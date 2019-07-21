@@ -79,31 +79,50 @@ public class LivingTotemEvent extends LivingEvent
         effects = new ArrayList<>();
     }
 
+
+    /**
+     * Returns the DamageSource that inflicted the lethal damage.
+     */
     public DamageSource getSource()
     {
         return source;
     }
 
+    /**
+     * Returns the health float for the event.
+     */
     public float getHealth()
     {
         return health;
     }
 
+    /**
+     * @param health - Sets the float value for how much life the player should get returned to if the Event.Result is Allow.
+     */
     public void setHealth(float health)
     {
         this.health = health;
     }
 
+    /**
+     * Returns the boolean for if the event should clear all active potion effects.
+     */
     public boolean doesClearEffects()
     {
         return clearEffects;
     }
 
+    /**
+     * @param clearEffects - If the event should clear effects, True By Default.
+     */
     public void setClearEffects(boolean clearEffects)
     {
         this.clearEffects = clearEffects;
     }
 
+    /**
+     * Returns the list of effects that will get added after effects are cleared by the event.
+     */
     public List<EffectInstance> getEffects() {
         return effects;
     }
