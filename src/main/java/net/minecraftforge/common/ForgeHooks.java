@@ -45,6 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -693,17 +694,29 @@ public class ForgeHooks
         return e.getBreakChance();
     }
 
-    public static boolean onGrindstoneChange(@Nonnull ItemStack first, @Nonnull ItemStack second, IInventory outputSlot)
+    public static boolean onGrindstoneChangePre(ItemStack first, ItemStack second, IInventory outputSlot, GrindstoneContainer container)
     {
-        GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(first, second);
-        if (MinecraftForge.EVENT_BUS.post(e))
+        GrindstoneUpdateEvent event = new GrindstoneUpdateEvent.Pre(first, second);
+        return onGrindstoneChange(event, outputSlot, container);
+    }
+
+    public static void onGrindstoneChangePost(ItemStack first, ItemStack second, ItemStack output, IInventory outputSlot, GrindstoneContainer container)
+    {
+        GrindstoneUpdateEvent event = new GrindstoneUpdateEvent.Post(first, second, output);
+        onGrindstoneChange(event, outputSlot, container);
+    }
+
+    public static boolean onGrindstoneChange(GrindstoneUpdateEvent event, IInventory outputSlot, GrindstoneContainer container)
+    {
+        if (MinecraftForge.EVENT_BUS.post(event))
         {
             outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
             return false;
         }
-        if (e.getOutput().isEmpty()) return true;
+        if (event.getOutput().isEmpty()) return true;
 
-        outputSlot.setInventorySlotContents(0, e.getOutput());
+        outputSlot.setInventorySlotContents(0, event.getOutput());
+        container.xpOnCraft = event.getXp();
         return false;
     }
 
