@@ -21,7 +21,7 @@
 +                             net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.enchantment.Enchantments.field_185308_t, p_82487_2_));
 +                     java.util.Random rand = new java.util.Random();
 +                     drops.forEach(d -> {
-+                        net.minecraft.entity.item.ItemEntity ent = entity.func_70099_a(p_82487_2_, 1.0F);
++                        net.minecraft.entity.item.ItemEntity ent = entity.func_70099_a(d, 1.0F);
 +                        ent.func_213317_d(ent.func_213322_ci().func_72441_c((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 +                     });
                       if (p_82487_2_.func_96631_a(1, world.field_73012_v, (ServerPlayerEntity)null)) {

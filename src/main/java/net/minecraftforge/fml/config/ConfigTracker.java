@@ -112,6 +112,7 @@ public class ConfigTracker {
             final CommentedConfig commentedConfig = CommentedConfig.inMemory();
             modConfig.getSpec().correct(commentedConfig);
             modConfig.setConfigData(commentedConfig);
+            modConfig.fireEvent(new ModConfig.Loading(modConfig));
         });
     }
 }

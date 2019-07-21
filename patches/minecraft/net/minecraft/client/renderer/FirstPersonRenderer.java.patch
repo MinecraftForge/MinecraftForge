@@ -42,7 +42,7 @@
        if (flag1) {
           float f4 = hand == Hand.OFF_HAND ? f : 0.0F;
           float f6 = 1.0F - MathHelper.func_219799_g(p_78440_1_, this.field_187472_i, this.field_187471_h);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_78440_1_, f1, f4, f6, this.field_187467_d))
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_78440_1_, f1, f4, f6, this.field_187468_e))
           this.func_187457_a(abstractclientplayerentity, p_78440_1_, f1, Hand.OFF_HAND, f4, this.field_187468_e, f6);
        }
  
@@ -72,8 +72,9 @@
           }
  
           if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
+-            this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(blockstate));
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, blockstate, overlayPos))
-             this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(blockstate));
++            this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().getTexture(blockstate, field_78455_a.field_71441_e, overlayPos));
           }
        }
  

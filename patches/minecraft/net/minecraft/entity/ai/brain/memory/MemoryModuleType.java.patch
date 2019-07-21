@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/memory/MemoryModuleType.java
 +++ b/net/minecraft/entity/ai/brain/memory/MemoryModuleType.java
-@@ -17,7 +17,7 @@
+@@ -18,7 +18,7 @@
  import net.minecraft.util.math.IPosWrapper;
  import net.minecraft.util.registry.Registry;
  

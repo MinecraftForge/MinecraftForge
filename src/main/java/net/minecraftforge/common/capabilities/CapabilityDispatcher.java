@@ -100,7 +100,18 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
         for (ICapabilityProvider c : caps)
         {
             LazyOptional<T> ret = c.getCapability(cap, side);
-            if (ret.isPresent()) {
+            //noinspection ConstantConditions
+            if (ret == null)
+            {
+                throw new RuntimeException(
+                        String.format(
+                                "Provider %s.getCapability() returned null; return LazyOptional.empty() instead!",
+                                c.getClass().getTypeName()
+                        )
+                );
+            }
+            if (ret.isPresent())
+            {
                 return ret;
             }
         }

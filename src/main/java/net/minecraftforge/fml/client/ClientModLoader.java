@@ -27,6 +27,7 @@ import net.minecraft.resources.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -64,11 +65,11 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
-        ModLoader.get().setStatusConsumer(earlyLoaderGUI.getStatusConsumer());
-        createRunnableWithCatch(ModLoader.get()::gatherAndInitializeMods).run();
+        createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
+        ModelLoaderRegistry.init();
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {

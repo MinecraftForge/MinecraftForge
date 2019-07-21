@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/BlockStateContainer.java
 +++ b/net/minecraft/world/chunk/BlockStateContainer.java
-@@ -63,6 +63,9 @@
+@@ -65,6 +65,9 @@
     }
  
     private void func_186012_b(int p_186012_1_) {
@@ -10,7 +10,7 @@
        if (p_186012_1_ != this.field_186024_e) {
           this.field_186024_e = p_186012_1_;
           if (this.field_186024_e <= 4) {
-@@ -73,6 +76,8 @@
+@@ -75,6 +78,8 @@
           } else {
              this.field_186022_c = this.field_205521_b;
              this.field_186024_e = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
@@ -19,7 +19,7 @@
           }
  
           this.field_186022_c.func_186041_a(this.field_205526_g);
-@@ -135,12 +140,16 @@
+@@ -137,12 +142,16 @@
        this.func_210459_b();
        int i = p_186010_1_.readByte();
        if (this.field_186024_e != i) {

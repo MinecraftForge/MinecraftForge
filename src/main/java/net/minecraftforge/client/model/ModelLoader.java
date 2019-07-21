@@ -39,6 +39,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
@@ -136,9 +137,9 @@ public final class ModelLoader extends ModelBakery
         return isLoading;
     }
 
-    public ModelLoader(IResourceManager manager, AtlasTexture map, IProfiler profiler)
+    public ModelLoader(IResourceManager manager, AtlasTexture map, BlockColors colours, IProfiler profiler)
     {
-        super(manager, map, profiler);
+        super(manager, map, colours, profiler);
         VanillaLoader.INSTANCE.setLoader(this);
         VariantLoader.INSTANCE.setLoader(this);
         ModelLoaderRegistry.clearModelCache(manager);

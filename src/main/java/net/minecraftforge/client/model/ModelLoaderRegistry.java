@@ -63,7 +63,7 @@ public class ModelLoaderRegistry
     private static IResourceManager manager;
 
     // Forge built-in loaders
-    static
+    public static void init()
     {
         registerLoader(B3DLoader.INSTANCE);
         registerLoader(OBJLoader.INSTANCE);

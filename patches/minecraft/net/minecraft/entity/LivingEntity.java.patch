@@ -320,9 +320,9 @@
                 }
 @@ -2403,13 +2435,22 @@
  
-    protected void func_184608_ct() {
+    private void func_184608_ct() {
        if (this.func_184587_cr()) {
--         if (this.func_184586_b(this.func_184600_cs()) == this.field_184627_bm) {
+-         if (ItemStack.func_185132_d(this.func_184586_b(this.func_184600_cs()), this.field_184627_bm)) {
 +         ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
 +         if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.field_184627_bm, itemstack)) this.field_184627_bm = itemstack;
 +         if (itemstack == this.field_184627_bm) {

@@ -27,10 +27,12 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
     protected final ISidedInventory inv;
+    @Nullable
     protected final Direction side;
 
     @SuppressWarnings("unchecked")
@@ -43,13 +45,13 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         return ret;
     }
 
-    public SidedInvWrapper(ISidedInventory inv, Direction side)
+    public SidedInvWrapper(ISidedInventory inv, @Nullable Direction side)
     {
         this.inv = inv;
         this.side = side;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, Direction side)
+    public static int getSlot(ISidedInventory inv, int slot, @Nullable Direction side)
     {
         int[] slots = inv.getSlotsForFace(side);
         if (slot < slots.length)
@@ -74,7 +76,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public int hashCode()
     {
         int result = inv.hashCode();
-        result = 31 * result + side.hashCode();
+        result = 31 * result + (side == null ? 0 : side.hashCode());
         return result;
     }
 

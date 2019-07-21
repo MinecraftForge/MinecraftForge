@@ -28,7 +28,7 @@ import java.util.UUID;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory

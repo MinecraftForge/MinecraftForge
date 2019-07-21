@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -26,6 +26,7 @@
+@@ -27,6 +27,7 @@
  
  public class WalkNodeProcessor extends NodeProcessor {
     protected float field_176183_h;
@@ -8,7 +8,7 @@
  
     public void func_186315_a(IWorldReader p_186315_1_, MobEntity p_186315_2_) {
        super.func_186315_a(p_186315_1_, p_186315_2_);
-@@ -258,7 +259,9 @@
+@@ -269,7 +270,9 @@
        PathNodeType pathnodetype = PathNodeType.BLOCKED;
        double d0 = (double)p_186319_5_.func_213311_cf() / 2.0D;
        BlockPos blockpos = new BlockPos(p_186319_5_);
@@ -18,7 +18,7 @@
        if (enumset.contains(PathNodeType.FENCE)) {
           return PathNodeType.FENCE;
        } else {
-@@ -348,6 +351,7 @@
+@@ -359,6 +362,7 @@
           if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) {
              pathnodetype = PathNodeType.DAMAGE_OTHER;
           }
@@ -26,7 +26,7 @@
        }
  
        pathnodetype = this.func_193578_a(p_186330_1_, p_186330_2_, p_186330_3_, p_186330_4_, pathnodetype);
-@@ -360,12 +364,14 @@
+@@ -371,12 +375,14 @@
              for(int i = -1; i <= 1; ++i) {
                 for(int j = -1; j <= 1; ++j) {
                    if (i != 0 || j != 0) {
@@ -45,7 +45,7 @@
                          p_193578_5_ = PathNodeType.DANGER_OTHER;
                       }
                    }
-@@ -380,9 +386,11 @@
+@@ -391,9 +397,11 @@
     protected PathNodeType func_189553_b(IBlockReader p_189553_1_, int p_189553_2_, int p_189553_3_, int p_189553_4_) {
        BlockPos blockpos = new BlockPos(p_189553_2_, p_189553_3_, p_189553_4_);
        BlockState blockstate = p_189553_1_.func_180495_p(blockpos);

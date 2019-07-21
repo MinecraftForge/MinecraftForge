@@ -1,0 +1,21 @@
+--- a/net/minecraft/inventory/container/GrindstoneContainer.java
++++ b/net/minecraft/inventory/container/GrindstoneContainer.java
+@@ -141,12 +141,13 @@
+             }
+ 
+             Item item = itemstack.func_77973_b();
+-            int k = item.func_77612_l() - itemstack.func_77952_i();
+-            int l = item.func_77612_l() - itemstack1.func_77952_i();
+-            int i1 = k + l + item.func_77612_l() * 5 / 100;
+-            i = Math.max(item.func_77612_l() - i1, 0);
++            int k = itemstack.func_77958_k() - itemstack.func_77952_i();
++            int l = itemstack.func_77958_k() - itemstack1.func_77952_i();
++            int i1 = k + l + itemstack.func_77958_k() * 5 / 100;
++            i = Math.max(itemstack.func_77958_k() - i1, 0);
+             itemstack2 = this.func_217011_b(itemstack, itemstack1);
+-            if (!itemstack2.func_77984_f()) {
++            if (!itemstack2.isRepairable()) i = itemstack.func_77952_i();
++            if (!itemstack2.func_77984_f() || !itemstack2.isRepairable()) {
+                if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
+                   this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
+                   this.func_75142_b();

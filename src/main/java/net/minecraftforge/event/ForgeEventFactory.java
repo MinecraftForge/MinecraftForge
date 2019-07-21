@@ -67,7 +67,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunk;
@@ -665,7 +665,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().func_223586_b(GameRules.field_223599_b) : result == Result.ALLOW;
+        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : result == Result.ALLOW;
     }
 
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)

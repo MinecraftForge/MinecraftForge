@@ -264,4 +264,8 @@ public class FMLLoader
     public static Optional<BiFunction<INameMappingService.Domain, String, String>> getNameFunction(final String naming) {
         return Launcher.INSTANCE.environment().findNameMapping(naming);
     }
+
+    public static String getMcpVersion() {
+        return mcpVersion;
+    }
 }

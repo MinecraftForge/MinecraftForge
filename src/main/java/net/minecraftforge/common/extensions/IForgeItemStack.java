@@ -425,4 +425,14 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
             return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
             (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.areItemStackTagsEqual(getStack(), other));
     }
+
+    /**
+     * Determines if a item is reparable, used by Repair recipes and Grindstone.
+     *
+     * @return True if reparable
+     */
+    default boolean isRepairable()
+    {
+        return getStack().getItem().isRepairable(getStack());
+    }
 }

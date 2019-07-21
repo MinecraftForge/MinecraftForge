@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/biome/Biome.java
 +++ b/net/minecraft/world/biome/Biome.java
-@@ -55,7 +55,7 @@
+@@ -58,7 +58,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     public static final Logger field_150586_aC = LogManager.getLogger();
     public static final Set<Biome> field_201870_ab = Sets.newHashSet();
     public static final ObjectIntIdentityMap<Biome> field_185373_j = new ObjectIntIdentityMap<>();
-@@ -132,11 +132,11 @@
+@@ -145,11 +145,11 @@
     }
  
     protected void func_201866_a(EntityClassification p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
@@ -23,8 +23,8 @@
     }
  
     public Biome.RainType func_201851_b() {
-@@ -168,7 +168,7 @@
-       if (this.func_180626_a(p_201854_2_) >= 0.15F) {
+@@ -198,7 +198,7 @@
+       if (this.func_225486_c(p_201854_2_) >= 0.15F) {
           return false;
        } else {
 -         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256 && p_201854_1_.func_175642_b(LightType.BLOCK, p_201854_2_) < 10) {
@@ -32,7 +32,7 @@
              BlockState blockstate = p_201854_1_.func_180495_p(p_201854_2_);
              IFluidState ifluidstate = p_201854_1_.func_204610_c(p_201854_2_);
              if (ifluidstate.func_206886_c() == Fluids.field_204546_a && blockstate.func_177230_c() instanceof FlowingFluidBlock) {
-@@ -193,7 +193,7 @@
+@@ -223,7 +223,7 @@
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_175642_b(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
@@ -41,7 +41,7 @@
                 return true;
              }
           }
-@@ -488,6 +488,18 @@
+@@ -526,6 +526,18 @@
        }
     }
  
