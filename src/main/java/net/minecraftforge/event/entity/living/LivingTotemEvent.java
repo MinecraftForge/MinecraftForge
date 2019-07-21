@@ -1,7 +1,25 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.util.DamageSource;
@@ -31,8 +49,7 @@ public class LivingTotemEvent extends LivingEvent
 {
     /**
      * If the event returns Result.Allow, the value of health will be used to decide the health the player is set to when "protected".
-     * By default it's not set and thus returns 0.
-     * This is checked against in {@link ForgeEventFactory#checkTotemProtection} and returns a value of 1 if a value is not set.
+     * By default, the player's health will be set to 1.
      */
     private float health;
     private final DamageSource source;
