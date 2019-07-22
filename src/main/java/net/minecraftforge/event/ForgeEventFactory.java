@@ -271,21 +271,23 @@ public class ForgeEventFactory
         ServerWorld world = context.getWorld();
         BlockPos pos = context.get(LootParameters.POSITION);
         BlockState state = context.get(LootParameters.BLOCK_STATE);
+        Entity dropCause = context.get(LootParameters.THIS_ENTITY);
+        PlayerEntity player = dropCause instanceof PlayerEntity ? (PlayerEntity) dropCause : null;
 
         // Create a NonNullList to pass to the event then fire it, return the drops from the event for the game to process.
         NonNullList<ItemStack> nonNullDrops = NonNullList.create();
         nonNullDrops.addAll(drops);
-        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, contextBuilder.build(LootParameterSets.BLOCK), nonNullDrops);
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, contextBuilder.build(LootParameterSets.BLOCK), player, nonNullDrops);
         MinecraftForge.EVENT_BUS.post(dropEvent);
         return dropEvent.getDrops();
     }
 
-    public static void fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, ItemStack drop)
+    public static void fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, @Nullable PlayerEntity player, ItemStack drop)
     {
         // Handle dropping stacks into the world here to reduce patch size in the block classes, the drop event can introduce more than just one stack to drop.
         NonNullList<ItemStack> drops = NonNullList.create();
         drops.add(drop);
-        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, null, drops);
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, null, player, drops);
         MinecraftForge.EVENT_BUS.post(dropEvent);
         dropEvent.getDrops().forEach(s -> Block.spawnAsEntity(world, pos, s));
     }

@@ -137,13 +137,15 @@ public class BlockEvent extends Event
     @Cancelable
     public static class DropLootEvent extends BlockEvent
     {
+        private final PlayerEntity player;
         private final LootContext context;
         private final NonNullList<ItemStack> drops;
 
-        public DropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, NonNullList<ItemStack> drops)
+        public DropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, @Nullable PlayerEntity player, NonNullList<ItemStack> drops)
         {
             super(world, pos, state);
             this.context = context;
+            this.player = player;
             this.drops = drops;
         }
 
@@ -156,6 +158,17 @@ public class BlockEvent extends Event
         public LootContext getContext()
         {
             return context;
+        }
+
+        /**
+         * Get the player that caused the loot to drop.
+         *
+         * @return The player that caused the loot to drop, or null if no player was directly involved.
+         */
+        @Nullable
+        public PlayerEntity getPlayer()
+        {
+            return player;
         }
 
         /**
