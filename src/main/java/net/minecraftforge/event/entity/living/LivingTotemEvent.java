@@ -20,10 +20,14 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LivingTotemEvent is fired when a player is about to die.
@@ -48,30 +52,77 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class LivingTotemEvent extends LivingEvent
 {
     /**
-     * If the event returns Result.Allow, the value of health will be used to decide the health of the player is set to when "protected".
+     * If the event returns Result.Allow, the value of health will be used to decide the health the player is set to when "protected".
      * By default, the player's health will be set to 1.
      */
     private float health;
+
+    /**
+     * If the event returns Result.Allow, the value of clearEffects will be used to decide if the built-in behavior clears all active potion effects.
+     * By default, the player's effects are cleared.
+     */
+    private boolean clearEffects = true;
+
+    /**
+     * If the event returns Result.Allow, the value of effects allows for people to add effects that gets added to the player;
+     * By default, the player gets no extra effects.
+     */
+    private List<PotionEffect> effects;
+
     private final DamageSource source;
 
     public LivingTotemEvent(EntityLivingBase livingBase, DamageSource source)
     {
         super(livingBase);
         this.source = source;
+        effects = new ArrayList<>();
     }
 
+
+    /**
+     * Returns the DamageSource that inflicted the lethal damage.
+     */
     public DamageSource getSource()
     {
         return source;
     }
 
+    /**
+     * Returns the health float for the event.
+     */
     public float getHealth()
     {
         return health;
     }
 
-    public void setHealth(int health)
+    /**
+     * @param health - Sets the float value for how much life the player should get returned to if the Event.Result is Allow.
+     */
+    public void setHealth(float health)
     {
         this.health = health;
+    }
+
+    /**
+     * Returns the boolean for if the event should clear all active potion effects.
+     */
+    public boolean doesClearEffects()
+    {
+        return clearEffects;
+    }
+
+    /**
+     * @param clearEffects - If the event should clear effects, True By Default.
+     */
+    public void setClearEffects(boolean clearEffects)
+    {
+        this.clearEffects = clearEffects;
+    }
+
+    /**
+     * Returns the list of effects that will get added after effects are cleared by the event.
+     */
+    public List<PotionEffect> getEffects() {
+        return effects;
     }
 }

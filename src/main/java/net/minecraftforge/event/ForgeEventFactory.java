@@ -838,7 +838,11 @@ public class ForgeEventFactory
         Result result = event.getResult();
         if (result == Result.ALLOW)
         {
-            livingBase.world.setEntityState(livingBase, (byte)35);
+            livingBase.world.setEntityState(livingBase, (byte) 35);
+            if (event.doesClearEffects())
+            {
+                livingBase.clearActivePotions();
+            }
             if (event.getHealth() <= 0)
             {
                 livingBase.setHealth(1.0F);
@@ -850,6 +854,13 @@ public class ForgeEventFactory
             else
             {
                 livingBase.setHealth(event.getHealth());
+            }
+            if (!event.getEffects().isEmpty())
+            {
+                for (PotionEffect instance : event.getEffects())
+                {
+                    livingBase.addPotionEffect(instance);
+                }
             }
         }
         return event.getResult();
