@@ -227,7 +227,7 @@ public class DimensionManager
 
     /**
      * Queues a dimension to unload, if it can be unloaded.
-     * @param id The id of the dimension
+     * @param world The world to unload
      */
     public static void unloadWorld(ServerWorld world)
     {
@@ -370,7 +370,7 @@ public class DimensionManager
                 ModDimension mod = ForgeRegistries.MOD_DIMENSIONS.getValue(entry.type);
                 if (mod == null)
                 {
-                    LOGGER.error(DIMMGR, "Modded dimension entry '{}' id {} in save file missing ModDimension.", entry.name.toString(), entry.id, entry.type.toString());
+                    LOGGER.error(DIMMGR, "Modded dimension entry '{}' id {} type {} in save file missing ModDimension.", entry.name.toString(), entry.id, entry.type.toString());
                     savedEntries.put(entry.name, entry);
                     continue;
                 }
