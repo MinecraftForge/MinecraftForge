@@ -9,7 +9,7 @@
                 world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                 itemstack.func_190918_g(1);
                 return ActionResultType.SUCCESS;
-@@ -189,6 +189,10 @@
+@@ -189,10 +189,18 @@
     }
  
     public Block func_179223_d() {
@@ -20,3 +20,11 @@
        return this.field_150939_a;
     }
  
+    public void func_195946_a(Map<Block, Item> p_195946_1_, Item p_195946_2_) {
+       p_195946_1_.put(this.func_179223_d(), p_195946_2_);
+    }
++
++   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++      blockToItemMap.remove(this.func_179223_d());
++   }
+ }

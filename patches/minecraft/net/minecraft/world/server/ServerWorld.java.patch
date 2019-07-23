@@ -98,6 +98,15 @@
                 p_217473_0_.func_70071_h_();
              }, entity);
              if (entity.field_70128_L) {
+@@ -386,7 +399,7 @@
+             if (entity2.field_70128_L) {
+                this.func_217454_n(entity2);
+                objectiterator.remove();
+-               this.func_217484_g(entity2);
++               this.removeEntityComplete(entity2, entity2 instanceof ServerPlayerEntity); //Forge: Keep cap data until revive. Every other entity removes directly.
+             }
+ 
+             iprofiler.func_76319_b();
 @@ -403,7 +416,7 @@
        int j = chunkpos.func_180333_d();
        IProfiler iprofiler = this.func_217381_Z();
@@ -213,9 +222,11 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -916,11 +938,15 @@
+@@ -915,12 +937,17 @@
+ 
     }
  
++   @Deprecated //Forge: Use removeEntityComplete(entity,boolean)
     public void func_217484_g(Entity p_217484_1_) {
 +      removeEntityComplete(p_217484_1_, false);
 +   }
@@ -230,7 +241,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -934,6 +960,7 @@
+@@ -934,6 +961,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -238,7 +249,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -954,9 +981,13 @@
+@@ -954,15 +982,19 @@
           }
        }
  
@@ -252,19 +263,28 @@
        if (this.field_217492_a) {
           throw new IllegalStateException("Removing entity while ticking!");
        } else {
-@@ -975,7 +1006,10 @@
+          this.func_217454_n(p_217467_1_);
+          this.field_217498_x.remove(p_217467_1_.func_145782_y());
+-         this.func_217484_g(p_217467_1_);
++         this.removeEntityComplete(p_217467_1_, keepData);
+       }
+    }
+ 
+@@ -975,8 +1007,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
 -      p_217434_1_.func_70106_y();
+-      this.func_217467_h(p_217434_1_);
 +      removePlayer(p_217434_1_, false);
 +   }
 +   public void removePlayer(ServerPlayerEntity p_217434_1_, boolean keepData) {
 +      p_217434_1_.remove(keepData);
-       this.func_217467_h(p_217434_1_);
++      this.removeEntity(p_217434_1_, keepData);
        this.func_72854_c();
     }
-@@ -1000,10 +1034,20 @@
+ 
+@@ -1000,10 +1035,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -285,7 +305,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.field_70165_t, p_217384_2_.field_70163_u, p_217384_2_.field_70161_v, p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1039,6 +1083,7 @@
+@@ -1039,6 +1084,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -293,7 +313,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1289,6 +1334,17 @@
+@@ -1289,6 +1335,17 @@
        p_217489_3_.func_213739_a(p_217489_1_, p_217489_2_);
     }
  

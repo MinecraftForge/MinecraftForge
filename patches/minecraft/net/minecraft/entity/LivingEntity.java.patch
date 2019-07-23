@@ -47,6 +47,15 @@
              while(i > 0) {
                 int j = ExperienceOrbEntity.func_70527_a(i);
                 i -= j;
+@@ -395,7 +401,7 @@
+             }
+          }
+ 
+-         this.func_70106_y();
++         this.remove(this instanceof net.minecraft.entity.player.ServerPlayerEntity); //Forge keep data until we revive player
+ 
+          for(int k = 0; k < 20; ++k) {
+             double d2 = this.field_70146_Z.nextGaussian() * 0.02D;
 @@ -590,7 +596,7 @@
              Effect effect = iterator.next();
              EffectInstance effectinstance = this.field_70713_bf.get(effect);
