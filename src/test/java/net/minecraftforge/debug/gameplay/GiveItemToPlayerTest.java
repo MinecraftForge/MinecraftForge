@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.gameplay;
 
@@ -29,12 +30,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+*/
 /**
  * A mod to test that ItemHandlerHelper.giveItemToPlayer works.
  * More specifically, that all players, including the one receiving the item, can hear the pickup sound when it happens.
  * This mod makes it so when you right click the air with a piece of dirt in your hand, you get another piece of dirt.
  * It's not a dupe glitch...it's a dupe "feature"...
- */
+ *//*
+
 //@Mod(modid = "giveitemtoplayertest", name = "ItemHandlerHelper.giveItemToPlayer Test", version = "1.0")
 public class GiveItemToPlayerTest {
     private static final boolean ENABLED = false;
@@ -58,3 +61,4 @@ public class GiveItemToPlayerTest {
         event.setCancellationResult(EnumActionResult.SUCCESS);
     }
 }
+*/

@@ -88,8 +88,6 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -375,15 +373,9 @@ public class GameData
             {
                 StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
                 StateContainer<Block, BlockState> newContainer = block.getStateContainer();
-                ImmutableList<BlockState> oldValidStates = oldContainer.getValidStates();
-                ImmutableList<BlockState> newValidStates = newContainer.getValidStates();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
-                if (block.getRegistryName().getNamespace().equals("minecraft") && (
-                        oldValidStates.size() != newValidStates.size() ||
-                        !Streams.zip(oldValidStates.stream().map(Object::toString),
-                                    newValidStates.stream().map(Object::toString),
-                                    String::equals).allMatch(v -> v)))
+                if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
@@ -483,7 +475,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                blockToItem.remove(((BlockItem)oldItem).getBlock());
+                ((BlockItem)oldItem).removeFromBlockToItemMap(blockToItem, item);
             }
             if (item instanceof BlockItem)
             {

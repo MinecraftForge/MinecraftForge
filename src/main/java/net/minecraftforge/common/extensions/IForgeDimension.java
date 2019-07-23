@@ -290,7 +290,7 @@ public interface IForgeDimension
      */
     default boolean shouldMapSpin(String entity, double x, double z, double rotation)
     {
-        return getDimension().getType() == DimensionType.field_223228_b_;
+        return getDimension().getType() == DimensionType.THE_NETHER;
     }
 
     /**

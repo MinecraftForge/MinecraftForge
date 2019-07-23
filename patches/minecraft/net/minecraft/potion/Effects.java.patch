@@ -2,7 +2,7 @@
 +++ b/net/minecraft/potion/Effects.java
 @@ -9,6 +9,7 @@
  import net.minecraft.world.Difficulty;
- import net.minecraft.world.ServerWorld;
+ import net.minecraft.world.server.ServerWorld;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Effects {

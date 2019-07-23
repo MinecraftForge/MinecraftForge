@@ -9,7 +9,7 @@
           return false;
        } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
           return false;
-@@ -130,6 +130,11 @@
+@@ -136,6 +136,11 @@
                    } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
                       p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
                       flag = true;

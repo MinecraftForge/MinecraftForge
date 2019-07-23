@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/Stitcher.java
 +++ b/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -13,6 +13,8 @@
+@@ -14,6 +14,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class Stitcher {
@@ -9,7 +9,7 @@
     private static final Comparator<Stitcher.Holder> field_217797_a = Comparator.<Stitcher.Holder, Integer>comparing((p_217793_0_) -> {
        return -p_217793_0_.field_94201_d;
     }).thenComparing((p_217795_0_) -> {
-@@ -53,6 +55,12 @@
+@@ -54,6 +56,12 @@
  
        for(Stitcher.Holder stitcher$holder : list) {
           if (!this.func_94310_b(stitcher$holder)) {
@@ -19,10 +19,10 @@
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
 +               list.forEach(h-> sb.append("\t").append(h).append("\n"));
 +            }));
-             throw new StitcherException(stitcher$holder.field_98151_a);
-          }
-       }
-@@ -104,7 +112,7 @@
+             throw new StitcherException(stitcher$holder.field_98151_a, list.stream().map((p_225334_0_) -> {
+                return p_225334_0_.field_98151_a;
+             }).collect(ImmutableList.toImmutableList()));
+@@ -107,7 +115,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
@@ -31,7 +31,7 @@
           } else {
              flag = flag1 && i <= j;
           }
-@@ -141,7 +149,7 @@
+@@ -144,7 +152,7 @@
        }
  
        public String toString() {

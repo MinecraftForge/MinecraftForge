@@ -899,7 +899,7 @@ public class ForgeHooksClient
 
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
         SelectiveReloadStateHandler.INSTANCE.beginReload(ReloadRequirements.include(types));
-        mc.func_213237_g();
+        mc.reloadResources();
         SelectiveReloadStateHandler.INSTANCE.endReload();
     }
 

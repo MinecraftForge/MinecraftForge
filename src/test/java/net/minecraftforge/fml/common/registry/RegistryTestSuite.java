@@ -15,18 +15,22 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.fml.common.registry;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+*/
 /**
  * Run the full suite of tests
- */
+ *//*
+
 @RunWith(Suite.class)
 @Suite.SuiteClasses({VanillaRegistryTests.class, FreezingTests.class, SubstitutionRemoveRestoreTest.class, SubstitutionInjectionTest.class, DummyBlockReplacementTest.class, BlockStateMappingsTest.class})
 public class RegistryTestSuite
 {
 }
+*/

@@ -7,4 +7,4 @@
 +         if (!p_196267_2_.isAreaLoaded(p_196267_3_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
           if (!func_220257_b(p_196267_1_, p_196267_2_, p_196267_3_)) {
              p_196267_2_.func_175656_a(p_196267_3_, Blocks.field_150346_d.func_176223_P());
-          } else if (p_196267_2_.func_201696_r(p_196267_3_.func_177984_a()) >= 4) {
+          } else {

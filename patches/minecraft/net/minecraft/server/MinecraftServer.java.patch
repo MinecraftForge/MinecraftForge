@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -181,7 +181,7 @@
+@@ -191,7 +191,7 @@
     private final GameProfileRepository field_152365_W;
     private final PlayerProfileCache field_152366_X;
     private long field_147142_T;
@@ -9,7 +9,7 @@
        p_213187_0_.setUncaughtExceptionHandler((p_213206_0_, p_213206_1_) -> {
           field_147145_h.error(p_213206_1_);
        });
-@@ -317,6 +317,8 @@
+@@ -327,6 +327,8 @@
        this.func_200245_b(new TranslationTextComponent("menu.loadingLevel"));
        SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
        this.func_175584_a(this.func_71270_I(), savehandler);
@@ -18,7 +18,7 @@
        WorldInfo worldinfo = savehandler.func_75757_d();
        WorldSettings worldsettings;
        if (worldinfo == null) {
-@@ -337,7 +339,6 @@
+@@ -347,7 +349,6 @@
        }
  
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
@@ -26,7 +26,7 @@
        this.func_213194_a(savehandler, worldinfo, worldsettings, ichunkstatuslistener);
        this.func_147139_a(this.func_147135_j(), true);
        this.func_213186_a(ichunkstatuslistener);
-@@ -385,6 +386,7 @@
+@@ -395,6 +396,7 @@
           if (dimensiontype != DimensionType.field_223227_a_) {
              this.field_71305_c.put(dimensiontype, new ServerMultiWorld(serverworld1, this, this.field_213217_au, p_213194_1_, dimensiontype, this.field_71304_b, p_213194_4_));
           }
@@ -34,7 +34,7 @@
        }
  
     }
-@@ -540,6 +542,7 @@
+@@ -552,6 +554,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -42,7 +42,7 @@
                 serverworld1.close();
              } catch (IOException ioexception) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception);
-@@ -580,6 +583,7 @@
+@@ -592,6 +595,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
@@ -50,7 +50,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
-@@ -611,7 +615,10 @@
+@@ -623,9 +627,15 @@
                 this.field_71304_b.func_219897_b();
                 this.field_71296_Q = true;
              }
@@ -60,8 +60,13 @@
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
              this.func_71228_a((CrashReport)null);
           }
++      } catch (net.minecraftforge.fml.StartupQuery.AbortedException e) {
++         // ignore silently
++         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
        } catch (Throwable throwable1) {
-@@ -630,6 +637,7 @@
+          field_147145_h.error("Encountered an unexpected exception", throwable1);
+          CrashReport crashreport;
+@@ -642,6 +652,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -69,7 +74,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -638,6 +646,7 @@
+@@ -650,6 +661,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -77,7 +82,7 @@
              this.func_71240_o();
           }
  
-@@ -734,6 +743,7 @@
+@@ -746,6 +758,7 @@
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
@@ -85,7 +90,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -748,6 +758,7 @@
+@@ -760,6 +773,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -93,7 +98,7 @@
        }
  
        if (this.field_71315_w % 6000 == 0) {
-@@ -775,6 +786,7 @@
+@@ -787,6 +801,7 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -101,15 +106,17 @@
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -783,6 +795,7 @@
+@@ -794,7 +809,8 @@
+       this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
  
-       for(ServerWorld serverworld : this.func_212370_w()) {
+-      for(ServerWorld serverworld : this.func_212370_w()) {
++      for(ServerWorld serverworld : this.getWorldArray()) {
 +         long tickStart = Util.func_211178_c();
           if (serverworld.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ || this.func_71255_r()) {
              this.field_71304_b.func_194340_a(() -> {
                 return serverworld.func_72912_H().func_76065_j() + " " + Registry.field_212622_k.func_177774_c(serverworld.field_73011_w.func_186058_p());
-@@ -794,6 +807,7 @@
+@@ -806,6 +822,7 @@
              }
  
              this.field_71304_b.func_76320_a("tick");
@@ -117,7 +124,7 @@
  
              try {
                 serverworld.func_72835_b(p_71190_1_);
-@@ -802,12 +816,16 @@
+@@ -814,12 +831,16 @@
                 serverworld.func_72914_a(crashreport);
                 throw new ReportedException(crashreport);
              }
@@ -134,7 +141,7 @@
        this.field_71304_b.func_219895_b("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_219895_b("players");
-@@ -844,6 +862,7 @@
+@@ -856,6 +877,7 @@
        OptionSpec<Integer> optionspec10 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec11 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec12 = optionparser.nonOptions();
@@ -142,7 +149,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -936,7 +955,7 @@
+@@ -948,7 +970,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -151,7 +158,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -975,7 +994,7 @@
+@@ -987,7 +1009,7 @@
     }
  
     public String getServerModName() {
@@ -160,11 +167,10 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1517,4 +1536,15 @@
-    }
+@@ -1529,6 +1551,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
-+
+ 
 +   private Map<DimensionType, long[]> tickTimes = Maps.newIdentityHashMap();
 +   @Nullable
 +   public long[] getTickTime(DimensionType dim) {
@@ -175,4 +181,21 @@
 +   public synchronized Map<DimensionType, ServerWorld> forgeGetWorldMap() {
 +      return this.field_71305_c;
 +   }
- }
++   private int worldArrayMarker = 0;
++   private int worldArrayLast = -1;
++   private ServerWorld[] worldArray;
++   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
++   public synchronized void markWorldsDirty() {
++      worldArrayMarker++;
++   }
++   private ServerWorld[] getWorldArray() {
++      if (worldArrayMarker == worldArrayLast && worldArray != null)
++         return worldArray;
++      worldArray = this.field_71305_c.values().stream().toArray(x -> new ServerWorld[x]);
++      worldArrayLast = worldArrayMarker;
++      return worldArray;
++   }
++
+    public void func_223711_a(Path p_223711_1_) throws IOException {
+       Path path = p_223711_1_.resolve("levels");
+ 

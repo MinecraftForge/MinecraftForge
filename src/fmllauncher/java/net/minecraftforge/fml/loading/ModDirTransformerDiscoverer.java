@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
@@ -35,6 +36,10 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
     @Override
     public List<Path> candidates(final Path gameDirectory) {
         final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative());
+        if (!Files.exists(modsDir)) {
+            // Skip if the mods dir doesn't exist yet.
+            return Collections.emptyList();
+        }
         List<Path> paths = new ArrayList<>();
         try {
             Files.createDirectories(modsDir);
