@@ -19,9 +19,9 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.crash.CrashReport;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraft.crash.CrashReport;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,21 +44,21 @@ public class MinecraftForge
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGE = MarkerManager.getMarker("FORGE");
 
-    /**
-     * Method invoked by FML before any other mods are loaded.
-     */
-    public static void initialize()
-    {
-        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
+   /**
+    * Method invoked by FML before any other mods are loaded.
+    */
+   public static void initialize()
+   {
+       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
-        UsernameCache.load();
-        // Load before all the mods, so MC owns the MC fluids
-        // TODO Fluids FluidRegistry.validateFluidRegistry();
-        ForgeHooks.initTools();
+       UsernameCache.load();
+       // Load before all the mods, so MC owns the MC fluids
+       // TODO Fluids FluidRegistry.validateFluidRegistry();
+       ForgeHooks.initTools();
 
-        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
-        new CrashReport("ThisIsFake", new Exception("Not real"));
-    }
+       //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
+       new CrashReport("ThisIsFake", new Exception("Not real"));
+   }
 
 
 

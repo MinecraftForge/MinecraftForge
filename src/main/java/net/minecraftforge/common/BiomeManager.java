@@ -25,14 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
+
+import javax.annotation.Nullable;
 
 public class BiomeManager
 {
@@ -79,7 +79,7 @@ public class BiomeManager
         list.clear();
 
         currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
-        
+
         return currentBiomes;
     }
 
