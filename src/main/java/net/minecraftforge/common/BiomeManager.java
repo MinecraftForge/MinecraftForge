@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-    private static Map<Biome, Biome> modded_river_map = new HashMap<>();
+    private static Map<Biome, Biome> moddedRiverMap = new HashMap<>();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
 
@@ -110,11 +110,11 @@ public class BiomeManager
     {
         if (river == null)
         {
-            modded_river_map.put(biome, biome);
+            moddedRiverMap.put(biome, biome);
         }
         else
         {
-            modded_river_map.put(biome, river);
+            moddedRiverMap.put(biome, river);
         }
     }
 
@@ -141,7 +141,7 @@ public class BiomeManager
     @Nullable
     public static Biome getRiver(Biome biome)
     {
-        return modded_river_map.getOrDefault(biome, null);
+        return moddedRiverMap.get(biome);
     }
 
     public static boolean isTypeListModded(BiomeType type)
