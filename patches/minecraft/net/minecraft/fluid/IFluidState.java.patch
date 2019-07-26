@@ -9,7 +9,7 @@
     Fluid func_206886_c();
  
     default boolean func_206889_d() {
-@@ -103,6 +103,7 @@
+@@ -107,6 +107,7 @@
        return this.func_206886_c().func_207185_a(p_206884_1_);
     }
  

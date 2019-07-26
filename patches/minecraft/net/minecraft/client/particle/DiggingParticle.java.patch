@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/particle/DiggingParticle.java
++++ b/net/minecraft/client/particle/DiggingParticle.java
+@@ -21,7 +21,7 @@
+    public DiggingParticle(World p_i46280_1_, double p_i46280_2_, double p_i46280_4_, double p_i46280_6_, double p_i46280_8_, double p_i46280_10_, double p_i46280_12_, BlockState p_i46280_14_) {
+       super(p_i46280_1_, p_i46280_2_, p_i46280_4_, p_i46280_6_, p_i46280_8_, p_i46280_10_, p_i46280_12_);
+       this.field_174847_a = p_i46280_14_;
+-      this.func_217567_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().func_178122_a(p_i46280_14_));
++      this.func_217567_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().getTexture(p_i46280_14_, p_i46280_1_, new BlockPos(field_187126_f, field_187127_g, field_187128_h)));
+       this.field_70545_g = 1.0F;
+       this.field_70552_h = 0.6F;
+       this.field_70553_i = 0.6F;

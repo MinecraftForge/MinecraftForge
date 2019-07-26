@@ -1,18 +1,35 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -89,9 +89,10 @@
+@@ -63,6 +63,8 @@
+       this.func_71237_c(p_71247_1_);
+       SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
+       this.func_175584_a(this.func_71270_I(), savehandler);
++      // Move factory creation earlier to prevent startupquery deadlock
++      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+       WorldInfo worldinfo = savehandler.func_75757_d();
+       if (worldinfo == null) {
+          worldinfo = new WorldInfo(this.field_71350_m, p_71247_2_);
+@@ -71,7 +73,6 @@
+       }
+ 
+       this.func_195560_a(savehandler.func_75765_b(), worldinfo);
+-      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+       this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
+       if (this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_176130_y() == null) {
+          this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M, true);
+@@ -89,9 +90,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");
        this.func_71253_a(CryptManager.func_75891_b());
 +      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
        this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j());
-       this.func_71205_p(this.func_71214_G() + " - " + this.func_71218_a(DimensionType.OVERWORLD).func_72912_H().func_76065_j());
+       this.func_71205_p(this.func_71214_G() + " - " + this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_76065_j());
 -      return true;
 +      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -126,6 +127,7 @@
+@@ -126,6 +128,7 @@
     }
  
     public Difficulty func_147135_j() {
@@ -20,7 +37,7 @@
        return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
     }
  
-@@ -213,6 +215,7 @@
+@@ -213,6 +216,7 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {

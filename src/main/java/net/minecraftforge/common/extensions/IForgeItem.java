@@ -20,6 +20,7 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -28,6 +29,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
@@ -43,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -111,7 +114,7 @@ public interface IForgeItem
      *
      * @return True if reparable
      */
-    boolean isRepairable();
+    boolean isRepairable(ItemStack stack);
 
     /**
     * Determines the amount of durability the mending enchantment
@@ -601,7 +604,7 @@ public interface IForgeItem
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment)
     {
-        return enchantment.field_77351_y.canEnchantItem(stack.getItem());
+        return enchantment.type.canEnchantItem(stack.getItem());
     }
 
     /**
@@ -759,5 +762,25 @@ public interface IForgeItem
      *         one.
      */
     @OnlyIn(Dist.CLIENT)
-    net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getTileEntityItemStackRenderer();
+    ItemStackTileEntityRenderer getTileEntityItemStackRenderer();
+
+    /**
+     * Retrieves a list of tags names this is known to be associated with.
+     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+     */
+    Set<ResourceLocation> getTags();
+
+    /**
+     * Reduce the durability of this item by the amount given.
+     * This can be used to e.g. consume power from NBT before durability.
+     *
+     * @param stack The itemstack to damage
+     * @param amount The amount to damage
+     * @param entity The entity damaging the item
+     * @param onBroken The on-broken callback from vanilla
+     * @return The amount of damage to pass to the vanilla logic
+     */
+    default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+        return amount;
+    }
 }

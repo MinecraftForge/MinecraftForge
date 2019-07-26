@@ -6,6 +6,6 @@
     }
 -
 -   public DimensionType func_186058_p() {
--      return DimensionType.NETHER;
+-      return DimensionType.field_223228_b_;
 -   }
  }

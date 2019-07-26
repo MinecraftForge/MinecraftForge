@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/FoxEntity.java
++++ b/net/minecraft/entity/passive/FoxEntity.java
+@@ -767,7 +767,7 @@
+       }
+ 
+       protected void func_220730_m() {
+-         if (FoxEntity.this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++         if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(FoxEntity.this.field_70170_p, FoxEntity.this)) {
+             BlockState blockstate = FoxEntity.this.field_70170_p.func_180495_p(this.field_179494_b);
+             if (blockstate.func_177230_c() == Blocks.field_222434_lW) {
+                int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);

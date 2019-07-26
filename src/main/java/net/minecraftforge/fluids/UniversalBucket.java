@@ -167,7 +167,7 @@ public class UniversalBucket extends Item
         }
 
         // clicked on a block?
-        RayTraceResult rt = func_219968_a(world, player, FluidMode.NONE);
+        RayTraceResult rt = rayTrace(world, player, FluidMode.NONE);
 
         ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, rt);
         if (ret != null) return ret;
@@ -190,7 +190,7 @@ public class UniversalBucket extends Item
             {
                 // try placing liquid
                 FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, hand, targetPos, itemstack, fluidStack);
-                if (result.isSuccess() && !player.playerAbilities.isCreativeMode)
+                if (result.isSuccess() && !player.abilities.isCreativeMode)
                 {
                     // success!
                     player.addStat(Stats.ITEM_USED.get(this));

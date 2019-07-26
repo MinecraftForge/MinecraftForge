@@ -63,7 +63,7 @@ public class ModelLoaderRegistry
     private static IResourceManager manager;
 
     // Forge built-in loaders
-    static
+    public static void init()
     {
         registerLoader(B3DLoader.INSTANCE);
         registerLoader(OBJLoader.INSTANCE);
@@ -79,7 +79,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).func_219534_a(loader);
+        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
     }
 
     public static boolean loaded(ResourceLocation location)

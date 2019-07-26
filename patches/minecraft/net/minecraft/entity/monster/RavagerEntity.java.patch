@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/RavagerEntity.java
++++ b/net/minecraft/entity/monster/RavagerEntity.java
+@@ -139,7 +139,7 @@
+             this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(MathHelper.func_219803_d(0.1D, d1, d0));
+          }
+ 
+-         if (this.field_70123_F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++         if (this.field_70123_F && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
+             boolean flag = false;
+             AxisAlignedBB axisalignedbb = this.func_174813_aQ().func_186662_g(0.2D);
+ 

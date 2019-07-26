@@ -1,0 +1,22 @@
+--- a/net/minecraft/data/DataGenerator.java
++++ b/net/minecraft/data/DataGenerator.java
+@@ -19,7 +19,7 @@
+ 
+    public DataGenerator(Path p_i48266_1_, Collection<Path> p_i48266_2_) {
+       this.field_200395_c = p_i48266_1_;
+-      this.field_200394_b = p_i48266_2_;
++      this.field_200394_b = Lists.newArrayList(p_i48266_2_);
+    }
+ 
+    public Collection<Path> func_200389_a() {
+@@ -53,6 +53,10 @@
+       this.field_200396_d.add(p_200390_1_);
+    }
+ 
++   public void addInput(Path value) {
++      this.field_200394_b.add(value);
++   }
++
+    static {
+       Bootstrap.func_151354_b();
+    }

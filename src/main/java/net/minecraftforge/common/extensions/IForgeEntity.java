@@ -159,7 +159,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     default EntityClassification getClassification(boolean forSpawnCount)
     {
-        return getEntity().getType().getClassiciation();
+        return getEntity().getType().getClassification();
     }
 
     /**

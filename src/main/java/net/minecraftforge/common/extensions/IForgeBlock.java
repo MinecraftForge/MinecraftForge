@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -28,11 +29,9 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.FarmlandBlock;
-import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
-import net.minecraft.block.StainedGlassBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -52,7 +51,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
@@ -65,7 +63,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -78,7 +75,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.IWorldWriter;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -86,6 +83,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
 
+@SuppressWarnings("deprecation")
 public interface IForgeBlock
 {
     default Block getBlock()
@@ -177,7 +175,6 @@ public interface IForgeBlock
      * @param state State of the current block
      * @return True if block has a tile entity, false otherwise
      */
-    @SuppressWarnings("deprecation")
     default boolean hasTileEntity(BlockState state)
     {
         return this instanceof ITileEntityProvider;
@@ -192,7 +189,6 @@ public interface IForgeBlock
      * @param world The world to create the TE in
      * @return A instance of a class extending TileEntity
      */
-    @SuppressWarnings("deprecation")
     @Nullable
     default TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
@@ -606,7 +602,6 @@ public interface IForgeBlock
        return 0;
     }
 
-    @SuppressWarnings("deprecation")
     default BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction)
     {
         return state.rotate(direction);
@@ -702,7 +697,7 @@ public interface IForgeBlock
     */
     default boolean shouldCheckWeakPower(BlockState state, IWorldReader world, BlockPos pos, Direction side)
     {
-        return state.func_215686_e(world, pos);
+        return state.isNormalCube(world, pos);
     }
 
     /**
@@ -812,7 +807,7 @@ public interface IForgeBlock
                 LivingEntity ent = (LivingEntity)entity;
                 f12 = (float) EnchantmentHelper.getRespirationModifier(ent) * 0.2F;
 
-                if (ent.isPotionActive(Effects.field_76427_o))
+                if (ent.isPotionActive(Effects.WATER_BREATHING))
                 {
                     f12 = f12 * 0.3F + 0.6F;
                 }
@@ -855,7 +850,6 @@ public interface IForgeBlock
      * @param hand The player hand used to place this block
      * @return The state to be placed in the world
      */
-    @SuppressWarnings("deprecation")
     default BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand)
     {
         return this.getBlock().updatePostPlacement(state, facing, state2, world, pos1, pos2);
@@ -905,7 +899,6 @@ public interface IForgeBlock
      * @param face The face that the fire is coming from
      * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
      */
-    @SuppressWarnings("deprecation")
     default int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
         return ((FireBlock)Blocks.FIRE).func_220274_q(state);
@@ -975,7 +968,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return !BlockTags.field_219754_W.contains(this.getBlock());
+            return !BlockTags.DRAGON_IMMUNE.contains(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
@@ -1006,9 +999,29 @@ public interface IForgeBlock
     /**
      * Determines if this block should drop loot when exploded.
      */
-    @SuppressWarnings("deprecation")
     default boolean canDropFromExplosion(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion)
     {
         return state.getBlock().canDropFromExplosion(explosion);
+    }
+
+    /**
+     * Retrieves a list of tags names this is known to be associated with.
+     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+     */
+    Set<ResourceLocation> getTags();
+
+    /**
+     * Called when the block is destroyed by an explosion.
+     * Useful for allowing the block to take into account tile entities,
+     * state, etc. when exploded, before it is removed.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param explosion The explosion instance affecting the block
+     */
+    default void onBlockExploded(BlockState state, World world, BlockPos pos, Explosion explosion)
+    {
+        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        getBlock().onExplosionDestroy(world, pos, explosion);
     }
 }

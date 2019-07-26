@@ -25,27 +25,26 @@ import net.minecraft.command.arguments.EntityOptions;
 import net.minecraft.command.arguments.EntitySelector;
 import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.command.EntitySelectorManager;
 import net.minecraftforge.common.command.IEntitySelectorType;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-//@Mod("entity_selector_test")
+@Mod("entity_selector_test")
 public class EntitySelectorTest
 {
     public EntitySelectorTest()
     {
-        FMLModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     }
 
     public void setup(FMLCommonSetupEvent event)
     {
-        EntityOptions.register("health", this::healthArgument, parser -> true,
-                new TextComponentString("Selects entities based on their current health."));
+        EntityOptions.register("health", this::healthArgument, parser -> true, new StringTextComponent("Selects entities based on their current health."));
         EntitySelectorManager.register("er", new ExampleCustomSelector());
     }
 
@@ -55,7 +54,7 @@ public class EntitySelectorTest
     private void healthArgument(EntitySelectorParser parser) throws CommandSyntaxException
     {
         MinMaxBounds.FloatBound bound = MinMaxBounds.FloatBound.fromReader(parser.getReader());
-        parser.addFilter(entity -> entity instanceof EntityLivingBase && bound.test(((EntityLivingBase) entity).getHealth()));
+        parser.addFilter(entity -> entity instanceof LivingEntity && bound.test(((LivingEntity) entity).getHealth()));
     }
 
     /**
@@ -91,7 +90,7 @@ public class EntitySelectorTest
         @Override
         public ITextComponent getSuggestionTooltip()
         {
-            return new TextComponentString("Example: Selects a random entity");
+            return new StringTextComponent("Example: Selects a random entity");
         }
     }
 }

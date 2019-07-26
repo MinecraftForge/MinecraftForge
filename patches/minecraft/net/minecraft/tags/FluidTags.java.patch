@@ -1,0 +1,17 @@
+--- a/net/minecraft/tags/FluidTags.java
++++ b/net/minecraft/tags/FluidTags.java
+@@ -18,6 +18,14 @@
+       ++field_206962_d;
+    }
+ 
++   public static TagCollection<Fluid> getCollection() {
++      return field_206961_c;
++   }
++
++   public static int getGeneration() {
++      return field_206962_d;
++   }
++
+    private static Tag<Fluid> func_206956_a(String p_206956_0_) {
+       return new FluidTags.Wrapper(new ResourceLocation(p_206956_0_));
+    }

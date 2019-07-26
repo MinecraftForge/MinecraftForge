@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/chunk/ChunkStatus.java
 +++ b/net/minecraft/world/chunk/ChunkStatus.java
-@@ -21,7 +21,7 @@
- import net.minecraft.world.gen.WorldGenRegion;
- import net.minecraft.world.gen.feature.template.TemplateManager;
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.server.ServerWorldLightManager;
  
 -public class ChunkStatus {
 +public class ChunkStatus extends net.minecraftforge.registries.ForgeRegistryEntry<ChunkStatus> {

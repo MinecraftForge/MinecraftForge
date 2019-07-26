@@ -195,7 +195,7 @@ public class ItemHandlerHelper
             entityitem.setPickupDelay(40);
             entityitem.setMotion(entityitem.getMotion().mul(0, 1, 0));
 
-            world.func_217376_c(entityitem);
+            world.addEntity(entityitem);
         }
     }
 

@@ -1,5 +1,14 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
+@@ -35,7 +35,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class PacketBuffer extends ByteBuf {
++public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer{
+    private final ByteBuf field_150794_a;
+ 
+    public PacketBuffer(ByteBuf p_i45154_1_) {
 @@ -265,6 +265,15 @@
     }
  

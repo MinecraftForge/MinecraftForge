@@ -81,7 +81,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     public CloudRenderer()
     {
         // Resource manager should always be reloadable.
-        ((IReloadableResourceManager) mc.getResourceManager()).func_219534_a(this);
+        ((IReloadableResourceManager) mc.getResourceManager()).addReloadListener(this);
     }
 
     private int getScale()
@@ -273,19 +273,19 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     public void checkSettings()
     {
         boolean newEnabled = ForgeConfig.CLIENT.forgeCloudsEnabled.get()
-                && mc.gameSettings.func_216842_e() != CloudOption.OFF
+                && mc.gameSettings.getCloudOption() != CloudOption.OFF
                 && mc.world != null
                 && mc.world.dimension.isSurfaceWorld();
 
         if (isBuilt()
                     && (!newEnabled
-                    || mc.gameSettings.func_216842_e() != cloudMode
+                    || mc.gameSettings.getCloudOption() != cloudMode
                     || mc.gameSettings.renderDistanceChunks != renderDistance))
         {
             dispose();
         }
 
-        cloudMode = mc.gameSettings.func_216842_e();
+        cloudMode = mc.gameSettings.getCloudOption();
         renderDistance = mc.gameSettings.renderDistanceChunks;
 
         if (newEnabled && !isBuilt())
@@ -485,7 +485,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         IRenderHandler renderer = world.dimension.getCloudRenderer();
         if (renderer != null)
         {
-            renderer.render(partialTicks, world, client);
+            renderer.render(cloudTicks, partialTicks, world, client);
             return true;
         }
         return getCloudRenderer().render(cloudTicks, partialTicks);

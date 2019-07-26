@@ -55,6 +55,9 @@ public class ModFileInfo implements IModFileInfo
         this.properties = config.<UnmodifiableConfig>getOptional("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
+        if (config.contains("mods") && !(config.get("mods") instanceof Collection)) {
+            throw new InvalidModFileException("Mods list is not a list.", this);
+        }
         final ArrayList<UnmodifiableConfig> modConfigs = config.getOrElse("mods", ArrayList::new);
         if (modConfigs.isEmpty()) {
             throw new InvalidModFileException("Missing mods list", this);

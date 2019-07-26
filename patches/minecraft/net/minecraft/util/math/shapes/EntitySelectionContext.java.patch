@@ -1,0 +1,35 @@
+--- a/net/minecraft/util/math/shapes/EntitySelectionContext.java
++++ b/net/minecraft/util/math/shapes/EntitySelectionContext.java
+@@ -18,6 +18,11 @@
+    private final Item field_216382_d;
+ 
+    protected EntitySelectionContext(boolean p_i51181_1_, double p_i51181_2_, Item p_i51181_4_) {
++      this(null, p_i51181_1_, p_i51181_2_, p_i51181_4_);
++   }
++
++   protected EntitySelectionContext(@javax.annotation.Nullable Entity entityIn, boolean p_i51181_1_, double p_i51181_2_, Item p_i51181_4_) {
++      this.entity = entityIn;
+       this.field_216380_b = p_i51181_1_;
+       this.field_216381_c = p_i51181_2_;
+       this.field_216382_d = p_i51181_4_;
+@@ -25,7 +30,7 @@
+ 
+    @Deprecated
+    protected EntitySelectionContext(Entity p_i51182_1_) {
+-      this(p_i51182_1_.func_70093_af(), p_i51182_1_.func_174813_aQ().field_72338_b, p_i51182_1_ instanceof LivingEntity ? ((LivingEntity)p_i51182_1_).func_184614_ca().func_77973_b() : Items.field_190931_a);
++      this(p_i51182_1_, p_i51182_1_.func_70093_af(), p_i51182_1_.func_174813_aQ().field_72338_b, p_i51182_1_ instanceof LivingEntity ? ((LivingEntity)p_i51182_1_).func_184614_ca().func_77973_b() : Items.field_190931_a);
+    }
+ 
+    public boolean func_216375_a(Item p_216375_1_) {
+@@ -39,4 +44,11 @@
+    public boolean func_216378_a(VoxelShape p_216378_1_, BlockPos p_216378_2_, boolean p_216378_3_) {
+       return this.field_216381_c > (double)p_216378_2_.func_177956_o() + p_216378_1_.func_197758_c(Direction.Axis.Y) - (double)1.0E-5F;
+    }
++
++   private final @javax.annotation.Nullable Entity entity;
++
++   @Override
++   public @javax.annotation.Nullable Entity getEntity() {
++      return entity;
++   }
+ }

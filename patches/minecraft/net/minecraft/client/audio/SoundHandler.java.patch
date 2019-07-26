@@ -1,42 +1,6 @@
 --- a/net/minecraft/client/audio/SoundHandler.java
 +++ b/net/minecraft/client/audio/SoundHandler.java
-@@ -61,6 +61,7 @@
-       SoundHandler.Loader soundhandler$loader = new SoundHandler.Loader();
-       p_212854_2_.func_219894_a();
- 
-+      java.util.List<net.minecraft.util.Tuple<ResourceLocation, Runnable>> resources = new java.util.LinkedList<>();
-       for(String s : p_212854_1_.func_199001_a()) {
-          p_212854_2_.func_76320_a(s);
- 
-@@ -74,7 +75,9 @@
-                   p_212854_2_.func_219895_b("register");
- 
-                   for(Entry<String, SoundList> entry : map.entrySet()) {
-+                     resources.add(new net.minecraft.util.Tuple<>(new ResourceLocation(s, entry.getKey()), () -> {
-                      soundhandler$loader.func_217944_a(new ResourceLocation(s, entry.getKey()), entry.getValue(), p_212854_1_);
-+                     }));
-                   }
- 
-                   p_212854_2_.func_76319_b();
-@@ -91,6 +94,17 @@
-          p_212854_2_.func_76319_b();
-       }
- 
-+      net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading sounds", resources.size(), bar -> {
-+         resources.forEach(entry -> {
-+            bar.step(entry.func_76341_a().toString());
-+            try {
-+                entry.func_76340_b().run();
-+            } catch (RuntimeException e) {
-+                field_147698_b.warn("Invalid sounds.json", e);
-+            }
-+         });
-+      });
-+
-       p_212854_2_.func_219897_b();
-       return soundhandler$loader;
-    }
-@@ -210,6 +224,11 @@
+@@ -210,6 +210,11 @@
        this.field_147694_f.func_195855_a(p_195478_1_, p_195478_2_);
     }
  

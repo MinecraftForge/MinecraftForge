@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/resources/JsonReloadListener.java
++++ b/net/minecraft/client/resources/JsonReloadListener.java
+@@ -61,4 +61,8 @@
+ 
+       return map;
+    }
++
++   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
++       return new ResourceLocation(rl.func_110624_b(), this.field_223383_d + "/" + rl.func_110623_a() + ".json");
++   }
+ }

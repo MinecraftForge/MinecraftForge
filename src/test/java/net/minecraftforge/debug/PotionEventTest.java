@@ -19,70 +19,48 @@
 
 package net.minecraftforge.debug;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-//@Mod(modid = "potioneventtest", name = "PotionEventTest", version = "1.0.0", acceptableRemoteVersions = "*")
+@Mod("potion_event_test")
+@Mod.EventBusSubscriber
 public class PotionEventTest
 {
-    public static final boolean ENABLE = false;
-    private Logger log;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        log = event.getModLog();
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        if (ENABLE)
-            MinecraftForge.EVENT_BUS.register(this);
-    }
+    private static Logger LOGGER = LogManager.getLogger(PotionEventTest.class);
 
     @SubscribeEvent
-    public void onPotionAdded(PotionEvent.PotionAddedEvent event)
+    public static void onPotionAdded(PotionEvent.PotionAddedEvent event)
     {
         if (!event.getEntity().getEntityWorld().isRemote)
-        {
-            log.info("{} has a new PotionEffect {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getOldPotionEffect());
-        }
+            LOGGER.info("{} has a new PotionEffect {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getOldPotionEffect());
     }
-    
+
     @SubscribeEvent
-    public void isPotionApplicable(PotionEvent.PotionApplicableEvent event)
+    public static void isPotionApplicable(PotionEvent.PotionApplicableEvent event)
     {
         if (!event.getEntity().getEntityWorld().isRemote)
         {
             event.setResult(Result.ALLOW);
-            log.info("Allowed Potion {} for Entity {}", event.getPotionEffect(), event.getEntityLiving());
+            LOGGER.info("Allowed Potion {} for Entity {}", event.getPotionEffect(), event.getEntityLiving());
         }
     }
-    
+
     @SubscribeEvent
-    public void onPotionRemove(PotionEvent.PotionRemoveEvent event)
+    public static void onPotionRemove(PotionEvent.PotionRemoveEvent event)
     {
         if (!event.getEntity().getEntityWorld().isRemote)
-        {
-            log.info("Effect {} got Removed from {}", event.getPotionEffect(), event.getEntityLiving());
-        }
+            LOGGER.info("Effect {} got Removed from {}", event.getPotionEffect(), event.getEntityLiving());
     }
-    
+
     @SubscribeEvent
-    public void onPotionExpiry(PotionEvent.PotionExpiryEvent event)
+    public static void onPotionExpiry(PotionEvent.PotionExpiryEvent event)
     {
         if (!event.getEntity().getEntityWorld().isRemote)
-        {
-            log.info("Effect {} expired from {}", event.getPotionEffect(), event.getEntityLiving());
-        }
+            LOGGER.info("Effect {} expired from {}", event.getPotionEffect(), event.getEntityLiving());
     }
 }

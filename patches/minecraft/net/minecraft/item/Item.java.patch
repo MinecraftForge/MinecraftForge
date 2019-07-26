@@ -35,7 +35,7 @@
     public final int func_77612_l() {
        return this.field_77699_b;
     }
-@@ -209,10 +215,12 @@
+@@ -213,10 +219,12 @@
     }
  
     @Nullable
@@ -48,7 +48,7 @@
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
-@@ -273,7 +281,7 @@
+@@ -277,7 +285,7 @@
     }
  
     public boolean func_77616_k(ItemStack p_77616_1_) {
@@ -57,7 +57,7 @@
     }
  
     protected static RayTraceResult func_219968_a(World p_219968_0_, PlayerEntity p_219968_1_, RayTraceContext.FluidMode p_219968_2_) {
-@@ -286,8 +294,8 @@
+@@ -290,8 +298,8 @@
        float f5 = MathHelper.func_76126_a(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -68,7 +68,7 @@
        return p_219968_0_.func_217299_a(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.OUTLINE, p_219968_2_, p_219968_1_));
     }
  
-@@ -303,6 +311,7 @@
+@@ -307,6 +315,7 @@
     }
  
     protected boolean func_194125_a(ItemGroup p_194125_1_) {
@@ -76,7 +76,7 @@
        ItemGroup itemgroup = this.func_77640_w();
        return itemgroup != null && (p_194125_1_ == ItemGroup.field_78027_g || p_194125_1_ == itemgroup);
     }
-@@ -316,10 +325,38 @@
+@@ -320,10 +329,44 @@
        return false;
     }
  
@@ -88,10 +88,11 @@
 +   @Nullable
 +   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer> teisr;
 +   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Item> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.ItemTags::getGeneration, net.minecraft.tags.ItemTags::func_199903_a);
 +   protected final boolean canRepair;
 +
 +   @Override
-+   public boolean isRepairable() {
++   public boolean isRepairable(ItemStack stack) {
 +     return canRepair && func_77645_m();
 +   }
 +
@@ -112,10 +113,15 @@
 +     return renderer != null ? renderer : net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer.field_147719_a;
 +   }
 +
++   @Override
++   public java.util.Set<ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -349,6 +386,9 @@
+@@ -353,6 +396,9 @@
        private ItemGroup field_200923_d;
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
@@ -125,7 +131,7 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -388,5 +428,20 @@
+@@ -392,5 +438,20 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }

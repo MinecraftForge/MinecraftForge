@@ -61,6 +61,7 @@ public class FMLModContainer extends ModContainer
         triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.GATHERDATA, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
         this.configHandler = Optional.of(event -> this.eventBus.post(event));
         final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
@@ -155,5 +156,10 @@ public class FMLModContainer extends ModContainer
     public IEventBus getEventBus()
     {
         return this.eventBus;
+    }
+
+    @Override
+    protected void acceptEvent(final Event e) {
+        this.eventBus.post(e);
     }
 }

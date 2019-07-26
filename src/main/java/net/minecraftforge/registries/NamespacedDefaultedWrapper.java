@@ -71,7 +71,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     // Reading Functions
     @Override
-    public Optional<T> func_218349_b(@Nullable ResourceLocation name)
+    public Optional<T> getValue(@Nullable ResourceLocation name)
     {
         return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }

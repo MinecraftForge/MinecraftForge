@@ -98,7 +98,7 @@ public class Tags
         public static final Tag<Item> FENCE_GATES = tag("fence_gates");
         public static final Tag<Item> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final Tag<Item> FENCES = tag("fences");
-        public static final Tag<Item> FENCES_NETHER_BRRICK = tag("fences/nether_brick");
+        public static final Tag<Item> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final Tag<Item> FENCES_WOODEN = tag("fences/wooden");
         public static final Tag<Item> GEMS = tag("gems");
         public static final Tag<Item> GEMS_DIAMOND = tag("gems/diamond");

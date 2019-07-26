@@ -1,0 +1,39 @@
+--- a/net/minecraft/resources/VanillaPack.java
++++ b/net/minecraft/resources/VanillaPack.java
+@@ -183,7 +183,7 @@
+ 
+       try {
+          URL url = VanillaPack.class.getResource(s);
+-         return func_223459_a(s, url) ? url.openStream() : null;
++         return func_223459_a(s, url) ? getExtraInputStream(p_195782_1_, s) : null;
+       } catch (IOException var6) {
+          return VanillaPack.class.getResourceAsStream(s);
+       }
+@@ -199,7 +199,7 @@
+ 
+    @Nullable
+    protected InputStream func_200010_a(String p_200010_1_) {
+-      return VanillaPack.class.getResourceAsStream("/" + p_200010_1_);
++      return getExtraInputStream(ResourcePackType.SERVER_DATA, "/" + p_200010_1_);
+    }
+ 
+    public boolean func_195764_b(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
+@@ -239,4 +239,18 @@
+ 
+    public void close() {
+    }
++
++   //Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime
++   //as forge ships vanilla assets in an 'extra' jar with no classes.
++   //So find that extra jar using the .mcassetsroot marker.
++   private InputStream getExtraInputStream(ResourcePackType type, String resource) {
++      try {
++         FileSystem fs = field_217810_e.get(type);
++         if (fs != null)
++            return Files.newInputStream(fs.getPath(resource));
++         return VanillaPack.class.getResourceAsStream(resource);
++      } catch (IOException e) {
++         return VanillaPack.class.getResourceAsStream(resource);
++      }
++   }
+ }

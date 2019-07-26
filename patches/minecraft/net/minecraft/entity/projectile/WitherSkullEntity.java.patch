@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/WitherSkullEntity.java
 +++ b/net/minecraft/entity/projectile/WitherSkullEntity.java
-@@ -47,7 +47,7 @@
+@@ -48,7 +48,7 @@
     }
  
     public float func_180428_a(Explosion p_180428_1_, IBlockReader p_180428_2_, BlockPos p_180428_3_, BlockState p_180428_4_, IFluidState p_180428_5_, float p_180428_6_) {
@@ -9,11 +9,11 @@
     }
  
     protected void func_70227_a(RayTraceResult p_70227_1_) {
-@@ -80,7 +80,7 @@
+@@ -81,7 +81,7 @@
              }
           }
  
--         Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing") ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+-         Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
 +         Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
           this.field_70170_p.func_217398_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, false, explosion$mode);
           this.func_70106_y();

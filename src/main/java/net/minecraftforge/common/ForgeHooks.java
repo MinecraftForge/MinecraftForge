@@ -237,7 +237,7 @@ public class ForgeHooks
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
-        boolean isCreative = player.playerAbilities.isCreativeMode;
+        boolean isCreative = player.abilities.isCreativeMode;
         TileEntity te = null;
 
         if (target.getType() == RayTraceResult.Type.BLOCK)
@@ -274,7 +274,7 @@ public class ForgeHooks
         if (isCreative)
         {
             player.inventory.setPickedItemStack(result);
-            Minecraft.getInstance().field_71442_b.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
+            Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
         int slot = player.inventory.getSlotFor(result);
@@ -283,7 +283,7 @@ public class ForgeHooks
             if (PlayerInventory.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
-                Minecraft.getInstance().field_71442_b.pickItem(slot);
+                Minecraft.getInstance().playerController.pickItem(slot);
             return true;
         }
         return false;
@@ -384,7 +384,7 @@ public class ForgeHooks
         if (isSpectator) return false;
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.getBlock().isLadder(state, world, pos, entity);
+            return state.isLadder(world, pos, entity);
         }
         else
         {
@@ -400,7 +400,7 @@ public class ForgeHooks
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = world.getBlockState(tmp);
-                        if (state.getBlock().isLadder(state, world, tmp, entity))
+                        if (state.isLadder(world, tmp, entity))
                         {
                             return true;
                         }
@@ -431,14 +431,14 @@ public class ForgeHooks
             return null;
 
         if (!player.world.isRemote)
-            player.getEntityWorld().func_217376_c(event.getEntityItem());
+            player.getEntityWorld().addEntity(event.getEntityItem());
         return event.getEntityItem();
     }
 
     @Nullable
     public static ITextComponent onServerChatEvent(ServerPlayNetHandler net, String raw, ITextComponent comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.field_147369_b, raw, comp);
+        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
@@ -512,9 +512,8 @@ public class ForgeHooks
             link.getStyle().setUnderlined(true);
             link.getStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
-                ichat = link;
-            else
-                ichat.appendSibling(link);
+                ichat = new StringTextComponent("");
+            ichat.appendSibling(link);
         }
 
         // Append the rest of the message.
@@ -587,7 +586,7 @@ public class ForgeHooks
         // handle all placement events here
         int size = itemstack.getCount();
         CompoundNBT nbt = null;
-        if (itemstack.hasTag())
+        if (itemstack.getTag() != null)
         {
             nbt = itemstack.getTag().copy();
         }
@@ -605,7 +604,7 @@ public class ForgeHooks
             // save new item data
             int newSize = itemstack.getCount();
             CompoundNBT newNBT = null;
-            if (itemstack.hasTag())
+            if (itemstack.getTag() != null)
             {
                 newNBT = itemstack.getTag().copy();
             }
@@ -615,10 +614,7 @@ public class ForgeHooks
 
             // make sure to set pre-placement item data for event
             itemstack.setCount(size);
-            if (nbt != null)
-            {
-                itemstack.setTag(nbt);
-            }
+            itemstack.setTag(nbt);
 
             PlayerEntity player = context.getPlayer();
             Direction side = context.getFace();
@@ -648,10 +644,7 @@ public class ForgeHooks
             {
                 // Change the stack to its new content
                 itemstack.setCount(newSize);
-                if (nbt != null)
-                {
-                    itemstack.setTag(newNBT);
-                }
+                itemstack.setTag(newNBT);
 
                 for (BlockSnapshot snap : blockSnapshots)
                 {
@@ -802,7 +795,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom, LootTableManager lootTableManager)
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonObject data, boolean custom, LootTableManager lootTableManager)
     {
         Deque<LootTableContext> que = lootContext.get();
         if (que == null)
@@ -1150,5 +1143,11 @@ public class ForgeHooks
             if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
         }
         return id;
+    }
+
+    public static boolean canEntityDestroy(World world, BlockPos pos, LivingEntity entity)
+    {
+        BlockState state = world.getBlockState(pos);
+        return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 }

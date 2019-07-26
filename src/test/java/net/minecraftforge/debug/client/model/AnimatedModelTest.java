@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client.model;
 
@@ -178,7 +179,8 @@ public class AnimatedModelTest
                     return state.withProperty(Properties.StaticProperty, true);
                 }
 
-                /*@Override
+                */
+/*@Override
                 public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
                     TileEntity te = world.getTileEntity(pos);
                     if(te instanceof Chest && state instanceof IExtendedBlockState)
@@ -186,7 +188,8 @@ public class AnimatedModelTest
                         return ((Chest)te).getState((IExtendedBlockState)state);
                     }
                     return super.getExtendedState(state, world, pos);
-                }*/
+                }*//*
+
 
                 @Override
                 public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
@@ -315,7 +318,8 @@ public class AnimatedModelTest
                 @SuppressWarnings("deprecation")
                 public Render<EntityChest> createRenderFor(RenderManager manager)
                 {
-                /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryTest.MODID, "block/chest.b3d"));
+                */
+/*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryTest.MODID, "block/chest.b3d"));
                 if(model instanceof IRetexturableModel)
                 {
                     model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
@@ -323,7 +327,8 @@ public class AnimatedModelTest
                 if(model instanceof IModelCustomData)
                 {
                     model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
-                }*/
+                }*//*
+
                     ResourceLocation location = new ModelResourceLocation(new ResourceLocation(MODID, blockName), "entity");
                     return new RenderLiving<EntityChest>(manager, new net.minecraftforge.client.model.animation.AnimationModelBase<EntityChest>(location, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                     {
@@ -420,9 +425,11 @@ public class AnimatedModelTest
 
         public Chest()
         {
-            /*asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/chest.json"), ImmutableMap.<String, ITimeValue>of(
+            */
+/*asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/chest.json"), ImmutableMap.<String, ITimeValue>of(
                 "click_time", clickTime
-            ));*/
+            ));*//*
+
             asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
                     "cycle_length", cycleLength,
                     "click_time", clickTime
@@ -444,9 +451,11 @@ public class AnimatedModelTest
             return true;
         }
 
-        /*public IExtendedBlockState getState(IExtendedBlockState state) {
+        */
+/*public IExtendedBlockState getState(IExtendedBlockState state) {
             return state.withProperty(B3DFrameProperty.instance, curState);
-        }*/
+        }*//*
+
 
         public void click(boolean sneaking)
         {
@@ -456,7 +465,8 @@ public class AnimatedModelTest
                 {
                     cycleLength.setValue(6 - cycleLength.apply(0));
                 }
-                /*else if(asm.currentState().equals("closed"))
+                */
+/*else if(asm.currentState().equals("closed"))
                 {
                     clickTime.setValue(Animation.getWorldTime(getWorld()));
                     asm.transition("opening");
@@ -465,7 +475,8 @@ public class AnimatedModelTest
                 {
                     clickTime.setValue(Animation.getWorldTime(getWorld()));
                     asm.transition("closing");
-                }*/
+                }*//*
+
                 else if (asm.currentState().equals("default"))
                 {
                     float time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
@@ -563,3 +574,4 @@ public class AnimatedModelTest
     }
 }
 
+*/

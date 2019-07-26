@@ -111,7 +111,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
        PlayerEntity entityplayer = context.getPlayer();
        BlockPos blockpos = context.getPos();
        CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getWorld(), blockpos, false);
-       if (entityplayer != null && !entityplayer.playerAbilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
+       if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
           return ActionResultType.PASS;
        } else {
           Item item = getStack().getItem();
@@ -424,5 +424,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
         else
             return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
             (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.areItemStackTagsEqual(getStack(), other));
+    }
+
+    /**
+     * Determines if a item is reparable, used by Repair recipes and Grindstone.
+     *
+     * @return True if reparable
+     */
+    default boolean isRepairable()
+    {
+        return getStack().getItem().isRepairable(getStack());
     }
 }

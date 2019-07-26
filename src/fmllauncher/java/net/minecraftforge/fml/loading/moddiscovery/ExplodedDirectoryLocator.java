@@ -52,6 +52,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
             Path resources = pathPathPair.getLeft();
             Path modtoml = resources.resolve(modstoml);
             if (Files.exists(modtoml)) {
+                LOGGER.debug(LOADING, "Found exploded directory mod manifest at {}", modtoml.toString());
                 ModFile mf = new ModFile(pathPathPair.getLeft(), this);
                 mods.put(mf, pathPathPair);
             } else {

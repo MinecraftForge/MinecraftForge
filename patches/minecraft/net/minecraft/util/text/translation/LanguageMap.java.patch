@@ -7,5 +7,5 @@
 -
 +         net.minecraftforge.fml.server.LanguageHook.captureLanguageMap(this.field_74816_c);
           this.field_150511_e = Util.func_211177_b();
-       } catch (JsonParseException jsonparseexception) {
-          field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)jsonparseexception);
+       } catch (JsonParseException | IOException ioexception) {
+          field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);

@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.fml.common.registry;
 
@@ -41,9 +42,11 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.Map;
 
+*/
 /**
  * Created by cpw on 04/07/16.
- */
+ *//*
+
 @RunWith(ForgeTestRunner.class)
 public class FreezingTests
 {
@@ -150,3 +153,4 @@ public class FreezingTests
         assertEquals("Active object not the same", r3, active.getValue(name));
     }
 }
+*/

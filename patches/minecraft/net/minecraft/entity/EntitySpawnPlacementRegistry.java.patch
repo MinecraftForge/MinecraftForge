@@ -1,33 +1,27 @@
 --- a/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ b/net/minecraft/entity/EntitySpawnPlacementRegistry.java
-@@ -9,6 +9,7 @@
-    private static final Map<EntityType<?>, EntitySpawnPlacementRegistry.Entry> field_209347_a = Maps.newHashMap();
- 
-    private static void func_209343_a(EntityType<?> p_209343_0_, EntitySpawnPlacementRegistry.PlacementType p_209343_1_, Heightmap.Type p_209343_2_) {
-+      if (field_209347_a.containsKey(p_209343_0_)) throw new IllegalArgumentException("Invalid register call, " + p_209343_0_ + " already registered.");
-       field_209347_a.put(p_209343_0_, new EntitySpawnPlacementRegistry.Entry(p_209343_2_, p_209343_1_));
-    }
- 
-@@ -87,8 +88,23 @@
-       }
+@@ -141,9 +141,25 @@
+       boolean test(EntityType<T> p_test_1_, IWorld p_test_2_, SpawnReason p_test_3_, BlockPos p_test_4_, Random p_test_5_);
     }
  
 -   public static enum PlacementType {
 +   public static enum PlacementType implements net.minecraftforge.common.IExtensibleEnum {
        ON_GROUND,
-       IN_WATER;
+       IN_WATER,
+       NO_RESTRICTIONS;
 +
-+      public static PlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<? extends MobEntity>> predicate) {
++      public static PlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, BlockPos, EntityType<? extends MobEntity>> predicate) {
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +
-+      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<?>> predicate;
++      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, BlockPos, EntityType<?>> predicate;
 +      private PlacementType() { this(null); }
-+      private PlacementType(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<?>> predicate) {
++      private PlacementType(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, BlockPos, EntityType<?>> predicate) {
 +         this.predicate = predicate;
 +      }
 +
-+      public boolean canSpawnAt(net.minecraft.world.IWorldReader world, net.minecraft.util.math.BlockPos pos, EntityType<?> type) {
++      public boolean canSpawnAt(net.minecraft.world.IWorldReader world, BlockPos pos, EntityType<?> type) {
++         if (this == NO_RESTRICTIONS) return true;
 +         if (predicate == null) return net.minecraft.world.spawner.WorldEntitySpawner.canSpawnAtBody(this, world, pos, type);
 +         return predicate.test(world, pos, type);
 +      }

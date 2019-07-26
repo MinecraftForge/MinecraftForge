@@ -27,7 +27,7 @@ import org.lwjgl.glfw.GLFW;
 public class InputEvent extends Event
 {
     /**
-     * This event fires when a mouse button is pressed.
+     * This event fires when a mouse input is detected.
      */
     public static class MouseInputEvent extends InputEvent
     {
@@ -41,16 +41,37 @@ public class InputEvent extends Event
             this.mods = mods;
         }
 
+        /**
+         * The mouse button that triggered this event.
+         * https://www.glfw.org/docs/latest/group__buttons.html
+         *
+         * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
+         */
         public int getButton()
         {
             return this.button;
         }
 
+        /**
+         * Integer representing the mouse button's action.
+         *
+         * @see GLFW#GLFW_PRESS
+         * @see GLFW#GLFW_RELEASE
+         */
         public int getAction()
         {
             return this.action;
         }
 
+        /**
+         * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
         public int getMods()
         {
             return this.mods;
@@ -58,7 +79,7 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when keyboard input is detected.
+     * This event fires when a keyboard input is detected.
      */
     public static class KeyInputEvent extends InputEvent
     {
@@ -75,7 +96,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * The keyboard key that was pressed or released
+         * The keyboard key that triggered this event.
          * https://www.glfw.org/docs/latest/group__keys.html
          *
          * @see GLFW key constants starting with "GLFW_KEY_"
@@ -98,6 +119,13 @@ public class InputEvent extends Event
             return this.scanCode;
         }
 
+        /**
+         * Integer representing the key's action.
+         *
+         * @see GLFW#GLFW_PRESS
+         * @see GLFW#GLFW_RELEASE
+         * @see GLFW#GLFW_REPEAT
+         */
         public int getAction()
         {
             return this.action;
@@ -105,6 +133,7 @@ public class InputEvent extends Event
 
         /**
          * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
          *
          * @see GLFW#GLFW_MOD_SHIFT
          * @see GLFW#GLFW_MOD_CONTROL

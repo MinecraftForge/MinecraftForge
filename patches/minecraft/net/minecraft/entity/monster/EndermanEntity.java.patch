@@ -1,6 +1,22 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -225,7 +225,9 @@
+@@ -92,7 +92,6 @@
+    }
+ 
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+-      super.func_70624_b(p_70624_1_);
+       IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+       if (p_70624_1_ == null) {
+          this.field_184721_by = 0;
+@@ -106,6 +105,7 @@
+          }
+       }
+ 
++      super.func_70624_b(p_70624_1_); //Forge: Moved down to allow event handlers to write data manager values.
+    }
+ 
+    protected void func_70088_a() {
+@@ -226,7 +226,9 @@
        if (!this.field_70170_p.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76230_c()) {
           return false;
        } else {
@@ -11,16 +27,16 @@
           if (flag) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -370,7 +372,7 @@
+@@ -371,7 +373,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
--         } else if (!this.field_179475_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
+-         } else if (!this.field_179475_a.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179475_a.field_70170_p, this.field_179475_a)) {
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -388,7 +390,7 @@
+@@ -389,7 +391,7 @@
           BlockPos blockpos1 = blockpos.func_177977_b();
           BlockState blockstate1 = iworld.func_180495_p(blockpos1);
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
@@ -29,11 +45,20 @@
              iworld.func_180501_a(blockpos, blockstate2, 3);
              this.field_179475_a.func_195406_b((BlockState)null);
           }
-@@ -433,7 +435,7 @@
+@@ -397,7 +399,7 @@
+       }
+ 
+       private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
+-         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && p_220836_5_.func_224756_o(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
++         return p_220836_4_.isAir(p_220836_1_, p_220836_2_) && !p_220836_5_.isAir(p_220836_1_, p_220836_6_) && p_220836_5_.func_224756_o(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
+       }
+    }
+ 
+@@ -434,7 +436,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;
--         } else if (!this.field_179473_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
+-         } else if (!this.field_179473_a.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179473_a.field_70170_p, this.field_179473_a)) {
              return false;
           } else {

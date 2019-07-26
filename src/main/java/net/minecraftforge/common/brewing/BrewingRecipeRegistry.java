@@ -40,16 +40,16 @@ public class BrewingRecipeRegistry {
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
      *
      * @param input
-     *            The ItemStack that goes in same slots as the water bottles
+     *            The Ingredient that goes in same slots as the water bottles
      *            would.
      * @param ingredient
-     *            The ItemStack that goes in the same slot as nether wart would.
+     *            The Ingredient that goes in the same slot as nether wart would.
      * @param output
      *            The ItemStack that will replace the input once the brewing is
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(ItemStack input, Ingredient ingredient, ItemStack output)
+    public static boolean addRecipe(Ingredient input, Ingredient ingredient, ItemStack output)
     {
         return addRecipe(new BrewingRecipe(input, ingredient, output));
     }

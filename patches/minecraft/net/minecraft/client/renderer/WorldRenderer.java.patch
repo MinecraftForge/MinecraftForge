@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/WorldRenderer.java
 +++ b/net/minecraft/client/renderer/WorldRenderer.java
-@@ -589,10 +589,12 @@
+@@ -592,10 +592,12 @@
           this.field_72769_h.func_217381_Z().func_219895_b("blockentities");
           RenderHelper.func_74519_b();
  
@@ -13,7 +13,7 @@
                    TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity, p_215326_3_, -1);
                 }
              }
-@@ -600,16 +602,18 @@
+@@ -603,16 +605,18 @@
  
           synchronized(this.field_181024_n) {
              for(TileEntity tileentity1 : this.field_181024_n) {
@@ -33,7 +33,7 @@
                 TileEntity tileentity2 = this.field_72769_h.func_175625_s(blockpos);
                 if (tileentity2 instanceof ChestTileEntity && blockstate.func_177229_b(ChestBlock.field_196314_b) == ChestType.LEFT) {
                    blockpos = blockpos.func_177972_a(blockstate.func_177229_b(ChestBlock.field_176459_a).func_176746_e());
-@@ -730,7 +734,7 @@
+@@ -733,7 +737,7 @@
              for(int j = -this.field_72739_F; j <= this.field_72739_F; ++j) {
                 for(int k = -this.field_72739_F; k <= this.field_72739_F; ++k) {
                    ChunkRender chunkrender1 = this.field_175008_n.func_178161_a(new BlockPos((j << 4) + 8, i, (k << 4) + 8));
@@ -42,7 +42,7 @@
                       chunkrender1.func_178577_a(p_215320_3_);
                       queue.add(new WorldRenderer.LocalRenderInformationContainer(chunkrender1, (Direction)null, 0));
                    }
-@@ -775,7 +779,7 @@
+@@ -778,7 +782,7 @@
              this.field_147595_R = true;
              BlockPos blockpos2 = chunkrender4.func_178568_j().func_177982_a(8, 8, 8);
              boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;
@@ -51,19 +51,19 @@
                 this.field_175009_l.add(chunkrender4);
              } else {
                 this.field_72777_q.func_213239_aq().func_76320_a("build near");
-@@ -969,6 +973,11 @@
+@@ -972,6 +976,11 @@
     }
  
     public void func_195465_a(float p_195465_1_) {
 +      net.minecraftforge.client.IRenderHandler renderer = this.field_72769_h.func_201675_m().getSkyRenderer();
 +      if (renderer != null) {
-+         renderer.render(p_195465_1_, field_72769_h, field_72777_q);
++         renderer.render(this.field_72773_u, p_195465_1_, this.field_72769_h, this.field_72777_q);
 +         return;
 +      }
-       if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.THE_END) {
+       if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.field_223229_c_) {
           this.func_180448_r();
        } else if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
-@@ -1113,6 +1122,7 @@
+@@ -1116,6 +1125,7 @@
     }
  
     public void func_195466_a(float p_195466_1_, double p_195466_2_, double p_195466_4_, double p_195466_6_) {
@@ -71,7 +71,7 @@
        if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
           float f = 12.0F;
           float f1 = 4.0F;
-@@ -1488,7 +1498,11 @@
+@@ -1491,7 +1501,11 @@
              DestroyBlockProgress destroyblockprogress = iterator.next();
              BlockPos blockpos = destroyblockprogress.func_180246_b();
              Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -84,7 +84,7 @@
                 double d3 = (double)blockpos.func_177958_n() - d0;
                 double d4 = (double)blockpos.func_177956_o() - d1;
                 double d5 = (double)blockpos.func_177952_p() - d2;
-@@ -1496,7 +1510,7 @@
+@@ -1499,7 +1513,7 @@
                    iterator.remove();
                 } else {
                    BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
@@ -93,7 +93,7 @@
                       int i = destroyblockprogress.func_73106_e();
                       TextureAtlasSprite textureatlassprite = this.field_94141_F[i];
                       BlockRendererDispatcher blockrendererdispatcher = this.field_72777_q.func_175602_ab();
-@@ -1517,7 +1531,7 @@
+@@ -1520,7 +1534,7 @@
        if (p_215325_3_ == 0 && p_215325_2_.func_216346_c() == RayTraceResult.Type.BLOCK) {
           BlockPos blockpos = ((BlockRayTraceResult)p_215325_2_).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
@@ -102,7 +102,7 @@
              GlStateManager.enableBlend();
              GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
              GlStateManager.lineWidth(Math.max(2.5F, (float)this.field_72777_q.field_195558_d.func_198109_k() / 1920.0F * 2.5F));
-@@ -1984,7 +1998,7 @@
+@@ -1994,7 +2008,7 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
@@ -111,7 +111,7 @@
              SoundType soundtype = blockstate.func_215695_r();
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
-@@ -2108,6 +2122,11 @@
+@@ -2118,6 +2132,11 @@
        }
     }
  

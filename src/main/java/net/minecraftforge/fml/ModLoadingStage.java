@@ -36,7 +36,8 @@ public enum ModLoadingStage
     ENQUEUE_IMC(()-> InterModEnqueueEvent::new),
     PROCESS_IMC(()-> InterModProcessEvent::new),
     COMPLETE(()-> FMLLoadCompleteEvent::new),
-    DONE(null);
+    DONE(null),
+    GATHERDATA(ModLoader.get()::getDataGeneratorEvent);
     private final Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction;
 
     ModLoadingStage(Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction)

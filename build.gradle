@@ -7,6 +7,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'org.ow2.asm:asm:7.1'
     }
 }
 import groovy.json.JsonSlurper
@@ -20,10 +21,12 @@ import net.minecraftforge.gradle.common.task.ArchiveChecksum
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.SignJar
 import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
+import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
+import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
-import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
+import org.objectweb.asm.ClassReader
 
 import java.util.stream.Collectors
 
@@ -45,9 +48,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20190608-1.14.2'
-    MC_VERSION = '1.14.2'
-    MCP_VERSION = '20190603.175704'
+    MAPPING_VERSION = '20190719-1.14.3'
+    MC_VERSION = '1.14.4'
+    MCP_VERSION = '20190719.225934'
 }
 
 project(':mcp') {
@@ -130,7 +133,10 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/main/java"]
             }
             resources {
-                srcDirs = ["$rootDir/src/main/resources"]
+                srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources"
+                ]
             }
         }
         test {
@@ -166,11 +172,12 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '26.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '28.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
+        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
     }
 
     def getVersion = {
@@ -268,6 +275,29 @@ project(':forge') {
                     TestMods { sources sourceSets.test }
                 }
             }
+
+            forge_data {
+                taskName 'forge_data'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevdata'
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+                
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
+            }
         }
     }
     
@@ -309,6 +339,14 @@ project(':forge') {
                 'Implementation-Title':     'FML Launcher',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'net/minecraftforge/fml/userdev/': [
+                'Specification-Title':      'Forge User Development',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    SPEC_VERSION,
+                'Implementation-Title':     project.group,
+                'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
+                'Implementation-Vendor':    'Forge Development LLC'
             ] as LinkedHashMap
         ]
     }
@@ -329,12 +367,12 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:2.1.+'
+        installer 'cpw.mods:modlauncher:3.0.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
-        installer 'net.minecraftforge:eventbus:0.9.+:service'
+        installer 'net.minecraftforge:eventbus:0.10.+:service'
         installer 'net.minecraftforge:forgespi:0.13.+'
-        installer 'net.minecraftforge:coremods:0.5.+'
+        installer 'net.minecraftforge:coremods:0.7.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'
@@ -349,6 +387,7 @@ project(':forge') {
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+        testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
@@ -423,6 +462,21 @@ project(':forge') {
         clean = { genJoinedBinPatches.cleanJar }
         input = genJoinedBinPatches.output
     }
+    // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
+    task createClientSRG(type: RenameJar, dependsOn: genClientBinPatches) {
+        tool = SPECIAL_SOURCE + ':shaded'
+        args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
+        mappings = { genClientBinPatches.srg }
+        input = { genClientBinPatches.cleanJar }
+        output = file('build/createClientSRG/output.jar')
+    }
+    task createServerSRG(type: RenameJar, dependsOn: genServerBinPatches) {
+        tool = SPECIAL_SOURCE + ':shaded'
+        args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
+        mappings = { genServerBinPatches.srg }
+        input = { genServerBinPatches.cleanJar }
+        output = file('build/createServerSRG/output.jar')
+    }
     // Checksum tasks so that we can know if the vanilla classes are what we expect them to do!
     task clientBaseChecksum(type: ArchiveChecksum, dependsOn: genClientBinPatches) {
         input = { genClientBinPatches.cleanJar} //Lazy because Patcher Plugin sets the value afterEvaluate
@@ -465,9 +519,58 @@ project(':forge') {
             }
         }
     }
+    task checkATs(dependsOn: genJoinedBinPatches) {
+        inputs.file { genJoinedBinPatches.cleanJar }
+        inputs.files patcher.accessTransformers
+        doLast {
+            def vanilla = [:]
+            def zip = new java.util.zip.ZipFile(genJoinedBinPatches.cleanJar)
+            zip.entries().findAll { !it.directory && it.name.endsWith('.class') }.each { entry ->
+                new ClassReader(zip.getInputStream(entry)).accept(new org.objectweb.asm.ClassVisitor(org.objectweb.asm.Opcodes.ASM7) {
+                    String name
+                    void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
+                        this.name = name
+                        vanilla[name] = access
+                    }
+                    org.objectweb.asm.FieldVisitor visitField(int access, String name, String desc, String sig, Object value) {
+                        vanilla[this.name + ' ' + name] = access
+                        return null
+                    }
+                    org.objectweb.asm.MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] excs) {
+                        vanilla[this.name + ' ' + name + desc] = access
+                        return null
+                    }
+                }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)   
+            }
+            patcher.accessTransformers.each { f -> 
+                TreeMap lines = [:]
+                f.eachLine { line -> 
+                    def idx = line.indexOf('#')
+                    if (idx == 0 || line.isEmpty()) return
+                    def comment = idx == -1 ? null : line.substring(idx)
+                    if (idx != -1) line = line.substring(0, idx - 1)
+                    def (modifier, cls, desc) = (line.trim() + '     ').split(' ', -1)
+                    def key = cls + (desc.isEmpty() ? '' : ' ' + desc)
+                    def access = vanilla[key.replace('.', '/')]
+                    if (access == null) {
+                        if ((desc.equals('*') || desc.equals('*()')) && vanilla[cls.replace('.', '/')] != null)
+                            println('Warning: ' + line)
+                        else {
+                            println('Invalid: ' + line)
+                            return
+                        }
+                    }
+                    //TODO: Check access actually changes, and expand inheretence?
+                    lines[key] = [modifier: modifier, comment: comment]
+                }
+                f.text = lines.collect{ it.value.modifier + ' ' + it.key + (it.value.comment == null ? '' : ' ' + it.value.comment) }.join('\n')
+            }
+        }
+    }
     
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
+        inputs.file { launcherJar.archivePath }
         ext {
             output = file('build/version.json')
             vanilla = project(':mcp').file('build/mcp/downloadJson/version.json')
@@ -521,10 +624,10 @@ project(':forge') {
         }
     }
       
-    task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches]) {
+    task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
         ext {
             output = file('build/install_profile.json')
-            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
+            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.4'
             JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.0'
         }
         doFirst {
@@ -534,6 +637,10 @@ project(':forge') {
         inputs.file applyServerBinPatches.output
         inputs.file genClientBinPatches.toolJar
         inputs.file launcherJson.output
+        /*
+        inputs.file createClientSRG.output
+        inputs.file createServerSRG.output
+        */
         outputs.file output
         doLast {
             def libs = [
@@ -588,6 +695,10 @@ project(':forge') {
                         client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
                         server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:srg]"
                     ],
+                    /*MC_SRG_SHA: [
+                        client: "'${sha1(createClientSRG.output)}'",
+                        server: "'${sha1(createServerSRG.output)}'"
+                    ],*/
                     PATCHED: [
                         client: "[${project.group}:${project.name}:${project.version}:client]",
                         server: "[${project.group}:${project.name}:${project.version}:server]"
@@ -595,6 +706,10 @@ project(':forge') {
                     PATCHED_SHA: [
                         client: "'${sha1(applyClientBinPatches.output)}'",
                         server: "'${sha1(applyServerBinPatches.output)}'"
+                    ],
+                    MCP_VERSION: [
+                        client: "'${MCP_VERSION}'",
+                        server: "'${MCP_VERSION}'"
                     ]
                 ],
                 processors: [
@@ -620,21 +735,19 @@ project(':forge') {
                             '{MC_SLIM}': '{MC_SLIM_SHA}',
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
-                    ], [ // SpecialSource has a bug where it won't create the nessasary directories, remove when they fix that.
-                        jar: INSTALLER_TOOLS,
-                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
-                        args: [
-                            '--task', 'CREATE_PARENTS',
-                            '--target', '{MC_SRG}'
-                        ]
                     ], [
-                        jar: 'net.md-5:SpecialSource:1.8.3',
-                        classpath: getClasspath(project, libs, 'net.md-5:SpecialSource:1.8.3'),
+                        jar: SPECIAL_SOURCE,
+                        classpath: getClasspath(project, libs, SPECIAL_SOURCE),
                         args: [
+                            //'--stable', Java 9 Is borked, https://bugs.openjdk.java.net/browse/JDK-8184940 TODO: find a fix.
                             '--in-jar', '{MC_SLIM}',
                             '--out-jar', '{MC_SRG}',
                             '--srg-in', '{MAPPINGS}'
+                        ]/*,
+                        outputs: [
+                            '{MC_SRG}': '{MC_SRG_SHA}'
                         ]
+                        */
                     ], [
                         jar: BIN_PATCHER,
                         classpath: getClasspath(project, libs, BIN_PATCHER),
@@ -677,6 +790,7 @@ project(':forge') {
         dependsOn fixAnnotationsJson
         */
         
+        /* We do not actually check this anywhere, so it's 400KB of uselless data
         // Add checksum files of clean and patched vanilla classes.
         ['client', 'server'].each { side ->
             ['Base', 'Patched'].each { type -> 
@@ -686,6 +800,7 @@ project(':forge') {
             }
         }
         dependsOn checksums
+        */
         
         // add crowdin locales
         from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
@@ -843,6 +958,19 @@ project(':forge') {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
                 environment 'target', 'fmluserdevserver'
+
+                environment 'MC_VERSION', "${MC_VERSION}"
+                environment 'FORGE_GROUP', "${project.group}"
+                environment 'MCP_VERSION', "${MCP_VERSION}"
+                environment 'MOD_CLASSES', '{source_roots}'
+                environment 'MCP_MAPPINGS', '{mcp_mappings}'
+                environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
+            }
+
+            data {
+                main 'net.minecraftforge.userdev.LaunchTesting'
+
+                environment 'target', 'fmluserdevdata'
 
                 environment 'MC_VERSION', "${MC_VERSION}"
                 environment 'FORGE_GROUP', "${project.group}"

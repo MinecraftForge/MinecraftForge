@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/MooshroomEntity.java
 +++ b/net/minecraft/entity/passive/MooshroomEntity.java
-@@ -28,7 +28,7 @@
+@@ -33,7 +33,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.commons.lang3.tuple.Pair;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<String> field_213449_bz = EntityDataManager.func_187226_a(MooshroomEntity.class, DataSerializers.field_187194_d);
     private Effect field_213450_bA;
     private int field_213447_bB;
-@@ -85,7 +85,7 @@
+@@ -97,7 +97,7 @@
  
           this.func_184185_a(soundevent, 1.0F, 1.0F);
           return true;
@@ -18,7 +18,7 @@
           this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.field_70165_t, this.field_70163_u + (double)(this.func_213302_cg() / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D);
           if (!this.field_70170_p.field_72995_K) {
              this.func_70106_y();
-@@ -191,6 +191,33 @@
+@@ -203,6 +203,33 @@
        return mooshroomentity$type2;
     }
  

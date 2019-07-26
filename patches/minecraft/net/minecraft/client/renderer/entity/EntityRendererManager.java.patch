@@ -1,10 +1,7 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -255,8 +255,13 @@
-       this.field_178637_m = new PlayerRenderer(this);
-       this.field_178636_l.put("default", this.field_178637_m);
+@@ -257,6 +257,10 @@
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
-+      net.minecraftforge.fml.client.registry.RenderingRegistry.loadEntityRenderers(this, this.field_78729_o);
     }
  
 +   public Map<String, PlayerRenderer> getSkinMap() {

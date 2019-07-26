@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -458,7 +458,7 @@
+@@ -459,7 +459,7 @@
                          blockpos$pooledmutableblockpos.func_181079_c(l1, k2, i2);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
-                         if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.AND)) {
+                         if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
 -                           f += blockstate.func_177230_c().func_208618_m();
 +                           f += blockstate.getSlipperiness(this.field_70170_p, blockpos$pooledmutableblockpos, this);
                             ++k1;
                          }
                       }
-@@ -777,6 +777,20 @@
+@@ -778,6 +778,20 @@
        return new SSpawnObjectPacket(this);
     }
  

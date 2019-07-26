@@ -15,114 +15,119 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.FarmlandWaterManager;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ObjectHolder;
+
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-//@Mod(modid = FarmlandWaterTest.ID, name = "Farmland Water Test", version = "1.0.0", acceptableRemoteVersions = "*")
+//This adds a block that creates a 4x4x4 watered region when activated
+@Mod(FarmlandWaterTest.MOD_ID)
+@Mod.EventBusSubscriber
 public class FarmlandWaterTest
 {
-    //This adds a block that creates a 4x4x4 watered region when activated
-    private static Logger logger;
-    private static Block testBlock;
-    static final String ID = "farmlandwatertest";
+    static final String MOD_ID = "farmland_water_test";
+    static final String BLOCK_ID = "test_block";
+    static final String TILE_ID = "test_tile";
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        logger = event.getModLog();
-        MinecraftForge.EVENT_BUS.register(FarmlandWaterTest.class);
-    }
+    private static Logger logger = LogManager.getLogger(FarmlandWaterTest.class);
+
+    @ObjectHolder(BLOCK_ID)
+    public static final Block test_block = null;
+    @ObjectHolder(TILE_ID)
+    public static final TileEntityType<TestTileEntity> test_tile = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        testBlock = new TestBlock();
-        event.getRegistry().register(testBlock.setRegistryName(new ResourceLocation(ID, "test_block")).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("Farmland Water Test Block"));
-        GameRegistry.registerTileEntity(TestTileEntity.class, new ResourceLocation(ID, "test_te"));
+        event.getRegistry().register(new TestBlock(Block.Properties.create(Material.ROCK)).setRegistryName(MOD_ID, BLOCK_ID));
+    }
+
+    @SubscribeEvent
+    public static void registerTileEntity(RegistryEvent.Register<TileEntityType<?>> event)
+    {
+        event.getRegistry().register(TileEntityType.Builder.func_223042_a(TestTileEntity::new, test_block).build(null).setRegistryName(MOD_ID, TILE_ID));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemBlock(testBlock).setRegistryName(new ResourceLocation(ID, "test_block")));
+        event.getRegistry().register(new BlockItem(test_block, new Item.Properties()).setRegistryName(new ResourceLocation(MOD_ID, BLOCK_ID)));
     }
 
     public static class TestBlock extends Block
     {
-
-        public TestBlock()
+        public TestBlock(Block.Properties props)
         {
-            super(Material.ROCK);
+            super(props);
         }
 
         @Override
-        public boolean hasTileEntity(IBlockState state)
+        public boolean hasTileEntity(BlockState state)
         {
             return true;
         }
 
         @Nullable
         @Override
-        public TileEntity createTileEntity(World world, IBlockState state)
+        public TileEntity createTileEntity(BlockState state, IBlockReader world)
         {
             return new TestTileEntity();
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTrace)
         {
-            if (world.isRemote)
-                return true;
-            TestTileEntity tileEntity = (TestTileEntity) world.getTileEntity(pos);
-            if (tileEntity == null)
-            {
-                return false;
-            }
-            tileEntity.isActive = !tileEntity.isActive;
-            tileEntity.updateTicket();
-            player.sendStatusMessage(new TextComponentString("Changed block powered state to " + tileEntity.isActive), true);
-            logger.info("Changed block powered state at {} to {}", pos, tileEntity.isActive);
-            return true;
+            Optional<TestTileEntity> opt  = getTE(world, pos);
+            opt.ifPresent(tileEntity -> {
+                tileEntity.isActive = !tileEntity.isActive;
+                tileEntity.updateTicket();
+                player.sendStatusMessage(new StringTextComponent("Changed block powered state to " + tileEntity.isActive), true);
+                logger.info("Changed block powered state at {} to {}", pos, tileEntity.isActive);
+            });
+            return opt.isPresent();
         }
 
         @Override
-        public void breakBlock(World world, BlockPos pos, IBlockState state)
+        public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving)
         {
-            if (world.isRemote)
-                return;
-            TestTileEntity tileEntity = (TestTileEntity) world.getTileEntity(pos);
-            if (tileEntity == null)
-                return;
-            tileEntity.farmlandTicket.invalidate();
+            getTE(world, pos).ifPresent(TileEntity::remove);
+        }
+
+        private Optional<TestTileEntity> getTE(World world, BlockPos pos)
+        {
+            if (world.isRemote) return Optional.empty();
+            return Optional.ofNullable((TestTileEntity)world.getTileEntity(pos));
         }
     }
 
@@ -130,6 +135,11 @@ public class FarmlandWaterTest
     {
         private AABBTicket farmlandTicket;
         private boolean isActive = false;
+
+        public TestTileEntity()
+        {
+            super(FarmlandWaterTest.test_tile);
+        }
 
         @Override
         public void onLoad()
@@ -146,32 +156,28 @@ public class FarmlandWaterTest
             if (world.isRemote)
                 return;
             if (isActive)
-            {
                 farmlandTicket.validate();
-            }
             else
-            {
                 farmlandTicket.invalidate();
-            }
         }
 
         @Override
-        public NBTTagCompound writeToNBT(NBTTagCompound compound)
+        public CompoundNBT write(CompoundNBT compound)
         {
-            compound = super.writeToNBT(compound);
-            compound.setBoolean("active", isActive);
+            compound = super.write(compound);
+            compound.putBoolean("active", isActive);
             return compound;
         }
 
         @Override
-        public void readFromNBT(NBTTagCompound compound)
+        public void read(CompoundNBT compound)
         {
-            super.readFromNBT(compound);
+            super.read(compound);
             isActive = compound.getBoolean("active");
         }
 
         @Override
-        public void onChunkUnload()
+        public void remove()
         {
             if (!world.isRemote)
             {
@@ -180,3 +186,4 @@ public class FarmlandWaterTest
         }
     }
 }
+*/

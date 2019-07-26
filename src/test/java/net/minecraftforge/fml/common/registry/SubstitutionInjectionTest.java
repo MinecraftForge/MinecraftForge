@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.fml.common.registry;
 
@@ -45,9 +46,11 @@ import static org.junit.Assert.fail;
 
 import java.util.Map;
 
+*/
 /**
  * Substitution test harness - tests that substitutions behave correctly
- */
+ *//*
+
 @RunWith(ForgeTestRunner.class)
 public class SubstitutionInjectionTest
 {
@@ -161,3 +164,4 @@ public class SubstitutionInjectionTest
         assertEquals("ItemBlock points at vanilla block", toSub, dirtitem.getBlock());
     }
 }
+*/

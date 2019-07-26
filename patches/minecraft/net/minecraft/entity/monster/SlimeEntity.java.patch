@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
-@@ -113,7 +113,7 @@
+@@ -114,7 +114,7 @@
  
     public void func_70071_h_() {
        if (!this.field_70170_p.field_72995_K && this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.func_70809_q() > 0) {
@@ -9,7 +9,7 @@
        }
  
        this.field_70811_b += (this.field_70813_a - this.field_70811_b) * 0.5F;
-@@ -122,6 +122,7 @@
+@@ -123,6 +123,7 @@
        if (this.field_70122_E && !this.field_175452_bi) {
           int i = this.func_70809_q();
  
@@ -17,16 +17,35 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -251,7 +252,7 @@
+@@ -170,7 +171,8 @@
+       return (EntityType<? extends SlimeEntity>) super.func_200600_R();
+    }
  
-    public boolean func_213380_a(IWorld p_213380_1_, SpawnReason p_213380_2_) {
-       BlockPos blockpos = new BlockPos(this.field_70165_t, 0.0D, this.field_70161_v);
--      if (p_213380_1_.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1) {
-+      if (p_213380_1_.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p)) {
+-   public void func_70106_y() {
++   @Override
++   public void remove(boolean keepData) {
+       int i = this.func_70809_q();
+       if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
+          int j = 2 + this.field_70146_Z.nextInt(3);
+@@ -193,7 +195,7 @@
+          }
+       }
+ 
+-      super.func_70106_y();
++      super.remove(keepData);
+    }
+ 
+    public void func_70108_f(Entity p_70108_1_) {
+@@ -251,7 +253,7 @@
+    }
+ 
+    public static boolean func_223366_c(EntityType<SlimeEntity> p_223366_0_, IWorld p_223366_1_, SpawnReason p_223366_2_, BlockPos p_223366_3_, Random p_223366_4_) {
+-      if (p_223366_1_.func_72912_H().func_76067_t() == WorldType.field_77138_c && p_223366_4_.nextInt(4) != 1) {
++      if (p_223366_1_.func_72912_H().func_76067_t().handleSlimeSpawnReduction(p_223366_4_, p_223366_1_) && p_223366_4_.nextInt(4) != 1) {
           return false;
        } else {
-          if (p_213380_1_.func_175659_aa() != Difficulty.PEACEFUL) {
-@@ -309,6 +310,12 @@
+          if (p_223366_1_.func_175659_aa() != Difficulty.PEACEFUL) {
+@@ -309,6 +311,12 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
  

@@ -18,3 +18,10 @@
              Direction direction = Direction.func_176741_a(p_196267_4_);
              BlockPos blockpos = p_196267_3_.func_177984_a();
              if (direction.func_176740_k().func_176722_c() && !p_196267_1_.func_177229_b(func_176267_a(direction))) {
+@@ -329,4 +329,6 @@
+    public static BooleanProperty func_176267_a(Direction p_176267_0_) {
+       return field_196546_A.get(p_176267_0_);
+    }
++
++   @Override public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) { return true; }
+ }
