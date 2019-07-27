@@ -70,6 +70,20 @@ public class ModList
         final int loadingThreadCount = FMLConfig.loadingThreadCount();
         LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
         modLoadingThreadPool = new ForkJoinPool(loadingThreadCount, ModList::newForkJoinWorkerThread, null, false);
+        CrashReportExtender.registerCrashCallable("Mod List", this::crashReport);
+    }
+
+    private String getModContainerState(String modId) {
+        return getModContainerById(modId).map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE");
+    }
+
+    private String fileToLine(ModFile mf) {
+        return mf.getFileName() + " " + mf.getModInfos().get(0).getDisplayName() + " " +
+                mf.getModInfos().stream().map(mi -> mi.getModId() + "@" + mi.getVersion() + " " +
+                getModContainerState(mi.getModId())).collect(Collectors.joining(", ", "{", "}"));
+    }
+    private String crashReport() {
+        return "\n"+applyForEachModFile(this::fileToLine).collect(Collectors.joining("\n\t\t", "\t\t", ""));
     }
 
     public static ModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
@@ -185,6 +199,10 @@ public class ModList
     public void forEachModFile(Consumer<ModFile> fileConsumer)
     {
         modFiles.stream().map(ModFileInfo::getFile).forEach(fileConsumer);
+    }
+
+    private <T> Stream<T> applyForEachModFile(Function<ModFile, T> function) {
+        return modFiles.stream().map(ModFileInfo::getFile).map(function);
     }
 
     public void forEachModContainer(BiConsumer<String, ModContainer> modContainerConsumer) {

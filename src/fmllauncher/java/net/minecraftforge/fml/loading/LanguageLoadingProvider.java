@@ -37,8 +37,15 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.rethrowFunction;
@@ -56,6 +63,10 @@ public class LanguageLoadingProvider
     public void forEach(final Consumer<IModLanguageProvider> consumer)
     {
         languageProviders.forEach(consumer);
+    }
+
+    public <T> Stream<T> applyForEach(final Function<IModLanguageProvider, T> function) {
+        return languageProviders.stream().map(function);
     }
 
     private static class ModLanguageWrapper {
