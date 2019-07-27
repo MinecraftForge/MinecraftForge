@@ -4,7 +4,7 @@
        if (LayerUtil.func_202827_a(i)) {
           return i;
        } else if (j == field_202725_h) {
-+    	 net.minecraft.world.biome.Biome moddedRiverBiome = net.minecraftforge.common.BiomeManager.getRiver(Registry.field_212624_m.func_148745_a(i));
++         net.minecraft.world.biome.Biome moddedRiverBiome = net.minecraftforge.common.BiomeManager.getRiver(Registry.field_212624_m.func_148745_a(i));
 +         if (moddedRiverBiome != null) return Registry.field_212624_m.func_148757_b(moddedRiverBiome);
           if (i == field_202721_d) {
              return field_202720_c;
