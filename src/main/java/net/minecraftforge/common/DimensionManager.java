@@ -219,9 +219,9 @@ public class DimensionManager
 
     private static boolean canUnloadWorld(ServerWorld world)
     {
-        return world.getForcedChunks().isEmpty()
+        return world.getDimension().getType() != DimensionType.OVERWORLD
                 && world.getPlayers().isEmpty()
-                //&& !world.dimension.getType().shouldLoadSpawn()
+                && world.getForcedChunks().isEmpty()
                 && !getData(world.getDimension().getType()).keepLoaded;
     }
 
@@ -284,6 +284,7 @@ public class DimensionManager
             finally
             {
                 MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                LOGGER.debug(DIMMGR, "Unloading dimension {}", id);
                 try {
                     w.close();
                 } catch (IOException e) {
@@ -343,6 +344,7 @@ public class DimensionManager
 
         savedEntries.clear();
 
+        @SuppressWarnings("unused")
         boolean error = false;
         ListNBT list = data.getList("entries", 10);
         for (int x = 0; x < list.size(); x++)
