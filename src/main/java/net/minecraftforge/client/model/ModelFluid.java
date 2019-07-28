@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -45,10 +46,10 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fluids.Fluid;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -79,9 +80,10 @@ public final class ModelFluid implements IUnbakedModel
     @Override
     public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
-        return fluid.getOverlay() != null
-                ? ImmutableSet.of(fluid.getStill(), fluid.getFlowing(), fluid.getOverlay())
-                : ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
+        FluidAttributes attrs = fluid.getAttributes();
+        return attrs.getOverlay() != null
+                ? ImmutableSet.of(attrs.getStill(), attrs.getFlowing(), attrs.getOverlay())
+                : ImmutableSet.of(attrs.getStill(), attrs.getFlowing());
     }
 
     @Override
@@ -93,15 +95,16 @@ public final class ModelFluid implements IUnbakedModel
     @Override
     public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
+        FluidAttributes attrs = fluid.getAttributes();
         return new CachingBakedFluid(
                 sprite.getState().apply(Optional.empty()),
                 PerspectiveMapWrapper.getTransforms(sprite.getState()),
                 format,
-                fluid.getColor(),
-                spriteGetter.apply(fluid.getStill()),
-                spriteGetter.apply(fluid.getFlowing()),
-                Optional.ofNullable(fluid.getOverlay()).map(spriteGetter),
-                fluid.isLighterThanAir(),
+                attrs.getColor(),
+                spriteGetter.apply(attrs.getStill()),
+                spriteGetter.apply(attrs.getFlowing()),
+                Optional.ofNullable(attrs.getOverlay()).map(spriteGetter),
+                attrs.isLighterThanAir(),
                 null
         );
     }

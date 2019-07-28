@@ -23,7 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
@@ -50,7 +50,7 @@ public class BlockWrapper extends VoidFluidHandler
     public int fill(FluidStack resource, boolean doFill)
     {
         // NOTE: "Filling" means placement in this context!
-        if (resource.amount < Fluid.BUCKET_VOLUME)
+        if (resource.amount < FluidAttributes.BUCKET_VOLUME)
         {
             return 0;
         }
@@ -59,6 +59,6 @@ public class BlockWrapper extends VoidFluidHandler
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlockState(blockPos, block.getDefaultState(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }
-        return Fluid.BUCKET_VOLUME;
+        return FluidAttributes.BUCKET_VOLUME;
     }
 }

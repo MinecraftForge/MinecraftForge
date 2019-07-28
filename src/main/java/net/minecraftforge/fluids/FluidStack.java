@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
@@ -125,12 +126,12 @@ public class FluidStack
 
     public String getLocalizedName()
     {
-        return this.getFluid().getLocalizedName(this);
+        return this.getFluid().getAttributes().getLocalizedName(this);
     }
 
-    public String getUnlocalizedName()
+    public String getTranslationKey()
     {
-        return this.getFluid().getUnlocalizedName(this);
+        return this.getFluid().getAttributes().getTranslationKey(this);
     }
 
     /**

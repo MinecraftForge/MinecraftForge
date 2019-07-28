@@ -27,6 +27,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.BlockRenderLayer;
@@ -35,6 +36,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorldReader;
+import net.minecraftforge.fluids.FluidAttributes;
 
 public interface IForgeFluid
 {
@@ -117,4 +119,20 @@ public interface IForgeFluid
      * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
      */
     Set<ResourceLocation> getTags();
+
+    /**
+     * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
+     * Do not call this from outside. To retrieve the values use {@link IForgeFluid#getAttributes()}
+     */
+    default FluidAttributes createAttributes(Fluid fluid) {
+        if (getFluid() == Fluids.LAVA)
+            return FluidAttributes.VANILLA_LAVA;
+        return FluidAttributes.VANILLA_WATER;
+    }
+
+    /**
+     * Retrieves the non-vanilla fluid attributes, including localized name.
+     * Do not override this. Override {@link IForgeFluid#createAttributes()} instead, which is only called once.
+     */
+    FluidAttributes getAttributes();
 }

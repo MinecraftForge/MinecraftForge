@@ -27,6 +27,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -142,7 +143,7 @@ public class FluidUtil
                             tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, true);
                             if (player != null)
                             {
-                                SoundEvent soundevent = simulatedTransfer.getFluid().getFillSound(simulatedTransfer);
+                                SoundEvent soundevent = simulatedTransfer.getFluid().getAttributes().getFillSound(simulatedTransfer);
                                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                             }
                         }
@@ -185,7 +186,7 @@ public class FluidUtil
                         {
                             if (player != null)
                             {
-                                SoundEvent soundevent = transfer.getFluid().getEmptySound(transfer);
+                                SoundEvent soundevent = transfer.getFluid().getAttributes().getEmptySound(transfer);
                                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                             }
                             ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -559,7 +560,7 @@ public class FluidUtil
         }
 
         Fluid fluid = resource.getFluid();
-        if (fluid == null || !fluid.canBePlacedInWorld())
+        if (fluid == null || !fluid.getAttributes().canBePlacedInWorld())
         {
             return false;
         }
@@ -581,12 +582,12 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.dimension.doesWaterVaporize() && fluid.doesVaporize(resource))
+        if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(resource))
         {
             FluidStack result = fluidSource.drain(resource, true);
             if (result != null)
             {
-                result.getFluid().vaporize(player, world, pos, result);
+                result.getFluid().getAttributes().vaporize(player, world, pos, result);
                 return true;
             }
         }
@@ -597,7 +598,7 @@ public class FluidUtil
             FluidStack result = tryFluidTransfer(handler, fluidSource, resource, true);
             if (result != null)
             {
-                SoundEvent soundevent = resource.getFluid().getEmptySound(resource);
+                SoundEvent soundevent = resource.getFluid().getAttributes().getEmptySound(resource);
                 world.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 return true;
             }
@@ -613,7 +614,7 @@ public class FluidUtil
      */
     private static IFluidHandler getFluidBlockHandler(Fluid fluid, World world, BlockPos pos)
     {
-        Block block = fluid.getBlock();/* TODO fluid blocks?
+        Block block = fluid.getAttributes().getBlock();/* TODO fluid blocks?
         if (block instanceof IFluidBlock)
         {
             return new FluidBlockWrapper((IFluidBlock) block, world, pos);

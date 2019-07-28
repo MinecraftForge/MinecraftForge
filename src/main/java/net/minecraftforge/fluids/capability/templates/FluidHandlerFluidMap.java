@@ -20,7 +20,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;

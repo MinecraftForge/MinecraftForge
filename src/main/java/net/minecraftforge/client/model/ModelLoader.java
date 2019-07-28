@@ -85,7 +85,6 @@ import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.logging.ModelLoaderErrorMessage;
 import net.minecraftforge.registries.IRegistryDelegate;

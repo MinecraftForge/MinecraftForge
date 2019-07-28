@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraft.fluid.Fluid;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

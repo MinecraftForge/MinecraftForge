@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
@@ -46,7 +47,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.function.Function;
@@ -113,7 +113,7 @@ public final class ModelDynBucket implements IUnbakedModel
         if (coverLocation != null)
             builder.add(coverLocation);
         if (fluid != null)
-            builder.add(fluid.getStill());
+            builder.add(fluid.getAttributes().getStill());
 
         return builder.build();
     }
@@ -132,7 +132,7 @@ public final class ModelDynBucket implements IUnbakedModel
         ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
 
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180° to turn it upside down
-        if (flipGas && fluid != null && fluid.isLighterThanAir())
+        if (flipGas && fluid != null && fluid.getAttributes().isLighterThanAir())
         {
             sprite = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
             state = sprite.getState();
@@ -144,7 +144,7 @@ public final class ModelDynBucket implements IUnbakedModel
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
         if(fluid != null) {
-            fluidSprite = spriteGetter.apply(fluid.getStill());
+            fluidSprite = spriteGetter.apply(fluid.getAttributes().getStill());
         }
 
         Random random = new Random();
@@ -160,8 +160,8 @@ public final class ModelDynBucket implements IUnbakedModel
         {
             TextureAtlasSprite liquid = spriteGetter.apply(liquidLocation);
             // build liquid layer (inside)
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
             particleSprite = fluidSprite;
         }
         if (coverLocation != null)
@@ -441,7 +441,7 @@ public final class ModelDynBucket implements IUnbakedModel
                         BakedDynBucket model = (BakedDynBucket)originalModel;
 
                         Fluid fluid = fluidStack.getFluid();
-                        String name = fluid.getName();
+                        String name = fluid.getAttributes().getName();
 
                         if (!model.cache.containsKey(name))
                         {

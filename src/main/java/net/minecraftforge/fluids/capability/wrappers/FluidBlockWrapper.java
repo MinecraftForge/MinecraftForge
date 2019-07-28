@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -54,9 +54,9 @@ public class FluidBlockWrapper implements IFluidHandler
         {
             percentFilled *= -1;
         }
-        int amountFilled = Math.round(Fluid.BUCKET_VOLUME * percentFilled);
+        int amountFilled = Math.round(FluidAttributes.BUCKET_VOLUME * percentFilled);
         FluidStack fluid = amountFilled > 0 ? new FluidStack(fluidBlock.getFluid(), amountFilled) : null;
-        return new FluidTankProperties[]{ new FluidTankProperties(fluid, Fluid.BUCKET_VOLUME, false, true)};
+        return new FluidTankProperties[]{ new FluidTankProperties(fluid, FluidAttributes.BUCKET_VOLUME, false, true)};
     }
 
     @Override

@@ -25,7 +25,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 
 public class TileFluidHandler extends TileEntity
 {
-    protected FluidTank tank = new FluidTank(Fluid.BUCKET_VOLUME);
+    protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
     
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 

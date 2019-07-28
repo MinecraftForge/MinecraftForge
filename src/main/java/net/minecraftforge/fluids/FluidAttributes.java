@@ -54,17 +54,29 @@ import net.minecraft.item.Rarity;
  * water.
  *
  */
-public class Fluid
+public class FluidAttributes
 {
+    // from ModelBakery, which is client-only
+    private static final ResourceLocation LOCATION_LAVA_STILL = new ResourceLocation("block/lava_still");
+    private static final ResourceLocation LOCATION_WATER_STILL = new ResourceLocation("block/water_still");
+    private static final ResourceLocation LOCATION_LAVA_FLOW = new ResourceLocation("block/lava_flow");
+    private static final ResourceLocation LOCATION_WATER_FLOW = new ResourceLocation("block/water_flow");
+    private static final ResourceLocation LOCATION_WATER_OVERLAY = new ResourceLocation("block/water_overlay");
+
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final int BUCKET_VOLUME = 1000;
 
+    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, 0x0000FF);
+    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("water", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, 0x0000FF)
+            /* TODO: set temperature and stuff */;
+
     /** The unique identification name for this fluid. */
     protected final String fluidName;
 
-    /** The unlocalized name of this fluid. */
-    protected String unlocalizedName;
+    /** The translation key of this fluid. */
+    protected String translationKey;
 
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
@@ -141,38 +153,38 @@ public class Fluid
      */
     protected int color = 0xFFFFFFFF;
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
+    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
     {
         this(fluidName, still, flowing, null, color);
     }
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, int color)
+    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, int color)
     {
         this(fluidName, still, flowing, overlay);
         this.setColor(color);
     }
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
+    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
         this(fluidName, still, flowing, (ResourceLocation) null);
     }
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay)
+    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
-        this.unlocalizedName = fluidName;
+        this.translationKey = fluidName;
         this.still = still;
         this.flowing = flowing;
         this.overlay = overlay;
     }
 
-    public Fluid setUnlocalizedName(String unlocalizedName)
+    public FluidAttributes setTranslationKey(String translationKey)
     {
-        this.unlocalizedName = unlocalizedName;
+        this.translationKey = translationKey;
         return this;
     }
 
-    public Fluid setBlock(Block block)
+    public FluidAttributes setBlock(Block block)
     {
         if (this.block == null || this.block == block)
         {
@@ -186,55 +198,55 @@ public class Fluid
         return this;
     }
 
-    public Fluid setLuminosity(int luminosity)
+    public FluidAttributes setLuminosity(int luminosity)
     {
         this.luminosity = luminosity;
         return this;
     }
 
-    public Fluid setDensity(int density)
+    public FluidAttributes setDensity(int density)
     {
         this.density = density;
         return this;
     }
 
-    public Fluid setTemperature(int temperature)
+    public FluidAttributes setTemperature(int temperature)
     {
         this.temperature = temperature;
         return this;
     }
 
-    public Fluid setViscosity(int viscosity)
+    public FluidAttributes setViscosity(int viscosity)
     {
         this.viscosity = viscosity;
         return this;
     }
 
-    public Fluid setGaseous(boolean isGaseous)
+    public FluidAttributes setGaseous(boolean isGaseous)
     {
         this.isGaseous = isGaseous;
         return this;
     }
 
-    public Fluid setRarity(Rarity rarity)
+    public FluidAttributes setRarity(Rarity rarity)
     {
         this.rarity = rarity;
         return this;
     }
 
-    public Fluid setFillSound(SoundEvent fillSound)
+    public FluidAttributes setFillSound(SoundEvent fillSound)
     {
         this.fillSound = fillSound;
         return this;
     }
 
-    public Fluid setEmptySound(SoundEvent emptySound)
+    public FluidAttributes setEmptySound(SoundEvent emptySound)
     {
         this.emptySound = emptySound;
         return this;
     }
 
-    public Fluid setColor(int color)
+    public FluidAttributes setColor(int color)
     {
         this.color = color;
         return this;
@@ -301,24 +313,24 @@ public class Fluid
      */
     public String getLocalizedName(FluidStack stack)
     {
-        String s = this.getUnlocalizedName();
+        String s = this.getTranslationKey();
         return s == null ? "" : LanguageMap.getInstance().translateKey(s); // TODO Server translation
     }
 
     /**
      * A FluidStack sensitive version of getUnlocalizedName
      */
-    public String getUnlocalizedName(FluidStack stack)
+    public String getTranslationKey(FluidStack stack)
     {
-        return this.getUnlocalizedName();
+        return this.getTranslationKey();
     }
 
     /**
      * Returns the unlocalized name of this fluid.
      */
-    public String getUnlocalizedName()
+    public String getTranslationKey()
     {
-        return "fluid." + this.unlocalizedName;
+        return "fluid." + this.translationKey;
     }
 
     /* Default Accessors */
