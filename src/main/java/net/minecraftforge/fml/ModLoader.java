@@ -214,7 +214,7 @@ public class ModLoader
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
-                    containers.size(), containers.stream().map(ModContainer::getModId).collect(Collectors.toList()),
+                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").collect(Collectors.toList()),
                     modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }

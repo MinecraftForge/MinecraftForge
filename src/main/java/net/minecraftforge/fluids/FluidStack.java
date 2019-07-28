@@ -19,8 +19,10 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -123,14 +125,14 @@ public class FluidStack
         return fluidDelegate.get();
     }
 
-    public String getLocalizedName()
+    public ITextComponent getDisplayName()
     {
-        return this.getFluid().getLocalizedName(this);
+        return this.getFluid().getAttributes().getDisplayName(this);
     }
 
-    public String getUnlocalizedName()
+    public String getTranslationKey()
     {
-        return this.getFluid().getUnlocalizedName(this);
+        return this.getFluid().getAttributes().getTranslationKey(this);
     }
 
     /**
@@ -155,7 +157,7 @@ public class FluidStack
 
     private boolean isFluidStackTagEqual(FluidStack other)
     {
-        return tag == null ? other.tag == null : other.tag == null ? false : tag.equals(other.tag);
+        return tag == null ? other.tag == null : other.tag != null && tag.equals(other.tag);
     }
 
     /**
@@ -163,7 +165,7 @@ public class FluidStack
      */
     public static boolean areFluidStackTagsEqual(@Nullable FluidStack stack1, @Nullable FluidStack stack2)
     {
-        return stack1 == null && stack2 == null ? true : stack1 == null || stack2 == null ? false : stack1.isFluidStackTagEqual(stack2);
+        return stack1 == null && stack2 == null || (stack1 != null && stack2 != null && stack1.isFluidStackTagEqual(stack2));
     }
 
     /**
@@ -230,7 +232,6 @@ public class FluidStack
         {
             return false;
         }
-
         return isFluidEqual((FluidStack) o);
     }
 }

@@ -71,7 +71,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -97,8 +96,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         return INSTANCE;
     }
-
-    public UniversalBucket universalBucket;
 
     public ForgeMod()
     {
@@ -158,7 +155,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
             forgeData.put("dims", dims);
-        // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -167,7 +163,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         if (tag.contains("dims", 10))
             DimensionManager.readRegistry(tag.getCompound("dims"));
-        // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)

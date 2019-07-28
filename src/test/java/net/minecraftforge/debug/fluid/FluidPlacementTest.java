@@ -213,7 +213,7 @@ public class FluidPlacementTest
             @Override
             public int fill(FluidStack resource, boolean doFill)
             {
-                if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
+                if (container.getCount() != 1 || resource == null || resource.amount > FluidAttributes.BUCKET_VOLUME || container
                         .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
                 {
                     return 0;

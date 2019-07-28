@@ -29,9 +29,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
@@ -91,13 +89,32 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new IFluidTankProperties[] { new FluidTankProperties(getFluid(), capacity) };
+    public int getTanks() {
+
+        return 1;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+
+        return getFluid();
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int getTankCapacity(int tank) {
+
+        return capacity;
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+
+        return true;
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
@@ -109,7 +126,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         {
             int fillAmount = Math.min(capacity, resource.amount);
             if (fillAmount == capacity) {
-                if (doFill) {
+                if (action.execute()) {
                     FluidStack filled = resource.copy();
                     filled.amount = fillAmount;
                     setFluid(filled);
@@ -123,17 +140,17 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
-        return drain(resource.amount, doDrain);
+        return drain(resource.amount, action);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
@@ -150,7 +167,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         if (drainAmount == capacity) {
             FluidStack drained = contained.copy();
 
-            if (doDrain) {
+            if (action.execute()) {
                 setContainerToEmpty();
             }
 

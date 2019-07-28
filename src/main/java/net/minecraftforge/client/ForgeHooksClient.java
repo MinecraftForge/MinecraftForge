@@ -560,6 +560,15 @@ public class ForgeHooksClient
         }
     }
 
+    public static TextureAtlasSprite[] getFluidSprites(IEnviromentBlockReader world, BlockPos pos, IFluidState fluidStateIn)
+    {
+        AtlasTexture atlas = Minecraft.getInstance().getTextureMap();
+        return new TextureAtlasSprite[] {
+                atlas.getSprite(fluidStateIn.getFluid().getAttributes().getStill(world, pos)),
+                atlas.getSprite(fluidStateIn.getFluid().getAttributes().getFlowing(world, pos)),
+        };
+    }
+
     private static class LightGatheringTransformer extends QuadGatheringTransformer {
 
         private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
