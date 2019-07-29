@@ -32,6 +32,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraft.util.Util;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,7 +104,7 @@ public class GuiModList extends Screen
     private int listWidth;
     private List<ModInfo> mods;
     private final List<ModInfo> unsortedMods;
-    private Button configButton;
+    private Button configButton, openModsFolderButton;
 
     private int buttonMargin = 1;
     private int numButtons = SortType.values().length;
@@ -279,7 +281,9 @@ public class GuiModList extends Screen
         int doneButtonWidth = Math.min(modInfoWidth, 200);
         this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
                 I18n.format("gui.done"), b -> GuiModList.this.minecraft.displayGuiScreen(GuiModList.this.mainMenu)));
-        this.addButton(this.configButton = new Button(6, this.height - 24, this.listWidth, 20,
+        this.addButton(this.openModsFolderButton = new Button(6, this.height - 24, this.listWidth, 20,
+                I18n.format("fml.menu.mods.openmodsfolder"), b -> Util.getOSType().openFile(FMLPaths.MODSDIR.get().toFile())));
+        this.addButton(this.configButton = new Button(6, this.height - 48, this.listWidth, 20,
                 I18n.format("fml.menu.mods.config"), b -> GuiModList.this.displayModConfig()));
         this.configButton.active = false;
 
