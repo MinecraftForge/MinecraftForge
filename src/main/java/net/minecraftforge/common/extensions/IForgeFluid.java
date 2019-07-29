@@ -124,11 +124,7 @@ public interface IForgeFluid
      * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
      * Do not call this from outside. To retrieve the values use {@link IForgeFluid#getAttributes()}
      */
-    default FluidAttributes createAttributes(Fluid fluid) {
-        if (getFluid() == Fluids.LAVA)
-            return FluidAttributes.VANILLA_LAVA;
-        return FluidAttributes.VANILLA_WATER;
-    }
+    FluidAttributes createAttributes(Fluid fluid);
 
     /**
      * Retrieves the non-vanilla fluid attributes, including localized name.

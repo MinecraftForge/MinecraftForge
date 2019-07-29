@@ -1,0 +1,11 @@
+--- a/net/minecraft/fluid/WaterFluid.java
++++ b/net/minecraft/fluid/WaterFluid.java
+@@ -94,6 +94,8 @@
+       return p_215665_5_ == Direction.DOWN && !p_215665_4_.func_207185_a(FluidTags.field_206959_a);
+    }
+ 
++   public net.minecraftforge.fluids.FluidAttributes createAttributes(Fluid fluid) { return net.minecraftforge.fluids.FluidAttributes.VANILLA_WATER; }
++
+    protected float func_210195_d() {
+       return 100.0F;
+    }

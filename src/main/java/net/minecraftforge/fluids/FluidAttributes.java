@@ -21,7 +21,9 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.world.IEnviromentBlockReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,6 +70,8 @@ public class FluidAttributes
 
     public static final int BUCKET_VOLUME = 1000;
 
+    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, 0)
+            .setDensity(0).setTemperature(0).setLuminosity(0);
     public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, 0x0000FF);
     public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("water", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, 0x0000FF)
             /* TODO: set temperature and stuff */;
@@ -433,16 +437,15 @@ public class FluidAttributes
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
-    public int getLuminosity(World world, BlockPos pos){ return getLuminosity(); }
-    public int getDensity(World world, BlockPos pos){ return getDensity(); }
-    public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
-    public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
-    public Rarity getRarity(World world, BlockPos pos){ return getRarity(); }
-    public int getColor(World world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
-    public ResourceLocation getFlowing(World world, BlockPos pos) { return getFlowing(); }
-    public SoundEvent getFillSound(World world, BlockPos pos) { return getFillSound(); }
-    public SoundEvent getEmptySound(World world, BlockPos pos) { return getEmptySound(); }
-
+    public int getLuminosity(IEnviromentBlockReader world, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(IEnviromentBlockReader world, BlockPos pos){ return getDensity(); }
+    public int getTemperature(IEnviromentBlockReader world, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(IEnviromentBlockReader world, BlockPos pos){ return getViscosity(); }
+    public boolean isGaseous(IEnviromentBlockReader world, BlockPos pos){ return isGaseous(); }
+    public Rarity getRarity(IEnviromentBlockReader world, BlockPos pos){ return getRarity(); }
+    public int getColor(IEnviromentBlockReader world, BlockPos pos){ return getColor(); }
+    public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStill(); }
+    public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowing(); }
+    public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
 }
