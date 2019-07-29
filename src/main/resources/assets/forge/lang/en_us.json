@@ -98,6 +98,8 @@
   "commands.forge.tracking.timing_entry": "{0} - {1} [{2}, {3}, {4}]: {5}",
   "commands.forge.tracking.no_data": "No data has been recorded yet.",
 
+  "commands.config.getwithtype": "Config for %s of type %s found at %s",
+  "commands.config.noconfig": "Config for %s of type %s not found",
 
   "forge.update.beta.1": "%sWARNING: %sForge Beta",
   "forge.update.beta.2": "Major issues may arise, verify before reporting.",
