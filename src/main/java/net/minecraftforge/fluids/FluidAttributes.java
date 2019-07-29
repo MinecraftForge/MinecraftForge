@@ -70,10 +70,10 @@ public class FluidAttributes
 
     public static final int BUCKET_VOLUME = 1000;
 
-    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, 0)
+    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, -1)
             .setDensity(0).setTemperature(0).setLuminosity(0);
-    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, 0x0000FF);
-    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("water", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, 0x0000FF)
+    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, -1);
+    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("lava", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, -1)
             /* TODO: set temperature and stuff */;
 
     /** The unique identification name for this fluid. */

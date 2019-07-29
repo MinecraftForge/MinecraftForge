@@ -83,6 +83,8 @@ public class NewFluidTest
         event.getRegistry().registerAll(test_fluid, test_fluid_flowing);
     }
 
+    private static final FluidAttributes ATTRIBUTES = new FluidAttributes("test_fluid", FLUID_STILL, FLUID_FLOWING, 0xFF00FF);
+
     private static abstract class MyFlowingFluid extends FlowingFluid
     {
         @Override
@@ -126,7 +128,7 @@ public class NewFluidTest
         @Override
         public BlockRenderLayer getRenderLayer()
         {
-            return BlockRenderLayer.SOLID;
+            return BlockRenderLayer.TRANSLUCENT;
         }
 
         @Override
@@ -160,9 +162,14 @@ public class NewFluidTest
         }
 
         @Override
+        public boolean isEquivalentTo(Fluid fluidIn) {
+            return fluidIn == test_fluid || fluidIn == test_fluid_flowing;
+        }
+
+        @Override
         public FluidAttributes createAttributes(Fluid fluid)
         {
-            return new FluidAttributes(fluid.getRegistryName().getPath(), FLUID_STILL, FLUID_FLOWING, 0xFF00FF);
+            return ATTRIBUTES;
         }
 
         public static class Flowing extends MyFlowingFluid
