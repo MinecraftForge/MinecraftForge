@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/server/ChunkManager.java
 +++ b/net/minecraft/world/server/ChunkManager.java
-@@ -385,6 +385,7 @@
-       while((p_223155_1_.getAsBoolean() || this.field_223181_A.size() > 2000) && (runnable = this.field_223181_A.poll()) != null) {
-          runnable.run();
+@@ -362,6 +362,7 @@
+       iprofiler.func_219895_b("chunk_unload");
+       if (!this.field_219255_i.func_217402_u()) {
+          this.func_223155_b(p_219204_1_);
++         if (this.field_219251_e.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_219255_i);
        }
-+      if (this.field_219251_e.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_219255_i);
  
-    }
- 
+       iprofiler.func_76319_b();
 @@ -398,6 +399,7 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
