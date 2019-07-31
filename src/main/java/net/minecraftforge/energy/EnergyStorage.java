@@ -63,7 +63,8 @@ public class EnergyStorage implements IEnergyStorage
 
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
         if (!simulate)
-            energy += energyReceived;
+            setEnergyStored(energy + energyReceived);
+
         return energyReceived;
     }
 
@@ -75,14 +76,41 @@ public class EnergyStorage implements IEnergyStorage
 
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
         if (!simulate)
-            energy -= energyExtracted;
+            setEnergyStored(energy - energyExtracted);
+
         return energyExtracted;
+    }
+
+    /**
+     * Triggered any time the energy state changes.
+     *
+     * @param prevValue - value before changes were applied
+     * @param newValue - new value after changes were applied
+     */
+    protected void onEnergyChanged(int prevValue, int newValue)
+    {
+        //Override this to implement update/sync logic
     }
 
     @Override
     public int getEnergyStored()
     {
         return energy;
+    }
+
+    /**
+     * Allows setting the energy directly
+     *
+     * @param value - value to set
+     */
+    public void setEnergyStored(int value)
+    {
+        final int prevEnergy = this.energy;
+        this.energy = Math.max(0, Math.min(value, getMaxEnergyStored()));
+        if (prevEnergy != this.energy)
+        {
+            onEnergyChanged(prevEnergy, value);
+        }
     }
 
     @Override
