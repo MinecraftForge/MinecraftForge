@@ -30,3 +30,14 @@
           }
  
        }
+@@ -101,4 +103,10 @@
+    public StemGrownBlock func_208486_d() {
+       return this.field_149877_a;
+    }
++   
++   //FORGE START
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.Crop;
++   }
+ }
