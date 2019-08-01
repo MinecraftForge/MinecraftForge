@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/SingleItemRecipe.java
 +++ b/net/minecraft/item/crafting/SingleItemRecipe.java
-@@ -64,7 +64,7 @@
+@@ -60,7 +60,7 @@
        return this.field_222132_b.func_77946_l();
     }
  

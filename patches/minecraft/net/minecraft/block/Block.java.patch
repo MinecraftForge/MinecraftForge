@@ -100,15 +100,15 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -677,6 +681,7 @@
-       p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
+@@ -640,6 +644,7 @@
+       return !this.field_149764_J.func_76220_a() && !this.field_149764_J.func_76224_d();
     }
  
 +   @Deprecated // Forge: Use more sensitive version below: getPickBlock
     @OnlyIn(Dist.CLIENT)
-    public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
-       return new ItemStack(this);
-@@ -691,6 +696,7 @@
+    public ITextComponent func_200291_n() {
+       return new TranslationTextComponent(this.func_149739_a());
+@@ -690,6 +695,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -116,7 +116,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -711,6 +717,7 @@
+@@ -710,6 +716,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -124,7 +124,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -755,6 +762,7 @@
+@@ -754,6 +761,7 @@
        }
     }
  
@@ -132,7 +132,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -780,13 +788,80 @@
+@@ -779,13 +787,80 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -215,7 +215,7 @@
     public static enum OffsetType {
        NONE,
        XZ,
-@@ -805,6 +880,8 @@
+@@ -804,6 +879,8 @@
        private float field_200961_i = 0.6F;
        private ResourceLocation field_222381_j;
        private boolean field_208772_j;
@@ -224,7 +224,7 @@
  
        private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
           this.field_200953_a = p_i48616_1_;
-@@ -835,6 +912,8 @@
+@@ -834,6 +911,8 @@
           block$properties.field_200956_d = p_200950_0_.field_149762_H;
           block$properties.field_200961_i = p_200950_0_.func_208618_m();
           block$properties.field_208772_j = p_200950_0_.field_208621_p;
@@ -233,7 +233,7 @@
           return block$properties;
        }
  
-@@ -883,6 +962,16 @@
+@@ -882,6 +961,16 @@
           return this;
        }
  

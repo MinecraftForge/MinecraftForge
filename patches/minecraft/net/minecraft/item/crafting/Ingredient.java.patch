@@ -1,7 +1,7 @@
 --- a/net/minecraft/item/crafting/Ingredient.java
 +++ b/net/minecraft/item/crafting/Ingredient.java
-@@ -30,6 +30,12 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -28,6 +28,12 @@
+ import net.minecraft.util.registry.Registry;
  
  public class Ingredient implements Predicate<ItemStack> {
 +   //Because Mojang caches things... we need to invalidate them.. so... here we go..
@@ -13,7 +13,7 @@
     private static final Predicate<? super Ingredient.IItemList> field_209362_b = (p_209361_0_) -> {
        return !p_209361_0_.func_199799_a().stream().allMatch(ItemStack::func_190926_b);
     };
-@@ -37,14 +43,16 @@
+@@ -35,11 +41,14 @@
     private final Ingredient.IItemList[] field_199807_b;
     private ItemStack[] field_193371_b;
     private IntList field_194140_c;
@@ -27,11 +27,8 @@
 +      Ingredient.INSTANCES.add(this);
     }
  
--   @OnlyIn(Dist.CLIENT)
     public ItemStack[] func_193365_a() {
-       this.func_199806_d();
-       return this.field_193371_b;
-@@ -96,6 +104,10 @@
+@@ -93,6 +102,10 @@
  
     public final void func_199564_a(PacketBuffer p_199564_1_) {
        this.func_199806_d();
@@ -42,7 +39,7 @@
        p_199564_1_.func_150787_b(this.field_193371_b.length);
  
        for(int i = 0; i < this.field_193371_b.length; ++i) {
-@@ -122,6 +134,25 @@
+@@ -119,6 +132,25 @@
        return this.field_199807_b.length == 0 && (this.field_193371_b == null || this.field_193371_b.length == 0) && (this.field_194140_c == null || this.field_194140_c.isEmpty());
     }
  
@@ -68,15 +65,7 @@
     public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
        Ingredient ingredient = new Ingredient(p_209357_0_);
        return ingredient.field_199807_b.length == 0 ? field_193370_a : ingredient;
-@@ -133,7 +164,6 @@
-       }));
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public static Ingredient func_193369_a(ItemStack... p_193369_0_) {
-       return func_209357_a(Arrays.stream(p_193369_0_).map((p_209356_0_) -> {
-          return new Ingredient.SingleItemList(p_209356_0_);
-@@ -146,6 +176,9 @@
+@@ -142,6 +174,9 @@
  
     public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
        int i = p_199566_0_.func_150792_a();
@@ -86,7 +75,7 @@
        return func_209357_a(Stream.generate(() -> {
           return new Ingredient.SingleItemList(p_199566_0_.func_150791_c());
        }).limit((long)i));
-@@ -153,6 +186,8 @@
+@@ -149,6 +184,8 @@
  
     public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
        if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
@@ -95,7 +84,7 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -173,6 +208,11 @@
+@@ -169,6 +206,11 @@
     }
  
     public static Ingredient.IItemList func_199803_a(JsonObject p_199803_0_) {
@@ -107,7 +96,7 @@
        if (p_199803_0_.has("item") && p_199803_0_.has("tag")) {
           throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
        } else if (p_199803_0_.has("item")) {
-@@ -194,6 +234,12 @@
+@@ -190,6 +232,12 @@
        }
     }
  
