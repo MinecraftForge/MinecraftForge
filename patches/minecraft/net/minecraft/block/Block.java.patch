@@ -100,14 +100,14 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -640,6 +644,7 @@
-       return !this.field_149764_J.func_76220_a() && !this.field_149764_J.func_76224_d();
+@@ -677,6 +681,7 @@
+       p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
 +   @Deprecated // Forge: Use more sensitive version below: getPickBlock
-    @OnlyIn(Dist.CLIENT)
-    public ITextComponent func_200291_n() {
-       return new TranslationTextComponent(this.func_149739_a());
+    public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
+       return new ItemStack(this);
+    }
 @@ -690,6 +695,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }

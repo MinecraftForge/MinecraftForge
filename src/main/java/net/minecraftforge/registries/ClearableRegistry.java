@@ -21,8 +21,11 @@ package net.minecraftforge.registries;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -55,12 +58,16 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     private final BiMap<ResourceLocation, T> map = HashBiMap.create();
     private final Set<ResourceLocation> keys = Collections.unmodifiableSet(map.keySet());
     private List<T> values = new ArrayList<>();
+    private Map<ResourceLocation, Set<T>> known = new HashMap<>();
     private final ResourceLocation name;
+    private final boolean isDelegated;
     private int nextId = 0;
 
-    public ClearableRegistry(ResourceLocation name)
+    public ClearableRegistry(ResourceLocation name) { this(name, null); }
+    public ClearableRegistry(ResourceLocation name, Class<T> superType)
     {
         this.name = name;
+        this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
     }
 
     @Override
@@ -107,8 +114,14 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
         T old = map.get(key);
         if (old != null)
         {
-            LOGGER.debug(REGISTRY, "{}: Adding suplicate key '{}' to registry. Old: {} New: {}", name, key, old, value);
+            LOGGER.debug(REGISTRY, "{}: Adding duplicate key '{}' to registry. Old: {} New: {}", name, key, old, value);
             values.remove(old);
+            if (isDelegated)
+            {
+                Set<T> others = known.computeIfAbsent(key, k -> new HashSet<>());
+                others.add(old);
+                others.forEach(e -> getDelegate(e).changeReference(value));
+            }
         }
 
         map.put(key, value);
@@ -117,7 +130,19 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
         if (nextId <= id)
             nextId = id + 1;
 
+        if (isDelegated)
+            getDelegate(value).setName(key);
+
         return value;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private RegistryDelegate<T> getDelegate(T thing)
+    {
+        if (isDelegated)
+            return (RegistryDelegate<T>)((ForgeRegistryEntry)thing).delegate;
+        else
+            throw new IllegalStateException("Tried to get existing delegate from registry that is not delegated.");
     }
 
     @Override
@@ -154,6 +179,14 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     public void clear()
     {
         LOGGER.debug(REGISTRY, "{}: Clearing registry", name);
+        if (isDelegated)
+        {
+            known.values().forEach(s -> {
+                s.forEach(e -> getDelegate(e).changeReference(e));
+                s.clear();
+            });
+            known.clear();
+        }
         map.clear();
         values.clear();
         ids.clear();
@@ -166,7 +199,8 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     }
 
     @Override
-    public Optional<T> getValue(ResourceLocation key) {
+    public Optional<T> getValue(ResourceLocation key)
+    {
         return Optional.ofNullable(map.get(key));
     }
 }
