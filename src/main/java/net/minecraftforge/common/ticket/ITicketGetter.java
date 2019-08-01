@@ -24,4 +24,10 @@ import java.util.Collection;
 public interface ITicketGetter<T> extends ITicketManager<T>
 {
     Collection<SimpleTicket<T>> getTickets();
+
+    /**
+     * This is only for the managing system to completely invalidate a ticket manager from the system.
+     * Don't call this from tickets
+     */
+    void destroy();
 }

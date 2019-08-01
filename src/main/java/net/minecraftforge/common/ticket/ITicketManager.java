@@ -24,4 +24,6 @@ public interface ITicketManager<T>
     void add(SimpleTicket<T> ticket);
 
     void remove(SimpleTicket<T> ticket);
+
+    boolean isDestroyed();
 }

@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.common.ticket.ChunkTicketManager;
+import net.minecraftforge.common.ticket.ITicketGetter;
 import net.minecraftforge.common.ticket.MultiTicketManager;
 import net.minecraftforge.common.ticket.SimpleTicket;
 
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class FarmlandWaterManager
 {
@@ -62,14 +64,20 @@ public class FarmlandWaterManager
         Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.computeIfAbsent(world.getDimension().getType().getId(), id -> new HashMap<>());
         if (chunkPoses.length == 1)
         {
-            ticket.setBackend(ticketMap.computeIfAbsent(chunkPoses[0], ChunkTicketManager::new));
+            ticket.setBackend(() -> ticketMap.computeIfAbsent(chunkPoses[0], ChunkTicketManager::new));
         }
         else
         {
-            ChunkTicketManager<Vec3d>[] tickets = new ChunkTicketManager[chunkPoses.length];
-            for (int i = 0; i < chunkPoses.length; i++)
-                tickets[i] = ticketMap.computeIfAbsent(chunkPoses[i], ChunkTicketManager::new);
-            ticket.setBackend(new MultiTicketManager<>(tickets));
+            ticket.setBackend(() ->
+            {
+                Supplier<ChunkTicketManager<Vec3d>>[] tickets = new Supplier[chunkPoses.length];
+                for (int i = 0; i < chunkPoses.length; i++)
+                {
+                    ChunkPos pos = chunkPoses[i];
+                    tickets[i] = () -> ticketMap.computeIfAbsent(pos, ChunkTicketManager::new);
+                }
+                return new MultiTicketManager<>(tickets);
+            });
         }
         ticket.validate();
         return ticket;
@@ -103,7 +111,7 @@ public class FarmlandWaterManager
     }
 
     /**
-     * Tests if a block is in a region that is watered by blocks. This does not check vanilla water, see {@link net.minecraft.block.BlockFarmland#hasWater(World, BlockPos)}
+     * Tests if a block is in a region that is watered by blocks. This does not check vanilla water, see {@link net.minecraft.block.FarmlandBlock#hasWater(IWorldReader, BlockPos)}}
      * @return true if there is a ticket with an AABB that includes your block
      */
     public static boolean hasBlockWaterTicket(IWorldReader world, BlockPos pos)
@@ -122,13 +130,17 @@ public class FarmlandWaterManager
 
     static void removeTickets(IChunk chunk)
     {
-        ChunkTicketManager<Vec3d> ticketManager = getTicketManager(chunk.getPos(), chunk.getWorldForge());
+        Preconditions.checkArgument(!chunk.getWorldForge().isRemote(), "Water region is only determined server-side");
+        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(chunk.getWorldForge().getDimension().getType().getId());
+        if (ticketMap == null)
+        {
+            return;
+        }
+        ChunkTicketManager<Vec3d> ticketManager = ticketMap.remove(chunk.getPos()); //remove the entire manager from the map
+
         if (ticketManager != null)
         {
-            for (SimpleTicket<Vec3d> ticket : ticketManager.getTickets())
-            {
-                ticket.invalidate();
-            }
+            ticketManager.destroy();
         }
     }
 

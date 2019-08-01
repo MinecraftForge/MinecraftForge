@@ -19,27 +19,50 @@
 
 package net.minecraftforge.common.ticket;
 
+import java.util.Arrays;
+import java.util.function.Supplier;
+
 public class MultiTicketManager<T> implements ITicketManager<T>
 {
-    private final ITicketGetter<T>[] ticketManagers;
+    private final Supplier<? extends ITicketGetter<T>>[] ticketManagersSuppliers;
+    private ITicketGetter<T>[] cachedManagers;
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
-    public MultiTicketManager(ITicketGetter<T>... ticketManagers)
+    public MultiTicketManager(Supplier<? extends ITicketGetter<T>>... ticketManagers)
     {
-        this.ticketManagers = ticketManagers;
+        this.ticketManagersSuppliers = ticketManagers;
+        this.cachedManagers = Arrays.stream(this.ticketManagersSuppliers).map(Supplier::get).toArray(ITicketGetter[]::new);
     }
 
     @Override
     public void add(SimpleTicket<T> ticket)
     {
-        for (ITicketGetter<T> manager : ticketManagers)
-            manager.add(ticket);
+        for (int i = 0; i < cachedManagers.length; i++)
+            getManager(i).add(ticket);
+    }
+
+    private ITicketGetter<T> getManager(int index)
+    {
+        ITicketGetter<T> manager = cachedManagers[index];
+        if (manager.isDestroyed())
+        {
+            manager = ticketManagersSuppliers[index].get();
+            cachedManagers[index] = manager;
+        }
+        return manager;
     }
 
     @Override
     public void remove(SimpleTicket<T> ticket)
     {
-        for (ITicketGetter<T> manager : ticketManagers)
-            manager.remove(ticket);
+        for (int i = 0; i < cachedManagers.length; i++)
+            getManager(i).remove(ticket);
+    }
+
+    @Override
+    public boolean isDestroyed()
+    {
+        return Arrays.stream(cachedManagers).allMatch(ITicketManager::isDestroyed);
     }
 }

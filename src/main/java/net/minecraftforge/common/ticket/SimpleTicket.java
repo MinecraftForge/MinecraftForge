@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Common class for a simple ticket based system.
@@ -31,7 +32,8 @@ import javax.annotation.Nullable;
 public abstract class SimpleTicket<T>
 {
     @Nullable
-    private ITicketManager<T> manager;
+    private Supplier<ITicketManager<T>> managerGetter;
+    private ITicketManager<T> currentManager = null;
     protected boolean isValid = false;
 
     /**
@@ -39,10 +41,10 @@ public abstract class SimpleTicket<T>
      * <br>
      * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftforge.common.FarmlandWaterManager}
      */
-    public final void setBackend(@Nonnull ITicketManager<T> ticketManager)
+    public final void setBackend(@Nonnull Supplier<ITicketManager<T>> ticketManager)
     {
-        Preconditions.checkState(this.manager == null, "Ticket is already registered to a managing system");
-        this.manager = ticketManager;
+        Preconditions.checkState(this.managerGetter == null, "Ticket is already registered to a managing system");
+        this.managerGetter = ticketManager;
     }
 
     /**
@@ -59,10 +61,14 @@ public abstract class SimpleTicket<T>
      */
     public void invalidate()
     {
-        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
-        if (this.isValid())
+        Preconditions.checkState(this.managerGetter != null, "Ticket is not registered to a managing system");
+        if (currentManager.isDestroyed())
         {
-            this.manager.remove(this);
+            currentManager = null;
+        }
+        if (this.isValid() && this.currentManager != null)
+        {
+            this.currentManager.remove(this);
         }
         this.isValid = false;
     }
@@ -72,10 +78,14 @@ public abstract class SimpleTicket<T>
      */
     public void validate()
     {
-        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
+        Preconditions.checkState(this.managerGetter != null, "Ticket is not registered to a managing system");
+        if (currentManager == null || currentManager.isDestroyed())
+        {
+            currentManager = this.managerGetter.get();
+        }
         if (!this.isValid())
         {
-            this.manager.add(this);
+            this.currentManager.add(this);
         }
         this.isValid = true;
     }
