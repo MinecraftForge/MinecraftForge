@@ -81,15 +81,12 @@
 -      if (resourcelocation == LootTables.field_186419_a) {
 -         return Collections.emptyList();
 -      } else {
--         LootContext lootcontext = p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_).func_216022_a(LootParameterSets.field_216267_h);
--         ServerWorld serverworld = lootcontext.func_202879_g();
--         LootTable loottable = serverworld.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
+          LootContext lootcontext = p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_).func_216022_a(LootParameterSets.field_216267_h);
+          ServerWorld serverworld = lootcontext.func_202879_g();
+          LootTable loottable = serverworld.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
 -         return loottable.func_216113_a(lootcontext);
 -      }
-+      p_220076_2_ = p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_);
-+      ServerWorld serverworld = p_220076_2_.func_216018_a();
-+      LootTable loottable = serverworld.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
-+      return net.minecraftforge.event.ForgeEventFactory.fireBlockGenerateLootEvent(loottable, p_220076_2_);
++      return net.minecraftforge.event.ForgeEventFactory.fireBlockGenerateLootEvent(loottable, p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_));
     }
  
     public static List<ItemStack> func_220070_a(BlockState p_220070_0_, ServerWorld p_220070_1_, BlockPos p_220070_2_, @Nullable TileEntity p_220070_3_) {
