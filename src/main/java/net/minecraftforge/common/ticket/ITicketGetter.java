@@ -24,9 +24,4 @@ import java.util.Collection;
 public interface ITicketGetter<T> extends ITicketManager<T>
 {
     Collection<SimpleTicket<T>> getTickets();
-
-    default void destroy()
-    {
-        getTickets().forEach(SimpleTicket::invalidate);
-    }
 }

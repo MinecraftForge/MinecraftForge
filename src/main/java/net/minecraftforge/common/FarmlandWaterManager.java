@@ -119,22 +119,6 @@ public class FarmlandWaterManager
         return false;
     }
 
-    static void removeTickets(Chunk chunk)
-    {
-        Preconditions.checkArgument(!chunk.getWorld().isRemote, "Water region is only determined server-side");
-        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(chunk.getWorld().provider.getDimension());
-        if (ticketMap == null)
-        {
-            return;
-        }
-        ChunkTicketManager<Vec3d> ticketManager = ticketMap.remove(chunk.getPos());
-
-        if (ticketManager != null)
-        {
-            ticketManager.destroy();
-        }
-    }
-
     private static ChunkTicketManager<Vec3d> getTicketManager(ChunkPos pos, World world) {
         Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(world.provider.getDimension());
