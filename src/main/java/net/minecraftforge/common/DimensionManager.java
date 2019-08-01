@@ -73,7 +73,7 @@ public class DimensionManager
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker DIMMGR = MarkerManager.getMarker("DIMS");
 
-    private static final ClearableRegistry<DimensionType> REGISTRY = new ClearableRegistry<>(new ResourceLocation("dimension_type"));
+    private static final ClearableRegistry<DimensionType> REGISTRY = new ClearableRegistry<>(new ResourceLocation("dimension_type"), DimensionType.class);
 
     private static final Int2ObjectMap<Data> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
@@ -379,10 +379,11 @@ public class DimensionManager
                 registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
             }
         }
+    }
 
-        //Allow modders to register dimensions/claim the missing.
+    public static void fireRegister()
+    {
         MinecraftForge.EVENT_BUS.post(new RegisterDimensionsEvent(savedEntries));
-
         if (!savedEntries.isEmpty())
         {
             savedEntries.values().forEach(entry -> {
