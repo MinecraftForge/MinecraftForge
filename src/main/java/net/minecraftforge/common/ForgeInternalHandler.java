@@ -81,12 +81,5 @@ public class ForgeInternalHandler
         if (event.phase == Phase.END)
             CloudRenderer.updateCloudSettings();
     }
-
-    @SubscribeEvent
-    public void onChunkUnload(ChunkEvent.Unload event)
-    {
-        if (!event.getWorld().isRemote())
-            FarmlandWaterManager.removeTickets(event.getChunk());
-    }
 }
 
