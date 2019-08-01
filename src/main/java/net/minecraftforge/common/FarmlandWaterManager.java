@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.MapMaker;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -58,7 +59,7 @@ public class FarmlandWaterManager
     {
         Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
         Preconditions.checkArgument(chunkPoses.length > 0, "Need at least one chunk pos");
-        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new HashMap<>());
+        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new MapMaker().weakValues().makeMap());
         if (chunkPoses.length == 1)
         {
             ticket.setBackend(ticketMap.computeIfAbsent(chunkPoses[0], ChunkTicketManager::new));
