@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/ResourcePackRepository.java
++++ ../src-work/minecraft/net/minecraft/client/resources/ResourcePackRepository.java
+@@ -310,9 +310,10 @@
+ 
+     private boolean func_190113_a(String p_190113_1_, File p_190113_2_)
+     {
++        InputStream is = null;
+         try
+         {
+-            String s = DigestUtils.sha1Hex((InputStream)(new FileInputStream(p_190113_2_)));
++            String s = DigestUtils.sha1Hex(is = (InputStream)(new FileInputStream(p_190113_2_)));
+ 
+             if (p_190113_1_.isEmpty())
+             {
+@@ -332,6 +333,7 @@
+         {
+             field_177320_c.warn("File {} couldn't be hashed.", p_190113_2_, ioexception);
+         }
++        finally { IOUtils.closeQuietly(is); } // Forge: close stream after use
+ 
+         return false;
+     }

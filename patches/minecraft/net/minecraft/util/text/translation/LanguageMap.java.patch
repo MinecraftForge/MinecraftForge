@@ -1,13 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
 +++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
-@@ -23,9 +23,29 @@
+@@ -23,10 +23,37 @@
  
      public LanguageMap()
      {
 +        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-+        inject(this, inputstream);
+         try
+         {
+-            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++            inject(this, inputstream);
++        }
++        finally
++        {
++            IOUtils.closeQuietly(inputstream); // Forge: close stream after use (MC-153470)
++        }
 +    }
-+
+ 
 +    public static void inject(InputStream inputstream)
 +    {
 +        inject(field_74817_a, inputstream);
@@ -23,15 +31,15 @@
 +    public static Map<String, String> parseLangFile(InputStream inputstream)
 +    {
 +        Map<String, String> table = Maps.newHashMap();
-         try
-         {
--            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++        try
++        {
 +            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
 +            if (inputstream == null) return table;
- 
++
              for (String s : IOUtils.readLines(inputstream, StandardCharsets.UTF_8))
              {
-@@ -37,17 +57,18 @@
+                 if (!s.isEmpty() && s.charAt(0) != '#')
+@@ -37,17 +64,18 @@
                      {
                          String s1 = astring[0];
                          String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");

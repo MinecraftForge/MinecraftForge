@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -43,6 +42,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
@@ -387,7 +387,7 @@ public class GuiModList extends GuiScreen
                 {
                     InputStream logoResource = getClass().getResourceAsStream(logoFile);
                     if (logoResource != null)
-                        logo = ImageIO.read(logoResource);
+                        logo = TextureUtil.readBufferedImage(logoResource);
                 }
                 if (logo != null)
                 {

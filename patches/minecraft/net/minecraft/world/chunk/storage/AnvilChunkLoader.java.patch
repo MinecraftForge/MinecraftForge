@@ -32,8 +32,11 @@
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
          NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
  
-@@ -67,7 +89,7 @@
+@@ -65,9 +87,10 @@
+             }
+ 
              nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
++            datainputstream.close(); // Forge: close stream after use
          }
  
 -        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
@@ -41,7 +44,7 @@
      }
  
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
-@@ -80,6 +102,13 @@
+@@ -80,6 +103,13 @@
      @Nullable
      protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
      {
@@ -55,7 +58,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at {},{} is missing level data, skipping", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_));
-@@ -103,10 +132,29 @@
+@@ -103,10 +133,29 @@
                      field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h));
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
@@ -86,7 +89,7 @@
              }
          }
      }
-@@ -121,7 +169,10 @@
+@@ -121,7 +170,10 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              nbttagcompound.func_74768_a("DataVersion", 1343);
@@ -97,7 +100,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +356,19 @@
+@@ -305,11 +357,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -117,7 +120,7 @@
              }
          }
  
-@@ -318,8 +377,16 @@
+@@ -318,8 +378,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -134,7 +137,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -345,6 +412,18 @@
+@@ -345,6 +413,18 @@
  
              p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
          }
@@ -153,7 +156,7 @@
      }
  
      private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -388,6 +467,16 @@
+@@ -388,6 +468,16 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -170,7 +173,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +520,6 @@
+@@ -431,8 +521,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
@@ -179,7 +182,7 @@
      }
  
      @Nullable
-@@ -563,4 +650,9 @@
+@@ -563,4 +651,9 @@
              return entity;
          }
      }

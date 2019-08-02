@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -439,9 +440,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void modConstruction(FMLConstructionEvent evt)
     {
         InputStream is = ForgeModContainer.class.getResourceAsStream("/META-INF/vanilla_annotations.json");
-        if (is != null)
-            JsonAnnotationLoader.loadJson(is, null, evt.getASMHarvestedData());
-        log.debug("Loading Vanilla annotations: " + is);
+        try
+        {
+            if (is != null)
+                JsonAnnotationLoader.loadJson(is, null, evt.getASMHarvestedData());
+            log.debug("Loading Vanilla annotations: " + is);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(is);
+        }
 
         List<String> all = Lists.newArrayList();
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashReportDetail.class.getName().replace('.', '/')))
