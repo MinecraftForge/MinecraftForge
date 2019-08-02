@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Common class for a simple ticket based system.
@@ -31,18 +32,27 @@ import javax.annotation.Nullable;
 public abstract class SimpleTicket<T>
 {
     @Nullable
-    private ITicketManager<T> manager;
+    private ITicketManager<T> masterManager;
+    private ITicketManager<T>[] dummyManagers;
     protected boolean isValid = false;
+
+    @Deprecated
+    public final void setBackend(@Nonnull ITicketManager<T> ticketManager)
+    {
+        this.setManager(ticketManager);
+    }
 
     /**
      * Internal method that sets the collection from the managing system.
      * <br>
      * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftforge.common.FarmlandWaterManager}
      */
-    public final void setBackend(@Nonnull ITicketManager<T> ticketManager)
+    @SafeVarargs
+    public final void setManager(@Nonnull ITicketManager<T> masterManager, @Nonnull ITicketManager<T>... dummyManagers)
     {
-        Preconditions.checkState(this.manager == null, "Ticket is already registered to a managing system");
-        this.manager = ticketManager;
+        Preconditions.checkState(this.masterManager == null, "Ticket is already registered to a managing system");
+        this.masterManager = masterManager;
+        this.dummyManagers = dummyManagers;
     }
 
     /**
@@ -59,12 +69,33 @@ public abstract class SimpleTicket<T>
      */
     public void invalidate()
     {
-        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
         if (this.isValid())
         {
-            this.manager.remove(this);
+            forEachManager(ticketManager -> ticketManager.remove(this));
         }
         this.isValid = false;
+    }
+
+    /**
+     * Called by the managing system when a ticket wishes to unload all of it's tickets, e.g. on chunk unload
+     * <br>The ticket must not remove itself from the manager that is calling the unload!
+     * The ticket must ensure that it removes itself from all of it's dummies when returning true
+     * @param unloadingManager The manager that is unloading this ticket
+     * @returns true if this ticket can be removed, false if not.
+     */
+    public boolean unload(ITicketManager<T> unloadingManager)
+    {
+        if (unloadingManager == masterManager)
+        {
+            this.isValid = false;
+            for (ITicketManager<T> manager : dummyManagers)
+            {
+                manager.remove(this); //remove ourself from all dummies
+            }
+            this.isValid = false; //and mark us as invalid
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -72,13 +103,34 @@ public abstract class SimpleTicket<T>
      */
     public void validate()
     {
-        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
         if (!this.isValid())
         {
-            this.manager.add(this);
+            forEachManager(ticketManager -> ticketManager.add(this));
         }
         this.isValid = true;
     }
 
     public abstract boolean matches(T toMatch);
+
+    //Helper methods for custom tickets below
+
+    protected final void forEachManager(Consumer<ITicketManager<T>> consumer)
+    {
+        Preconditions.checkState(this.masterManager != null, "Ticket is not registered to a managing system");
+        consumer.accept(masterManager);
+        for (ITicketManager<T> manager : dummyManagers)
+        {
+            consumer.accept(manager);
+        }
+    }
+
+    protected final ITicketManager<T> getMasterManager()
+    {
+        return masterManager;
+    }
+
+    protected final ITicketManager<T>[] getDummyManagers()
+    {
+        return dummyManagers;
+    }
 }

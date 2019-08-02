@@ -19,6 +19,10 @@
 
 package net.minecraftforge.common.ticket;
 
+/**
+ * @deprecated No longer needed, {@link SimpleTicket} now accepts dummy managers
+ */
+@Deprecated
 public class MultiTicketManager<T> implements ITicketManager<T>
 {
     private final ITicketGetter<T>[] ticketManagers;
