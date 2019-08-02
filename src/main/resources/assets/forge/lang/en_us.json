@@ -6,6 +6,7 @@
   "fml.menu.mods.a_to_z": "A-Z",
   "fml.menu.mods.z_to_a": "Z-A",
   "fml.menu.mods.config": "Config",
+  "fml.menu.mods.openmodsfolder": "Open mods folder",
   "fml.menu.modoptions": "Mod Options...",
   "fml.menu.mods.info.version":"Version: {0}",
   "fml.menu.mods.info.idstate":"ModID: {0} State:{1,lower}",
