@@ -125,7 +125,7 @@ public class ForgeConfig
         public final BooleanValue selectiveResourceReloadEnabled;
 
         public final BooleanValue showLoadWarnings;
-        
+
         public final BooleanValue allowEmissiveItems;
 
         Client(ForgeConfigSpec.Builder builder) {
@@ -168,7 +168,7 @@ public class ForgeConfig
                 .comment("When enabled, forge will show any warnings that occurred during loading")
                 .translation("forge.configgui.showloadwarnings")
                 .define("showLoadWarnings", true);
-            
+
             allowEmissiveItems = builder
                 .comment("Allow item rendering to detect emissive quads and draw them properly. This allows glowing blocks to look the same in item form, but incurs a very slight performance hit.")
                 .translation("forge.configgui.allowEmissiveItems")
@@ -209,67 +209,4 @@ public class ForgeConfig
     //public static boolean disableVersionCheck = false;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
-
-    //Client
-    //public static int clumpingThreshold = 64;
-    //public static boolean zoomInMissingModelTextInGui = false;
-    //public static boolean disableStairSlabCulling = false;
-    //public static boolean alwaysSetupTerrainOffThread = false;
-    //public static boolean forgeLightPipelineEnabled = true;
-    //public static boolean selectiveResourceReloadEnabled = false;
-
-    //TODO
-    //public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
-
-    /*
-    private static void syncConfig(boolean load)
-    {
-        //prop = config.get(Configuration.CATEGORY_CLIENT, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
-        //prop.setComment("Control the range of sky blending for colored skies in biomes.");
-        //prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
-        //blendRanges = prop.getIntList();
-        //propOrder.add(prop.getName());
-    }
-
-    /**
-     * By subscribing to the OnConfigChangedEvent we are able to execute code when our config screens are closed.
-     * This implementation uses the optional configID string to handle multiple Configurations using one event handler.
-     * /
-    @SubscribeEvent
-    public void onConfigChanged(OnConfigChangedEvent event)
-    {
-        if (getMetadata().modId.equals(event.getModID()))
-        {
-            if ("chunkLoader".equals(event.getConfigID()))
-            {
-                ForgeChunkManager.syncConfigDefaults();
-                ForgeChunkManager.loadConfiguration();
-            }
-            else
-            {
-                boolean tmpStairs = disableStairSlabCulling;
-
-                syncConfig(false);
-
-                if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
-                {
-                    FMLCommonHandler.instance().reloadRenderers();
-                }
-
-            }
-        }
-    }
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
-    }
-
-    @Subscribe
-    public void postInit(InterModProcessEvent evt)
-    {
-        ForgeChunkManager.loadConfiguration();
-    }
-    */
-
 }

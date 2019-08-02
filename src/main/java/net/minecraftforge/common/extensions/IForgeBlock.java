@@ -365,7 +365,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLeaves(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || !state.isOpaqueCube(world, pos);
+        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
     }
 
     /**
