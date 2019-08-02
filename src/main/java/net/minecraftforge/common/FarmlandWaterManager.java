@@ -42,9 +42,9 @@ public class FarmlandWaterManager
     private static final Int2ObjectMap<Map<ChunkPos, ChunkTicketManager<Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
 
     @Deprecated
-    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos... additionalChunks)
+    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos... chunkPoses)
     {
-        return addCustomTicket(world, ticket, additionalChunks[0], Arrays.copyOfRange(additionalChunks, 1, additionalChunks.length));
+        return addCustomTicket(world, ticket, chunkPoses[0], Arrays.copyOfRange(chunkPoses, 1, chunkPoses.length));
     }
 
     /**
@@ -86,9 +86,7 @@ public class FarmlandWaterManager
     public static AABBTicket addAABBTicket(World world, AxisAlignedBB aabb)
     {
         if (DEBUG)
-        {
             FMLLog.log.info("FarmlandWaterManager: New AABBTicket, aabb={}", aabb);
-        }
         //First calculate all chunks the aabb is in
         ChunkPos leftUp = new ChunkPos(((int) aabb.minX) >> 4, ((int) aabb.minZ) >> 4);
         ChunkPos rightDown = new ChunkPos(((int) aabb.maxX) >> 4, ((int) aabb.maxZ) >> 4);
@@ -108,18 +106,14 @@ public class FarmlandWaterManager
             if (distToCenter < masterDistance)
             {
                 if (DEBUG)
-                {
                     FMLLog.log.info("FarmlandWaterManager: New better pos then {}: {}, prev dist {}, new dist {}", masterPos, pos, masterDistance, distToCenter);
-                }
                 masterPos = pos;
                 masterDistance = distToCenter;
             }
         }
         posSet.remove(masterPos);
         if (DEBUG)
-        {
             FMLLog.log.info("FarmlandWaterManager: {} center pos, {} dummy posses. Dist to center {}", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance);
-        }
         return addCustomTicket(world, new AABBTicket(aabb), masterPos, posSet.toArray(new ChunkPos[0]));
     }
 
@@ -153,25 +147,14 @@ public class FarmlandWaterManager
 
     static void removeTickets(Chunk chunk)
     {
-        Preconditions.checkArgument(!chunk.getWorld().isRemote, "Water region is only determined server-side");
-        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(chunk.getWorld().provider.getDimension());
-        if (ticketMap == null)
-        {
-            return;
-        }
-        ChunkTicketManager<Vec3d> ticketManager = ticketMap.remove(chunk.getPos());
-
+        ChunkTicketManager<Vec3d> ticketManager = getTicketManager(chunk.getPos(), chunk.getWorld());
         if (ticketManager != null)
         {
             if (DEBUG)
-            {
                 FMLLog.log.info("FarmlandWaterManager: got tickets {} at {} before", ticketManager.getTickets().size(), ticketManager.pos);
-            }
             ticketManager.getTickets().removeIf(next -> next.unload(ticketManager)); //remove if this is the master manager of the ticket
             if (DEBUG)
-            {
                 FMLLog.log.info("FarmlandWaterManager: got tickets {} at {} after", ticketManager.getTickets().size(), ticketManager.pos);
-            }
         }
     }
 
