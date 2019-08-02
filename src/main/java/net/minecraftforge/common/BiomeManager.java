@@ -21,9 +21,7 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 
@@ -37,7 +35,6 @@ import javax.annotation.Nullable;
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-    private static Map<Biome, Biome> moddedRiverMap = new HashMap<>();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
 
@@ -106,18 +103,6 @@ public class BiomeManager
         if (list != null) list.add(entry);
     }
 
-    public static void setRiver(Biome biome, @Nullable Biome river)
-    {
-        if (river == null)
-        {
-            moddedRiverMap.put(biome, biome);
-        }
-        else
-        {
-            moddedRiverMap.put(biome, river);
-        }
-    }
-
     public static void removeBiome(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
@@ -136,12 +121,6 @@ public class BiomeManager
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
-    }
-
-    @Nullable
-    public static Biome getRiver(Biome biome)
-    {
-        return moddedRiverMap.get(biome);
     }
 
     public static boolean isTypeListModded(BiomeType type)

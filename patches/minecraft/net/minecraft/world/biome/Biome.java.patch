@@ -41,7 +41,18 @@
                 return true;
              }
           }
-@@ -526,6 +526,18 @@
+@@ -374,6 +374,10 @@
+    public String func_205402_s() {
+       return this.field_185364_H;
+    }
++   
++   public Biome getRiver() {
++       return Biomes.field_76781_i;
++   }
+ 
+    public static class Builder {
+       @Nullable
+@@ -526,6 +530,18 @@
        }
     }
  
