@@ -33,8 +33,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
     @Override
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
     {
-        lightmap[0] = calcLightmap(blockInfo.getBlockLight(), x, y, z);
-        lightmap[1] = calcLightmap(blockInfo.getSkyLight(), x, y, z);
+        calcLightmap(lightmap, x, y, z);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         color[2] *= a;
     }
 
-    protected float calcLightmap(float[][][][] light, float x, float y, float z)
+    protected void calcLightmap(float[] lightmap, float x, float y, float z)
     {
         x *= 2;
         y *= 2;
@@ -105,8 +104,12 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
             z *= s;
         }
 
-        float l = 0;
-        float s = 0;
+        float[][][][] blockLight = blockInfo.getBlockLight();
+        float[][][][] skyLight   = blockInfo.getSkyLight();
+
+        float bl = 0f;
+        float sl = 0f;
+        float s  = 0f;
 
         for(int ix = 0; ix <= 1; ix++)
         {
@@ -124,26 +127,28 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
                     float sz = vx + vy + 3;
 
                     float bx = (2 * vx + vy + vz + 6) / (s3 * sy * sz * (vx + 2));
-                    s += bx;
-                    l += bx * light[0][ix][iy][iz];
+                    s  += bx;
+                    bl += bx * blockLight[0][ix][iy][iz];
+                    sl += bx *   skyLight[0][ix][iy][iz];
 
                     float by = (2 * vy + vz + vx + 6) / (s3 * sz * sx * (vy + 2));
-                    s += by;
-                    l += by * light[1][ix][iy][iz];
+                    s  += by;
+                    bl += by * blockLight[1][ix][iy][iz];
+                    sl += by *   skyLight[1][ix][iy][iz];
 
                     float bz = (2 * vz + vx + vy + 6) / (s3 * sx * sy * (vz + 2));
-                    s += bz;
-                    l += bz * light[2][ix][iy][iz];
+                    s  += bz;
+                    bl += bz * blockLight[2][ix][iy][iz];
+                    sl += bz *   skyLight[2][ix][iy][iz];
                 }
             }
         }
 
-        l /= s;
+        bl /= s;
+        sl /= s;
 
-        if(l > 15f * 0x20 / 0xFFFF) l = 15f * 0x20 / 0xFFFF;
-        if(l < 0) l = 0;
-
-        return l;
+        lightmap[0] = MathHelper.clamp(bl, 0f, 15f * 0x20 / 0xFFFF);
+        lightmap[1] = MathHelper.clamp(sl, 0f, 15f * 0x20 / 0xFFFF);
     }
 
     protected float getAo(float x, float y, float z)
