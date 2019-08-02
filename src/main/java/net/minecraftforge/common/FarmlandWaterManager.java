@@ -41,6 +41,12 @@ public class FarmlandWaterManager
     private static boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
     private static final Int2ObjectMap<Map<ChunkPos, ChunkTicketManager<Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
 
+    @Deprecated
+    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos... additionalChunks)
+    {
+        return addCustomTicket(world, ticket, additionalChunks[0], Arrays.copyOfRange(additionalChunks, 1, additionalChunks.length));
+    }
+
     /**
      * Adds a custom ticket.
      * Use {@link #addAABBTicket(World, AxisAlignedBB)} if you just need a ticket that can water a certain area.
