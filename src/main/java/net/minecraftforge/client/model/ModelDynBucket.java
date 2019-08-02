@@ -273,19 +273,26 @@ public final class ModelDynBucket implements IModel
         public void register(TextureMap map)
         {
             // only create these textures if they are not added by a resource pack
-
-            if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_cover.png")) == null)
+            try (IResource cover = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_cover.png"));
+                 IResource base = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_base.png")))
             {
-                ResourceLocation bucketCover = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_cover");
-                BucketCoverSprite bucketCoverSprite = new BucketCoverSprite(bucketCover);
-                map.setTextureEntry(bucketCoverSprite);
+                if (cover == null)
+                {
+                    ResourceLocation bucketCover = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_cover");
+                    BucketCoverSprite bucketCoverSprite = new BucketCoverSprite(bucketCover);
+                    map.setTextureEntry(bucketCoverSprite);
+                }
+
+                if (base == null)
+                {
+                    ResourceLocation bucketBase = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_base");
+                    BucketBaseSprite bucketBaseSprite = new BucketBaseSprite(bucketBase);
+                    map.setTextureEntry(bucketBaseSprite);
+                }
             }
-
-            if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_base.png")) == null)
+            catch (IOException e)
             {
-                ResourceLocation bucketBase = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_base");
-                BucketBaseSprite bucketBaseSprite = new BucketBaseSprite(bucketBase);
-                map.setTextureEntry(bucketBaseSprite);
+                FMLLog.log.error("Failed to close resource", e);
             }
         }
 

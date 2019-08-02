@@ -224,7 +224,6 @@ public class OBJModel implements IModel
         //Partial reading of the OBJ format. Documentation taken from http://paulbourke.net/dataformats/obj/
         public OBJModel parse() throws IOException
         {
-            String currentLine = "";
             Material material = new Material();
             material.setName(Material.DEFAULT_NAME);
             int usemtlCounter = 0;
@@ -233,9 +232,9 @@ public class OBJModel implements IModel
             for (;;)
             {
                 lineNum++;
-                currentLine = objReader.readLine();
+                String currentLine = objReader.readLine();
                 if (currentLine == null) break;
-                currentLine.trim();
+                currentLine = currentLine.trim();
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
 
                 try
@@ -387,8 +386,6 @@ public class OBJModel implements IModel
         private Set<String> unknownMaterialCommands = new HashSet<String>();
         private Map<String, Material> materials = new HashMap<String, Material>();
         private Map<String, Group> groups = new HashMap<String, Group>();
-        private InputStreamReader mtlStream;
-        private BufferedReader mtlReader;
 
 //        private float[] minUVBounds = new float[] {0.0f, 0.0f};
 //        private float[] maxUVBounds = new float[] {1.0f, 1.0f};
@@ -436,8 +433,6 @@ public class OBJModel implements IModel
             ret.unknownMaterialCommands = this.unknownMaterialCommands;
             ret.materials = mats;
             ret.groups = this.groups;
-            ret.mtlStream = this.mtlStream;
-            ret.mtlReader = this.mtlReader;
 //            ret.minUVBounds = this.minUVBounds;
 //            ret.maxUVBounds = this.maxUVBounds;
             return ret;
@@ -479,10 +474,10 @@ public class OBJModel implements IModel
         public void changeMaterialColor(String name, int color)
         {
             Vector4f colorVec = new Vector4f();
-            colorVec.w = (color >> 24 & 255) / 255;
-            colorVec.x = (color >> 16 & 255) / 255;
-            colorVec.y = (color >> 8 & 255) / 255;
-            colorVec.z = (color & 255) / 255;
+            colorVec.w = (color >> 24 & 255) / 255f;
+            colorVec.x = (color >> 16 & 255) / 255f;
+            colorVec.y = (color >> 8 & 255) / 255f;
+            colorVec.z = (color & 255) / 255f;
             this.materials.get(name).setColor(colorVec);
         }
 
@@ -504,87 +499,86 @@ public class OBJModel implements IModel
             String domain = from.getResourceDomain();
             if (!path.contains("/"))
                 path = from.getResourcePath().substring(0, from.getResourcePath().lastIndexOf("/") + 1) + path;
-            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), StandardCharsets.UTF_8);
-            mtlReader = new BufferedReader(mtlStream);
 
-            String currentLine = "";
-            Material material = new Material();
-            material.setName(Material.WHITE_NAME);
-            material.setTexture(Texture.WHITE);
-            this.materials.put(Material.WHITE_NAME, material);
-            this.materials.put(Material.DEFAULT_NAME, new Material(Texture.WHITE));
-
-            for (;;)
+            ResourceLocation mtlLocation = new ResourceLocation(domain, path);
+            try (IResource resource = manager.getResource(mtlLocation))
             {
-                currentLine = mtlReader.readLine();
-                if (currentLine == null) break;
-                currentLine.trim();
-                if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
+                BufferedReader mtlReader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
 
-                String[] fields = WHITE_SPACE.split(currentLine, 2);
-                String key = fields[0];
-                String data = fields[1];
+                Material material = new Material();
+                material.setName(Material.WHITE_NAME);
+                material.setTexture(Texture.WHITE);
+                this.materials.put(Material.WHITE_NAME, material);
+                this.materials.put(Material.DEFAULT_NAME, new Material(Texture.WHITE));
 
-                if (key.equalsIgnoreCase("newmtl"))
+                for (;;)
                 {
-                    hasSetColor = false;
-                    hasSetTexture = false;
-                    material = new Material();
-                    material.setName(data);
-                    this.materials.put(data, material);
-                }
-                else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks"))
-                {
-                    if (key.equalsIgnoreCase("Kd") || !hasSetColor)
+                    String currentLine = mtlReader.readLine();
+                    if (currentLine == null) break;
+                    currentLine = currentLine.trim();
+                    if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
+
+                    String[] fields = WHITE_SPACE.split(currentLine, 2);
+                    String key = fields[0];
+                    String data = fields[1];
+
+                    if (key.equalsIgnoreCase("newmtl"))
                     {
-                        String[] rgbStrings = WHITE_SPACE.split(data, 3);
-                        Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
-                        hasSetColor = true;
-                        material.setColor(color);
+                        hasSetColor = false;
+                        hasSetTexture = false;
+                        material = new Material();
+                        material.setName(data);
+                        this.materials.put(data, material);
                     }
-                    else
+                    else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks"))
                     {
-                        FMLLog.log.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
-                    }
-                }
-                else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
-                {
-                    if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture)
-                    {
-                        if (data.contains(" "))
+                        if (key.equalsIgnoreCase("Kd") || !hasSetColor)
                         {
-                            String[] mapStrings = WHITE_SPACE.split(data);
-                            String texturePath = mapStrings[mapStrings.length - 1];
-                            Texture texture = new Texture(texturePath);
-                            hasSetTexture = true;
-                            material.setTexture(texture);
+                            String[] rgbStrings = WHITE_SPACE.split(data, 3);
+                            Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
+                            hasSetColor = true;
+                            material.setColor(color);
                         }
                         else
                         {
-                            Texture texture = new Texture(data);
-                            hasSetTexture = true;
-                            material.setTexture(texture);
+                            FMLLog.log.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), mtlLocation, key);
                         }
                     }
-                    else
+                    else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
                     {
-                        FMLLog.log.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture)
+                        {
+                            if (data.contains(" "))
+                            {
+                                String[] mapStrings = WHITE_SPACE.split(data);
+                                String texturePath = mapStrings[mapStrings.length - 1];
+                                Texture texture = new Texture(texturePath);
+                                hasSetTexture = true;
+                                material.setTexture(texture);
+                            }
+                            else
+                            {
+                                Texture texture = new Texture(data);
+                                hasSetTexture = true;
+                                material.setTexture(texture);
+                            }
+                        }
+                        else
+                        {
+                            FMLLog.log.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), mtlLocation, key);
+                        }
                     }
-                }
-                else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
-                {
-                    //d <-optional key here> float[0.0:1.0, 1.0]
-                    //Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
-                    String[] splitData = WHITE_SPACE.split(data);
-                    float alpha = Float.parseFloat(splitData[splitData.length - 1]);
-                    material.getColor().setW(alpha);
-                }
-                else
-                {
-                    if (!unknownMaterialCommands.contains(key))
+                    else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
                     {
-                        unknownMaterialCommands.add(key);
-                        FMLLog.log.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        //d <-optional key here> float[0.0:1.0, 1.0]
+                        //Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
+                        String[] splitData = WHITE_SPACE.split(data);
+                        float alpha = Float.parseFloat(splitData[splitData.length - 1]);
+                        material.getColor().setW(alpha);
+                    }
+                    else if (unknownMaterialCommands.add(key))
+                    {
+                        FMLLog.log.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, mtlLocation);
                     }
                 }
             }
