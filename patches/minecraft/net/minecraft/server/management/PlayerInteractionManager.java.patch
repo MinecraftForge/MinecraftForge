@@ -18,18 +18,24 @@
              this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
              this.field_73094_o = -1;
              this.field_73088_d = false;
-@@ -115,7 +115,9 @@
+@@ -115,7 +115,15 @@
        double d1 = this.field_73090_b.field_70163_u - ((double)p_225416_1_.func_177956_o() + 0.5D) + 1.5D;
        double d2 = this.field_73090_b.field_70161_v - ((double)p_225416_1_.func_177952_p() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 -      if (d3 > 36.0D) {
 +      double dist = field_73090_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 1;
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_225416_1_, p_225416_3_);
++      if (event.isCanceled()) { // Restore block and te data
++         field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
++         field_73092_a.func_184138_a(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), field_73092_a.func_180495_p(p_225416_1_), 3);
++         return;
++      }
 +      dist *= dist;
 +      if (d3 > dist) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
        } else if (p_225416_1_.func_177956_o() >= p_225416_4_) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
-@@ -145,12 +147,12 @@
+@@ -145,12 +153,12 @@
              this.field_73089_e = this.field_73100_i;
              float f = 1.0F;
              BlockState blockstate = this.field_73092_a.func_180495_p(p_225416_1_);
@@ -44,7 +50,7 @@
                 this.func_225415_a(p_225416_1_, p_225416_2_);
              } else {
                 this.field_73088_d = true;
-@@ -203,7 +205,8 @@
+@@ -203,7 +211,8 @@
  
     public boolean func_180237_b(BlockPos p_180237_1_) {
        BlockState blockstate = this.field_73092_a.func_180495_p(p_180237_1_);
@@ -54,7 +60,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
-@@ -211,25 +214,30 @@
+@@ -211,25 +220,30 @@
           if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_73090_b.func_195070_dx()) {
              this.field_73092_a.func_184138_a(p_180237_1_, blockstate, blockstate, 3);
              return false;
@@ -92,7 +98,7 @@
  
                 return true;
              }
-@@ -237,6 +245,14 @@
+@@ -237,12 +251,22 @@
        }
     }
  
@@ -107,3 +113,20 @@
     public ActionResultType func_187250_a(PlayerEntity p_187250_1_, World p_187250_2_, ItemStack p_187250_3_, Hand p_187250_4_) {
        if (this.field_73091_c == GameType.SPECTATOR) {
           return ActionResultType.PASS;
+       } else if (p_187250_1_.func_184811_cZ().func_185141_a(p_187250_3_.func_77973_b())) {
+          return ActionResultType.PASS;
+       } else {
++         ActionResultType cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_);
++         if (cancelResult != null) return cancelResult;
+          int i = p_187250_3_.func_190916_E();
+          int j = p_187250_3_.func_77952_i();
+          ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
+@@ -291,6 +315,8 @@
+             return ActionResultType.SUCCESS;
+          } else if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
+             ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
++            if (event.isCanceled()) return event.getCancellationResult();
+             if (this.func_73083_d()) {
+                int i = p_219441_3_.func_190916_E();
+                ActionResultType actionresulttype = p_219441_3_.func_196084_a(itemusecontext);
