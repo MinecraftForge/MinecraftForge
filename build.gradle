@@ -187,7 +187,6 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
-        SIDE_STRIPPER = rootProject.file('src/main/resources/forge.sas')
     }
 
     def getVersion = {
@@ -215,6 +214,7 @@ project(':forge') {
         patchedSrc = file('src/main/java')
         srgPatches = true
         accessTransformer = file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
+        sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")
 
         runs {
             forge_client {
@@ -583,138 +583,42 @@ project(':forge') {
     }
     task checkSAS(dependsOn: extractInheritance) {
         inputs.file { extractInheritance.output }
-        inputs.file SIDE_STRIPPER
+        inputs.files patcher.sideAnnotationStrippers
         doLast {
             def json = new JsonSlurper().parseText(extractInheritance.output.text)
             
-            def lines = []
-            SIDE_STRIPPER.eachLine { line ->
-                if (line[0] == '\t') return //Skip any tabed lines, those are ones we add
-                def idx = line.indexOf('#')
-                if (idx == 0 || line.isEmpty()) {
-                    lines.add(line)
-                    return
-                }
-                
-                def comment = idx == -1 ? null : line.substring(idx)
-                if (idx != -1) line = line.substring(0, idx - 1)
-                
-                def (cls, desc) = (line.trim() + '    ').split(' ', -1)
-                cls = cls.replaceAll('\\.', '/')
-                desc = desc.replace('(', ' (')
-                if (desc.isEmpty() || json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
-                    println('Invalid: ' + line)
-                    return
-                }
-                
-                def mtd = json[cls]['methods'][desc]
-                lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
-                def children = json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
-                .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
-                children.each { lines.add('\t' + it) }
-            }
-            SIDE_STRIPPER.text = lines.join('\n')
-        }
-    }
-    
-    if (SIDE_STRIPPER != null && SIDE_STRIPPER.exists()) {
-        def setupMCP = project(':mcp').setupMCP
-        setupMCP.addPreDecompile("${project.name}SideStripper", new MCPFunction() {
-            def config = project(':forge').SIDE_STRIPPER // As this is a anon class it can't reference the project directly?
-            File execute(MCPEnvironment env) throws IOException {
-                def input = env.arguments.get('input')
-                def output = env.getFile('output.jar')
-                def cacheFile = env.getFile('lastinput.sha1')
-                def cache = new HashStore(env.project).load(cacheFile)
-                if (cache.areSame(input, config) && output.exists()) return output
-                
-                def classes = [] as Set
-                def methods = [] as Set
-                config.eachLine { line ->
+            patcher.sideAnnotationStrippers.each { f -> 
+                def lines = []
+                f.eachLine { line ->
+                    if (line[0] == '\t') return //Skip any tabed lines, those are ones we add
                     def idx = line.indexOf('#')
-                    if (idx == 0 || line.isEmpty()) return
-                    if (idx != -1) line = line.substring(0, idx - 1)
-                    if (line[0] == '\t') line = line.substring(1)
-                    def (cls, desc) = (line.trim() + '    ').split(' ', -1)
-                    classes.add(cls)
-                    methods.add(cls + ' ' + desc)
-                }
-                
-                if (output.exists()) output.delete()
-                if (!output.getParentFile().exists()) output.getParentFile().mkdirs()
-                output.createNewFile()
-                new ZipInputStream(input.newInputStream()).withCloseable{ zis -> 
-                    new ZipOutputStream(output.newOutputStream()).withCloseable{ zos ->
-                        def entry
-                        while ((entry = zis.getNextEntry()) != null) {
-                            zos.putNextEntry(new ZipEntry(entry))
-                            if (!entry.name.endsWith('.class') || !classes.contains(entry.name.substring(0, entry.name.length() - 6))) {
-                                def read
-                                def buf = new byte[0x100]
-                                while ((read = zis.read(buf, 0, buf.length)) != -1)
-                                    zos.write(buf, 0, read)
-                            } else {
-                                def reader = new ClassReader(zis)
-                                def node = new ClassNode();
-                                reader.accept(node, 0)
-                                
-                                if (node.methods != null) {
-                                    node.methods.each { mtd -> 
-                                        if (methods.contains(node.name + ' ' + mtd.name + mtd.desc)) {
-                                            if (mtd.visibleAnnotations != null) {
-                                                def itr = mtd.visibleAnnotations.iterator()
-                                                while (itr.hasNext()) {
-                                                    def ann = itr.next()
-                                                    if ('Lnet/minecraftforge/api/distmarker/OnlyIn;'.equals(ann.desc))
-                                                        itr.remove()
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                
-                                def writer = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-                                node.accept(writer)
-                                zos.write(writer.toByteArray())
-                            }
-                            zos.closeEntry()
-                        }
+                    if (idx == 0 || line.isEmpty()) {
+                        lines.add(line)
+                        return
                     }
-                }
-                cache.save(cacheFile)
-                return output
-            }
-            
-            void addInputs(HashStore cache, String prefix) {
-                cache.add("${prefix}SAS", config)
-            }
-        })
-        
-        def fakePatches = file('build/makeSASFakePatches/')
-        task makeSASFakePatches() {
-            inputs.file SIDE_STRIPPER
-            outputs.file fakePatches
-            doLast() {
-                    SIDE_STRIPPER.eachLine { line ->
-                    def idx = line.indexOf('#')
-                    if (idx == 0 || line.isEmpty()) return
+                    
+                    def comment = idx == -1 ? null : line.substring(idx)
                     if (idx != -1) line = line.substring(0, idx - 1)
-                    if (line[0] == '\t') line = line.substring(1)
+                    
                     def (cls, desc) = (line.trim() + '    ').split(' ', -1)
-                    def patch = new File(fakePatches, cls + '.java.patch')
-                    if (!patch.getParentFile().exists()) patch.getParentFile().mkdirs()
-                    patch.createNewFile()
+                    cls = cls.replaceAll('\\.', '/')
+                    desc = desc.replace('(', ' (')
+                    if (desc.isEmpty() || json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
+                        println('Invalid: ' + line)
+                        return
+                    }
+                    
+                    def mtd = json[cls]['methods'][desc]
+                    lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
+                    def children = json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
+                    .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
+                    children.each { lines.add('\t' + it) }
                 }
+                f.text = lines.join('\n')
             }
         }
-        genClientBinPatches.dependsOn(makeSASFakePatches)
-        genClientBinPatches.addPatchSet(fakePatches)
-        genServerBinPatches.dependsOn(makeSASFakePatches)
-        genServerBinPatches.addPatchSet(fakePatches)
-        genJoinedBinPatches.dependsOn(makeSASFakePatches)
-        genJoinedBinPatches.addPatchSet(fakePatches)
     }
-    
+
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
         inputs.file { launcherJar.archivePath }
@@ -770,7 +674,7 @@ project(':forge') {
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
-      
+
     task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
         ext {
             output = file('build/install_profile.json')
