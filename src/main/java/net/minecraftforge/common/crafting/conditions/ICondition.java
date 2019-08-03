@@ -17,14 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.crafting;
+package net.minecraftforge.common.crafting.conditions;
 
-import java.util.function.BooleanSupplier;
+import net.minecraft.util.ResourceLocation;
 
-import com.google.gson.JsonObject;
-
-@FunctionalInterface
-public interface IConditionSerializer
+public interface ICondition
 {
-    BooleanSupplier parse(JsonObject json);
+    ResourceLocation getID();
+
+    boolean test();
 }

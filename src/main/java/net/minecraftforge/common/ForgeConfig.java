@@ -49,6 +49,8 @@ public class ForgeConfig
 
         public final IntValue clumpingThreshold;
 
+        public final BooleanValue treatEmptyTagsAsAir;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -103,6 +105,11 @@ public class ForgeConfig
                     .translation("forge.configgui.clumpingThreshold")
                     .worldRestart()
                     .defineInRange("clumpingThreshold", 64, 64, 1024);
+
+            treatEmptyTagsAsAir = builder
+                    .comment("Vanilla will treat crafting recipess using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
+                    .translation("forge.configgui.treatEmptyTagsAsAir")
+                    .define("treatEmptyTagsAsAir", false);
 
             builder.pop();
         }

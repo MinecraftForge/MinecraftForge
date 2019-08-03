@@ -314,6 +314,19 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
+
+            forge_test_data {
+                parent runs.forge_data
+                taskName 'forge_test_data'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    tests { sources  sourceSets.test }
+                }
+                
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+            }
         }
     }
     
