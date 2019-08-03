@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.command.arguments.ArgumentSerializer;
+import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
@@ -28,7 +30,9 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.command.ConfigCommand;
+import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ForgeCommand;
+import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -97,6 +101,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
+        ArgumentTypes.register("mod_id", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+        ArgumentTypes.register("enum", EnumArgument.class, new EnumArgument.Serializer());
     }
 
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
