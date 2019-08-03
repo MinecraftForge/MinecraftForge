@@ -73,6 +73,6 @@ public class ModLoadingException extends RuntimeException
     }
 
     public String formatToString() {
-        return ForgeI18n.parseMessage(i18nMessage, Streams.concat(Stream.of(modInfo.getModId(), errorStage, getCause()), context.stream()).toArray());
+        return ForgeI18n.parseMessage(i18nMessage, Streams.concat(Stream.of(modInfo, errorStage, getCause()), context.stream()).toArray());
     }
 }
