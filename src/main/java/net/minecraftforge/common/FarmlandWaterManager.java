@@ -29,10 +29,12 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.common.ticket.ChunkTicketManager;
-import net.minecraftforge.common.ticket.MultiTicketManager;
 import net.minecraftforge.common.ticket.SimpleTicket;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -40,7 +42,9 @@ import java.util.Set;
 
 public class FarmlandWaterManager
 {
+    private static boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
     private static final Int2ObjectMap<Map<ChunkPos, ChunkTicketManager<Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Adds a custom ticket.
@@ -50,26 +54,19 @@ public class FarmlandWaterManager
      * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
      * @param world The world where the region should be marked. Only server-side worlds are allowed
      * @param ticket Your ticket you want to have registered
-     * @param chunkPoses The chunkPoses where the ticket is located
+     * @param masterChunk The chunk pos that is controls when the ticket may be unloaded. The ticket should originate from here.
+     * @param additionalChunks The chunks in that this ticket wants to operate as well.
      * @return The ticket for your requested region.
      */
     @SuppressWarnings("unchecked")
-    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos... chunkPoses)
+    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks)
     {
         Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Preconditions.checkArgument(chunkPoses.length > 0, "Need at least one chunk pos");
         Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.computeIfAbsent(world.getDimension().getType().getId(), id -> new MapMaker().weakValues().makeMap());
-        if (chunkPoses.length == 1)
-        {
-            ticket.setBackend(ticketMap.computeIfAbsent(chunkPoses[0], ChunkTicketManager::new));
-        }
-        else
-        {
-            ChunkTicketManager<Vec3d>[] tickets = new ChunkTicketManager[chunkPoses.length];
-            for (int i = 0; i < chunkPoses.length; i++)
-                tickets[i] = ticketMap.computeIfAbsent(chunkPoses[i], ChunkTicketManager::new);
-            ticket.setBackend(new MultiTicketManager<>(tickets));
-        }
+        ChunkTicketManager<Vec3d>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
+        for (int i = 0; i < additionalChunks.length; i++)
+            additionalTickets[i] = ticketMap.computeIfAbsent(additionalChunks[i], ChunkTicketManager::new);
+        ticket.setManager(ticketMap.computeIfAbsent(masterChunk, ChunkTicketManager::new), additionalTickets);
         ticket.validate();
         return ticket;
     }
@@ -87,6 +84,8 @@ public class FarmlandWaterManager
      */
     public static AABBTicket addAABBTicket(World world, AxisAlignedBB aabb)
     {
+        if (DEBUG)
+            LOGGER.info("FarmlandWaterManager: New AABBTicket, aabb={}", aabb);
         //First calculate all chunks the aabb is in
         ChunkPos leftUp = new ChunkPos(((int) aabb.minX) >> 4, ((int) aabb.minZ) >> 4);
         ChunkPos rightDown = new ChunkPos(((int) aabb.maxX) >> 4, ((int) aabb.maxZ) >> 4);
@@ -98,7 +97,33 @@ public class FarmlandWaterManager
                 posSet.add(new ChunkPos(x, z));
             }
         }
-        return addCustomTicket(world, new AABBTicket(aabb), posSet.toArray(new ChunkPos[0]));
+        ChunkPos masterPos = null;
+        double masterDistance = Double.MAX_VALUE;
+        for (ChunkPos pos : posSet) //Find the chunkPos with the lowest distance to the center and choose it as the master pos
+        {
+            double distToCenter = getDistanceSq(pos, aabb.getCenter());
+            if (distToCenter < masterDistance)
+            {
+                if (DEBUG)
+                    LOGGER.info("FarmlandWaterManager: New better pos then {}: {}, prev dist {}, new dist {}", masterPos, pos, masterDistance, distToCenter);
+                masterPos = pos;
+                masterDistance = distToCenter;
+            }
+        }
+        posSet.remove(masterPos);
+        if (DEBUG)
+            LOGGER.info("FarmlandWaterManager: {} center pos, {} dummy posses. Dist to center {}", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance);
+        return addCustomTicket(world, new AABBTicket(aabb), masterPos, posSet.toArray(new ChunkPos[0]));
+    }
+
+    private static double getDistanceSq(ChunkPos pos, Vec3d vec3d)
+    {
+        //See ChunkPos#getDistanceSq
+        double d0 = (double)(pos.x * 16 + 8);
+        double d1 = (double)(pos.z * 16 + 8);
+        double d2 = d0 - vec3d.x;
+        double d3 = d1 - vec3d.z;
+        return  d2 * d2 + d3 * d3;
     }
 
     /**
@@ -117,6 +142,19 @@ public class FarmlandWaterManager
             }
         }
         return false;
+    }
+
+    static void removeTickets(IChunk chunk)
+    {
+        ChunkTicketManager<Vec3d> ticketManager = getTicketManager(chunk.getPos(), chunk.getWorldForge());
+        if (ticketManager != null)
+        {
+            if (DEBUG)
+                LOGGER.info("FarmlandWaterManager: got tickets {} at {} before", ticketManager.getTickets().size(), ticketManager.pos);
+            ticketManager.getTickets().removeIf(next -> next.unload(ticketManager)); //remove if this is the master manager of the ticket
+            if (DEBUG)
+                LOGGER.info("FarmlandWaterManager: got tickets {} at {} after", ticketManager.getTickets().size(), ticketManager.pos);
+        }
     }
 
     private static ChunkTicketManager<Vec3d> getTicketManager(ChunkPos pos, IWorldReader world) {
