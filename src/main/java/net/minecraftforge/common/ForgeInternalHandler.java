@@ -46,18 +46,17 @@ public class ForgeInternalHandler
         {
             ItemStack stack = ((ItemEntity)entity).getItem();
             Item item = stack.getItem();
-/*
+
             if (item.hasCustomEntity(stack))
             {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
-                    entity.setDead();
+                    entity.remove();
                     event.setCanceled(true);
-                    event.getWorld().spawnEntity(newEntity);
+                    event.getWorld().addEntity(newEntity);
                 }
             }
-*/
         }
     }
 

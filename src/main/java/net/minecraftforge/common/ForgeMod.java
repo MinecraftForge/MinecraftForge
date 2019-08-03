@@ -37,14 +37,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.AndCondition;
+import net.minecraftforge.common.crafting.conditions.FalseCondition;
+import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftforge.common.crafting.conditions.NotCondition;
+import net.minecraftforge.common.crafting.conditions.OrCondition;
+import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -171,5 +184,19 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             gen.addProvider(new ForgeItemTagsProvider(gen));
             gen.addProvider(new ForgeRecipeProvider(gen));
         }
+    }
+
+    public void registerRecipeSerialziers(RegistryEvent.Register<IRecipeSerializer<?>> event)
+    {
+        CraftingHelper.register(AndCondition.Serializer.INSTANCE);
+        CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
+        CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
+        CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
+        CraftingHelper.register(NotCondition.Serializer.INSTANCE);
+        CraftingHelper.register(OrCondition.Serializer.INSTANCE);
+        CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
+
+        event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
+
     }
 }
