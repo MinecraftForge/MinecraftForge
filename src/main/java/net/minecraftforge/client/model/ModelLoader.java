@@ -145,19 +145,21 @@ public final class ModelLoader extends ModelBakery
         ModelLoaderRegistry.clearModelCache(manager);
     }
 
-    private static Set<ModelResourceLocation> specialModels = new HashSet<>();
+    private static Set<ResourceLocation> specialModels = new HashSet<>();
 
     /**
      * Indicate to vanilla that it should load and bake the given model, even if no blocks or
      * items use it. This is useful if e.g. you have baked models only for entity renderers.
      * Call during {@link net.minecraftforge.client.event.ModelRegistryEvent}
+     * @param rl The model, either {@link ModelResourceLocation} to point to a blockstate variant,
+     *           or plain {@link ResourceLocation} to point directly to a json in the models folder.
      */
-    public static void addSpecialModel(ModelResourceLocation mrl) {
-        specialModels.add(mrl);
+    public static void addSpecialModel(ResourceLocation rl) {
+        specialModels.add(rl);
     }
 
     @Override
-    public Set<ModelResourceLocation> getSpecialModels() {
+    public Set<ResourceLocation> getSpecialModels() {
         return specialModels;
     }
 
