@@ -102,7 +102,9 @@ public class FarmlandWaterManager
         double masterDistance = Double.MAX_VALUE;
         for (ChunkPos pos : posSet) //Find the chunkPos with the lowest distance to the center and choose it as the master pos
         {
-            double distToCenter = getDistanceSq(pos, aabb.getCenter());
+            //basically pos.getCenter but it is Client Side Only in 1.12
+            Vec3d center = new Vec3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
+            double distToCenter = getDistanceSq(pos, center);
             if (distToCenter < masterDistance)
             {
                 if (DEBUG)
@@ -136,7 +138,8 @@ public class FarmlandWaterManager
         ChunkTicketManager<Vec3d> ticketManager = getTicketManager(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4), world);
         if (ticketManager != null)
         {
-            Vec3d posAsVec3d = new Vec3d(pos);
+            //make the vec3d originate in the center of the block
+            Vec3d posAsVec3d = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             for (SimpleTicket<Vec3d> ticket : ticketManager.getTickets()) {
                 if (ticket.matches(posAsVec3d))
                     return true;
