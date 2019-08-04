@@ -35,10 +35,10 @@ import net.minecraft.world.World;
 public class Constants
 {
     /**
-     * NBT Tag type IDS, used when storing the nbt to disc, Should align with NBTBase.getId,
-     * table used in NBTBase.func_150283_g
+     * NBT Tag type IDS, used when storing the nbt to disc, Should align with {@link net.minecraft.nbt.INBT#create}
+     * and {@link net.minecraft.nbt.INBT#getTypeName}
      *
-     * Main use is checking tag type in NBTTagCompound.contains(String, int)
+     * Main use is checking tag type in {@link net.minecraft.nbt.CompoundNBT#contains(String, int)}
      *
      */
     public static class NBT
