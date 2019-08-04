@@ -135,7 +135,7 @@ public class FarmlandWaterManager
         ChunkTicketManager<Vec3d> ticketManager = getTicketManager(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4), world);
         if (ticketManager != null)
         {
-            Vec3d posAsVec3d = new Vec3d(pos);
+            Vec3d posAsVec3d = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             for (SimpleTicket<Vec3d> ticket : ticketManager.getTickets()) {
                 if (ticket.matches(posAsVec3d))
                     return true;
