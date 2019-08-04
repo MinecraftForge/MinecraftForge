@@ -22,11 +22,9 @@ package net.minecraftforge.common.util;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -174,7 +172,7 @@ public class Constants
          * Calls {@link World#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)}.<br>
          * Server-side, this updates all the path-finding navigators.
          */
-        public static final int RUN_BLOCK_UPDATE     = (1 << 1);
+        public static final int BLOCK_UPDATE         = (1 << 1);
         /**
          * Stops the blocks from being marked for a render update
          */
@@ -208,7 +206,7 @@ public class Constants
          */
         public static final int IS_MOVING            = (1 << 6);
 
-        public static final int DEFAULT = NOTIFY_NEIGHBORS | RUN_BLOCK_UPDATE;
+        public static final int DEFAULT = NOTIFY_NEIGHBORS | BLOCK_UPDATE;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
 
