@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screen/DeathScreen.java
++++ b/net/minecraft/client/gui/screen/DeathScreen.java
+@@ -44,6 +44,7 @@
+       }));
+       Button button = this.addButton(new Button(this.width / 2 - 100, this.height / 4 + 96, 200, 20, s1, (p_213020_1_) -> {
+          if (this.field_213023_c) {
++            func_213022_a(true);
+             this.minecraft.func_147108_a(new MainMenuScreen());
+          } else {
+             ConfirmScreen confirmscreen = new ConfirmScreen(this::func_213022_a, new TranslationTextComponent("deathScreen.quit.confirm"), new StringTextComponent(""), I18n.func_135052_a("deathScreen.titleScreen"), I18n.func_135052_a("deathScreen.respawn"));

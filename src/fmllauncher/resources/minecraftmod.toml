@@ -1,9 +1,12 @@
-modId="minecraft"
-version="${global.mcVersion}"
-displayName="Minecraft"
-logoFile="mcplogo.png"
-credits="Mojang, deobfuscated by MCP"
-authors="MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs"
-description='''
-Minecraft, decompiled and deobfuscated with MCP technology
-'''
+modLoader="minecraft"
+loaderVersion="1"
+[[mods]]
+    modId="minecraft"
+    version="${global.mcVersion}"
+    displayName="Minecraft"
+    logoFile="mcplogo.png"
+    credits="Mojang, deobfuscated by MCP"
+    authors="MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs"
+    description='''
+    Minecraft, decompiled and deobfuscated with MCP technology
+    '''

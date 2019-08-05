@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/TrackedEntity.java
 +++ b/net/minecraft/world/TrackedEntity.java
-@@ -77,9 +77,8 @@
+@@ -78,9 +78,8 @@
        if (this.field_219461_c instanceof ItemFrameEntity && this.field_219472_n % 10 == 0) {
           ItemFrameEntity itemframeentity = (ItemFrameEntity)this.field_219461_c;
           ItemStack itemstack = itemframeentity.func_82335_i();
@@ -12,7 +12,7 @@
              for(ServerPlayerEntity serverplayerentity : this.field_219460_b.func_217369_A()) {
                 mapdata.func_76191_a(serverplayerentity, itemstack);
                 IPacket<?> ipacket = ((FilledMapItem)itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
-@@ -183,12 +182,14 @@
+@@ -184,12 +183,14 @@
     public void func_219454_a(ServerPlayerEntity p_219454_1_) {
        this.field_219461_c.func_184203_c(p_219454_1_);
        p_219454_1_.func_152339_d(this.field_219461_c);

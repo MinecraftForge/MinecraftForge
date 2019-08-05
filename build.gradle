@@ -15,11 +15,20 @@ import groovy.json.JsonBuilder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.LinkedHashMap
+import java.util.TreeSet
+import java.util.stream.Collectors
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import java.security.MessageDigest
 import java.net.URL
 import net.minecraftforge.gradle.common.task.ArchiveChecksum
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
+import net.minecraftforge.gradle.common.task.ExtractInheritance
 import net.minecraftforge.gradle.common.task.SignJar
+import net.minecraftforge.gradle.common.util.HashStore
+import net.minecraftforge.gradle.mcp.function.MCPFunction
+import net.minecraftforge.gradle.mcp.util.MCPEnvironment
 import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
@@ -27,8 +36,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.objectweb.asm.ClassReader
-
-import java.util.stream.Collectors
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.tree.ClassNode
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
@@ -48,9 +57,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20190621-1.14.2'
-    MC_VERSION = '1.14.3'
-    MCP_VERSION = '20190624.152911'
+    MAPPING_VERSION = '20190719-1.14.3'
+    MC_VERSION = '1.14.4'
+    MCP_VERSION = '20190719.225934'
 }
 
 project(':mcp') {
@@ -172,7 +181,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '27.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '28.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -205,6 +214,7 @@ project(':forge') {
         patchedSrc = file('src/main/java')
         srgPatches = true
         accessTransformer = file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
+        sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")
 
         runs {
             forge_client {
@@ -225,6 +235,33 @@ project(':forge') {
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'terminal.ansi', 'true'
+                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
+            cpw_forge_client {
+                taskName 'cpw_forge_client'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevclient'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
+                environment 'nativesDirectory', extractNatives.output
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+                property 'terminal.ansi', 'true'
+                property 'forge.logging.noansi', 'false'
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
@@ -332,6 +369,14 @@ project(':forge') {
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
+            'net/minecraftforge/fml/mclanguageprovider/': [
+                    'Specification-Title':      'Mod Language Provider',
+                    'Specification-Vendor':     'Forge Development LLC',
+                    'Specification-Version':    '1',
+                    'Implementation-Title':     'Minecraft Language Mod Provider',
+                    'Implementation-Version':   '1',
+                    'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
             'net/minecraftforge/fml/loading/': [
                 'Specification-Title':      'Launcher',
                 'Specification-Vendor':     'Forge Development LLC',
@@ -367,12 +412,12 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:2.1.+'
+        installer 'cpw.mods:modlauncher:3.2.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
         installer 'net.minecraftforge:eventbus:0.10.+:service'
         installer 'net.minecraftforge:forgespi:0.13.+'
-        installer 'net.minecraftforge:coremods:0.6.+'
+        installer 'net.minecraftforge:coremods:0.7.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'
@@ -387,6 +432,7 @@ project(':forge') {
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+        testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
@@ -518,6 +564,10 @@ project(':forge') {
             }
         }
     }
+    
+    task extractInheritance(type: ExtractInheritance, dependsOn: genJoinedBinPatches) {
+        input { genJoinedBinPatches.cleanJar }
+    }
     task checkATs(dependsOn: genJoinedBinPatches) {
         inputs.file { genJoinedBinPatches.cleanJar }
         inputs.files patcher.accessTransformers
@@ -566,7 +616,44 @@ project(':forge') {
             }
         }
     }
-    
+    task checkSAS(dependsOn: extractInheritance) {
+        inputs.file { extractInheritance.output }
+        inputs.files patcher.sideAnnotationStrippers
+        doLast {
+            def json = new JsonSlurper().parseText(extractInheritance.output.text)
+            
+            patcher.sideAnnotationStrippers.each { f -> 
+                def lines = []
+                f.eachLine { line ->
+                    if (line[0] == '\t') return //Skip any tabed lines, those are ones we add
+                    def idx = line.indexOf('#')
+                    if (idx == 0 || line.isEmpty()) {
+                        lines.add(line)
+                        return
+                    }
+                    
+                    def comment = idx == -1 ? null : line.substring(idx)
+                    if (idx != -1) line = line.substring(0, idx - 1)
+                    
+                    def (cls, desc) = (line.trim() + '    ').split(' ', -1)
+                    cls = cls.replaceAll('\\.', '/')
+                    desc = desc.replace('(', ' (')
+                    if (desc.isEmpty() || json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
+                        println('Invalid: ' + line)
+                        return
+                    }
+                    
+                    def mtd = json[cls]['methods'][desc]
+                    lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
+                    def children = json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
+                    .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
+                    children.each { lines.add('\t' + it) }
+                }
+                f.text = lines.join('\n')
+            }
+        }
+    }
+
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
         inputs.file { launcherJar.archivePath }
@@ -622,7 +709,7 @@ project(':forge') {
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
-      
+
     task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
         ext {
             output = file('build/install_profile.json')
@@ -757,15 +844,6 @@ project(':forge') {
                         ],
                         outputs: [
                             '{PATCHED}': '{PATCHED_SHA}'
-                        ]
-                    ], [
-                        jar: INSTALLER_TOOLS,
-                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
-                        args: [
-                            '--task', 'DEOBF_REALMS',
-                            '--map',  '{MAPPINGS}',
-                            '--mc',   '{MINECRAFT_JAR}',
-                            '--mcp',  '{MCP_VERSION}'
                         ]
                     ]
                 ]

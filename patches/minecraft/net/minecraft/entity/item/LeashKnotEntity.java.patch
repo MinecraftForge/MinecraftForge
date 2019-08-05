@@ -4,7 +4,7 @@
        this.field_70165_t = (double)this.field_174861_a.func_177958_n() + 0.5D;
        this.field_70163_u = (double)this.field_174861_a.func_177956_o() + 0.5D;
        this.field_70161_v = (double)this.field_174861_a.func_177952_p() + 0.5D;
-+      if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.ServerWorld) ((net.minecraft.world.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++      if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
     }
  
     public void func_174859_a(Direction p_174859_1_) {

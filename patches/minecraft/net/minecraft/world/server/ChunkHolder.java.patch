@@ -1,0 +1,53 @@
+--- a/net/minecraft/world/server/ChunkHolder.java
++++ b/net/minecraft/world/server/ChunkHolder.java
+@@ -135,7 +135,7 @@
+       Chunk chunk = this.func_219298_c();
+       if (chunk != null) {
+          this.field_219322_q |= 1 << (p_219279_2_ >> 4);
+-         if (this.field_219321_p < 64) {
++         { //Forge; Cache everything, so always run
+             short short1 = (short)(p_219279_1_ << 12 | p_219279_3_ << 8 | p_219279_2_);
+ 
+             for(int i = 0; i < this.field_219321_p; ++i) {
+@@ -144,6 +144,8 @@
+                }
+             }
+ 
++            if (this.field_219321_p == this.field_219320_o.length)
++               this.field_219320_o = java.util.Arrays.copyOf(this.field_219320_o, this.field_219320_o.length << 1);
+             this.field_219320_o[this.field_219321_p++] = short1;
+          }
+ 
+@@ -166,7 +168,7 @@
+    public void func_219274_a(Chunk p_219274_1_) {
+       if (this.field_219321_p != 0 || this.field_219325_t != 0 || this.field_219324_s != 0) {
+          World world = p_219274_1_.func_177412_p();
+-         if (this.field_219321_p == 64) {
++         if (this.field_219321_p >= net.minecraftforge.common.ForgeConfig.SERVER.clumpingThreshold.get()) {
+             this.field_219323_r = -1;
+          }
+ 
+@@ -189,20 +191,19 @@
+             int k = (this.field_219320_o[0] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
+             BlockPos blockpos = new BlockPos(l, j1, k);
+             this.func_219293_a(new SChangeBlockPacket(world, blockpos), false);
+-            if (world.func_180495_p(blockpos).func_177230_c().func_149716_u()) {
++            if (world.func_180495_p(blockpos).hasTileEntity()) {
+                this.func_219305_a(world, blockpos);
+             }
+-         } else if (this.field_219321_p == 64) {
++         } else if (this.field_219321_p >= net.minecraftforge.common.ForgeConfig.SERVER.clumpingThreshold.get()) {
+             this.func_219293_a(new SChunkDataPacket(p_219274_1_, this.field_219322_q), false);
+          } else if (this.field_219321_p != 0) {
+             this.func_219293_a(new SMultiBlockChangePacket(this.field_219321_p, this.field_219320_o, p_219274_1_), false);
+-
+             for(int i1 = 0; i1 < this.field_219321_p; ++i1) {
+                int k1 = (this.field_219320_o[i1] >> 12 & 15) + this.field_219319_n.field_77276_a * 16;
+                int l1 = this.field_219320_o[i1] & 255;
+                int i2 = (this.field_219320_o[i1] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
+                BlockPos blockpos1 = new BlockPos(k1, l1, i2);
+-               if (world.func_180495_p(blockpos1).func_177230_c().func_149716_u()) {
++               if (world.func_180495_p(blockpos1).hasTileEntity()) {
+                   this.func_219305_a(world, blockpos1);
+                }
+             }

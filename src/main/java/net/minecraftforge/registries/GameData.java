@@ -88,8 +88,6 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -375,15 +373,9 @@ public class GameData
             {
                 StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
                 StateContainer<Block, BlockState> newContainer = block.getStateContainer();
-                ImmutableList<BlockState> oldValidStates = oldContainer.getValidStates();
-                ImmutableList<BlockState> newValidStates = newContainer.getValidStates();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
-                if (block.getRegistryName().getNamespace().equals("minecraft") && (
-                        oldValidStates.size() != newValidStates.size() ||
-                        !Streams.zip(oldValidStates.stream().map(Object::toString),
-                                    newValidStates.stream().map(Object::toString),
-                                    String::equals).allMatch(v -> v)))
+                if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
@@ -482,8 +474,8 @@ public class GameData
             if (oldItem instanceof BlockItem)
             {
                 @SuppressWarnings("unchecked")
-                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
-                blockToItem.remove(((BlockItem)oldItem).getBlock());
+                Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
+                ((BlockItem)oldItem).removeFromBlockToItemMap(blockToItem, item);
             }
             if (item instanceof BlockItem)
             {
@@ -944,7 +936,7 @@ public class GameData
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
-        String prefix = ModLoadingContext.get().getActiveContainer().getNamespace();
+        String prefix = ModLoadingContext.get().getActiveNamespace();
         if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);

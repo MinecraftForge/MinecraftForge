@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/BannerDuplicateRecipe.java
 +++ b/net/minecraft/item/crafting/BannerDuplicateRecipe.java
-@@ -79,8 +79,8 @@
+@@ -77,8 +77,8 @@
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = p_179532_1_.func_70301_a(i);
           if (!itemstack.func_190926_b()) {
@@ -11,11 +11,3 @@
              } else if (itemstack.func_77942_o() && BannerTileEntity.func_175113_c(itemstack) > 0) {
                 ItemStack itemstack1 = itemstack.func_77946_l();
                 itemstack1.func_190920_e(1);
-@@ -96,7 +96,6 @@
-       return IRecipeSerializer.field_222167_k;
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
-       return p_194133_1_ * p_194133_2_ >= 2;
-    }

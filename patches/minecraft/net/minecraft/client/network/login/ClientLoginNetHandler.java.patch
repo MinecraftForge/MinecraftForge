@@ -8,7 +8,7 @@
        this.field_147393_d.func_150719_a(new ClientPlayNetHandler(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e));
     }
  
-@@ -122,6 +123,7 @@
+@@ -126,6 +127,7 @@
     }
  
     public void func_209521_a(SCustomPayloadLoginPacket p_209521_1_) {

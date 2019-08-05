@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -142,7 +142,7 @@
+@@ -143,7 +143,7 @@
     public final KeyBinding[] field_151456_ac = new KeyBinding[]{new KeyBinding("key.hotbar.1", 49, "key.categories.inventory"), new KeyBinding("key.hotbar.2", 50, "key.categories.inventory"), new KeyBinding("key.hotbar.3", 51, "key.categories.inventory"), new KeyBinding("key.hotbar.4", 52, "key.categories.inventory"), new KeyBinding("key.hotbar.5", 53, "key.categories.inventory"), new KeyBinding("key.hotbar.6", 54, "key.categories.inventory"), new KeyBinding("key.hotbar.7", 55, "key.categories.inventory"), new KeyBinding("key.hotbar.8", 56, "key.categories.inventory"), new KeyBinding("key.hotbar.9", 57, "key.categories.inventory")};
     public final KeyBinding field_193629_ap = new KeyBinding("key.saveToolbarActivator", 67, "key.categories.creative");
     public final KeyBinding field_193630_aq = new KeyBinding("key.loadToolbarActivator", 88, "key.categories.creative");
@@ -9,7 +9,7 @@
     protected Minecraft field_74317_L;
     private final File field_74354_ai;
     public Difficulty field_74318_M = Difficulty.NORMAL;
-@@ -161,6 +161,7 @@
+@@ -162,6 +162,7 @@
     public String field_74363_ab = "en_us";
  
     public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_) {
@@ -17,7 +17,7 @@
        this.field_74317_L = p_i46326_1_;
        this.field_74354_ai = new File(p_i46326_2_, "options.txt");
        if (p_i46326_1_.func_147111_S() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
-@@ -462,7 +463,11 @@
+@@ -467,7 +468,11 @@
  
                 for(KeyBinding keybinding : this.field_74324_K) {
                    if (s1.equals("key_" + keybinding.func_151464_g())) {
@@ -30,7 +30,7 @@
                    }
                 }
  
-@@ -510,6 +515,7 @@
+@@ -515,6 +520,7 @@
     }
  
     public void func_74303_b() {
@@ -38,7 +38,7 @@
        try (PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.field_74354_ai), StandardCharsets.UTF_8))) {
           printwriter.println("version:" + SharedConstants.func_215069_a().getWorldVersion());
           printwriter.println("autoJump:" + AbstractOption.field_216719_z.func_216741_b(this));
-@@ -583,7 +589,7 @@
+@@ -589,7 +595,7 @@
           printwriter.println("glDebugVerbosity:" + this.field_209231_W);
  
           for(KeyBinding keybinding : this.field_74324_K) {
@@ -47,7 +47,7 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -680,6 +686,25 @@
+@@ -686,6 +692,25 @@
           }
        }
  
