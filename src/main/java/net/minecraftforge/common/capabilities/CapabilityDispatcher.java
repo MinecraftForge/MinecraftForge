@@ -19,21 +19,22 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
-
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.accessor.CapabilityAccessor;
+import net.minecraftforge.common.capabilities.accessor.ICapabilityAccessor;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A high-speed implementation of a capability delegator.
@@ -94,12 +95,19 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     }
 
 
+    @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+    {
+        return getCapability(cap, CapabilityAccessor.getSide(side));
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable ICapabilityAccessor accessor)
     {
         for (ICapabilityProvider c : caps)
         {
-            LazyOptional<T> ret = c.getCapability(cap, side);
+            LazyOptional<T> ret = c.getCapability(cap, accessor);
             //noinspection ConstantConditions
             if (ret == null)
             {

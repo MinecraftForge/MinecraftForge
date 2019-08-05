@@ -19,9 +19,11 @@
 
 package net.minecraftforge.fluids.capability;
 
-import javax.annotation.Nullable;
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 
-import net.minecraftforge.fluids.*;
+import javax.annotation.Nullable;
 
 /**
  * Implement this interface as a capability which should handle fluids, generally storing them in
@@ -46,7 +48,19 @@ public interface IFluidHandler
      * @param doFill   If false, fill will only be simulated.
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
+    @Deprecated // Remove in 1.15, use accessor version
     int fill(FluidStack resource, boolean doFill);
+
+    /**
+     * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
+     *
+     * @param resource FluidStack representing the Fluid and maximum amount of fluid to be filled.
+     * @param accessor System/Object data for accessing this capability
+     * @return Amount of resource that was (or would have been, if simulated) filled.
+     */
+    default int fill(FluidStack resource, IFlowCapabilityAccessor accessor) {
+        return fill(resource, !accessor.simulate());
+    }
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -56,8 +70,22 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
-    @Nullable
+    @Nullable // Remove in 1.15, use accessor version
     FluidStack drain(FluidStack resource, boolean doDrain);
+
+
+    /**
+     * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
+     *
+     * @param resource FluidStack representing the Fluid and maximum amount of fluid to be drained.
+     * @param accessor System/Object data for accessing this capability
+     * @return FluidStack representing the Fluid and amount that was (or would have been, if
+     * simulated) drained.
+     */
+    @Nullable
+    default FluidStack drain(FluidStack resource, IFlowCapabilityAccessor accessor) {
+        return drain(resource, !accessor.simulate());
+    }
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -69,6 +97,21 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
-    @Nullable
+    @Nullable // Remove in 1.15, use accessor version
     FluidStack drain(int maxDrain, boolean doDrain);
+
+    /**
+     * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
+     * <p/>
+     * This method is not Fluid-sensitive.
+     *
+     * @param maxDrain Maximum amount of fluid to drain.
+     * @param accessor System/Object data for accessing this capability
+     * @return FluidStack representing the Fluid and amount that was (or would have been, if
+     * simulated) drained.
+     */
+    @Nullable // Remove in 1.15, use accessor version
+    default FluidStack drain(int maxDrain, IFlowCapabilityAccessor accessor) {
+        return drain(maxDrain, !accessor.simulate());
+    }
 }

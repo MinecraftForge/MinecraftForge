@@ -20,6 +20,7 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -122,6 +123,26 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
         return handler.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, IFlowCapabilityAccessor accessor)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
+        return handler.insertItem(slot, stack, accessor);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack extractItem(int slot, int amount, IFlowCapabilityAccessor accessor)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
+        return handler.extractItem(slot, amount, accessor);
     }
 
     @Override

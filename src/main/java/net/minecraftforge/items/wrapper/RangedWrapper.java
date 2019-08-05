@@ -21,6 +21,7 @@ package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -80,6 +81,30 @@ public class RangedWrapper implements IItemHandlerModifiable {
         if (checkSlot(slot))
         {
             return compose.extractItem(slot + minSlot, amount, simulate);
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, IFlowCapabilityAccessor accessor)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.insertItem(slot + minSlot, stack, accessor);
+        }
+
+        return stack;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack extractItem(int slot, int amount, IFlowCapabilityAccessor accessor)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.extractItem(slot + minSlot, amount, accessor);
         }
 
         return ItemStack.EMPTY;

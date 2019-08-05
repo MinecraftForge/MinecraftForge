@@ -19,14 +19,17 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.accessor.CapabilityAccessor;
+import net.minecraftforge.common.capabilities.accessor.ICapabilityAccessor;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -112,9 +115,17 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     @Override
     @Nonnull
+    @Deprecated
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
     {
+        return getCapability(cap, CapabilityAccessor.getSide(side));
+    }
+
+    @Override
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable ICapabilityAccessor accessor)
+    {
         final CapabilityDispatcher disp = getCapabilities();
-        return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
+        return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, accessor);
     }
 }

@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.model.animation;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
@@ -34,15 +32,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.ModelStateComposition;
+import net.minecraftforge.common.capabilities.accessor.ICapabilityAccessor;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-
-import java.util.function.Function;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Function;
 
 public final class AnimationItemOverrideList extends ItemOverrideList
 {
@@ -70,7 +67,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     @Override
     public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
     {
-        return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
+        return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, (ICapabilityAccessor)null)
             .map(asm ->
             {
                 World w = world;

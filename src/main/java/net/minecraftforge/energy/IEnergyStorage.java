@@ -19,6 +19,8 @@
 
 package net.minecraftforge.energy;
 
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
+
 /**
  * An energy storage is the unit of interaction with Energy inventories.
  * <p>
@@ -39,7 +41,22 @@ public interface IEnergyStorage
     *            If TRUE, the insertion will only be simulated.
     * @return Amount of energy that was (or would have been, if simulated) accepted by the storage.
     */
+    @Deprecated //Remove in 1.15, use accessor version instead
     int receiveEnergy(int maxReceive, boolean simulate);
+
+    /**
+     * Adds energy to the storage. Returns quantity of energy that was accepted.
+     *
+     * @param maxReceive
+     *            Maximum amount of energy to be inserted.
+     * @param accessor
+     *            Data input to control how the receive is processed
+     * @return Amount of energy that was (or would have been, if simulated) accepted by the storage.
+     */
+    default int receiveEnergy(int maxReceive, IFlowCapabilityAccessor accessor)
+    {
+        return receiveEnergy(maxReceive, accessor.simulate());
+    }
 
     /**
     * Removes energy from the storage. Returns quantity of energy that was removed.
@@ -50,7 +67,22 @@ public interface IEnergyStorage
     *            If TRUE, the extraction will only be simulated.
     * @return Amount of energy that was (or would have been, if simulated) extracted from the storage.
     */
+    @Deprecated //Remove in 1.15, use accessor version instead
     int extractEnergy(int maxExtract, boolean simulate);
+
+    /**
+     * Removes energy from the storage. Returns quantity of energy that was removed.
+     *
+     * @param maxExtract
+     *            Maximum amount of energy to be extracted.
+     * @param accessor
+     *            Data input to control how the extract is processed
+     * @return Amount of energy that was (or would have been, if simulated) extracted from the storage.
+     */
+    default int extractEnergy(int maxExtract, IFlowCapabilityAccessor accessor)
+    {
+        return extractEnergy(maxExtract, accessor.simulate());
+    }
 
     /**
     * Returns the amount of energy currently stored.

@@ -21,10 +21,9 @@ package net.minecraftforge.items;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import javax.annotation.Nonnull;
-
 
 import javax.annotation.Nonnull;
 
@@ -74,7 +73,26 @@ public interface IItemHandler
      *         The returned ItemStack can be safely modified after.
      **/
     @Nonnull
+    @Deprecated //Remove in 1.15, use accessor version
     ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
+
+    /**
+     * <p>
+     * Inserts an ItemStack into the given slot and return the remainder.
+     * The ItemStack <em>should not</em> be modified in this function!
+     * </p>
+     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, boolean)}
+     *
+     * @param slot     Slot to insert into.
+     * @param stack    ItemStack to insert. This must not be modified by the item handler.
+     * @param accessor - System/Object data for working with the capability
+     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
+     *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
+     *         The returned ItemStack can be safely modified after.
+     **/
+    default ItemStack insertItem(int slot, @Nonnull ItemStack stack, IFlowCapabilityAccessor accessor) {
+        return insertItem(slot, stack, accessor.simulate());
+    }
 
     /**
      * Extracts an ItemStack from the given slot.
@@ -90,7 +108,26 @@ public interface IItemHandler
      *         The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      **/
     @Nonnull
+    @Deprecated //Remove in 1.15, use accessor version
     ItemStack extractItem(int slot, int amount, boolean simulate);
+
+    /**
+     * Extracts an ItemStack from the given slot.
+     * <p>
+     * The returned value must be empty if nothing is extracted,
+     * otherwise its stack size must be less than or equal to {@code amount} and {@link ItemStack#getMaxStackSize()}.
+     * </p>
+     *
+     * @param slot     Slot to extract from.
+     * @param amount   Amount to extract (may be greater than the current stack's max limit)
+     * @param accessor - System/Object data for working with the capability
+     * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
+     *         The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
+     **/
+    @Nonnull
+    default ItemStack extractItem(int slot, int amount, IFlowCapabilityAccessor accessor) {
+        return extractItem(slot, amount, accessor.simulate());
+    }
 
     /**
      * Retrieves the maximum stack size allowed to exist in the given slot.

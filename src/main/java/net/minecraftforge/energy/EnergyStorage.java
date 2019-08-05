@@ -19,6 +19,8 @@
 
 package net.minecraftforge.energy;
 
+import net.minecraftforge.common.capabilities.accessor.IFlowCapabilityAccessor;
+
 /**
  * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
  *
@@ -69,6 +71,29 @@ public class EnergyStorage implements IEnergyStorage
     }
 
     @Override
+    public int receiveEnergy(int maxReceive, IFlowCapabilityAccessor accessor)
+    {
+        //Enforce take all, not enough storage space
+        if(accessor.requireFull() && (getEnergyStored() + maxReceive > getMaxEnergyStored())) {
+            return 0;
+        }
+        //Bypass
+        else if(accessor.bypassLimits())
+        {
+            int energyReceived = Math.min(capacity - energy, maxReceive);
+            if (!accessor.simulate())
+                setEnergyStored(energy + energyReceived);
+
+            return energyReceived;
+        }
+        //Enforce take all, breaks max limit check
+        else if(accessor.requireFull() && maxReceive > this.maxReceive) {
+            return 0;
+        }
+        return receiveEnergy(maxReceive, accessor.simulate());
+    }
+
+    @Override
     public int extractEnergy(int maxExtract, boolean simulate)
     {
         if (!canExtract())
@@ -79,6 +104,29 @@ public class EnergyStorage implements IEnergyStorage
             setEnergyStored(energy - energyExtracted);
 
         return energyExtracted;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, IFlowCapabilityAccessor accessor)
+    {
+        //Enforce remove all, don't have enough energy check
+        if(accessor.requireFull() && maxExtract > energy) {
+            return 0;
+        }
+        //Bypass
+        else if(accessor.bypassLimits())
+        {
+            int energyExtracted = Math.min(energy, maxExtract);
+            if (!accessor.simulate())
+                setEnergyStored(energy - energyExtracted);
+
+            return energyExtracted;
+        }
+        //Enforce remove all, breaks max limit check
+        else if(accessor.requireFull() && (maxExtract > this.maxExtract)) {
+            return 0;
+        }
+        return extractEnergy(maxExtract, accessor.simulate());
     }
 
     /**
