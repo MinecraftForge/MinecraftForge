@@ -412,7 +412,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:3.1.+'
+        installer 'cpw.mods:modlauncher:3.2.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
         installer 'net.minecraftforge:eventbus:0.10.+:service'
