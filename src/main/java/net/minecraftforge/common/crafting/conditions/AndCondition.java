@@ -88,7 +88,7 @@ public class AndCondition implements ICondition
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("And condition values must be an array of JsonObjects");
-                children.add(CraftingHelper.deserialize(j.getAsJsonObject()));
+                children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
             }
             return new AndCondition(children.toArray(new ICondition[children.size()]));
         }

@@ -22,7 +22,8 @@ package net.minecraftforge.common.crafting;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -62,26 +63,6 @@ public class CraftingHelper
     private static final Map<ResourceLocation, IConditionSerializer<?>> conditions = new HashMap<>();
     private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
 
-    public static final IIngredientSerializer<IngredientNBT> INGREDIENT_NBT = register(new ResourceLocation("forge", "nbt"), new IngredientNBT.Serializer());
-    public static final IIngredientSerializer<CompoundIngredient> INGREDIENT_COMPOUND = register(new ResourceLocation("forge", "compound"), new CompoundIngredient.Serializer());
-    public static final IIngredientSerializer<Ingredient> INGREDIENT_VANILLA = register(new ResourceLocation("minecraft", "item"), new IIngredientSerializer<Ingredient>() {
-                        public Ingredient parse(PacketBuffer buffer) {
-                            return Ingredient.fromItemListStream(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));
-                        }
-
-                        public Ingredient parse(JsonObject json) {
-                           return Ingredient.fromItemListStream(Stream.of(Ingredient.deserializeItemList(json)));
-                        }
-
-                        public void write(PacketBuffer buffer, Ingredient ingredient) {
-                            ItemStack[] items = ingredient.getMatchingStacks();
-                            buffer.writeVarInt(items.length);
-
-                            for (ItemStack stack : items)
-                                buffer.writeItemStack(stack);
-                        }
-                    });
-
     public static IConditionSerializer<?> register(IConditionSerializer<?> serializer)
     {
         ResourceLocation key = serializer.getID();
@@ -99,7 +80,11 @@ public class CraftingHelper
         ingredients.put(key, serializer);
         return serializer;
     }
-
+    @Nullable
+    public static ResourceLocation getID(IIngredientSerializer<?> serializer)
+    {
+        return ingredients.inverse().get(serializer);
+    }
     public static <T extends Ingredient> void write(PacketBuffer buffer, T ingredient)
     {
         @SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
@@ -107,7 +92,7 @@ public class CraftingHelper
         ResourceLocation key = ingredients.inverse().get(serializer);
         if (key == null)
             throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);
-        if (serializer != INGREDIENT_VANILLA)
+        if (serializer != VanillaIngredientSerializer.INSTANCE)
         {
             buffer.writeVarInt(-1); //Marker to know there is a custom ingredient
             buffer.writeResourceLocation(key);
@@ -226,13 +211,13 @@ public class CraftingHelper
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
-            if (!CraftingHelper.deserialize(json).test())
+            if (!CraftingHelper.getCondition(json).test())
                 return false;
         }
         return true;
     }
 
-    public static ICondition deserialize(JsonObject json)
+    public static ICondition getCondition(JsonObject json)
     {
         ResourceLocation type = new ResourceLocation(JSONUtils.getString(json, "type"));
         IConditionSerializer<?> serializer = conditions.get(type);

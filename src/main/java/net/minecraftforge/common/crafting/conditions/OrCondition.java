@@ -90,7 +90,7 @@ public class OrCondition implements ICondition
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
-                children.add(CraftingHelper.deserialize(j.getAsJsonObject()));
+                children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
             }
             return new OrCondition(children.toArray(new ICondition[children.size()]));
         }

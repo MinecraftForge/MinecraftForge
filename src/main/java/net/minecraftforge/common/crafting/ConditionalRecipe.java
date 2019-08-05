@@ -21,6 +21,7 @@ package net.minecraftforge.common.crafting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,9 +36,19 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ConditionalRecipe
 {
+    @ObjectHolder("forge:conditional")
+    public static final IRecipeSerializer<IRecipe<?>> SERIALZIER = null;
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
     public static class Serializer<T extends IRecipe<?>> implements IRecipeSerializer<T>
     {
         private ResourceLocation name;
@@ -95,9 +106,16 @@ public class ConditionalRecipe
         private List<IFinishedRecipe> recipes = new ArrayList<>();
 
         private List<ICondition> currentConditions = new ArrayList<>();
+
         public Builder addCondition(ICondition condition)
         {
             currentConditions.add(condition);
+            return this;
+        }
+
+        public Builder addRecipe(Consumer<Consumer<IFinishedRecipe>> callable)
+        {
+            callable.accept(this::addRecipe);
             return this;
         }
 
@@ -109,6 +127,69 @@ public class ConditionalRecipe
             recipes.add(recipe);
             currentConditions.clear();
             return this;
+        }
+
+        public void build(Consumer<IFinishedRecipe> consumer, String namespace, String path)
+        {
+            if (!currentConditions.isEmpty())
+                throw new IllegalStateException("Invalid ConditionalRecipe builder, Orphaned conditions");
+            if (recipes.isEmpty())
+                throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
+
+            consumer.accept(new Finished(new ResourceLocation(namespace, path), conditions, recipes));
+        }
+    }
+
+    private static class Finished implements IFinishedRecipe
+    {
+        private final ResourceLocation id;
+        private final List<ICondition[]> conditions;
+        private final List<IFinishedRecipe> recipes;
+
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes)
+        {
+            this.id = id;
+            this.conditions = conditions;
+            this.recipes = recipes;
+        }
+
+        @Override
+        public void serialize(JsonObject json) {
+            JsonArray array = new JsonArray();
+            json.add("recipes", array);
+            for (int x = 0; x < conditions.size(); x++)
+            {
+                JsonObject holder = new JsonObject();
+
+                JsonArray conds = new JsonArray();
+                for (ICondition c : conditions.get(x))
+                    conds.add(CraftingHelper.serialize(c));
+                holder.add("conditions", conds);
+                holder.add("recipe", recipes.get(x).getRecipeJson());
+
+                array.add(holder);
+            }
+        }
+
+        @Override
+        public ResourceLocation getID() {
+            return id;
+        }
+
+        @Override
+        public IRecipeSerializer<?> getSerializer()
+        {
+            return SERIALZIER;
+        }
+
+        @Override
+        public JsonObject getAdvancementJson() {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getAdvancementID() {
+            return null;
         }
     }
 }

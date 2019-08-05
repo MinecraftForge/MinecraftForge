@@ -314,6 +314,17 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
+
+            forge_test_data {
+                parent runs.forge_data
+                taskName 'forge_test_data'
+
+                mods {
+                    tests { sources  sourceSets.test }
+                }
+                
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+            }
         }
     }
     

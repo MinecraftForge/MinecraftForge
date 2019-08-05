@@ -59,7 +59,7 @@
 +
 +   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
 +      if (!isVanilla()) throw new IllegalStateException("Modderrs must implement Ingredient.getSerializer in their custom Ingredients: " + this);
-+      return net.minecraftforge.common.crafting.CraftingHelper.INGREDIENT_VANILLA;
++      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
 +   }
 +
     public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
