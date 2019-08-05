@@ -17,15 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.gameevent;
+package net.minecraftforge.event;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
-public class TickEvent extends net.minecraftforge.eventbus.api.Event
+public class TickEvent extends Event
 {
     public enum Type {
         WORLD, PLAYER, CLIENT, SERVER, RENDER;

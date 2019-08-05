@@ -21,6 +21,10 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -30,6 +34,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
+
+import javax.annotation.Nonnull;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -380,6 +386,126 @@ public class PlayerEvent extends LivingEvent
         public double getVisibilityModifier()
         {
             return visibilityModifier;
+        }
+    }
+
+    public static class ItemPickupEvent extends PlayerEvent {
+        /**
+         * Original EntityItem with current remaining stack size
+         */
+        private final ItemEntity originalEntity;
+        /**
+         * Clone item stack, containing the item and amount picked up
+         */
+        private final ItemStack stack;
+        public ItemPickupEvent(PlayerEntity player, ItemEntity entPickedUp, ItemStack stack)
+        {
+            super(player);
+            this.originalEntity = entPickedUp;
+            this.stack = stack;
+        }
+
+        public ItemStack getStack() {
+            return stack;
+        }
+
+        public ItemEntity getOriginalEntity() {
+            return originalEntity;
+        }
+    }
+
+    public static class ItemCraftedEvent extends PlayerEvent {
+        @Nonnull
+        private final ItemStack crafting;
+        private final IInventory craftMatrix;
+        public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
+        {
+            super(player);
+            this.crafting = crafting;
+            this.craftMatrix = craftMatrix;
+        }
+
+        @Nonnull
+        public ItemStack getCrafting()
+        {
+            return this.crafting;
+        }
+
+        public IInventory getInventory()
+        {
+            return this.craftMatrix;
+        }
+    }
+
+    public static class ItemSmeltedEvent extends PlayerEvent {
+        @Nonnull
+        private final ItemStack smelting;
+        public ItemSmeltedEvent(PlayerEntity player, @Nonnull ItemStack crafting)
+        {
+            super(player);
+            this.smelting = crafting;
+        }
+
+        @Nonnull
+        public ItemStack getSmelting()
+        {
+            return this.smelting;
+        }
+    }
+
+    public static class PlayerLoggedInEvent extends PlayerEvent {
+        public PlayerLoggedInEvent(PlayerEntity player)
+        {
+            super(player);
+        }
+    }
+
+    public static class PlayerLoggedOutEvent extends PlayerEvent {
+        public PlayerLoggedOutEvent(PlayerEntity player)
+        {
+            super(player);
+        }
+    }
+
+    public static class PlayerRespawnEvent extends PlayerEvent {
+        private final boolean endConquered;
+
+        public PlayerRespawnEvent(PlayerEntity player, boolean endConquered)
+        {
+            super(player);
+            this.endConquered = endConquered;
+        }
+
+        /**
+         * Did this respawn event come from the player conquering the end?
+         * @return if this respawn was because the player conquered the end
+         */
+        public boolean isEndConquered()
+        {
+            return this.endConquered;
+        }
+
+
+    }
+
+    public static class PlayerChangedDimensionEvent extends PlayerEvent {
+        private final DimensionType fromDim;
+        private final DimensionType toDim;
+        public PlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim)
+        {
+            super(player);
+            this.fromDim = fromDim;
+            this.toDim = toDim;
+        }
+
+        public DimensionType getFrom()
+        {
+            return this.fromDim;
+        }
+
+        public DimensionType getTo()
+        {
+            return this.toDim;
         }
     }
 }
