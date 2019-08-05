@@ -90,6 +90,7 @@ public class ConfigFileTypeHandler {
         public void run() {
             // Force the regular classloader onto the special thread
             Thread.currentThread().setContextClassLoader(realClassLoader);
+            this.commentedFileConfig.load();
             LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
             this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
         }
