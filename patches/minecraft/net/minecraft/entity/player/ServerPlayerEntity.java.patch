@@ -17,18 +17,33 @@
                 BlockPos blockpos = new BlockPos(this.field_70165_t, this.field_70163_u, this.field_70161_v);
                 BlockState blockstate = Blocks.field_222388_bz.func_176223_P();
                 if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-@@ -568,8 +569,10 @@
+@@ -568,11 +569,13 @@
        return this.field_71133_b.func_71219_W();
     }
  
 +   @Override
     @Nullable
-    public Entity func_212321_a(DimensionType p_212321_1_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType destination, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, destination)) return null;
        this.field_184851_cj = true;
        DimensionType dimensiontype = this.field_71093_bK;
-       if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
-@@ -591,8 +594,8 @@
+-      if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
++      if (dimensiontype == DimensionType.field_223229_c_ && destination == DimensionType.field_223227_a_) {
+          this.func_213319_R();
+          this.func_71121_q().func_217434_e(this);
+          if (!this.field_71136_j) {
+@@ -584,15 +587,15 @@
+          return this;
+       } else {
+          ServerWorld serverworld = this.field_71133_b.func_71218_a(dimensiontype);
+-         this.field_71093_bK = p_212321_1_;
+-         ServerWorld serverworld1 = this.field_71133_b.func_71218_a(p_212321_1_);
++         this.field_71093_bK = destination;
++         ServerWorld serverworld1 = this.field_71133_b.func_71218_a(destination);
+          WorldInfo worldinfo = this.field_70170_p.func_72912_H();
+-         this.field_71135_a.func_147359_a(new SRespawnPacket(p_212321_1_, worldinfo.func_76067_t(), this.field_71134_c.func_73081_b()));
++         this.field_71135_a.func_147359_a(new SRespawnPacket(destination, worldinfo.func_76067_t(), this.field_71134_c.func_73081_b()));
           this.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
           PlayerList playerlist = this.field_71133_b.func_184103_al();
           playerlist.func_187243_f(this);
@@ -39,28 +54,53 @@
           double d0 = this.field_70165_t;
           double d1 = this.field_70163_u;
           double d2 = this.field_70161_v;
-@@ -601,13 +604,11 @@
+@@ -601,14 +604,12 @@
           double d3 = 8.0D;
           float f2 = f1;
           serverworld.func_217381_Z().func_76320_a("moving");
+-         if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223228_b_) {
 +         double moveFactor = serverworld.func_201675_m().getMovementFactor() / serverworld1.func_201675_m().getMovementFactor();
 +         d0 *= moveFactor;
 +         d2 *= moveFactor;
-          if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223228_b_) {
++         if (dimensiontype == DimensionType.field_223227_a_ && destination == DimensionType.field_223228_b_) {
              this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
 -            d0 /= 8.0D;
 -            d2 /= 8.0D;
 -         } else if (dimensiontype == DimensionType.field_223228_b_ && p_212321_1_ == DimensionType.field_223227_a_) {
 -            d0 *= 8.0D;
 -            d2 *= 8.0D;
-          } else if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223229_c_) {
+-         } else if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223229_c_) {
++         } else if (dimensiontype == DimensionType.field_223227_a_ && destination == DimensionType.field_223229_c_) {
              BlockPos blockpos = serverworld1.func_180504_m();
              d0 = (double)blockpos.func_177958_n();
+             d1 = (double)blockpos.func_177956_o();
+@@ -627,7 +628,7 @@
+          d0 = MathHelper.func_151237_a(d0, d7, d5);
+          d2 = MathHelper.func_151237_a(d2, d4, d6);
+          this.func_70012_b(d0, d1, d2, f1, f);
+-         if (p_212321_1_ == DimensionType.field_223229_c_) {
++         if (destination == DimensionType.field_223229_c_) {
+             int i = MathHelper.func_76128_c(this.field_70165_t);
+             int j = MathHelper.func_76128_c(this.field_70163_u) - 1;
+             int k = MathHelper.func_76128_c(this.field_70161_v);
+@@ -648,9 +649,9 @@
+ 
+             this.func_70012_b((double)i, (double)j, (double)k, f1, 0.0F);
+             this.func_213317_d(Vec3d.field_186680_a);
+-         } else if (!serverworld1.func_85176_s().func_222268_a(this, f2)) {
+-            serverworld1.func_85176_s().func_85188_a(this);
+-            serverworld1.func_85176_s().func_222268_a(this, f2);
++         } else if (!teleporter.placeEntity(this, serverworld, serverworld1, f2) && teleporter.isVanilla()) {
++            ((net.minecraft.world.Teleporter) teleporter).func_85188_a(this);
++            teleporter.placeEntity(this, serverworld, serverworld1, f2);
+          }
+ 
+          serverworld.func_217381_Z().func_76319_b();
 @@ -671,6 +672,7 @@
           this.field_71144_ck = -1;
           this.field_71149_ch = -1.0F;
           this.field_71146_ci = -1;
-+         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, dimensiontype, p_212321_1_);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, dimensiontype, destination);
           return this;
        }
     }

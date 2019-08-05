@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/Teleporter.java
++++ b/net/minecraft/world/Teleporter.java
+@@ -25,11 +25,12 @@
+ import net.minecraft.world.dimension.Dimension;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.server.TicketType;
++import net.minecraftforge.common.util.ITeleporter;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.util.Supplier;
+ 
+-public class Teleporter {
++public class Teleporter implements ITeleporter {
+    private static final Logger field_222274_a = LogManager.getLogger();
+    private static final NetherPortalBlock field_196236_a = (NetherPortalBlock)Blocks.field_150427_aO;
+    protected final ServerWorld field_85192_a;
+@@ -42,6 +43,11 @@
+       this.field_77187_a = new Random(p_i1963_1_.func_72905_C());
+    }
+ 
++   @Override
++   public boolean placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw) {
++      return func_222268_a(entity, yaw);
++   }
++
+    public boolean func_222268_a(Entity p_222268_1_, float p_222268_2_) {
+       Vec3d vec3d = p_222268_1_.func_181014_aG();
+       Direction direction = p_222268_1_.func_181012_aH();
