@@ -304,7 +304,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     int add(int id, V value)
     {
-        final String owner = ModLoadingContext.get().getActiveContainer().getNamespace();
+        final String owner = ModLoadingContext.get().getActiveNamespace();
         return add(id, value, owner);
     }
 

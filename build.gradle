@@ -243,6 +243,33 @@ project(':forge') {
                 source sourceSets.userdev
             }
 
+            cpw_forge_client {
+                taskName 'cpw_forge_client'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevclient'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
+                environment 'nativesDirectory', extractNatives.output
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+                property 'terminal.ansi', 'true'
+                property 'forge.logging.noansi', 'false'
+                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
             forge_test_client {
                 parent runs.forge_client
                 taskName 'forge_test_client'
@@ -341,6 +368,14 @@ project(':forge') {
                 'Implementation-Title':     'FML Java Mod',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'net/minecraftforge/fml/mclanguageprovider/': [
+                    'Specification-Title':      'Mod Language Provider',
+                    'Specification-Vendor':     'Forge Development LLC',
+                    'Specification-Version':    '1',
+                    'Implementation-Title':     'Minecraft Language Mod Provider',
+                    'Implementation-Version':   '1',
+                    'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/loading/': [
                 'Specification-Title':      'Launcher',

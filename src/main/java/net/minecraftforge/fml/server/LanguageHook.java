@@ -92,7 +92,7 @@ public class LanguageHook
 
     }
 
-    static void loadForgeAndMCLangs() {
+    public static void loadForgeAndMCLangs() {
         modTable = new HashMap<>(5000);
         final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
         final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");

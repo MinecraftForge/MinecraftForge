@@ -105,7 +105,7 @@ public class ObjectHolderRegistry
 
         // double pass - get all the class level annotations first, then the field level annotations
         annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType())).filter(a -> a.getTargetType() == ElementType.TYPE)
-        .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), null,                 (String)data.getAnnotationData().get("value"), true, data.getClassType().getClassName().startsWith("net.minecraft.")));
+        .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), null, (String)data.getAnnotationData().get("value"), true, data.getClassType().getClassName().startsWith("net.minecraft.")));
 
         annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType())).filter(a -> a.getTargetType() == ElementType.FIELD)
         .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), data.getMemberName(), (String)data.getAnnotationData().get("value"), false, false));
