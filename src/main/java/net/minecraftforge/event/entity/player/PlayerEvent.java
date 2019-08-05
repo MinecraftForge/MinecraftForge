@@ -53,11 +53,21 @@ public class PlayerEvent extends LivingEvent
         entityPlayer = player;
     }
 
+    /**
+     * Use {@link #getPlayer()}
+     *
+     * @return Player
+     */
+    @Deprecated
     public PlayerEntity getEntityPlayer()
     {
         return entityPlayer;
     }
 
+    /**
+     * @return Player
+     */
+    public PlayerEntity getPlayer() { return entityPlayer; }
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
