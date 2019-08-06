@@ -1,6 +1,37 @@
 --- a/net/minecraft/client/particle/ParticleManager.java
 +++ b/net/minecraft/client/particle/ParticleManager.java
-@@ -235,6 +235,7 @@
+@@ -63,7 +63,7 @@
+    private final Queue<EmitterParticle> field_178933_d = Queues.newArrayDeque();
+    private final TextureManager field_78877_c;
+    private final Random field_78875_d = new Random();
+-   private final Int2ObjectMap<IParticleFactory<?>> field_178932_g = new Int2ObjectOpenHashMap<>();
++   private final Map<ResourceLocation, IParticleFactory<?>> field_178932_g = new java.util.HashMap<>();
+    private final Queue<Particle> field_187241_h = Queues.newArrayDeque();
+    private final Map<ResourceLocation, ParticleManager.AnimatedSpriteImpl> field_215242_i = Maps.newHashMap();
+    private final AtlasTexture field_215243_j = new AtlasTexture("textures/particle");
+@@ -137,13 +137,13 @@
+    }
+ 
+    public <T extends IParticleData> void func_199283_a(ParticleType<T> p_199283_1_, IParticleFactory<T> p_199283_2_) {
+-      this.field_178932_g.put(Registry.field_212632_u.func_148757_b(p_199283_1_), p_199283_2_);
++      this.field_178932_g.put(Registry.field_212632_u.func_177774_c(p_199283_1_), p_199283_2_);
+    }
+ 
+    public <T extends IParticleData> void func_215234_a(ParticleType<T> p_215234_1_, ParticleManager.IParticleMetaFactory<T> p_215234_2_) {
+       ParticleManager.AnimatedSpriteImpl particlemanager$animatedspriteimpl = new ParticleManager.AnimatedSpriteImpl();
+       this.field_215242_i.put(Registry.field_212632_u.func_177774_c(p_215234_1_), particlemanager$animatedspriteimpl);
+-      this.field_178932_g.put(Registry.field_212632_u.func_148757_b(p_215234_1_), p_215234_2_.create(particlemanager$animatedspriteimpl));
++      this.field_178932_g.put(Registry.field_212632_u.func_177774_c(p_215234_1_), p_215234_2_.create(particlemanager$animatedspriteimpl));
+    }
+ 
+    public CompletableFuture<Void> func_215226_a(IFutureReloadListener.IStage p_215226_1_, IResourceManager p_215226_2_, IProfiler p_215226_3_, IProfiler p_215226_4_, Executor p_215226_5_, Executor p_215226_6_) {
+@@ -230,11 +230,12 @@
+ 
+    @Nullable
+    private <T extends IParticleData> Particle func_199927_b(T p_199927_1_, double p_199927_2_, double p_199927_4_, double p_199927_6_, double p_199927_8_, double p_199927_10_, double p_199927_12_) {
+-      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>) this.field_178932_g.get(Registry.field_212632_u.func_148757_b(p_199927_1_.func_197554_b()));
++      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>) this.field_178932_g.get(Registry.field_212632_u.func_177774_c(p_199927_1_.func_197554_b()));
+       return iparticlefactory == null ? null : iparticlefactory.func_199234_a(p_199927_1_, this.field_78878_a, p_199927_2_, p_199927_4_, p_199927_6_, p_199927_8_, p_199927_10_, p_199927_12_);
     }
  
     public void func_78873_a(Particle p_78873_1_) {
