@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/IWorldWriter.java
++++ b/net/minecraft/world/IWorldWriter.java
+@@ -4,7 +4,7 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.util.math.BlockPos;
+ 
+-public interface IWorldWriter {
++public interface IWorldWriter extends net.minecraftforge.common.extensions.IForgeWorldWriter {
+    boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_);
+ 
+    boolean func_217377_a(BlockPos p_217377_1_, boolean p_217377_2_);

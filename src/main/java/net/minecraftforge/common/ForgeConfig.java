@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
@@ -48,6 +49,8 @@ public class ForgeConfig
         public final IntValue dimensionUnloadQueueDelay;
 
         public final IntValue clumpingThreshold;
+
+        public final ConfigValue<String> multipartHandler;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
@@ -103,6 +106,12 @@ public class ForgeConfig
                     .translation("forge.configgui.clumpingThreshold")
                     .worldRestart()
                     .defineInRange("clumpingThreshold", 64, 64, 1024);
+
+            multipartHandler = builder
+                    .comment("Determines the handler for all multipart behavior in the instance. If empty (default), will be populated with the first mod-supplied handler available, or default to the vanilla one if none are present.")
+                    .translation("forge.configgui.multipartHandler")
+                    .worldRestart()
+                    .define("multipartHandler", "");
 
             builder.pop();
         }

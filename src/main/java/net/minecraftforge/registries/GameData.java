@@ -60,6 +60,8 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.common.multipart.IMultipartSlot;
+import net.minecraftforge.common.multipart.MultipartHandler;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
@@ -136,6 +138,8 @@ public class GameData
     // Custom forge registries
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
+    public static final ResourceLocation MULTIPART_SLOTS = new ResourceLocation("forge:multipart_slots");
+    public static final ResourceLocation MULTIPART_HANDLERS = new ResourceLocation("forge:multipart_handlers");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
@@ -200,6 +204,8 @@ public class GameData
         // Custom forge registries
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
+        makeRegistry(MULTIPART_SLOTS, IMultipartSlot.class).disableSaving().disableOverrides().create();
+        makeRegistry(MULTIPART_HANDLERS, MultipartHandler.class).disableSaving().disableOverrides().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)

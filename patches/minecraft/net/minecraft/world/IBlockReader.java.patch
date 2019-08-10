@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/IBlockReader.java
++++ b/net/minecraft/world/IBlockReader.java
+@@ -14,7 +14,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.util.math.shapes.VoxelShape;
+ 
+-public interface IBlockReader {
++public interface IBlockReader extends net.minecraftforge.common.extensions.IForgeBlockReader {
+    @Nullable
+    TileEntity func_175625_s(BlockPos p_175625_1_);
+ 

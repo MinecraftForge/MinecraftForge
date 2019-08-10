@@ -43,6 +43,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IEnviromentBlockReader;
@@ -54,6 +55,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.multipart.IMultipartSlot;
+import net.minecraftforge.common.multipart.MultipartSlot;
 
 public interface IForgeBlockState
 {
@@ -866,5 +869,47 @@ public interface IForgeBlockState
     default void onBlockExploded(World world, BlockPos pos, Explosion explosion)
     {
         getBlockState().getBlock().onBlockExploded(getBlockState(), world, pos, explosion);
+    }
+
+    /**
+     * Gets the slot that this state takes up when placed in the same block space as other blocks.<br/>
+     *
+     * Returning {@link MultipartSlot#FULL_BLOCK} signifies that this state does not support multipart behavior and is
+     * the value returned by default.
+     */
+    default IMultipartSlot getMultipartSlot()
+    {
+        return getBlockState().getBlock().getMultipartSlot(getBlockState());
+    }
+
+    /**
+     * Gets the shape for this state when performing an occlusion test.<br/>
+     *
+     * This is the part of the block that cannot and will not be intersected by other parts in the same block space.<br/>
+     * In the case of a pipe or tube, this should only return the center of said block, since the sides can be covered to
+     * block the connection.<br/>
+     */
+    default VoxelShape getOcclusionShape(IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().getOcclusionShape(getBlockState(), world, pos);
+    }
+
+    /**
+     * Performs an occlusion test between this state and another state that may or may not be in the world.<br/>
+     *
+     * Returning {@link ActionResultType#SUCCESS} indicates that the blocks do not intersect with each other.<br/>
+     * Returning {@link ActionResultType#FAIL} indicates that the blocks intersect with each other.<br/>
+     * Returning {@link ActionResultType#PASS} indicates that this block does not perform special occlusion testing, and
+     * the other block should also be tested. If both return {@link ActionResultType#PASS}, a default occlusion test is
+     * to be performed by the caller.
+     *
+     * @param world The current world
+     * @param pos The current position
+     * @param otherState The other state (may or may not be in the world already)
+     * @return Whether the occlusion test succeeded or failed, or is not handled in any special way
+     */
+    default ActionResultType testOcclusion(IBlockReader world, BlockPos pos, BlockState otherState)
+    {
+        return getBlockState().getBlock().testOcclusion(getBlockState(), world, pos, otherState);
     }
 }

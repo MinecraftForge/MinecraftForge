@@ -49,6 +49,8 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.common.multipart.IMultipartSlot;
+import net.minecraftforge.common.multipart.MultipartHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -97,6 +99,8 @@ public class ForgeRegistries
     // Custom forge registries
     public static final IForgeRegistry<ModDimension> MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
+    public static final IForgeRegistry<IMultipartSlot> MULTIPART_SLOTS = RegistryManager.ACTIVE.getRegistry(IMultipartSlot.class);
+    public static final IForgeRegistry<MultipartHandler> MULTIPART_HANDLERS = RegistryManager.ACTIVE.getRegistry(MultipartHandler.class);
 
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
