@@ -39,7 +39,24 @@ public interface IEnergyStorage
     *            If TRUE, the insertion will only be simulated.
     * @return Amount of energy that was (or would have been, if simulated) accepted by the storage.
     */
-    int receiveEnergy(int maxReceive, boolean simulate);
+    default int receiveEnergy(int maxReceive, boolean simulate){
+        return receiveEnergy(maxReceive, simulate, false, false);
+    }
+
+    /**
+     * Adds energy to the storage. Returns quantity of energy that was accepted.
+     *
+     * @param maxReceive
+     *            Maximum amount of energy to be inserted.
+     * @param simulate
+     *            If TRUE, the extraction will only be simulated.
+     * @param bypassLimits
+     *            If TRUE, the input limit should be ignored
+     * @param matchExact
+     *            If TRUE, the receive should be exact instead of partial (take all or none)
+     * @return Amount of energy that was (or would have been, if simulated) accepted by the storage.
+     */
+    int receiveEnergy(int maxReceive, boolean simulate, boolean bypassLimits, boolean matchExact);
 
     /**
     * Removes energy from the storage. Returns quantity of energy that was removed.
@@ -50,7 +67,24 @@ public interface IEnergyStorage
     *            If TRUE, the extraction will only be simulated.
     * @return Amount of energy that was (or would have been, if simulated) extracted from the storage.
     */
-    int extractEnergy(int maxExtract, boolean simulate);
+    default int extractEnergy(int maxExtract, boolean simulate){
+        return extractEnergy(maxExtract, simulate, false, false);
+    }
+
+    /**
+     * Removes energy from the storage. Returns quantity of energy that was removed.
+     *
+     * @param maxExtract
+     *            Maximum amount of energy to be extracted.
+     * @param simulate
+     *            If TRUE, the extraction will only be simulated.
+     * @param bypassLimits
+     *            If TRUE, the input limit should be ignored
+     * @param matchExact
+     *            If TRUE, the extract should be exact instead of partial (take all or none)
+     * @return Amount of energy that was (or would have been, if simulated) extracted from the storage.
+     */
+    int extractEnergy(int maxExtract, boolean simulate, boolean bypassLimits, boolean matchExact);
 
     /**
     * Returns the amount of energy currently stored.

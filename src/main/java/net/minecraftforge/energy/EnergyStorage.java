@@ -69,6 +69,29 @@ public class EnergyStorage implements IEnergyStorage
     }
 
     @Override
+    public int receiveEnergy(int maxReceive, boolean simulate, boolean bypassLimits, boolean matchExact)
+    {
+        //Enforce take all, not enough storage space
+        if(matchExact && (getEnergyStored() + maxReceive > getMaxEnergyStored())) {
+            return 0;
+        }
+        //Bypass
+        else if(bypassLimits)
+        {
+            int energyReceived = Math.min(capacity - energy, maxReceive);
+            if (!simulate)
+                setEnergyStored(energy + energyReceived);
+
+            return energyReceived;
+        }
+        //Enforce take all, breaks max limit check
+        else if(matchExact && maxReceive > this.maxReceive) {
+            return 0;
+        }
+        return receiveEnergy(maxReceive, simulate);
+    }
+
+    @Override
     public int extractEnergy(int maxExtract, boolean simulate)
     {
         if (!canExtract())
@@ -79,6 +102,29 @@ public class EnergyStorage implements IEnergyStorage
             setEnergyStored(energy - energyExtracted);
 
         return energyExtracted;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate, boolean bypassLimits, boolean matchExact)
+    {
+        //Enforce remove all, don't have enough energy check
+        if(matchExact && maxExtract > energy) {
+            return 0;
+        }
+        //Bypass
+        else if(bypassLimits)
+        {
+            int energyExtracted = Math.min(energy, maxExtract);
+            if (!simulate)
+                setEnergyStored(energy - energyExtracted);
+
+            return energyExtracted;
+        }
+        //Enforce remove all, breaks max limit check
+        else if(matchExact && (maxExtract > this.maxExtract)) {
+            return 0;
+        }
+        return extractEnergy(maxExtract, simulate);
     }
 
     /**
