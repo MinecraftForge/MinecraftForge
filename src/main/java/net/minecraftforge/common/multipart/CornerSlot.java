@@ -50,7 +50,7 @@ public enum CornerSlot implements IMultipartSlot
         this.dirX = dirX;
         this.dirY = dirY;
         this.dirZ = dirZ;
-        this.name = new ResourceLocation("forge", "corner_" + getDirectionString(dirY) + getDirectionString(dirY) + getDirectionString(dirZ));
+        this.name = new ResourceLocation("forge", "corner_" + getDirectionString(dirY) + getDirectionString(dirZ) + getDirectionString(dirX));
     }
 
     public Direction.AxisDirection getXDirection()
