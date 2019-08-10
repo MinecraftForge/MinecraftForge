@@ -209,18 +209,4 @@ public class Constants
         public static final int DEFAULT = NOTIFY_NEIGHBORS | BLOCK_UPDATE;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
-
-    /**
-     * The flags used for {@link net.minecraft.entity.Entity#getFlag(int)} and {@link net.minecraft.entity.Entity#setFlag(int, boolean)}}<br>
-     * Can be found by searching for the usages of getFlag
-     */
-    public static class EntityFlags {
-        public static final int BURNING       = 0;
-        public static final int SNEAKING      = 1;
-        public static final int SPRINTING     = 3;
-        public static final int SWIMMING      = 4;
-        public static final int INVISIBLE     = 5;
-        public static final int GLOWING       = 6;
-        public static final int ELYTRA_FLYING = 7;
-    }
 }
