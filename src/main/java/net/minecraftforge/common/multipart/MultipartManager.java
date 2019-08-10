@@ -47,7 +47,7 @@ public enum MultipartManager
         return handler;
     }
 
-    private void updateActiveHandler()
+    public void updateActiveHandler()
     {
         ForgeConfigSpec.ConfigValue<String> cfg = ForgeConfig.SERVER.multipartHandler;
         String cfgValue = cfg.get().trim();

@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
+import net.minecraftforge.common.multipart.MultipartManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
@@ -207,6 +208,10 @@ public class ForgeConfig
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        if (configEvent.getConfig().getSpec() == serverSpec)
+        {
+            MultipartManager.INSTANCE.updateActiveHandler();
+        }
     }
 
     @SubscribeEvent
