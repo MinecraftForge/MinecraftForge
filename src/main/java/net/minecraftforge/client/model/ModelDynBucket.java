@@ -23,17 +23,20 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.List;
 
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 import javax.vecmath.Quat4f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.ISprite;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.entity.LivingEntity;
@@ -45,11 +48,13 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.client.extensions.IForgeAtlasTexture;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.FluidUtil;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.Optional;
 import java.util.Random;
@@ -122,7 +127,7 @@ public final class ModelDynBucket implements IUnbakedModel
     @Override
     public Collection<ResourceLocation> getDependencies() 
     {
-    	return Collections.emptyList();
+        return Collections.emptyList();
     }
 
     @Nullable
@@ -249,32 +254,6 @@ public final class ModelDynBucket implements IUnbakedModel
         return new ModelDynBucket(base, liquid, cover, fluid, flipGas, tint);
     }
     
-    @Nullable
-    protected static IResource getResource(ResourceLocation resourceLocation)
-    {
-        try
-        {
-            return Minecraft.getInstance().getResourceManager().getResource(resourceLocation);
-        }
-        catch (IOException ignored)
-        {
-            return null;
-        }
-    }
-    
-    @Nullable
-    protected static PngSizeInfo getSizeInfo(IResource resource)
-    {
-        try
-        {
-            return new PngSizeInfo(resource.toString(), resource.getInputStream());
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-    
     public enum LoaderDynBucket implements ICustomModelLoader
     {
         INSTANCE;
@@ -297,63 +276,64 @@ public final class ModelDynBucket implements IUnbakedModel
             // no need to clear cache since we create a new model instance
         }
 
-        public void register(AtlasTexture map)
+        public void register(AtlasTexture map, IResourceManager manager, List<IForgeAtlasTexture.SpriteProvider> sprites)
         {
-            // only create these textures if they are not added by a resource pack
-
-        	IResource res;
-            if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_cover.png")) == null)
+            if (!manager.hasResource(map.getSpritePath(BucketBaseSprite.LOCATION)))
             {
-                ResourceLocation bucketCover = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_cover");
-                BucketCoverSprite bucketCoverSprite = new BucketCoverSprite(bucketCover);
-//                map.setTextureEntry(bucketCoverSprite);
+                sprites.add(createBucketSizedSprite(map, BucketBaseSprite::new));
             }
-
-            if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_base.png")) == null)
+            if (!manager.hasResource(map.getSpritePath(BucketBaseSprite.LOCATION)))
             {
-                ResourceLocation bucketBase = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_base");
-                BucketBaseSprite bucketBaseSprite = new BucketBaseSprite(bucketBase);
-//                map.setTextureEntry(bucketBaseSprite);
+                sprites.add(createBucketSizedSprite(map, BucketCoverSprite::new));
             }
         }
     }
 
+    private static final ResourceLocation VANILLA_BUCKET_ID = new ResourceLocation("item/bucket");
+
+    @FunctionalInterface
+    private interface BucketSpriteSupplier
+    {
+        TextureAtlasSprite create(PngSizeInfo sizeIn, @Nullable AnimationMetadataSection animationMetadataIn) throws IOException;
+    }
+
+    private static IForgeAtlasTexture.SpriteProvider createBucketSizedSprite(AtlasTexture map, BucketSpriteSupplier constructor)
+    {
+        return manager -> {
+            try (IResource iresource = manager.getResource(map.getSpritePath(VANILLA_BUCKET_ID)))
+            {
+                PngSizeInfo pngsizeinfo = new PngSizeInfo(iresource.toString(), iresource.getInputStream());
+                AnimationMetadataSection animationmetadatasection = iresource.getMetadata(AnimationMetadataSection.SERIALIZER);
+                return constructor.create(pngsizeinfo, animationmetadatasection);
+            }
+        };
+    }
+
     private static final class BucketBaseSprite extends TextureAtlasSprite
     {
-        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
-        private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket);
+        private static final ResourceLocation LOCATION = new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket_base");
 
-        private BucketBaseSprite(ResourceLocation res)
+        private BucketBaseSprite(PngSizeInfo sizeIn, @Nullable AnimationMetadataSection animationMetadataIn)
         {
-            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
-        }
-
-        /* TODO Custom TAS
-        @Override
-        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-        {
-            return true;
+            super(LOCATION, sizeIn, animationMetadataIn);
         }
 
         @Override
         public Collection<ResourceLocation> getDependencies()
         {
-            return dependencies;
+            return ImmutableList.of(VANILLA_BUCKET_ID);
         }
 
         @Override
-        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+        public void load(IResourceManager manager, ResourceLocation location, int mipmapLevels, Function<ResourceLocation, CompletableFuture<TextureAtlasSprite>> textureGetter)
         {
-            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-            // TODO custom sprites are gonna be a PITA, these are final
-            width = sprite.getIconWidth();
-            height = sprite.getIconHeight();
-            // TODO No easy way to dump pixels of one sprite into another without n^2 for loop, investigate patch?
-            final int[][] pixels = sprite.getFrameTextureData(0);
-            this.clearFramesTextureData();
-            this.framesTextureData.add(pixels);
-            return false;
-        }*/
+            TextureAtlasSprite vanillaSprite = textureGetter.apply(VANILLA_BUCKET_ID).join();
+            NativeImage source = vanillaSprite.getImage(0);
+            NativeImage image = new NativeImage(source.getFormat(), width, height, false);
+            image.copyImageData(source);
+            frames = new NativeImage[mipmapLevels];
+            frames[0] = image;
+        }
     }
 
     /**
@@ -361,68 +341,48 @@ public final class ModelDynBucket implements IUnbakedModel
      */
     private static final class BucketCoverSprite extends TextureAtlasSprite
     {
-        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
-        private final ResourceLocation bucketCoverMask = new ResourceLocation(ForgeVersion.MOD_ID, "item/vanilla_bucket_cover_mask");
-        private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket, bucketCoverMask);
+        private static final ResourceLocation LOCATION = new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket_cover");
+        private static final ResourceLocation COVER_MASK = new ResourceLocation(ForgeVersion.MOD_ID, "items/vanilla_bucket_cover_mask");
 
-        private BucketCoverSprite(ResourceLocation res)
+        private BucketCoverSprite(PngSizeInfo sizeIn, @Nullable AnimationMetadataSection animationMetadataIn)
         {
-            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
-        }
-
-        /* TODO Custom TAS
-        @Override
-        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-        {
-            return true;
+            super(LOCATION, sizeIn, animationMetadataIn);
         }
 
         @Override
         public Collection<ResourceLocation> getDependencies()
         {
-            return dependencies;
+            return ImmutableList.of(COVER_MASK, VANILLA_BUCKET_ID);
         }
 
         @Override
-        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+        public void load(IResourceManager manager, ResourceLocation location, int mipmapLevels, Function<ResourceLocation, CompletableFuture<TextureAtlasSprite>> textureGetter)
         {
-            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-            final TextureAtlasSprite alphaMask = textureGetter.apply(bucketCoverMask);
-            width = sprite.getIconWidth();
-            height = sprite.getIconHeight();
-            final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
-            pixels[0] = new int[width * height];
+            final NativeImage result = new NativeImage(width, height, true);
 
-            try (
-                 IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
-                 IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
-            ) {
-                // use the alpha mask if it fits, otherwise leave the cover texture blank
-                if (empty != null && mask != null && Objects.equals(empty.getPackName(), mask.getPackName()) &&
-                        alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
+            final TextureAtlasSprite mask = textureGetter.apply(COVER_MASK).join();
+            final TextureAtlasSprite bucket = textureGetter.apply(VANILLA_BUCKET_ID).join();
+
+            final NativeImage maskPixels = mask.getImage(0);
+            final NativeImage bucketPixels = bucket.getImage(0);
+
+            if (maskPixels.getWidth() == width && maskPixels.getHeight() == height)
+            {
+                for (int i = 0; i < width; i++)
                 {
-                    final int[][] oldPixels = sprite.getFrameTextureData(0);
-                    final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
-
-                    for (int p = 0; p < width * height; p++)
+                    for (int j = 0; j < height; j++)
                     {
-                        final int alphaMultiplier = alphaPixels[0][p] >>> 24;
-                        final int oldPixel = oldPixels[0][p];
+                        final int alphaMultiplier = maskPixels.getPixelRGBA(i, j) >>> 24;
+                        final int oldPixel = bucketPixels.getPixelRGBA(i, j);
                         final int oldPixelAlpha = oldPixel >>> 24;
                         final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
-                        pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
+                        result.setPixelRGBA(i, j, (oldPixel & 0xFFFFFF) + (newAlpha << 24));
                     }
                 }
             }
-            catch (IOException e)
-            {
-                LOGGER.error("Failed to close resource", e);
-            }
-
-            this.clearFramesTextureData();
-            this.framesTextureData.add(pixels);
-            return false;
-        }*/
+            frames = new NativeImage[mipmapLevels];
+            frames[0] = result;
+        }
     }
 
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList

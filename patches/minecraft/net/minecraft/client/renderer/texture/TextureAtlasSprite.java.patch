@@ -42,7 +42,7 @@
           p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
        }
  
-@@ -464,4 +471,10 @@
+@@ -464,4 +471,14 @@
     public void func_195663_q() {
        this.func_195659_d(0);
     }
@@ -51,5 +51,9 @@
 +   
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
 +       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.field_130223_c, y + this.field_195672_e[frameIndex] * this.field_130224_d);
++   }
++
++   public NativeImage getImage(int frameIndex) {
++      return field_195670_c[frameIndex];
 +   }
  }

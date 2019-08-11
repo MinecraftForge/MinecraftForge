@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.block.Block;
@@ -66,6 +67,7 @@ import net.minecraft.client.renderer.model.multipart.Multipart;
 import net.minecraft.client.renderer.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -713,54 +715,30 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    // Temporary to compile things
-    public static final class White {
-        public static final ResourceLocation LOCATION = new ResourceLocation("white");
-        public static final TextureAtlasSprite INSTANCE = MissingTextureSprite.func_217790_a();
-    }
-
     /**
      * 16x16 pure white sprite.
      */
-    /*/ TODO Custom TAS
     public static final class White extends TextureAtlasSprite
     {
         public static final ResourceLocation LOCATION = new ResourceLocation("white");
-        public static final White INSTANCE = new White();
+        public static White INSTANCE = new White();
 
-        private White()
+        public White()
         {
-            super(LOCATION.toString());
-            this.width = this.height = 16;
+            super(LOCATION, 16, 16);
         }
 
         @Override
-        public boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
+        public void load(IResourceManager manager, ResourceLocation location, int mipmapLevels, Function<ResourceLocation, CompletableFuture<TextureAtlasSprite>> textureGetter)
         {
-            return true;
-        }
-
-        @Override
-        public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
-        {
-            BufferedImage image = new BufferedImage(this.getIconWidth(), this.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = image.createGraphics();
-            graphics.setBackground(Color.WHITE);
-            graphics.clearRect(0, 0, this.getIconWidth(), this.getIconHeight());
-            int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
-            pixels[0] = new int[image.getWidth() * image.getHeight()];
-            image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
-            this.clearFramesTextureData();
-            this.framesTextureData.add(pixels);
-            return false;
-        }
-
-        public void register(TextureMap map)
-        {
-            map.setTextureEntry(White.INSTANCE);
+            NativeImage img = new NativeImage(width, height, false);
+            img.fillAreaRGBA(0, 0, width, height, 0xFFFFFFFF);
+            frames = new NativeImage[mipmapLevels];
+            frames[0] = img;
+            INSTANCE = this;
         }
     }
-*/
+
     @SuppressWarnings("serial")
     public static class ItemLoadingException extends ModelLoaderRegistry.LoaderException
     {

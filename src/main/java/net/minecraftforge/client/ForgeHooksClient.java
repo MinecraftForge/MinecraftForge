@@ -91,9 +91,7 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
@@ -165,18 +163,6 @@ public class ForgeHooksClient
     public static boolean renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
-    }
-
-    public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
-    {
-        ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
-//        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
-        ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
-    }
-
-    public static void onTextureStitchedPost(AtlasTexture map)
-    {
-        ModLoader.get().postEvent(new TextureStitchEvent.Post(map));
     }
 
     public static void onBlockColorsInit(BlockColors blockColors)

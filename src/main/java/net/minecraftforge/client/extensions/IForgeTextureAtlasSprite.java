@@ -19,46 +19,45 @@
 
 package net.minecraftforge.client.extensions;
 
-import java.util.Collection;
-import java.util.function.Function;
-
 import com.google.common.collect.ImmutableList;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 public interface IForgeTextureAtlasSprite
 {
-    /**
-     * The result of this function determines is the below 'load' function is called, and the
-     * default vanilla loading code is bypassed completely.
-     * @param manager Main resource manager
-     * @param location File resource location
-     * @return True to use your own custom load code and bypass vanilla loading.
-     */
-    default boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
+    default TextureAtlasSprite getSprite()
     {
-        return false;
+        return (TextureAtlasSprite)this;
     }
 
     /**
      * Load the specified resource as this sprite's data.
-     * Returning false from this function will prevent this icon from being stitched onto the master texture.
+     * This method does not need to generate mipmaps - only first level has to be specified.
      * @param manager Main resource manager
      * @param location File resource location
-     * @param textureGetter accessor for dependencies. All of them will be loaded before this one
-     * @return False to prevent this Icon from being stitched
+     * @param mipmapLevels Size of image array to allocate
+     * @param textureGetter Accessor for dependencies. May block if dependency is not yet loaded.
      */
-    default boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+    default void load(IResourceManager manager, ResourceLocation location, int mipmapLevels, Function<ResourceLocation, CompletableFuture<TextureAtlasSprite>> textureGetter) throws IOException
     {
-        return true;
+        try (IResource resource = manager.getResource(location))
+        {
+            getSprite().loadSpriteFrames(resource, mipmapLevels);
+        }
     }
 
     /**
      * @return all textures that should be loaded before this texture.
      */
-    default Collection<ResourceLocation> getDependencies() 
+    default Collection<ResourceLocation> getDependencies()
     {
         return ImmutableList.of();
     }

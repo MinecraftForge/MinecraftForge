@@ -18,8 +18,10 @@
  */
 
 package net.minecraftforge.client.event;
-
+import java.util.List;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.extensions.IForgeAtlasTexture;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 
@@ -43,22 +45,36 @@ public class TextureStitchEvent extends Event
     /**
      * Fired when the TextureMap is told to refresh it's stitched texture.
      * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
+     * Custom sprites added here will be evaluated in parallel with normal sprites.
+     * In case of id conflict custom sprites will have priority.
      */
     public static class Pre extends TextureStitchEvent
     {
+        private final IResourceManager resourceManager;
         private final Set<ResourceLocation> sprites;
+        private final List<IForgeAtlasTexture.SpriteProvider> customSprites;
 
-        public Pre(AtlasTexture map, Set<ResourceLocation> sprites)
+        public Pre(AtlasTexture map, IResourceManager resourceManager, Set<ResourceLocation> sprites, List<IForgeAtlasTexture.SpriteProvider> customSprites)
         {
             super(map);
+            this.resourceManager = resourceManager;
             this.sprites = sprites;
+            this.customSprites = customSprites;
         }
 
-        /**
-         * Add a sprite to be stitched into the Texture Atlas.
-         */
-        public boolean addSprite(ResourceLocation sprite) {
-            return this.sprites.add(sprite);
+        public boolean addSprite(ResourceLocation sprite)
+        {
+            return sprites.add(sprite);
+        }
+
+        public void addSprite(final IForgeAtlasTexture.SpriteProvider sprite)
+        {
+            customSprites.add(sprite);
+        }
+
+        public IResourceManager getResourceManager()
+        {
+            return resourceManager;
         }
     }
 
