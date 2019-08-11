@@ -22,6 +22,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.event.RegistryEvent;
@@ -35,8 +36,8 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod("new_fluid_test")
 public class NewFluidTest
 {
-    public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/stone");
-    public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/bedrock");
+    public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/brown_mushroom_block");
+    public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/mushroom_stem");
 
     @ObjectHolder("forge:test_fluid")
     public static FlowingFluid test_fluid;
@@ -83,7 +84,7 @@ public class NewFluidTest
         event.getRegistry().registerAll(test_fluid, test_fluid_flowing);
     }
 
-    private static final FluidAttributes ATTRIBUTES = new FluidAttributes("test_fluid", FLUID_STILL, FLUID_FLOWING, 0xFF00FF);
+    private static final FluidAttributes ATTRIBUTES = new FluidAttributes("test_fluid", FLUID_STILL, FLUID_FLOWING, 0xFFFFFF);
 
     private static abstract class MyFlowingFluid extends FlowingFluid
     {
