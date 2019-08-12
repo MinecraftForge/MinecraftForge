@@ -1028,4 +1028,10 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent(key, scanCode, action, modifiers));
     }
+
+    public static boolean onMouseScroll(MouseHelper mouseHelper, double scrollDelta)
+    {
+        Event event = new InputEvent.MouseScrollEvent(scrollDelta, mouseHelper.isLeftDown(), mouseHelper.isMiddleDown(), mouseHelper.isRightDown(), mouseHelper.getMouseX(), mouseHelper.getMouseY());
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
 }

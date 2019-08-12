@@ -20,6 +20,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import org.lwjgl.glfw.GLFW;
@@ -75,6 +76,59 @@ public class InputEvent extends Event
         public int getMods()
         {
             return this.mods;
+        }
+    }
+
+    /**
+     * This event fires when the mouse scroll wheel is used outside of a gui.
+     */
+    @Cancelable
+    public static class MouseScrollEvent extends InputEvent
+    {
+        private final double scrollDelta;
+        private final double mouseX;
+        private final double mouseY;
+        private final boolean leftDown;
+        private final boolean middleDown;
+        private final boolean rightDown;
+        public MouseScrollEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
+        {
+            this.scrollDelta = scrollDelta;
+            this.leftDown = leftDown;
+            this.middleDown = middleDown;
+            this.rightDown = rightDown;
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+        }
+
+        public double getScrollDelta()
+        {
+            return this.scrollDelta;
+        }
+
+        public boolean isLeftDown()
+        {
+            return this.leftDown;
+        }
+
+        public boolean isRightDown()
+        {
+            return this.rightDown;
+        }
+
+        public boolean isMiddleDown()
+        {
+            return this.middleDown;
+        }
+
+        public double getMouseX()
+        {
+            return this.mouseX;
+        }
+
+        public double getMouseY()
+        {
+            return this.mouseY;
         }
     }
 
