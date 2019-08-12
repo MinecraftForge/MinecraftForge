@@ -29,9 +29,13 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
+import net.minecraftforge.client.model.BlockModelBuilder.ElementBuilder;
+import net.minecraftforge.client.model.ItemModelBuilder;
+import net.minecraftforge.client.model.ModelProvider;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -48,6 +52,10 @@ public class DataGeneratorTest
     {
         DataGenerator gen = event.getGenerator();
 
+        if (event.includeClient())
+        {
+            gen.addProvider(new Models(gen));
+        }
         if (event.includeServer())
         {
             gen.addProvider(new Recipes(gen));
@@ -107,4 +115,41 @@ public class DataGeneratorTest
             .build(consumer, ID);
         }
     }
+    
+    public static class Models extends ModelProvider<ItemModelBuilder>
+    {
+        public Models(DataGenerator generator)
+        {
+            super(generator, ITEM_FOLDER);
+        }
+
+        @Override
+        protected void registerBuilders()
+        {
+            builders.put(new ResourceLocation("forge", "test_generated_model"), (ItemModelBuilder) new ItemModelBuilder()
+                    .parent(new ResourceLocation("item/generated"))
+                    .texture("layer0", "block/stone"));
+
+            ItemModelBuilder builder = (ItemModelBuilder) new ItemModelBuilder()
+                    .parent(new ResourceLocation("block/block"))
+                    .texture("all", "block/dirt");
+
+            ElementBuilder element = builder.element();
+            for (Direction dir : Direction.values()) {
+                element = element.face(dir)
+                        .cullface(dir)
+                        .texture("#all")
+                        .build();
+            }
+            builder = (ItemModelBuilder) element.build();
+            builders.put(new ResourceLocation("forge", "test_block_model"), builder);
+        }
+
+        @Override
+        public String getName()
+        {
+            return "Forge Test Item Models";
+        }
+    }
+
 }
