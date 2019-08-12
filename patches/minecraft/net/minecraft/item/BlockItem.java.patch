@@ -1,6 +1,28 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -69,7 +69,7 @@
+@@ -36,14 +36,17 @@
+    }
+ 
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+-      ActionResultType actionresulttype = this.func_195942_a(new BlockItemUseContext(p_195939_1_));
++      BlockItemUseContext ctx = new BlockItemUseContext(p_195939_1_);
++      ActionResultType actionresulttype = ActionResultType.FAIL;
++      if (!ctx.func_196012_c())
++         actionresulttype = this.func_195942_a(new net.minecraftforge.common.util.SameBlockPlaceContext(ctx));
++      if (actionresulttype != ActionResultType.SUCCESS)
++         actionresulttype = this.func_195942_a(ctx);
+       return actionresulttype != ActionResultType.SUCCESS && this.func_219971_r() ? this.func_77659_a(p_195939_1_.field_196006_g, p_195939_1_.field_196001_b, p_195939_1_.field_221534_c).func_188397_a() : actionresulttype;
+    }
+ 
+    public ActionResultType func_195942_a(BlockItemUseContext p_195942_1_) {
+-      if (!p_195942_1_.func_196011_b()) {
+-         return ActionResultType.FAIL;
+-      } else {
++      {
+          BlockItemUseContext blockitemusecontext = this.func_219984_b(p_195942_1_);
+          if (blockitemusecontext == null) {
+             return ActionResultType.FAIL;
+@@ -69,7 +72,7 @@
                    }
                 }
  
@@ -9,7 +31,17 @@
                 world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                 itemstack.func_190918_g(1);
                 return ActionResultType.SUCCESS;
-@@ -189,10 +189,18 @@
+@@ -137,6 +140,9 @@
+    }
+ 
+    protected boolean func_195941_b(BlockItemUseContext p_195941_1_, BlockState p_195941_2_) {
++      if (p_195941_1_.func_195991_k().canAddBlockState(p_195941_1_.func_195995_a(), p_195941_2_) && p_195941_1_.func_195991_k().addBlockState(p_195941_1_.func_195995_a(), p_195941_2_, 11)) return true;
++      if (p_195941_1_ instanceof net.minecraftforge.common.util.SameBlockPlaceContext) return false;
++      if (!p_195941_1_.func_196012_c() && !p_195941_1_.func_195991_k().func_180495_p(p_195941_1_.func_195995_a()).func_196953_a(p_195941_1_)) return false;
+       return p_195941_1_.func_195991_k().func_180501_a(p_195941_1_.func_195995_a(), p_195941_2_, 11);
+    }
+ 
+@@ -189,10 +195,18 @@
     }
  
     public Block func_179223_d() {
