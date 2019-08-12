@@ -50,14 +50,14 @@ public enum FMLPaths
         this.isDirectory = true;
     }
 
-    private Path computePath(String... path)
-    {
-        return Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
-    }
-
     FMLPaths(boolean isDir, FMLPaths parent, String... path) {
         this.relativePath = parent.relativePath.resolve(computePath(path));
         this.isDirectory = isDir;
+    }
+
+    private Path computePath(String... path)
+    {
+        return Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
     }
 
     public static void setup(IEnvironment env) {
@@ -77,6 +77,10 @@ public enum FMLPaths
             }
             LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
         }
+    }
+
+    public static Path getOrCreateGameRelativePath(Path path, String name) {
+        return FileUtils.getOrCreateDirectory(FMLPaths.GAMEDIR.get().resolve(path), name);
     }
 
     public Path relative() {

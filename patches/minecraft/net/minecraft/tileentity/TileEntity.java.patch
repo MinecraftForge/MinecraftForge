@@ -40,23 +40,16 @@
           return p_189516_1_;
        }
     }
-@@ -93,14 +100,13 @@
+@@ -93,7 +100,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
 -         if (!this.field_195045_e.func_196958_f()) {
-+         if (!this.field_195045_e.isAir(field_145850_b, this.field_174879_c)) {
++         if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
- 
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_) {
-       double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-       double d1 = (double)this.field_174879_c.func_177956_o() + 0.5D - p_145835_3_;
-@@ -140,6 +146,7 @@
+@@ -139,6 +146,7 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -64,7 +57,7 @@
     }
  
     public void func_145829_t() {
-@@ -182,6 +189,13 @@
+@@ -181,6 +189,13 @@
        return this.field_200663_e;
     }
  

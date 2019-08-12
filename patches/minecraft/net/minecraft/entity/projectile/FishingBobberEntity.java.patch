@@ -62,3 +62,15 @@
        } else {
           return 0;
        }
+@@ -416,8 +424,9 @@
+       return false;
+    }
+ 
+-   public void func_70106_y() {
+-      super.func_70106_y();
++   @Override
++   public void remove(boolean keepData) {
++      super.remove(keepData);
+       if (this.field_146042_b != null) {
+          this.field_146042_b.field_71104_cf = null;
+       }

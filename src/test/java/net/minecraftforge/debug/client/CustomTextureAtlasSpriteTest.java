@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client;
 
@@ -40,9 +41,11 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.function.Function;
 
+*/
 /**
  * Test for {@link TextureStitchEvent.Pre}.
- */
+ *//*
+
 //@Mod(modid = CustomTextureAtlasSpriteTest.MOD_ID, name = CustomTextureAtlasSpriteTest.NAME, version = "1.0", clientSideOnly = true)
 public class CustomTextureAtlasSpriteTest
 {
@@ -124,3 +127,4 @@ public class CustomTextureAtlasSpriteTest
         }
     }
 }
+*/

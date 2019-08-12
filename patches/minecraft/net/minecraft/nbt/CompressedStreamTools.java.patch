@@ -1,30 +1,6 @@
 --- a/net/minecraft/nbt/CompressedStreamTools.java
 +++ b/net/minecraft/nbt/CompressedStreamTools.java
-@@ -38,7 +38,6 @@
- 
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public static void func_74793_a(CompoundNBT p_74793_0_, File p_74793_1_) throws IOException {
-       File file1 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
-       if (file1.exists()) {
-@@ -57,7 +56,6 @@
-       }
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public static void func_74795_b(CompoundNBT p_74795_0_, File p_74795_1_) throws IOException {
-       DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
- 
-@@ -70,7 +68,6 @@
-    }
- 
-    @Nullable
--   @OnlyIn(Dist.CLIENT)
-    public static CompoundNBT func_74797_a(File p_74797_0_) throws IOException {
-       if (!p_74797_0_.exists()) {
-          return null;
-@@ -115,10 +112,12 @@
+@@ -110,10 +110,12 @@
  
     private static INBT func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) throws IOException {
        byte b0 = p_152455_0_.readByte();

@@ -49,7 +49,7 @@ import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -852,5 +852,19 @@ public interface IForgeBlockState
     default boolean canDropFromExplosion(IBlockReader world, BlockPos pos, Explosion explosion)
     {
         return getBlockState().getBlock().canDropFromExplosion(getBlockState(), world, pos, explosion);
+    }
+
+    /**
+     * Called when the block is destroyed by an explosion.
+     * Useful for allowing the block to take into account tile entities,
+     * state, etc. when exploded, before it is removed.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param explosion The explosion instance affecting the block
+     */
+    default void onBlockExploded(World world, BlockPos pos, Explosion explosion)
+    {
+        getBlockState().getBlock().onBlockExploded(getBlockState(), world, pos, explosion);
     }
 }

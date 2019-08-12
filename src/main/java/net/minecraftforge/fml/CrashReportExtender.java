@@ -26,42 +26,11 @@ import net.minecraftforge.fml.common.ICrashCallable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class CrashReportExtender
 {
     private static List<ICrashCallable> crashCallables = new ArrayList<>();
-
-    static {
-        registerCrashCallable(new ICrashCallable() {
-            @Override
-            public String call()
-            {
-                return "New FML!";
-            }
-
-            @Override
-            public String getLabel()
-            {
-                return "FML";
-            }
-        });
-
-        registerCrashCallable(new ICrashCallable()
-        {
-            @Override
-            public String call()
-            {
-                return "Nothing";
-            }
-
-            @Override
-            public String getLabel()
-            {
-                return "Loaded coremods (and transformers)";
-            }
-        });
-
-    }
 
     public static void enhanceCrashReport(final CrashReport crashReport, final CrashReportCategory category)
     {
@@ -76,6 +45,18 @@ public class CrashReportExtender
         crashCallables.add(callable);
     }
 
+    public static void registerCrashCallable(String headerName, Callable<String> reportGenerator) {
+        registerCrashCallable(new ICrashCallable() {
+            @Override
+            public String getLabel() {
+                return headerName;
+            }
+            @Override
+            public String call() throws Exception {
+                return reportGenerator.call();
+            }
+        });
+    }
     public static void addCrashReportHeader(StringBuilder stringbuilder, CrashReport crashReport)
     {
     }

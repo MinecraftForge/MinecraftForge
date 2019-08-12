@@ -1,16 +1,6 @@
 --- a/net/minecraft/item/crafting/IRecipe.java
 +++ b/net/minecraft/item/crafting/IRecipe.java
-@@ -15,8 +15,7 @@
- 
-    ItemStack func_77572_b(C p_77572_1_);
- 
--   @OnlyIn(Dist.CLIENT)
--   boolean func_194133_a(int p_194133_1_, int p_194133_2_);
-+   default boolean func_194133_a(int p_194133_1_, int p_194133_2_) { return true; }
- 
-    ItemStack func_77571_b();
- 
-@@ -24,9 +23,9 @@
+@@ -21,9 +21,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.func_191197_a(p_179532_1_.func_70302_i_(), ItemStack.field_190927_a);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
@@ -23,16 +13,3 @@
           }
        }
  
-@@ -41,12 +40,10 @@
-       return false;
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    default String func_193358_e() {
-       return "";
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    default ItemStack func_222128_h() {
-       return new ItemStack(Blocks.field_150462_ai);
-    }

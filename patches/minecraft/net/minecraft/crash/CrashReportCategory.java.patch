@@ -1,6 +1,6 @@
 --- a/net/minecraft/crash/CrashReportCategory.java
 +++ b/net/minecraft/crash/CrashReportCategory.java
-@@ -98,8 +98,10 @@
+@@ -100,8 +100,10 @@
        if (astacktraceelement.length <= 0) {
           return 0;
        } else {

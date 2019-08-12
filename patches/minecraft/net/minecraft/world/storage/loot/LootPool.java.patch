@@ -54,12 +54,17 @@
  
        public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
           this.field_216050_d = p_216046_1_;
-@@ -144,15 +147,56 @@
+@@ -144,15 +147,61 @@
           return this;
        }
  
 +      public LootPool.Builder name(String name) {
 +         this.name = name;
++         return this;
++      }
++
++      public LootPool.Builder bonusRolls(float min, float max) {
++         this.field_216051_e = new RandomValueRange(min, max);
 +         return this;
 +      }
 +
@@ -112,7 +117,7 @@
     public static class Serializer implements JsonDeserializer<LootPool>, JsonSerializer<LootPool> {
        public LootPool deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
           JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot pool");
-@@ -161,18 +205,20 @@
+@@ -161,18 +210,20 @@
           ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
           IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
           RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);

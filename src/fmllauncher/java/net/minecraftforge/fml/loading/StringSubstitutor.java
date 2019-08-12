@@ -24,10 +24,9 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class StringSubstitutor
 {
     private static final Map<String,String> globals = ImmutableMap.of(

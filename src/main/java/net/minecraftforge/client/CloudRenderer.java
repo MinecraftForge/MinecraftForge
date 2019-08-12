@@ -485,7 +485,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         IRenderHandler renderer = world.dimension.getCloudRenderer();
         if (renderer != null)
         {
-            renderer.render(partialTicks, world, client);
+            renderer.render(cloudTicks, partialTicks, world, client);
             return true;
         }
         return getCloudRenderer().render(cloudTicks, partialTicks);

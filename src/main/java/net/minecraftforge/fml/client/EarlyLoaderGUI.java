@@ -62,12 +62,12 @@ public class EarlyLoaderGUI {
 
     void renderTick() {
         if (handledElsewhere) return;
-        int guiScale = window.func_216521_a(0, false);
-        window.func_216525_a(guiScale);
+        int guiScale = window.calcGuiScale(0, false);
+        window.setGuiScale(guiScale);
 
         GlStateManager.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        window.func_216522_a(Minecraft.IS_RUNNING_ON_MAC);
+        window.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
         renderMessages();
         window.update(false);
     }
@@ -79,7 +79,7 @@ public class EarlyLoaderGUI {
             final float fade = MathHelper.clamp((4000.0f - (float) pair.getLeft() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
             if (fade <0.01f) continue;
             StartupMessageManager.Message msg = pair.getRight();
-            renderMessage(msg.getText(), msg.getTypeColour(), i, fade);
+            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, fade);
         }
         renderMemoryInfo();
     }
@@ -96,7 +96,7 @@ public class EarlyLoaderGUI {
         memorycolour[2] = ((i) & 0xFF) / 255.0f;
         memorycolour[1] = ((i >> 8 ) & 0xFF) / 255.0f;
         memorycolour[0] = ((i >> 16 ) & 0xFF) / 255.0f;
-        renderMessage(memory, memorycolour, 21, 1.0f);
+        renderMessage(memory, memorycolour, 1, 1.0f);
     }
 
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
@@ -110,7 +110,7 @@ public class EarlyLoaderGUI {
         GlStateManager.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         GlStateManager.color3f(colour[0],colour[1],colour[2]);
         GlStateManager.pushMatrix();
-        GlStateManager.translatef(10, window.getScaledHeight() - 15 - line * 10, 0);
+        GlStateManager.translatef(10, line * 10, 0);
         GlStateManager.scalef(1, 1, 0);
         GlStateManager.drawArrays(GL11.GL_QUADS, 0, quads * 4);
         GlStateManager.popMatrix();

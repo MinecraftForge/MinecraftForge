@@ -51,7 +51,7 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.listener.IChunkStatusListener;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
@@ -73,7 +73,7 @@ public class DimensionManager
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker DIMMGR = MarkerManager.getMarker("DIMS");
 
-    private static final ClearableRegistry<DimensionType> REGISTRY = new ClearableRegistry<>(new ResourceLocation("dimension_type"));
+    private static final ClearableRegistry<DimensionType> REGISTRY = new ClearableRegistry<>(new ResourceLocation("dimension_type"), DimensionType.class);
 
     private static final Int2ObjectMap<Data> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
@@ -198,11 +198,11 @@ public class DimensionManager
     @SuppressWarnings("deprecation")
     public static ServerWorld initWorld(MinecraftServer server, DimensionType dim)
     {
-        Validate.isTrue(dim != DimensionType.field_223227_a_, "Can not hotload overworld. This must be loaded at all times by main Server.");
+        Validate.isTrue(dim != DimensionType.OVERWORLD, "Can not hotload overworld. This must be loaded at all times by main Server.");
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Must provide dimension when creating world");
 
-        ServerWorld overworld = getWorld(server, DimensionType.field_223227_a_, false, false);
+        ServerWorld overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
         @SuppressWarnings("resource")
@@ -210,6 +210,7 @@ public class DimensionManager
         if (!server.isSinglePlayer())
             world.getWorldInfo().setGameType(server.getGameType());
         server.forgeGetWorldMap().put(dim, world);
+        server.markWorldsDirty();
 
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 
@@ -218,15 +219,15 @@ public class DimensionManager
 
     private static boolean canUnloadWorld(ServerWorld world)
     {
-        return world.getForcedChunks().isEmpty()
+        return world.getDimension().getType() != DimensionType.OVERWORLD
                 && world.getPlayers().isEmpty()
-                //&& !world.dimension.getType().shouldLoadSpawn()
+                && world.getForcedChunks().isEmpty()
                 && !getData(world.getDimension().getType()).keepLoaded;
     }
 
     /**
      * Queues a dimension to unload, if it can be unloaded.
-     * @param id The id of the dimension
+     * @param world The world to unload
      */
     public static void unloadWorld(ServerWorld world)
     {
@@ -283,12 +284,14 @@ public class DimensionManager
             finally
             {
                 MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                LOGGER.debug(DIMMGR, "Unloading dimension {}", id);
                 try {
                     w.close();
                 } catch (IOException e) {
                     LOGGER.error("Exception closing the level", e);
                 }
                 server.forgeGetWorldMap().remove(dim);
+                server.markWorldsDirty();
             }
         }
 
@@ -341,6 +344,7 @@ public class DimensionManager
 
         savedEntries.clear();
 
+        @SuppressWarnings("unused")
         boolean error = false;
         ListNBT list = data.getList("entries", 10);
         for (int x = 0; x < list.size(); x++)
@@ -368,17 +372,18 @@ public class DimensionManager
                 ModDimension mod = ForgeRegistries.MOD_DIMENSIONS.getValue(entry.type);
                 if (mod == null)
                 {
-                    LOGGER.error(DIMMGR, "Modded dimension entry '{}' id {} in save file missing ModDimension.", entry.name.toString(), entry.id, entry.type.toString());
+                    LOGGER.error(DIMMGR, "Modded dimension entry '{}' id {} type {} in save file missing ModDimension.", entry.name.toString(), entry.id, entry.type.toString());
                     savedEntries.put(entry.name, entry);
                     continue;
                 }
                 registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
             }
         }
+    }
 
-        //Allow modders to register dimensions/claim the missing.
+    public static void fireRegister()
+    {
         MinecraftForge.EVENT_BUS.post(new RegisterDimensionsEvent(savedEntries));
-
         if (!savedEntries.isEmpty())
         {
             savedEntries.values().forEach(entry -> {
@@ -475,8 +480,8 @@ public class DimensionManager
 
     private static class NoopChunkStatusListener implements IChunkStatusListener
     {
-        @Override public void func_219509_a(ChunkPos p_219509_1_) { }
-        @Override public void func_219508_a(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
-        @Override public void func_219510_b() { }
+        @Override public void start(ChunkPos center) { }
+        @Override public void statusChanged(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
+        @Override public void stop() { }
     }
 }

@@ -1,5 +1,21 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
+@@ -92,7 +92,6 @@
+    }
+ 
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+-      super.func_70624_b(p_70624_1_);
+       IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+       if (p_70624_1_ == null) {
+          this.field_184721_by = 0;
+@@ -106,6 +105,7 @@
+          }
+       }
+ 
++      super.func_70624_b(p_70624_1_); //Forge: Moved down to allow event handlers to write data manager values.
+    }
+ 
+    protected void func_70088_a() {
 @@ -226,7 +226,9 @@
        if (!this.field_70170_p.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76230_c()) {
           return false;
@@ -33,8 +49,8 @@
        }
  
        private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
--         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && Block.func_208062_a(p_220836_5_.func_196952_d(p_220836_1_, p_220836_6_)) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
-+         return p_220836_4_.isAir(p_220836_1_, p_220836_2_) && !p_220836_5_.isAir(p_220836_1_, p_220836_6_) && Block.func_208062_a(p_220836_5_.func_196952_d(p_220836_1_, p_220836_6_)) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
+-         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && p_220836_5_.func_224756_o(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
++         return p_220836_4_.isAir(p_220836_1_, p_220836_2_) && !p_220836_5_.isAir(p_220836_1_, p_220836_6_) && p_220836_5_.func_224756_o(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
        }
     }
  

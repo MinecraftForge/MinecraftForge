@@ -17,7 +17,26 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -251,7 +252,7 @@
+@@ -170,7 +171,8 @@
+       return (EntityType<? extends SlimeEntity>) super.func_200600_R();
+    }
+ 
+-   public void func_70106_y() {
++   @Override
++   public void remove(boolean keepData) {
+       int i = this.func_70809_q();
+       if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
+          int j = 2 + this.field_70146_Z.nextInt(3);
+@@ -193,7 +195,7 @@
+          }
+       }
+ 
+-      super.func_70106_y();
++      super.remove(keepData);
+    }
+ 
+    public void func_70108_f(Entity p_70108_1_) {
+@@ -251,7 +253,7 @@
     }
  
     public static boolean func_223366_c(EntityType<SlimeEntity> p_223366_0_, IWorld p_223366_1_, SpawnReason p_223366_2_, BlockPos p_223366_3_, Random p_223366_4_) {
@@ -26,7 +45,7 @@
           return false;
        } else {
           if (p_223366_1_.func_175659_aa() != Difficulty.PEACEFUL) {
-@@ -309,6 +310,12 @@
+@@ -309,6 +311,12 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
  

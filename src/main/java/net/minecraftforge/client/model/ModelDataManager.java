@@ -108,6 +108,7 @@ public class ModelDataManager
     
     public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
     {
+        Preconditions.checkArgument(world.isRemote, "Asked ModelDataManager from server world!");
         refreshModelData(world, pos);
         return modelDataCache.getOrDefault(pos, Collections.emptyMap());
     }

@@ -44,6 +44,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -75,6 +77,7 @@ public class FMLLoader
     static String forgeVersion;
     private static String forgeGroup;
     private static Predicate<String> classLoaderExclusions;
+    private static String launchHandlerName;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -166,6 +169,7 @@ public class FMLLoader
             LOGGER.fatal(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");
         }
+        launchHandlerName = launchHandler.get().name();
         gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
 
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
@@ -263,5 +267,21 @@ public class FMLLoader
 
     public static Optional<BiFunction<INameMappingService.Domain, String, String>> getNameFunction(final String naming) {
         return Launcher.INSTANCE.environment().findNameMapping(naming);
+    }
+
+    public static String getMcpVersion() {
+        return mcpVersion;
+    }
+
+    public static String getLauncherInfo() {
+        return Launcher.INSTANCE.environment().getProperty(IEnvironment.Keys.MLIMPL_VERSION.get()).orElse("MISSING");
+    }
+
+    public static List<Map<String, String>> modLauncherModList() {
+        return Launcher.INSTANCE.environment().getProperty(IEnvironment.Keys.MODLIST.get()).orElseGet(Collections::emptyList);
+    }
+
+    public static String launcherHandlerName() {
+        return launchHandlerName;
     }
 }

@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client.model;
 
@@ -228,6 +229,7 @@ public class ModelLoaderRegistryTest
             return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
         }
 
+*/
 /*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -235,7 +237,8 @@ public class ModelLoaderRegistryTest
             B3DLoader.B3DState newState = new B3DLoader.B3DState(null, counter);
             return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, newState);
         }
-*/
+*//*
+
         @Override
         public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
@@ -263,7 +266,8 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block is intended to demonstrate how to change the visibility of a group(s)
      * from within the block's class.
      * By right clicking on this block the player increments an integer value in the tile entity
@@ -273,7 +277,8 @@ public class ModelLoaderRegistryTest
      * Holding shift decrements the value in the tile entity.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJTesseractBlock extends Block
     {
         public static final String name = "obj_tesseract_block";
@@ -342,6 +347,7 @@ public class ModelLoaderRegistryTest
             return true;
         }
 
+*/
 /*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -351,7 +357,8 @@ public class ModelLoaderRegistryTest
                 return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.state);
             }
             return state;
-        }*/
+        }*//*
+
     }
 
     public static class OBJTesseractTileEntity extends TileEntity
@@ -427,7 +434,8 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block demonstrates how to utilize the vertex coloring feature
      * of the OBJ loader. See 'vertex_coloring.obj' and 'vertex_coloring.mtl' in
      * 'test/resources/assets/forgedebugmodelloaderregistry/models/block/', to properly
@@ -436,7 +444,8 @@ public class ModelLoaderRegistryTest
      * color instead of each vertex.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJVertexColoring1 extends Block
     {
         public static final String name = "obj_vertex_coloring1";
@@ -466,14 +475,16 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block demonstrates how to use IProperties and IUnlistedProperties together
      * in the same ExtendedBlockState. Similar to pistons, this block will face the player
      * when placed. Unlike pistons, however; this block's model is an eyeball, because
      * the OBJ loader can load spheres.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJDirectionEye extends Block
     {
         public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -517,13 +528,15 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block uses the same model as CustomModelBlock3 does, but
      * this class allows the player to cycle the colors of each vertex to black
      * and then back to the original color when right clicking on the block.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJVertexColoring2 extends Block
     {
         public static final String name = "obj_vertex_coloring2";
@@ -576,7 +589,8 @@ public class ModelLoaderRegistryTest
             if (this.world.isRemote)
             {
                 logger.info(shouldIncrement);
-                /*
+                */
+/*
                 IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.world.getBlockState(this.pos), this.world, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)
                 {
@@ -621,16 +635,19 @@ public class ModelLoaderRegistryTest
                         }
                     }
                     this.world.markBlockRangeForRenderUpdate(this.pos, this.pos);
-                }*/
+                }*//*
+
             }
         }
     }
 
-    /**
+    */
+/**
      * This block is a debug block that faces the player when placed, like a piston.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJDirectionBlock extends Block
     {
         public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -674,12 +691,14 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block is a testing block that will be used to test the use
      * of "custom" data defined in a forge blockstate json. WIP, ignore for now.
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJCustomDataBlock extends Block
     {
         public static final BooleanProperty NORTH = BooleanProperty.create("north");
@@ -726,12 +745,14 @@ public class ModelLoaderRegistryTest
         }
     }
 
-    /**
+    */
+/**
      * This block uses the same model as CustomModelBlock4, but instead of facing the
      * player when placed, this one ALWAYS faces the player. I know, creepy right?
      * @author shadekiller666
      *
-     */
+     *//*
+
     public static class OBJDynamicEye extends Block
     {
         public static final String name = "obj_dynamic_eye";
@@ -766,6 +787,7 @@ public class ModelLoaderRegistryTest
             return true;
         }
 
+*/
 /*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -778,7 +800,8 @@ public class ModelLoaderRegistryTest
                 }
             }
             return state;
-        }*/
+        }*//*
+
     }
 
     public static class OBJDynamicEyeTileEntity extends TileEntity implements ITickable
@@ -822,3 +845,4 @@ public class ModelLoaderRegistryTest
         }
     }
 }
+*/

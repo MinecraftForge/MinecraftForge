@@ -22,6 +22,7 @@ package net.minecraftforge.fml.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
+import it.unimi.dsi.fastutil.bytes.Byte2ByteOpenCustomHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.network.FMLHandshakeMessages;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -54,10 +55,12 @@ public class ConfigTracker {
     public static final ConfigTracker INSTANCE = new ConfigTracker();
     private final ConcurrentHashMap<String, ModConfig> fileMap;
     private final EnumMap<ModConfig.Type, Set<ModConfig>> configSets;
+    private ConcurrentHashMap<String, Map<ModConfig.Type, ModConfig>> configsByMod;
 
     private ConfigTracker() {
         this.fileMap = new ConcurrentHashMap<>();
         this.configSets = new EnumMap<>(ModConfig.Type.class);
+        this.configsByMod = new ConcurrentHashMap<>();
         this.configSets.put(ModConfig.Type.CLIENT, Collections.synchronizedSet(new LinkedHashSet<>()));
         this.configSets.put(ModConfig.Type.COMMON, Collections.synchronizedSet(new LinkedHashSet<>()));
 //        this.configSets.put(ModConfig.Type.PLAYER, new ConcurrentSkipListSet<>());
@@ -71,6 +74,7 @@ public class ConfigTracker {
         }
         this.fileMap.put(config.getFileName(), config);
         this.configSets.get(config.getType()).add(config);
+        this.configsByMod.computeIfAbsent(config.getModId(), (k)->new EnumMap<>(ModConfig.Type.class)).put(config.getType(), config);
         LOGGER.debug(CONFIG, "Config file {} for {} tracking", config.getFileName(), config.getModId());
     }
 
@@ -112,6 +116,12 @@ public class ConfigTracker {
             final CommentedConfig commentedConfig = CommentedConfig.inMemory();
             modConfig.getSpec().correct(commentedConfig);
             modConfig.setConfigData(commentedConfig);
+            modConfig.fireEvent(new ModConfig.Loading(modConfig));
         });
+    }
+
+    public String getConfigFileName(String modId, ModConfig.Type type) {
+        return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).
+                map(ModConfig::getFullPath).map(Object::toString).orElse(null);
     }
 }

@@ -26,15 +26,30 @@ import net.minecraftforge.fml.loading.ModSorter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipError;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
@@ -49,6 +64,7 @@ public class ModDiscoverer {
         locators = ServiceLoader.load(IModLocator.class);
         locatorList = ServiceLoaderStreamUtils.toList(this.locators);
         locatorList.forEach(l->l.initArguments(arguments));
+        locatorList.add(new MinecraftLocator());
         LOGGER.debug(CORE,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
     }
 
@@ -88,7 +104,95 @@ public class ModDiscoverer {
         return backgroundScanHandler;
     }
 
-    public void addExplodedTarget(final Path compiledClasses, final Path forgemodstoml) {
+    private static class MinecraftLocator implements IModLocator {
+        private final Path mcJar = FMLLoader.getMCPaths()[0];
+        private final FileSystem fileSystem;
 
+        MinecraftLocator() {
+            if (!Files.isDirectory(mcJar)) {
+                try {
+                    fileSystem = FileSystems.newFileSystem(mcJar, getClass().getClassLoader());
+                } catch (ZipError | IOException e) {
+                    LOGGER.fatal(SCAN,"Invalid Minecraft JAR file - no filesystem created");
+                    throw new RuntimeException(e);
+                }
+            } else {
+                fileSystem = null;
+            }
+        }
+
+        @Override
+        public List<ModFile> scanMods() {
+            return Collections.singletonList(new ModFile(mcJar, this));
+        }
+
+        @Override
+        public String name() {
+            return "minecraft";
+        }
+
+        @Override
+        public Path findPath(final ModFile modFile, final String... path) {
+            String[] newPath = Arrays.copyOf(path, path.length);
+            if (path.length == 2 && Objects.equals(path[1], "mods.toml")) {
+                final URI jarFileURI;
+                try {
+                    jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
+                    if (Objects.equals(jarFileURI.getScheme(), "jar")) {
+                        // Initialize the filesystem for the forge jar, because otherwise this barfs?
+                        FileSystems.newFileSystem(jarFileURI, new HashMap<>());
+                    }
+                } catch (URISyntaxException | IOException e) {
+                    LOGGER.fatal(SCAN, "Unable to read minecraft default mod");
+                    throw new RuntimeException(e);
+                }
+                return Paths.get(jarFileURI);
+            }
+            if (Files.isDirectory(mcJar)) return findPathDirectory(modFile, path);
+            return findPathJar(modFile, path);
+        }
+
+        private Path findPathDirectory(final ModFile modFile, final String... path) {
+            if (path.length < 1) {
+                throw new IllegalArgumentException("Missing path");
+            }
+            final Path target = Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
+            // try right path first (resources)
+            return mcJar.resolve(target);
+        }
+
+        private Path findPathJar(final ModFile modFile, final String... path) {
+            return fileSystem.getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
+        }
+        @Override
+        public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
+            LOGGER.debug(SCAN,"Scan started: {}", modFile);
+            Path path;
+            if (Files.isDirectory(mcJar))
+                path = mcJar;
+            else
+                path = fileSystem.getPath("/");
+            try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
+                files.forEach(pathConsumer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            LOGGER.debug(SCAN,"Scan finished: {}", modFile);
+        }
+
+        @Override
+        public Optional<Manifest> findManifest(final Path file) {
+            return Optional.empty();
+        }
+
+        @Override
+        public void initArguments(final Map<String, ?> arguments) {
+            // no op
+        }
+
+        @Override
+        public boolean isValid(final ModFile modFile) {
+            return true;
+        }
     }
 }

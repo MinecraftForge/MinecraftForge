@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client.model;
 
@@ -116,7 +117,8 @@ public class ForgeBlockStatesLoaderTest
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to
     // disabling until we can make it a proper test
-    /*public static class CustomMappedBlock extends Block
+    */
+/*public static class CustomMappedBlock extends Block
     {
         public static final PropertyEnum<CustomVariant> VARIANT = PropertyEnum.create("type", CustomVariant.class);
 
@@ -152,5 +154,7 @@ public class ForgeBlockStatesLoaderTest
 
             public String getName() { return this.toString(); };
         }
-    }*/
+    }*//*
+
 }
+*/
