@@ -47,11 +47,27 @@ public interface IForgeWorldWriter
     /**
      * Attempts to add the given {@link BlockState} to the world at the given position.
      */
+    default boolean addBlockState(BlockPos pos, BlockState state)
+    {
+        return addBlockState(pos, state, 3);
+    }
+
+    /**
+     * Attempts to add the given {@link BlockState} to the world at the given position.
+     */
     default boolean addBlockState(BlockPos pos, BlockState state, int flags)
     {
         IWorld world = getWorldWriterAsIWorld();
         if (world == null) return false;
         return MultipartManager.INSTANCE.getHandler().addBlockState(world, pos, state, flags);
+    }
+
+    /**
+     * Replaces the given {@link BlockState}, if present, with another.
+     */
+    default boolean replaceBlockState(BlockPos pos, BlockState originalState, BlockState newState)
+    {
+        return replaceBlockState(pos, originalState, newState, 3);
     }
 
     /**
