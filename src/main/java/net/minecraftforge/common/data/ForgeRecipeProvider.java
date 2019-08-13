@@ -75,20 +75,25 @@ public class ForgeRecipeProvider extends RecipeProvider
     {
         replace(Items.STICK,               Tags.Items.RODS_WOODEN);
         replace(Items.BLAZE_ROD,           Tags.Items.RODS_BLAZE);
+        
         replace(Items.GLOWSTONE_DUST,      Tags.Items.DUSTS_GLOWSTONE);
         replace(Items.PRISMARINE_SHARD,    Tags.Items.DUSTS_PRISMARINE);
         replace(Items.REDSTONE,            Tags.Items.DUSTS_REDSTONE);
+        
         replace(Items.BRICK,               Tags.Items.INGOTS_BRICK);
         replace(Items.GOLD_INGOT,          Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT,          Tags.Items.INGOTS_IRON);
         replace(Items.NETHER_BRICK,        Tags.Items.INGOTS_NETHER_BRICK);
+        
         replace(Items.GOLD_NUGGET,         Tags.Items.NUGGETS_GOLD);
         replace(Items.IRON_NUGGET,         Tags.Items.NUGGETS_IRON);
+        
         replace(Items.DIAMOND,             Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,             Tags.Items.GEMS_EMERALD);
         replace(Items.LAPIS_LAZULI,        Tags.Items.GEMS_LAPIS);
         replace(Items.PRISMARINE_CRYSTALS, Tags.Items.GEMS_PRISMARINE);
         replace(Items.QUARTZ,              Tags.Items.GEMS_QUARTZ);
+        
         replace(Blocks.COAL_BLOCK,         Tags.Items.STORAGE_BLOCKS_COAL);
         replace(Blocks.DIAMOND_BLOCK,      Tags.Items.STORAGE_BLOCKS_DIAMOND);
         replace(Blocks.EMERALD_BLOCK,      Tags.Items.STORAGE_BLOCKS_EMERALD);
@@ -97,8 +102,10 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Blocks.LAPIS_BLOCK,        Tags.Items.STORAGE_BLOCKS_LAPIS);
         replace(Blocks.QUARTZ_BLOCK,       Tags.Items.STORAGE_BLOCKS_QUARTZ);
         replace(Blocks.REDSTONE_BLOCK,     Tags.Items.STORAGE_BLOCKS_REDSTONE);
+        
         replace(Items.CHEST,               Tags.Items.CHESTS_WOODEN);
         replace(Blocks.COBBLESTONE,        Tags.Items.COBBLESTONE);
+        
         replace(Items.BLACK_DYE,           Tags.Items.DYES_BLACK);
         replace(Items.BLUE_DYE,            Tags.Items.DYES_BLUE);
         replace(Items.BROWN_DYE,           Tags.Items.DYES_BROWN);
