@@ -27,33 +27,33 @@ import net.minecraftforge.eventbus.api.Cancelable;
  *
  * This event is cancelable. {@link Cancelable}<br>
  *
- * setWakeUpTime(wakeUpTime) sets a new time that will be set when all players wakeup.<br>
+ * setWakeUpTime(wakeUpTime) sets a new time that will be added to the dayTime.<br>
  */
 @Cancelable
 public class SleepFinishedTimeEvent extends WorldEvent
 {
-    private long wakeUpTime;
+    private long additionalTime;
 
-    public SleepFinishedTimeEvent(ServerWorld worldIn, long wakeUpTimeIn)
+    public SleepFinishedTimeEvent(ServerWorld worldIn)
     {
         super(worldIn);
-        this.wakeUpTime = wakeUpTimeIn;
+        this.additionalTime = -1L;
     }
 
     /**
-     * @returns the wakeup time
+     * @returns the time addition
      */
-    public long getWakeUpTime()
+    public long getTimeAddition()
     {
-        return wakeUpTime;
+        return additionalTime;
     }
 
     /**
      * Sets the new time which should be set when all players wake up
-     * @param wakeUpTimeIn The new time at wakeup
+     * @param additionalTimeIn The new time at wakeup
      */
-    public void setWakeUpTime(long wakeUpTimeIn)
+    public void setTimeAddition(long additionalTimeIn)
     {
-        this.wakeUpTime = wakeUpTimeIn;
+        this.additionalTime = additionalTimeIn;
     }
 }
