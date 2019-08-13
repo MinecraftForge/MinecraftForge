@@ -19,20 +19,26 @@
 
 package net.minecraftforge.common.multipart;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 /**
- * Represents a slot inside a block space.<br/>
- * In most cases, you will want to extend {@link MultipartSlot} instead of implementing this interface directly.<br/>
+ * Default implementation of {@link IBlockSlot} to reduce redundant code.<br/>
  *
- * Default implementations are provided for face, edge, corner and center slots, as well as a general-purpose full-block
- * slot.
- *
- * @see MultipartSlot
+ * @see IBlockSlot
  * @see FaceSlot
  * @see EdgeSlot
  * @see CornerSlot
  */
-public interface IMultipartSlot extends IForgeRegistryEntry<IMultipartSlot>
+public class BlockSlot extends ForgeRegistryEntry<IBlockSlot> implements IBlockSlot
 {
+    /**
+     * A slot that takes up the whole block.<br/>
+     * This slot is not meant to be used in practice and all implementations should treat blocks returning this as not
+     * supporting multipart behavior.
+     */
+    public static final IBlockSlot FULL_BLOCK = new BlockSlot().setRegistryName("forge", "full_block");
+    /**
+     * A generic slot located in the center of the block.
+     */
+    public static final IBlockSlot CENTER = new BlockSlot().setRegistryName("forge", "center");
 }

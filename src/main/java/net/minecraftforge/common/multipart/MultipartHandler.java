@@ -42,10 +42,11 @@ public abstract class MultipartHandler extends ForgeRegistryEntry<MultipartHandl
     /**
      * Gets the {@link BlockState} at the specified slot in a block.<br/>
      *
-     * If the slot is {@link MultipartSlot#FULL_BLOCK}, this method must return {@code world.getBlockState(pos)}.<br/>
-     * If there isn't a part in the given slot, the returned state must return true when {@link BlockState#isAir(IBlockReader, BlockPos)} is called.
+     * If the slot is {@link BlockSlot#FULL_BLOCK}, this method must return {@code world.getBlockState(pos)}.<br/>
+     * If the slot matches that of a part in this block space, this method must return that BlockState.<br/>
+     * If there isn't a part in the given slot, the returned state must return {@code true} when {@link BlockState#isAir(IBlockReader, BlockPos)} is called.
      */
-    public abstract BlockState getBlockState(IBlockReader world, BlockPos pos, IMultipartSlot slot);
+    public abstract BlockState getBlockState(IBlockReader world, BlockPos pos, IBlockSlot slot);
 
     /**
      * Gets the {@link TileEntity} for the specified state in a block.<br/>

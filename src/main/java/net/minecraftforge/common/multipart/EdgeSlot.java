@@ -27,9 +27,9 @@ import javax.annotation.Nullable;
 /**
  * A slot on the edge of a block.
  *
- * @see IMultipartSlot
+ * @see IBlockSlot
  */
-public enum EdgeSlot implements IMultipartSlot
+public enum EdgeSlot implements IBlockSlot
 {
     DOWN_NORTH(Direction.DOWN, Direction.NORTH, Direction.Axis.X),
     DOWN_SOUTH(Direction.DOWN, Direction.SOUTH, Direction.Axis.X),
@@ -67,7 +67,7 @@ public enum EdgeSlot implements IMultipartSlot
     }
 
     @Override
-    public IMultipartSlot setRegistryName(ResourceLocation name)
+    public IBlockSlot setRegistryName(ResourceLocation name)
     {
         throw new IllegalStateException("Attempted to override registry name of: " + getRegistryName());
     }
@@ -79,9 +79,9 @@ public enum EdgeSlot implements IMultipartSlot
     }
 
     @Override
-    public Class<IMultipartSlot> getRegistryType()
+    public Class<IBlockSlot> getRegistryType()
     {
-        return IMultipartSlot.class;
+        return IBlockSlot.class;
     }
 
     private static final EdgeSlot[][] SLOTS = {

@@ -45,10 +45,10 @@ public final class NoOpMultipartHandler extends MultipartHandler
     }
 
     @Override
-    public BlockState getBlockState(IBlockReader world, BlockPos pos, IMultipartSlot slot)
+    public BlockState getBlockState(IBlockReader world, BlockPos pos, IBlockSlot slot)
     {
         BlockState currentState = world.getBlockState(pos);
-        if (slot == MultipartSlot.FULL_BLOCK || slot == currentState.getMultipartSlot())
+        if (slot == BlockSlot.FULL_BLOCK || slot == currentState.getSlot())
         {
             return currentState;
         }

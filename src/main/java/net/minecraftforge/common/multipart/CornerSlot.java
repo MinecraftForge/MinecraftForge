@@ -27,9 +27,9 @@ import javax.annotation.Nullable;
 /**
  * A slot on the corner of a block.
  *
- * @see IMultipartSlot
+ * @see IBlockSlot
  */
-public enum CornerSlot implements IMultipartSlot
+public enum CornerSlot implements IBlockSlot
 {
     DOWN_NORTH_WEST(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE),
     DOWN_NORTH_EAST(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.POSITIVE),
@@ -69,7 +69,7 @@ public enum CornerSlot implements IMultipartSlot
     }
 
     @Override
-    public IMultipartSlot setRegistryName(ResourceLocation name)
+    public IBlockSlot setRegistryName(ResourceLocation name)
     {
         throw new IllegalStateException("Attempted to override registry name of: " + getRegistryName());
     }
@@ -81,9 +81,9 @@ public enum CornerSlot implements IMultipartSlot
     }
 
     @Override
-    public Class<IMultipartSlot> getRegistryType()
+    public Class<IBlockSlot> getRegistryType()
     {
-        return IMultipartSlot.class;
+        return IBlockSlot.class;
     }
 
     private static final CornerSlot[] SLOTS = values();

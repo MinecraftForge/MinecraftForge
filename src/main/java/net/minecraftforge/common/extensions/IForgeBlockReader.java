@@ -23,7 +23,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.common.multipart.IMultipartSlot;
+import net.minecraftforge.common.multipart.IBlockSlot;
 import net.minecraftforge.common.multipart.MultipartManager;
 
 import javax.annotation.Nullable;
@@ -40,7 +40,7 @@ public interface IForgeBlockReader
      *
      * If there isn't a part in the given slot, air is returned.
      */
-    default BlockState getBlockState(BlockPos pos, IMultipartSlot slot)
+    default BlockState getBlockState(BlockPos pos, IBlockSlot slot)
     {
         return MultipartManager.INSTANCE.getHandler().getBlockState(getBlockReader(), pos, slot);
     }

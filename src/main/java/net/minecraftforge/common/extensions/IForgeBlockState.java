@@ -55,8 +55,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.multipart.IMultipartSlot;
-import net.minecraftforge.common.multipart.MultipartSlot;
+import net.minecraftforge.common.multipart.IBlockSlot;
+import net.minecraftforge.common.multipart.BlockSlot;
 
 public interface IForgeBlockState
 {
@@ -874,12 +874,12 @@ public interface IForgeBlockState
     /**
      * Gets the slot that this state takes up when placed in the same block space as other blocks.<br/>
      *
-     * Returning {@link MultipartSlot#FULL_BLOCK} signifies that this state does not support multipart behavior and is
+     * Returning {@link BlockSlot#FULL_BLOCK} signifies that this state does not support multipart behavior and is
      * the value returned by default.
      */
-    default IMultipartSlot getMultipartSlot()
+    default IBlockSlot getSlot()
     {
-        return getBlockState().getBlock().getMultipartSlot(getBlockState());
+        return getBlockState().getBlock().getSlot(getBlockState());
     }
 
     /**

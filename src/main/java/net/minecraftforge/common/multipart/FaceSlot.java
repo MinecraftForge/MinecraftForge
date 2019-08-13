@@ -25,9 +25,9 @@ import net.minecraft.util.ResourceLocation;
 /**
  * A slot on the face of a block.
  *
- * @see IMultipartSlot
+ * @see IBlockSlot
  */
-public enum FaceSlot implements IMultipartSlot
+public enum FaceSlot implements IBlockSlot
 {
     DOWN(Direction.DOWN),
     UP(Direction.UP),
@@ -51,7 +51,7 @@ public enum FaceSlot implements IMultipartSlot
     }
 
     @Override
-    public IMultipartSlot setRegistryName(ResourceLocation name)
+    public IBlockSlot setRegistryName(ResourceLocation name)
     {
         throw new IllegalStateException("Attempted to override registry name of: " + getRegistryName());
     }
@@ -63,9 +63,9 @@ public enum FaceSlot implements IMultipartSlot
     }
 
     @Override
-    public Class<IMultipartSlot> getRegistryType()
+    public Class<IBlockSlot> getRegistryType()
     {
-        return IMultipartSlot.class;
+        return IBlockSlot.class;
     }
 
     private static final FaceSlot[] SLOTS = values();

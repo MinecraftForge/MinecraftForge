@@ -31,7 +31,7 @@ import java.util.Arrays;
 
 /**
  * Manages the current instance of {@link MultipartHandler} in use by the system and handles registration of Forge's
- * built-in {@link IMultipartSlot multipart slots} and {@link NoOpMultipartHandler handler}.
+ * built-in {@link IBlockSlot block slots} and {@link NoOpMultipartHandler handler}.
  *
  * @see MultipartHandler
  */
@@ -78,11 +78,11 @@ public enum MultipartManager
     }
 
     @SubscribeEvent
-    public void registerMultipartSlots(RegistryEvent.Register<IMultipartSlot> event)
+    public void registerMultipartSlots(RegistryEvent.Register<IBlockSlot> event)
     {
-        IForgeRegistry<IMultipartSlot> registry = event.getRegistry();
-        registry.register(MultipartSlot.FULL_BLOCK);
-        registry.register(MultipartSlot.CENTER);
+        IForgeRegistry<IBlockSlot> registry = event.getRegistry();
+        registry.register(BlockSlot.FULL_BLOCK);
+        registry.register(BlockSlot.CENTER);
         Arrays.stream(FaceSlot.values()).forEach(registry::register);
         Arrays.stream(EdgeSlot.values()).forEach(registry::register);
         Arrays.stream(CornerSlot.values()).forEach(registry::register);
