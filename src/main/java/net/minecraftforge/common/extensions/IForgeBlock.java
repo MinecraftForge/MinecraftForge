@@ -1060,9 +1060,12 @@ public interface IForgeBlock
      *
      * Returning {@link ActionResultType#SUCCESS} indicates that the blocks do not intersect with each other.<br/>
      * Returning {@link ActionResultType#FAIL} indicates that the blocks intersect with each other.<br/>
-     * Returning {@link ActionResultType#PASS} indicates that this block does not perform special occlusion testing, and
-     * the other block should also be tested. If both return {@link ActionResultType#PASS}, a default occlusion test is
-     * to be performed by the caller.
+     * Returning {@link ActionResultType#PASS} indicates that this block does not perform special occlusion testing.<br/>
+     *
+     * When testing two blocks against each other:<br/>
+     * If either block returns {@link ActionResultType#FAIL}, they intersect.<br/>
+     * If neither fail and either block returns {@link ActionResultType#SUCCESS}, they don't intersect.<br/>
+     * If both return {@link ActionResultType#PASS}, a default occlusion test is to be performed by the caller.
      *
      * @param state The current state
      * @param world The current world
