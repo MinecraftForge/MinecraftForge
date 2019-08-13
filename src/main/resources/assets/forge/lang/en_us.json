@@ -137,6 +137,8 @@
   "forge.configgui.forgeLightPipelineEnabled": "Forge Light Pipeline Enabled",
   "forge.configgui.selectiveResourceReloadEnabled.tooltip": "When enabled, makes specific reload tasks such as language changing quicker to run.",
   "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
+  "forge.configgui.multipartHandler.tooltip": "Determines the handler for all multipart behavior in the instance. If empty (default), will be populated with the first mod-supplied handler available, or default to the vanilla one if none are present.",
+  "forge.configgui.multipartHandler": "Active Multipart Handler",
 
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
