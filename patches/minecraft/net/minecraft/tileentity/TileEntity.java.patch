@@ -40,9 +40,12 @@
           return p_189516_1_;
        }
     }
-@@ -93,7 +100,7 @@
+@@ -91,9 +98,9 @@
+ 
+    public void func_70296_d() {
        if (this.field_145850_b != null) {
-          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+-         this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
++         this.field_195045_e = this.field_195045_e != null ? this.field_145850_b.getBlockState(this.field_174879_c, this.field_195045_e.getSlot()) : this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
 -         if (!this.field_195045_e.func_196958_f()) {
 +         if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
