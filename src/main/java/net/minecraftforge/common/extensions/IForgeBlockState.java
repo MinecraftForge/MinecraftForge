@@ -884,6 +884,7 @@ public interface IForgeBlockState
 
     /**
      * Gets the shape for this state when performing an occlusion test.<br/>
+     * The state may not yet be in the world, so perform any necessary checks.<br/>
      *
      * This is the part of the block that cannot and will not be intersected by other parts in the same block space.<br/>
      * In the case of a pipe or tube, this should only return the center of said block, since the sides can be covered to
@@ -895,7 +896,8 @@ public interface IForgeBlockState
     }
 
     /**
-     * Performs an occlusion test between this state and another state that may or may not be in the world.<br/>
+     * Performs an occlusion test between this state and another state.<br/>
+     * One (either) of them may not be in the world, so perform any necessary checks.<br/>
      *
      * Returning {@link ActionResultType#SUCCESS} indicates that the blocks do not intersect with each other.<br/>
      * Returning {@link ActionResultType#FAIL} indicates that the blocks intersect with each other.<br/>
