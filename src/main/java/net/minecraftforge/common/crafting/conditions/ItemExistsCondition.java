@@ -57,6 +57,12 @@ public class ItemExistsCondition implements ICondition
         return ForgeRegistries.ITEMS.containsKey(item);
     }
 
+    @Override
+    public String toString()
+    {
+        return "item_exists(\"" + item + "\")";
+    }
+
     public static class Serializer implements IConditionSerializer<ItemExistsCondition>
     {
         public static final Serializer INSTANCE = new Serializer();

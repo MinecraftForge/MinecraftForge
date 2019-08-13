@@ -42,6 +42,12 @@ public final class TrueCondition implements ICondition
         return true;
     }
 
+    @Override
+    public String toString()
+    {
+        return "true";
+    }
+
     public static class Serializer implements IConditionSerializer<TrueCondition>
     {
         public static final Serializer INSTANCE = new Serializer();

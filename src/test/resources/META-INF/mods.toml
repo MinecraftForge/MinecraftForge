@@ -45,3 +45,5 @@ loaderVersion="[28,)"
     modId="entity_selector_test"
 [[mods]]
     modId="data_gen_test"
+[[mods]]
+    modId="piston_event_test"

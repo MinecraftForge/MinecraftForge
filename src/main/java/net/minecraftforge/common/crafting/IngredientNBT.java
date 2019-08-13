@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 
+//TODO: 1.15 Rename to NBTIngredient to match naming.
 public class IngredientNBT extends Ingredient
 {
     private final ItemStack stack;

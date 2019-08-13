@@ -47,6 +47,12 @@ public class ModLoadedCondition implements ICondition
         return ModList.get().isLoaded(modid);
     }
 
+    @Override
+    public String toString()
+    {
+        return "mod_loaded(\"" + modid + "\")";
+    }
+
     public static class Serializer implements IConditionSerializer<ModLoadedCondition>
     {
         public static final Serializer INSTANCE = new Serializer();

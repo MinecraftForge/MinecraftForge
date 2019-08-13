@@ -28,6 +28,7 @@ import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class DataGeneratorTest
 {
+    @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
@@ -69,7 +71,9 @@ public class DataGeneratorTest
                 .patternLine("XXX")
                 .patternLine("XXX")
                 .key('X', Blocks.DIRT)
-                .setGroup("")::build
+                .setGroup("")
+                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
+                ::build
             )
             .build(consumer, "data_gen_test", "conditional");
         }

@@ -19,18 +19,10 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.conditions.OrCondition.Serializer;
 
 public class NotCondition implements ICondition
 {
@@ -54,6 +46,12 @@ public class NotCondition implements ICondition
         return !child.test();
     }
 
+    @Override
+    public String toString()
+    {
+        return "!" + child;
+    }
+
     public static class Serializer implements IConditionSerializer<NotCondition>
     {
         public static final Serializer INSTANCE = new Serializer();
@@ -61,7 +59,7 @@ public class NotCondition implements ICondition
         @Override
         public void write(JsonObject json, NotCondition value)
         {
-            json.add("value", CraftingHelper.serialize(value));
+            json.add("value", CraftingHelper.serialize(value.child));
         }
 
         @Override

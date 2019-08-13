@@ -22,6 +22,7 @@ package net.minecraftforge.common.crafting.conditions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -65,6 +66,12 @@ public class AndCondition implements ICondition
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return Joiner.on(" && ").join(children);
     }
 
     public static class Serializer implements IConditionSerializer<AndCondition>

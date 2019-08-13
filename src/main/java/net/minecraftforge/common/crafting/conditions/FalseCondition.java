@@ -41,6 +41,12 @@ public final class FalseCondition implements ICondition
         return false;
     }
 
+    @Override
+    public String toString()
+    {
+        return "false";
+    }
+
     public static class Serializer implements IConditionSerializer<FalseCondition>
     {
         public static final Serializer INSTANCE = new Serializer();

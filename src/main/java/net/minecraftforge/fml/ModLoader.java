@@ -208,7 +208,9 @@ public class ModLoader
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
-                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e))
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
