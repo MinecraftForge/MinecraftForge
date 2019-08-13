@@ -27,12 +27,23 @@ import net.minecraftforge.common.multipart.IBlockSlot;
 import net.minecraftforge.common.multipart.MultipartManager;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 public interface IForgeBlockReader
 {
     default IBlockReader getBlockReader()
     {
         return (IBlockReader)this;
+    }
+
+    /**
+     * Gets all the {@link IBlockSlot}s occupied by blocks in the given block space.<br/>
+     *
+     * If the current state is air, returns an empty set.
+     */
+    default Set<IBlockSlot> getOccupiedSlots(BlockPos pos)
+    {
+        return MultipartManager.INSTANCE.getHandler().getOccupiedSlots(getBlockReader(), pos);
     }
 
     /**
@@ -43,6 +54,18 @@ public interface IForgeBlockReader
     default BlockState getBlockState(BlockPos pos, IBlockSlot slot)
     {
         return MultipartManager.INSTANCE.getHandler().getBlockState(getBlockReader(), pos, slot);
+    }
+
+    /**
+     * Gets the {@link TileEntity} at the specified slot in a block.<br/>
+     *
+     * If the slot matches that of a part in this block space, returns that TileEntity, if present.<br/>
+     * If there isn't a part in the given slot, returns {@code null}.
+     */
+    @Nullable
+    default TileEntity getTileEntity(BlockPos pos, IBlockSlot slot)
+    {
+        return MultipartManager.INSTANCE.getHandler().getTileEntity(getBlockReader(), pos, slot);
     }
 
     /**

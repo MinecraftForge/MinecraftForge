@@ -28,6 +28,7 @@ import net.minecraftforge.common.extensions.IForgeBlockState;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * Exposes the methods needed for placement, removal and retrieval of parts within a single block space.<br/>
@@ -40,6 +41,15 @@ import javax.annotation.Nullable;
 public abstract class MultipartHandler extends ForgeRegistryEntry<MultipartHandler>
 {
     /**
+     * Gets all the {@link IBlockSlot}s occupied by blocks in the given block space.<br/>
+     *
+     * If the current state is air, this method must return an empty set.<br/>
+     * If the given block space contains a single block, this method must return a set with its state's slot as its sole element.<br/>
+     * If the given block space contains multiple blocks, this method must return a set of all the slots they take up.
+     */
+    public abstract Set<IBlockSlot> getOccupiedSlots(IBlockReader world, BlockPos pos);
+
+    /**
      * Gets the {@link BlockState} at the specified slot in a block.<br/>
      *
      * If the slot is {@link BlockSlot#FULL_BLOCK}, this method must return {@code world.getBlockState(pos)}.<br/>
@@ -49,11 +59,21 @@ public abstract class MultipartHandler extends ForgeRegistryEntry<MultipartHandl
     public abstract BlockState getBlockState(IBlockReader world, BlockPos pos, IBlockSlot slot);
 
     /**
+     * Gets the {@link TileEntity} at the specified slot in a block.<br/>
+     *
+     * If the slot is {@link BlockSlot#FULL_BLOCK}, this method must return {@code world.getTileEntity(pos)}.<br/>
+     * If the slot matches that of a part in this block space, this method must return that TileEntity, if present.<br/>
+     * If there isn't a part in the given slot, this method must return {@code null}.
+     */
+    @Nullable
+    public abstract TileEntity getTileEntity(IBlockReader world, BlockPos pos, IBlockSlot slot);
+
+    /**
      * Gets the {@link TileEntity} for the specified state in a block.<br/>
      *
      * If the state matches that of the block (as returned by {@code world.getBlockState(pos)}), this method must return
      * {@code world.getTileEntity(pos)}.<br/>
-     * If the state matches that of a part in this block space, this method must return that TileEntity, if present.
+     * If the state matches that of a part in this block space, this method must return that TileEntity, if present.<br/>
      * If the state does not match either of the above cases, this method must return {@code null}.
      */
     @Nullable
@@ -65,7 +85,7 @@ public abstract class MultipartHandler extends ForgeRegistryEntry<MultipartHandl
      * If the current state at that position returns true in {@link BlockState#isAir(IBlockReader, BlockPos)}, this method
      * must return {@code true}.<br/>
      * If a block is already present, behavior will depend on the specific implementation, but should generally check for
-     * multipart compatibility (see {@link IForgeBlockState#getMultipartSlot()}) and perform an occlusion test.
+     * multipart compatibility (see {@link IForgeBlockState#getSlot()}) and perform an occlusion test.
      */
     public abstract boolean canAddBlockState(IWorld world, BlockPos pos, BlockState state);
 

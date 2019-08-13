@@ -27,6 +27,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * The default implementation of {@link MultipartHandler} shipped with Forge.<br/>
@@ -45,6 +47,17 @@ public final class NoOpMultipartHandler extends MultipartHandler
     }
 
     @Override
+    public Set<IBlockSlot> getOccupiedSlots(IBlockReader world, BlockPos pos)
+    {
+        BlockState currentState = world.getBlockState(pos);
+        if (currentState.isAir(world, pos))
+        {
+            return Collections.emptySet();
+        }
+        return Collections.singleton(currentState.getSlot());
+    }
+
+    @Override
     public BlockState getBlockState(IBlockReader world, BlockPos pos, IBlockSlot slot)
     {
         BlockState currentState = world.getBlockState(pos);
@@ -53,6 +66,18 @@ public final class NoOpMultipartHandler extends MultipartHandler
             return currentState;
         }
         return Blocks.AIR.getDefaultState();
+    }
+
+    @Nullable
+    @Override
+    public TileEntity getTileEntity(IBlockReader world, BlockPos pos, IBlockSlot slot)
+    {
+        BlockState currentState = world.getBlockState(pos);
+        if (slot == BlockSlot.FULL_BLOCK || slot == currentState.getSlot())
+        {
+            return world.getTileEntity(pos);
+        }
+        return null;
     }
 
     @Nullable
