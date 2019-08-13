@@ -18,7 +18,7 @@
              this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
              this.field_73094_o = -1;
              this.field_73088_d = false;
-@@ -115,7 +115,15 @@
+@@ -115,14 +115,22 @@
        double d1 = this.field_73090_b.field_70163_u - ((double)p_225416_1_.func_177956_o() + 0.5D) + 1.5D;
        double d2 = this.field_73090_b.field_70161_v - ((double)p_225416_1_.func_177952_p() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -26,7 +26,7 @@
 +      double dist = field_73090_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 1;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_225416_1_, p_225416_3_);
 +      if (event.isCanceled()) { // Restore block and te data
-+         field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
++         field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, false));
 +         field_73092_a.func_184138_a(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), field_73092_a.func_180495_p(p_225416_1_), 3);
 +         return;
 +      }
@@ -34,7 +34,25 @@
 +      if (d3 > dist) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
        } else if (p_225416_1_.func_177956_o() >= p_225416_4_) {
-          this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
+-         this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
++         this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, false));
+       } else {
+          if (p_225416_2_ == CPlayerDiggingPacket.Action.START_DESTROY_BLOCK) {
+             if (!this.field_73092_a.func_175660_a(this.field_73090_b, p_225416_1_)) {
+-               this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
++               this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, false));
+                return;
+             }
+ 
+@@ -137,7 +145,7 @@
+             }
+ 
+             if (this.field_73090_b.func_223729_a(this.field_73092_a, p_225416_1_, this.field_73091_c)) {
+-               this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
++               this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, false));
+                return;
+             }
+ 
 @@ -145,12 +153,12 @@
              this.field_73089_e = this.field_73100_i;
              float f = 1.0F;
@@ -50,7 +68,15 @@
                 this.func_225415_a(p_225416_1_, p_225416_2_);
              } else {
                 this.field_73088_d = true;
-@@ -203,7 +211,8 @@
+@@ -196,14 +204,15 @@
+       if (this.func_180237_b(p_225415_1_)) {
+          this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225415_1_, this.field_73092_a.func_180495_p(p_225415_1_), p_225415_2_, true));
+       } else {
+-         this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225415_1_, this.field_73092_a.func_180495_p(p_225415_1_), p_225415_2_, false));
++         this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225415_1_, this.field_73092_a.func_180495_p(p_225415_1_), CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, false));
+       }
+ 
+    }
  
     public boolean func_180237_b(BlockPos p_180237_1_) {
        BlockState blockstate = this.field_73092_a.func_180495_p(p_180237_1_);
