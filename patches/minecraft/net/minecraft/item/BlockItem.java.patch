@@ -22,6 +22,15 @@
           BlockItemUseContext blockitemusecontext = this.func_219984_b(p_195942_1_);
           if (blockitemusecontext == null) {
              return ActionResultType.FAIL;
+@@ -51,7 +54,7 @@
+             BlockState blockstate = this.func_195945_b(blockitemusecontext);
+             if (blockstate == null) {
+                return ActionResultType.FAIL;
+-            } else if (!this.func_195941_b(blockitemusecontext, blockstate)) {
++            } else if (!this.tryPlaceBlock(blockitemusecontext, blockstate)) {
+                return ActionResultType.FAIL;
+             } else {
+                BlockPos blockpos = blockitemusecontext.func_195995_a();
 @@ -69,7 +72,7 @@
                    }
                 }
@@ -31,17 +40,7 @@
                 world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                 itemstack.func_190918_g(1);
                 return ActionResultType.SUCCESS;
-@@ -137,6 +140,9 @@
-    }
- 
-    protected boolean func_195941_b(BlockItemUseContext p_195941_1_, BlockState p_195941_2_) {
-+      if (p_195941_1_.func_195991_k().canAddBlockState(p_195941_1_.func_195995_a(), p_195941_2_) && p_195941_1_.func_195991_k().addBlockState(p_195941_1_.func_195995_a(), p_195941_2_, 11)) return true;
-+      if (p_195941_1_ instanceof net.minecraftforge.common.util.SameBlockPlaceContext) return false;
-+      if (!p_195941_1_.func_196012_c() && !p_195941_1_.func_195991_k().func_180495_p(p_195941_1_.func_195995_a()).func_196953_a(p_195941_1_)) return false;
-       return p_195941_1_.func_195991_k().func_180501_a(p_195941_1_.func_195995_a(), p_195941_2_, 11);
-    }
- 
-@@ -189,10 +195,18 @@
+@@ -189,10 +192,25 @@
     }
  
     public Block func_179223_d() {
@@ -58,5 +57,12 @@
 +
 +   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
 +      blockToItemMap.remove(this.func_179223_d());
++   }
++
++   protected boolean tryPlaceBlock(BlockItemUseContext context, BlockState state) {
++      if (context.func_195991_k().canAddBlockState(context.func_195995_a(), state) && context.func_195991_k().addBlockState(context.func_195995_a(), state, 11)) return true;
++      if (context instanceof net.minecraftforge.common.util.SameBlockPlaceContext) return false;
++      if (!context.func_196012_c() && !context.func_195991_k().func_180495_p(context.func_195995_a()).func_196953_a(context)) return false;
++      return func_195941_b(context, state);
 +   }
  }
