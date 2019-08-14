@@ -36,15 +36,26 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent.TradeType;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class VillagerTradingManager
 {
 
+    private static boolean run = false;
+
+    public static void loadTrades(FMLServerAboutToStartEvent e)
+    {
+        if(run) return;
+        postWandererEvent();
+        postVillagerEvents();
+        run = true;
+    }
+
     /**
      * Posts the WandererTradesEvent.  Called during common setup.
      */
-    public static void postWandererEvent()
+    private static void postWandererEvent()
     {
         List<ITrade> generic = new ArrayList<>();
         List<ITrade> rare = new ArrayList<>();
@@ -61,7 +72,7 @@ public class VillagerTradingManager
     /**
      * Posts a VillagerTradesEvent for each registered profession.  Called during common setup.
      */
-    public static void postVillagerEvents()
+    private static void postVillagerEvents()
     {
         for (VillagerProfession prof : ForgeRegistries.PROFESSIONS)
         {
