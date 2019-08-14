@@ -9,11 +9,22 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * Used for rendering of a texture as an advancement icon instead of need of providing a proxy item.
+ */
 public class DisplayInfoIcon {
     private static final String KEY_PREFIX = "forgeadvicon:";
 
+    /**
+     * Creates a fake itemStack with reference to texture given from advancement json.
+     * Existence of "forge" json object is checked in {@link net.minecraft.advancements.DisplayInfo#deserializeIcon()}.
+     *
+     * @param object advancement json object
+     * @return fake itemStack with texture reference
+     */
     public static ItemStack createForgeIcon(final JsonObject object) {
         final String path = KEY_PREFIX + object.get("forge").getAsString();
+        
         return new ItemStack(() -> new Item(new Item.Properties()) {
             @Override
             public String getTranslationKey() {
@@ -23,7 +34,9 @@ public class DisplayInfoIcon {
     }
 
     /**
-     * @return true if forge item, false if not
+     * Tries to render given itemStack as an advancement icon if item was created by {@link #createForgeIcon()}.
+     * 
+     * @return true if forge icon item, false if not
      */
     public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y) {
         String textureKey = itemStack.getItem().getTranslationKey();
