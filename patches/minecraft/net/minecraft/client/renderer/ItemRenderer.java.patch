@@ -68,7 +68,15 @@
        this.func_180454_a(p_191962_1_, p_191962_4_);
        GlStateManager.disableAlphaTest();
        GlStateManager.disableRescaleNormal();
-@@ -299,6 +301,7 @@
+@@ -292,6 +294,7 @@
+          this.field_77023_b += 50.0F;
+ 
+          try {
++            if (!net.minecraftforge.advancements.DisplayInfoIcon.renderForgeIcon(p_184391_2_, p_184391_3_, p_184391_4_))
+             this.func_191962_a(p_184391_2_, p_184391_3_, p_184391_4_, this.func_184393_a(p_184391_2_, (World)null, p_184391_1_));
+          } catch (Throwable throwable) {
+             CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering item");
+@@ -299,6 +302,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -76,7 +84,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -330,9 +333,12 @@
+@@ -330,9 +334,12 @@
              GlStateManager.enableBlend();
              GlStateManager.enableLighting();
              GlStateManager.enableDepthTest();
@@ -90,7 +98,7 @@
              GlStateManager.disableLighting();
              GlStateManager.disableDepthTest();
              GlStateManager.disableTexture();
-@@ -340,11 +346,9 @@
+@@ -340,11 +347,9 @@
              GlStateManager.disableBlend();
              Tessellator tessellator = Tessellator.func_178181_a();
              BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -105,7 +113,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              GlStateManager.enableBlend();
-@@ -383,4 +387,9 @@
+@@ -383,4 +388,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

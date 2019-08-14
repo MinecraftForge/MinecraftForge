@@ -1,0 +1,10 @@
+--- a/net/minecraft/advancements/DisplayInfo.java
++++ b/net/minecraft/advancements/DisplayInfo.java
+@@ -110,6 +110,7 @@
+    }
+ 
+    private static ItemStack func_193221_a(JsonObject p_193221_0_) {
++      if (p_193221_0_.has("forge")) return net.minecraftforge.advancements.DisplayInfoIcon.createForgeIcon(p_193221_0_);
+       if (!p_193221_0_.has("item")) {
+          throw new JsonSyntaxException("Unsupported icon type, currently only items are supported (add 'item' key)");
+       } else {
