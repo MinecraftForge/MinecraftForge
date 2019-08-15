@@ -54,6 +54,15 @@
     }
  
     protected boolean func_204229_de() {
+@@ -345,7 +355,7 @@
+          } else {
+             pose = Pose.STANDING;
+          }
+-
++         pose = net.minecraftforge.event.ForgeEventFactory.getPlayerPose(this,pose);
+          Pose pose1;
+          if (!this.func_175149_v() && !this.func_184218_aH() && !this.func_213298_c(pose)) {
+             if (this.func_213298_c(Pose.SNEAKING)) {
 @@ -441,10 +451,10 @@
           this.field_71107_bF = this.field_71109_bG;
           this.field_71109_bG = 0.0F;
@@ -440,6 +449,15 @@
        return this.func_208016_c(itextcomponent);
     }
  
+@@ -1878,7 +1997,7 @@
+    }
+ 
+    public EntitySize func_213305_a(Pose p_213305_1_) {
+-      return field_213836_b.getOrDefault(p_213305_1_, field_213835_bs);
++      return field_213836_b.getOrDefault(p_213305_1_, net.minecraftforge.common.PlayerSize.getOrDefault(p_213305_1_,field_213835_bs));
+    }
+ 
+    public ItemStack func_213356_f(ItemStack p_213356_1_) {
 @@ -1939,4 +2058,44 @@
           return this.field_221260_g;
        }

@@ -1,0 +1,19 @@
+--- a/net/minecraft/entity/Pose.java
++++ b/net/minecraft/entity/Pose.java
+@@ -1,6 +1,6 @@
+ package net.minecraft.entity;
+ 
+-public enum Pose {
++public enum Pose implements net.minecraftforge.common.IExtensibleEnum {
+    STANDING,
+    FALL_FLYING,
+    SLEEPING,
+@@ -8,4 +8,8 @@
+    SPIN_ATTACK,
+    SNEAKING,
+    DYING;
++
++   public static Pose create(String name) {
++      throw new IllegalStateException("Enum not extended");
++   }
+ }

@@ -21,6 +21,8 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import com.google.common.base.Preconditions;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -516,6 +518,42 @@ public class PlayerEvent extends LivingEvent
         public DimensionType getTo()
         {
             return this.toDim;
+        }
+    }
+
+    /**
+     * Can be used to change the pose of the player.
+     * Set a pose to override and cancel the event.
+     *
+     * Can be used together with {@link net.minecraftforge.common.PlayerSize} to modify the size of a player
+     */
+    @Cancelable
+    public static class PlayerUpdatePoseEvent extends PlayerEvent {
+        private final Pose originalPose;
+        private Pose overriddenPose;
+
+        public PlayerUpdatePoseEvent(PlayerEntity player, Pose pose){
+            super(player);
+            this.originalPose=pose;
+            this.overriddenPose=pose;
+        }
+
+        /**
+         * @return The pose vanilla has chosen for the player
+         */
+        public Pose getOriginalPose() {
+            return originalPose;
+        }
+
+        public Pose getOverriddenPose()
+        {
+            return overriddenPose;
+        }
+
+        public void setOverriddenPose(Pose overriddenPose)
+        {
+            Preconditions.checkNotNull(overriddenPose);
+            this.overriddenPose = overriddenPose;
         }
     }
 }

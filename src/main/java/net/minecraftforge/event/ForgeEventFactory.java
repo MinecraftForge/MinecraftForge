@@ -33,6 +33,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.merchant.IMerchant;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -698,5 +699,11 @@ public class ForgeEventFactory
     public static boolean onPistonMovePost(World world, BlockPos pos, Direction direction, boolean extending)
     {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+    }
+
+    public static Pose getPlayerPose(PlayerEntity player, Pose pose)
+    {
+        PlayerEvent.PlayerUpdatePoseEvent event = new PlayerEvent.PlayerUpdatePoseEvent(player,pose);
+        return MinecraftForge.EVENT_BUS.post(event) ? event.getOverriddenPose() : event.getOriginalPose();
     }
 }
