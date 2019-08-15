@@ -20,6 +20,7 @@
 package net.minecraftforge.advancements;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 
 /**
  * Used for rendering of a texture as an advancement icon instead of need of providing a proxy item.
@@ -41,13 +43,25 @@ public class DisplayInfoIcon {
      * @param object advancement json object
      * @return fake itemStack with texture reference
      */
-    public static ItemStack createForgeIcon(final JsonObject object) {
-        final String path = KEY_PREFIX + object.get("forge").getAsString();
+    public static ItemStack createForgeIcon(final JsonObject object)
+    {
+        final String path = object.get("forge").getAsString();
 
-        return new ItemStack(() -> new Item(new Item.Properties()) {
+        try
+        {
+            new ResourceLocation(path);
+        }
+        catch (ResourceLocationException e)
+        {
+            throw new JsonSyntaxException("Invalid resource location for forge advancement icon: " + path, e);
+        }
+
+        return new ItemStack(() -> new Item(new Item.Properties())
+        {
             @Override
-            public String getTranslationKey() {
-                return path;
+            public String getTranslationKey()
+            {
+                return KEY_PREFIX + path;
             }
         });
     }
@@ -57,7 +71,8 @@ public class DisplayInfoIcon {
      * 
      * @return true if forge icon item, false if not
      */
-    public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y) {
+    public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y)
+    {
         String textureKey = itemStack.getItem().getTranslationKey();
 
         if(!textureKey.startsWith(KEY_PREFIX))
