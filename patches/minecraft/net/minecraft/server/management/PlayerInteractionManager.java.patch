@@ -121,12 +121,23 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -291,6 +315,8 @@
+@@ -285,12 +309,18 @@
+             return ActionResultType.PASS;
+          }
+       } else {
++         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
++         if (event.isCanceled()) return event.getCancellationResult();
++         ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
++         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++            ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);
++            if (result != ActionResultType.PASS) return result;
++         }
+          boolean flag = !p_219441_1_.func_184614_ca().func_190926_b() || !p_219441_1_.func_184592_cb().func_190926_b();
+          boolean flag1 = p_219441_1_.func_70093_af() && flag;
+          if (!flag1 && blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
              return ActionResultType.SUCCESS;
           } else if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
-             ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
-+            if (event.isCanceled()) return event.getCancellationResult();
+-            ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
              if (this.func_73083_d()) {
                 int i = p_219441_3_.func_190916_E();
                 ActionResultType actionresulttype = p_219441_3_.func_196084_a(itemusecontext);
