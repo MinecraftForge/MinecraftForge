@@ -27,12 +27,13 @@
      }
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
-@@ -93,27 +93,27 @@
+@@ -93,32 +93,33 @@
      {
          if (!p_189540_2_.field_72995_K)
          {
 -            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_189540_1_.func_177229_b(this.func_176560_l());
-+            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = getRailDirection(p_189540_2_, p_189540_3_, p_189540_2_.func_180495_p(p_189540_3_), null);
++            final IBlockState currentState = p_189540_2_.func_180495_p(p_189540_3_);
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = getRailDirection(p_189540_2_, p_189540_3_, currentState.func_177230_c() == this ? currentState : p_189540_1_, null);
              boolean flag = false;
  
 -            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
@@ -61,7 +62,13 @@
              {
                  flag = true;
              }
-@@ -154,7 +154,7 @@
+ 
+-            if (flag && !p_189540_2_.func_175623_d(p_189540_3_))
++            if (flag && !currentState.func_177230_c().isAir(currentState, p_189540_2_, p_189540_3_))
+             {
+                 this.func_176226_b(p_189540_2_, p_189540_3_, p_189540_1_, 0);
+                 p_189540_2_.func_175698_g(p_189540_3_);
+@@ -154,7 +155,7 @@
      {
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
  
@@ -70,7 +77,7 @@
          {
              p_180663_1_.func_175685_c(p_180663_2_.func_177984_a(), this, false);
          }
-@@ -166,8 +166,101 @@
+@@ -166,8 +167,101 @@
          }
      }
  
@@ -172,7 +179,7 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -238,6 +331,7 @@
+@@ -238,6 +332,7 @@
          private IBlockState field_180366_e;
          private final boolean field_150656_f;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
@@ -180,7 +187,7 @@
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -245,8 +339,9 @@
+@@ -245,8 +340,9 @@
              this.field_180367_c = p_i45739_3_;
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
@@ -192,7 +199,7 @@
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -438,7 +533,7 @@
+@@ -438,7 +534,7 @@
                  }
              }
  
@@ -201,7 +208,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -451,7 +546,7 @@
+@@ -451,7 +547,7 @@
                  }
              }
  
@@ -210,7 +217,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -594,7 +689,7 @@
+@@ -594,7 +690,7 @@
                  }
              }
  
@@ -219,7 +226,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -607,7 +702,7 @@
+@@ -607,7 +703,7 @@
                  }
              }
  
