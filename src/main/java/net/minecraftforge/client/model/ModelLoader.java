@@ -145,194 +145,24 @@ public final class ModelLoader extends ModelBakery
         ModelLoaderRegistry.clearModelCache(manager);
     }
 
-    // TODO lots of commented code here - we need to reevaluate what exactly this class needs to do in the new system, which is difficult with no mappings. So let's get everything compiling first.
-    // This code has mostly been ported to 1.13
-    /*
-    @Nonnull
-    @Override
-    public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
-    {
-        Map<ModelResourceLocation, IUnbakedModel> map = Maps.<ModelResourceLocation, IUnbakedModel>newHashMap();
+    private static Set<ResourceLocation> specialModels = new HashSet<>();
 
-        if (ClientModLoader.isErrored()) // skip loading models if we're just going to show a fatal error screen
-            return bakedRegistry;
-
-        isLoading = true;
-
-        missingModel = ModelLoaderRegistry.getMissingModel();
-        stateModels.put(MODEL_MISSING, missingModel);
-
-        final Set<ResourceLocation> textures = Sets.newHashSet(ModelLoaderRegistry.getTextures());
-        textures.remove(MissingTextureSprite.getLocation());
-        textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
-
-        textureMap.stitch(resourceManager, textures);
-
-        STATE_CONTAINER_OVERRIDES.forEach((p_209602_2_, p_209602_3_) -> {
-           p_209602_3_.getValidStates().forEach((p_209601_3_) -> {
-              this.getUnbakedModel(map, BlockModelShapes.getModelLocation(p_209602_2_, p_209601_3_));
-           });
-        });
-
-        for(ResourceLocation resourcelocation : Item.REGISTRY.getKeys()) {
-           this.getUnbakedModel(map, new ModelResourceLocation(resourcelocation, "inventory"));
-        }
-
-        this.getUnbakedModel(map, new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
-        Set<String> set = Sets.<String>newLinkedHashSet();
-        Set<ResourceLocation> set1 = (Set)map.values().stream().<ResourceLocation>flatMap((p_209595_2_) -> {
-           return p_209595_2_.getTextures(this::getUnbakedModel, set).stream();
-        }).collect(Collectors.toSet());
-        set1.addAll(LOCATIONS_BUILTIN_TEXTURES);
-        set.forEach((p_209588_0_) -> {
-           LOGGER.warn("Unable to resolve texture reference: {}", (Object)p_209588_0_);
-        });
-        this.textureMap.stitch(this.resourceManager, set1);
-        map.forEach((p_209599_1_, p_209599_2_) -> {
-           IBakedModel ibakedmodel = p_209599_2_.bake(this::getUnbakedModel, this.textureMap::getSprite, ModelRotation.X0_Y0, false);
-           if (ibakedmodel != null) {
-              this.bakedRegistry.putObject(p_209599_1_, ibakedmodel);
-           }
-
-        });
-        return this.bakedRegistry;
-
-        IBakedModel missingBaked = missingModel.bake(defaultModelGetter(), defaultTextureGetter(), missingModel.getDefaultState(), false, DefaultVertexFormats.ITEM);
-        Map<IUnbakedModel, IBakedModel> bakedModels = Maps.newHashMap();
-        HashMultimap<IUnbakedModel, ModelResourceLocation> models = HashMultimap.create();
-        Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
-
-        ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
-
-        for(IUnbakedModel model : models.keySet())
-        {
-            String modelLocations = "[" + Joiner.on(", ").join(models.get(model)) + "]";
-            bakeBar.step(modelLocations);
-            if(model == getMissingModel())
-            {
-                bakedModels.put(model, missingBaked);
-            }
-            else
-            {
-                try
-                {
-                    bakedModels.put(model, model.bake(defaultModelGetter(), defaultTextureGetter(), model.getDefaultState(), false, DefaultVertexFormats.ITEM));
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error("Exception baking model for location(s) {}:", modelLocations, e);
-                    bakedModels.put(model, missingBaked);
-                }
-            }
-        }
-
-        ProgressManager.pop(bakeBar);
-
-        for (Entry<ModelResourceLocation, IUnbakedModel> e : stateModels.entrySet())
-        {
-            bakedRegistry.putObject(e.getKey(), bakedModels.get(e.getValue()));
-        }
-        return bakedRegistry;
-    }
-
-    protected void loadBlocks()
-    {
-        List<Block> blocks = StreamSupport.stream(Block.REGISTRY.spliterator(), false)
-                .filter(block -> block.getRegistryName() != null)
-                .sorted(Comparator.comparing(b -> b.getRegistryName().toString()))
-                .collect(Collectors.toList());
-        ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
-
-        for(Block block : blocks)
-        {
-            blockBar.step(block.getRegistryName().toString());
-            for(ResourceLocation location : mapper.getBlockstateLocations(block))
-            {
-                loadBlock(mapper, block, location);
-            }
-        }
-        ProgressManager.pop(blockBar);
+    /**
+     * Indicate to vanilla that it should load and bake the given model, even if no blocks or
+     * items use it. This is useful if e.g. you have baked models only for entity renderers.
+     * Call during {@link net.minecraftforge.client.event.ModelRegistryEvent}
+     * @param rl The model, either {@link ModelResourceLocation} to point to a blockstate variant,
+     *           or plain {@link ResourceLocation} to point directly to a json in the models folder.
+     */
+    public static void addSpecialModel(ResourceLocation rl) {
+        specialModels.add(rl);
     }
 
     @Override
-    protected void registerVariant(@Nullable ModelBlockDefinition definition, ModelResourceLocation location)
-    {
-        IUnbakedModel model;
-        try
-        {
-            model = ModelLoaderRegistry.getModel(location);
-        }
-        catch(Exception e)
-        {
-            storeException(location, e);
-            model = ModelLoaderRegistry.getMissingModel(location, e);
-        }
-        stateModels.put(location, model);
+    public Set<ResourceLocation> getSpecialModels() {
+        return specialModels;
     }
 
-    @Override
-    protected void registerMultipartVariant(ModelBlockDefinition definition, Collection<ModelResourceLocation> locations)
-    {
-        for (ModelResourceLocation location : locations)
-        {
-            multipartDefinitions.put(location, definition);
-            registerVariant(null, location);
-        }
-    }
-
-    private void storeException(ResourceLocation location, Exception exception)
-    {
-        loadingExceptions.put(location, exception);
-    }
-
-
-    @Override
-    protected void loadItemModels()
-    {
-        registerVariantNames();
-
-        List<Item> items = StreamSupport.stream(Item.REGISTRY.spliterator(), false)
-                .filter(item -> item.getRegistryName() != null)
-                .sorted(Comparator.comparing(i -> i.getRegistryName().toString()))
-                .collect(Collectors.toList());
-
-        ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
-        for(Item item : items)
-        {
-            itemBar.step(item.getRegistryName().toString());
-            for(String s : getVariantNames(item))
-            {
-                ResourceLocation file = getItemLocation(s);
-                ModelResourceLocation memory = getInventoryVariant(s);
-                IUnbakedModel model = ModelLoaderRegistry.getMissingModel();
-                Exception exception = null;
-                try
-                {
-                    model = ModelLoaderRegistry.getModel(memory);
-                }
-                catch (Exception blockstateException)
-                {
-                    try
-                    {
-                        model = ModelLoaderRegistry.getModel(file);
-                        ModelLoaderRegistry.addAlias(memory, file);
-                    }
-                    catch (Exception normalException)
-                    {
-                        exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
-                    }
-                }
-                if (exception != null)
-                {
-                    storeException(memory, exception);
-                    model = ModelLoaderRegistry.getMissingModel(memory, exception);
-                }
-                stateModels.put(memory, model);
-            }
-        }
-        ProgressManager.pop(itemBar);
-    }
-*/
     /**
      * Hooked from ModelBakery, allows using MRLs that don't end with "inventory" for items.
      */
