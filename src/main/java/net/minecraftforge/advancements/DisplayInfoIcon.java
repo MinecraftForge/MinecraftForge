@@ -34,7 +34,6 @@ import net.minecraft.util.ResourceLocationException;
  * Used for rendering of a texture as an advancement icon instead of need of providing a proxy item.
  */
 public class DisplayInfoIcon {
-    private static final String KEY_PREFIX = "forgeadvicon:";
 
     /**
      * Creates a fake itemStack with reference to texture given from advancement json.
@@ -56,14 +55,7 @@ public class DisplayInfoIcon {
             throw new JsonSyntaxException("Invalid resource location for forge advancement icon: " + path, e);
         }
 
-        return new ItemStack(() -> new AdvancementForgeIconItem(new Item.Properties())
-        {
-            @Override
-            public String getTranslationKey()
-            {
-                return KEY_PREFIX + path;
-            }
-        });
+        return new ItemStack(() -> new AdvancementForgeIconItem(new Item.Properties(), path));
     }
 
     /**
@@ -73,14 +65,10 @@ public class DisplayInfoIcon {
      */
     public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y)
     {
-        String textureKey = itemStack.getItem().getTranslationKey();
-
-        if(!(itemStack.getItem() instanceof AdvancementForgeIconItem && textureKey.startsWith(KEY_PREFIX)))
+        if(!(itemStack.getItem() instanceof AdvancementForgeIconItem))
         {
             return false;
         }
-
-        textureKey = textureKey.substring(KEY_PREFIX.length());
 
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
@@ -89,7 +77,7 @@ public class DisplayInfoIcon {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(textureKey));
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(itemStack.getItem().getTranslationKey()));
         AbstractGui.blit(x, y, 0, 0, 0, 16, 16, 16, 16);
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
@@ -101,13 +89,23 @@ public class DisplayInfoIcon {
     }
 
     /**
-     * Item class to ensure an itemStack was made by this class can be rendered by this class
+     * Item class to ensure an itemStack was made by this class can be rendered by this class.
+     * Transfers texture resource location.
      */
     private static class AdvancementForgeIconItem extends Item
     {
-        private AdvancementForgeIconItem(Item.Properties properties)
+        final String path;
+
+        private AdvancementForgeIconItem(Item.Properties properties, String path)
         {
             super(properties);
+            this.path = path;
+        }
+
+        @Override
+        public String getTranslationKey()
+        {
+            return path;
         }
     }
 }
