@@ -27,6 +27,7 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 
@@ -34,6 +35,8 @@ import net.minecraft.util.ResourceLocationException;
  * Used for rendering of a texture as an advancement icon instead of need of providing a proxy item.
  */
 public class DisplayInfoIcon {
+    private static final String NBT_KEY = "forgeAdvIcon";
+    private static final AdvancementForgeIconItem ICON_INSTANCE = new AdvancementForgeIconItem(new Item.Properties());
 
     /**
      * Creates a fake itemStack with reference to texture given from advancement json.
@@ -42,7 +45,7 @@ public class DisplayInfoIcon {
      * @param object advancement json object
      * @return fake itemStack with texture reference
      */
-    public static ItemStack createForgeIcon(final JsonObject object)
+    public static ItemStack deserializeForgeIcon(final JsonObject object)
     {
         final String path = object.get("forge").getAsString();
 
@@ -55,7 +58,19 @@ public class DisplayInfoIcon {
             throw new JsonSyntaxException("Invalid resource location for forge advancement icon: " + path, e);
         }
 
-        return new ItemStack(() -> new AdvancementForgeIconItem(new Item.Properties(), path));
+        // TODO: used registered instance instead
+        ItemStack itemStack = new ItemStack(ICON_INSTANCE);
+        CompoundNBT compound = new CompoundNBT();
+        compound.putString(NBT_KEY, path);
+        itemStack.setTag(compound);
+        return itemStack;
+    }
+
+    public static JsonObject serializeForgeIcon(final ItemStack itemStack)
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("forge", getForgeIconTexturePath(itemStack));
+        return jsonObject;
     }
 
     /**
@@ -65,7 +80,7 @@ public class DisplayInfoIcon {
      */
     public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y)
     {
-        if(!(itemStack.getItem() instanceof AdvancementForgeIconItem))
+        if(!isForgeIcon(itemStack))
         {
             return false;
         }
@@ -77,7 +92,7 @@ public class DisplayInfoIcon {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(((AdvancementForgeIconItem) itemStack.getItem()).getTexturePath()));
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(getForgeIconTexturePath(itemStack)));
         AbstractGui.blit(x, y, 0, 0, 0, 16, 16, 16, 16);
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
@@ -88,23 +103,31 @@ public class DisplayInfoIcon {
         return true;
     }
 
+    public static boolean isForgeIcon(final ItemStack itemStack)
+    {
+        return itemStack.getItem() == ICON_INSTANCE;
+    }
+
+    public static String getForgeIconTexturePath(final ItemStack itemStack)
+    {
+        if(!(isForgeIcon(itemStack) && itemStack.hasTag()))
+        {
+            return "";
+        }
+
+        return itemStack.getTag().getString(NBT_KEY);
+    }
+
     /**
      * Item class to ensure an itemStack was made by this class can be rendered by this class.
      * Transfers texture resource location.
+     * TODO: register item properly for advancement network sync
      */
     private static class AdvancementForgeIconItem extends Item
     {
-        final String path;
-
-        private AdvancementForgeIconItem(Item.Properties properties, String path)
+        private AdvancementForgeIconItem(Item.Properties properties)
         {
             super(properties);
-            this.path = path;
-        }
-
-        public String getTexturePath()
-        {
-            return path;
         }
     }
 }

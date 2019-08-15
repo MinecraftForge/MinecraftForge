@@ -4,7 +4,15 @@
     }
  
     private static ItemStack func_193221_a(JsonObject p_193221_0_) {
-+      if (p_193221_0_.has("forge")) return net.minecraftforge.advancements.DisplayInfoIcon.createForgeIcon(p_193221_0_);
++      if (p_193221_0_.has("forge")) return net.minecraftforge.advancements.DisplayInfoIcon.deserializeForgeIcon(p_193221_0_);
        if (!p_193221_0_.has("item")) {
           throw new JsonSyntaxException("Unsupported icon type, currently only items are supported (add 'item' key)");
        } else {
+@@ -190,6 +191,7 @@
+    }
+ 
+    private JsonObject func_200289_l() {
++      if(net.minecraftforge.advancements.DisplayInfoIcon.isForgeIcon(this.field_192301_b)) return net.minecraftforge.advancements.DisplayInfoIcon.serializeForgeIcon(this.field_192301_b);
+       JsonObject jsonobject = new JsonObject();
+       jsonobject.addProperty("item", Registry.field_212630_s.func_177774_c(this.field_192301_b.func_77973_b()).toString());
+       if (this.field_192301_b.func_77942_o()) {
