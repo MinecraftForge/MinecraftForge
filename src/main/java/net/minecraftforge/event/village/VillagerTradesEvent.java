@@ -28,9 +28,10 @@ import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.trading.BasicTrade;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 /**
- * VillagerTradesEvent is fired during setup.  It is used to gather the trade lists for each profession.
+ * VillagerTradesEvent is fired during the {@link FMLServerAboutToStartEvent}.  It is used to gather the trade lists for each profession.
  * It is fired on the {@link MinecraftForge#EVENT_BUS}.
  * It is fired once for each registered villager profession.
  * Villagers pick two trades from their trade map, based on their level.

@@ -20,15 +20,15 @@
 package net.minecraftforge.event.village;
 
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.trading.BasicTrade;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 /**
- * VillagerTradesEvent is fired during setup.  It is used to gather the trade lists for the wandering merchant.
+ * WandererTradesEvent is fired during the {@link FMLServerAboutToStartEvent}.  It is used to gather the trade lists for the wandering merchant.
  * It is fired on the {@link MinecraftForge#EVENT_BUS}.
  * The wandering merchant picks a few trades from {@link TradeType#GENERIC} and a single trade from {@link TradeType#RARE}.
  * To add trades to the merchant, simply add new trades to the list. {@link BasicTrade} provides a default implementation.
@@ -36,21 +36,22 @@ import net.minecraftforge.eventbus.api.Event;
 public class WandererTradesEvent extends Event
 {
 
-    protected Map<TradeType, List<ITrade>> trades;
+    protected List<ITrade> generic;
+    protected List<ITrade> rare;
 
-    public WandererTradesEvent(Map<TradeType, List<ITrade>> trades)
+    public WandererTradesEvent(List<ITrade> generic, List<ITrade> rare)
     {
-        this.trades = trades;
+        this.generic = generic;
+        this.rare = rare;
     }
 
-    public Map<TradeType, List<ITrade>> getTrades()
+    public List<ITrade> getGenericTrades()
     {
-        return trades;
+        return generic;
     }
 
-    public static enum TradeType
+    public List<ITrade> getRareTrades()
     {
-        GENERIC,
-        RARE;
+        return rare;
     }
 }

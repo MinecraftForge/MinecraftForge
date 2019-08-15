@@ -21,10 +21,10 @@ package net.minecraftforge.common.trading;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -35,21 +35,19 @@ import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
-import net.minecraftforge.event.village.WandererTradesEvent.TradeType;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class VillagerTradingManager
 {
 
-    private static boolean run = false;
+    private static final Map<VillagerProfession, Int2ObjectMap<VillagerTrades.ITrade[]>> VANILLA_TRADES = ImmutableMap.copyOf(VillagerTrades.field_221239_a);
+    private static final Map<Integer, VillagerTrades.ITrade[]> WANDERER_TRADES = ImmutableMap.copyOf(VillagerTrades.field_221240_b);
 
     public static void loadTrades(FMLServerAboutToStartEvent e)
     {
-        if(run) return;
         postWandererEvent();
         postVillagerEvents();
-        run = true;
     }
 
     /**
@@ -59,14 +57,11 @@ public class VillagerTradingManager
     {
         List<ITrade> generic = new ArrayList<>();
         List<ITrade> rare = new ArrayList<>();
-        generic.addAll(Arrays.asList(VillagerTrades.field_221240_b.get(1)));
-        rare.addAll(Arrays.asList(VillagerTrades.field_221240_b.get(2)));
-        Map<TradeType, List<ITrade>> trades = new HashMap<>();
-        trades.put(TradeType.GENERIC, generic);
-        trades.put(TradeType.RARE, rare);
-        MinecraftForge.EVENT_BUS.post(new WandererTradesEvent(trades));
-        VillagerTrades.field_221240_b.put(1, trades.get(TradeType.GENERIC).toArray(new ITrade[0]));
-        VillagerTrades.field_221240_b.put(2, trades.get(TradeType.RARE).toArray(new ITrade[0]));
+        Arrays.stream(WANDERER_TRADES.get(1)).forEach(generic::add);
+        Arrays.stream(WANDERER_TRADES.get(2)).forEach(rare::add);
+        MinecraftForge.EVENT_BUS.post(new WandererTradesEvent(generic, rare));
+        VillagerTrades.field_221240_b.put(1, generic.toArray(new ITrade[0]));
+        VillagerTrades.field_221240_b.put(2, rare.toArray(new ITrade[0]));
     }
 
     /**
@@ -76,13 +71,15 @@ public class VillagerTradingManager
     {
         for (VillagerProfession prof : ForgeRegistries.PROFESSIONS)
         {
-            Int2ObjectMap<ITrade[]> trades = VillagerTrades.field_221239_a.computeIfAbsent(prof, a -> new Int2ObjectOpenHashMap<>());
+            Int2ObjectMap<ITrade[]> trades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
             Int2ObjectMap<List<ITrade>> mutableTrades = new Int2ObjectOpenHashMap<>();
             trades.int2ObjectEntrySet().forEach(e -> mutableTrades.put(e.getIntKey(), Lists.newArrayList(e.getValue())));
             for (int i = 1; i < 6; i++)
                 mutableTrades.computeIfAbsent(i, e -> new ArrayList<>());
             MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
-            mutableTrades.int2ObjectEntrySet().forEach(e -> trades.put(e.getIntKey(), e.getValue().toArray(new ITrade[0])));
+            Int2ObjectMap<ITrade[]> newTrades = new Int2ObjectOpenHashMap<>();
+            mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new ITrade[0])));
+            VillagerTrades.field_221239_a.put(prof, newTrades);
         }
     }
 
