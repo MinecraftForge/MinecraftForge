@@ -63,7 +63,7 @@ public class VillagerTradingManager
     }
 
     /**
-     * Posts the WandererTradesEvent.  Called during common setup.
+     * Posts the WandererTradesEvent.
      */
     private static void postWandererEvent()
     {
@@ -77,7 +77,7 @@ public class VillagerTradingManager
     }
 
     /**
-     * Posts a VillagerTradesEvent for each registered profession.  Called during common setup.
+     * Posts a VillagerTradesEvent for each registered profession.
      */
     private static void postVillagerEvents()
     {
