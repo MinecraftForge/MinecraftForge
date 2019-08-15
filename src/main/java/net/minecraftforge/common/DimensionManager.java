@@ -450,7 +450,7 @@ public class DimensionManager
             this.name = new ResourceLocation(data.getString("name"));
             this.type = data.contains("type", 8) ? new ResourceLocation(data.getString("type")) : null;
             this.data = data.contains("data", 7) ? data.getByteArray("data") : null;
-            this.skyLight = data.contains("sky_light", 99) ? data.getByte("sky_light") == 0 : true;
+            this.skyLight = data.contains("sky_light", 99) ? data.getBoolean("sky_light") : true;
         }
 
         private SavedEntry(DimensionType data)
@@ -473,7 +473,7 @@ public class DimensionManager
                 ret.putString("type", type.toString());
             if (data != null)
                 ret.putByteArray("data", data);
-            ret.putByte("sky_light", (byte)(skyLight ? 1 : 0));
+            ret.putBoolean("sky_light", skyLight);
             return ret;
         }
     }
