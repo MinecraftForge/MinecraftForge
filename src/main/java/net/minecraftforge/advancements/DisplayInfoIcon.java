@@ -56,7 +56,7 @@ public class DisplayInfoIcon {
             throw new JsonSyntaxException("Invalid resource location for forge advancement icon: " + path, e);
         }
 
-        return new ItemStack(() -> new Item(new Item.Properties())
+        return new ItemStack(() -> new AdvancementForgeIconItem(new Item.Properties())
         {
             @Override
             public String getTranslationKey()
@@ -75,22 +75,12 @@ public class DisplayInfoIcon {
     {
         String textureKey = itemStack.getItem().getTranslationKey();
 
-        if(!textureKey.startsWith(KEY_PREFIX))
+        if(!(itemStack.getItem() instanceof AdvancementForgeIconItem && textureKey.startsWith(KEY_PREFIX)))
         {
             return false;
         }
 
         textureKey = textureKey.substring(KEY_PREFIX.length());
-        ResourceLocation textureLoc;
-
-        try
-        {
-            textureLoc = new ResourceLocation(textureKey);
-        }
-        catch (ResourceLocationException e)
-        {
-            return false;
-        }
 
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
@@ -99,7 +89,7 @@ public class DisplayInfoIcon {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(textureLoc);
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(textureKey));
         AbstractGui.blit(x, y, 0, 0, 0, 16, 16, 16, 16);
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
@@ -108,5 +98,16 @@ public class DisplayInfoIcon {
         GlStateManager.popMatrix();
 
         return true;
+    }
+
+    /**
+     * Item class to ensure an itemStack was made by this class can be rendered by this class
+     */
+    private static class AdvancementForgeIconItem extends Item
+    {
+        private AdvancementForgeIconItem(Item.Properties properties)
+        {
+            super(properties);
+        }
     }
 }
