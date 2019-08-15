@@ -81,6 +81,16 @@ public class DisplayInfoIcon {
         }
 
         textureKey = textureKey.substring(KEY_PREFIX.length());
+        ResourceLocation textureLoc;
+
+        try
+        {
+            textureLoc = new ResourceLocation(textureKey);
+        }
+        catch (ResourceLocationException e)
+        {
+            return false;
+        }
 
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
@@ -89,7 +99,7 @@ public class DisplayInfoIcon {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(textureKey));
+        Minecraft.getInstance().getTextureManager().bindTexture(textureLoc);
         AbstractGui.blit(x, y, 0, 0, 0, 16, 16, 16, 16);
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
