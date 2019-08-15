@@ -253,7 +253,7 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
-                environment 'MOD_CLASSES', "${project.file("build/resources/test").canonicalPath}:${project.file("build/classes/java/test").canonicalPath}"
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
                 mods {
                     TestMods { sources sourceSets.test }
