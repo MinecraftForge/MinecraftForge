@@ -32,6 +32,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
@@ -66,8 +67,8 @@ public class VillagerTradingManager
      */
     private static void postWandererEvent()
     {
-        List<ITrade> generic = new ArrayList<>();
-        List<ITrade> rare = new ArrayList<>();
+        List<ITrade> generic = NonNullList.create();
+        List<ITrade> rare = NonNullList.create();
         Arrays.stream(WANDERER_TRADES.get(1)).forEach(generic::add);
         Arrays.stream(WANDERER_TRADES.get(2)).forEach(rare::add);
         MinecraftForge.EVENT_BUS.post(new WandererTradesEvent(generic, rare));
@@ -84,9 +85,14 @@ public class VillagerTradingManager
         {
             Int2ObjectMap<ITrade[]> trades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
             Int2ObjectMap<List<ITrade>> mutableTrades = new Int2ObjectOpenHashMap<>();
-            trades.int2ObjectEntrySet().forEach(e -> mutableTrades.put(e.getIntKey(), Lists.newArrayList(e.getValue())));
             for (int i = 1; i < 6; i++)
-                mutableTrades.computeIfAbsent(i, e -> new ArrayList<>());
+            {
+                mutableTrades.put(i, NonNullList.create());
+            }
+            trades.int2ObjectEntrySet().forEach(e ->
+            {
+                Arrays.stream(e.getValue()).forEach(mutableTrades.get(e.getIntKey())::add);
+            });
             MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
             Int2ObjectMap<ITrade[]> newTrades = new Int2ObjectOpenHashMap<>();
             mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new ITrade[0])));
