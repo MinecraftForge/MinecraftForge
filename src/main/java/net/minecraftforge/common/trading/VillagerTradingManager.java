@@ -21,10 +21,10 @@ package net.minecraftforge.common.trading;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -41,8 +41,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class VillagerTradingManager
 {
 
-    private static final Map<VillagerProfession, Int2ObjectMap<VillagerTrades.ITrade[]>> VANILLA_TRADES = ImmutableMap.copyOf(VillagerTrades.field_221239_a);
-    private static final Map<Integer, VillagerTrades.ITrade[]> WANDERER_TRADES = ImmutableMap.copyOf(VillagerTrades.field_221240_b);
+    private static final Map<VillagerProfession, Int2ObjectMap<ITrade[]>> VANILLA_TRADES = new HashMap<>();
+    private static final Int2ObjectMap<ITrade[]> WANDERER_TRADES = new Int2ObjectOpenHashMap<>();
+
+    static
+    {
+        VillagerTrades.field_221239_a.entrySet().forEach(e ->
+        {
+            Int2ObjectMap<ITrade[]> copy = new Int2ObjectOpenHashMap<>();
+            e.getValue().int2ObjectEntrySet().forEach(ent -> copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length)));
+            VANILLA_TRADES.put(e.getKey(), copy);
+        });
+        VillagerTrades.field_221240_b.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
+    }
 
     public static void loadTrades(FMLServerAboutToStartEvent e)
     {
