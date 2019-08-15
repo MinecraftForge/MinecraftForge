@@ -77,7 +77,7 @@ public class DisplayInfoIcon {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(itemStack.getItem().getTexturePath()));
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(((AdvancementForgeIconItem) itemStack.getItem()).getTexturePath()));
         AbstractGui.blit(x, y, 0, 0, 0, 16, 16, 16, 16);
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
