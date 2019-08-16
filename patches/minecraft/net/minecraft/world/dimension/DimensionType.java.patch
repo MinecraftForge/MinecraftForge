@@ -9,40 +9,40 @@
     public static final DimensionType field_223227_a_ = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true));
     public static final DimensionType field_223228_b_ = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false));
     public static final DimensionType field_223229_c_ = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false));
-@@ -19,17 +19,31 @@
+@@ -19,19 +19,27 @@
     private final String field_212682_f;
     private final BiFunction<World, DimensionType, ? extends Dimension> field_201038_g;
     private final boolean field_218273_h;
 +   private final boolean isVanilla;
-+   private final net.minecraftforge.common.ModDimension modType;
-+   private final net.minecraft.network.PacketBuffer data;
  
     private static DimensionType func_212677_a(String p_212677_0_, DimensionType p_212677_1_) {
        return Registry.func_218343_a(Registry.field_212622_k, p_212677_1_.field_186074_d, p_212677_0_, p_212677_1_);
     }
  
-+   //Forge, Internal use only. Use DimensionManager instead.
++   //Forge: Internal use only
 +   @Deprecated
     protected DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_) {
-+      this(p_i49935_1_, p_i49935_2_, p_i49935_3_, p_i49935_4_, p_i49935_5_, null, null);
-+   }
-+
-+   //Forge, Internal use only. Use DimensionManager instead.
-+   @Deprecated
-+   public DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
        this.field_186074_d = p_i49935_1_;
        this.field_186076_f = p_i49935_2_;
        this.field_212682_f = p_i49935_3_;
        this.field_201038_g = p_i49935_4_;
        this.field_218273_h = p_i49935_5_;
 +      this.isVanilla = this.field_186074_d >= 0 && this.field_186074_d <= 2;
-+      this.modType = modType;
-+      this.data = data;
     }
  
++   public DimensionType(BiFunction<World, DimensionType, ? extends Dimension> factory, boolean hasSkyLight) {
++      this(-1, "", null, factory, hasSkyLight);
++   }
++
     public static DimensionType func_218271_a(Dynamic<?> p_218271_0_) {
-@@ -44,8 +58,9 @@
-       return this.field_186074_d + -1;
+       return Registry.field_212622_k.func_82594_a(new ResourceLocation(p_218271_0_.asString("")));
+    }
+@@ -41,23 +49,29 @@
+    }
+ 
+    public int func_186068_a() {
+-      return this.field_186074_d + -1;
++      return Registry.field_212622_k.func_148757_b(this) + -1;
     }
  
 +   @Deprecated //Forge Do not use, only used for villages backwards compatibility
@@ -52,7 +52,16 @@
     }
  
     public File func_212679_a(File p_212679_1_) {
-@@ -57,7 +72,7 @@
++      if (this.field_212682_f == null) return new File(p_212679_1_, func_212678_a(this).func_110624_b() + "/" + func_212678_a(this).func_110623_a()); // Forge: redirect modded dirs
+       return this.field_212682_f.isEmpty() ? p_212679_1_ : new File(p_212679_1_, this.field_212682_f);
+    }
+ 
++   public boolean isVanilla() {
++      return this.isVanilla;
++   }
++
+    public Dimension func_218270_a(World p_218270_1_) {
+       return this.field_201038_g.apply(p_218270_1_, this);
     }
  
     public String toString() {
@@ -61,25 +70,3 @@
     }
  
     @Nullable
-@@ -65,7 +80,21 @@
-       return Registry.field_212622_k.func_148745_a(p_186069_0_ - -1);
-    }
- 
-+   public boolean isVanilla() {
-+      return this.isVanilla;
-+   }
-+
-    @Nullable
-+   public net.minecraftforge.common.ModDimension getModType() {
-+      return this.modType;
-+   }
-+
-+   @Nullable
-+   public net.minecraft.network.PacketBuffer getData() {
-+      return this.data;
-+   }
-+
-+   @Nullable
-    public static DimensionType func_193417_a(ResourceLocation p_193417_0_) {
-       return Registry.field_212622_k.func_82594_a(p_193417_0_);
-    }

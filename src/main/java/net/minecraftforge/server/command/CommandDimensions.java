@@ -19,18 +19,17 @@
 
 package net.minecraftforge.server.command;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
+import java.util.stream.Collectors;
 
 public class CommandDimensions
 {
@@ -40,14 +39,14 @@ public class CommandDimensions
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .executes(ctx -> {
                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.dimensions.list"), true);
-                Map<String, List<String>> types = new HashMap<>();
+                Multimap<String, String> dimensions = HashMultimap.create();
                 for (DimensionType dim : DimensionType.getAll()) {
-                    String key = dim.getModType() == null ? "Vanilla" : dim.getModType().getRegistryName().toString();
-                    types.computeIfAbsent(key, k -> new ArrayList<>()).add(DimensionType.getKey(dim).toString());
+                    ResourceLocation key = DimensionType.getKey(dim);
+                    dimensions.put(key.getNamespace(), key.getPath());
                 }
 
-                types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), true);
+                dimensions.keys().stream().sorted().forEach(key -> {
+                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + dimensions.get(key).stream().sorted().collect(Collectors.joining(", "))), true);
                 });
                 return 0;
             });

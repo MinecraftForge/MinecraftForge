@@ -134,20 +134,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     @Override
     public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
     {
-        CompoundNBT forgeData = new CompoundNBT();
-        CompoundNBT dims = new CompoundNBT();
-        DimensionManager.writeRegistry(dims);
-        if (!dims.isEmpty())
-            forgeData.put("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
-        return forgeData;
+        return new CompoundNBT();
     }
 
     @Override
     public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
     {
-        if (tag.contains("dims", 10))
-            DimensionManager.readRegistry(tag.getCompound("dims"));
         // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 

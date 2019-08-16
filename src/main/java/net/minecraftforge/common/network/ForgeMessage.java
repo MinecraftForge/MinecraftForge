@@ -19,78 +19,12 @@
 
 package net.minecraftforge.common.network;
 
-import java.nio.charset.StandardCharsets;
-
-import javax.annotation.Nullable;
-
+import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.registries.ForgeRegistries;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 public abstract class ForgeMessage {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    public static class DimensionRegisterMessage extends ForgeMessage {
-        int id;
-        ResourceLocation name;
-        ModDimension dim;
-        boolean skyLight;
-        @Nullable
-        PacketBuffer data;
-
-        public DimensionRegisterMessage(){}
-        public DimensionRegisterMessage(int id, ResourceLocation name, ModDimension dim, boolean skyLight, @Nullable PacketBuffer data)
-        {
-            this.id = id;
-            this.dim = dim;
-            this.data = data;
-            this.skyLight = skyLight;
-        }
-
-        @Override
-        void toBytes(ByteBuf buff)
-        {
-            PacketBuffer output = new PacketBuffer(buff);
-            output.writeInt(id);
-            output.writeResourceLocation(name);
-            output.writeResourceLocation(dim.getRegistryName());
-            output.writeBoolean(skyLight);
-
-            if (data == null)
-            {
-                output.writeShort(0);
-            }
-            else
-            {
-                ByteBuf dup = data.duplicate();
-                output.writeShort(dup.readableBytes());
-                output.writeBytes(dup);
-            }
-        }
-
-        @Override
-        void fromBytes(ByteBuf buff)
-        {
-            PacketBuffer input = new PacketBuffer(buff);
-            id = input.readInt();
-            name = input.readResourceLocation();
-            dim = ForgeRegistries.MOD_DIMENSIONS.getValue(input.readResourceLocation());
-            skyLight = input.readBoolean();
-
-            int len = input.readShort();
-            if (len != 0)
-            {
-                data = new PacketBuffer(Unpooled.buffer());
-                input.readBytes(data, len);
-            }
-        }
-    }
 /* TODO fluids
     public static class FluidIdMapMessage extends ForgeMessage {
         BiMap<Fluid, Integer> fluidIds = HashBiMap.create();

@@ -81,7 +81,7 @@
        return ChunkGeneratorType.field_205489_f;
     });
 -   public static final Registry<DimensionType> field_212622_k = func_222935_a("dimension_type", () -> {
-+   @Deprecated public static final Registry<DimensionType> field_212622_k = func_222939_a("dimension_type", net.minecraftforge.common.DimensionManager.getRegistry(), () -> {
++   @Deprecated public static final Registry<DimensionType> field_212622_k = forge("dimension_type", DimensionType.class, () -> {
        return DimensionType.field_223227_a_;
     });
 -   public static final DefaultedRegistry<PaintingType> field_212620_i = func_222933_a("motive", "kebab", () -> {
