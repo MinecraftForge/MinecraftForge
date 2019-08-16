@@ -45,7 +45,7 @@ public class CommandDimensions
                     dimensions.put(key.getNamespace(), key.getPath());
                 }
 
-                dimensions.keys().stream().sorted().forEach(key -> {
+                dimensions.keySet().stream().sorted().forEach(key -> {
                     ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + dimensions.get(key).stream().sorted().collect(Collectors.joining(", "))), true);
                 });
                 return 0;
