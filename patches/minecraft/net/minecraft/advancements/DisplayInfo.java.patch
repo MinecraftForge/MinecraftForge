@@ -1,0 +1,10 @@
+--- a/net/minecraft/advancements/DisplayInfo.java
++++ b/net/minecraft/advancements/DisplayInfo.java
+@@ -122,6 +122,7 @@
+                try {
+                   CompoundNBT compoundnbt = JsonToNBT.func_180713_a(JSONUtils.func_151206_a(p_193221_0_.get("nbt"), "nbt"));
+                   itemstack.func_77982_d(compoundnbt);
++                  net.minecraftforge.advancements.DisplayInfoIcon.validateAndSetupForgeIcon(itemstack);
+                } catch (CommandSyntaxException commandsyntaxexception) {
+                   throw new JsonSyntaxException("Invalid nbt tag: " + commandsyntaxexception.getMessage());
+                }

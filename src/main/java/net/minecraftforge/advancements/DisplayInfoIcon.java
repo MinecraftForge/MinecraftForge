@@ -36,8 +36,86 @@ import org.lwjgl.opengl.GL11;
  */
 public class DisplayInfoIcon
 {
+    /*
+     *  === USAGE ===
+     * 
+     * "display" : {
+     *     "icon" : {
+     *          "item" : "resource location of working item that Item#isDamageable() or Item#shouldSyncTag()",
+     *          "nbt" : "{forgeAdvIcon:{ <list of properties, see block below> }}"
+     *     } 
+     * }
+     * 
+     * rendered texture size (properties asW asH) is capped at 26 pixels but should be smaller than 22 if an icon
+     * use asW=asH=26 and offX=offY=-5 if you want to replace the default background, does affect announcement toast and tab icon (if root advanc.)
+     * see minecraft:textures/gui/advancements/widgets.png for actual size of advancement toast
+     * 
+     *  === PROPERTIES ===
+     * 
+     * json format: <json key>:<value>
+     * ResourceLocation is string, example of loc property: loc:"modid:textures/advancements/test.png"
+     * 
+     * json key | type             | def value | description
+     * 
+     * loc      | ResourceLocation | REQUIRED  | texture location
+     * offX     | Integer          | 0         | translate x before drawing
+     * offY     | Integer          | 0         | translate y before drawing
+     * w        | Integer          | 16        | texture width
+     * h        | Integer          | 16        | texture height
+     * texOffX  | Float            | 0.0       | inner texture x offset (aka u)
+     * texOffY  | Float            | 0.0       | inner texture y offset (aka v)
+     * asW      | Integer          | 16        | map texture width to
+     * asH      | Integer          | 16        | map texture height to
+     */
+
+    // taken from advancement source code, advancement toast is 26x26 px
+    private static final int MAX_SIZE = 26;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String NBT_KEY = "forgeAdvIcon";
+    private static final String NBT_VALIDATED = "validated";
+    private static final String NBT_DATA_LOCATION = "loc";
+    private static final String NBT_DATA_DRAW_OFFSET_X = "offX";
+    private static final String NBT_DATA_DRAW_OFFSET_Y = "offY";
+    private static final String NBT_DATA_DRAW_WIDTH = "w";
+    private static final String NBT_DATA_DRAW_HEIGHT = "h";
+    private static final String NBT_DATA_TEXTURE_OFFSET_X = "texOffX";
+    private static final String NBT_DATA_TEXTURE_OFFSET_Y = "texOffY";
+    private static final String NBT_DATA_DRAW_AS_WIDTH = "asW";
+    private static final String NBT_DATA_DRAW_AS_HEIGHT = "asH";
+
+    /**
+     * Validates provided properties and missing properties to default values.
+     */
+    public static void validateAndSetupForgeIcon(final ItemStack itemStack)
+    {
+        if (isForgeIcon(itemStack))
+        {
+            final CompoundNBT iconNBT = itemStack.getTag().getCompound(NBT_KEY);
+
+            if (!(itemStack.getItem().shouldSyncTag() || itemStack.getItem().isDamageable()))
+            {
+                LOGGER.error("Invalid item \"{}\" for forge advancement icon, nbt: {}", itemStack.getItem().getRegistryName(), iconNBT.toString());
+                markValidated(iconNBT, false);
+                return;
+            }
+
+            if (validateTextureLocation(iconNBT, NBT_DATA_LOCATION) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_X, -MAX_SIZE, MAX_SIZE, 0) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_Y, -MAX_SIZE, MAX_SIZE, 0) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_WIDTH, 1, Integer.MAX_VALUE, 16) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_HEIGHT, 1, Integer.MAX_VALUE, 16) ||
+                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_X, 0.0f, Float.MAX_VALUE, 0.0f) ||
+                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_Y, 0.0f, Float.MAX_VALUE, 0.0f) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_AS_WIDTH, 1, MAX_SIZE, 16) ||
+                validateInteger(iconNBT, NBT_DATA_DRAW_AS_HEIGHT, 1, MAX_SIZE, 16))
+            {
+                markValidated(iconNBT, false);
+                return;
+            }
+
+            markValidated(iconNBT, true);
+        }
+    }
 
     /**
      * Tries to render given itemStack as an advancement icon if itemstack passes through {@link #isForgeIcon()}.
@@ -46,23 +124,22 @@ public class DisplayInfoIcon
      */
     public static boolean renderForgeIcon(final ItemStack itemStack, final int x, final int y)
     {
-        if(!isForgeIcon(itemStack))
+        if (!isForgeIcon(itemStack))
         {
             return false;
         }
 
-        final CompoundNBT iconCompound = itemStack.getTag().getCompound(NBT_KEY);
-        final String texturePath = iconCompound.getString("location");
-        final ResourceLocation textureLocation;
+        CompoundNBT iconNBT = itemStack.getTag().getCompound(NBT_KEY);
 
-        try
+        if (!iconNBT.contains(NBT_VALIDATED))
         {
-            textureLocation = new ResourceLocation(texturePath);
+            validateAndSetupForgeIcon(itemStack);
+            iconNBT = itemStack.getTag().getCompound(NBT_KEY);
         }
-        catch (ResourceLocationException e)
+
+        if (!iconNBT.getBoolean(NBT_VALIDATED))
         {
-            LOGGER.error("Invalid resource location for forge advancement icon: " + texturePath, e);
-            // fall back to render the default icon
+            // falls back to render the default icon
             return false;
         }
 
@@ -74,8 +151,11 @@ public class DisplayInfoIcon
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(textureLocation);
-        AbstractGui.blit(x, y, 0, 0, 0, iconCompound.getInt("width"), iconCompound.getInt("height"), 16, 16);
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(iconNBT.getString(NBT_DATA_LOCATION)));
+        AbstractGui.blit(x + iconNBT.getInt(NBT_DATA_DRAW_OFFSET_X), y + iconNBT.getInt(NBT_DATA_DRAW_OFFSET_Y),
+            iconNBT.getFloat(NBT_DATA_TEXTURE_OFFSET_X), iconNBT.getFloat(NBT_DATA_TEXTURE_OFFSET_Y),
+            iconNBT.getInt(NBT_DATA_DRAW_WIDTH), iconNBT.getInt(NBT_DATA_DRAW_HEIGHT),
+            iconNBT.getInt(NBT_DATA_DRAW_AS_WIDTH), iconNBT.getInt(NBT_DATA_DRAW_AS_HEIGHT));
         Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.disableBlend();
         GlStateManager.disableAlphaTest();
@@ -91,5 +171,78 @@ public class DisplayInfoIcon
     public static boolean isForgeIcon(final ItemStack itemStack)
     {
         return itemStack.hasTag() && itemStack.getTag().contains(NBT_KEY, 10);
+    }
+
+    private static void markValidated(CompoundNBT nbt, boolean validated)
+    {
+        nbt.putBoolean(NBT_VALIDATED, validated);
+    }
+
+    /**
+     * @return false if key passed the check, true if not
+     */
+    private static boolean validateTextureLocation(CompoundNBT nbt, String nbtKey)
+    {
+        if (!nbt.contains(nbtKey))
+        {
+            LOGGER.error("No texture location \"{}\" found for forge advancement icon, nbt: {}", nbtKey, nbt.toString());
+            return true;
+        }
+
+        final String textureLoc = nbt.getString(nbtKey);
+
+        try
+        {
+            new ResourceLocation(textureLoc);
+        }
+        catch (ResourceLocationException e)
+        {
+            LOGGER.error("Invalid texture location \"" + nbtKey + "\":\"" + textureLoc + "\" for forge advancement icon, nbt: " + nbt.toString(), e);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return false if key passed the check, true if not
+     */
+    private static boolean validateInteger(CompoundNBT nbt, String nbtKey, int minValue, int maxValue, int defaultValue)
+    {
+        if (!nbt.contains(nbtKey))
+        {
+            nbt.putInt(nbtKey, defaultValue);
+            return false;
+        }
+
+        final int nbtValue = nbt.getInt(nbtKey);
+        
+        if (nbtValue < minValue || nbtValue > maxValue)
+        {
+            LOGGER.error("Wrong \"{}\" for forge advancement icon, allowed range: [{} | {}], nbt: {}", nbtKey, minValue, maxValue, nbt.toString());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return false if key passed the check, true if not
+     */
+    private static boolean validateFloat(CompoundNBT nbt, String nbtKey, float minValue, float maxValue, float defaultValue)
+    {
+        if (!nbt.contains(nbtKey))
+        {
+            nbt.putFloat(nbtKey, defaultValue);
+            return false;
+        }
+
+        final float nbtValue = nbt.getFloat(nbtKey);
+        
+        if (nbtValue < minValue || nbtValue > maxValue)
+        {
+            LOGGER.error("Wrong \"{}\" for forge advancement icon, allowed range: [{} | {}], nbt: {}", nbtKey, minValue, maxValue, nbt.toString());
+            return true;
+        }
+        return false;
     }
 }
