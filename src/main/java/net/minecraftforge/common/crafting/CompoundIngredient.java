@@ -149,7 +149,7 @@ public class CompoundIngredient extends Ingredient
         @Override
         public CompoundIngredient parse(JsonObject json)
         {
-            throw new JsonSyntaxException("CompountIngredient should not be directly referenced in json, just use an array of ingredients.");
+            throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
         }
 
         @Override

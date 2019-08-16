@@ -103,6 +103,8 @@ public class ConditionalRecipe
     {
         private List<ICondition[]> conditions = new ArrayList<>();
         private List<IFinishedRecipe> recipes = new ArrayList<>();
+        private ResourceLocation advId;
+        private ConditionalAdvancement.Builder adv;
 
         private List<ICondition> currentConditions = new ArrayList<>();
 
@@ -128,14 +130,33 @@ public class ConditionalRecipe
             return this;
         }
 
+        public Builder setAdvancement(String namespace, String path, ConditionalAdvancement.Builder advancement)
+        {
+            return setAdvancement(new ResourceLocation(namespace, path), advancement);
+        }
+
+        public Builder setAdvancement(ResourceLocation id, ConditionalAdvancement.Builder advancement)
+        {
+            if (this.advId != null)
+                throw new IllegalStateException("Invalid ConditionalRecipeBuilder, Advancement already set");
+            this.advId = id;
+            this.adv = advancement;
+            return this;
+        }
+
         public void build(Consumer<IFinishedRecipe> consumer, String namespace, String path)
+        {
+            build(consumer, new ResourceLocation(namespace, path));
+        }
+
+        public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id)
         {
             if (!currentConditions.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, Orphaned conditions");
             if (recipes.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
-            consumer.accept(new Finished(new ResourceLocation(namespace, path), conditions, recipes));
+            consumer.accept(new Finished(id, conditions, recipes, advId, adv));
         }
     }
 
@@ -144,12 +165,16 @@ public class ConditionalRecipe
         private final ResourceLocation id;
         private final List<ICondition[]> conditions;
         private final List<IFinishedRecipe> recipes;
+        private final ResourceLocation advId;
+        private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, ResourceLocation advId, ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;
             this.recipes = recipes;
+            this.advId = advId;
+            this.adv = adv;
         }
 
         @Override
@@ -183,12 +208,12 @@ public class ConditionalRecipe
 
         @Override
         public JsonObject getAdvancementJson() {
-            return null;
+            return adv == null ? null : adv.write();
         }
 
         @Override
         public ResourceLocation getAdvancementID() {
-            return null;
+            return advId;
         }
     }
 }

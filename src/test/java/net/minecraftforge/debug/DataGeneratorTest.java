@@ -21,11 +21,17 @@ package net.minecraftforge.debug;
 
 import java.util.function.Consumer;
 
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.FrameType;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -57,6 +63,8 @@ public class DataGeneratorTest
 
         protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
         {
+            ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
+
             ConditionalRecipe.builder()
             .addCondition(
                 and(
@@ -75,7 +83,28 @@ public class DataGeneratorTest
                 .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
                 ::build
             )
-            .build(consumer, "data_gen_test", "conditional");
+            .setAdvancement(ID,
+                ConditionalAdvancement.builder()
+                .addCondition(
+                    and(
+                        not(modLoaded("minecraft")),
+                        itemExists("minecraft", "dirt"),
+                        FALSE()
+                    )
+                )
+                .addAdvancement(
+                    Advancement.Builder.builder()
+                    .withParentId(new ResourceLocation("minecraft", "root"))
+                    .withDisplay(Blocks.DIAMOND_BLOCK,
+                        new StringTextComponent("Dirt2Diamonds"),
+                        new StringTextComponent("The BEST crafting recipe in the game!"),
+                        null, FrameType.TASK, false, false, false
+                    )
+                    .withRewards(AdvancementRewards.Builder.recipe(ID))
+                    .withCriterion("has_dirt", hasItem(Blocks.DIRT))
+                )
+            )
+            .build(consumer, ID);
         }
     }
 }
