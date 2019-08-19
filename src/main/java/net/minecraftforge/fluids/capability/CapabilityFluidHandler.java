@@ -40,6 +40,10 @@ public class CapabilityFluidHandler
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
+    public enum Action {
+    	DEFAULT, SIMULATE, FORCE
+	}
+
     public static void register()
     {
         CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(FluidAttributes.BUCKET_VOLUME));

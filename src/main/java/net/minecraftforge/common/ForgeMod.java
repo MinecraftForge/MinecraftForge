@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.item.Item;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
