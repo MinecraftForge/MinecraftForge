@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/block/SweetBerryBushBlock.java
-@@ -77,7 +77,7 @@
+@@ -74,7 +74,7 @@
           return false;
        } else if (i > 1) {
           int j = 1 + p_220051_2_.field_73012_v.nextInt(2);
