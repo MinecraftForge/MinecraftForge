@@ -23,6 +23,7 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -56,6 +57,7 @@ public class ResourcePackLoader
     public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks) {
         resourcePackList = resourcePacks;
         modResourcePacks = ModList.get().getModFiles().stream().
+                filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).
                 map(mf -> new ModFileResourcePack(mf.getFile())).
                 collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
         resourcePacks.addPackFinder(new ModPackFinder());
@@ -69,6 +71,7 @@ public class ResourcePackLoader
             for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
             {
                 IModInfo mod = e.getKey().getModInfos().get(0);
+                if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
                 final String name = "mod:" + mod.getModId();
                 final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
                 if (packInfo == null) {

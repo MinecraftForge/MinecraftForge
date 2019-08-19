@@ -42,7 +42,7 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 
     public GuiSlotModList(GuiModList parent, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 67 + 4, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 91 + 4, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
         this.listWidth = listWidth;
         this.refreshList();

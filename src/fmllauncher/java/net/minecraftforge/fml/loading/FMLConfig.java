@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ public class FMLConfig
         configSpec.define("splashscreen", Boolean.TRUE);
         configSpec.define("maxThreads", -1);
         configSpec.define("versionCheck", Boolean.TRUE);
+        configSpec.define("defaultConfigPath",  "defaultconfigs");
     }
 
     private CommentedFileConfig configData;
@@ -69,6 +71,8 @@ public class FMLConfig
         LOGGER.trace(CORE, "Splash screen is {}", FMLConfig::splashScreenEnabled);
         LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
         LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
+        LOGGER.trace(CORE, "Default config paths at {}", FMLConfig::defaultConfigPath);
+        FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 
     public static boolean splashScreenEnabled() {
@@ -83,5 +87,9 @@ public class FMLConfig
 
     public static boolean runVersionCheck() {
         return INSTANCE.configData.<Boolean>getOptional("versionCheck").orElse(Boolean.TRUE);
+    }
+
+    public static String defaultConfigPath() {
+        return INSTANCE.configData.<String>getOptional("defaultConfigPath").orElse("defaultconfigs");
     }
 }

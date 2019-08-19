@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

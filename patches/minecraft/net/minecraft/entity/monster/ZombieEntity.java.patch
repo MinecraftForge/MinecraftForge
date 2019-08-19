@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -106,7 +106,7 @@
+@@ -107,7 +107,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.23F);
        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
        this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
@@ -9,7 +9,7 @@
     }
  
     protected void func_70088_a() {
-@@ -279,12 +279,16 @@
+@@ -281,12 +281,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -28,7 +28,7 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -294,6 +298,7 @@
+@@ -296,6 +300,7 @@
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_217346_i(zombieentity) && this.field_70170_p.func_217345_j(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
                       this.field_70170_p.func_217376_c(zombieentity);
@@ -36,7 +36,7 @@
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(this.field_70170_p, this.field_70170_p.func_175649_E(new BlockPos(zombieentity)), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
-@@ -426,7 +431,7 @@
+@@ -429,7 +434,7 @@
        float f = p_213386_2_.func_180170_c();
        this.func_98053_h(this.field_70146_Z.nextFloat() < 0.55F * f);
        if (p_213386_4_ == null) {

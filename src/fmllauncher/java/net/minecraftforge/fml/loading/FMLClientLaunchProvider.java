@@ -58,16 +58,6 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
         };
     }
 
-    @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
-    {
-        super.configureTransformationClassLoader(builder);
-        Path realms = LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms");
-        Path mapped = Paths.get(realms.toString().substring(0, realms.toString().length() - 4) + '-' + FMLLoader.getMcpVersion() + ".jar");
-        LOGGER.debug(CORE, "Found realms library at {}", Files.exists(mapped) ? mapped : realms);
-        builder.addTransformationPath(Files.exists(mapped) ? mapped : realms);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void setup(final IEnvironment environment, final Map<String, ?> arguments) {

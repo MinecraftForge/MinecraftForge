@@ -448,8 +448,7 @@ public class ForgeBlockStateV1 extends Marker
 
             protected ResourceLocation getBlockLocation(String location)
             {
-                ResourceLocation tmp = new ResourceLocation(location);
-                return new ResourceLocation(tmp.getNamespace(), "block/" + tmp.getPath());
+                return new ResourceLocation(location); //Vanilla 1.14 removed automatic block prefixes. See https://github.com/MinecraftForge/MinecraftForge/issues/5892
             }
 
             /** Throws an error if there are submodels in this submodel. */

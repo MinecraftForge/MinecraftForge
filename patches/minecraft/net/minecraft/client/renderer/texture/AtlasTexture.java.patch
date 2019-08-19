@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/AtlasTexture.java
 +++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
-@@ -79,6 +79,7 @@
+@@ -80,6 +80,7 @@
           }
        }
  
@@ -8,7 +8,7 @@
     }
  
     public AtlasTexture.SheetData func_215254_a(IResourceManager p_215254_1_, Iterable<ResourceLocation> p_215254_2_, IProfiler p_215254_3_) {
-@@ -91,6 +92,7 @@
+@@ -92,6 +93,7 @@
              set.add(p_215253_1_);
           }
        });
@@ -16,7 +16,7 @@
        int i = this.field_215265_o;
        Stitcher stitcher = new Stitcher(i, i, this.field_147636_j);
        int j = Integer.MAX_VALUE;
-@@ -110,6 +112,7 @@
+@@ -111,6 +113,7 @@
  
        int i1 = Math.min(j, k);
        int j1 = MathHelper.func_151239_c(i1);
@@ -24,7 +24,7 @@
        if (j1 < this.field_147636_j) {
           field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_94254_c, this.field_147636_j, j1, i1);
           this.field_147636_j = j1;
-@@ -191,6 +194,7 @@
+@@ -198,6 +201,7 @@
  
        label62: {
           boolean flag;
@@ -32,7 +32,7 @@
           try {
              iresource = p_195422_1_.func_199002_a(resourcelocation);
              p_195422_2_.func_195664_a(iresource, this.field_147636_j + 1);
-@@ -268,6 +272,93 @@
+@@ -275,6 +279,93 @@
        this.field_94258_i.clear();
     }
  

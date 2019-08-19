@@ -52,7 +52,7 @@ public class LoadingModList
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
         this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
-        this.sortedList = Streams.concat(DefaultModInfos.getModInfos().stream(), sortedList.stream()).
+        this.sortedList = sortedList.stream().
                 map(ModInfo.class::cast).
                 collect(Collectors.toList());
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).

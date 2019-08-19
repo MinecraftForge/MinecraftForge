@@ -23,17 +23,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.*;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.BrandingControl;
+import net.minecraftforge.fml.LoadingFailedException;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
+import net.minecraftforge.fml.server.LanguageHook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,11 +74,13 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
+        LanguageHook.loadForgeAndMCLangs();
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
+        ModelLoaderRegistry.init();
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {

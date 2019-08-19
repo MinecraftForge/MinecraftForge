@@ -3,10 +3,10 @@
 @@ -124,7 +124,7 @@
        BlockState blockstate1 = p_208074_1_.func_180495_p(blockpos1);
        if (!blockstate1.func_215686_e(p_208074_1_, blockpos1)) {
-          boolean flag = Block.func_220056_d(blockstate, p_208074_1_, blockpos, Direction.UP) || blockstate.func_177230_c() == Blocks.field_150438_bZ;
+          boolean flag = blockstate.func_224755_d(p_208074_1_, blockpos, Direction.UP) || blockstate.func_177230_c() == Blocks.field_150438_bZ;
 -         if (flag && func_176346_d(p_208074_1_.func_180495_p(blockpos.func_177984_a()))) {
 +         if (flag && canConnectTo(p_208074_1_.func_180495_p(blockpos.func_177984_a()), p_208074_1_, blockpos.func_177984_a(), null)) {
-             if (func_208062_a(blockstate.func_196952_d(p_208074_1_, blockpos))) {
+             if (blockstate.func_224756_o(p_208074_1_, blockpos)) {
                 return RedstoneSide.UP;
              }
 @@ -133,7 +133,7 @@

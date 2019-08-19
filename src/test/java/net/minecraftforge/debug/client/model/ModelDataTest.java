@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client.model;
 
@@ -187,3 +188,4 @@ public class ModelDataTest
         event.getRegistry().register(TileEntityType.Builder.func_223042_a(Tile::new, MY_BLOCK).build(null).setRegistryName(MODID, BLOCK_NAME));
     }
 }
+*/

@@ -95,7 +95,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
 
     @Override
     protected String getNaming() {
-        return "srg";
+        return "mcp";
     }
 
 }

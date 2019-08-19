@@ -41,6 +41,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -114,7 +115,27 @@ public class ModLoader
         this.loadingWarnings = FMLLoader.getLoadingModList().
                 getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
                     InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
-        LOGGER.info(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
+        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
+        CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
+        CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
+        CrashReportExtender.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);
+        CrashReportExtender.registerCrashCallable("ModLauncher services", this::computeModLauncherServiceList);
+        CrashReportExtender.registerCrashCallable("FML", ForgeVersion::getSpec);
+        CrashReportExtender.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
+        CrashReportExtender.registerCrashCallable("FML Language Providers", this::computeLanguageList);
+    }
+
+    private String computeLanguageList() {
+        return "\n"+FMLLoader.getLanguageLoadingProvider().applyForEach(lp->lp.name() +"@"+ lp.getClass().getPackage().getImplementationVersion()).collect(Collectors.joining("\n\t\t", "\t\t", ""));
+    }
+
+    private String computeModLauncherServiceList() {
+        final List<Map<String, String>> mods = FMLLoader.modLauncherModList();
+        return "\n"+mods.stream().map(mod->mod.getOrDefault("file","nofile")+
+                " "+mod.getOrDefault("name", "missing")+
+                " "+mod.getOrDefault("type","NOTYPE")+
+                " "+mod.getOrDefault("description", "")).
+                collect(Collectors.joining("\n\t\t","\t\t",""));
     }
 
     public static ModLoader get()

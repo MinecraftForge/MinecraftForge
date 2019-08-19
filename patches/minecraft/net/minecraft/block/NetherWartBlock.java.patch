@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/NetherWartBlock.java
 +++ b/net/minecraft/block/NetherWartBlock.java
-@@ -33,9 +33,10 @@
+@@ -31,9 +31,10 @@
  
     public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        int i = p_196267_1_.func_177229_b(field_176486_a);

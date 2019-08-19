@@ -1,7 +1,7 @@
 --- a/net/minecraft/block/FlowerPotBlock.java
 +++ b/net/minecraft/block/FlowerPotBlock.java
-@@ -21,7 +21,7 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -19,7 +19,7 @@
+ import net.minecraft.world.World;
  
  public class FlowerPotBlock extends Block {
 -   private static final Map<Block, Block> field_196451_b = Maps.newHashMap();

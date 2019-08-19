@@ -26,11 +26,11 @@ import javax.annotation.Nonnull;
 
 public class BrewingRecipe implements IBrewingRecipe
 {
-    @Nonnull private final ItemStack input;
+    @Nonnull private final Ingredient input;
     @Nonnull private final Ingredient ingredient;
     @Nonnull private final ItemStack output;
 
-    public BrewingRecipe(ItemStack input, Ingredient ingredient, ItemStack output)
+    public BrewingRecipe(Ingredient input, Ingredient ingredient, ItemStack output)
     {
         this.input = input;
         this.ingredient = ingredient;
@@ -40,7 +40,7 @@ public class BrewingRecipe implements IBrewingRecipe
     @Override
     public boolean isInput(@Nonnull ItemStack stack)
     {
-        return ingredient.test(stack);
+        return this.input.test(stack);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BrewingRecipe implements IBrewingRecipe
         return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : ItemStack.EMPTY;
     }
 
-    public ItemStack getInput()
+    public Ingredient getInput()
     {
         return input;
     }

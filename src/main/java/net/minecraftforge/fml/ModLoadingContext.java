@@ -41,7 +41,11 @@ public class ModLoadingContext
     }
 
     public ModContainer getActiveContainer() {
-        return activeContainer == null ? DefaultModContainers.MINECRAFT : activeContainer;
+        return activeContainer == null ? ModList.get().getModContainerById("minecraft").orElseThrow(()->new RuntimeException("Where is minecraft???!")) : activeContainer;
+    }
+
+    public String getActiveNamespace() {
+        return activeContainer == null ? "minecraft" : activeContainer.getNamespace();
     }
 
     /**

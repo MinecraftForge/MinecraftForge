@@ -61,7 +61,7 @@ public class FMLDevDataLaunchProvider extends FMLDevServerLaunchProvider impleme
 
     @Override
     protected String getNaming() {
-        return "srg";
+        return "mcp";
     }
 
 }

@@ -144,7 +144,7 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = Stream.concat(DefaultModInfos.getModInfos().stream(), modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream)).map(ModInfo.class::cast);
+        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(ModInfo.class::cast);
         final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
 
         // TODO: make this figure out dupe handling better
@@ -162,8 +162,8 @@ public class ModSorter
 
     private void verifyDependencyVersions()
     {
-        final Map<String, ArtifactVersion> modVersions = Stream.concat(modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream), DefaultModInfos.getModInfos().stream()).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
+        final Map<String, ArtifactVersion> modVersions = modFiles.stream().map(ModFile::getModInfos).
+                flatMap(Collection::stream).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
         final Map<IModInfo, List<IModInfo.ModVersion>> modVersionDependencies = modFiles.stream().
                 map(ModFile::getModInfos).flatMap(Collection::stream).
                 collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));

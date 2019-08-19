@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/FilledMapItem.java
 +++ b/net/minecraft/item/FilledMapItem.java
-@@ -52,6 +52,16 @@
+@@ -51,6 +51,16 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {

@@ -1,0 +1,50 @@
+--- a/net/minecraft/world/server/ChunkManager.java
++++ b/net/minecraft/world/server/ChunkManager.java
+@@ -362,6 +362,7 @@
+       iprofiler.func_219895_b("chunk_unload");
+       if (!this.field_219255_i.func_217402_u()) {
+          this.func_223155_b(p_219204_1_);
++         if (this.field_219251_e.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_219255_i);
+       }
+ 
+       iprofiler.func_76319_b();
+@@ -398,6 +399,7 @@
+             if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
+                if (p_219185_5_ instanceof Chunk) {
+                   ((Chunk)p_219185_5_).func_177417_c(false);
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload((Chunk)p_219185_5_));
+                }
+ 
+                this.func_219229_a(p_219185_5_);
+@@ -475,6 +477,7 @@
+                if (flag) {
+                   IChunk ichunk = ChunkSerializer.func_222656_a(this.field_219255_i, this.field_219269_w, this.field_219260_n, p_223172_1_, compoundnbt);
+                   ichunk.func_177432_b(this.field_219255_i.func_82737_E());
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(ichunk));
+                   return Either.left(ichunk);
+                }
+ 
+@@ -584,6 +587,7 @@
+                if (list != null) {
+                   list.forEach(chunk::func_76622_b);
+                }
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+             }
+ 
+             return chunk;
+@@ -668,6 +672,7 @@
+             }
+ 
+             CompoundNBT compoundnbt1 = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_219229_1_, compoundnbt1));
+             this.func_219100_a(chunkpos, compoundnbt1);
+             return true;
+          } catch (Exception exception) {
+@@ -804,6 +809,7 @@
+       for(int l = i - this.field_219247_A; l <= i + this.field_219247_A; ++l) {
+          for(int k = j - this.field_219247_A; k <= j + this.field_219247_A; ++k) {
+             ChunkPos chunkpos = new ChunkPos(l, k);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_219234_2_, p_219234_1_, chunkpos, field_219255_i);
+             this.func_219199_a(p_219234_1_, chunkpos, new IPacket[2], !p_219234_2_, p_219234_2_);
+          }
+       }
