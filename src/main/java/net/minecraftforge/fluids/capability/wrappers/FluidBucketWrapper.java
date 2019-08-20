@@ -103,14 +103,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || getFluid() != null || !canFillFluidType(resource))
         {
             return 0;
         }
 
-        if (doFill)
+        if (action.execute())
         {
             setFluid(resource);
         }
@@ -120,7 +120,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < FluidAttributes.BUCKET_VOLUME)
         {
@@ -130,9 +130,9 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null && fluidStack.isFluidEqual(resource))
         {
-            if (doDrain)
+            if (action.execute())
             {
-                setFluid((FluidStack) null);
+                setFluid(null);
             }
             return fluidStack;
         }
@@ -142,7 +142,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain < FluidAttributes.BUCKET_VOLUME)
         {
@@ -152,9 +152,9 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null)
         {
-            if (doDrain)
+            if (action.execute())
             {
-                setFluid((FluidStack) null);
+                setFluid(null);
             }
             return fluidStack;
         }

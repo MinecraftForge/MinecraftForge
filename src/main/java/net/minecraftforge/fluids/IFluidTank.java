@@ -19,15 +19,17 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+
 import javax.annotation.Nullable;
 
 /**
  * A tank is the unit of interaction with Fluid inventories.
- *
+ * <p>
  * A reference implementation can be found at {@link FluidTank}.
  */
-public interface IFluidTank
-{
+public interface IFluidTank {
+
     /**
      * @return FluidStack representing the fluid in the tank, null if the tank is empty.
      */
@@ -47,7 +49,7 @@ public interface IFluidTank
     /**
      * Returns a wrapper object {@link FluidTankInfo } containing the capacity of the tank and the
      * FluidStack it holds.
-     *
+     * <p>
      * Should prevent manipulation of the IFluidTank. See {@link FluidTank}.
      *
      * @return State information for the IFluidTank.
@@ -55,23 +57,18 @@ public interface IFluidTank
     FluidTankInfo getInfo();
 
     /**
-     *
-     * @param resource
-     *            FluidStack attempting to fill the tank.
-     * @param doFill
-     *            If false, the fill will only be simulated.
+     * @param resource FluidStack attempting to fill the tank.
+     * @param action   If SIMULATE, the fill will only be simulated.
      * @return Amount of fluid that was accepted by the tank.
      */
-    int fill(FluidStack resource, boolean doFill);
+    int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action);
 
     /**
-     *
-     * @param maxDrain
-     *            Maximum amount of fluid to be removed from the container.
-     * @param doDrain
-     *            If false, the drain will only be simulated.
+     * @param maxDrain Maximum amount of fluid to be removed from the container.
+     * @param action   If SIMULATE, the drain will only be simulated.
      * @return Amount of fluid that was removed from the tank.
      */
     @Nullable
-    FluidStack drain(int maxDrain, boolean doDrain);
+    FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action);
+
 }

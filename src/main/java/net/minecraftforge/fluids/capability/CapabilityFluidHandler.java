@@ -40,8 +40,16 @@ public class CapabilityFluidHandler
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
-    public enum Action {
-    	DEFAULT, SIMULATE, FORCE
+    public enum FluidAction {
+    	EXECUTE, SIMULATE;
+
+		public boolean execute() {
+    		return this == EXECUTE;
+		}
+
+		public boolean simulate() {
+			return this == SIMULATE;
+		}
 	}
 
     public static void register()

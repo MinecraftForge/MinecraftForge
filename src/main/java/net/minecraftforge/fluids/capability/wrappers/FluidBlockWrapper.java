@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -60,31 +61,31 @@ public class FluidBlockWrapper implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         // NOTE: "Filling" means placement in this context!
         if (resource == null)
         {
             return 0;
         }
-        return fluidBlock.place(world, blockPos, resource, doFill);
+        return fluidBlock.place(world, blockPos, resource, action);
     }
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         if (resource == null || !fluidBlock.canDrain(world, blockPos))
         {
             return null;
         }
 
-        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, false);
+        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, CapabilityFluidHandler.FluidAction.SIMULATE);
         if (resource.containsFluid(simulatedDrain))
         {
-            if (doDrain)
+            if (action.execute())
             {
-                return fluidBlock.drain(world, blockPos, true);
+                return fluidBlock.drain(world, blockPos, CapabilityFluidHandler.FluidAction.EXECUTE);
             }
             else
             {
@@ -97,19 +98,19 @@ public class FluidBlockWrapper implements IFluidHandler
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action)
     {
         if (maxDrain <= 0 || !fluidBlock.canDrain(world, blockPos))
         {
             return null;
         }
 
-        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, false);
+        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, CapabilityFluidHandler.FluidAction.SIMULATE);
         if (simulatedDrain != null && simulatedDrain.amount <= maxDrain)
         {
-            if (doDrain)
+            if (action.execute())
             {
-                return fluidBlock.drain(world, blockPos, true);
+                return fluidBlock.drain(world, blockPos, CapabilityFluidHandler.FluidAction.EXECUTE);
             }
             else
             {

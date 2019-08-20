@@ -43,21 +43,21 @@ public interface IFluidHandler
      * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be filled.
-     * @param doFill   If false, fill will only be simulated.
+     * @param action   If SIMULATE, fill will only be simulated.
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
-    int fill(FluidStack resource, boolean doFill);
+    int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be drained.
-     * @param doDrain  If false, drain will only be simulated.
+     * @param action   If SIMULATE, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
     @Nullable
-    FluidStack drain(FluidStack resource, boolean doDrain);
+    FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -65,10 +65,10 @@ public interface IFluidHandler
      * This method is not Fluid-sensitive.
      *
      * @param maxDrain Maximum amount of fluid to drain.
-     * @param doDrain  If false, drain will only be simulated.
+     * @param action   If SIMULATE, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
     @Nullable
-    FluidStack drain(int maxDrain, boolean doDrain);
+    FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action);
 }

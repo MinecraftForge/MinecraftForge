@@ -22,6 +22,7 @@ package net.minecraftforge.fluids.capability.templates;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
@@ -74,19 +75,19 @@ public class VoidFluidHandler implements IFluidHandler, IFluidTank
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         return resource.amount;
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action)
     {
         return null;
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action)
     {
         return null;
     }
