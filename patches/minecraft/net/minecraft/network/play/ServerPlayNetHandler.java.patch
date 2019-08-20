@@ -1,14 +1,17 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -180,6 +180,7 @@
+@@ -180,8 +180,10 @@
  
     public void func_73660_a() {
        this.func_184342_d();
-+      if (this.field_147369_b.func_70089_S()) //Don't tick players while they are dead/respawning.
++      if (this.field_147369_b.func_70089_S()) { //Don't tick players while they are dead/respawning.
        this.field_147369_b.func_71127_g();
        this.field_147369_b.func_70080_a(this.field_184349_l, this.field_184350_m, this.field_184351_n, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
++      }
        ++this.field_147368_e;
-@@ -337,9 +338,11 @@
+       this.field_184348_G = this.field_184347_F;
+       if (this.field_184344_B) {
+@@ -337,9 +339,11 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -20,7 +23,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -839,7 +842,9 @@
+@@ -839,7 +843,9 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -31,7 +34,7 @@
              this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
           }
        } else {
-@@ -959,7 +964,9 @@
+@@ -959,7 +965,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
@@ -42,7 +45,7 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -1057,6 +1064,7 @@
+@@ -1057,6 +1065,7 @@
                 this.field_147369_b.func_190775_a(entity, hand);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
                 Hand hand1 = p_147340_1_.func_186994_b();
@@ -50,7 +53,7 @@
                 entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
                 if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b) {
-@@ -1087,7 +1095,7 @@
+@@ -1087,7 +1096,7 @@
                 return;
              }
  
@@ -59,7 +62,7 @@
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
-@@ -1264,6 +1272,8 @@
+@@ -1264,6 +1273,8 @@
     }
  
     public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
