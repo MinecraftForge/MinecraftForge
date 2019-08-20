@@ -49,7 +49,6 @@ import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -93,7 +92,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-        MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -102,12 +100,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
     }
-
-    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
-    }
-
 
     public void preInit(FMLCommonSetupEvent evt)
     {
