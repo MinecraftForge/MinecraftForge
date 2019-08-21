@@ -4,7 +4,7 @@
  
      public void func_78873_a(Particle p_78873_1_)
      {
-+        if (p_78873_1_ == null) return; //Forge: Prevent modders from being bad and adding nulls causing untraceable NPEs.
++        if (checkParticle(p_78873_1_)) // Forge: don't allow invalid particles to be added
          this.field_187241_h.add(p_78873_1_);
      }
  
@@ -17,10 +17,12 @@
          {
              p_180533_2_ = p_180533_2_.func_185899_b(this.field_78878_a, p_180533_1_);
              int i = 4;
-@@ -493,4 +494,13 @@
+@@ -493,4 +494,30 @@
  
          return "" + i;
      }
++
++    /* ======================================== FORGE START ===================================== */
 +
 +    public void addBlockHitEffects(BlockPos pos, net.minecraft.util.math.RayTraceResult target)
 +    {
@@ -29,5 +31,20 @@
 +        {
 +            func_180532_a(pos, target.field_178784_b);
 +        }
-+     }
++    }
++
++    private boolean checkParticle(Particle particle)
++    {
++        java.util.Objects.requireNonNull(particle); // make NPEs from null particles traceable
++        if (particle.field_187122_b != this.field_78878_a)
++        {
++            net.minecraftforge.fml.common.FMLLog.log.warn(
++                    "An attempt was made to spawn a particle (type: {}) from an invalid world (was: {}, expected: {}). " +
++                            "This can cause serious thread-safety issues and should be reported to the mod responsible.",
++                    particle.getClass().getName(), particle.field_187122_b, this.field_78878_a
++            );
++            return false;
++        }
++        return true;
++    }
  }
