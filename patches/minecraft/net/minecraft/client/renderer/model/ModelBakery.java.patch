@@ -9,7 +9,20 @@
     private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
     private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
     private final AtlasTexture.SheetData field_217853_J;
-@@ -288,7 +288,7 @@
+@@ -142,6 +142,12 @@
+ 
+       p_i51735_4_.func_219895_b("special");
+       this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
++      for (ResourceLocation rl : getSpecialModels()) {
++          // Same as func_217843_a but without restricting to MRL's
++          IUnbakedModel iunbakedmodel = this.func_209597_a(rl);
++          this.field_217849_F.put(rl, iunbakedmodel);
++          this.field_217851_H.put(rl, iunbakedmodel);
++      }
+       p_i51735_4_.func_219895_b("textures");
+       Set<String> set = Sets.newLinkedHashSet();
+       Set<ResourceLocation> set1 = this.field_217851_H.values().stream().flatMap((p_217838_2_) -> {
+@@ -288,7 +294,7 @@
                       {
                          lvt_13_5_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_217839_1_) -> {
                             try (InputStream inputstream = p_217839_1_.func_199027_b()) {
@@ -18,7 +31,7 @@
                                return pair2;
                             } catch (Exception exception1) {
                                throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
-@@ -404,7 +404,12 @@
+@@ -404,7 +410,12 @@
  
     @Nullable
     public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
@@ -32,7 +45,7 @@
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
        } else {
-@@ -412,11 +417,11 @@
+@@ -412,11 +423,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
@@ -46,3 +59,14 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
+@@ -471,6 +482,10 @@
+       return this.field_225367_M;
+    }
+ 
++   public Set<ResourceLocation> getSpecialModels() {
++      return java.util.Collections.emptySet();
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    static class BlockStateDefinitionException extends RuntimeException {
+       public BlockStateDefinitionException(String p_i49526_1_) {
