@@ -7,13 +7,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.ISuggestionProvider;
-
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EnumArgument<T extends Enum<T>>  implements ArgumentType<T> {
+public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     private final Class<T> enumClass;
 
     public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {
@@ -37,4 +36,29 @@ public class EnumArgument<T extends Enum<T>>  implements ArgumentType<T> {
     public Collection<String> getExamples() {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
+
+    /* JAVAC HATES RAW TYPES!
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static class Serialzier implements IArgumentSerializer<EnumArgument> {
+        @Override
+        public void write(EnumArgument argument, PacketBuffer buffer) {
+            buffer.writeString(argument.enumClass.getName());
+        }
+
+        @Override
+        public EnumArgument<?> read(PacketBuffer buffer) {
+            try {
+                String name = buffer.readString();
+                return new EnumArgument(Class.forName(name));
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public void write(EnumArgument argument, JsonObject json) {
+            json.addProperty("enum", argument.enumClass.getName());
+        }
+    }
+    */
 }
