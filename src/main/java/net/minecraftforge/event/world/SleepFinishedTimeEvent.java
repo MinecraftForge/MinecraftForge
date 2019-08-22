@@ -23,13 +23,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * This event is fired when all players are asleep and the time should be set to daytime.<br>
- *
- * This event is cancelable. {@link Cancelable}<br>
+ * This event is fired when all players are asleep and the time should be set to day.<br>
  *
  * setWakeUpTime(wakeUpTime) sets a new time that will be added to the dayTime.<br>
  */
-@Cancelable
 public class SleepFinishedTimeEvent extends WorldEvent
 {
     private long additionalTime;
