@@ -129,7 +129,7 @@
           this.field_70126_B -= 360.0F;
        }
  
-+      if (!this.field_70170_p.field_72995_K) this.field_70170_p.func_212866_a_((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
++      if (!this.field_70170_p.field_72995_K && this.func_70089_S()) this.field_70170_p.func_212866_a_((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
        this.func_70101_b(p_70080_7_, p_70080_8_);
     }
