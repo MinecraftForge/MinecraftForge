@@ -24,16 +24,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.item.*;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
@@ -97,13 +94,32 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new FluidTankProperties[] { new FluidTankProperties(getFluid(), FluidAttributes.BUCKET_VOLUME) };
+    public int getTanks() {
+
+        return 1;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+
+        return getFluid();
     }
 
     @Override
-    public int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action)
+    public int getTankCapacity(int tank) {
+
+        return FluidAttributes.BUCKET_VOLUME;
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+
+        return true;
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || getFluid() != null || !canFillFluidType(resource))
         {
@@ -120,7 +136,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action)
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < FluidAttributes.BUCKET_VOLUME)
         {
@@ -142,7 +158,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain < FluidAttributes.BUCKET_VOLUME)
         {

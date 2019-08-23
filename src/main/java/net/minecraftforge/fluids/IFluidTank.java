@@ -1,32 +1,13 @@
-/*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 package net.minecraftforge.fluids;
 
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import javax.annotation.Nullable;
 
 /**
- * A tank is the unit of interaction with Fluid inventories.
- * <p>
- * A reference implementation can be found at {@link FluidTank}.
+ * This interface represents a Fluid Tank. IT IS NOT REQUIRED but is provided for convenience.
+ * You are free to handle Fluids in any way that you wish - this is simply an easy default way.
+ * DO NOT ASSUME that these objects are used internally in all cases.
  */
 public interface IFluidTank {
 
@@ -47,28 +28,32 @@ public interface IFluidTank {
     int getCapacity();
 
     /**
-     * Returns a wrapper object {@link FluidTankInfo } containing the capacity of the tank and the
-     * FluidStack it holds.
-     * <p>
-     * Should prevent manipulation of the IFluidTank. See {@link FluidTank}.
-     *
-     * @return State information for the IFluidTank.
+     * @param stack Fluidstack holding the Fluid to be queried.
+     * @return If the tank can hold the fluid (EVER, not at the time of query).
      */
-    FluidTankInfo getInfo();
+    boolean isFluidValid(FluidStack stack);
 
     /**
      * @param resource FluidStack attempting to fill the tank.
      * @param action   If SIMULATE, the fill will only be simulated.
-     * @return Amount of fluid that was accepted by the tank.
+     * @return Amount of fluid that was accepted (or would be, if simulated) by the tank.
      */
-    int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action);
+    int fill(FluidStack resource, FluidAction action);
 
     /**
      * @param maxDrain Maximum amount of fluid to be removed from the container.
      * @param action   If SIMULATE, the drain will only be simulated.
-     * @return Amount of fluid that was removed from the tank.
+     * @return Amount of fluid that was removed (or would be, if simulated) from the tank.
      */
     @Nullable
-    FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action);
+    FluidStack drain(int maxDrain, FluidAction action);
+
+    /**
+     * @param resource Maximum amount of fluid to be removed from the container.
+     * @param action   If SIMULATE, the drain will only be simulated.
+     * @return FluidStack representing fluid that was removed (or would be, if simulated) from the tank.
+     */
+    @Nullable
+    FluidStack drain(FluidStack resource, FluidAction action);
 
 }

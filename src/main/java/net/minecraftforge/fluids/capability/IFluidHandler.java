@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraftforge.fluids.*;
@@ -31,13 +32,62 @@ import net.minecraftforge.fluids.*;
  */
 public interface IFluidHandler
 {
+    enum FluidAction {
+        EXECUTE, SIMULATE;
+
+        public boolean execute() {
+            return this == EXECUTE;
+        }
+
+        public boolean simulate() {
+            return this == SIMULATE;
+        }
+    }
+
     /**
-     * Returns an array of objects which represent the internal tanks.
-     * These objects cannot be used to manipulate the internal tanks.
+     * Returns the number of fluid storage units ("tanks") available
      *
-     * @return Properties for the relevant internal tanks.
+     * @return The number of tanks available
      */
-    IFluidTankProperties[] getTankProperties();
+    int getTanks();
+
+    /**
+     * Returns the FluidStack in a given tank.
+     *
+     * <p>
+     * <strong>IMPORTANT:</strong> This FluidStack <em>MUST NOT</em> be modified. This method is not for
+     * altering internal contents. Any implementers who are able to detect modification via this method
+     * should throw an exception. It is ENTIRELY reasonable and likely that the stack returned here will be a copy.
+     * </p>
+     *
+     * <p>
+     * <strong><em>SERIOUSLY: DO NOT MODIFY THE RETURNED FLUIDSTACK</em></strong>
+     * </p>
+     *
+     * @param tank Tank to query.
+     * @return FluidStack in a given tank. NULL if the tank is empty.
+     */
+    @Nullable
+    FluidStack getFluidInTank(int tank);
+
+    /**
+     * Retrieves the maximum fluid amount for a given tank.
+     *
+     * @param tank Tank to query.
+     * @return     The maximum fluid amount held by the tank.
+     */
+    int getTankCapacity(int tank);
+
+    /**
+     * This function is a way to determine which fluids can exist inside a given handler. General purpose tanks will
+     * basically always return TRUE for this.
+     *
+     * @param tank  Tank to query for validity
+     * @param stack Stack to test with for validity
+     * @return TRUE if the tank can hold the FluidStack, not considering current state.
+     * (Basically, is a given fluid EVER allowed in this tank?) Return FALSE if the answer to that question is 'no.'
+     */
+    boolean isFluidValid(int tank, @Nonnull FluidStack stack);
 
     /**
      * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
@@ -46,7 +96,7 @@ public interface IFluidHandler
      * @param action   If SIMULATE, fill will only be simulated.
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
-    int fill(FluidStack resource, CapabilityFluidHandler.FluidAction action);
+    int fill(FluidStack resource, FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -57,7 +107,7 @@ public interface IFluidHandler
      * simulated) drained.
      */
     @Nullable
-    FluidStack drain(FluidStack resource, CapabilityFluidHandler.FluidAction action);
+    FluidStack drain(FluidStack resource, FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -70,5 +120,6 @@ public interface IFluidHandler
      * simulated) drained.
      */
     @Nullable
-    FluidStack drain(int maxDrain, CapabilityFluidHandler.FluidAction action);
+    FluidStack drain(int maxDrain, FluidAction action);
+
 }

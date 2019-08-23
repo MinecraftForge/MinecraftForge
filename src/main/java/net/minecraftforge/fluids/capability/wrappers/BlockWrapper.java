@@ -47,14 +47,14 @@ public class BlockWrapper extends VoidFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, FluidAction action)
     {
         // NOTE: "Filling" means placement in this context!
         if (resource.amount < FluidAttributes.BUCKET_VOLUME)
         {
             return 0;
         }
-        if (doFill)
+        if (action.execute())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlockState(blockPos, block.getDefaultState(), Constants.BlockFlags.DEFAULT_AND_RERENDER);

@@ -29,9 +29,8 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class CapabilityFluidHandler
 {
@@ -40,19 +39,7 @@ public class CapabilityFluidHandler
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
-    public enum FluidAction {
-    	EXECUTE, SIMULATE;
-
-		public boolean execute() {
-    		return this == EXECUTE;
-		}
-
-		public boolean simulate() {
-			return this == SIMULATE;
-		}
-	}
-
-    public static void register()
+	public static void register()
     {
         CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(FluidAttributes.BUCKET_VOLUME));
 
@@ -63,10 +50,10 @@ public class CapabilityFluidHandler
         @Override
 		public INBT writeNBT(Capability<T> capability, T instance, Direction side)
 		{
-			if (!(instance instanceof IFluidTank))
-				throw new RuntimeException("IFluidHandler instance does not implement IFluidTank");
+			if (!(instance instanceof FluidTank))
+				throw new RuntimeException("Cannot serialize to an instance that isn't the default implementation");
 			CompoundNBT nbt = new CompoundNBT();
-			IFluidTank tank = (IFluidTank) instance;
+			FluidTank tank = (FluidTank) instance;
 			FluidStack fluid = tank.getFluid();
 			if (fluid != null)
 			{
@@ -84,7 +71,7 @@ public class CapabilityFluidHandler
 		public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt)
 		{
 			if (!(instance instanceof FluidTank))
-				throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");
+				throw new RuntimeException("Cannot deserialize to an instance that isn't the default implementation");
 			CompoundNBT tags = (CompoundNBT) nbt;
 			FluidTank tank = (FluidTank) instance;
 			tank.setCapacity(tags.getInt("Capacity"));

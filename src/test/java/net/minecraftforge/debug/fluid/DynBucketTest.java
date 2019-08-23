@@ -63,7 +63,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankOld;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -331,7 +331,7 @@ public class DynBucketTest
 
     public static class TileSimpleTank extends TileEntity
     {
-        FluidTank tank = new FluidTank(4000);
+        FluidTankOld tank = new FluidTankOld(4000);
 
         @Override
         public void readFromNBT(NBTTagCompound tags)

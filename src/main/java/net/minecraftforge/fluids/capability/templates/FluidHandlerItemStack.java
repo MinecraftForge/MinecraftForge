@@ -30,15 +30,13 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * FluidHandlerItemStack is a template capability provider for ItemStacks.
  * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.
  *
- * This class allows an itemStack to contain any partial level of fluid up to its capacity, unlike {@link FluidHandlerItemStackSimple}
+ * This class allows an ItemStack to contain any partial level of fluid up to its capacity, unlike {@link FluidHandlerItemStackSimple}
  *
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
@@ -94,13 +92,32 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new FluidTankProperties[] { new FluidTankProperties(getFluid(), capacity) };
+    public int getTanks() {
+
+        return 1;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+
+        return getFluid();
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int getTankCapacity(int tank) {
+
+        return capacity;
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+
+        return true;
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction doFill)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
@@ -112,7 +129,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         {
             int fillAmount = Math.min(capacity, resource.amount);
 
-            if (doFill)
+            if (doFill.execute())
             {
                 FluidStack filled = resource.copy();
                 filled.amount = fillAmount;
@@ -127,7 +144,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             {
                 int fillAmount = Math.min(capacity - contained.amount, resource.amount);
 
-                if (doFill && fillAmount > 0) {
+                if (doFill.execute() && fillAmount > 0) {
                     contained.amount += fillAmount;
                     setFluid(contained);
                 }
@@ -140,17 +157,17 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
-        return drain(resource.amount, doDrain);
+        return drain(resource.amount, action);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
@@ -168,7 +185,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         FluidStack drained = contained.copy();
         drained.amount = drainAmount;
 
-        if (doDrain)
+        if (action.execute())
         {
             contained.amount -= drainAmount;
             if (contained.amount == 0)
