@@ -21,7 +21,11 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.IEnviromentBlockReader;
 import org.apache.logging.log4j.LogManager;
@@ -70,11 +74,21 @@ public class FluidAttributes
 
     public static final int BUCKET_VOLUME = 1000;
 
-    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, -1)
-            .setDensity(0).setTemperature(0).setLuminosity(0);
-    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, -1);
-    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("lava", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, -1)
-            /* TODO: set temperature and stuff */;
+    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, -1).setDensity(0).setTemperature(0).setLuminosity(0);
+    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, -1) {
+        @Override
+        public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
+        {
+            return Blocks.WATER.getDefaultState();
+        }
+    };
+    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("lava", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, -1) {
+        @Override
+        public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
+        {
+            return Blocks.LAVA.getDefaultState();
+        }
+    }.setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300);
 
     /** The unique identification name for this fluid. */
     protected final String fluidName;
@@ -141,13 +155,6 @@ public class FluidAttributes
     protected Rarity rarity = Rarity.COMMON;
 
     /**
-     * If there is a Block implementation of the Fluid, the Block is linked here.
-     *
-     * The default value of null should remain for any Fluid without a Block implementation.
-     */
-    protected Block block = null;
-
-    /**
      * Color used by universal bucket and the ModelFluid baked model.
      * Note that this int includes the alpha so converting this to RGB with alpha would be
      *   float r = ((color >> 16) & 0xFF) / 255f; // red
@@ -185,20 +192,6 @@ public class FluidAttributes
     public FluidAttributes setTranslationKey(String translationKey)
     {
         this.translationKey = translationKey;
-        return this;
-    }
-
-    public FluidAttributes setBlock(Block block)
-    {
-        if (this.block == null || this.block == block)
-        {
-            this.block = block;
-        }
-        else
-        {
-            LOGGER.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
-                    + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, fluidName, this.block);
-        }
         return this;
     }
 
@@ -261,14 +254,24 @@ public class FluidAttributes
         return this.fluidName;
     }
 
-    public final Block getBlock()
+    public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
     {
-        return block;
+        return null;
     }
 
-    public final boolean canBePlacedInWorld()
+    public IFluidState getStateForPlacement(IEnviromentBlockReader reader, BlockPos pos, FluidStack state)
     {
-        return block != null;
+        return state.getFluid().getDefaultState();
+    }
+
+    public final boolean canBePlacedInWorld(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
+    {
+        return getBlock(reader, pos, state) != null;
+    }
+
+    public final boolean canBePlacedInWorld(IEnviromentBlockReader reader, BlockPos pos, FluidStack state)
+    {
+        return getBlock(reader, pos, getStateForPlacement(reader, pos, state)) != null;
     }
 
     public final boolean isLighterThanAir()
@@ -285,11 +288,12 @@ public class FluidAttributes
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
      */
-    public boolean doesVaporize(FluidStack fluidStack)
+    public boolean doesVaporize(IEnviromentBlockReader reader, BlockPos pos, FluidStack fluidStack)
     {
-        if (block == null)
+        BlockState blockstate = getBlock(reader, pos, getStateForPlacement(reader, pos, fluidStack));
+        if (blockstate == null)
             return false;
-        return block.getDefaultState().getMaterial() == Material.WATER;
+        return blockstate.getMaterial() == Material.WATER;
     }
 
     /**
@@ -391,35 +395,11 @@ public class FluidAttributes
 
     public SoundEvent getFillSound()
     {
-        if(fillSound == null)
-        {
-            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
-            {
-                fillSound = SoundEvents.ITEM_BUCKET_FILL_LAVA;
-            }
-            else
-            {
-                fillSound = SoundEvents.ITEM_BUCKET_FILL;
-            }
-        }
-
         return fillSound;
     }
 
     public SoundEvent getEmptySound()
     {
-        if(emptySound == null)
-        {
-            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
-            {
-                emptySound = SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
-            }
-            else
-            {
-                emptySound = SoundEvents.ITEM_BUCKET_EMPTY;
-            }
-        }
-
         return emptySound;
     }
 

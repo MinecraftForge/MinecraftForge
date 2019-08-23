@@ -560,7 +560,7 @@ public class FluidUtil
         }
 
         Fluid fluid = resource.getFluid();
-        if (fluid == null || !fluid.getAttributes().canBePlacedInWorld())
+        if (fluid == null || !fluid.getAttributes().canBePlacedInWorld(world, pos, resource))
         {
             return false;
         }
@@ -582,7 +582,7 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(resource))
+        if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(world, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (result != null)
@@ -614,7 +614,7 @@ public class FluidUtil
      */
     private static IFluidHandler getFluidBlockHandler(Fluid fluid, World world, BlockPos pos)
     {
-        Block block = fluid.getAttributes().getBlock();/* TODO fluid blocks?
+        BlockState state = fluid.getAttributes().getBlock(world, pos, fluid.getDefaultState());/* TODO fluid blocks?
         if (block instanceof IFluidBlock)
         {
             return new FluidBlockWrapper((IFluidBlock) block, world, pos);
@@ -625,7 +625,7 @@ public class FluidUtil
         }
         else*/
         {
-            return new BlockWrapper(block, world, pos);
+            return new BlockWrapper(state, world, pos);
         }
     }
 

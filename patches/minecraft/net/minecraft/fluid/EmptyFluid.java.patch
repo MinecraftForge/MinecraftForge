@@ -1,9 +1,10 @@
 --- a/net/minecraft/fluid/EmptyFluid.java
 +++ b/net/minecraft/fluid/EmptyFluid.java
-@@ -68,4 +68,6 @@
+@@ -68,4 +68,7 @@
     public VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_) {
        return VoxelShapes.func_197880_a();
     }
 +
++   @Override
 +   public net.minecraftforge.fluids.FluidAttributes createAttributes(Fluid fluid) { return net.minecraftforge.fluids.FluidAttributes.EMPTY; }
  }
