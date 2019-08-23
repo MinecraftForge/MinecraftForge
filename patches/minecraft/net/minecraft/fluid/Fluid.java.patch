@@ -35,7 +35,7 @@
 +   protected net.minecraftforge.fluids.FluidAttributes createAttributes(Fluid fluid)
 +   {
 +      if (fluid instanceof EmptyFluid)
-+         return net.minecraftforge.fluids.FluidAttributes.builder("water", null, null)
++         return net.minecraftforge.fluids.FluidAttributes.builder("empty", null, null)
 +                 .density(0).temperature(0).luminosity(0).viscosity(0).density(0).build();
 +      if (fluid instanceof WaterFluid)
 +         return net.minecraftforge.fluids.FluidAttributes.builder("water",

@@ -22,6 +22,7 @@ package net.minecraftforge.fluids;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -124,7 +125,7 @@ public class FluidStack
         return fluidDelegate.get();
     }
 
-    public String getDisplayName()
+    public ITextComponent getDisplayName()
     {
         return this.getFluid().getAttributes().getDisplayName(this);
     }

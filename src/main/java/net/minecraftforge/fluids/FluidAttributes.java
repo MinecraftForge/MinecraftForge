@@ -25,6 +25,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
 import java.util.Locale;
@@ -234,10 +236,9 @@ public class FluidAttributes
     /**
      * Returns the localized name of this fluid.
      */
-    public String getDisplayName(FluidStack stack)
+    public ITextComponent getDisplayName(FluidStack stack)
     {
-        String s = this.getTranslationKey();
-        return s == null ? "" : LanguageMap.getInstance().translateKey(s); // TODO Server translation
+        return new TranslationTextComponent(getTranslationKey());
     }
 
     /**

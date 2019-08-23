@@ -84,7 +84,7 @@ public class NewFluidTest
         event.getRegistry().registerAll(test_fluid, test_fluid_flowing);
     }
 
-    private static final FluidAttributes ATTRIBUTES = new FluidAttributes("test_fluid", FLUID_STILL, FLUID_FLOWING, 0xFFFFFF);
+    private static final FluidAttributes ATTRIBUTES = FluidAttributes.builder("test_fluid", FLUID_STILL, FLUID_FLOWING).build();
 
     private static abstract class MyFlowingFluid extends FlowingFluid
     {
