@@ -121,14 +121,7 @@ public interface IForgeFluid
     Set<ResourceLocation> getTags();
 
     /**
-     * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
-     * Do not call this from outside. To retrieve the values use {@link IForgeFluid#getAttributes()}
-     */
-    FluidAttributes createAttributes(Fluid fluid);
-
-    /**
      * Retrieves the non-vanilla fluid attributes, including localized name.
-     * Do not override this. Override {@link IForgeFluid#createAttributes()} instead, which is only called once.
      */
     FluidAttributes getAttributes();
 }

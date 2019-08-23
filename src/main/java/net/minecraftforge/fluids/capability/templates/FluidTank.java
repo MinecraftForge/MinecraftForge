@@ -17,10 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/*
- * (C) 2014-2018 Team CoFH / CoFH / Cult of the Full Hub
- * http://www.teamcofh.com
- */
 package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.nbt.CompoundNBT;

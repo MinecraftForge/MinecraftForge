@@ -1,15 +1,17 @@
 --- a/net/minecraft/fluid/Fluid.java
 +++ b/net/minecraft/fluid/Fluid.java
-@@ -19,7 +19,7 @@
+@@ -18,8 +18,9 @@
+ import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.fluids.FluidAttributes;
  
 -public abstract class Fluid {
 +public abstract class Fluid extends net.minecraftforge.registries.ForgeRegistryEntry<Fluid> implements net.minecraftforge.common.extensions.IForgeFluid {
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
     protected final StateContainer<Fluid, IFluidState> field_207202_e;
     private IFluidState field_207200_b;
-@@ -102,4 +102,17 @@
+@@ -102,4 +103,23 @@
     }
  
     public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
@@ -20,8 +22,14 @@
 +      return reverseTags.getTagNames();
 +   }
 +
++   /**
++    * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
++    * Do not call this from outside. To retrieve the values use {@link Fluid#getAttributes()}
++    */
++   protected abstract FluidAttributes createAttributes(Fluid fluid);
++
 +   private net.minecraftforge.fluids.FluidAttributes forgeFluidAttributes;
-+   public net.minecraftforge.fluids.FluidAttributes getAttributes() {
++   public final net.minecraftforge.fluids.FluidAttributes getAttributes() {
 +      if (forgeFluidAttributes == null)
 +         forgeFluidAttributes = createAttributes(this);
 +      return forgeFluidAttributes;
