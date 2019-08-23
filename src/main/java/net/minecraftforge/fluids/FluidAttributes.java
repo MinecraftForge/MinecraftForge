@@ -23,15 +23,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.IEnviromentBlockReader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Locale;
+import java.util.function.Supplier;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,54 +61,35 @@ import net.minecraft.item.Rarity;
 public class FluidAttributes
 {
     // from ModelBakery, which is client-only
-    private static final ResourceLocation LOCATION_LAVA_STILL = new ResourceLocation("block/lava_still");
-    private static final ResourceLocation LOCATION_WATER_STILL = new ResourceLocation("block/water_still");
-    private static final ResourceLocation LOCATION_LAVA_FLOW = new ResourceLocation("block/lava_flow");
-    private static final ResourceLocation LOCATION_WATER_FLOW = new ResourceLocation("block/water_flow");
-    private static final ResourceLocation LOCATION_WATER_OVERLAY = new ResourceLocation("block/water_overlay");
-
-
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final ResourceLocation LOCATION_LAVA_STILL = new ResourceLocation("block/lava_still");
+    public static final ResourceLocation LOCATION_WATER_STILL = new ResourceLocation("block/water_still");
+    public static final ResourceLocation LOCATION_LAVA_FLOW = new ResourceLocation("block/lava_flow");
+    public static final ResourceLocation LOCATION_WATER_FLOW = new ResourceLocation("block/water_flow");
+    public static final ResourceLocation LOCATION_WATER_OVERLAY = new ResourceLocation("block/water_overlay");
 
     public static final int BUCKET_VOLUME = 1000;
 
-    public static final FluidAttributes EMPTY = new FluidAttributes("air", null, null, -1).setDensity(0).setTemperature(0).setLuminosity(0);
-    public static final FluidAttributes VANILLA_WATER = new FluidAttributes("water", LOCATION_WATER_STILL, LOCATION_WATER_FLOW, LOCATION_WATER_OVERLAY, -1) {
-        @Override
-        public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
-        {
-            return Blocks.WATER.getDefaultState();
-        }
-    };
-    public static final FluidAttributes VANILLA_LAVA = new FluidAttributes("lava", LOCATION_LAVA_STILL, LOCATION_LAVA_FLOW, -1) {
-        @Override
-        public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
-        {
-            return Blocks.LAVA.getDefaultState();
-        }
-    }.setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300);
-
     /** The unique identification name for this fluid. */
-    protected final String fluidName;
+    private final String fluidName;
 
     /** The translation key of this fluid. */
-    protected String translationKey;
+    private String translationKey;
 
-    protected final ResourceLocation still;
-    protected final ResourceLocation flowing;
+    private final ResourceLocation stillTexture;
+    private final ResourceLocation flowingTexture;
 
     @Nullable
-    protected final ResourceLocation overlay;
+    private final ResourceLocation overlayTexture;
 
-    private SoundEvent fillSound;
-    private SoundEvent emptySound;
+    private final SoundEvent fillSound;
+    private final SoundEvent emptySound;
 
     /**
      * The light level emitted by this fluid.
      *
      * Default value is 0, as most fluids do not actively emit light.
      */
-    protected int luminosity = 0;
+    private final int luminosity;
 
     /**
      * Density of the fluid - completely arbitrary; negative density indicates that the fluid is
@@ -118,7 +97,7 @@ public class FluidAttributes
      *
      * Default value is approximately the real-life density of water in kg/m^3.
      */
-    protected int density = 1000;
+    private final int density;
 
     /**
      * Temperature of the fluid - completely arbitrary; higher temperature indicates that the fluid is
@@ -126,7 +105,7 @@ public class FluidAttributes
      *
      * Default value is approximately the real-life room temperature of water in degrees Kelvin.
      */
-    protected int temperature = 300;
+    private final int temperature;
 
     /**
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
@@ -138,21 +117,23 @@ public class FluidAttributes
      * Lower viscosity means that a fluid flows more quickly, like helium.
      *
      */
-    protected int viscosity = 1000;
+    private final int viscosity;
 
     /**
      * This indicates if the fluid is gaseous.
      *
      * Generally this is associated with negative density fluids.
      */
-    protected boolean isGaseous;
+    private final boolean isGaseous;
 
     /**
      * The rarity of the fluid.
      *
      * Used primarily in tool tips.
      */
-    protected Rarity rarity = Rarity.COMMON;
+    private final Rarity rarity;
+
+    private final Supplier<Block> blockSupplier;
 
     /**
      * Color used by universal bucket and the ModelFluid baked model.
@@ -162,91 +143,25 @@ public class FluidAttributes
      *   float b = ((color >> 0) & 0xFF) / 255f; // blue
      *   float a = ((color >> 24) & 0xFF) / 255f; // alpha
      */
-    protected int color = 0xFFFFFFFF;
+    private final int color;
 
-    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
+    protected FluidAttributes(Builder builder)
     {
-        this(fluidName, still, flowing, null, color);
-    }
-
-    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, int color)
-    {
-        this(fluidName, still, flowing, overlay);
-        this.setColor(color);
-    }
-
-    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing)
-    {
-        this(fluidName, still, flowing, (ResourceLocation) null);
-    }
-
-    public FluidAttributes(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay)
-    {
-        this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
-        this.translationKey = fluidName;
-        this.still = still;
-        this.flowing = flowing;
-        this.overlay = overlay;
-    }
-
-    public FluidAttributes setTranslationKey(String translationKey)
-    {
-        this.translationKey = translationKey;
-        return this;
-    }
-
-    public FluidAttributes setLuminosity(int luminosity)
-    {
-        this.luminosity = luminosity;
-        return this;
-    }
-
-    public FluidAttributes setDensity(int density)
-    {
-        this.density = density;
-        return this;
-    }
-
-    public FluidAttributes setTemperature(int temperature)
-    {
-        this.temperature = temperature;
-        return this;
-    }
-
-    public FluidAttributes setViscosity(int viscosity)
-    {
-        this.viscosity = viscosity;
-        return this;
-    }
-
-    public FluidAttributes setGaseous(boolean isGaseous)
-    {
-        this.isGaseous = isGaseous;
-        return this;
-    }
-
-    public FluidAttributes setRarity(Rarity rarity)
-    {
-        this.rarity = rarity;
-        return this;
-    }
-
-    public FluidAttributes setFillSound(SoundEvent fillSound)
-    {
-        this.fillSound = fillSound;
-        return this;
-    }
-
-    public FluidAttributes setEmptySound(SoundEvent emptySound)
-    {
-        this.emptySound = emptySound;
-        return this;
-    }
-
-    public FluidAttributes setColor(int color)
-    {
-        this.color = color;
-        return this;
+        this.fluidName = builder.name;
+        this.translationKey = builder.translationKey;
+        this.stillTexture = builder.stillTexture;
+        this.flowingTexture = builder.flowingTexture;
+        this.overlayTexture = builder.overlayTexture;
+        this.blockSupplier = builder.blockSupplier;
+        this.color = builder.color;
+        this.fillSound = builder.fillSound;
+        this.emptySound = builder.emptySound;
+        this.luminosity = builder.luminosity;
+        this.temperature = builder.temperature;
+        this.viscosity = builder.viscosity;
+        this.density = builder.density;
+        this.isGaseous = builder.isGaseous;
+        this.rarity = builder.rarity;
     }
 
     public final String getName()
@@ -256,7 +171,7 @@ public class FluidAttributes
 
     public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
     {
-        return null;
+        return (blockSupplier != null ? blockSupplier.get() : Blocks.AIR).getDefaultState();
     }
 
     public IFluidState getStateForPlacement(IEnviromentBlockReader reader, BlockPos pos, FluidStack state)
@@ -319,7 +234,7 @@ public class FluidAttributes
     /**
      * Returns the localized name of this fluid.
      */
-    public String getLocalizedName(FluidStack stack)
+    public String getDisplayName(FluidStack stack)
     {
         String s = this.getTranslationKey();
         return s == null ? "" : LanguageMap.getInstance().translateKey(s); // TODO Server translation
@@ -377,20 +292,20 @@ public class FluidAttributes
         return color;
     }
 
-    public ResourceLocation getStill()
+    public ResourceLocation getStillTexture()
     {
-        return still;
+        return stillTexture;
     }
 
-    public ResourceLocation getFlowing()
+    public ResourceLocation getFlowingTexture()
     {
-        return flowing;
+        return flowingTexture;
     }
 
     @Nullable
-    public ResourceLocation getOverlay()
+    public ResourceLocation getOverlayTexture()
     {
-        return overlay;
+        return overlayTexture;
     }
 
     public SoundEvent getFillSound()
@@ -411,8 +326,8 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public ResourceLocation getStill(FluidStack stack) { return getStill(); }
-    public ResourceLocation getFlowing(FluidStack stack) { return getFlowing(); }
+    public ResourceLocation getStill(FluidStack stack) { return getStillTexture(); }
+    public ResourceLocation getFlowing(FluidStack stack) { return getFlowingTexture(); }
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
@@ -424,8 +339,116 @@ public class FluidAttributes
     public boolean isGaseous(IEnviromentBlockReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(IEnviromentBlockReader world, BlockPos pos){ return getRarity(); }
     public int getColor(IEnviromentBlockReader world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStill(); }
-    public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowing(); }
+    public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowingTexture(); }
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
     public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
+
+    public static Builder builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+        return new Builder(name, stillTexture, flowingTexture);
+    }
+
+    public static class Builder
+    {
+        private final String name;
+        private final ResourceLocation stillTexture;
+        private final ResourceLocation flowingTexture;
+        private ResourceLocation overlayTexture;
+        private int color = 0xFFFFFF;
+        private String translationKey;
+        private SoundEvent fillSound;
+        private SoundEvent emptySound;
+        private Supplier<Block> blockSupplier;
+        private int luminosity = 0;
+        private int density = 1000;
+        private int temperature = 300;
+        private int viscosity = 1000;
+        private boolean isGaseous;
+        private Rarity rarity = Rarity.COMMON;
+
+        protected Builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            this.name = name.toLowerCase(Locale.ENGLISH);
+            this.stillTexture = stillTexture;
+            this.flowingTexture = flowingTexture;
+            this.translationKey = "fluid." + this.name + ".name";
+        }
+
+        public final Builder translationKey(String translationKey)
+        {
+            this.translationKey = translationKey;
+            return this;
+        }
+
+        public final Builder color(int color)
+        {
+            this.color = color;
+            return this;
+        }
+
+        public final Builder overlay(ResourceLocation texture)
+        {
+            overlayTexture = texture;
+            return this;
+        }
+
+        public final Builder block(Supplier<Block> supplier)
+        {
+            blockSupplier = supplier;
+            return this;
+        }
+
+        public final Builder luminosity(int luminosity)
+        {
+            this.luminosity = luminosity;
+            return this;
+        }
+
+        public final Builder density(int density)
+        {
+            this.density = density;
+            return this;
+        }
+
+        public final Builder temperature(int temperature)
+        {
+            this.temperature = temperature;
+            return this;
+        }
+
+        public final Builder viscosity(int viscosity)
+        {
+            this.viscosity = viscosity;
+            return this;
+        }
+
+        public final Builder gaseous()
+        {
+            isGaseous = true;
+            return this;
+        }
+
+        public final Builder rarity(Rarity rarity)
+        {
+            this.rarity = rarity;
+            return this;
+        }
+
+        public final Builder sound(SoundEvent sound)
+        {
+            this.fillSound = this.emptySound = sound;
+            return this;
+        }
+
+        public final Builder sound(SoundEvent fillSound, SoundEvent emptySound)
+        {
+            this.fillSound = fillSound;
+            this.emptySound = emptySound;
+            return this;
+        }
+
+        public FluidAttributes build()
+        {
+            return new FluidAttributes(this);
+        }
+    }
 }

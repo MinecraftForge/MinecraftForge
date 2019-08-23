@@ -124,9 +124,9 @@ public class FluidStack
         return fluidDelegate.get();
     }
 
-    public String getLocalizedName()
+    public String getDisplayName()
     {
-        return this.getFluid().getAttributes().getLocalizedName(this);
+        return this.getFluid().getAttributes().getDisplayName(this);
     }
 
     public String getTranslationKey()

@@ -1,17 +1,23 @@
 --- a/net/minecraft/fluid/Fluid.java
 +++ b/net/minecraft/fluid/Fluid.java
-@@ -18,8 +18,9 @@
- import net.minecraft.world.World;
+@@ -3,6 +3,7 @@
+ import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
++import net.minecraft.block.Blocks;
+ import net.minecraft.item.Item;
+ import net.minecraft.particles.IParticleData;
+ import net.minecraft.state.StateContainer;
+@@ -19,7 +20,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.fluids.FluidAttributes;
  
 -public abstract class Fluid {
 +public abstract class Fluid extends net.minecraftforge.registries.ForgeRegistryEntry<Fluid> implements net.minecraftforge.common.extensions.IForgeFluid {
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
     protected final StateContainer<Fluid, IFluidState> field_207202_e;
     private IFluidState field_207200_b;
-@@ -102,4 +103,23 @@
+@@ -102,4 +103,41 @@
     }
  
     public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
@@ -26,7 +32,25 @@
 +    * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
 +    * Do not call this from outside. To retrieve the values use {@link Fluid#getAttributes()}
 +    */
-+   protected abstract FluidAttributes createAttributes(Fluid fluid);
++   protected net.minecraftforge.fluids.FluidAttributes createAttributes(Fluid fluid)
++   {
++      if (fluid instanceof EmptyFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("water", null, null)
++                 .density(0).temperature(0).luminosity(0).viscosity(0).density(0).build();
++      if (fluid instanceof WaterFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("water",
++                  net.minecraftforge.fluids.FluidAttributes.LOCATION_WATER_STILL,
++                  net.minecraftforge.fluids.FluidAttributes.LOCATION_WATER_FLOW)
++                 .overlay(net.minecraftforge.fluids.FluidAttributes.LOCATION_WATER_OVERLAY)
++                 .block(() -> Blocks.field_150355_j).build();
++      if (fluid instanceof LavaFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("lava",
++                 net.minecraftforge.fluids.FluidAttributes.LOCATION_LAVA_STILL,
++                 net.minecraftforge.fluids.FluidAttributes.LOCATION_LAVA_FLOW)
++                 .block(() -> Blocks.field_150353_l)
++                 .luminosity(15).density(3000).viscosity(6000).temperature(1300).build();
++      throw new RuntimeException("Mod fluids must override createAttributes.");
++   }
 +
 +   private net.minecraftforge.fluids.FluidAttributes forgeFluidAttributes;
 +   public final net.minecraftforge.fluids.FluidAttributes getAttributes() {

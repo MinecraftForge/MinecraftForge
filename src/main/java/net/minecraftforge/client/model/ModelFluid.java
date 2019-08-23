@@ -48,7 +48,6 @@ import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -81,9 +80,9 @@ public final class ModelFluid implements IUnbakedModel
     public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         FluidAttributes attrs = fluid.getAttributes();
-        return attrs.getOverlay() != null
-                ? ImmutableSet.of(attrs.getStill(), attrs.getFlowing(), attrs.getOverlay())
-                : ImmutableSet.of(attrs.getStill(), attrs.getFlowing());
+        return attrs.getOverlayTexture() != null
+                ? ImmutableSet.of(attrs.getStillTexture(), attrs.getFlowingTexture(), attrs.getOverlayTexture())
+                : ImmutableSet.of(attrs.getStillTexture(), attrs.getFlowingTexture());
     }
 
     @Override
@@ -101,9 +100,9 @@ public final class ModelFluid implements IUnbakedModel
                 PerspectiveMapWrapper.getTransforms(sprite.getState()),
                 format,
                 attrs.getColor(),
-                spriteGetter.apply(attrs.getStill()),
-                spriteGetter.apply(attrs.getFlowing()),
-                Optional.ofNullable(attrs.getOverlay()).map(spriteGetter),
+                spriteGetter.apply(attrs.getStillTexture()),
+                spriteGetter.apply(attrs.getFlowingTexture()),
+                Optional.ofNullable(attrs.getOverlayTexture()).map(spriteGetter),
                 attrs.isLighterThanAir(),
                 null
         );

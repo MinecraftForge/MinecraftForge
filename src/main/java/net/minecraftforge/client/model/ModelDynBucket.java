@@ -113,7 +113,7 @@ public final class ModelDynBucket implements IUnbakedModel
         if (coverLocation != null)
             builder.add(coverLocation);
         if (fluid != null)
-            builder.add(fluid.getAttributes().getStill());
+            builder.add(fluid.getAttributes().getStillTexture());
 
         return builder.build();
     }
@@ -144,7 +144,7 @@ public final class ModelDynBucket implements IUnbakedModel
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
         if(fluid != null) {
-            fluidSprite = spriteGetter.apply(fluid.getAttributes().getStill());
+            fluidSprite = spriteGetter.apply(fluid.getAttributes().getStillTexture());
         }
 
         Random random = new Random();
