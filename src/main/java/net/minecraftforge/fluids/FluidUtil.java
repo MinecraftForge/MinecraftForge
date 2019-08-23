@@ -149,7 +149,7 @@ public class FluidUtil
                         }
                         else
                         {
-                            containerFluidHandler.fill(simulatedTransfer, true);
+                            containerFluidHandler.fill(simulatedTransfer, IFluidHandler.FluidAction.SIMULATE);
                         }
 
                         ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -198,7 +198,7 @@ public class FluidUtil
                         FluidStack simulatedTransfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, false);
                         if (simulatedTransfer != null)
                         {
-                            containerFluidHandler.drain(simulatedTransfer, true);
+                            containerFluidHandler.drain(simulatedTransfer, IFluidHandler.FluidAction.SIMULATE);
                             ItemStack resultContainer = containerFluidHandler.getContainer();
                             return new FluidActionResult(resultContainer);
                         }
@@ -359,7 +359,7 @@ public class FluidUtil
     @Nullable
     public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doTransfer)
     {
-        FluidStack drainable = fluidSource.drain(maxAmount, false);
+        FluidStack drainable = fluidSource.drain(maxAmount, IFluidHandler.FluidAction.SIMULATE);
         if (drainable != null && drainable.amount > 0)
         {
             return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
@@ -381,7 +381,7 @@ public class FluidUtil
     @Nullable
     public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack resource, boolean doTransfer)
     {
-        FluidStack drainable = fluidSource.drain(resource, false);
+        FluidStack drainable = fluidSource.drain(resource, IFluidHandler.FluidAction.SIMULATE);
         if (drainable != null && drainable.amount > 0 && resource.isFluidEqual(drainable))
         {
             return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
@@ -399,15 +399,15 @@ public class FluidUtil
     @Nullable
     private static FluidStack tryFluidTransfer_Internal(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack drainable, boolean doTransfer)
     {
-        int fillableAmount = fluidDestination.fill(drainable, false);
+        int fillableAmount = fluidDestination.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
         if (fillableAmount > 0)
         {
             if (doTransfer)
             {
-                FluidStack drained = fluidSource.drain(fillableAmount, true);
+                FluidStack drained = fluidSource.drain(fillableAmount, IFluidHandler.FluidAction.EXECUTE);
                 if (drained != null)
                 {
-                    drained.amount = fluidDestination.fill(drained, true);
+                    drained.amount = fluidDestination.fill(drained, IFluidHandler.FluidAction.EXECUTE);
                     return drained;
                 }
             }
@@ -446,7 +446,7 @@ public class FluidUtil
         {
             container = ItemHandlerHelper.copyStackWithSize(container, 1);
             return getFluidHandler(container)
-                    .map(handler -> handler.drain(Integer.MAX_VALUE, false));
+                    .map(handler -> handler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE));
         }
         return LazyOptional.empty();
     }
@@ -565,7 +565,7 @@ public class FluidUtil
             return false;
         }
 
-        if (fluidSource.drain(resource, false) == null)
+        if (fluidSource.drain(resource, IFluidHandler.FluidAction.SIMULATE) == null)
         {
             return false;
         }
@@ -584,7 +584,7 @@ public class FluidUtil
 
         if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(resource))
         {
-            FluidStack result = fluidSource.drain(resource, true);
+            FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (result != null)
             {
                 result.getFluid().getAttributes().vaporize(player, world, pos, result);

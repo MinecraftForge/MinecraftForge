@@ -45,3 +45,5 @@ loaderVersion="[28,)"
     modId="entity_selector_test"
 [[mods]]
     modId="new_fluid_test"
+[[mods]]
+    modId="pistoneventtest"
