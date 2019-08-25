@@ -140,9 +140,6 @@ public final class ModelLoader extends ModelBakery
     public ModelLoader(IResourceManager manager, AtlasTexture map, BlockColors colours, IProfiler profiler)
     {
         super(manager, map, colours, profiler);
-        VanillaLoader.INSTANCE.setLoader(this);
-        VariantLoader.INSTANCE.setLoader(this);
-        ModelLoaderRegistry.clearModelCache(manager);
     }
 
     private static Set<ResourceLocation> specialModels = new HashSet<>();
@@ -151,8 +148,7 @@ public final class ModelLoader extends ModelBakery
      * Indicate to vanilla that it should load and bake the given model, even if no blocks or
      * items use it. This is useful if e.g. you have baked models only for entity renderers.
      * Call during {@link net.minecraftforge.client.event.ModelRegistryEvent}
-     * @param rl The model, either {@link ModelResourceLocation} to point to a blockstate variant,
-     *           or plain {@link ResourceLocation} to point directly to a json in the models folder.
+     * @param rl Model path to load, same as in {@link ModelLoaderRegistry#getModel}.
      */
     public static void addSpecialModel(ResourceLocation rl) {
         specialModels.add(rl);
@@ -161,6 +157,13 @@ public final class ModelLoader extends ModelBakery
     @Override
     public Set<ResourceLocation> getSpecialModels() {
         return specialModels;
+    }
+
+    @Override
+    public void setLoaders() {
+        VanillaLoader.INSTANCE.setLoader(this);
+        VariantLoader.INSTANCE.setLoader(this);
+        ModelLoaderRegistry.clearModelCache(resourceManager);
     }
 
     /**
