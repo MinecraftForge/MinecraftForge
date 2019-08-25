@@ -27,6 +27,9 @@ import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.Optional;
 
+/**
+ * An {@link IModelState} that combines the transforms from two child {@link IModelState}.
+ */
 public class ModelStateComposition implements IModelState, ISprite
 {
     private final IModelState first;
