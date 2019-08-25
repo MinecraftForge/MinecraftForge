@@ -69,6 +69,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 
     private Config childConfig;
 
+    private boolean isCorrecting = false;
+
     private ForgeConfigSpec(Config storage, Map<List<String>, String> levelComments) {
         super(storage);
         this.levelComments = levelComments;
@@ -87,6 +89,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         }
     }
 
+    public boolean isCorrecting() {
+        return isCorrecting;
+    }
+
     public void save()
     {
         Preconditions.checkNotNull(childConfig, "Cannot save config value without assigned Config object present");
@@ -95,18 +101,25 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         }
     }
 
-    public boolean isCorrect(CommentedConfig config) {
+    public synchronized boolean isCorrect(CommentedConfig config) {
         LinkedList<String> parentPath = new LinkedList<>();
-        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), null, true) == 0;
+        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (a, b, c, d) -> {}, true) == 0;
     }
 
     public int correct(CommentedConfig config) {
         return correct(config, (action, path, incorrectValue, correctedValue) -> {});
     }
 
-    public int correct(CommentedConfig config, CorrectionListener listener) {
+    public synchronized int correct(CommentedConfig config, CorrectionListener listener) {
         LinkedList<String> parentPath = new LinkedList<>(); //Linked list for fast add/removes
-        return correct(this.config, config, parentPath, Collections.unmodifiableList(parentPath), listener, false);
+        int ret = -1;
+        try {
+            isCorrecting = true;
+            ret = correct(this.config, config, parentPath, Collections.unmodifiableList(parentPath), listener, false);
+        } finally {
+            isCorrecting = false;
+        }
+        return ret;
     }
 
     private int correct(Config spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, boolean dryRun)
