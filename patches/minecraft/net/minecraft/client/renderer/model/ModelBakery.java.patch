@@ -9,11 +9,18 @@
     private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
     private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
     private final AtlasTexture.SheetData field_217853_J;
-@@ -142,6 +142,14 @@
+@@ -107,6 +107,7 @@
+    });
+ 
+    public ModelBakery(IResourceManager p_i51735_1_, AtlasTexture p_i51735_2_, BlockColors p_i51735_3_, IProfiler p_i51735_4_) {
++      this.setLoaders(); // Do this early so we can use custom loaders
+       this.field_177598_f = p_i51735_1_;
+       this.field_177609_j = p_i51735_2_;
+       this.field_225365_D = p_i51735_3_;
+@@ -142,6 +143,13 @@
  
        p_i51735_4_.func_219895_b("special");
        this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
-+      this.setLoaders(); // Do this now so special models can use custom loaders
 +      for (ResourceLocation rl : getSpecialModels()) {
 +          // Same as func_217843_a but go through custom loaders
 +          IUnbakedModel iunbakedmodel = net.minecraftforge.client.model.ModelLoaderRegistry
