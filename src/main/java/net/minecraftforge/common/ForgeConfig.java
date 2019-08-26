@@ -49,6 +49,8 @@ public class ForgeConfig
 
         public final IntValue clumpingThreshold;
 
+        public final BooleanValue fixEntityNavigation;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -103,6 +105,11 @@ public class ForgeConfig
                     .translation("forge.configgui.clumpingThreshold")
                     .worldRestart()
                     .defineInRange("clumpingThreshold", 64, 64, 1024);
+
+            fixEntityNavigation = builder
+                    .comment("Fix vanilla navigation issues that can cause some entities to spin around.")
+                    .translation("forge.configgui.fixEntityNavigation")
+                    .define("fixEntityNavigation", false);
 
             builder.pop();
         }
