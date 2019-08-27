@@ -137,7 +137,6 @@
   "forge.configgui.forgeLightPipelineEnabled": "Forge Light Pipeline Enabled",
   "forge.configgui.selectiveResourceReloadEnabled.tooltip": "When enabled, makes specific reload tasks such as language changing quicker to run.",
   "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
-  "forge.configgui.fixEntityNavigation": "Fix Entity Navigation",
 
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",

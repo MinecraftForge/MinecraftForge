@@ -1150,8 +1150,4 @@ public class ForgeHooks
         BlockState state = world.getBlockState(pos);
         return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
-
-    public static double getEntityNavigatorOffset(Entity entity) {
-        return ForgeConfig.SERVER.fixEntityNavigation.get() ? (entity.getWidth() + 1) / 2D : 0.5;
-    }
 }
