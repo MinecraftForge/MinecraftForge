@@ -58,3 +58,12 @@
           return PathNodeType.OPEN;
        } else if (!block.func_203417_a(BlockTags.field_212185_E) && block != Blocks.field_196651_dG) {
           if (block == Blocks.field_150480_ab) {
+@@ -412,7 +420,7 @@
+             return PathNodeType.RAIL;
+          } else if (block instanceof LeavesBlock) {
+             return PathNodeType.LEAVES;
+-         } else if (!block.func_203417_a(BlockTags.field_219748_G) && !block.func_203417_a(BlockTags.field_219757_z) && (!(block instanceof FenceGateBlock) || blockstate.func_177229_b(FenceGateBlock.field_176466_a))) {
++         } else if (!block.func_203417_a(BlockTags.field_219748_G) && !block.func_203417_a(BlockTags.field_219757_z) && (!(block instanceof FenceGateBlock) || blockstate.func_177229_b(FenceGateBlock.field_176466_a)) && !blockstate.collisionExtendsVertically(p_189553_1_, blockpos, currentEntity)) {
+             IFluidState ifluidstate = p_189553_1_.func_204610_c(blockpos);
+             if (ifluidstate.func_206884_a(FluidTags.field_206959_a)) {
+                return PathNodeType.WATER;

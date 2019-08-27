@@ -1024,4 +1024,13 @@ public interface IForgeBlock
         world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         getBlock().onExplosionDestroy(world, pos, explosion);
     }
+
+    /**
+     * Determines if this block's collision box should be treated as though it can extend above its block space.
+     * Use this to replicate fence and wall behavior.
+     */
+    default boolean collisionExtendsVertically(BlockState state, IBlockReader world, BlockPos pos, Entity collidingEntity)
+    {
+        return false;
+    }
 }

@@ -867,4 +867,13 @@ public interface IForgeBlockState
     {
         getBlockState().getBlock().onBlockExploded(getBlockState(), world, pos, explosion);
     }
+
+    /**
+     * Determines if this block's collision box should be treated as though it can extend above its block space.
+     * This can be used to replicate fence and wall behavior.
+     */
+    default boolean collisionExtendsVertically(IBlockReader world, BlockPos pos, Entity collidingEntity)
+    {
+        return getBlockState().getBlock().collisionExtendsVertically(getBlockState(), world, pos, collidingEntity);
+    }
 }

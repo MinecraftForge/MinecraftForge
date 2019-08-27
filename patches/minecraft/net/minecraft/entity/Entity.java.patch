@@ -64,7 +64,7 @@
        float f = this.field_213325_aI.field_220315_a / 2.0F;
        float f1 = this.field_213325_aI.field_220316_b;
        this.func_174826_a(new AxisAlignedBB(p_70107_1_ - (double)f, p_70107_3_, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ + (double)f1, p_70107_5_ + (double)f));
-@@ -496,7 +508,7 @@
+@@ -496,11 +508,11 @@
           int k = MathHelper.func_76128_c(this.field_70161_v);
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -73,6 +73,11 @@
              BlockPos blockpos1 = blockpos.func_177977_b();
              BlockState blockstate1 = this.field_70170_p.func_180495_p(blockpos1);
              Block block = blockstate1.func_177230_c();
+-            if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock) {
++            if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock || blockstate.collisionExtendsVertically(this.field_70170_p, blockpos, this)) {
+                blockstate = blockstate1;
+                blockpos = blockpos1;
+             }
 @@ -535,7 +547,7 @@
  
              this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vec3d)) * 0.6D);
