@@ -6,7 +6,7 @@
   ],
   "key": {
     "Q": {
-      "item": "minecraft:quartz"
+      "tag": "forge:gems/quartz"
     },
     "C": {
       "tag": "forge:cobblestone"

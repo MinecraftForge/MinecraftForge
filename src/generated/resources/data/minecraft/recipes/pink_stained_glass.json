@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "stained_glass",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:glass"
+    },
+    "X": {
+      "tag": "forge:dyes/pink"
+    }
+  },
+  "result": {
+    "item": "minecraft:pink_stained_glass",
+    "count": 8
+  }
+}

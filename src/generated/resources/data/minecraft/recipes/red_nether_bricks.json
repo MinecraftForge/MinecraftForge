@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NW",
+    "WN"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:nether_wart"
+    },
+    "N": {
+      "tag": "forge:ingots/nether_brick"
+    }
+  },
+  "result": {
+    "item": "minecraft:red_nether_bricks"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:diorite"
+    },
+    {
+      "tag": "forge:gems/quartz"
+    }
+  ],
+  "result": {
+    "item": "minecraft:granite"
+  }
+}

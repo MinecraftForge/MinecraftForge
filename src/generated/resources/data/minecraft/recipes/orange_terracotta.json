@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "stained_terracotta",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:terracotta"
+    },
+    "X": {
+      "tag": "forge:dyes/orange"
+    }
+  },
+  "result": {
+    "item": "minecraft:orange_terracotta",
+    "count": 8
+  }
+}

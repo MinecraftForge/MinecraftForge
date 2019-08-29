@@ -9,7 +9,7 @@
       "tag": "forge:rods/wooden"
     },
     "X": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   },
   "result": {

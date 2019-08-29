@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "carpet",
+  "pattern": [
+    "###",
+    "#$#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:white_carpet"
+    },
+    "$": {
+      "tag": "forge:dyes/lime"
+    }
+  },
+  "result": {
+    "item": "minecraft:lime_carpet",
+    "count": 8
+  }
+}

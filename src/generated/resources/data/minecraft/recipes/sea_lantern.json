@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "CCC",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:dusts/prismarine"
+    },
+    "C": {
+      "tag": "forge:gems/prismarine"
+    }
+  },
+  "result": {
+    "item": "minecraft:sea_lantern"
+  }
+}

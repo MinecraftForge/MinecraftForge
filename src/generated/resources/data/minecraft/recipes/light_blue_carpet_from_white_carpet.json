@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "carpet",
+  "pattern": [
+    "###",
+    "#$#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:white_carpet"
+    },
+    "$": {
+      "tag": "forge:dyes/light_blue"
+    }
+  },
+  "result": {
+    "item": "minecraft:light_blue_carpet",
+    "count": 8
+  }
+}

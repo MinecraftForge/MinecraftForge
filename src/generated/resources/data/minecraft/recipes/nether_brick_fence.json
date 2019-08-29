@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#-#",
+    "#-#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:nether_bricks"
+    },
+    "-": {
+      "tag": "forge:ingots/nether_brick"
+    }
+  },
+  "result": {
+    "item": "minecraft:nether_brick_fence",
+    "count": 6
+  }
+}

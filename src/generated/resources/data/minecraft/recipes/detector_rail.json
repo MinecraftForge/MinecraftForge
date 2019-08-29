@@ -7,7 +7,7 @@
   ],
   "key": {
     "R": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     },
     "#": {
       "item": "minecraft:stone_pressure_plate"

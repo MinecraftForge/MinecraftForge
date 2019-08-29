@@ -6,7 +6,7 @@
   ],
   "key": {
     "B": {
-      "item": "minecraft:blaze_rod"
+      "tag": "forge:rods/blaze"
     },
     "#": {
       "tag": "forge:cobblestone"

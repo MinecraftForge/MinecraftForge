@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "carpet",
+  "pattern": [
+    "###",
+    "#$#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:white_carpet"
+    },
+    "$": {
+      "tag": "forge:dyes/pink"
+    }
+  },
+  "result": {
+    "item": "minecraft:pink_carpet",
+    "count": 8
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:dusts/prismarine"
+    }
+  },
+  "result": {
+    "item": "minecraft:prismarine_bricks"
+  }
+}

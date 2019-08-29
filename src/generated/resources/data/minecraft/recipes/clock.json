@@ -10,7 +10,7 @@
       "tag": "forge:ingots/gold"
     },
     "X": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     }
   },
   "result": {

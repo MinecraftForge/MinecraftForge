@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "stained_glass_pane",
+  "pattern": [
+    "###",
+    "#$#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:glass_pane"
+    },
+    "$": {
+      "tag": "forge:dyes/light_gray"
+    }
+  },
+  "result": {
+    "item": "minecraft:light_gray_stained_glass_pane",
+    "count": 8
+  }
+}

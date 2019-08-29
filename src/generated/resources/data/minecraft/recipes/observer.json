@@ -7,10 +7,10 @@
   ],
   "key": {
     "Q": {
-      "item": "minecraft:quartz"
+      "tag": "forge:gems/quartz"
     },
     "R": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     },
     "#": {
       "tag": "forge:cobblestone"

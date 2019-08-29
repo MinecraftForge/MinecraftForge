@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NN",
+    "NN"
+  ],
+  "key": {
+    "N": {
+      "tag": "forge:ingots/nether_brick"
+    }
+  },
+  "result": {
+    "item": "minecraft:nether_bricks"
+  }
+}

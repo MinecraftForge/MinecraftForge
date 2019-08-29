@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "stained_glass_pane",
+  "pattern": [
+    "###",
+    "#$#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:glass_pane"
+    },
+    "$": {
+      "tag": "forge:dyes/red"
+    }
+  },
+  "result": {
+    "item": "minecraft:red_stained_glass_pane",
+    "count": 8
+  }
+}
