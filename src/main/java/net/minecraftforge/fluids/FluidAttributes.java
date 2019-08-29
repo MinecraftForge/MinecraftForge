@@ -131,9 +131,6 @@ public class FluidAttributes
      */
     private final Rarity rarity;
 
-    private final Supplier<Block> blockSupplier;
-    private final Supplier<Item> bucketSupplier;
-
     /**
      * Color used by universal bucket and the ModelFluid baked model.
      * Note that this int includes the alpha so converting this to RGB with alpha would be
@@ -151,7 +148,6 @@ public class FluidAttributes
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
-        this.blockSupplier = builder.blockSupplier;
         this.color = builder.color;
         this.fillSound = builder.fillSound;
         this.emptySound = builder.emptySound;
@@ -161,7 +157,6 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-        this.bucketSupplier = builder.bucketSupplier;
     }
 
     public final String getName()
@@ -171,12 +166,12 @@ public class FluidAttributes
 
     public ItemStack getBucket(FluidStack stack)
     {
-        return bucketSupplier != null ? new ItemStack(bucketSupplier.get()) : ItemStack.EMPTY;
+        return new ItemStack(stack.getFluid().getFilledBucket());
     }
 
     public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
     {
-        return (blockSupplier != null ? blockSupplier.get() : Blocks.AIR).getDefaultState();
+        return state.getBlockState();
     }
 
     public IFluidState getStateForPlacement(IEnviromentBlockReader reader, BlockPos pos, FluidStack state)
@@ -362,8 +357,6 @@ public class FluidAttributes
         private String translationKey;
         private SoundEvent fillSound;
         private SoundEvent emptySound;
-        private Supplier<Block> blockSupplier;
-        private Supplier<Item> bucketSupplier;
         private int luminosity = 0;
         private int density = 1000;
         private int temperature = 300;
@@ -399,18 +392,6 @@ public class FluidAttributes
         public final Builder overlay(ResourceLocation texture)
         {
             overlayTexture = texture;
-            return this;
-        }
-
-        public final Builder block(Supplier<Block> supplier)
-        {
-            blockSupplier = supplier;
-            return this;
-        }
-
-        public final Builder bucket(Supplier<Item> supplier)
-        {
-            bucketSupplier = supplier;
             return this;
         }
 

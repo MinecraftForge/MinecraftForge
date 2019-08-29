@@ -29,10 +29,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
@@ -47,8 +44,10 @@ import net.minecraft.world.IWorldReader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -77,6 +76,7 @@ public class NewFluidTest
         modEventBus.addGenericListener(Block.class, this::registerBlocks);
         modEventBus.addGenericListener(Item.class, this::registerItems);
         modEventBus.addGenericListener(Fluid.class, this::registerFluids);
+        modEventBus.addListener(this::loadComplete);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -101,6 +101,16 @@ public class NewFluidTest
     public void registerFluids(RegistryEvent.Register<Fluid> event)
     {
         event.getRegistry().registerAll(test_fluid, test_fluid_flowing);
+    }
+
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+        // some sanity checks
+        BlockState state = Fluids.WATER.getDefaultState().getBlockState();
+        BlockState state2 = Fluids.WATER.getAttributes().getBlock(null,null,Fluids.WATER.getDefaultState());
+        assert state.getBlock() == Blocks.WATER && state2 == state;
+        ItemStack stack = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
+        assert stack.getItem() == Fluids.WATER.getFilledBucket();
     }
 
     private static final FluidAttributes ATTRIBUTES = FluidAttributes.builder("test_fluid", FLUID_STILL, FLUID_FLOWING).build();
@@ -187,7 +197,7 @@ public class NewFluidTest
         }
 
         @Override
-        public FluidAttributes createAttributes(Fluid fluid)
+        protected FluidAttributes createAttributes(Fluid fluid)
         {
             return ATTRIBUTES;
         }
