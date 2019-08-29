@@ -46,7 +46,7 @@
     @Nullable
     public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
        T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
-+      if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, p_220342_1_, p_220342_5_.func_177958_n(), p_220342_5_.func_177956_o(), p_220342_5_.func_177952_p(), null)) return null;
++      if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, p_220342_1_, p_220342_5_.func_177958_n(), p_220342_5_.func_177956_o(), p_220342_5_.func_177952_p(), null, p_220342_6_)) return null;
        p_220342_1_.func_217376_c(t);
        return t;
     }
