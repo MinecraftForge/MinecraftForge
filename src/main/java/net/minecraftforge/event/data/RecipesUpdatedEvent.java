@@ -17,18 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.event.data;
 
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.item.crafting.RecipeManager;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Fired on {@link Dist#CLIENT} when {@link RecipeManager} has all of its recipes synced from the server to the client (just after a client has connected),
+ * Data event for recipes.
+ *
  */
 public class RecipesUpdatedEvent extends Event
 {
-    public RecipesUpdatedEvent()
-    {
-    }
+    /**
+     * Fired on the logical server when the {@link RecipeManager} has read all recipes from disk.  At this point all recipes are available on the server.
+     */
+    public static class Server extends RecipesUpdatedEvent {}
+
+    /**
+     * Fired on the logical client from {@link ClientPlayNetHandler#handleUpdateRecipes(SUpdateRecipesPacket)}.  At this point all recipes are available on the client.
+     */
+    public static class Client extends RecipesUpdatedEvent {}
 }

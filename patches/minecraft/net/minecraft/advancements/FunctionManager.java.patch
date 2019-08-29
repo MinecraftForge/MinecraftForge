@@ -1,0 +1,10 @@
+--- a/net/minecraft/advancements/FunctionManager.java
++++ b/net/minecraft/advancements/FunctionManager.java
+@@ -170,6 +170,7 @@
+       this.field_200002_i.func_219779_a(this.field_200002_i.func_219781_a(p_195410_1_, this.field_193069_c.func_213207_aT()).join());
+       this.field_200003_j.addAll(this.field_200002_i.func_199915_b(field_200001_d).func_199885_a());
+       this.field_200223_l = true;
++      net.minecraftforge.event.ForgeEventFactory.postToMainThread(new net.minecraftforge.event.data.FunctionsUpdatedEvent());
+    }
+ 
+    @Nullable

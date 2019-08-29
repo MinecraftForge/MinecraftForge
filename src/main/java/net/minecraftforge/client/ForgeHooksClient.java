@@ -45,7 +45,6 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.client.MouseHelper;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.fml.ModLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -1000,12 +999,6 @@ public class ForgeHooksClient
     {
         Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static void onRecipesUpdated()
-    {
-        Event event = new RecipesUpdatedEvent();
-        MinecraftForge.EVENT_BUS.post(event);
     }
 
     // Resets cached thread fields in ThreadNameCachingStrategy and ReusableLogEventFactory to be repopulated during their next access.

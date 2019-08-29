@@ -131,6 +131,7 @@ import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.fml.DeferredWorkQueue;
 
 public class ForgeEventFactory
 {
@@ -698,5 +699,10 @@ public class ForgeEventFactory
     public static boolean onPistonMovePost(World world, BlockPos pos, Direction direction, boolean extending)
     {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+    }
+
+    public static void postToMainThread(Event event)
+    {
+        DeferredWorkQueue.runLater(() -> MinecraftForge.EVENT_BUS.post(event));
     }
 }

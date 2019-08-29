@@ -19,3 +19,11 @@
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
+@@ -65,6 +74,7 @@
+          return p_223400_0_.getValue().build();
+       }));
+       field_199521_c.info("Loaded {} recipes", (int)map.size());
++      net.minecraftforge.event.ForgeEventFactory.postToMainThread(new net.minecraftforge.event.data.RecipesUpdatedEvent.Server());
+    }
+ 
+    public <C extends IInventory, T extends IRecipe<C>> Optional<T> func_215371_a(IRecipeType<T> p_215371_1_, C p_215371_2_, World p_215371_3_) {

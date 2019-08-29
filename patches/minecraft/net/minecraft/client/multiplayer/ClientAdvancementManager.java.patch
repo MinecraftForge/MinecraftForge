@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/multiplayer/ClientAdvancementManager.java
++++ b/net/minecraft/client/multiplayer/ClientAdvancementManager.java
+@@ -59,7 +59,7 @@
+             field_192800_a.warn("Server informed client about progress for unknown advancement {}", entry.getKey());
+          }
+       }
+-
++      if(p_192799_1_.func_192602_d()) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.data.AdvancementsUpdatedEvent.Client());
+    }
+ 
+    public AdvancementList func_194229_a() {

@@ -13,3 +13,11 @@
              map.put(p_223387_1_, advancement$builder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              field_192782_a.error("Parsing error loading custom advancement {}: {}", p_223387_1_, jsonparseexception.getMessage());
+@@ -53,6 +57,7 @@
+       }
+ 
+       this.field_223388_c = advancementlist;
++      net.minecraftforge.event.ForgeEventFactory.postToMainThread(new net.minecraftforge.event.data.AdvancementsUpdatedEvent.Server());
+    }
+ 
+    @Nullable

@@ -45,7 +45,7 @@
        clientrecipebook.func_199644_c();
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
-+      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.data.RecipesUpdatedEvent.Client());
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
@@ -58,7 +58,15 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1766,10 +1776,12 @@
+@@ -1353,6 +1363,7 @@
+       }
+ 
+       this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.data.TagsUpdatedEvent.Client());
+    }
+ 
+    public void func_175098_a(SCombatPacket p_175098_1_) {
+@@ -1766,10 +1777,12 @@
  
              this.field_147299_f.field_184132_p.field_217741_m.func_217692_a(pointofinterestdebugrenderer$braininfo);
           } else {
