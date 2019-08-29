@@ -186,12 +186,12 @@ public class FluidAttributes
 
     public final boolean canBePlacedInWorld(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
     {
-        return getBlock(reader, pos, state) != null;
+        return !getBlock(reader, pos, state).isAir(reader, pos);
     }
 
     public final boolean canBePlacedInWorld(IEnviromentBlockReader reader, BlockPos pos, FluidStack state)
     {
-        return getBlock(reader, pos, getStateForPlacement(reader, pos, state)) != null;
+        return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir(reader, pos);
     }
 
     public final boolean isLighterThanAir()

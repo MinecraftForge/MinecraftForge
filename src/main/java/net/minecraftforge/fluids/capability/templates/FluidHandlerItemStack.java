@@ -119,7 +119,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @Override
     public int fill(FluidStack resource, FluidAction doFill)
     {
-        if (container.getCount() != 1 || resource == null || resource.getAmount() <= 0 || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource.isEmpty() || !canFillFluidType(resource))
         {
             return 0;
         }

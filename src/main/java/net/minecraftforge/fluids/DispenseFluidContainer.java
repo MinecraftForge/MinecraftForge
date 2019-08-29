@@ -53,7 +53,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     @Nonnull
     public ItemStack dispenseStack(@Nonnull IBlockSource source, @Nonnull ItemStack stack)
     {
-        if (FluidUtil.getFluidContained(stack) != null)
+        if (FluidUtil.getFluidContained(stack).isPresent())
         {
             return dumpContainer(source, stack);
         }

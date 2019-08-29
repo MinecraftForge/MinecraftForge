@@ -217,8 +217,10 @@ public class FluidStack
     {
         getOrCreateTag();
         CompoundNBT child = tag.getCompound(childName);
-        if (child == null)
-            tag.put(childName, child = new CompoundNBT());
+        if (!tag.contains(childName, Constants.NBT.TAG_COMPOUND))
+        {
+            tag.put(childName, child);
+        }
         return child;
     }
 
@@ -302,13 +304,8 @@ public class FluidStack
      *            The ItemStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(ItemStack other)
+    public boolean isFluidEqual(@Nonnull ItemStack other)
     {
-        if (other == null)
-        {
-            return false;
-        }
-
         return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
     }
 

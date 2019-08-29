@@ -89,25 +89,15 @@ public class FluidTank implements IFluidHandler, IFluidTank {
 
     public FluidTank readFromNBT(CompoundNBT nbt) {
 
-        FluidStack fluid = FluidStack.EMPTY;
-        if (!nbt.contains("Empty"))
-        {
-            fluid = FluidStack.loadFluidStackFromNBT(nbt);
-        }
+        FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
         setFluid(fluid);
         return this;
     }
 
     public CompoundNBT writeToNBT(CompoundNBT nbt) {
 
-        if (fluid != null)
-        {
-            fluid.writeToNBT(nbt);
-        }
-        else
-        {
-            nbt.putString("Empty", "");
-        }
+        fluid.writeToNBT(nbt);
+
         return nbt;
     }
 
@@ -139,13 +129,13 @@ public class FluidTank implements IFluidHandler, IFluidTank {
     @Override
     public int fill(FluidStack resource, FluidAction action)
     {
-        if (resource == null || !isFluidValid(resource))
+        if (resource.isEmpty() || !isFluidValid(resource))
         {
             return 0;
         }
         if (action.simulate())
         {
-            if (fluid == null)
+            if (fluid.isEmpty())
             {
                 return Math.min(capacity, resource.getAmount());
             }
@@ -155,7 +145,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
             }
             return Math.min(capacity - fluid.getAmount(), resource.getAmount());
         }
-        if (fluid == null)
+        if (fluid.isEmpty())
         {
             onContentsChanged();
             fluid = new FluidStack(resource, Math.min(capacity, resource.getAmount()));
@@ -183,7 +173,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (resource == null || !resource.isFluidEqual(fluid))
+        if (resource.isEmpty() || !resource.isFluidEqual(fluid))
         {
             return FluidStack.EMPTY;
         }
