@@ -41,7 +41,20 @@
                 return true;
              }
           }
-@@ -526,6 +526,18 @@
+@@ -375,6 +375,12 @@
+       return this.field_185364_H;
+    }
+ 
++   public Biome getRiver() {
++      if (this == Biomes.field_76774_n) return Biomes.field_76777_m;
++      if (this == Biomes.field_76789_p || this == Biomes.field_76788_q) return Biomes.field_76788_q;
++      return Biomes.field_76781_i;
++   }
++
+    public static class Builder {
+       @Nullable
+       private ConfiguredSurfaceBuilder<?> field_205422_a;
+@@ -526,6 +532,18 @@
        }
     }
  

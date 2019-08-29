@@ -53,7 +53,7 @@
   "fml.modloading.brokenfile.oldforge": "File {2} is for an older version of Forge and cannot be loaded",
   "fml.modloading.brokenfile.liteloader": "File {2} is a LiteLoader mod and cannot be loaded",
   "fml.modloading.brokenfile.fabric": "File {2} is a Fabric mod and cannot be loaded",
-  "fml.modloading.brokenfile.optifine": "File {2} is OptiFine, which is unsupported",
+  "fml.modloading.brokenfile.optifine": "File {2} is an incompatible version of OptiFine",
   "fml.modloading.brokenfile.invalidzip": "File {2} is not a jar file",
   "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
 
