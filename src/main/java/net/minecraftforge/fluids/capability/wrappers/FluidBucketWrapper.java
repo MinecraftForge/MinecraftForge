@@ -83,7 +83,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     protected void setFluid(@Nonnull FluidStack fluidStack)
     {
-        if (fluidStack.getAmount() <= 0)
+        if (fluidStack.isEmpty())
             container = new ItemStack(Items.BUCKET);
         else
             container = FluidUtil.getFilledBucket(fluidStack);
@@ -134,7 +134,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource.isEmpty() || resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
+        if (container.getCount() != 1 || resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
         {
             return FluidStack.EMPTY;
         }

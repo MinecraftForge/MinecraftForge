@@ -193,10 +193,6 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         if (action.execute())
         {
             fluid.shrink(drained);
-            if (fluid.getAmount() <= 0)
-            {
-                fluid = FluidStack.EMPTY;
-            }
         }
         return stack;
     }

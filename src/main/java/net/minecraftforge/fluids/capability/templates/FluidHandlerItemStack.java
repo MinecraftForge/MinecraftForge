@@ -190,7 +190,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         if (action.execute())
         {
             contained.shrink(drainAmount);
-            if (contained.getAmount() == 0)
+            if (contained.isEmpty())
             {
                 setContainerToEmpty();
             }

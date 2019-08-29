@@ -172,7 +172,6 @@ public class FluidStack
     public void setAmount(int amount)
     {
         if (getRawFluid() == Fluids.EMPTY) throw new IllegalStateException("Can't modify the empty stack.");
-        if (amount < 0) throw new IllegalStateException("The amount can't be negative.");
         this.amount = amount;
         updateEmpty();
     }
