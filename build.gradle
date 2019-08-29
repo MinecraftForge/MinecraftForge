@@ -303,7 +303,7 @@ artifacts {
     archives(changelog.outputs.files.singleFile) {
         classifier = 'changelog'
     }
-    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
+    archives file('build/' + launch4j.outputDir + '/' + launch4j.outfile)
     archives makeMdk
 }
 
