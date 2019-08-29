@@ -99,3 +99,12 @@
                  packetbuffer.release();
              }
          }
+@@ -2087,7 +2099,7 @@
+ 
+                     if (iattributeinstance == null)
+                     {
+-                        iattributeinstance = abstractattributemap.func_111150_b(new RangedAttribute((IAttribute)null, spacketentityproperties$snapshot.func_151409_a(), 0.0D, 2.2250738585072014E-308D, Double.MAX_VALUE));
++                        iattributeinstance = abstractattributemap.func_111150_b(new RangedAttribute((IAttribute)null, spacketentityproperties$snapshot.func_151409_a(), 0.0D, -Double.MAX_VALUE, Double.MAX_VALUE)); // Forge: fix invalid value range (MC-150405)
+                     }
+ 
+                     iattributeinstance.func_111128_a(spacketentityproperties$snapshot.func_151410_b());
