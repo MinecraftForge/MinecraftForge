@@ -36,19 +36,23 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 
-/*
- * Interface for models that can be baked
- * (possibly to different vertex formats and with different state).
+/**
+ * General interface for any model that can be baked, superset of vanilla {@link net.minecraft.client.renderer.model.IUnbakedModel}.
+ * Models can be baked to different vertex formats and with different state.
  */
 @SuppressWarnings("unchecked")
 public interface IModel<T extends IModel<T>>
 {
+    /**
+     * @param spriteGetter Where textures will be looked up when baking
+     * @param sprite Transforms to apply while baking. Usually will be an instance of {@link IModelState}.
+     */
     @Nullable
     IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
 
-    /*
+    /**
      * Default state this model will be baked with.
-     * See IModelState.
+     * @see IModelState
      */
     default IModelState getDefaultState() {
         return TRSRTransformation.identity();

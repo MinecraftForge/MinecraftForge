@@ -22,6 +22,9 @@ package net.minecraftforge.client.model;
 import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraftforge.common.model.IModelState;
 
+/**
+ * Adapter from {@link IModelState} to the vanilla transform description class {@link ISprite}.
+ */
 public class BasicState implements ISprite
 {
     private final IModelState defaultState;
