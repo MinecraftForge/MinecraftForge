@@ -55,7 +55,7 @@ public class VillagerTradingManager
         VillagerTrades.field_221240_b.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
     }
 
-    public static void loadTrades(FMLServerAboutToStartEvent e)
+    static void loadTrades(FMLServerAboutToStartEvent e)
     {
         postWandererEvent();
         postVillagerEvents();
