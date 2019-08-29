@@ -13,7 +13,7 @@
        this.func_215234_a(ParticleTypes.field_197605_P, UnderwaterParticle.Factory::new);
        this.func_215234_a(ParticleTypes.field_218422_X, SplashParticle.Factory::new);
        this.func_215234_a(ParticleTypes.field_197607_R, SpellParticle.WitchFactory::new);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ParticleRegistryEvent());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ParticleFactoryRegisterEvent());
     }
  
     public <T extends IParticleData> void func_199283_a(ParticleType<T> p_199283_1_, IParticleFactory<T> p_199283_2_) {
