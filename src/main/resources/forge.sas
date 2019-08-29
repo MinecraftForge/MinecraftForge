@@ -25,6 +25,10 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/StemBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/SweetBerryBushBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider; # getSeedsItem
+	net/minecraft/block/BeetrootBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
+	net/minecraft/block/CarrotBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
+	net/minecraft/block/PotatoBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 net/minecraft/block/SoundType func_185845_c()Lnet/minecraft/util/SoundEvent; # getBreakSound
 net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # getHitSound
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks
