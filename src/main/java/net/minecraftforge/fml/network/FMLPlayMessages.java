@@ -172,6 +172,76 @@ public class FMLPlayMessages
             });
             ctx.get().setPacketHandled(true);
         }
+
+        public Entity getEntity()
+        {
+            return entity;
+        }
+
+        public int getTypeId()
+        {
+            return typeId;
+        }
+
+        public int getEntityId()
+        {
+            return entityId;
+        }
+
+        public UUID getUuid()
+        {
+            return uuid;
+        }
+
+        public double getPosX()
+        {
+            return posX;
+        }
+
+        public double getPosY()
+        {
+            return posY;
+        }
+
+        public double getPosZ()
+        {
+            return posZ;
+        }
+
+        public byte getPitch()
+        {
+            return pitch;
+        }
+
+        public byte getYaw()
+        {
+            return yaw;
+        }
+
+        public byte getHeadYaw()
+        {
+            return headYaw;
+        }
+
+        public int getVelX()
+        {
+            return velX;
+        }
+
+        public int getVelY()
+        {
+            return velY;
+        }
+
+        public int getVelZ()
+        {
+            return velZ;
+        }
+
+        public PacketBuffer getAdditionalData()
+        {
+            return buf;
+        }
     }
 
     public static class OpenContainer
