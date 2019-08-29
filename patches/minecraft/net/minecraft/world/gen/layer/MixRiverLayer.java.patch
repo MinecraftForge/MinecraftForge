@@ -1,11 +1,15 @@
 --- a/net/minecraft/world/gen/layer/MixRiverLayer.java
 +++ b/net/minecraft/world/gen/layer/MixRiverLayer.java
-@@ -25,7 +25,7 @@
-          if (i == field_202721_d) {
-             return field_202720_c;
-          } else {
+@@ -22,11 +22,7 @@
+       if (LayerUtil.func_202827_a(i)) {
+          return i;
+       } else if (j == field_202725_h) {
+-         if (i == field_202721_d) {
+-            return field_202720_c;
+-         } else {
 -            return i != field_202722_e && i != field_202723_f ? j & 255 : field_202723_f;
-+            return i != field_202722_e && i != field_202723_f ? Registry.field_212624_m.func_148757_b(Registry.field_212624_m.func_148745_a(i).getRiver()) & 255 : field_202723_f;
-          }
+-         }
++         return Registry.field_212624_m.func_148757_b(Registry.field_212624_m.func_148745_a(i).getRiver());
        } else {
           return i;
+       }
