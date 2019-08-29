@@ -20,7 +20,6 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * This event is fired when all players are asleep and the time should be set to day.<br>
@@ -29,28 +28,32 @@ import net.minecraftforge.eventbus.api.Cancelable;
  */
 public class SleepFinishedTimeEvent extends WorldEvent
 {
-    private long additionalTime;
+    private long newTime;
 
-    public SleepFinishedTimeEvent(ServerWorld worldIn)
+    public SleepFinishedTimeEvent(ServerWorld worldIn, long newTimeIn)
     {
         super(worldIn);
-        this.additionalTime = -1L;
+        this.newTime = newTimeIn;
     }
 
     /**
-     * @returns the time addition
+     * @return the new time
      */
-    public long getTimeAddition()
+    public long getNewTime()
     {
-        return additionalTime;
+        return newTime;
     }
 
     /**
      * Sets the new time which should be set when all players wake up
-     * @param additionalTimeIn The new time at wakeup
+     * @param newTimeIn The new time at wakeup
+     * @return {@code false} if newTimeIn was lower than current time
      */
-    public void setTimeAddition(long additionalTimeIn)
+    public boolean setTimeAddition(long newTimeIn)
     {
-        this.additionalTime = additionalTimeIn;
+        if (getWorld().getWorld().getDayTime() > newTimeIn)
+            return false;
+        this.newTime = newTimeIn;
+        return true;
     }
 }

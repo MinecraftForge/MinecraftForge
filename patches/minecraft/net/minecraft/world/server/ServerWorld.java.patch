@@ -79,8 +79,8 @@
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
 -            this.func_72877_b(l - l % 24000L);
-+            long i = net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this);
-+            this.func_72877_b(i < 0L || i > 24000L ? func_72820_D() + 24000L - this.func_72820_D() % 24000L : func_72820_D() + i);
++            long l = this.func_72820_D() + 24000L;
++            this.func_72877_b(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, l - l % 24000L));
           }
  
           this.field_217491_A.stream().filter(LivingEntity::func_70608_bn).forEach((p_217444_0_) -> {
