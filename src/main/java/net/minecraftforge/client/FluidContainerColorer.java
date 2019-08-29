@@ -32,7 +32,7 @@ public class FluidContainerColorer implements IItemColor
     {
         if (tintIndex != 1) return 0xFFFFFFFF;
         return FluidUtil.getFluidContained(stack)
-                .map(fstack -> fstack.getFluid().getColor(fstack))
+                .map(fstack -> fstack.getFluid().getAttributes().getColor(fstack))
                 .orElse(0xFFFFFFFF);
     }
 }

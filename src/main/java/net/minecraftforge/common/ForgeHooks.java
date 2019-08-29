@@ -583,6 +583,10 @@ public class ForgeHooks
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
 
+        PlayerEntity player = context.getPlayer();
+        if (player != null && !player.abilities.allowEdit && !itemstack.canPlaceOn(world.getTags(), new CachedBlockInfo(world, context.getPos(), false)))
+            return ActionResultType.PASS;
+
         // handle all placement events here
         int size = itemstack.getCount();
         CompoundNBT nbt = null;
@@ -596,7 +600,11 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
+        ItemStack copy = itemstack.isDamageable() ? itemstack.copy() : null;
         ActionResultType ret = itemstack.getItem().onItemUse(context);
+        if (itemstack.isEmpty())
+            ForgeEventFactory.onPlayerDestroyItem(player, copy, context.getHand());
+
         world.captureBlockSnapshots = false;
 
         if (ret == ActionResultType.SUCCESS)
@@ -616,7 +624,6 @@ public class ForgeHooks
             itemstack.setCount(size);
             itemstack.setTag(nbt);
 
-            PlayerEntity player = context.getPlayer();
             Direction side = context.getFace();
 
             boolean eventResult = false;

@@ -19,8 +19,6 @@
 
 package net.minecraftforge.energy;
 
-import java.util.concurrent.Callable;
-
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.util.Direction;

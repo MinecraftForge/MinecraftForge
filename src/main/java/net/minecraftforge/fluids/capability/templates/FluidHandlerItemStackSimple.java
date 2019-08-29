@@ -29,9 +29,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
@@ -67,13 +65,13 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         return container;
     }
 
-    @Nullable
+    @Nonnull
     public FluidStack getFluid()
     {
         CompoundNBT tagCompound = container.getTag();
         if (tagCompound == null || !tagCompound.contains(FLUID_NBT_KEY))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
         return FluidStack.loadFluidStackFromNBT(tagCompound.getCompound(FLUID_NBT_KEY));
     }
@@ -91,27 +89,46 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new IFluidTankProperties[] { new FluidTankProperties(getFluid(), capacity) };
+    public int getTanks() {
+
+        return 1;
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+
+        return getFluid();
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int getTankCapacity(int tank) {
+
+        return capacity;
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+
+        return true;
+    }
+
+    @Override
+    public int fill(@Nonnull FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource.isEmpty() || !canFillFluidType(resource))
         {
             return 0;
         }
 
         FluidStack contained = getFluid();
-        if (contained == null)
+        if (contained.isEmpty())
         {
-            int fillAmount = Math.min(capacity, resource.amount);
+            int fillAmount = Math.min(capacity, resource.getAmount());
             if (fillAmount == capacity) {
-                if (doFill) {
+                if (action.execute()) {
                     FluidStack filled = resource.copy();
-                    filled.amount = fillAmount;
+                    filled.setAmount(fillAmount);
                     setFluid(filled);
                 }
 
@@ -122,42 +139,44 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         return 0;
     }
 
+    @Nonnull
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
+        if (container.getCount() != 1 || resource == null || resource.getAmount() <= 0 || !resource.isFluidEqual(getFluid()))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
-        return drain(resource.amount, doDrain);
+        return drain(resource.getAmount(), action);
     }
 
+    @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
         FluidStack contained = getFluid();
-        if (contained == null || contained.amount <= 0 || !canDrainFluidType(contained))
+        if (contained.isEmpty() || !canDrainFluidType(contained))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
-        final int drainAmount = Math.min(contained.amount, maxDrain);
+        final int drainAmount = Math.min(contained.getAmount(), maxDrain);
         if (drainAmount == capacity) {
             FluidStack drained = contained.copy();
 
-            if (doDrain) {
+            if (action.execute()) {
                 setContainerToEmpty();
             }
 
             return drained;
         }
 
-        return null;
+        return FluidStack.EMPTY;
     }
 
     public boolean canFillFluidType(FluidStack fluid)
@@ -177,7 +196,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
      */
     protected void setContainerToEmpty()
     {
-        container.getTag().remove(FLUID_NBT_KEY);
+        container.removeChildTag(FLUID_NBT_KEY);
     }
 
     @Override

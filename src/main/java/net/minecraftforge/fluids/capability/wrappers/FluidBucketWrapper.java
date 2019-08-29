@@ -22,22 +22,17 @@ package net.minecraftforge.fluids.capability.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.item.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.MilkBucketItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.*;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
@@ -64,34 +59,21 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     public boolean canFillFluidType(FluidStack fluid)
-    {/* TODO fluids
-        if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || fluid.getFluid().getName().equals("milk"))
+    {
+        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA || fluid.getFluid().getRegistryName().equals(new ResourceLocation("milk")))
         {
             return true;
         }
-        return FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid.getFluid());
-        */ return false;
+        return fluid.getFluid().getAttributes().getBucket(fluid) != null;
     }
 
-    @Nullable
+    @Nonnull
     public FluidStack getFluid()
     {
-        Item item = container.getItem();/* TODO fluids
-        if (item == Items.WATER_BUCKET)
+        Item item = container.getItem();
+        if (item instanceof BucketItem)
         {
-            return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
-        }
-        else if (item == Items.LAVA_BUCKET)
-        {
-            return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
-        }
-        else if (item == Items.MILK_BUCKET)
-        {
-            return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
-        }
-        else*/ if (item == ForgeMod.getInstance().universalBucket)
-        {
-            return ForgeMod.getInstance().universalBucket.getFluid(container);
+            return new FluidStack(((BucketItem)item).getFluid(), FluidAttributes.BUCKET_VOLUME);
         }
         else
         {
@@ -99,78 +81,97 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
     }
 
-    protected void setFluid(@Nullable FluidStack fluidStack)
+    protected void setFluid(@Nonnull FluidStack fluidStack)
     {
-        if (fluidStack == null)
+        if (fluidStack.getAmount() <= 0)
             container = new ItemStack(Items.BUCKET);
         else
             container = FluidUtil.getFilledBucket(fluidStack);
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new FluidTankProperties[] { new FluidTankProperties(getFluid(), Fluid.BUCKET_VOLUME) };
+    public int getTanks() {
+
+        return 1;
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+
+        return getFluid();
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int getTankCapacity(int tank) {
+
+        return FluidAttributes.BUCKET_VOLUME;
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+
+        return true;
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || getFluid() != null || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource == null || resource.getAmount() < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || getFluid() != null || !canFillFluidType(resource))
         {
             return 0;
         }
 
-        if (doFill)
+        if (action.execute())
         {
             setFluid(resource);
         }
 
-        return Fluid.BUCKET_VOLUME;
+        return FluidAttributes.BUCKET_VOLUME;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
+        if (container.getCount() != 1 || resource == null || resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
         FluidStack fluidStack = getFluid();
         if (fluidStack != null && fluidStack.isFluidEqual(resource))
         {
-            if (doDrain)
+            if (action.execute())
             {
-                setFluid((FluidStack) null);
+                setFluid(FluidStack.EMPTY);
             }
             return fluidStack;
         }
 
-        return null;
+        return FluidStack.EMPTY;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
-        if (container.getCount() != 1 || maxDrain < Fluid.BUCKET_VOLUME)
+        if (container.getCount() != 1 || maxDrain < FluidAttributes.BUCKET_VOLUME)
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
         FluidStack fluidStack = getFluid();
         if (fluidStack != null)
         {
-            if (doDrain)
+            if (action.execute())
             {
-                setFluid((FluidStack) null);
+                setFluid(FluidStack.EMPTY);
             }
             return fluidStack;
         }
 
-        return null;
+        return FluidStack.EMPTY;
     }
     
     @Override
