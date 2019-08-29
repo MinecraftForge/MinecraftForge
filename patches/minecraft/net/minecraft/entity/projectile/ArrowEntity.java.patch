@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/ArrowEntity.java
++++ b/net/minecraft/entity/projectile/ArrowEntity.java
+@@ -59,7 +59,7 @@
+       } else if (p_184555_1_.func_77973_b() == Items.field_151032_g) {
+          this.field_184560_g = Potions.field_185229_a;
+          this.field_184561_h.clear();
+-         this.field_70180_af.func_187227_b(field_184559_f, -1);
++         this.func_191507_d(-1); // Forge: fix MC-107941
+       }
+ 
+    }
