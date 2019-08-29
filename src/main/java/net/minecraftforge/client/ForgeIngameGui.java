@@ -50,8 +50,6 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -362,49 +360,6 @@ public class ForgeIngameGui extends IngameGui
         }
 
         post(HOTBAR);
-    }
-
-    @Override
-    public void renderSelectedItem()
-    {
-        mc.getProfiler().startSection("selectedItemName");
-        if (this.remainingHighlightTicks > 0 && !this.highlightingItemStack.isEmpty()) {
-            ITextComponent itextcomponent = (new StringTextComponent("")).appendSibling(this.highlightingItemStack.getDisplayName()).applyTextStyle(this.highlightingItemStack.getRarity().color);
-            if (this.highlightingItemStack.hasDisplayName()) {
-                itextcomponent.applyTextStyle(TextFormatting.ITALIC);
-            }
-
-            // Apply highlight tip to display string
-            String s = this.highlightingItemStack.getItem().getHighlightTip(this.highlightingItemStack, itextcomponent.getFormattedText());
-            int i = (this.scaledWidth - this.getFontRenderer().getStringWidth(s)) / 2;
-            int j = this.scaledHeight - 59;
-            if (!this.mc.playerController.shouldDrawHUD()) {
-                j += 14;
-            }
-
-            int k = (int)((float)this.remainingHighlightTicks * 256.0F / 10.0F);
-            if (k > 255) {
-                k = 255;
-            }
-
-            if (k > 0) {
-                GlStateManager.pushMatrix();
-                GlStateManager.enableBlend();
-                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-                fill(i - 2, j - 2, i + this.getFontRenderer().getStringWidth(s) + 2, j + 9 + 2, this.mc.gameSettings.func_216839_a(0));
-                FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
-                if (font == null) {
-                    this.getFontRenderer().drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
-                } else {
-                    i = (this.scaledWidth - font.getStringWidth(s)) / 2;
-                    font.drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
-                }
-                GlStateManager.disableBlend();
-                GlStateManager.popMatrix();
-            }
-        }
-
-        mc.getProfiler().endSection();
     }
 
     @Override
