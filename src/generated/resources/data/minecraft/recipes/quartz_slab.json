@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": [
+      {
+        "item": "minecraft:chiseled_quartz_block"
+      },
+      {
+        "tag": "forge:storage_blocks/quartz"
+      },
+      {
+        "item": "minecraft:quartz_pillar"
+      }
+    ]
+  },
+  "result": {
+    "item": "minecraft:quartz_slab",
+    "count": 6
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:nuggets/gold"
+    },
+    "X": {
+      "item": "minecraft:carrot"
+    }
+  },
+  "result": {
+    "item": "minecraft:golden_carrot"
+  }
+}

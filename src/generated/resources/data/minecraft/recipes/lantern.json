@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "X#X",
+    "XXX"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:torch"
+    },
+    "X": {
+      "tag": "forge:nuggets/iron"
+    }
+  },
+  "result": {
+    "item": "minecraft:lantern"
+  }
+}

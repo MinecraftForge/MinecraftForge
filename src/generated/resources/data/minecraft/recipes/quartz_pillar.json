@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:storage_blocks/quartz"
+    }
+  },
+  "result": {
+    "item": "minecraft:quartz_pillar",
+    "count": 2
+  }
+}

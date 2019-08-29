@@ -65,6 +65,11 @@ public class ForgeRecipeProvider extends RecipeProvider
         excludes.add(item.asItem().getRegistryName());
     }
 
+    private void exclude(String recipe)
+    {
+        excludes.add(new ResourceLocation("minecraft", recipe));
+    }
+
     private void replace(IItemProvider item, Tag<Item> tag)
     {
         replacements.put(item.asItem(), tag);
@@ -85,8 +90,8 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Items.IRON_INGOT,          Tags.Items.INGOTS_IRON);
         replace(Items.NETHER_BRICK,        Tags.Items.INGOTS_NETHER_BRICK);
         
-        exclude(Items.GOLD_NUGGET);
-        exclude(Items.IRON_NUGGET);
+        replace(Items.GOLD_NUGGET,         Tags.Items.NUGGETS_GOLD);
+        replace(Items.IRON_NUGGET,         Tags.Items.NUGGETS_IRON);
         
         replace(Items.DIAMOND,             Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,             Tags.Items.GEMS_EMERALD);
@@ -94,14 +99,14 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Items.PRISMARINE_CRYSTALS, Tags.Items.GEMS_PRISMARINE);
         replace(Items.QUARTZ,              Tags.Items.GEMS_QUARTZ);
         
-        exclude(Blocks.COAL_BLOCK);
-        exclude(Blocks.DIAMOND_BLOCK);
-        exclude(Blocks.EMERALD_BLOCK);
-        exclude(Blocks.GOLD_BLOCK);
-        exclude(Blocks.IRON_BLOCK);
-        exclude(Blocks.LAPIS_BLOCK);
-        exclude(Blocks.QUARTZ_BLOCK);
-        exclude(Blocks.REDSTONE_BLOCK);
+        replace(Blocks.COAL_BLOCK,         Tags.Items.STORAGE_BLOCKS_COAL);
+        replace(Blocks.DIAMOND_BLOCK,      Tags.Items.STORAGE_BLOCKS_DIAMOND);
+        replace(Blocks.EMERALD_BLOCK,      Tags.Items.STORAGE_BLOCKS_EMERALD);
+        replace(Blocks.GOLD_BLOCK,         Tags.Items.STORAGE_BLOCKS_GOLD);
+        replace(Blocks.IRON_BLOCK,         Tags.Items.STORAGE_BLOCKS_IRON);
+        replace(Blocks.LAPIS_BLOCK,        Tags.Items.STORAGE_BLOCKS_LAPIS);
+        replace(Blocks.QUARTZ_BLOCK,       Tags.Items.STORAGE_BLOCKS_QUARTZ);
+        replace(Blocks.REDSTONE_BLOCK,     Tags.Items.STORAGE_BLOCKS_REDSTONE);
         
         replace(Items.CHEST,               Tags.Items.CHESTS_WOODEN);
         replace(Blocks.COBBLESTONE,        Tags.Items.COBBLESTONE);
@@ -122,6 +127,30 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Items.RED_DYE,             Tags.Items.DYES_RED);
         replace(Items.WHITE_DYE,           Tags.Items.DYES_WHITE);
         replace(Items.YELLOW_DYE,          Tags.Items.DYES_YELLOW);
+
+        exclude(Items.REDSTONE);
+        exclude(Items.GOLD_INGOT);
+        exclude("gold_ingot_from_gold_block");
+        exclude("gold_ingot_from_nuggets");
+        exclude(Items.IRON_INGOT);
+        exclude("iron_ingot_from_iron_block");
+        exclude("iron_ingot_from_nuggets");
+        exclude(Items.GOLD_NUGGET);
+        exclude(Items.IRON_NUGGET);
+        exclude(Items.COAL);
+        exclude(Items.DIAMOND);
+        exclude(Items.EMERALD);
+        exclude(Items.LAPIS_LAZULI);
+        exclude(Items.PRISMARINE_CRYSTALS);
+        exclude(Items.QUARTZ);
+        exclude(Blocks.COAL_BLOCK);
+        exclude(Blocks.DIAMOND_BLOCK);
+        exclude(Blocks.EMERALD_BLOCK);
+        exclude(Blocks.GOLD_BLOCK);
+        exclude(Blocks.IRON_BLOCK);
+        exclude(Blocks.LAPIS_BLOCK);
+        exclude(Blocks.QUARTZ_BLOCK);
+        exclude(Blocks.REDSTONE_BLOCK);
 
         super.registerRecipes(vanilla -> {
             IFinishedRecipe modified = enhance(vanilla);
