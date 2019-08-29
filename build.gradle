@@ -10,8 +10,12 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
+        classpath 'edu.sc.seis.launch4j:launch4j:2.4.6'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
@@ -22,7 +26,7 @@ plugins {
 
 apply plugin: "maven"
 def patcher_plugin = plugins.apply('net.minecraftforge.gradle.patcher')
-apply plugin: "net.minecraftforge.gradle.launch4j"
+apply plugin: 'edu.sc.seis.launch4j'
 
 minecraft.version = "1.12.2"
 
@@ -283,14 +287,14 @@ tasks.build.dependsOn makeMdk
 
 launch4j {
     jar = installer.archivePath.canonicalPath
-    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
+    outfile = "${project.name}-${project.version}-installer-win.exe"
     icon = file('icon.ico').canonicalPath
     manifest = file('l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.8.0'
-    initialHeapPercent = 5;
-    maxHeapPercent = 100;
+    jreMinVersion = '1.8.0_101'
+    initialHeapPercent = 5
+    maxHeapPercent = 100
 }
-tasks.generateXmlConfig.dependsOn installer
+tasks.createExe.dependsOn installer
 tasks.build.dependsOn 'launch4j'
 
 // MAVEN
