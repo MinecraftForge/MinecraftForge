@@ -40,10 +40,9 @@
              float f = 1.0F;
              BlockState blockstate = this.field_73092_a.func_180495_p(p_225416_1_);
 -            if (!blockstate.func_196958_f()) {
--               blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
 +            if (!blockstate.isAir(field_73092_a, p_225416_1_)) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
-+                  blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
+                blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
                 f = blockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_225416_1_);
              }
  
