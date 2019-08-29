@@ -50,6 +50,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
+import org.apache.commons.lang3.Validate;
 
 @Mod("new_fluid_test")
 public class NewFluidTest
@@ -108,9 +109,9 @@ public class NewFluidTest
         // some sanity checks
         BlockState state = Fluids.WATER.getDefaultState().getBlockState();
         BlockState state2 = Fluids.WATER.getAttributes().getBlock(null,null,Fluids.WATER.getDefaultState());
-        assert state.getBlock() == Blocks.WATER && state2 == state;
+        Validate.isTrue(state.getBlock() == Blocks.WATER && state2 == state);
         ItemStack stack = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
-        assert stack.getItem() == Fluids.WATER.getFilledBucket();
+        Validate.isTrue(stack.getItem() == Fluids.WATER.getFilledBucket());
     }
 
     private static final FluidAttributes ATTRIBUTES = FluidAttributes.builder("test_fluid", FLUID_STILL, FLUID_FLOWING).build();
