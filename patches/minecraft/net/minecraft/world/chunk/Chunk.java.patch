@@ -295,7 +295,21 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1244,13 +1268,13 @@
+@@ -1190,7 +1214,12 @@
+ 
+         if (k == 255)
+         {
+-            Biome biome = p_177411_2_.func_180300_a(p_177411_1_, Biomes.field_76772_c);
++            // Forge: checking for client ensures that biomes are only generated on integrated server
++            // in singleplayer. Generating biomes on the client may corrupt the biome ID arrays on
++            // the server while they are being generated because IntCache can't be thread safe,
++            // so client and server may end up filling the same array.
++            // This is not necessary in 1.13 and newer versions.
++            Biome biome = field_76637_e.field_72995_K ? Biomes.field_76772_c : p_177411_2_.func_180300_a(p_177411_1_, Biomes.field_76772_c);
+             k = Biome.func_185362_a(biome);
+             this.field_76651_r[j << 4 | i] = (byte)(k & 255);
+         }
+@@ -1244,13 +1273,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -311,7 +325,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1405,7 @@
+@@ -1381,7 +1410,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -320,7 +334,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1444,7 @@
+@@ -1420,6 +1449,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -328,7 +342,7 @@
          }
      }
  
-@@ -1489,4 +1514,55 @@
+@@ -1489,4 +1519,55 @@
          QUEUED,
          CHECK;
      }
