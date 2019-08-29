@@ -143,7 +143,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.getAmount() <= 0 || !resource.isFluidEqual(getFluid()))
+        if (container.getCount() != 1 || resource.isEmpty() || !resource.isFluidEqual(getFluid()))
         {
             return FluidStack.EMPTY;
         }

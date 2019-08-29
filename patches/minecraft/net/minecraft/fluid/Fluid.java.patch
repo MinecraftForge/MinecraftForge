@@ -9,7 +9,7 @@
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
     protected final StateContainer<Fluid, IFluidState> field_207202_e;
     private IFluidState field_207200_b;
-@@ -102,4 +102,41 @@
+@@ -102,4 +102,40 @@
     }
  
     public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
@@ -34,12 +34,11 @@
 +                 new net.minecraft.util.ResourceLocation("block/water_still"),
 +                 new net.minecraft.util.ResourceLocation("block/water_flow"))
 +                 .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
-+                 .vanillaColor().block(() -> net.minecraft.block.Blocks.field_150355_j).build();
++                 .vanillaColor().build();
 +      if (fluid instanceof LavaFluid)
 +         return net.minecraftforge.fluids.FluidAttributes.builder("lava",
 +                 new net.minecraft.util.ResourceLocation("block/lava_still"),
 +                 new net.minecraft.util.ResourceLocation("block/lava_flow"))
-+                 .block(() -> net.minecraft.block.Blocks.field_150353_l)
 +                 .vanillaColor().luminosity(15).density(3000).viscosity(6000).temperature(1300).build();
 +      throw new RuntimeException("Mod fluids must override createAttributes.");
 +   }

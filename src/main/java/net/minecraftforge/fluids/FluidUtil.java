@@ -554,7 +554,7 @@ public class FluidUtil
             return false;
         }
 
-        if (fluidSource.drain(resource, IFluidHandler.FluidAction.SIMULATE) == null)
+        if (fluidSource.drain(resource, IFluidHandler.FluidAction.SIMULATE).isEmpty())
         {
             return false;
         }
@@ -574,7 +574,7 @@ public class FluidUtil
         if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(world, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
-            if (result != null)
+            if (!result.isEmpty())
             {
                 result.getFluid().getAttributes().vaporize(player, world, pos, result);
                 return true;
@@ -585,7 +585,7 @@ public class FluidUtil
             // This fluid handler places the fluid block when filled
             IFluidHandler handler = getFluidBlockHandler(fluid, world, pos);
             FluidStack result = tryFluidTransfer(handler, fluidSource, resource, true);
-            if (result != null)
+            if (!result.isEmpty())
             {
                 SoundEvent soundevent = resource.getFluid().getAttributes().getEmptySound(resource);
                 world.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);

@@ -77,13 +77,13 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
         else
         {
-            return null;
+            return FluidStack.EMPTY;
         }
     }
 
     protected void setFluid(@Nonnull FluidStack fluidStack)
     {
-        if (fluidStack.getAmount() <= 0)
+        if (fluidStack.isEmpty())
             container = new ItemStack(Items.BUCKET);
         else
             container = FluidUtil.getFilledBucket(fluidStack);
@@ -117,7 +117,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     @Override
     public int fill(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.getAmount() < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || getFluid() != null || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource.getAmount() < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || !getFluid().isEmpty() || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -134,13 +134,13 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
+        if (container.getCount() != 1 || resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
         {
             return FluidStack.EMPTY;
         }
 
         FluidStack fluidStack = getFluid();
-        if (fluidStack != null && fluidStack.isFluidEqual(resource))
+        if (!fluidStack.isEmpty() && fluidStack.isFluidEqual(resource))
         {
             if (action.execute())
             {
@@ -162,7 +162,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
 
         FluidStack fluidStack = getFluid();
-        if (fluidStack != null)
+        if (!fluidStack.isEmpty())
         {
             if (action.execute())
             {
