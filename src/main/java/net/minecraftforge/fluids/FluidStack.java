@@ -69,6 +69,8 @@ public class FluidStack
         }
         this.fluidDelegate = fluid.delegate;
         this.amount = amount;
+
+        updateEmpty();
     }
 
     public FluidStack(Fluid fluid, int amount, CompoundNBT nbt)
