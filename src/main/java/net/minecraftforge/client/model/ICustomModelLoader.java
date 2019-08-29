@@ -42,14 +42,16 @@ public interface ICustomModelLoader extends ISelectiveResourceReloadListener
         }
     }
 
-    /*
+    /**
      * Checks if given model should be loaded by this loader.
      * Reading file contents is inadvisable, if possible decision should be made based on the location alone.
+     * @param modelLocation The path, either to an actual file or a {@link net.minecraft.client.renderer.model.ModelResourceLocation}.
      */
     boolean accepts(ResourceLocation modelLocation);
 
-    /*
-     * loads (or reloads) specified model
+    /**
+     * @param modelLocation The model to (re)load, either path to an
+     *                      actual file or a {@link net.minecraft.client.renderer.model.ModelResourceLocation}.
      */
     IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception;
 

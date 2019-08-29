@@ -21,7 +21,6 @@ package net.minecraftforge.fml.config;
 
 import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.fml.loading.FMLConfig;
@@ -90,9 +89,11 @@ public class ConfigFileTypeHandler {
         public void run() {
             // Force the regular classloader onto the special thread
             Thread.currentThread().setContextClassLoader(realClassLoader);
-            this.commentedFileConfig.load();
-            LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
-            this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
+            if (!this.modConfig.getSpec().isCorrecting()) {
+                this.commentedFileConfig.load();
+                LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
+                this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
+            }
         }
     }
 }

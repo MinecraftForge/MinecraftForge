@@ -19,9 +19,9 @@
 
 package net.minecraftforge.common.model;
 
-/*
- * Represents the part of the model you can refer to, for example: mesh,
+/**
+ * Represents some part of a model you can refer to, for example: mesh,
  * skeleton, bone or some separately animated submodel.
- * Primary function of this interface is the argument type of IModelState.apply.
+ * @see IModelState
  */
 public interface IModelPart {}

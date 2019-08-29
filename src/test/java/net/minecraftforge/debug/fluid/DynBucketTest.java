@@ -15,7 +15,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *//*
+ */
+
+/*
 
 
 package net.minecraftforge.debug.fluid;
@@ -63,7 +65,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankOld;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -136,7 +138,7 @@ public class DynBucketTest
     @net.minecraftforge.eventbus.api.SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidTest.FLUID, Fluid.BUCKET_VOLUME));
+        ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidTest.FLUID, FluidAttributes.BUCKET_VOLUME));
         GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.fromItem(Items.DIAMOND));
     }
 
@@ -162,7 +164,7 @@ public class DynBucketTest
             if (state.getBlock() instanceof IFluidBlock)
             {
                 Fluid fluid = ((IFluidBlock) state.getBlock()).getFluid();
-                FluidStack fs = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+                FluidStack fs = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 
                 ItemStack bucket = event.getEmptyBucket();
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
@@ -331,7 +333,7 @@ public class DynBucketTest
 
     public static class TileSimpleTank extends TileEntity
     {
-        FluidTank tank = new FluidTank(4000);
+        FluidTankOld tank = new FluidTankOld(4000);
 
         @Override
         public void readFromNBT(NBTTagCompound tags)

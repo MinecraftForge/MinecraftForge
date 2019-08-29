@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.ow2.asm:asm:7.1'
+        classpath 'org.ow2.asm:asm-tree:7.1'
     }
 }
 import groovy.json.JsonSlurper
@@ -36,8 +37,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.tree.ClassNode
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
@@ -187,6 +186,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
+        VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
     }
 
     def getVersion = {
@@ -244,30 +244,9 @@ project(':forge') {
             }
 
             cpw_forge_client {
+                parent runs.forge_client
                 taskName 'cpw_forge_client'
-
-                main 'net.minecraftforge.userdev.LaunchTesting'
-                workingDirectory project.file('run')
-
-                environment 'target', 'fmldevclient'
-                environment 'assetIndex', '{asset_index}'
-                environment 'assetDirectory', downloadAssets.output
-                environment 'nativesDirectory', extractNatives.output
-
-                environment 'MC_VERSION', MC_VERSION
-                environment 'MCP_VERSION', MCP_VERSION
-                environment 'FORGE_GROUP', project.group
-                environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
-                environment 'LAUNCHER_VERSION', SPEC_VERSION
-                property 'terminal.ansi', 'true'
                 property 'forge.logging.noansi', 'false'
-                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-
-                ideaModule "${rootProject.name}.${project.name}.userdev"
-
-                source sourceSets.main
-                source sourceSets.userdev
             }
 
             forge_test_client {
@@ -335,6 +314,19 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
+
+            forge_test_data {
+                parent runs.forge_data
+                taskName 'forge_test_data'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    tests { sources  sourceSets.test }
+                }
+                
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+            }
         }
     }
     
@@ -370,12 +362,12 @@ project(':forge') {
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/mclanguageprovider/': [
-                    'Specification-Title':      'Mod Language Provider',
-                    'Specification-Vendor':     'Forge Development LLC',
-                    'Specification-Version':    '1',
-                    'Implementation-Title':     'Minecraft Language Mod Provider',
-                    'Implementation-Version':   '1',
-                    'Implementation-Vendor':    'Forge'
+                'Specification-Title':      'Mod Language Provider',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    '1',
+                'Implementation-Title':     'Minecraft Language Mod Provider',
+                'Implementation-Version':   '1',
+                'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/loading/': [
                 'Specification-Title':      'Launcher',
@@ -565,8 +557,38 @@ project(':forge') {
         }
     }
     
-    task extractInheritance(type: ExtractInheritance, dependsOn: genJoinedBinPatches) {
+    task downloadLibraries(dependsOn: ':mcp:setupMCP') {
+        inputs.file VERSION_JSON
+        doLast {
+            def json = new JsonSlurper().parseText(VERSION_JSON.text)
+            json.libraries.each {lib ->
+                def artifacts = [lib.downloads.artifact] + lib.downloads.get('classifiers', [:]).values()
+                artifacts.each{ art -> 
+                    def target = file('build/libraries/' + art.path)
+                    if (!target.exists()) {
+                        download {
+                            src art.url
+                            dest target
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         input { genJoinedBinPatches.cleanJar }
+        doFirst {
+            def json = new JsonSlurper().parseText(VERSION_JSON.text)
+            json.libraries.each {lib ->
+                def artifacts = [lib.downloads.artifact] + lib.downloads.get('classifiers', [:]).values()
+                artifacts.each{ art -> 
+                    def target = file('build/libraries/' + art.path)
+                    if (target.exists())
+                        addLibrary(target)
+                }
+            }
+        }
     }
     task checkATs(dependsOn: genJoinedBinPatches) {
         inputs.file { genJoinedBinPatches.cleanJar }

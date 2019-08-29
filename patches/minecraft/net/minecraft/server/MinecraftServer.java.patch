@@ -156,7 +156,18 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -948,7 +971,7 @@
+@@ -887,6 +910,10 @@
+          GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
+          PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s, field_152367_a.getName()));
+          String s1 = Optional.ofNullable(optionset.valueOf(optionspec9)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
++         if (s1 == null || s1.isEmpty() || new File(s, s1).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
++            field_147145_h.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s1);
++            return;
++         }
+          final DedicatedServer dedicatedserver = new DedicatedServer(new File(s), serverpropertiesprovider, DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new, s1);
+          dedicatedserver.func_71224_l(optionset.valueOf(optionspec7));
+          dedicatedserver.func_71208_b(optionset.valueOf(optionspec10));
+@@ -948,7 +975,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -165,7 +176,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -987,7 +1010,7 @@
+@@ -987,7 +1014,7 @@
     }
  
     public String getServerModName() {
@@ -174,7 +185,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1529,6 +1552,31 @@
+@@ -1529,6 +1556,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  

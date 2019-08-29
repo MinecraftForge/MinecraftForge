@@ -47,7 +47,7 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 
-/*
+/**
  * Central hub for custom model loaders.
  */
 public class ModelLoaderRegistry
@@ -57,8 +57,6 @@ public class ModelLoaderRegistry
     private static final Set<ICustomModelLoader> loaders = Sets.newHashSet();
     private static final Map<ResourceLocation, IUnbakedModel> cache = Maps.newHashMap();
     private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
-    private static final Set<ResourceLocation> textures = Sets.newHashSet();
-    private static final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
 
     private static IResourceManager manager;
 
@@ -73,7 +71,7 @@ public class ModelLoaderRegistry
         registerLoader(ModelDynBucket.LoaderDynBucket.INSTANCE);
     }
 
-    /*
+    /**
      * Makes system aware of your loader.
      */
     public static void registerLoader(ICustomModelLoader loader)
@@ -97,8 +95,12 @@ public class ModelLoaderRegistry
 
     /**
      * Primary method to get IModel instances.
-     * ResourceLocation argument will be passed directly to the custom model loaders,
-     * ModelResourceLocation argument will be loaded through the blockstate system.
+     * @param location The path to load, either:
+     *                 - Pure {@link ResourceLocation}. "models/" will be prepended to the path, then
+     *                   the path is passed to the {@link ICustomModelLoader}s, which may further modify
+     *                   the path before asking resource packs for it. For example, the {@link VanillaLoader}
+     *                   appends ".json" before looking the model up.
+     *                 - {@link ModelResourceLocation}. The blockstate system will load the model, using {@link VariantLoader}.
      */
     public static IUnbakedModel getModel(ResourceLocation location) throws Exception
     {
@@ -117,9 +119,6 @@ public class ModelLoaderRegistry
         loadingModels.addLast(location);
         try
         {
-            ResourceLocation aliased = aliases.get(location);
-            if (aliased != null) return getModel(aliased);
-
             ResourceLocation actual = getActualLocation(location);
             ICustomModelLoader accepted = null;
             for(ICustomModelLoader loader : loaders)
@@ -174,7 +173,6 @@ public class ModelLoaderRegistry
             {
                 throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
             }
-            textures.addAll(model.getTextures(ModelLoader.defaultModelGetter(), new HashSet<>()));
         }
         finally
         {
@@ -237,30 +235,17 @@ public class ModelLoaderRegistry
     {
         //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
         IUnbakedModel model = new FancyMissingModel(getMissingModel(), location.toString());
-        textures.addAll(model.getTextures(null, null));
         return model;
-    }
-
-    static void addAlias(ResourceLocation from, ResourceLocation to)
-    {
-        aliases.put(from, to);
     }
 
     public static void clearModelCache(IResourceManager manager)
     {
         ModelLoaderRegistry.manager = manager;
-        aliases.clear();
-        textures.clear();
         cache.clear();
         // putting the builtin models in
         cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.INSTANCE);
         cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ItemLayerModel.INSTANCE);
         cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ItemLayerModel.INSTANCE);
-    }
-
-    static Iterable<ResourceLocation> getTextures()
-    {
-        return textures;
     }
 
     public static class LoaderException extends Exception

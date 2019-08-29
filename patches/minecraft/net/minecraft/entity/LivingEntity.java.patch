@@ -397,15 +397,19 @@
           this.func_184602_cy();
        }
  
-@@ -2532,6 +2588,7 @@
+@@ -2532,6 +2588,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
-+         if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv()))
++         if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv())) {
++            ItemStack copy = this instanceof PlayerEntity ? field_184627_bm.func_77946_l() : null;
           this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
++           if (copy != null && field_184627_bm.func_190926_b()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem((PlayerEntity)this, copy, func_184600_cs());
++         }
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
-@@ -2687,16 +2744,16 @@
+          }
+@@ -2687,16 +2747,16 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_213347_1_) -> {
@@ -426,7 +430,7 @@
                 BlockPos blockpos = p_213368_1_.func_177984_a();
                 return new Vec3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
              });
-@@ -2711,8 +2768,13 @@
+@@ -2711,8 +2771,13 @@
     @Nullable
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
@@ -441,7 +445,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -2779,4 +2841,58 @@
+@@ -2779,4 +2844,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

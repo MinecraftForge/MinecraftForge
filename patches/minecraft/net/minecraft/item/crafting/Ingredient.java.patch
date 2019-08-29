@@ -59,7 +59,7 @@
 +
 +   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
 +      if (!isVanilla()) throw new IllegalStateException("Modderrs must implement Ingredient.getSerializer in their custom Ingredients: " + this);
-+      return net.minecraftforge.common.crafting.CraftingHelper.INGREDIENT_VANILLA;
++      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
 +   }
 +
     public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
@@ -84,19 +84,7 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -169,6 +206,11 @@
-    }
- 
-    public static Ingredient.IItemList func_199803_a(JsonObject p_199803_0_) {
-+      if (p_199803_0_.has("constant")) {
-+         Ingredient.IItemList ret = net.minecraftforge.common.crafting.CraftingHelper.getConstant(new ResourceLocation(JSONUtils.func_151200_h(p_199803_0_, "constant")));
-+         if (ret == null) throw new JsonSyntaxException("Ingredient referenced invalid constant: " + JSONUtils.func_151200_h(p_199803_0_, "constant"));
-+         return ret;
-+      }
-       if (p_199803_0_.has("item") && p_199803_0_.has("tag")) {
-          throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
-       } else if (p_199803_0_.has("item")) {
-@@ -190,6 +232,12 @@
+@@ -190,6 +227,12 @@
        }
     }
  
@@ -108,4 +96,14 @@
 +
     public interface IItemList {
        Collection<ItemStack> func_199799_a();
+ 
+@@ -228,6 +271,9 @@
+             list.add(new ItemStack(item));
+          }
+ 
++         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
++            list.add(new ItemStack(net.minecraft.block.Blocks.field_180401_cv).func_200302_a(new net.minecraft.util.text.StringTextComponent("Empty Tag: " + field_199800_a.func_199886_b().toString())));
++         }
+          return list;
+       }
  

@@ -17,18 +17,16 @@
     }
  
     public boolean func_199308_a(EffectInstance p_199308_1_) {
-@@ -88,6 +89,10 @@
+@@ -88,7 +89,7 @@
     }
  
     public Effect func_188419_a() {
-+      return this.getPotionRaw() == null ? null : this.getPotionRaw().delegate.get();
-+   }
-+
-+   private Effect getPotionRaw() {
-       return this.field_188420_b;
+-      return this.field_188420_b;
++      return this.field_188420_b == null ? null : this.field_188420_b.delegate.get();
     }
  
-@@ -188,11 +193,12 @@
+    public int func_76459_b() {
+@@ -188,11 +189,12 @@
        p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
        p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
        p_82719_1_.func_74757_a("ShowIcon", this.func_205348_f());
@@ -42,7 +40,7 @@
        Effect effect = Effect.func_188412_a(i);
        if (effect == null) {
           return null;
-@@ -210,7 +216,7 @@
+@@ -210,7 +212,7 @@
              flag2 = p_82722_0_.func_74767_n("ShowIcon");
           }
  
@@ -51,7 +49,7 @@
        }
     }
  
-@@ -226,6 +232,32 @@
+@@ -226,6 +228,32 @@
  
     public int compareTo(EffectInstance p_compareTo_1_) {
        int i = 32147;

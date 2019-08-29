@@ -50,6 +50,14 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,
+ * with the following changes:
+ * - Represented as a true {@link IUnbakedModel} so it can be baked as usual instead of using
+ *   special-case logic like vanilla does.
+ * - Various fixes in the baking logic.
+ * - Not limited to 4 layers maximum.
+ */
 public final class ItemLayerModel implements IUnbakedModel
 {
     public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.of());

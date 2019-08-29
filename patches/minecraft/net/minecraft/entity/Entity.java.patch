@@ -108,14 +108,18 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
-@@ -1040,6 +1053,7 @@
+@@ -1040,9 +1053,10 @@
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
 +      if (!blockstate.addRunningEffects(field_70170_p, blockpos, this))
        if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
           Vec3d vec3d = this.func_213322_ci();
-          this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.field_70163_u + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vec3d.field_72450_a * -4.0D, 1.5D, vec3d.field_72449_c * -4.0D);
+-         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.field_70163_u + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vec3d.field_72450_a * -4.0D, 1.5D, vec3d.field_72449_c * -4.0D);
++         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(blockpos), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.field_70163_u + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vec3d.field_72450_a * -4.0D, 1.5D, vec3d.field_72449_c * -4.0D);
+       }
+ 
+    }
 @@ -1061,7 +1075,7 @@
              return false;
           } else {
@@ -129,7 +133,7 @@
           this.field_70126_B -= 360.0F;
        }
  
-+      if (!this.field_70170_p.field_72995_K) this.field_70170_p.func_212866_a_((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
++      if (!this.field_70170_p.field_72995_K && this.func_70089_S()) this.field_70170_p.func_212866_a_((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
        this.func_70101_b(p_70080_7_, p_70080_8_);
     }

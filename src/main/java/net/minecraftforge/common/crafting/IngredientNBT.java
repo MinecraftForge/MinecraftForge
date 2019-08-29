@@ -23,12 +23,14 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 
+//TODO: 1.15 Rename to NBTIngredient to match naming.
 public class IngredientNBT extends Ingredient
 {
     private final ItemStack stack;
@@ -56,11 +58,25 @@ public class IngredientNBT extends Ingredient
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
-        return CraftingHelper.INGREDIENT_NBT;
+        return Serializer.INSTANCE;
+    }
+
+    @Override
+    public JsonElement serialize()
+    {
+        JsonObject json = new JsonObject();
+        json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
+        json.addProperty("item", stack.getItem().getRegistryName().toString());
+        json.addProperty("count", stack.getCount());
+        if (stack.hasTag())
+            json.addProperty("nbt", stack.getTag().toString());
+        return json;
     }
 
     public static class Serializer implements IIngredientSerializer<IngredientNBT>
     {
+        public static final Serializer INSTANCE = new Serializer();
+
         @Override
         public IngredientNBT parse(PacketBuffer buffer) {
             return new IngredientNBT(buffer.readItemStack());

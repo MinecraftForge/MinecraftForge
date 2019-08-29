@@ -177,7 +177,7 @@ public class BlockSnapshot
         BlockState current = getCurrentBlock();
         BlockState replaced = getReplacedBlock();
 
-        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.NOTIFY_LISTENERS;
+        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.BLOCK_UPDATE;
 
         if (current != replaced)
         {

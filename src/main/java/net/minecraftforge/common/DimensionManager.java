@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.MutableRegistry;
@@ -80,6 +83,7 @@ public class DimensionManager
     private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
     private static final Map<ResourceLocation, SavedEntry> savedEntries = new HashMap<>();
+    private static volatile Set<World> playerWorlds = new HashSet<>();
 
     /**
      * Registers a real unique dimension, Should be called on server init, or when the dimension is created.
@@ -144,7 +148,7 @@ public class DimensionManager
     /**
      * Retrieves the world from the server allowing for null return, and optionally resetting it's unload timer.
      *
-     * @param server The server that controlls this world.
+     * @param server The server that controls this world.
      * @param dim Dimension to load.
      * @param resetUnloadDelay True to reset the unload timer, which is a delay that is used to prevent constant world loading/unloading cycle.
      * @param forceLoad True to attempt to load the dimension if the server has it unloaded.
@@ -222,7 +226,8 @@ public class DimensionManager
         return world.getDimension().getType() != DimensionType.OVERWORLD
                 && world.getPlayers().isEmpty()
                 && world.getForcedChunks().isEmpty()
-                && !getData(world.getDimension().getType()).keepLoaded;
+                && !getData(world.getDimension().getType()).keepLoaded
+                && !playerWorlds.contains(world);
     }
 
     /**
@@ -450,7 +455,7 @@ public class DimensionManager
             this.name = new ResourceLocation(data.getString("name"));
             this.type = data.contains("type", 8) ? new ResourceLocation(data.getString("type")) : null;
             this.data = data.contains("data", 7) ? data.getByteArray("data") : null;
-            this.skyLight = data.contains("sky_light", 99) ? data.getByte("sky_light") == 0 : true;
+            this.skyLight = data.contains("sky_light", 99) ? data.getBoolean("sky_light") : true;
         }
 
         private SavedEntry(DimensionType data)
@@ -473,7 +478,7 @@ public class DimensionManager
                 ret.putString("type", type.toString());
             if (data != null)
                 ret.putByteArray("data", data);
-            ret.putByte("sky_light", (byte)(skyLight ? 1 : 0));
+            ret.putBoolean("sky_light", skyLight);
             return ret;
         }
     }
@@ -483,5 +488,11 @@ public class DimensionManager
         @Override public void start(ChunkPos center) { }
         @Override public void statusChanged(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
         @Override public void stop() { }
+    }
+
+    public static boolean rebuildPlayerMap(PlayerList players, boolean changed)
+    {
+        playerWorlds = players.getPlayers().stream().map(e -> e.world).collect(Collectors.toSet());
+        return changed;
     }
 }
