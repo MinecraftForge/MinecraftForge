@@ -22,8 +22,8 @@ package net.minecraftforge.event.village;
 import java.util.List;
 
 import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
+import net.minecraftforge.common.BasicTrade;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.trading.BasicTrade;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 

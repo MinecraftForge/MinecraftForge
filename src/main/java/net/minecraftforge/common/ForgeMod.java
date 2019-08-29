@@ -44,7 +44,6 @@ import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
-import net.minecraftforge.common.trading.VillagerTradingManager;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;

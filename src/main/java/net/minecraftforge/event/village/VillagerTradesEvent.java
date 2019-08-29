@@ -25,8 +25,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
+import net.minecraftforge.common.BasicTrade;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.trading.BasicTrade;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
