@@ -6,7 +6,7 @@
     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
 +   private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
     private static final AttributeModifier field_110157_c = (new AttributeModifier(field_110156_b, "Sprinting speed boost", (double)0.3F, AttributeModifier.Operation.MULTIPLY_TOTAL)).func_111168_a(false);
-+   private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling aceleration reduction", -0.07, AttributeModifier.Operation.ADDITION).func_111168_a(false); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
++   private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION).func_111168_a(false); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
 +   public static final net.minecraft.entity.ai.attributes.IAttribute SWIM_SPEED = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "forge.swimSpeed", 1.0D, 0.0D, 1024.0D).func_111112_a(true);
 +   public static final net.minecraft.entity.ai.attributes.IAttribute NAMETAG_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "forge.nameTagDistance", 64.0D, 0.0D, Float.MAX_VALUE).func_111112_a(true);
 +   public static final net.minecraft.entity.ai.attributes.IAttribute ENTITY_GRAVITY = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "forge.entity_gravity", 0.08D, -8.0D, 8.0D).func_111112_a(true);
