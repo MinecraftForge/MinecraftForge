@@ -252,7 +252,7 @@ public class ForgeEventFactory
         return event.getDropChance();
     }
 
-    public static BlockState fireFluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, BlockState state)
+    public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
     {
         BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(world, pos, liquidPos, state);
         MinecraftForge.EVENT_BUS.post(event);

@@ -1,0 +1,18 @@
+--- a/net/minecraft/block/FlowingFluidBlock.java
++++ b/net/minecraft/block/FlowingFluidBlock.java
+@@ -121,13 +121,13 @@
+          if (flag) {
+             IFluidState ifluidstate = p_204515_1_.func_204610_c(p_204515_2_);
+             if (ifluidstate.func_206889_d()) {
+-               p_204515_1_.func_175656_a(p_204515_2_, Blocks.field_150343_Z.func_176223_P());
++               p_204515_1_.func_175656_a(p_204515_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_204515_1_, p_204515_2_, p_204515_2_, Blocks.field_150343_Z.func_176223_P()));
+                this.func_180688_d(p_204515_1_, p_204515_2_);
+                return false;
+             }
+ 
+             if (ifluidstate.func_215679_a(p_204515_1_, p_204515_2_) >= 0.44444445F) {
+-               p_204515_1_.func_175656_a(p_204515_2_, Blocks.field_150347_e.func_176223_P());
++               p_204515_1_.func_175656_a(p_204515_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_204515_1_, p_204515_2_, p_204515_2_, Blocks.field_150347_e.func_176223_P()));
+                this.func_180688_d(p_204515_1_, p_204515_2_);
+                return false;
+             }
