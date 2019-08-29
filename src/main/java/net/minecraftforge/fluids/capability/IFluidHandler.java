@@ -67,7 +67,7 @@ public interface IFluidHandler
      * @param tank Tank to query.
      * @return FluidStack in a given tank. NULL if the tank is empty.
      */
-    @Nullable
+    @Nonnull
     FluidStack getFluidInTank(int tank);
 
     /**
@@ -106,7 +106,7 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
-    @Nullable
+    @Nonnull
     FluidStack drain(FluidStack resource, FluidAction action);
 
     /**
@@ -119,7 +119,7 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
-    @Nullable
+    @Nonnull
     FluidStack drain(int maxDrain, FluidAction action);
 
 }

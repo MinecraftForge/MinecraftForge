@@ -20,12 +20,17 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,8 +48,11 @@ public class FluidStack
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public int amount;
-    public CompoundNBT tag;
+    public static final FluidStack EMPTY = new FluidStack(Fluids.EMPTY, 0);
+
+    private boolean isEmpty;
+    private int amount;
+    private CompoundNBT tag;
     private IRegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
@@ -53,13 +61,13 @@ public class FluidStack
         {
             LOGGER.fatal("Null fluid supplied to fluidstack. Did you try and create a stack for an unregistered fluid?");
             throw new IllegalArgumentException("Cannot create a fluidstack from a null fluid");
-        }/* TODO fluids
-        else if (!FluidRegistry.isFluidRegistered(fluid))
+        }
+        else if (ForgeRegistries.FLUIDS.getKey(fluid) == null)
         {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getName(), fluid.getClass().getName());
+            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryName(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
-        } */
-        this.fluidDelegate = null; // TODO fluids FluidRegistry.makeDelegate(fluid);
+        }
+        this.fluidDelegate = fluid.delegate;
         this.amount = amount;
     }
 
@@ -69,7 +77,7 @@ public class FluidStack
 
         if (nbt != null)
         {
-            tag = (CompoundNBT) nbt.copy();
+            tag = nbt.copy();
         }
     }
 
@@ -82,35 +90,35 @@ public class FluidStack
      * This provides a safe method for retrieving a FluidStack - if the Fluid is invalid, the stack
      * will return as null.
      */
-    @Nullable
     public static FluidStack loadFluidStackFromNBT(CompoundNBT nbt)
     {
         if (nbt == null)
         {
-            return null;
+            return EMPTY;
         }
         if (!nbt.contains("FluidName", Constants.NBT.TAG_STRING))
         {
-            return null;
+            return EMPTY;
         }
 
-        String fluidName = nbt.getString("FluidName");
-        // TODO fluids if (FluidRegistry.getFluid(fluidName) == null)
+        ResourceLocation fluidName = new ResourceLocation(nbt.getString("FluidName"));
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+        if (fluid == null)
         {
-            return null;
-        }/*
-        FluidStack stack = new FluidStack(FluidRegistry.getFluid(fluidName), nbt.getInteger("Amount"));
-
-        if (nbt.hasKey("Tag"))
-        {
-            stack.tag = nbt.getCompoundTag("Tag");
+            return EMPTY;
         }
-        return stack;*/
+        FluidStack stack = new FluidStack(fluid, nbt.getInt("Amount"));
+
+        if (nbt.contains("Tag", Constants.NBT.TAG_COMPOUND))
+        {
+            stack.tag = nbt.getCompound("Tag");
+        }
+        return stack;
     }
 
     public CompoundNBT writeToNBT(CompoundNBT nbt)
     {
-        // TODO fluids bt.setString("FluidName", FluidRegistry.getFluidName(getFluid()));
+        nbt.putString("FluidName", getFluid().getRegistryName().toString());
         nbt.putInt("Amount", amount);
 
         if (tag != null)
@@ -120,9 +128,104 @@ public class FluidStack
         return nbt;
     }
 
+    public void writeToPacket(PacketBuffer buf)
+    {
+        buf.writeRegistryId(getFluid());
+        buf.writeVarInt(getAmount());
+        buf.writeCompoundTag(tag);
+    }
+
+    public static FluidStack readFromPacket(PacketBuffer buf)
+    {
+        Fluid fluid = buf.readRegistryId();
+        int amount = buf.readVarInt();
+        CompoundNBT tag = buf.readCompoundTag();
+        if (fluid == Fluids.EMPTY) return EMPTY;
+        return new FluidStack(fluid, amount, tag);
+    }
+
     public final Fluid getFluid()
     {
+        return isEmpty ? Fluids.EMPTY : fluidDelegate.get();
+    }
+
+    public final Fluid getRawFluid()
+    {
         return fluidDelegate.get();
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    protected void updateEmpty() {
+        isEmpty = getRawFluid() == Fluids.EMPTY || amount == 0;
+    }
+
+    public int getAmount()
+    {
+        return isEmpty ? 0 : amount ;
+    }
+
+    public void setAmount(int amount)
+    {
+        if (getRawFluid() == Fluids.EMPTY) throw new IllegalStateException("Can't modify the empty stack.");
+        if (amount < 0) throw new IllegalStateException("The amount can't be negative.");
+        this.amount = amount;
+        updateEmpty();
+    }
+
+    public void grow(int amount) {
+        setAmount(this.amount + amount);
+    }
+
+    public void shrink(int amount) {
+        setAmount(this.amount - amount);
+    }
+
+    public boolean hasTag()
+    {
+        return tag != null;
+    }
+
+    public CompoundNBT getTag()
+    {
+        return tag;
+    }
+
+    public void setTag(CompoundNBT tag)
+    {
+        if (getRawFluid() == Fluids.EMPTY) throw new IllegalStateException("Can't modify the empty stack.");
+        this.tag = tag;
+    }
+
+    public CompoundNBT getOrCreateTag()
+    {
+        if (tag == null)
+            setTag(new CompoundNBT());
+        return tag;
+    }
+
+    public CompoundNBT getChildTag(String childName)
+    {
+        if (tag == null)
+            return null;
+        return tag.getCompound(childName);
+    }
+
+    public CompoundNBT getOrCreateChildTag(String childName)
+    {
+        getOrCreateTag();
+        CompoundNBT child = tag.getCompound(childName);
+        if (child == null)
+            tag.put(childName, child = new CompoundNBT());
+        return child;
+    }
+
+    public void removeChildTag(String childName)
+    {
+        if (tag != null)
+            tag.remove(childName);
     }
 
     public ITextComponent getDisplayName()
@@ -150,9 +253,9 @@ public class FluidStack
      *            The FluidStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(@Nullable FluidStack other)
+    public boolean isFluidEqual(@Nonnull FluidStack other)
     {
-        return other != null && getFluid() == other.getFluid() && isFluidStackTagEqual(other);
+        return getFluid() == other.getFluid() && isFluidStackTagEqual(other);
     }
 
     private boolean isFluidStackTagEqual(FluidStack other)
@@ -163,9 +266,9 @@ public class FluidStack
     /**
      * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
      */
-    public static boolean areFluidStackTagsEqual(@Nullable FluidStack stack1, @Nullable FluidStack stack2)
+    public static boolean areFluidStackTagsEqual(@Nonnull FluidStack stack1, @Nonnull FluidStack stack2)
     {
-        return stack1 == null && stack2 == null || (stack1 != null && stack2 != null && stack1.isFluidStackTagEqual(stack2));
+        return stack1.isFluidStackTagEqual(stack2);
     }
 
     /**
@@ -174,7 +277,7 @@ public class FluidStack
      * @param other
      * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
      */
-    public boolean containsFluid(@Nullable FluidStack other)
+    public boolean containsFluid(@Nonnull FluidStack other)
     {
         return isFluidEqual(other) && amount >= other.amount;
     }

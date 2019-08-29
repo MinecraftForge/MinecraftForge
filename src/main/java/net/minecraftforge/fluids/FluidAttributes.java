@@ -24,6 +24,9 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -129,6 +132,7 @@ public class FluidAttributes
     private final Rarity rarity;
 
     private final Supplier<Block> blockSupplier;
+    private final Supplier<Item> bucketSupplier;
 
     /**
      * Color used by universal bucket and the ModelFluid baked model.
@@ -157,11 +161,17 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
+        this.bucketSupplier = builder.bucketSupplier;
     }
 
     public final String getName()
     {
         return this.fluidName;
+    }
+
+    public ItemStack getBucket(FluidStack stack)
+    {
+        return bucketSupplier != null ? new ItemStack(bucketSupplier.get()) : ItemStack.EMPTY;
     }
 
     public BlockState getBlock(IEnviromentBlockReader reader, BlockPos pos, IFluidState state)
@@ -353,6 +363,7 @@ public class FluidAttributes
         private SoundEvent fillSound;
         private SoundEvent emptySound;
         private Supplier<Block> blockSupplier;
+        private Supplier<Item> bucketSupplier;
         private int luminosity = 0;
         private int density = 1000;
         private int temperature = 300;
@@ -394,6 +405,12 @@ public class FluidAttributes
         public final Builder block(Supplier<Block> supplier)
         {
             blockSupplier = supplier;
+            return this;
+        }
+
+        public final Builder bucket(Supplier<Item> supplier)
+        {
+            bucketSupplier = supplier;
             return this;
         }
 

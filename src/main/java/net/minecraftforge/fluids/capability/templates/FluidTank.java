@@ -37,8 +37,8 @@ import java.util.function.Predicate;
 public class FluidTank implements IFluidHandler, IFluidTank {
 
     protected Predicate<FluidStack> validator;
-    @Nullable
-    protected FluidStack fluid = null;
+    @Nonnull
+    protected FluidStack fluid = FluidStack.EMPTY;
     protected int capacity;
 
     public FluidTank(int capacity)
@@ -76,6 +76,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return capacity;
     }
 
+    @Nonnull
     public FluidStack getFluid()
     {
         return fluid;
@@ -83,17 +84,12 @@ public class FluidTank implements IFluidHandler, IFluidTank {
 
     public int getFluidAmount()
     {
-
-        if (fluid == null)
-        {
-            return 0;
-        }
-        return fluid.amount;
+        return fluid.getAmount();
     }
 
     public FluidTank readFromNBT(CompoundNBT nbt) {
 
-        FluidStack fluid = null;
+        FluidStack fluid = FluidStack.EMPTY;
         if (!nbt.contains("Empty"))
         {
             fluid = FluidStack.loadFluidStackFromNBT(nbt);
@@ -121,7 +117,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return 1;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
 
@@ -151,67 +147,65 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         {
             if (fluid == null)
             {
-                return Math.min(capacity, resource.amount);
+                return Math.min(capacity, resource.getAmount());
             }
             if (!fluid.isFluidEqual(resource))
             {
                 return 0;
             }
-            return Math.min(capacity - fluid.amount, resource.amount);
+            return Math.min(capacity - fluid.getAmount(), resource.getAmount());
         }
         if (fluid == null)
         {
             onContentsChanged();
-            fluid = new FluidStack(resource, Math.min(capacity, resource.amount));
-            return fluid.amount;
+            fluid = new FluidStack(resource, Math.min(capacity, resource.getAmount()));
+            return fluid.getAmount();
         }
         if (!fluid.isFluidEqual(resource))
         {
             return 0;
         }
-        int filled = capacity - fluid.amount;
+        int filled = capacity - fluid.getAmount();
 
-        if (resource.amount < filled)
+        if (resource.getAmount() < filled)
         {
-            fluid.amount += resource.amount;
-            filled = resource.amount;
+            fluid.grow(resource.getAmount());
+            filled = resource.getAmount();
         }
         else
         {
-            fluid.amount = capacity;
+            fluid.setAmount(capacity);
         }
         return filled;
     }
 
+    @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
         if (resource == null || !resource.isFluidEqual(fluid))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
-        return drain(resource.amount, action);
+        return drain(resource.getAmount(), action);
     }
 
+    @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
-        if (fluid == null)
-        {
-            return null;
-        }
         int drained = maxDrain;
-        if (fluid.amount < drained)
+        if (fluid.getAmount() < drained)
         {
-            drained = fluid.amount;
+            drained = fluid.getAmount();
         }
         FluidStack stack = new FluidStack(fluid, drained);
         if (action.execute())
         {
-            fluid.amount -= drained;
-            if (fluid.amount <= 0)
+            fluid.shrink(drained);
+            if (fluid.getAmount() <= 0)
             {
-                fluid = null;
+                fluid = FluidStack.EMPTY;
             }
         }
         return stack;
@@ -229,16 +223,12 @@ public class FluidTank implements IFluidHandler, IFluidTank {
 
     public boolean isEmpty()
     {
-        return fluid == null || fluid.amount <= 0;
+        return fluid.isEmpty();
     }
 
     public int getSpace()
     {
-        if (fluid == null)
-        {
-            return capacity;
-        }
-        return fluid.amount >= capacity ? 0 : capacity - fluid.amount;
+        return Math.max(0, capacity - fluid.getAmount());
     }
 
 }

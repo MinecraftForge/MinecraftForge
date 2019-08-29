@@ -38,6 +38,7 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -66,8 +67,8 @@ import com.google.gson.JsonParser;
 public final class ModelFluid implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final ModelFluid WATER = null; // TODO fluids new ModelFluid(FluidRegistry.WATER);
-    public static final ModelFluid LAVA = null; // TODO fluids new ModelFluid(FluidRegistry.LAVA);
+    public static final ModelFluid WATER = new ModelFluid(Fluids.WATER);
+    public static final ModelFluid LAVA = new ModelFluid(Fluids.LAVA);
 
     private final Fluid fluid;
 

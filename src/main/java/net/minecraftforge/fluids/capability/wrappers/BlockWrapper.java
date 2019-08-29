@@ -51,7 +51,7 @@ public class BlockWrapper extends VoidFluidHandler
     public int fill(FluidStack resource, FluidAction action)
     {
         // NOTE: "Filling" means placement in this context!
-        if (resource.amount < FluidAttributes.BUCKET_VOLUME)
+        if (resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
         {
             return 0;
         }

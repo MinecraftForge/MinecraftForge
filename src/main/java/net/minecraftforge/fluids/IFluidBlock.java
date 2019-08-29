@@ -63,7 +63,7 @@ public interface IFluidBlock
      *            If SIMULATE, the drain will only be simulated.
      * @return
      */
-    @Nullable
+    @Nonnull
     FluidStack drain(World world, BlockPos pos, IFluidHandler.FluidAction action);
 
     /**

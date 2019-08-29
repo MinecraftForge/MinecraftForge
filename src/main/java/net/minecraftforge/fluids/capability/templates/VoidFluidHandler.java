@@ -38,7 +38,7 @@ public class VoidFluidHandler implements IFluidHandler
     @Override
     public int getTanks() { return 1; }
 
-    @Nullable
+    @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) { return null; }
 
@@ -51,17 +51,17 @@ public class VoidFluidHandler implements IFluidHandler
     @Override
     public int fill(FluidStack resource, FluidAction action)
     {
-        return resource.amount;
+        return resource.getAmount();
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
         return null;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {

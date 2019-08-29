@@ -68,13 +68,13 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         return container;
     }
 
-    @Nullable
+    @Nonnull
     public FluidStack getFluid()
     {
         CompoundNBT tagCompound = container.getTag();
         if (tagCompound == null || !tagCompound.contains(FLUID_NBT_KEY))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
         return FluidStack.loadFluidStackFromNBT(tagCompound.getCompound(FLUID_NBT_KEY));
     }
@@ -97,7 +97,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         return 1;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
 
@@ -119,20 +119,20 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @Override
     public int fill(FluidStack resource, FluidAction doFill)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource == null || resource.getAmount() <= 0 || !canFillFluidType(resource))
         {
             return 0;
         }
 
         FluidStack contained = getFluid();
-        if (contained == null)
+        if (contained.isEmpty())
         {
-            int fillAmount = Math.min(capacity, resource.amount);
+            int fillAmount = Math.min(capacity, resource.getAmount());
 
             if (doFill.execute())
             {
                 FluidStack filled = resource.copy();
-                filled.amount = fillAmount;
+                filled.setAmount(fillAmount);
                 setFluid(filled);
             }
 
@@ -142,10 +142,10 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         {
             if (contained.isFluidEqual(resource))
             {
-                int fillAmount = Math.min(capacity - contained.amount, resource.amount);
+                int fillAmount = Math.min(capacity - contained.getAmount(), resource.getAmount());
 
                 if (doFill.execute() && fillAmount > 0) {
-                    contained.amount += fillAmount;
+                    contained.grow(fillAmount);
                     setFluid(contained);
                 }
 
@@ -156,39 +156,41 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         }
     }
 
+    @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
+        if (container.getCount() != 1 || resource.isEmpty() || !resource.isFluidEqual(getFluid()))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
-        return drain(resource.amount, action);
+        return drain(resource.getAmount(), action);
     }
 
+    @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
         FluidStack contained = getFluid();
-        if (contained == null || contained.amount <= 0 || !canDrainFluidType(contained))
+        if (contained.isEmpty() || !canDrainFluidType(contained))
         {
-            return null;
+            return FluidStack.EMPTY;
         }
 
-        final int drainAmount = Math.min(contained.amount, maxDrain);
+        final int drainAmount = Math.min(contained.getAmount(), maxDrain);
 
         FluidStack drained = contained.copy();
-        drained.amount = drainAmount;
+        drained.setAmount(drainAmount);
 
         if (action.execute())
         {
-            contained.amount -= drainAmount;
-            if (contained.amount == 0)
+            contained.shrink(drainAmount);
+            if (contained.getAmount() == 0)
             {
                 setContainerToEmpty();
             }
@@ -217,7 +219,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
      */
     protected void setContainerToEmpty()
     {
-        container.getTag().remove(FLUID_NBT_KEY);
+        container.removeChildTag(FLUID_NBT_KEY);
     }
 
     @Override

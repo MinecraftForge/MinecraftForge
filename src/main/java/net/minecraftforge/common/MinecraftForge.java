@@ -52,8 +52,6 @@ public class MinecraftForge
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
-       // Load before all the mods, so MC owns the MC fluids
-       // TODO Fluids FluidRegistry.validateFluidRegistry();
        ForgeHooks.initTools();
 
        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine

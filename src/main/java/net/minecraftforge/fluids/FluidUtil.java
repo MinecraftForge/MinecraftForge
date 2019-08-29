@@ -28,14 +28,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -136,7 +135,7 @@ public class FluidUtil
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
                     FluidStack simulatedTransfer = tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, false);
-                    if (simulatedTransfer != null)
+                    if (!simulatedTransfer.isEmpty())
                     {
                         if (doFill)
                         {
@@ -182,7 +181,7 @@ public class FluidUtil
                     if (doDrain)
                     {
                         FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
-                        if (transfer != null)
+                        if (!transfer.isEmpty())
                         {
                             if (player != null)
                             {
@@ -196,7 +195,7 @@ public class FluidUtil
                     else
                     {
                         FluidStack simulatedTransfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, false);
-                        if (simulatedTransfer != null)
+                        if (!simulatedTransfer.isEmpty())
                         {
                             containerFluidHandler.drain(simulatedTransfer, IFluidHandler.FluidAction.SIMULATE);
                             ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -356,15 +355,15 @@ public class FluidUtil
      * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
      * @return the fluidStack that was transferred from the source to the destination. null on failure.
      */
-    @Nullable
+    @Nonnull
     public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doTransfer)
     {
         FluidStack drainable = fluidSource.drain(maxAmount, IFluidHandler.FluidAction.SIMULATE);
-        if (drainable != null && drainable.amount > 0)
+        if (!drainable.isEmpty())
         {
             return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
         }
-        return null;
+        return FluidStack.EMPTY;
     }
 
     /**
@@ -378,15 +377,15 @@ public class FluidUtil
      * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
      * @return the fluidStack that was transferred from the source to the destination. null on failure.
      */
-    @Nullable
+    @Nonnull
     public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack resource, boolean doTransfer)
     {
         FluidStack drainable = fluidSource.drain(resource, IFluidHandler.FluidAction.SIMULATE);
-        if (drainable != null && drainable.amount > 0 && resource.isFluidEqual(drainable))
+        if (!drainable.isEmpty() && resource.isFluidEqual(drainable))
         {
             return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
         }
-        return null;
+        return FluidStack.EMPTY;
     }
 
     /**
@@ -396,7 +395,7 @@ public class FluidUtil
      * Modders: Instead of this method, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, FluidStack, boolean)}
      * or {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, int, boolean)}.
      */
-    @Nullable
+    @Nonnull
     private static FluidStack tryFluidTransfer_Internal(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack drainable, boolean doTransfer)
     {
         int fillableAmount = fluidDestination.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
@@ -405,19 +404,19 @@ public class FluidUtil
             if (doTransfer)
             {
                 FluidStack drained = fluidSource.drain(fillableAmount, IFluidHandler.FluidAction.EXECUTE);
-                if (drained != null)
+                if (!drained.isEmpty())
                 {
-                    drained.amount = fluidDestination.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+                    drained.setAmount(fluidDestination.fill(drained, IFluidHandler.FluidAction.EXECUTE));
                     return drained;
                 }
             }
             else
             {
-                drainable.amount = fillableAmount;
+                drainable.setAmount(fillableAmount);
                 return drainable;
             }
         }
-        return null;
+        return FluidStack.EMPTY;
     }
 
     /**
@@ -466,16 +465,7 @@ public class FluidUtil
             {
                 return tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
             }
-        }/* TODO fluids blocks?
-        if (block instanceof IFluidBlock)
-        {
-            return OptionalCapabilityInstance.of(() -> new FluidBlockWrapper((IFluidBlock) block, world, blockPos));
         }
-        else if (block instanceof BlockLiquid)
-        {
-            return OptionalCapabilityInstance.of(() -> new BlockLiquidWrapper((BlockLiquid) block, world, blockPos));
-        }
-*/
         return LazyOptional.empty();
     }
 
@@ -501,15 +491,14 @@ public class FluidUtil
         BlockState state = worldIn.getBlockState(pos);
         Block block = state.getBlock();
 
-        /* TODO fluid blocks?
-        if (block instanceof IFluidBlock || block instanceof BlockLiquid)
+        if (block instanceof IFluidBlock)
         {
-            IFluidHandler targetFluidHandler = getFluidHandler(worldIn, pos, side);
+            IFluidHandler targetFluidHandler = getFluidHandler(worldIn, pos, side).orElse(null);
             if (targetFluidHandler != null)
             {
                 return tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
             }
-        }*/
+        }
         return FluidActionResult.FAILURE;
     }
 
@@ -554,7 +543,7 @@ public class FluidUtil
      */
     public static boolean tryPlaceFluid(@Nullable PlayerEntity player, World world, Hand hand, BlockPos pos, IFluidHandler fluidSource, FluidStack resource)
     {
-        if (world == null || resource == null || pos == null)
+        if (world == null || pos == null)
         {
             return false;
         }
@@ -614,19 +603,8 @@ public class FluidUtil
      */
     private static IFluidHandler getFluidBlockHandler(Fluid fluid, World world, BlockPos pos)
     {
-        BlockState state = fluid.getAttributes().getBlock(world, pos, fluid.getDefaultState());/* TODO fluid blocks?
-        if (block instanceof IFluidBlock)
-        {
-            return new FluidBlockWrapper((IFluidBlock) block, world, pos);
-        }
-        else if (block instanceof BlockLiquid)
-        {
-            return new BlockLiquidWrapper((BlockLiquid) block, world, pos);
-        }
-        else*/
-        {
-            return new BlockWrapper(state, world, pos);
-        }
+        BlockState state = fluid.getAttributes().getBlock(world, pos, fluid.getDefaultState());
+        return new BlockWrapper(state, world, pos);
     }
 
     /**
@@ -661,38 +639,25 @@ public class FluidUtil
      */
     @Nonnull
     public static ItemStack getFilledBucket(@Nonnull FluidStack fluidStack)
-    {/* TODO fluids
+    {
         Fluid fluid = fluidStack.getFluid();
 
-        if (fluidStack.tag == null || fluidStack.tag.isEmpty())
+        if (!fluidStack.hasTag() || fluidStack.getTag().isEmpty())
         {
-            if (fluid == FluidRegistry.WATER)
+            if (fluid == Fluids.WATER)
             {
                 return new ItemStack(Items.WATER_BUCKET);
             }
-            else if (fluid == FluidRegistry.LAVA)
+            else if (fluid == Fluids.LAVA)
             {
                 return new ItemStack(Items.LAVA_BUCKET);
             }
-            else if (fluid.getName().equals("milk"))
+            else if (fluid.getRegistryName().equals(new ResourceLocation("milk")))
             {
                 return new ItemStack(Items.MILK_BUCKET);
             }
         }
 
-        if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
-        {
-            UniversalBucket bucket = ForgeMod.getInstance().universalBucket;
-            ItemStack filledBucket = new ItemStack(bucket);
-            FluidStack fluidContents = new FluidStack(fluidStack, bucket.getCapacity());
-
-            NBTTagCompound tag = new NBTTagCompound();
-            fluidContents.writeToNBT(tag);
-            filledBucket.setTagCompound(tag);
-
-            return filledBucket;
-        }
-*/
-        return ItemStack.EMPTY;
+        return fluid.getAttributes().getBucket(fluidStack);
     }
 }

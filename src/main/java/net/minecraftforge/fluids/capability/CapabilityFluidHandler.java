@@ -55,14 +55,7 @@ public class CapabilityFluidHandler
 			CompoundNBT nbt = new CompoundNBT();
 			FluidTank tank = (FluidTank) instance;
 			FluidStack fluid = tank.getFluid();
-			if (fluid != null)
-			{
-				fluid.writeToNBT(nbt);
-			}
-			else
-			{
-				nbt.putString("Empty", "");
-			}
+			fluid.writeToNBT(nbt);
 			nbt.putInt("Capacity", tank.getCapacity());
 			return nbt;
 		}

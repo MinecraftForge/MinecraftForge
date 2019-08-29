@@ -44,6 +44,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -190,8 +191,8 @@ public final class ModelDynBucket implements IUnbakedModel
     @Override
     public ModelDynBucket process(ImmutableMap<String, String> customData)
     {
-        String fluidName = customData.get("fluid");
-        Fluid fluid = null; // TODO fluids FluidRegistry.getFluid(fluidName);
+        ResourceLocation fluidName = new ResourceLocation(customData.get("fluid"));
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
 
         if (fluid == null) fluid = this.fluid;
 
