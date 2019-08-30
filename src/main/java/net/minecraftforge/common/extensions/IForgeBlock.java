@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.FarmlandBlock;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
@@ -1031,6 +1032,6 @@ public interface IForgeBlock
      */
     default boolean collisionExtendsVertically(BlockState state, IBlockReader world, BlockPos pos, Entity collidingEntity)
     {
-        return false;
+        return getBlock().isIn(BlockTags.FENCES) || getBlock().isIn(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
     }
 }

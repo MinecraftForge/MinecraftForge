@@ -74,7 +74,7 @@
              BlockState blockstate1 = this.field_70170_p.func_180495_p(blockpos1);
              Block block = blockstate1.func_177230_c();
 -            if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock) {
-+            if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock || blockstate.collisionExtendsVertically(this.field_70170_p, blockpos, this)) {
++            if (blockstate.collisionExtendsVertically(this.field_70170_p, blockpos, this)) {
                 blockstate = blockstate1;
                 blockpos = blockpos1;
              }
