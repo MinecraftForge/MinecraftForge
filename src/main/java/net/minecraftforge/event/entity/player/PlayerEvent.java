@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -33,7 +34,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 
@@ -516,6 +516,35 @@ public class PlayerEvent extends LivingEvent
         public DimensionType getTo()
         {
             return this.toDim;
+        }
+    }
+
+    public static class PlayerSizeEvent extends PlayerEvent {
+        private final EntitySize originalSize;
+        @Nonnull
+        private EntitySize size;
+
+        public PlayerSizeEvent(PlayerEntity player, @Nonnull EntitySize size)
+        {
+            super(player);
+            this.originalSize = size;
+            this.size = size;
+        }
+
+        public EntitySize getOriginalSize()
+        {
+            return originalSize;
+        }
+
+        public void setSize(@Nonnull EntitySize size)
+        {
+            this.size = size;
+        }
+
+        @Nonnull
+        public EntitySize getSize()
+        {
+            return size;
         }
     }
 }

@@ -437,6 +437,15 @@
        return this.func_208016_c(itextcomponent);
     }
  
+@@ -1878,7 +1996,7 @@
+    }
+ 
+    public EntitySize func_213305_a(Pose p_213305_1_) {
+-      return field_213836_b.getOrDefault(p_213305_1_, field_213835_bs);
++      return net.minecraftforge.event.ForgeEventFactory.getPlayerSize(this, field_213836_b.getOrDefault(p_213305_1_, field_213835_bs));
+    }
+ 
+    public ItemStack func_213356_f(ItemStack p_213356_1_) {
 @@ -1939,4 +2057,44 @@
           return this.field_221260_g;
        }
