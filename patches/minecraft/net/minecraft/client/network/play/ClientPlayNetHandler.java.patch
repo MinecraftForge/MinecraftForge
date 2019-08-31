@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/network/play/ClientPlayNetHandler.java
 +++ b/net/minecraft/client/network/play/ClientPlayNetHandler.java
-@@ -366,6 +366,7 @@
+@@ -356,6 +356,7 @@
+ 
+       this.field_147299_f.field_184132_p.func_217737_a();
+       this.field_147299_f.field_71439_g.func_70065_x();
++      net.minecraftforge.fml.client.ClientHooks.firePlayerLogin(this.field_147299_f.field_71442_b, this.field_147299_f.field_71439_g, this.field_147299_f.func_147114_u().func_147298_b());
+       int i = p_147282_1_.func_149197_c();
+       this.field_147300_g.func_217408_a(i, this.field_147299_f.field_71439_g);
+       this.field_147299_f.field_71439_g.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
+@@ -366,6 +367,7 @@
        this.field_147299_f.field_71439_g.func_145769_d(i);
        this.field_147299_f.field_71439_g.func_175150_k(p_147282_1_.func_179744_h());
        this.field_147299_f.field_71442_b.func_78746_a(p_147282_1_.func_149198_e());
@@ -8,7 +16,7 @@
        this.field_147299_f.field_71474_y.func_82879_c();
        this.field_147302_e.func_179290_a(new CCustomPayloadPacket(CCustomPayloadPacket.field_210344_a, (new PacketBuffer(Unpooled.buffer())).func_180714_a(ClientBrandRetriever.getClientModName())));
        this.field_147299_f.func_213229_ar().func_216814_a();
-@@ -714,7 +715,7 @@
+@@ -714,7 +716,7 @@
           BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
           TileEntity tileentity = this.field_147300_g.func_175625_s(blockpos);
           if (tileentity != null) {
@@ -17,7 +25,7 @@
           }
        }
  
-@@ -790,7 +791,9 @@
+@@ -790,7 +792,9 @@
  
     public void func_147251_a(SChatPacket p_147251_1_) {
        PacketThreadUtil.func_218797_a(p_147251_1_, this, this.field_147299_f);
@@ -28,15 +36,18 @@
     }
  
     public void func_147279_a(SAnimateHandPacket p_147279_1_) {
-@@ -962,6 +965,7 @@
+@@ -962,8 +966,10 @@
        this.field_147299_f.field_71439_g = clientplayerentity1;
        this.field_147299_f.field_175622_Z = clientplayerentity1;
        clientplayerentity1.func_184212_Q().func_187218_a(clientplayerentity.func_184212_Q().func_187231_c());
 +      clientplayerentity1.updateSyncFields(clientplayerentity); // Forge: fix MC-10657
        clientplayerentity1.func_70065_x();
        clientplayerentity1.func_175158_f(s);
++      net.minecraftforge.fml.client.ClientHooks.firePlayerRespawn(this.field_147299_f.field_71442_b, clientplayerentity, clientplayerentity1, clientplayerentity1.field_71174_a.func_147298_b());
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
-@@ -1084,6 +1088,12 @@
+       clientplayerentity1.field_70177_z = -180.0F;
+       clientplayerentity1.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
+@@ -1084,6 +1090,12 @@
           boolean flag = i == 2 && tileentity instanceof CommandBlockTileEntity;
           if (i == 1 && tileentity instanceof MobSpawnerTileEntity || flag || i == 3 && tileentity instanceof BeaconTileEntity || i == 4 && tileentity instanceof SkullTileEntity || i == 6 && tileentity instanceof BannerTileEntity || i == 7 && tileentity instanceof StructureBlockTileEntity || i == 8 && tileentity instanceof EndGatewayTileEntity || i == 9 && tileentity instanceof SignTileEntity || i == 11 && tileentity instanceof BedTileEntity || i == 5 && tileentity instanceof ConduitTileEntity || i == 12 && tileentity instanceof JigsawTileEntity || i == 13 && tileentity instanceof CampfireTileEntity) {
              tileentity.func_145839_a(p_147273_1_.func_148857_g());
@@ -49,7 +60,7 @@
           }
  
           if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
-@@ -1253,6 +1263,7 @@
+@@ -1253,6 +1265,7 @@
        clientrecipebook.func_199644_c();
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -57,7 +68,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1333,7 +1344,7 @@
+@@ -1333,7 +1346,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -66,7 +77,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1766,10 +1777,12 @@
+@@ -1766,10 +1779,12 @@
  
              this.field_147299_f.field_184132_p.field_217741_m.func_217692_a(pointofinterestdebugrenderer$braininfo);
           } else {

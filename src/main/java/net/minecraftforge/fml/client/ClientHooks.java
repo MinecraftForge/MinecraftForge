@@ -34,9 +34,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
 import net.minecraft.client.gui.screen.WorldSelectionScreen;
+import net.minecraft.client.multiplayer.PlayerController;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.ModList;
@@ -308,5 +312,18 @@ public class ClientHooks
         }
         logger.error(Strings.repeat("+=", 25));
     }
+
+    public static void firePlayerLogin(PlayerController pc, ClientPlayerEntity player, NetworkManager networkManager) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedInEvent(pc, player, networkManager));
+    }
+
+    public static void firePlayerLogout(PlayerController pc, ClientPlayerEntity player) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getNetworkManager() : null : null));
+    }
+
+    public static void firePlayerRespawn(PlayerController pc, ClientPlayerEntity oldPlayer, ClientPlayerEntity newPlayer, NetworkManager networkManager) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.RespawnEvent(pc, oldPlayer, newPlayer, networkManager));
+    }
+
 
 }
