@@ -115,7 +115,7 @@ public class ModLoader
         this.loadingWarnings = FMLLoader.getLoadingModList().
                 getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
                     InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
-        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
+        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.init());
         CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
         CrashReportExtender.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);

@@ -20,8 +20,10 @@
 package net.minecraftforge.fml.network;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,6 +79,14 @@ public class NetworkHooks
     {
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NOVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
+    }
+
+    public synchronized static void sendMCRegistryPackets(NetworkManager manager, String direction) {
+        final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
+                filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
+                collect(Collectors.toSet());
+        FMLMCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
+        FMLMCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }
 
     public static void handleClientLoginSuccess(NetworkManager manager) {

@@ -20,8 +20,12 @@
 package net.minecraftforge.fml.network;
 
 import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.network.event.EventNetworkChannel;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.RegistryManager;
+
+import java.util.Arrays;
+import java.util.List;
 
 class NetworkInitialization {
 
@@ -75,12 +79,12 @@ class NetworkInitialization {
     }
 
     public static SimpleChannel getPlayChannel() {
-         SimpleChannel playChannel = NetworkRegistry.ChannelBuilder
-                .named(FMLNetworkConstants.FML_PLAY_RESOURCE)
-                .clientAcceptedVersions(a -> true)
-                .serverAcceptedVersions(a -> true)
-                .networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION)
-                .simpleChannel();
+         SimpleChannel playChannel = NetworkRegistry.ChannelBuilder.
+                named(FMLNetworkConstants.FML_PLAY_RESOURCE).
+                clientAcceptedVersions(a -> true).
+                serverAcceptedVersions(a -> true).
+                networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
+                simpleChannel();
 
         playChannel.messageBuilder(FMLPlayMessages.SpawnEntity.class, 0).
                 decoder(FMLPlayMessages.SpawnEntity::decode).
@@ -97,5 +101,21 @@ class NetworkInitialization {
         return playChannel;
     }
 
-
+    public static List<EventNetworkChannel> buildMCRegistrationChannels() {
+        final EventNetworkChannel mcRegChannel = NetworkRegistry.ChannelBuilder.
+                named(FMLNetworkConstants.MC_REGISTER_RESOURCE).
+                clientAcceptedVersions(a -> true).
+                serverAcceptedVersions(a -> true).
+                networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
+                eventNetworkChannel();
+        mcRegChannel.addListener(FMLMCRegisterPacketHandler.INSTANCE::registerListener);
+        final EventNetworkChannel mcUnregChannel = NetworkRegistry.ChannelBuilder.
+                named(FMLNetworkConstants.MC_UNREGISTER_RESOURCE).
+                clientAcceptedVersions(a -> true).
+                serverAcceptedVersions(a -> true).
+                networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
+                eventNetworkChannel();
+        mcUnregChannel.addListener(FMLMCRegisterPacketHandler.INSTANCE::unregisterListener);
+        return Arrays.asList(mcRegChannel, mcUnregChannel);
+    }
 }

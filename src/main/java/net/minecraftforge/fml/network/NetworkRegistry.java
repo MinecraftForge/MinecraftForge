@@ -125,15 +125,15 @@ public class NetworkRegistry
      */
     private static NetworkInstance createInstance(ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
     {
-        if(lock && !name.getNamespace().equals("fml")){
+        if(lock) {
             LOGGER.error(NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
             throw new IllegalArgumentException("Registration of network channels is locked");
         }
-        final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
         if (instances.containsKey(name)) {
             LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
             throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
         }
+        final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
         instances.put(name, networkInstance);
         return networkInstance;
     }
