@@ -82,26 +82,38 @@ public class NewFluidTest
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        (test_fluid = new MyFlowingFluid.Source()).setRegistryName("forge:test_fluid");
-        test_fluid_flowing = new MyFlowingFluid.Flowing().setRegistryName("forge:test_fluid_flowing");
-
         event.getRegistry().registerAll(
-                new FlowingFluidBlock(test_fluid, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
-                {}
-                .setRegistryName("forge:test_fluid_block")
+                new FlowingFluidBlock(Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+                {
+                    @Override
+                    public FlowingFluid getFluid()
+                    {
+                        return test_fluid;
+                    }
+                }.setRegistryName("forge:test_fluid_block")
         );
     }
 
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new BucketItem(test_fluid, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC)).setRegistryName("forge:test_fluid_bucket")
+                new BucketItem(new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
+                {
+                    @Override
+                    public Fluid getFluid()
+                    {
+                        return test_fluid;
+                    }
+                }.setRegistryName("forge:test_fluid_bucket")
         );
     }
 
     public void registerFluids(RegistryEvent.Register<Fluid> event)
     {
-        event.getRegistry().registerAll(test_fluid, test_fluid_flowing);
+        event.getRegistry().registerAll(
+                new MyFlowingFluid.Source().setRegistryName("forge:test_fluid"),
+                new MyFlowingFluid.Flowing().setRegistryName("forge:test_fluid_flowing")
+        );
     }
 
     public void loadComplete(FMLLoadCompleteEvent event)
