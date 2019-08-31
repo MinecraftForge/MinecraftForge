@@ -23,27 +23,27 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.LanguageMap;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.item.Rarity;
 
@@ -67,10 +67,8 @@ public class FluidAttributes
 {
     public static final int BUCKET_VOLUME = 1000;
 
-    /** The unique identification name for this fluid. */
-    private final String fluidName;
+    private final Fluid owner;
 
-    /** The translation key of this fluid. */
     private String translationKey;
 
     private final ResourceLocation stillTexture;
@@ -141,9 +139,11 @@ public class FluidAttributes
      */
     private final int color;
 
+    private final boolean useBiomeWaterColor;
+
     protected FluidAttributes(Builder builder)
     {
-        this.fluidName = builder.name;
+        this.owner = builder.owner;
         this.translationKey = builder.translationKey;
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
@@ -157,11 +157,7 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-    }
-
-    public final String getName()
-    {
-        return this.fluidName;
+        this.useBiomeWaterColor = builder.useBiomeWaterColor;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -252,7 +248,7 @@ public class FluidAttributes
      */
     public String getTranslationKey()
     {
-        return "fluid." + this.translationKey;
+        return this.translationKey;
     }
 
     /* Default Accessors */
@@ -289,6 +285,11 @@ public class FluidAttributes
     public int getColor()
     {
         return color;
+    }
+
+    public boolean getUseBiomeWaterColor()
+    {
+        return useBiomeWaterColor;
     }
 
     public ResourceLocation getStillTexture()
@@ -343,17 +344,24 @@ public class FluidAttributes
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
     public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
 
-    public static Builder builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-        return new Builder(name, stillTexture, flowingTexture);
+    public static Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+        return new Builder(owner, stillTexture, flowingTexture);
+    }
+
+    public Stream<ResourceLocation> getTextures()
+    {
+        if (overlayTexture != null)
+            return Stream.of(stillTexture, flowingTexture, overlayTexture);
+        return Stream.of(stillTexture, flowingTexture);
     }
 
     public static class Builder
     {
-        private final String name;
+        private final Fluid owner;
         private final ResourceLocation stillTexture;
         private final ResourceLocation flowingTexture;
         private ResourceLocation overlayTexture;
-        private int color = 0xFFFFFF;
+        private int color = 0xFFFFFFFF;
         private String translationKey;
         private SoundEvent fillSound;
         private SoundEvent emptySound;
@@ -363,12 +371,13 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
+        private boolean useBiomeWaterColor = false;
 
-        protected Builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            this.name = name.toLowerCase(Locale.ENGLISH);
+        protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            this.owner = owner;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
-            this.translationKey = "fluid." + this.name + ".name";
+            this.translationKey = Util.makeTranslationKey("fluid", owner.getRegistryName());
         }
 
         public final Builder translationKey(String translationKey)
@@ -383,9 +392,9 @@ public class FluidAttributes
             return this;
         }
 
-        public final Builder vanillaColor()
+        public final Builder useBiomeWaterColor()
         {
-            this.color = -1;
+            this.useBiomeWaterColor = true;
             return this;
         }
 

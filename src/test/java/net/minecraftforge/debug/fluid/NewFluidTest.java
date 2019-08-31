@@ -114,8 +114,6 @@ public class NewFluidTest
         Validate.isTrue(stack.getItem() == Fluids.WATER.getFilledBucket());
     }
 
-    private static final FluidAttributes ATTRIBUTES = FluidAttributes.builder("test_fluid", FLUID_STILL, FLUID_FLOWING).build();
-
     private static abstract class MyFlowingFluid extends FlowingFluid
     {
         @Override
@@ -198,9 +196,9 @@ public class NewFluidTest
         }
 
         @Override
-        protected FluidAttributes createAttributes(Fluid fluid)
+        protected FluidAttributes createAttributes()
         {
-            return ATTRIBUTES;
+            return FluidAttributes.builder(this, FLUID_STILL, FLUID_FLOWING).color(0x1080FF).build();
         }
 
         public static class Flowing extends MyFlowingFluid
