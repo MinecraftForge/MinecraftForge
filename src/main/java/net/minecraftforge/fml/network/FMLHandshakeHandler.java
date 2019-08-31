@@ -28,6 +28,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.util.ThreeConsumer;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
@@ -129,6 +131,46 @@ public class FMLHandshakeHandler {
             this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, false);
             LOGGER.debug(FMLHSMARKER, "Starting new modded network connection. Found {} messages to dispatch.", this.messageList.size());
         }
+    }
+
+    /**
+     * Transforms a two-argument instance method reference into a {@link BiConsumer} based on the {@link #getHandshake(Supplier)} function.
+     *
+     * This should only be used for login message types.
+     *
+     * @param consumer A two argument instance method reference
+     * @param <MSG> message type
+     * @return A {@link BiConsumer} for use in message handling
+     */
+    public static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> biConsumerFor(ThreeConsumer<FMLHandshakeHandler, ? super MSG, ? super Supplier<NetworkEvent.Context>> consumer)
+    {
+        return (m, c) -> ThreeConsumer.bindArgs(consumer, m, c).accept(getHandshake(c));
+    }
+
+    /**
+     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(FMLHandshakeMessages.LoginIndexedMessage, Supplier)}
+     * method to handle index tracking. Used for client to server replies.
+     *
+     * This should only be used for login messages.
+     *
+     * @param next The method reference to call after index handling
+     * @param <MSG> message type
+     * @return A {@link BiConsumer} for use in message handling
+     */
+    public static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> indexFirst(ThreeConsumer<FMLHandshakeHandler, MSG, Supplier<NetworkEvent.Context>> next)
+    {
+        final BiConsumer<MSG, Supplier<NetworkEvent.Context>> loginIndexedMessageSupplierBiConsumer = biConsumerFor(FMLHandshakeHandler::handleIndexedMessage);
+        return loginIndexedMessageSupplierBiConsumer.andThen(biConsumerFor(next));
+    }
+
+    /**
+     * Retrieve the handshake from the {@link NetworkEvent.Context}
+     *
+     * @param contextSupplier the {@link NetworkEvent.Context}
+     * @return The handshake handler for the connection
+     */
+    private static FMLHandshakeHandler getHandshake(Supplier<NetworkEvent.Context> contextSupplier) {
+        return contextSupplier.get().attr(FMLNetworkConstants.FML_HANDSHAKE_HANDLER).get();
     }
 
     void handleServerModListOnClient(FMLHandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
