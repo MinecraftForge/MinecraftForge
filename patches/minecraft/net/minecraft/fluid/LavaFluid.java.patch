@@ -1,0 +1,29 @@
+--- a/net/minecraft/fluid/LavaFluid.java
++++ b/net/minecraft/fluid/LavaFluid.java
+@@ -76,7 +76,7 @@
+                BlockState blockstate = p_207186_1_.func_180495_p(blockpos);
+                if (blockstate.func_196958_f()) {
+                   if (this.func_176369_e(p_207186_1_, blockpos)) {
+-                     p_207186_1_.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                     p_207186_1_.func_175656_a(blockpos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_207186_1_, blockpos, p_207186_2_, Blocks.field_150480_ab.func_176223_P()));
+                      return;
+                   }
+                } else if (blockstate.func_185904_a().func_76230_c()) {
+@@ -91,7 +91,7 @@
+                }
+ 
+                if (p_207186_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_207186_1_, blockpos1)) {
+-                  p_207186_1_.func_175656_a(blockpos1.func_177984_a(), Blocks.field_150480_ab.func_176223_P());
++                  p_207186_1_.func_175656_a(blockpos1.func_177984_a(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_207186_1_, blockpos1.func_177984_a(), p_207186_2_, Blocks.field_150480_ab.func_176223_P()));
+                }
+             }
+          }
+@@ -169,7 +169,7 @@
+          IFluidState ifluidstate = p_205574_1_.func_204610_c(p_205574_2_);
+          if (this.func_207185_a(FluidTags.field_206960_b) && ifluidstate.func_206884_a(FluidTags.field_206959_a)) {
+             if (p_205574_3_.func_177230_c() instanceof FlowingFluidBlock) {
+-               p_205574_1_.func_180501_a(p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3);
++               p_205574_1_.func_180501_a(p_205574_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_205574_1_, p_205574_2_, p_205574_2_, Blocks.field_150348_b.func_176223_P()), 3);
+             }
+ 
+             this.func_205581_a(p_205574_1_, p_205574_2_);
