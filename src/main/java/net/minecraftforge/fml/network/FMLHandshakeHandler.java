@@ -38,15 +38,11 @@ import org.apache.logging.log4j.MarkerManager;
 
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
@@ -142,7 +138,7 @@ public class FMLHandshakeHandler {
      * @param <MSG> message type
      * @return A {@link BiConsumer} for use in message handling
      */
-    public static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> biConsumerFor(ThreeConsumer<FMLHandshakeHandler, ? super MSG, ? super Supplier<NetworkEvent.Context>> consumer)
+    public static <MSG extends IntSupplier> BiConsumer<MSG, Supplier<NetworkEvent.Context>> biConsumerFor(ThreeConsumer<FMLHandshakeHandler, ? super MSG, ? super Supplier<NetworkEvent.Context>> consumer)
     {
         return (m, c) -> ThreeConsumer.bindArgs(consumer, m, c).accept(getHandshake(c));
     }
@@ -157,7 +153,7 @@ public class FMLHandshakeHandler {
      * @param <MSG> message type
      * @return A {@link BiConsumer} for use in message handling
      */
-    public static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> indexFirst(ThreeConsumer<FMLHandshakeHandler, MSG, Supplier<NetworkEvent.Context>> next)
+    public static <MSG extends IntSupplier> BiConsumer<MSG, Supplier<NetworkEvent.Context>> indexFirst(ThreeConsumer<FMLHandshakeHandler, MSG, Supplier<NetworkEvent.Context>> next)
     {
         final BiConsumer<MSG, Supplier<NetworkEvent.Context>> loginIndexedMessageSupplierBiConsumer = biConsumerFor(FMLHandshakeHandler::handleIndexedMessage);
         return loginIndexedMessageSupplierBiConsumer.andThen(biConsumerFor(next));
@@ -194,12 +190,12 @@ public class FMLHandshakeHandler {
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
-    <MSG extends FMLHandshakeMessages.LoginIndexedMessage> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
+    <MSG extends IntSupplier> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Received client indexed reply {} of type {}", message.getLoginIndex(), message.getClass().getName());
-        boolean removed = this.sentMessages.removeIf(i->i==message.getLoginIndex());
+        LOGGER.debug(FMLHSMARKER, "Received client indexed reply {} of type {}", message.getAsInt(), message.getClass().getName());
+        boolean removed = this.sentMessages.removeIf(i-> i == message.getAsInt());
         if (!removed) {
-            LOGGER.error(FMLHSMARKER, "Recieved unexpected index {} in client reply", message.getLoginIndex());
+            LOGGER.error(FMLHSMARKER, "Recieved unexpected index {} in client reply", message.getAsInt());
         }
     }
 
