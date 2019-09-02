@@ -87,6 +87,10 @@ public class ModelDataManager
                 {
                     data.put(pos, toUpdate.getModelData());
                 }
+                else
+                {
+                    data.remove(pos);
+                }
             }
         }
     }
