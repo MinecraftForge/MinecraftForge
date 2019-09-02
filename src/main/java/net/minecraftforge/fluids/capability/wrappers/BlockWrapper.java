@@ -20,10 +20,11 @@
 package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
@@ -35,30 +36,30 @@ import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
  */
 public class BlockWrapper extends VoidFluidHandler
 {
-    protected final Block block;
+    protected final BlockState state;
     protected final World world;
     protected final BlockPos blockPos;
 
-    public BlockWrapper(Block block, World world, BlockPos blockPos)
+    public BlockWrapper(BlockState state, World world, BlockPos blockPos)
     {
-        this.block = block;
+        this.state = state;
         this.world = world;
         this.blockPos = blockPos;
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, FluidAction action)
     {
         // NOTE: "Filling" means placement in this context!
-        if (resource.amount < Fluid.BUCKET_VOLUME)
+        if (resource.getAmount() < FluidAttributes.BUCKET_VOLUME)
         {
             return 0;
         }
-        if (doFill)
+        if (action.execute())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
-            world.setBlockState(blockPos, block.getDefaultState(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
+            world.setBlockState(blockPos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }
-        return Fluid.BUCKET_VOLUME;
+        return FluidAttributes.BUCKET_VOLUME;
     }
 }

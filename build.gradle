@@ -40,9 +40,9 @@ import org.objectweb.asm.ClassReader
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
-    id 'org.ajoberstar.grgit' version '2.3.0'
+    id 'org.ajoberstar.grgit' version '3.1.1'
     id 'de.undercouch.download' version '3.3.0'
-    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'com.github.ben-manes.versions' version '0.22.0'
 }
 apply plugin: 'eclipse'
 
@@ -58,7 +58,7 @@ ext {
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
     MC_VERSION = '1.14.4'
-    MCP_VERSION = '20190719.225934'
+    MCP_VERSION = '20190829.143755'
 }
 
 project(':mcp') {
@@ -80,7 +80,7 @@ project(':clean') {
     }
     
     dependencies {
-        implementation 'net.minecraftforge:forgespi:0.13.+'
+        implementation 'net.minecraftforge:forgespi:1.1.+'
     }
     patcher {
         parent = project(':mcp')
@@ -191,8 +191,8 @@ project(':forge') {
 
     def getVersion = {
         //TAG-offset-hash
-        def raw = grgit.describe(longDescr: true)
-        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true)).split('-') as List
+        def raw = grgit.describe(longDescr: true, tags:true)
+        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true, tags:true)).split('-') as List
         def hash = desc.remove(desc.size() - 1)
         def offset = desc.remove(desc.size() - 1)
         def tag = desc.join('-')
@@ -314,6 +314,19 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
+
+            forge_test_data {
+                parent runs.forge_data
+                taskName 'forge_test_data'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    tests { sources  sourceSets.test }
+                }
+                
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+            }
         }
     }
     
@@ -393,20 +406,20 @@ project(':forge') {
         installer 'org.ow2.asm:asm-tree:6.2'
         installer 'cpw.mods:modlauncher:3.2.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
-        installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
-        installer 'net.minecraftforge:eventbus:0.10.+:service'
-        installer 'net.minecraftforge:forgespi:0.13.+'
-        installer 'net.minecraftforge:coremods:0.7.+'
+        installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
+        installer 'net.minecraftforge:eventbus:1.0.+:service'
+        installer 'net.minecraftforge:forgespi:1.3.+'
+        installer 'net.minecraftforge:coremods:1.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'
-        installer 'org.jline:jline:3.9.0'
+        installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
-        installer 'net.minecrell:terminalconsoleappender:1.1.+'
+        installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'

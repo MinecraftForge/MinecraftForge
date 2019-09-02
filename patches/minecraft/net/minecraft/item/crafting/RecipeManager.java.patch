@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -50,8 +50,13 @@
+@@ -50,9 +50,18 @@
  
        for(Entry<ResourceLocation, JsonObject> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -12,5 +12,10 @@
 +               continue;
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, entry.getValue());
++            if (irecipe == null) {
++               field_199521_c.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++               continue;
++            }
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
+             }).put(resourcelocation, irecipe);

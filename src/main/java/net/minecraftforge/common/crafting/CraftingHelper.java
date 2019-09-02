@@ -19,18 +19,11 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
-import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
-
-import net.minecraftforge.fml.ModList;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -40,24 +33,21 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.Ingredient.IItemList;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -65,71 +55,17 @@ import org.apache.logging.log4j.MarkerManager;
 
 public class CraftingHelper
 {
+    @SuppressWarnings("unused")
     private static final Logger LOGGER = LogManager.getLogger();
+    @SuppressWarnings("unused")
     private static final Marker CRAFTHELPER = MarkerManager.getMarker("CRAFTHELPER");
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Map<ResourceLocation, IConditionSerializer> conditions = new HashMap<>();
+    private static final Map<ResourceLocation, IConditionSerializer<?>> conditions = new HashMap<>();
     private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
-    private static Map<ResourceLocation, IItemList> constants = new HashMap<>();
 
-    public static final IConditionSerializer CONDITION_MOD_LOADED = condition("mod_loaded", json -> {
-                                                                        String modid = JSONUtils.getString(json, "modid");
-                                                                        return () -> ModList.get().isLoaded(modid);
-                                                                    });
-    public static final IConditionSerializer CONDITION_ITEM_EXISTS = condition("item_exists", json -> {
-                                                                        String itemName = JSONUtils.getString(json, "item");
-                                                                        return () -> ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
-                                                                    });
-    public static final IConditionSerializer CONDITION_NOT = condition("not", json -> {
-                                                                BooleanSupplier child = CraftingHelper.getCondition(JSONUtils.getJsonObject(json, "value"));
-                                                                return () -> !child.getAsBoolean();
-                                                            });
-    public static final IConditionSerializer CONDITION_OR = condition("or", json -> {
-                                                                JsonArray values = JSONUtils.getJsonArray(json, "values");
-                                                                List<BooleanSupplier> children = Lists.newArrayList();
-                                                                for (JsonElement j : values)
-                                                                {
-                                                                    if (!j.isJsonObject())
-                                                                        throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
-                                                                    children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
-                                                                }
-                                                                return () -> children.stream().anyMatch(BooleanSupplier::getAsBoolean);
-                                                            });
-    public static final IConditionSerializer CONDITION_AND = condition("and", json -> {
-                                                                JsonArray values = JSONUtils.getJsonArray(json, "values");
-                                                                List<BooleanSupplier> children = Lists.newArrayList();
-                                                                for (JsonElement j : values)
-                                                                {
-                                                                    if (!j.isJsonObject())
-                                                                        throw new JsonSyntaxException("And condition values must be an array of JsonObjects");
-                                                                    children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
-                                                                }
-                                                                return () -> children.stream().allMatch(c -> c.getAsBoolean());
-                                                            });
-    public static final IConditionSerializer CONDITION_FALSE = condition("false", json -> () -> false);
-
-    public static final IIngredientSerializer<IngredientNBT> INGREDIENT_NBT = register(new ResourceLocation("forge", "nbt"), new IngredientNBT.Serializer());
-    public static final IIngredientSerializer<CompoundIngredient> INGREDIENT_COMPOUND = register(new ResourceLocation("forge", "compound"), new CompoundIngredient.Serializer());
-    public static final IIngredientSerializer<Ingredient> INGREDIENT_VANILLA = register(new ResourceLocation("minecraft", "item"), new IIngredientSerializer<Ingredient>() {
-                        public Ingredient parse(PacketBuffer buffer) {
-                            return Ingredient.fromItemListStream(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));
-                        }
-
-                        public Ingredient parse(JsonObject json) {
-                           return Ingredient.fromItemListStream(Stream.of(Ingredient.deserializeItemList(json)));
-                        }
-
-                        public void write(PacketBuffer buffer, Ingredient ingredient) {
-                            ItemStack[] items = ingredient.getMatchingStacks();
-                            buffer.writeVarInt(items.length);
-
-                            for (ItemStack stack : items)
-                                buffer.writeItemStack(stack);
-                        }
-                    });
-
-    public static IConditionSerializer register(ResourceLocation key, IConditionSerializer serializer)
+    public static IConditionSerializer<?> register(IConditionSerializer<?> serializer)
     {
+        ResourceLocation key = serializer.getID();
         if (conditions.containsKey(key))
             throw new IllegalStateException("Duplicate recipe condition serializer: " + key);
         conditions.put(key, serializer);
@@ -144,11 +80,11 @@ public class CraftingHelper
         ingredients.put(key, serializer);
         return serializer;
     }
-
-    private static IConditionSerializer condition(String name, IConditionSerializer serializer) {
-        return register(new ResourceLocation("forge", name), serializer);
+    @Nullable
+    public static ResourceLocation getID(IIngredientSerializer<?> serializer)
+    {
+        return ingredients.inverse().get(serializer);
     }
-
     public static <T extends Ingredient> void write(PacketBuffer buffer, T ingredient)
     {
         @SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
@@ -156,7 +92,7 @@ public class CraftingHelper
         ResourceLocation key = ingredients.inverse().get(serializer);
         if (key == null)
             throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);
-        if (serializer != INGREDIENT_VANILLA)
+        if (serializer != VanillaIngredientSerializer.INSTANCE)
         {
             buffer.writeVarInt(-1); //Marker to know there is a custom ingredient
             buffer.writeResourceLocation(key);
@@ -275,94 +211,27 @@ public class CraftingHelper
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
-            BooleanSupplier cond = CraftingHelper.getCondition(json);
-            if (!cond.getAsBoolean())
+            if (!CraftingHelper.getCondition(json).test())
                 return false;
         }
         return true;
     }
 
-    public static BooleanSupplier getCondition(JsonObject json)
+    public static ICondition getCondition(JsonObject json)
     {
         ResourceLocation type = new ResourceLocation(JSONUtils.getString(json, "type"));
-        IConditionSerializer serrializer = conditions.get(type);
-        if (serrializer == null)
+        IConditionSerializer<?> serializer = conditions.get(type);
+        if (serializer == null)
             throw new JsonSyntaxException("Unknown condition type: " + type.toString());
-        return serrializer.parse(json);
+        return serializer.read(json);
     }
 
-    @Nullable
-    public static IItemList getConstant(ResourceLocation key) {
-        return constants.get(key);
-    }
-
-    public static void reloadConstants(IResourceManager manager) {
-        Map<ResourceLocation, IItemList> tmp = new HashMap<>();
-        for(ResourceLocation key : manager.getAllResourceLocations("recipes", filename -> filename.equals("_constants.json")))
-        {
-            String path = key.getPath();
-            if (!path.equals("recipes/_constants.json")) //Top level only
-                continue;
-
-            tmp.putAll(loadConstants(manager, key));
-        }
-        constants = tmp;
-    }
-
-    public static Map<ResourceLocation, IItemList> loadConstants(IResourceManager manager, ResourceLocation key) {
-        Map<ResourceLocation, IItemList> tmp = new HashMap<>();
-        try (IResource iresource = manager.getResource(key))
-        {
-            JsonObject[] elements = JSONUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
-            for (int x = 0; x < elements.length; x++)
-            {
-                JsonObject json = elements[x];
-                //Force namespace to the directory that this constants file is in, to prevent modders from overriding other's sneakily
-                //TODO: Move back to a resource pack/mod specific constant list?
-                ResourceLocation name = json.has("name") ? new ResourceLocation(JSONUtils.getString(json, "name")) : null;
-                if (name != null)
-                    name = new ResourceLocation(key.getNamespace(), name.getPath());
-
-                if (json == null || json.size() == 0)
-                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's null or empty", x, key);
-                else if (!processConditions(json, "conditions"))
-                    LOGGER.info(CRAFTHELPER, "Skipping loading constant #{} from {} as it's conditions were not met", x, key);
-                else if (name == null)
-                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `name`", x, key);
-                else if (json.has("items"))
-                {
-                    List<ItemStack> items = new ArrayList<>();
-                    for (JsonElement item : JSONUtils.getJsonArray(json, "items"))
-                    {
-                        if (item.isJsonObject())
-                            items.add(getItemStack(item.getAsJsonObject(), true));
-                        else
-                        {
-                            LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's `items` entry is not a object", x, key);
-                            items.clear();
-                            break;
-                        }
-                    }
-                    if (!items.isEmpty())
-                        tmp.put(name, new StackList(items));
-                }
-                else if (json.has("tag"))
-                    tmp.put(name, Ingredient.deserializeItemList(json));
-                else if (json.has("item"))
-                    tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JSONUtils.getJsonObject(json, "item"), true))));
-                else
-                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
-            }
-
-        }
-        catch (IllegalArgumentException | JsonParseException e)
-        {
-           LOGGER.error(CRAFTHELPER, "Parsing error loading constants {}", key, e);
-        }
-        catch (IOException e)
-        {
-           LOGGER.error(CRAFTHELPER, "Couldn't read constants from {}", key, e);
-        }
-        return tmp;
+    public static <T extends ICondition> JsonObject serialize(T condition)
+    {
+        @SuppressWarnings("unchecked")
+        IConditionSerializer<T> serializer = (IConditionSerializer<T>)conditions.get(condition.getID());
+        if (serializer == null)
+            throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
+        return serializer.getJson(condition);
     }
 }

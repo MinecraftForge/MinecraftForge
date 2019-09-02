@@ -15,7 +15,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *//*
+ */
+
+/*
 
 
 package net.minecraftforge.debug.fluid;
@@ -213,7 +215,7 @@ public class FluidPlacementTest
             @Override
             public int fill(FluidStack resource, boolean doFill)
             {
-                if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
+                if (container.getCount() != 1 || resource == null || resource.amount > FluidAttributes.BUCKET_VOLUME || container
                         .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
                 {
                     return 0;

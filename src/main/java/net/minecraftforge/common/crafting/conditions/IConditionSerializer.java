@@ -17,28 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftforge.common.crafting.conditions;
 
-import javax.annotation.Nullable;
+import com.google.gson.JsonObject;
 
-/**
- * Wrapper class used to encapsulate information about an IFluidTank.
- */
-public final class FluidTankInfo
+import net.minecraft.util.ResourceLocation;
+
+public interface IConditionSerializer<T extends ICondition>
 {
-    @Nullable
-    public final FluidStack fluid;
-    public final int capacity;
+    void write(JsonObject json, T value);
 
-    public FluidTankInfo(@Nullable FluidStack fluid, int capacity)
-    {
-        this.fluid = fluid;
-        this.capacity = capacity;
-    }
+    T read(JsonObject json);
 
-    public FluidTankInfo(IFluidTank tank)
+    ResourceLocation getID();
+
+    default JsonObject getJson(T value)
     {
-        this.fluid = tank.getFluid();
-        this.capacity = tank.getCapacity();
+        JsonObject json = new JsonObject();
+        this.write(json, value);
+        json.addProperty("type", value.getID().toString());
+        return json;
     }
 }

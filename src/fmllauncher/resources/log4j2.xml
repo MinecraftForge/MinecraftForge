@@ -20,19 +20,19 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}%n%tEx}" disableAnsi="${sys:forge.logging.noansi:-true}">
+                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}%n%tEx}" disableAnsi="${sys:forge.logging.noansi:-true}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}"/>
+                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n">
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>
@@ -61,7 +61,7 @@
             <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
-            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
+            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-debug}"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -51,13 +51,14 @@
+@@ -51,7 +51,7 @@
  
     public ItemRenderer(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_) {
        this.field_175057_n = p_i46552_1_;
@@ -9,14 +9,7 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-             this.field_175059_m.func_199311_a(item, new ModelResourceLocation(Registry.field_212630_s.func_177774_c(item), "inventory"));
-          }
-       }
-+      net.minecraftforge.client.model.ModelLoader.onRegisterItems(this.field_175059_m);
- 
-       this.field_184395_f = p_i46552_3_;
-    }
-@@ -75,6 +76,10 @@
+@@ -75,6 +75,10 @@
     }
  
     private void func_191967_a(IBakedModel p_191967_1_, int p_191967_2_, ItemStack p_191967_3_) {
@@ -27,7 +20,7 @@
        Tessellator tessellator = Tessellator.func_178181_a();
        BufferBuilder bufferbuilder = tessellator.func_178180_c();
        bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_176599_b);
-@@ -98,7 +103,7 @@
+@@ -98,7 +102,7 @@
           if (p_180454_2_.func_188618_c()) {
              GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
              GlStateManager.enableRescaleNormal();
@@ -36,7 +29,7 @@
           } else {
              this.func_191961_a(p_180454_2_, p_180454_1_);
              if (p_180454_1_.func_77962_s()) {
-@@ -164,7 +169,7 @@
+@@ -164,7 +168,7 @@
              k = k | -16777216;
           }
  
@@ -45,7 +38,7 @@
        }
  
     }
-@@ -225,11 +230,8 @@
+@@ -225,11 +229,8 @@
           GlStateManager.enableBlend();
           GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
           GlStateManager.pushMatrix();
@@ -59,7 +52,7 @@
  
           this.func_180454_a(p_184394_1_, p_184394_2_);
           GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-@@ -260,7 +262,7 @@
+@@ -260,7 +261,7 @@
        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        this.func_180452_a(p_191962_2_, p_191962_3_, p_191962_4_.func_177556_c());
@@ -68,15 +61,7 @@
        this.func_180454_a(p_191962_1_, p_191962_4_);
        GlStateManager.disableAlphaTest();
        GlStateManager.disableRescaleNormal();
-@@ -292,6 +294,7 @@
-          this.field_77023_b += 50.0F;
- 
-          try {
-+            if (!net.minecraftforge.advancements.DisplayInfoIcon.renderForgeIcon(p_184391_2_, p_184391_3_, p_184391_4_))
-             this.func_191962_a(p_184391_2_, p_184391_3_, p_184391_4_, this.func_184393_a(p_184391_2_, (World)null, p_184391_1_));
-          } catch (Throwable throwable) {
-             CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering item");
-@@ -299,6 +302,7 @@
+@@ -299,6 +300,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -84,7 +69,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -330,9 +334,12 @@
+@@ -330,9 +332,12 @@
              GlStateManager.enableBlend();
              GlStateManager.enableLighting();
              GlStateManager.enableDepthTest();
@@ -98,7 +83,7 @@
              GlStateManager.disableLighting();
              GlStateManager.disableDepthTest();
              GlStateManager.disableTexture();
-@@ -340,11 +347,9 @@
+@@ -340,11 +345,9 @@
              GlStateManager.disableBlend();
              Tessellator tessellator = Tessellator.func_178181_a();
              BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -113,7 +98,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              GlStateManager.enableBlend();
-@@ -383,4 +388,9 @@
+@@ -383,4 +386,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

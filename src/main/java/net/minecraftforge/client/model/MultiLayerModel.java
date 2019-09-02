@@ -55,6 +55,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+/**
+ * A model that can be rendered in multiple {@link BlockRenderLayer}.
+ */
 public final class MultiLayerModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();

@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,13 +43,13 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
-    protected final Map<ModFile, FileSystem> modJars;
+    protected final Map<IModFile, FileSystem> modJars;
 
     public AbstractJarFileLocator() {
         this.modJars = new HashMap<>();
     }
 
-    protected FileSystem createFileSystem(ModFile modFile) {
+    protected FileSystem createFileSystem(IModFile modFile) {
         try {
             return FileSystems.newFileSystem(modFile.getFilePath(), modFile.getClass().getClassLoader());
         } catch (ZipError | IOException e) {
@@ -56,14 +58,16 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         }
     }
 
-    public Path findPath(final ModFile modFile, final String... path) {
+    @Override
+    public Path findPath(final IModFile modFile, final String... path) {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
         return modJars.get(modFile).getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
     }
 
-    public void scanFile(final ModFile file, final Consumer<Path> pathConsumer) {
+    @Override
+    public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
         LOGGER.debug(SCAN,"Scan started: {}", file);
         FileSystem fs = modJars.get(file);
         fs.getRootDirectories().forEach(path -> {
@@ -76,6 +80,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         LOGGER.debug(SCAN,"Scan finished: {}", file);
     }
 
+    @Override
     public Optional<Manifest> findManifest(final Path file)
     {
         try (JarFile jf = new JarFile(file.toFile()))
@@ -89,7 +94,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
     }
 
     @Override
-    public boolean isValid(final ModFile modFile) {
+    public boolean isValid(final IModFile modFile) {
         return modJars.get(modFile) != null;
     }
 }

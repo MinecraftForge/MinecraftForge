@@ -28,9 +28,6 @@ import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-
-import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
 
 public class ModConfig
 {

@@ -21,12 +21,14 @@ package net.minecraftforge.common;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -46,18 +48,16 @@ public class ForgeInternalHandler
         {
             ItemStack stack = ((ItemEntity)entity).getItem();
             Item item = stack.getItem();
-/*
             if (item.hasCustomEntity(stack))
             {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
-                    entity.setDead();
+                    entity.remove();
                     event.setCanceled(true);
-                    event.getWorld().spawnEntity(newEntity);
+                    event.getWorld().addEntity(newEntity);
                 }
             }
-*/
         }
     }
 
@@ -87,6 +87,19 @@ public class ForgeInternalHandler
     {
         if (!event.getWorld().isRemote())
             FarmlandWaterManager.removeTickets(event.getChunk());
+    }
+
+    @SubscribeEvent
+    public void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event)
+    {
+        if (event.getPlayer() instanceof ServerPlayerEntity)
+            DimensionManager.rebuildPlayerMap(((ServerPlayerEntity)event.getPlayer()).server.getPlayerList(), true);
+    }
+
+    @SubscribeEvent
+    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
     }
 }
 

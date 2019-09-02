@@ -29,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
@@ -41,15 +43,15 @@ import net.minecraft.network.PacketBuffer;
 
 public class CompoundIngredient extends Ingredient
 {
-    private Collection<Ingredient> children;
+    private List<Ingredient> children;
     private ItemStack[] stacks;
     private IntList itemIds;
     private final boolean isSimple;
 
-    protected CompoundIngredient(Collection<Ingredient> children)
+    protected CompoundIngredient(List<Ingredient> children)
     {
         super(Stream.of());
-        this.children = children;
+        this.children = Collections.unmodifiableList(children);
         this.isSimple = children.stream().allMatch(Ingredient::isSimple);
     }
 
@@ -110,17 +112,34 @@ public class CompoundIngredient extends Ingredient
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
-        return CraftingHelper.INGREDIENT_COMPOUND;
+        return Serializer.INSTANCE;
     }
 
     @Nonnull
     public Collection<Ingredient> getChildren()
     {
-        return Collections.unmodifiableCollection(this.children);
+        return this.children;
+    }
+
+    @Override
+    public JsonElement serialize()
+    {
+       if (this.children.size() == 1)
+       {
+          return this.children.get(0).serialize();
+       }
+       else
+       {
+          JsonArray json = new JsonArray();
+          this.children.stream().forEach(e -> json.add(e.serialize()));
+          return json;
+       }
     }
 
     public static class Serializer implements IIngredientSerializer<CompoundIngredient>
     {
+        public static final Serializer INSTANCE = new Serializer();
+
         @Override
         public CompoundIngredient parse(PacketBuffer buffer)
         {
@@ -130,7 +149,7 @@ public class CompoundIngredient extends Ingredient
         @Override
         public CompoundIngredient parse(JsonObject json)
         {
-            throw new JsonSyntaxException("CompountIngredient should not be directly referenced in json, just use an array of ingredients.");
+            throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
         }
 
         @Override

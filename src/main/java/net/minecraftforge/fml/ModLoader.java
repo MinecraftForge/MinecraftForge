@@ -115,7 +115,7 @@ public class ModLoader
         this.loadingWarnings = FMLLoader.getLoadingModList().
                 getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
                     InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
-        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
+        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.init());
         CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
         CrashReportExtender.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);
@@ -208,11 +208,13 @@ public class ModLoader
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
-                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e))
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
-                    containers.size(), containers.stream().map(ModContainer::getModId).collect(Collectors.toList()),
+                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").collect(Collectors.toList()),
                     modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
