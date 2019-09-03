@@ -23,12 +23,12 @@
  
                             mobentity.func_70012_b((double)f, (double)k, (double)f1, p_222263_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
 -                           if (d0 > 16384.0D && mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
-+                           int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null);
++                           int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null, SpawnReason.NATURAL);
 +                           if (canSpawn == -1 || (canSpawn == 0 && d0 > 16384.0D && (mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)))) {
                                break label115;
                             }
  
-+                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_222263_1_, f, k, f1, null))
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_222263_1_, f, k, f1, null, SpawnReason.NATURAL))
                             ilivingentitydata = mobentity.func_213386_a(p_222263_1_, p_222263_1_.func_175649_E(new BlockPos(mobentity)), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
                             ++i;
                             ++j2;
@@ -90,7 +90,7 @@
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;
-+                        if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null) == -1) continue;
++                        if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null, SpawnReason.CHUNK_GENERATION) == -1) continue;
                          if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
                             ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(new BlockPos(mobentity)), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT)null);
                             p_77191_0_.func_217376_c(mobentity);
