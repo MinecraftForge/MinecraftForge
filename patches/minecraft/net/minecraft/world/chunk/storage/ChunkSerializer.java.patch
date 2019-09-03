@@ -8,6 +8,15 @@
        } else {
           ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist1, chunkprimerticklist);
           ichunk = chunkprimer;
+@@ -159,7 +160,7 @@
+ 
+          if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
+             for(BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
+-               if (ichunk.func_180495_p(blockpos).func_185906_d() != 0) {
++               if (ichunk.func_180495_p(blockpos).getLightValue(p_222656_0_, blockpos) != 0) {
+                   chunkprimer.func_201637_h(blockpos);
+                }
+             }
 @@ -314,12 +315,22 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {

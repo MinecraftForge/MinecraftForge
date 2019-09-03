@@ -177,6 +177,15 @@
        for(int i = 0; i < this.field_76652_q.length; ++i) {
           ChunkSection chunksection = this.field_76652_q[i];
           if ((p_217326_3_ & 1 << i) == 0) {
+@@ -599,7 +616,7 @@
+ 
+    public Stream<BlockPos> func_217304_m() {
+       return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
+-         return this.func_180495_p(p_217312_1_).func_185906_d() != 0;
++         return this.func_180495_p(p_217312_1_).getLightValue(field_76637_e, p_217312_1_) != 0;
+       });
+    }
+ 
 @@ -704,9 +721,9 @@
     private TileEntity func_212815_a(BlockPos p_212815_1_, CompoundNBT p_212815_2_) {
        TileEntity tileentity;
