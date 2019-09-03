@@ -22,28 +22,20 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.World;
 import net.minecraft.item.Rarity;
 import net.minecraft.world.biome.BiomeColors;
@@ -140,6 +132,17 @@ public class FluidAttributes
      */
     private final int color;
 
+    /**
+     * Amount of time a bucket of the fluid will burn for when placed in a furnace-like machine.
+     * Eg. a bucket of lava burns for 20000 ticks.
+     *
+     * Note that this will include both things that are hot and things that are actively combusting.
+     * To differentiate them, place them in separate tags, such as forge:fluids/combustible
+     *
+     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks.
+     */
+    protected int burnTime = 0;
+
     protected FluidAttributes(Builder builder)
     {
         this.owner = builder.owner;
@@ -156,6 +159,7 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
+        this.burnTime = builder.fuelTime;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -311,6 +315,21 @@ public class FluidAttributes
         return emptySound;
     }
 
+    public final int getBurnTime()
+    {
+        return this.burnTime;
+    }
+
+    /**
+     * Indicates if the fluid has been marked as a fuel,
+     * it does not imply that the fuel is a combustible.
+     * Hot things can also generate energy.
+     */
+    public boolean isFuel()
+    {
+        return (this.burnTime > 0);
+    }
+
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
@@ -319,6 +338,8 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
+    public int getBurnTime(FluidStack stack){ return getBurnTime(); }
+    public boolean isFuel(FluidStack stack){ return isFuel(); }
     public ResourceLocation getStill(FluidStack stack) { return getStillTexture(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowingTexture(); }
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
@@ -332,6 +353,8 @@ public class FluidAttributes
     public boolean isGaseous(IEnviromentBlockReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(IEnviromentBlockReader world, BlockPos pos){ return getRarity(); }
     public int getColor(IEnviromentBlockReader world, BlockPos pos){ return getColor(); }
+    public int getBurnTime(World world, BlockPos pos){ return getBurnTime(); }
+    public boolean isFuel(World world, BlockPos pos){ return isFuel(); }
     public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStillTexture(); }
     public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowingTexture(); }
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
@@ -364,6 +387,7 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
+        private int fuelTime = 0;
 
         protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
             this.owner = owner;
@@ -436,6 +460,12 @@ public class FluidAttributes
         {
             this.fillSound = fillSound;
             this.emptySound = emptySound;
+            return this;
+        }
+
+        public final Builder fuel(int fuelTime)
+        {
+            this.fuelTime = fuelTime;
             return this;
         }
 
