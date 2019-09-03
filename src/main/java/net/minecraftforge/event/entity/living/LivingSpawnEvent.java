@@ -106,11 +106,11 @@ public class LivingSpawnEvent extends LivingEvent
         {
             return spawner;
         }
-        
+
         public SpawnReason getSpawnReason()
-		{
-			return spawnReason;
-		}
+        {
+            return spawnReason;
+        }
     }
 
     /**
@@ -148,11 +148,11 @@ public class LivingSpawnEvent extends LivingEvent
         {
             return spawner;
         }
-        
+
         public SpawnReason getSpawnReason()
-		{
-			return spawnReason;
-		}
+        {
+            return spawnReason;
+        }
     }
 
     /**
