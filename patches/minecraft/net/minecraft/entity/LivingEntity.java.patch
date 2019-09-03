@@ -52,7 +52,7 @@
              while(i > 0) {
                 int j = ExperienceOrbEntity.func_70527_a(i);
                 i -= j;
-@@ -395,7 +401,7 @@
+@@ -395,7 +405,7 @@
              }
           }
  
@@ -61,7 +61,7 @@
  
           for(int k = 0; k < 20; ++k) {
              double d2 = this.field_70146_Z.nextGaussian() * 0.02D;
-@@ -590,7 +596,7 @@
+@@ -590,7 +600,7 @@
              Effect effect = iterator.next();
              EffectInstance effectinstance = this.field_70713_bf.get(effect);
              if (!effectinstance.func_76455_a(this)) {
@@ -397,7 +397,7 @@
           this.func_184602_cy();
        }
  
-@@ -2532,6 +2588,11 @@
+@@ -2532,7 +2588,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {

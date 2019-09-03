@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CropsBlock.java
 +++ b/net/minecraft/block/CropsBlock.java
-@@ -59,12 +59,14 @@
+@@ -57,12 +57,14 @@
  
     public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
@@ -16,7 +16,7 @@
              }
           }
        }
-@@ -93,9 +95,9 @@
+@@ -91,9 +93,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
              BlockState blockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
@@ -28,7 +28,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -131,7 +133,7 @@
+@@ -129,7 +131,7 @@
     }
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
