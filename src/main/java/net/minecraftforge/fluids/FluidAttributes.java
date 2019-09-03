@@ -133,15 +133,15 @@ public class FluidAttributes
     private final int color;
 
     /**
-     * Amount of time a bucket of the fluid will burn for when placed in a furnace-like machine.
-     * Eg. a bucket of lava burns for 20000 ticks.
+     * Amount of time a bucket of the fluid will last for when used as a fuel.
      *
      * Note that this will include both things that are hot and things that are actively combusting.
      * To differentiate them, place them in separate tags, such as forge:fluids/combustible
      *
-     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks.
+     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks,
+     * and a bucket of lava lasts for 20000 ticks.
      */
-    protected int burnTime = 0;
+    protected int fuelTime = 0;
 
     protected FluidAttributes(Builder builder)
     {
@@ -159,7 +159,7 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-        this.burnTime = builder.fuelTime;
+        this.fuelTime = builder.fuelTime;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -315,9 +315,9 @@ public class FluidAttributes
         return emptySound;
     }
 
-    public final int getBurnTime()
+    public final int getFuelTime()
     {
-        return this.burnTime;
+        return this.fuelTime;
     }
 
     /**
@@ -327,7 +327,7 @@ public class FluidAttributes
      */
     public boolean isFuel()
     {
-        return (this.burnTime > 0);
+        return (this.fuelTime > 0);
     }
 
     /* Stack-based Accessors */
@@ -338,7 +338,7 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public int getBurnTime(FluidStack stack){ return getBurnTime(); }
+    public int getFuelTime(FluidStack stack){ return getFuelTime(); }
     public boolean isFuel(FluidStack stack){ return isFuel(); }
     public ResourceLocation getStill(FluidStack stack) { return getStillTexture(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowingTexture(); }
@@ -353,7 +353,7 @@ public class FluidAttributes
     public boolean isGaseous(IEnviromentBlockReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(IEnviromentBlockReader world, BlockPos pos){ return getRarity(); }
     public int getColor(IEnviromentBlockReader world, BlockPos pos){ return getColor(); }
-    public int getBurnTime(World world, BlockPos pos){ return getBurnTime(); }
+    public int getFuelTime(World world, BlockPos pos){ return getFuelTime(); }
     public boolean isFuel(World world, BlockPos pos){ return isFuel(); }
     public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStillTexture(); }
     public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowingTexture(); }
