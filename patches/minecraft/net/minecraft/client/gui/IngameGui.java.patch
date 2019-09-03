@@ -24,7 +24,15 @@
              }
           }
  
-@@ -588,7 +593,13 @@
+@@ -572,6 +577,7 @@
+          }
+ 
+          String s = itextcomponent.func_150254_d();
++         s = this.field_92016_l.func_77973_b().getHighlightTip(this.field_92016_l, s);
+          int i = (this.field_194811_H - this.func_175179_f().func_78256_a(s)) / 2;
+          int j = this.field_194812_I - 59;
+          if (!this.field_73839_d.field_71442_b.func_78755_b()) {
+@@ -588,7 +594,13 @@
              GlStateManager.enableBlend();
              GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
              fill(i - 2, j - 2, i + this.func_175179_f().func_78256_a(s) + 2, j + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
