@@ -705,6 +705,7 @@ project(':forge') {
                 inheritsFrom: MC_VERSION,
                 logging: {},
                 arguments: [
+                    jvm: ['-Dterminal.jline=false'], //disable jline terminal by default, the client does not support it.
                     game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
                 ],
                 libraries: [
