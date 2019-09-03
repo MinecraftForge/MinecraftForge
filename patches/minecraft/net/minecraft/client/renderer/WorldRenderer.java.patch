@@ -107,8 +107,9 @@
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
 -         if (!blockstate.func_196958_f()) {
+-            SoundType soundtype = blockstate.func_215695_r();
 +         if (!blockstate.isAir(this.field_72769_h, p_180439_3_)) {
-             SoundType soundtype = blockstate.func_215695_r();
++            SoundType soundtype = blockstate.getSoundType(field_72769_h, p_180439_3_, null);
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
 @@ -2118,6 +2132,11 @@
