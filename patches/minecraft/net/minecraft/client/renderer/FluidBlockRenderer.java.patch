@@ -1,16 +1,13 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -57,9 +57,10 @@
-    }
+@@ -58,8 +58,8 @@
  
     public boolean func_217638_a(IEnviromentBlockReader p_217638_1_, BlockPos p_217638_2_, BufferBuilder p_217638_3_, IFluidState p_217638_4_) {
--      boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b);
+       boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b);
 -      TextureAtlasSprite[] atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
 -      int i = flag ? 16777215 : BiomeColors.func_217612_c(p_217638_1_, p_217638_2_);
-+      boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b) && !p_217638_4_.func_206886_c().getAttributes().getUseBiomeWaterColor();
 +      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_217638_1_, p_217638_2_, p_217638_4_);
-+      if (atextureatlassprite == null) atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
-+      int i = flag ? p_217638_4_.func_206886_c().getAttributes().getColor(p_217638_1_, p_217638_2_) : BiomeColors.func_217612_c(p_217638_1_, p_217638_2_);
++      int i = p_217638_4_.func_206886_c().getAttributes().getColor(p_217638_1_, p_217638_2_);
        float f = (float)(i >> 16 & 255) / 255.0F;
        float f1 = (float)(i >> 8 & 255) / 255.0F;
        float f2 = (float)(i & 255) / 255.0F;

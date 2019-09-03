@@ -46,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.World;
 import net.minecraft.item.Rarity;
+import net.minecraft.world.biome.BiomeColors;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -139,8 +140,6 @@ public class FluidAttributes
      */
     private final int color;
 
-    private final boolean useBiomeWaterColor;
-
     protected FluidAttributes(Builder builder)
     {
         this.owner = builder.owner;
@@ -157,7 +156,6 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-        this.useBiomeWaterColor = builder.useBiomeWaterColor;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -287,11 +285,6 @@ public class FluidAttributes
         return color;
     }
 
-    public boolean getUseBiomeWaterColor()
-    {
-        return useBiomeWaterColor;
-    }
-
     public ResourceLocation getStillTexture()
     {
         return stillTexture;
@@ -371,7 +364,6 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
-        private boolean useBiomeWaterColor = false;
 
         protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
             this.owner = owner;
@@ -389,12 +381,6 @@ public class FluidAttributes
         public final Builder color(int color)
         {
             this.color = color;
-            return this;
-        }
-
-        public final Builder useBiomeWaterColor()
-        {
-            this.useBiomeWaterColor = true;
             return this;
         }
 
@@ -456,6 +442,38 @@ public class FluidAttributes
         public FluidAttributes build()
         {
             return new FluidAttributes(this);
+        }
+    }
+
+    public static class Water extends FluidAttributes
+    {
+        protected Water(Builder builder)
+        {
+            super(builder);
+        }
+
+        @Override
+        public int getColor(IEnviromentBlockReader world, BlockPos pos)
+        {
+            return BiomeColors.getWaterColor(world, pos);
+        }
+
+        public static FluidAttributes.Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            return new Builder(owner, stillTexture, flowingTexture);
+        }
+
+        private static class Builder extends FluidAttributes.Builder
+        {
+            protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture)
+            {
+                super(owner, stillTexture, flowingTexture);
+            }
+
+            @Override
+            public FluidAttributes build()
+            {
+                return new Water(this);
+            }
         }
     }
 }

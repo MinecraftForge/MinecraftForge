@@ -33,12 +33,12 @@
 +                 .translationKey("block.minecraft.air")
 +                 .color(0).density(0).temperature(0).luminosity(0).viscosity(0).density(0).build();
 +      if (this instanceof WaterFluid)
-+         return net.minecraftforge.fluids.FluidAttributes.builder(this,
++         return net.minecraftforge.fluids.FluidAttributes.Water.builder(this,
 +                 new net.minecraft.util.ResourceLocation("block/water_still"),
 +                 new net.minecraft.util.ResourceLocation("block/water_flow"))
 +                 .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
 +                 .translationKey("block.minecraft.water")
-+                 .color(0x3F76E4).useBiomeWaterColor().build();
++                 .color(0x3F76E4).build();
 +      if (this instanceof LavaFluid)
 +         return net.minecraftforge.fluids.FluidAttributes.builder(this,
 +                 new net.minecraft.util.ResourceLocation("block/lava_still"),
