@@ -309,16 +309,16 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    public static void renderMainMenu(MainMenuScreen gui, FontRenderer font, int width, int height)
+    public static void renderMainMenu(MainMenuScreen gui, FontRenderer font, int width, int height, int color)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
             String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), color);
             line = I18n.format("forge.update.beta.2");
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), color);
         }
 
         String line = null;
@@ -335,7 +335,7 @@ public class ForgeHooksClient
         if (line != null)
         {
             // if we have a line, render it in the bottom right, above Mojang's copyright line
-            gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
+            gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), color);
         }
     }
 

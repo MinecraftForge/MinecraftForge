@@ -44,7 +44,7 @@
  
           this.minecraft.func_110434_K().func_110577_a(field_194400_H);
           blit(j + 88, 67, 0.0F, 0.0F, 98, 14, 128, 16);
-+         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.font, this.width, this.height);
++         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.font, this.width, this.height, 16777215 | l);
           if (this.field_73975_c != null) {
              GlStateManager.pushMatrix();
              GlStateManager.translatef((float)(this.width / 2 + 90), 70.0F, 0.0F);
