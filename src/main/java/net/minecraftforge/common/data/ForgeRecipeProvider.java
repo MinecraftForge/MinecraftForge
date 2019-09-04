@@ -78,8 +78,30 @@ public class ForgeRecipeProvider extends RecipeProvider
     @Override
     protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
     {
+        replace(Blocks.BOOKSHELF,          Tags.Items.BOOKSHELVES);
+        replace(Blocks.GLASS,              Tags.Items.GLASS_COLORLESS);
+        replace(Blocks.GLASS_PANE,         Tags.Items.GLASS_PANES_COLORLESS);
+        replace(Blocks.GRAVEL,             Tags.Items.GRAVEL);
+        replace(Blocks.OBSIDIAN,           Tags.Items.OBSIDIAN);
+        replace(Blocks.SAND,               Tags.Items.SAND);
+        
+        replace(Items.BONE,                Tags.Items.BONES);
+        replace(Items.EGG,                 Tags.Items.EGGS);
+        replace(Items.ENDER_PEARL,         Tags.Items.ENDER_PEARLS);
+        replace(Items.FEATHER,             Tags.Items.FEATHERS);
+        replace(Items.GUNPOWDER,           Tags.Items.GUNPOWDER);
+        replace(Items.LEATHER,             Tags.Items.LEATHER);
+        replace(Items.NETHER_STAR,         Tags.Items.NETHER_STARS);
+        replace(Items.SLIME_BALL,          Tags.Items.SLIMEBALLS);
+        replace(Items.STRING,              Tags.Items.STRING);
+        
         replace(Items.STICK,               Tags.Items.RODS_WOODEN);
         replace(Items.BLAZE_ROD,           Tags.Items.RODS_BLAZE);
+        
+        replace(Items.BEETROOT,            Tags.Items.CROPS_BEETROOT);
+        replace(Items.CARROT,              Tags.Items.CROPS_CARROT);
+        replace(Items.NETHER_WART,         Tags.Items.CROPS_NETHER_WART);
+        replace(Items.WHEAT,               Tags.Items.CROPS_WHEAT);
         
         replace(Items.GLOWSTONE_DUST,      Tags.Items.DUSTS_GLOWSTONE);
         replace(Items.PRISMARINE_SHARD,    Tags.Items.DUSTS_PRISMARINE);
@@ -128,6 +150,13 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Items.WHITE_DYE,           Tags.Items.DYES_WHITE);
         replace(Items.YELLOW_DYE,          Tags.Items.DYES_YELLOW);
 
+        exclude(Blocks.NETHER_WART_BLOCK);
+        exclude(Blocks.HAY_BLOCK);
+        exclude(Blocks.GLASS_PANE);
+        exclude(Blocks.SANDSTONE);
+        exclude(Blocks.SLIME_BLOCK);
+        exclude("red_dye_from_beetroot");
+        exclude(Items.BLUE_DYE);
         exclude(Items.REDSTONE);
         exclude(Items.GOLD_INGOT);
         exclude("gold_ingot_from_gold_block");

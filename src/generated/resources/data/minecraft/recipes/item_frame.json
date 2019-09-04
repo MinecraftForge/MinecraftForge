@@ -10,7 +10,7 @@
       "tag": "forge:rods/wooden"
     },
     "X": {
-      "item": "minecraft:leather"
+      "tag": "forge:leather"
     }
   },
   "result": {

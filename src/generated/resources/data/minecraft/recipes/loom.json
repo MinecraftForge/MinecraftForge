@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "@@",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "@": {
+      "tag": "forge:string"
+    }
+  },
+  "result": {
+    "item": "minecraft:loom"
+  }
+}

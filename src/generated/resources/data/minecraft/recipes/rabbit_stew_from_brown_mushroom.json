@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "rabbit_stew",
+  "ingredients": [
+    {
+      "item": "minecraft:baked_potato"
+    },
+    {
+      "item": "minecraft:cooked_rabbit"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "tag": "forge:crops/carrot"
+    },
+    {
+      "item": "minecraft:brown_mushroom"
+    }
+  ],
+  "result": {
+    "item": "minecraft:rabbit_stew"
+  }
+}

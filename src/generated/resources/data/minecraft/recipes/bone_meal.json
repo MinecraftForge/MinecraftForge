@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "bonemeal",
+  "ingredients": [
+    {
+      "tag": "forge:bones"
+    }
+  ],
+  "result": {
+    "item": "minecraft:bone_meal",
+    "count": 3
+  }
+}

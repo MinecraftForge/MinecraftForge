@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GEG",
+    "GTG"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:ghast_tear"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "G": {
+      "tag": "forge:glass/colorless"
+    }
+  },
+  "result": {
+    "item": "minecraft:end_crystal"
+  }
+}

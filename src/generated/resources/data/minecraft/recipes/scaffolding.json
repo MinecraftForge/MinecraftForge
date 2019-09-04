@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I~I",
+    "I I",
+    "I I"
+  ],
+  "key": {
+    "~": {
+      "tag": "forge:string"
+    },
+    "I": {
+      "item": "minecraft:bamboo"
+    }
+  },
+  "result": {
+    "item": "minecraft:scaffolding",
+    "count": 6
+  }
+}

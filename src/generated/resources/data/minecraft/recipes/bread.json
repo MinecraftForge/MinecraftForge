@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:crops/wheat"
+    }
+  },
+  "result": {
+    "item": "minecraft:bread"
+  }
+}

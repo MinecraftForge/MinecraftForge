@@ -8,7 +8,7 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:glass"
+      "tag": "forge:glass/colorless"
     },
     "X": {
       "tag": "forge:dyes/green"

@@ -6,28 +6,28 @@
       "tag": "forge:dyes/yellow"
     },
     {
-      "item": "minecraft:sand"
+      "tag": "forge:sand"
     },
     {
-      "item": "minecraft:sand"
+      "tag": "forge:sand"
     },
     {
-      "item": "minecraft:sand"
+      "tag": "forge:sand"
     },
     {
-      "item": "minecraft:sand"
+      "tag": "forge:sand"
     },
     {
-      "item": "minecraft:gravel"
+      "tag": "forge:gravel"
     },
     {
-      "item": "minecraft:gravel"
+      "tag": "forge:gravel"
     },
     {
-      "item": "minecraft:gravel"
+      "tag": "forge:gravel"
     },
     {
-      "item": "minecraft:gravel"
+      "tag": "forge:gravel"
     }
   ],
   "result": {

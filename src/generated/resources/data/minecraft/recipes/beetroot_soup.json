@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    }
+  ],
+  "result": {
+    "item": "minecraft:beetroot_soup"
+  }
+}

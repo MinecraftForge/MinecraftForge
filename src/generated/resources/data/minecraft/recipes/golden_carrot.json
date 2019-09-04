@@ -10,7 +10,7 @@
       "tag": "forge:nuggets/gold"
     },
     "X": {
-      "item": "minecraft:carrot"
+      "tag": "forge:crops/carrot"
     }
   },
   "result": {

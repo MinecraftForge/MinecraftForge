@@ -13,7 +13,7 @@
       "item": "minecraft:flint"
     },
     "Y": {
-      "item": "minecraft:feather"
+      "tag": "forge:feathers"
     }
   },
   "result": {

@@ -6,7 +6,7 @@
   ],
   "key": {
     "W": {
-      "item": "minecraft:nether_wart"
+      "tag": "forge:crops/nether_wart"
     },
     "N": {
       "tag": "forge:ingots/nether_brick"

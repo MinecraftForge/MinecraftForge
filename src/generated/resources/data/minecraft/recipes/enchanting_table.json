@@ -10,7 +10,7 @@
       "item": "minecraft:book"
     },
     "#": {
-      "item": "minecraft:obsidian"
+      "tag": "forge:obsidian"
     },
     "D": {
       "tag": "forge:gems/diamond"

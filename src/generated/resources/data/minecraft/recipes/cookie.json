@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#X#"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:crops/wheat"
+    },
+    "X": {
+      "item": "minecraft:cocoa_beans"
+    }
+  },
+  "result": {
+    "item": "minecraft:cookie",
+    "count": 8
+  }
+}

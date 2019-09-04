@@ -8,7 +8,7 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:glass_pane"
+      "tag": "forge:glass_panes/colorless"
     },
     "$": {
       "tag": "forge:dyes/magenta"

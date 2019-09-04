@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "~~ ",
+    "~O ",
+    "  ~"
+  ],
+  "key": {
+    "~": {
+      "tag": "forge:string"
+    },
+    "O": {
+      "tag": "forge:slimeballs"
+    }
+  },
+  "result": {
+    "item": "minecraft:lead",
+    "count": 2
+  }
+}
