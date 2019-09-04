@@ -17,28 +17,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftforge.common.crafting.conditions;
 
-import javax.annotation.Nullable;
-
-/**
- * Wrapper class used to encapsulate information about an IFluidTank.
- */
-public final class FluidTankInfo
+public interface IConditionBuilder
 {
-    @Nullable
-    public final FluidStack fluid;
-    public final int capacity;
-
-    public FluidTankInfo(@Nullable FluidStack fluid, int capacity)
+    default ICondition and(ICondition... values)
     {
-        this.fluid = fluid;
-        this.capacity = capacity;
+        return new AndCondition(values);
     }
 
-    public FluidTankInfo(IFluidTank tank)
+    default ICondition FALSE()
     {
-        this.fluid = tank.getFluid();
-        this.capacity = tank.getCapacity();
+        return FalseCondition.INSTANCE;
+    }
+
+    default ICondition TRUE()
+    {
+        return TrueCondition.INSTANCE;
+    }
+
+    default ICondition not(ICondition value)
+    {
+        return new NotCondition(value);
+    }
+
+    default ICondition or(ICondition... values)
+    {
+        return new OrCondition(values);
+    }
+
+    default ICondition itemExists(String namespace, String path)
+    {
+        return new ItemExistsCondition(namespace, path);
+    }
+
+    default ICondition modLoaded(String modid)
+    {
+        return new ModLoadedCondition(modid);
     }
 }

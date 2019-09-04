@@ -19,10 +19,14 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.ModSorter;
+import net.minecraftforge.forgespi.Environment;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,6 +65,7 @@ public class ModDiscoverer {
     private final List<IModLocator> locatorList;
 
     public ModDiscoverer(Map<String, ?> arguments) {
+        Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODFOLDERFACTORY.get(), v->ModsFolderLocator::new);
         locators = ServiceLoader.load(IModLocator.class);
         locatorList = ServiceLoaderStreamUtils.toList(this.locators);
         locatorList.forEach(l->l.initArguments(arguments));
@@ -75,16 +80,17 @@ public class ModDiscoverer {
 
     public BackgroundScanHandler discoverMods() {
         LOGGER.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
-        final Map<ModFile.Type, List<ModFile>> modFiles = locatorList.stream()
+        final Map<IModFile.Type, List<ModFile>> modFiles = locatorList.stream()
                 .peek(loc -> LOGGER.debug(SCAN,"Trying locator {}", loc))
                 .map(IModLocator::scanMods)
                 .flatMap(Collection::stream)
                 .peek(mf -> LOGGER.debug(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
-                .collect(Collectors.groupingBy(ModFile::getType));
+                .map(ModFile.class::cast)
+                .collect(Collectors.groupingBy(IModFile::getType));
 
-        FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
+        FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(IModFile.Type.LANGPROVIDER));
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
-        final List<ModFile> mods = modFiles.getOrDefault(ModFile.Type.MOD, Collections.emptyList());
+        final List<ModFile> mods = modFiles.getOrDefault(IModFile.Type.MOD, Collections.emptyList());
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
@@ -122,7 +128,7 @@ public class ModDiscoverer {
         }
 
         @Override
-        public List<ModFile> scanMods() {
+        public List<IModFile> scanMods() {
             return Collections.singletonList(new ModFile(mcJar, this));
         }
 
@@ -132,7 +138,7 @@ public class ModDiscoverer {
         }
 
         @Override
-        public Path findPath(final ModFile modFile, final String... path) {
+        public Path findPath(final IModFile modFile, final String... path) {
             String[] newPath = Arrays.copyOf(path, path.length);
             if (path.length == 2 && Objects.equals(path[1], "mods.toml")) {
                 final URI jarFileURI;
@@ -152,7 +158,7 @@ public class ModDiscoverer {
             return findPathJar(modFile, path);
         }
 
-        private Path findPathDirectory(final ModFile modFile, final String... path) {
+        private Path findPathDirectory(final IModFile modFile, final String... path) {
             if (path.length < 1) {
                 throw new IllegalArgumentException("Missing path");
             }
@@ -161,11 +167,11 @@ public class ModDiscoverer {
             return mcJar.resolve(target);
         }
 
-        private Path findPathJar(final ModFile modFile, final String... path) {
+        private Path findPathJar(final IModFile modFile, final String... path) {
             return fileSystem.getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
         }
         @Override
-        public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
+        public void scanFile(final IModFile modFile, final Consumer<Path> pathConsumer) {
             LOGGER.debug(SCAN,"Scan started: {}", modFile);
             Path path;
             if (Files.isDirectory(mcJar))
@@ -191,7 +197,7 @@ public class ModDiscoverer {
         }
 
         @Override
-        public boolean isValid(final ModFile modFile) {
+        public boolean isValid(final IModFile modFile) {
             return true;
         }
     }

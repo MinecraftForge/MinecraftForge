@@ -1,0 +1,67 @@
+{
+  "advancements": [
+    {
+      "conditions": [
+        {
+          "values": [
+            {
+              "value": {
+                "modid": "minecraft",
+                "type": "forge:mod_loaded"
+              },
+              "type": "forge:not"
+            },
+            {
+              "item": "minecraft:dirt",
+              "type": "forge:item_exists"
+            },
+            {
+              "type": "forge:false"
+            }
+          ],
+          "type": "forge:and"
+        }
+      ],
+      "advancement": {
+        "parent": "minecraft:root",
+        "display": {
+          "icon": {
+            "item": "minecraft:diamond_block"
+          },
+          "title": {
+            "text": "Dirt2Diamonds"
+          },
+          "description": {
+            "text": "The BEST crafting recipe in the game!"
+          },
+          "frame": "task",
+          "show_toast": false,
+          "announce_to_chat": false,
+          "hidden": false
+        },
+        "rewards": {
+          "recipes": [
+            "data_gen_test:conditional"
+          ]
+        },
+        "criteria": {
+          "has_dirt": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "item": "minecraft:dirt"
+                }
+              ]
+            }
+          }
+        },
+        "requirements": [
+          [
+            "has_dirt"
+          ]
+        ]
+      }
+    }
+  ]
+}

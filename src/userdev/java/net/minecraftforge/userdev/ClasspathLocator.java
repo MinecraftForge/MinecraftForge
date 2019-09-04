@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +45,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     private List<Path> modCoords;
 
     @Override
-    public List<ModFile> scanMods() {
+    public List<IModFile> scanMods() {
         return modCoords.stream().
             map(mc -> new ModFile(mc, this)).
             peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf))).

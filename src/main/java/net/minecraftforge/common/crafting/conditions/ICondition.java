@@ -17,29 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.ticket;
+package net.minecraftforge.common.crafting.conditions;
 
-public class MultiTicketManager<T> implements ITicketManager<T>
+import net.minecraft.util.ResourceLocation;
+
+public interface ICondition
 {
-    private final ITicketGetter<T>[] ticketManagers;
+    ResourceLocation getID();
 
-    @SafeVarargs
-    public MultiTicketManager(ITicketGetter<T>... ticketManagers)
-    {
-        this.ticketManagers = ticketManagers;
-    }
-
-    @Override
-    public void add(SimpleTicket<T> ticket)
-    {
-        for (ITicketGetter<T> manager : ticketManagers)
-            manager.add(ticket);
-    }
-
-    @Override
-    public void remove(SimpleTicket<T> ticket)
-    {
-        for (ITicketGetter<T> manager : ticketManagers)
-            manager.remove(ticket);
-    }
+    boolean test();
 }

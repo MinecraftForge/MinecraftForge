@@ -20,74 +20,51 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-
-import javax.annotation.Nullable;
-
-import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.EMPTY_TANK_INFO;
-import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.EMPTY_TANK_PROPERTIES_ARRAY;
 
 /**
  * VoidFluidHandler is a template fluid handler that can be filled indefinitely without ever getting full.
  * It does not store fluid that gets filled into it, but "destroys" it upon receiving it.
  */
-public class VoidFluidHandler implements IFluidHandler, IFluidTank
+public class VoidFluidHandler implements IFluidHandler
 {
     public static final VoidFluidHandler INSTANCE = new VoidFluidHandler();
 
     public VoidFluidHandler() {}
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return EMPTY_TANK_PROPERTIES_ARRAY;
-    }
+    public int getTanks() { return 1; }
+
+    @Nonnull
+    @Override
+    public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
 
     @Override
-    @Nullable
-    public FluidStack getFluid()
-    {
-        return null;
-    }
+    public int getTankCapacity(int tank) { return Integer.MAX_VALUE; }
 
     @Override
-    public int getFluidAmount()
-    {
-        return 0;
-    }
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return true; }
 
     @Override
-    public int getCapacity()
+    public int fill(FluidStack resource, FluidAction action)
     {
-        return Integer.MAX_VALUE;
+        return resource.getAmount();
     }
 
+    @Nonnull
     @Override
-    public FluidTankInfo getInfo()
+    public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        return EMPTY_TANK_INFO;
+        return FluidStack.EMPTY;
     }
 
+    @Nonnull
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public FluidStack drain(int maxDrain, FluidAction action)
     {
-        return resource.amount;
-    }
-
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
-    {
-        return null;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
-    {
-        return null;
+        return FluidStack.EMPTY;
     }
 }

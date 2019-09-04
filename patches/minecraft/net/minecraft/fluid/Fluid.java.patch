@@ -9,7 +9,7 @@
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
     protected final StateContainer<Fluid, IFluidState> field_207202_e;
     private IFluidState field_207200_b;
-@@ -102,4 +102,10 @@
+@@ -102,4 +102,40 @@
     }
  
     public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
@@ -18,5 +18,35 @@
 +   @Override
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
++   }
++
++   /**
++    * Creates the fluid attributes object, which will contain all the extended values for the fluid that aren't part of the vanilla system.
++    * Do not call this from outside. To retrieve the values use {@link Fluid#getAttributes()}
++    */
++   protected net.minecraftforge.fluids.FluidAttributes createAttributes(Fluid fluid)
++   {
++      if (fluid instanceof EmptyFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("empty", null, null)
++                 .vanillaColor().density(0).temperature(0).luminosity(0).viscosity(0).density(0).build();
++      if (fluid instanceof WaterFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("water",
++                 new net.minecraft.util.ResourceLocation("block/water_still"),
++                 new net.minecraft.util.ResourceLocation("block/water_flow"))
++                 .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
++                 .vanillaColor().build();
++      if (fluid instanceof LavaFluid)
++         return net.minecraftforge.fluids.FluidAttributes.builder("lava",
++                 new net.minecraft.util.ResourceLocation("block/lava_still"),
++                 new net.minecraft.util.ResourceLocation("block/lava_flow"))
++                 .vanillaColor().luminosity(15).density(3000).viscosity(6000).temperature(1300).build();
++      throw new RuntimeException("Mod fluids must override createAttributes.");
++   }
++
++   private net.minecraftforge.fluids.FluidAttributes forgeFluidAttributes;
++   public final net.minecraftforge.fluids.FluidAttributes getAttributes() {
++      if (forgeFluidAttributes == null)
++         forgeFluidAttributes = createAttributes(this);
++      return forgeFluidAttributes;
 +   }
  }

@@ -52,16 +52,12 @@ import net.minecraftforge.common.Tags;
 
 public class ForgeRecipeProvider extends RecipeProvider
 {
-    private final DataGenerator generator;
-    private final Path ADV_ROOT;
     private Map<Item, Tag<Item>> replacements = new HashMap<>();
     private Set<ResourceLocation> excludes = new HashSet<>();
 
     public ForgeRecipeProvider(DataGenerator generatorIn)
     {
         super(generatorIn);
-        this.generator = generatorIn;
-        ADV_ROOT = this.generator.getOutputFolder().resolve("data/minecraft/advancements/recipes/root.json");
     }
 
     private void exclude(IItemProvider item)
@@ -101,7 +97,6 @@ public class ForgeRecipeProvider extends RecipeProvider
 
     @Override
     protected void saveRecipeAdvancement(DirectoryCache cache, JsonObject advancementJson, Path pathIn) {
-        if (pathIn.equals(ADV_ROOT)) return; //We NEVER care about this.
         //NOOP - We dont replace any of the advancement things yet...
     }
 

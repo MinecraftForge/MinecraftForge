@@ -52,6 +52,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
@@ -583,6 +584,10 @@ public class ForgeHooks
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
 
+        PlayerEntity player = context.getPlayer();
+        if (player != null && !player.abilities.allowEdit && !itemstack.canPlaceOn(world.getTags(), new CachedBlockInfo(world, context.getPos(), false)))
+            return ActionResultType.PASS;
+
         // handle all placement events here
         int size = itemstack.getCount();
         CompoundNBT nbt = null;
@@ -596,7 +601,11 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
+        ItemStack copy = itemstack.isDamageable() ? itemstack.copy() : null;
         ActionResultType ret = itemstack.getItem().onItemUse(context);
+        if (itemstack.isEmpty())
+            ForgeEventFactory.onPlayerDestroyItem(player, copy, context.getHand());
+
         world.captureBlockSnapshots = false;
 
         if (ret == ActionResultType.SUCCESS)
@@ -616,7 +625,6 @@ public class ForgeHooks
             itemstack.setCount(size);
             itemstack.setTag(nbt);
 
-            PlayerEntity player = context.getPlayer();
             Direction side = context.getFace();
 
             boolean eventResult = false;
@@ -1045,8 +1053,8 @@ public class ForgeHooks
         return event.getVanillaNoteId();
     }
 
-    public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner) {
-        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
+    public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {
+        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 

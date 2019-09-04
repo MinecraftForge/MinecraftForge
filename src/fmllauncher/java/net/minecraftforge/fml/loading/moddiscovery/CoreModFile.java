@@ -48,6 +48,11 @@ public class CoreModFile implements ICoreModFile {
     }
 
     @Override
+    public Reader getAdditionalFile(final String fileName) throws IOException {
+        return Files.newBufferedReader(file.findResource(fileName));
+    }
+
+    @Override
     public String getOwnerId() {
         return this.file.getModInfos().get(0).getModId();
     }

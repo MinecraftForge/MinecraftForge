@@ -17,14 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.crafting;
-
-import java.util.function.BooleanSupplier;
+package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
-@FunctionalInterface
-public interface IConditionSerializer
+import net.minecraft.util.ResourceLocation;
+
+public interface IConditionSerializer<T extends ICondition>
 {
-    BooleanSupplier parse(JsonObject json);
+    void write(JsonObject json, T value);
+
+    T read(JsonObject json);
+
+    ResourceLocation getID();
+
+    default JsonObject getJson(T value)
+    {
+        JsonObject json = new JsonObject();
+        this.write(json, value);
+        json.addProperty("type", value.getID().toString());
+        return json;
+    }
 }

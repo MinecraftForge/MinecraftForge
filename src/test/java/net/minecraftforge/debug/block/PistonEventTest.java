@@ -54,7 +54,7 @@ import net.minecraftforge.fml.common.Mod;
 public class PistonEventTest
 {
 
-    public static final String MODID = "pistoneventtest";
+    public static final String MODID = "piston_event_test";
 
     private static Block shiftOnMove = new BlockShiftOnMove();
 

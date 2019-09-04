@@ -85,7 +85,6 @@ import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.logging.ModelLoaderErrorMessage;
 import net.minecraftforge.registries.IRegistryDelegate;
@@ -126,8 +125,6 @@ public final class ModelLoader extends ModelBakery
     private final Map<ModelResourceLocation, IUnbakedModel> stateModels = Maps.newHashMap();
     private final Map<ModelResourceLocation, BlockModelDefinition> multipartDefinitions = Maps.newHashMap();
     private final Map<BlockModelDefinition, IUnbakedModel> multipartModels = Maps.newHashMap();
-    // TODO: nothing adds to missingVariants, remove it?
-    private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
     private IUnbakedModel missingModel = null;
 
@@ -182,8 +179,6 @@ public final class ModelLoader extends ModelBakery
 
     private final class VanillaModelWrapper implements IUnbakedModel
     {
-        private final FaceBakery faceBakery = new FaceBakery();
-
         private final ResourceLocation location;
         private final BlockModel model;
         private final boolean uvlock;
@@ -644,6 +639,9 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    /**
+     * Adapter from the vanilla json model loader to a custom model loader
+     */
     protected static enum VanillaLoader implements ICustomModelLoader
     {
         INSTANCE;
@@ -669,7 +667,7 @@ public final class ModelLoader extends ModelBakery
             return loader;
         }
 
-        // NOOP, handled in loader
+        // NOOP, handled by ModelLoader itself
         @Override
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
@@ -686,14 +684,17 @@ public final class ModelLoader extends ModelBakery
             {
                 return loader.getMissingModel();
             }
-            String modelPath = modelLocation.getPath();
+
+            String trimmedPath = modelLocation.getPath();
             if(modelLocation.getPath().startsWith("models/"))
             {
-                modelPath = modelPath.substring("models/".length());
+                trimmedPath = trimmedPath.substring("models/".length());
             }
-            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getNamespace(), "armatures/" + modelPath + ".json");
+            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getNamespace(), "armatures/" + trimmedPath + ".json");
             ModelBlockAnimation animation = ModelBlockAnimation.loadVanillaAnimation(loader.resourceManager, armatureLocation);
-            BlockModel model = loader.loadModel(modelLocation);
+
+            ResourceLocation trimmedLocation = new ResourceLocation(modelLocation.getNamespace(), trimmedPath);
+            BlockModel model = loader.loadModel(trimmedLocation);
             IUnbakedModel iModel = loader.new VanillaModelWrapper(modelLocation, model, false, animation);
             if(loader.missingModel == null && modelLocation.equals(MODEL_MISSING))
             {
@@ -791,65 +792,8 @@ public final class ModelLoader extends ModelBakery
                 }
             }
         }
-        for(ModelResourceLocation missing : missingVariants)
-        {
-            IBakedModel model = modelRegistry.get(missing);
-            if(model == null || model == missingModel)
-            {
-                LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage(missing, null));
-            }
-            if(model == null)
-            {
-                modelRegistry.put(missing, missingModel);
-            }
-        }
         loadingExceptions.clear();
-        missingVariants.clear();
         isLoading = false;
-    }
-
-    /*
-    // TODO replace these if necessary, IStateMapper and ItemMeshDefinition are gone
-    private static final Map<IRegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
-
-    /**
-     * Adds a custom IBlockState -> model variant logic.
-     *//*
-    public static void setCustomStateMapper(Block block, IStateMapper mapper)
-    {
-        customStateMappers.put(block.delegate, mapper);
-    }
-
-    /**
-     * Internal, do not use.
-     *//*
-    public static void onRegisterAllBlocks(BlockModelShapes shapes)
-    {
-        for (Entry<IRegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
-        {
-            shapes.registerBlockWithStateMapper(e.getKey().get(), e.getValue());
-        }
-    }
-*/
-    private static final Map<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
-
-    /**
-     * Adds a simple mapping from Item + metadata to the model variant.
-     * Registers the variant with the ModelBakery too.
-     *//*
-    public static void setCustomModelResourceLocation(Item item, int metadata, ModelResourceLocation model)
-    {
-        customModels.put(Pair.of(item.delegate, metadata), model);
-        ModelBakery.registerItemVariants(item, model);
-    }
-
-    /**
-     * Adds generic ItemStack -> model variant logic.
-     * You still need to manually call ModelBakery.registerItemVariants with all values that meshDefinition can return.
-     *//*
-    public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
-    {
-        customMeshDefinitions.put(item.delegate, meshDefinition);
     }
 
     /**
@@ -860,16 +804,6 @@ public final class ModelLoader extends ModelBakery
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 */
-    /**
-     * Internal, do not use.
-     */
-    public static void onRegisterItems(ItemModelMesher mesher)
-    {
-        for (Entry<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
-        {
-            mesher.register(e.getKey().getLeft().get(), e.getValue());
-        }
-    }
 
     private static enum DefaultTextureGetter implements Function<ResourceLocation, TextureAtlasSprite>
     {
@@ -897,6 +831,9 @@ public final class ModelLoader extends ModelBakery
         return DEFAULT_MODEL_GETTER;
     }
 
+    /**
+     * Exposes the blockstate json loader as a custom model loader
+     */
     protected static enum VariantLoader implements ICustomModelLoader
     {
         INSTANCE;
@@ -919,7 +856,7 @@ public final class ModelLoader extends ModelBakery
         }
 
         @Override
-        public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return loader.getUnbakedModel(modelLocation);
         }

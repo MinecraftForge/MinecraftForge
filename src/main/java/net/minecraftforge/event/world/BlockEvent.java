@@ -371,7 +371,7 @@ public class BlockEvent extends Event
         private BlockState newState;
         private BlockState origState;
 
-        public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, BlockState state)
+        public FluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
         {
             super(world, pos, state);
             this.liquidPos = liquidPos;

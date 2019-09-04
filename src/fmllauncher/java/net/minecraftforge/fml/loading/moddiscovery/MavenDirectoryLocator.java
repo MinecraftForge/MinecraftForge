@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.MavenCoordinateResolver;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,11 +34,11 @@ public class MavenDirectoryLocator extends AbstractJarFileLocator {
     private List<Path> modCoords;
 
     @Override
-    public List<ModFile> scanMods() {
-        return modCoords.stream().
-                map(mc -> new ModFile(mc, this)).
-                peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf))).
-                collect(Collectors.toList());
+    public List<IModFile> scanMods() {
+        return modCoords.stream()
+                .map(mc -> new ModFile(mc, this))
+                .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
+                .collect(Collectors.toList());
     }
 
     @Override

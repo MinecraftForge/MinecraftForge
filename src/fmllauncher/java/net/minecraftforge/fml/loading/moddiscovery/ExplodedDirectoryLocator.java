@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +38,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public class ExplodedDirectoryLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<Pair<Path,List<Path>>> rootDirs;
-    private final Map<ModFile, Pair<Path,List<Path>>> mods;
+    private final Map<IModFile, Pair<Path,List<Path>>> mods;
 
     public ExplodedDirectoryLocator() {
         this.rootDirs = new ArrayList<>();
@@ -44,7 +46,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     @Override
-    public List<ModFile> scanMods() {
+    public List<IModFile> scanMods() {
         final Path modstoml = Paths.get("META-INF", "mods.toml");
         // Collect all the mods.toml files found
         rootDirs.forEach(pathPathPair -> {
@@ -67,7 +69,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     @Override
-    public Path findPath(final ModFile modFile, final String... path) {
+    public Path findPath(final IModFile modFile, final String... path) {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
@@ -81,7 +83,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     @Override
-    public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
+    public void scanFile(final IModFile modFile, final Consumer<Path> pathConsumer) {
         LOGGER.debug(SCAN,"Scanning exploded directory {}", modFile.getFilePath().toString());
         final Pair<Path, List<Path>> pathPathPair = mods.get(modFile);
         // classes are in the right branch of the pair
@@ -119,7 +121,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     @Override
-    public boolean isValid(final ModFile modFile) {
+    public boolean isValid(final IModFile modFile) {
         return mods.get(modFile) != null;
     }
 }
