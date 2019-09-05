@@ -19,7 +19,7 @@ function initializeCoreMod() {
             },
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
-                var fn = asmapi.mapField('field_77876_a') // potion field - remap to mcp if necessary
+                var fn = asmapi.mapField('field_204517_c') // potion field - remap to mcp if necessary
                 asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFluid'))
                 return classNode;
             }

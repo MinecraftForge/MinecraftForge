@@ -26,13 +26,7 @@
     public void func_196265_a(BlockState p_196265_1_, World p_196265_2_, BlockPos p_196265_3_, Random p_196265_4_) {
        p_196265_2_.func_204610_c(p_196265_3_).func_206891_b(p_196265_2_, p_196265_3_, p_196265_4_);
     }
-@@ -56,17 +66,18 @@
-    }
- 
-    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
--      return !this.field_204517_c.func_207185_a(FluidTags.field_206960_b);
-+      return !getFluid().func_207185_a(FluidTags.field_206960_b);
-    }
+@@ -61,6 +71,7 @@
  
     public IFluidState func_204507_t(BlockState p_204507_1_) {
        int i = p_204507_1_.func_177229_b(field_176367_b);
@@ -40,31 +34,6 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
-    @OnlyIn(Dist.CLIENT)
-    public boolean func_200122_a(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
--      return p_200122_2_.func_204520_s().func_206886_c().func_207187_a(this.field_204517_c) ? true : super.func_200124_e(p_200122_1_);
-+      return p_200122_2_.func_204520_s().func_206886_c().func_207187_a(getFluid()) ? true : super.func_200124_e(p_200122_1_);
-    }
- 
-    public BlockRenderType func_149645_b(BlockState p_149645_1_) {
-@@ -82,7 +93,7 @@
-    }
- 
-    public int func_149738_a(IWorldReader p_149738_1_) {
--      return this.field_204517_c.func_205569_a(p_149738_1_);
-+      return getFluid().func_205569_a(p_149738_1_);
-    }
- 
-    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-@@ -108,7 +119,7 @@
-    }
- 
-    public boolean func_204515_c(World p_204515_1_, BlockPos p_204515_2_, BlockState p_204515_3_) {
--      if (this.field_204517_c.func_207185_a(FluidTags.field_206960_b)) {
-+      if (getFluid().func_207185_a(FluidTags.field_206960_b)) {
-          boolean flag = false;
- 
-          for(Direction direction : Direction.values()) {
 @@ -121,13 +132,13 @@
           if (flag) {
              IFluidState ifluidstate = p_204515_1_.func_204610_c(p_204515_2_);
@@ -81,21 +50,7 @@
                 this.func_180688_d(p_204515_1_, p_204515_2_);
                 return false;
              }
-@@ -148,16 +159,33 @@
-    public Fluid func_204508_a(IWorld p_204508_1_, BlockPos p_204508_2_, BlockState p_204508_3_) {
-       if (p_204508_3_.func_177229_b(field_176367_b) == 0) {
-          p_204508_1_.func_180501_a(p_204508_2_, Blocks.field_150350_a.func_176223_P(), 11);
--         return this.field_204517_c;
-+         return getFluid();
-       } else {
-          return Fluids.field_204541_a;
-       }
-    }
- 
-    public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
--      if (this.field_204517_c.func_207185_a(FluidTags.field_206960_b)) {
-+      if (getFluid().func_207185_a(FluidTags.field_206960_b)) {
-          p_196262_4_.func_213292_aB();
+@@ -160,4 +171,21 @@
        }
  
     }
