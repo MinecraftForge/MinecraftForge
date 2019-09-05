@@ -59,11 +59,11 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.CHESTS_TRAPPED, Tags.Items.CHESTS_TRAPPED);
         copy(Tags.Blocks.CHESTS_WOODEN, Tags.Items.CHESTS_WOODEN);
         copy(Tags.Blocks.COBBLESTONE, Tags.Items.COBBLESTONE);
-        getBuilder(Tags.Items.CROPS).add(Tags.Items.CROPS_BEETROOT, Tags.Items.CROPS_CARROT, Tags.Items.CROPS_NETHER_WART, Tags.Items.CROPS_POTATOE, Tags.Items.CROPS_WHEAT);
+        getBuilder(Tags.Items.CROPS).add(Tags.Items.CROPS_BEETROOT, Tags.Items.CROPS_CARROT, Tags.Items.CROPS_NETHER_WART, Tags.Items.CROPS_POTATO, Tags.Items.CROPS_WHEAT);
         getBuilder(Tags.Items.CROPS_BEETROOT).add(Items.BEETROOT);
         getBuilder(Tags.Items.CROPS_CARROT).add(Items.CARROT);
         getBuilder(Tags.Items.CROPS_NETHER_WART).add(Items.NETHER_WART);
-        getBuilder(Tags.Items.CROPS_POTATOE).add(Items.POTATO);
+        getBuilder(Tags.Items.CROPS_POTATO).add(Items.POTATO);
         getBuilder(Tags.Items.CROPS_WHEAT).add(Items.WHEAT);
         getBuilder(Tags.Items.DUSTS).add(Tags.Items.DUSTS_GLOWSTONE, Tags.Items.DUSTS_PRISMARINE, Tags.Items.DUSTS_REDSTONE);
         getBuilder(Tags.Items.DUSTS_GLOWSTONE).add(Items.GLOWSTONE_DUST);

@@ -132,7 +132,7 @@ public class Tags
         public static final Tag<Item> CROPS_BEETROOT = tag("crops/beetroot");
         public static final Tag<Item> CROPS_CARROT = tag("crops/carrot");
         public static final Tag<Item> CROPS_NETHER_WART = tag("crops/nether_wart");
-        public static final Tag<Item> CROPS_POTATOE = tag("crops/potatoe");
+        public static final Tag<Item> CROPS_POTATO = tag("crops/potato");
         public static final Tag<Item> CROPS_WHEAT = tag("crops/wheat");
         public static final Tag<Item> DUSTS = tag("dusts");
         public static final Tag<Item> DUSTS_PRISMARINE = tag("dusts/prismarine");

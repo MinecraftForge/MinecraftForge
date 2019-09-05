@@ -328,7 +328,7 @@ public final class ModelLoader extends ModelBakery
                     }
                     else
                     {
-                        builder.addFaceQuad(baseState.rotate(e.getValue().cullFace), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
+                        builder.addFaceQuad(baseState.rotateTransform(e.getValue().cullFace), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
                     }
                 }
             }

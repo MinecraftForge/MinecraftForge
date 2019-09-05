@@ -73,7 +73,7 @@ public interface ICustomPacket<T extends IPacket<?>> {
         }
     }
 
-    default PacketBuffer getData() {
+    default PacketBuffer getInternalData() {
         return Fields.lookup.get(this.getClass()).data.map(f->UnsafeHacks.<PacketBuffer>getField(f, this)).orElse(null);
     }
 

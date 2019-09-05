@@ -1144,6 +1144,16 @@ project(':forge') {
     
     tasks.eclipse.dependsOn('genEclipseRuns')
     
+    if (project.hasProperty('UPDATE_MAPPINGS')) {
+        extractRangeMap {
+            sources sourceSets.test.java.srcDirs
+        }
+        applyRangeMap {
+            sources sourceSets.test.java.srcDirs
+        }
+        sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
+    }
+    
     publishing {
         publications {
             mavenJava(MavenPublication) {
