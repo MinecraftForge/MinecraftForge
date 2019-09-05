@@ -11,6 +11,30 @@ function initializeCoreMod() {
                 asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('func_188419_a'))
                 return classNode;
             }
+        },
+        'flowingfluidblock': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.block.FlowingFluidBlock'
+            },
+            'transformer': function(classNode) {
+                var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
+                var fn = asmapi.mapField('field_77876_a') // potion field - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFluid'))
+                return classNode;
+            }
+        },
+        'bucketitem': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.item.BucketItem'
+            },
+            'transformer': function(classNode) {
+                var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
+                var fn = asmapi.mapField('field_77876_a') // potion field - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFluid'))
+                return classNode;
+            }
         }
     }
 }

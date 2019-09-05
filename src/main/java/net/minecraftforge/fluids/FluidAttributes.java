@@ -31,6 +31,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import net.minecraft.block.material.Material;
@@ -315,6 +316,15 @@ public class FluidAttributes
         return emptySound;
     }
 
+    /**
+     * Amount of time a bucket of the fluid will last for when used as a fuel.
+     *
+     * Note that this will include both things that are hot and things that are actively combusting.
+     * To differentiate them, place them in separate tags, such as forge:fluids/combustible
+     *
+     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks,
+     * and a bucket of lava lasts for 20000 ticks.
+     */
     public final int getFuelTime()
     {
         return this.fuelTime;
@@ -361,7 +371,7 @@ public class FluidAttributes
     public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
 
     public static Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-        return new Builder(owner, stillTexture, flowingTexture);
+        return new Builder(owner, stillTexture, flowingTexture, FluidAttributes::new);
     }
 
     public Stream<ResourceLocation> getTextures()
@@ -388,9 +398,11 @@ public class FluidAttributes
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
         private int fuelTime = 0;
+        private Function<Builder,FluidAttributes> factory;
 
-        protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+        protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture, Function<Builder,FluidAttributes> factory) {
             this.owner = owner;
+            this.factory = factory;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
             this.translationKey = Util.makeTranslationKey("fluid", owner.getRegistryName());
@@ -471,7 +483,7 @@ public class FluidAttributes
 
         public FluidAttributes build()
         {
-            return new FluidAttributes(this);
+            return factory.apply(this);
         }
     }
 
@@ -488,22 +500,8 @@ public class FluidAttributes
             return BiomeColors.getWaterColor(world, pos);
         }
 
-        public static FluidAttributes.Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            return new Builder(owner, stillTexture, flowingTexture);
-        }
-
-        private static class Builder extends FluidAttributes.Builder
-        {
-            protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture)
-            {
-                super(owner, stillTexture, flowingTexture);
-            }
-
-            @Override
-            public FluidAttributes build()
-            {
-                return new Water(this);
-            }
+        public static Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            return new Builder(owner, stillTexture, flowingTexture, Water::new);
         }
     }
 }
