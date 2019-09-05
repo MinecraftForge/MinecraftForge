@@ -61,8 +61,6 @@ public class FluidAttributes
 {
     public static final int BUCKET_VOLUME = 1000;
 
-    private final Fluid owner;
-
     private String translationKey;
 
     private final ResourceLocation stillTexture;
@@ -146,7 +144,6 @@ public class FluidAttributes
 
     protected FluidAttributes(Builder builder)
     {
-        this.owner = builder.owner;
         this.translationKey = builder.translationKey;
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
@@ -383,7 +380,6 @@ public class FluidAttributes
 
     public static class Builder
     {
-        private final Fluid owner;
         private final ResourceLocation stillTexture;
         private final ResourceLocation flowingTexture;
         private ResourceLocation overlayTexture;
@@ -401,7 +397,6 @@ public class FluidAttributes
         private Function<Builder,FluidAttributes> factory;
 
         protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture, Function<Builder,FluidAttributes> factory) {
-            this.owner = owner;
             this.factory = factory;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
