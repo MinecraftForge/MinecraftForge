@@ -6,6 +6,7 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +22,9 @@ public class FMLMCRegisterPacketHandler {
         private Set<ResourceLocation> locations = new HashSet<>();
 
         public void updateFrom(PacketBuffer buffer) {
-            locations = bytesToResLocation(buffer.readByteArray());
+            byte[] data = new byte[buffer.readableBytes() < 0 ? 0 : buffer.readableBytes()];
+            buffer.readBytes(data);
+            locations = bytesToResLocation(data);
         }
 
         byte[] toByteArray() {
@@ -82,7 +85,7 @@ public class FMLMCRegisterPacketHandler {
 
     public void sendRegistry(NetworkManager manager, final NetworkDirection dir) {
         PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
-        pb.writeByteArray(getFrom(manager).toByteArray());
+        pb.writeBytes(getFrom(manager).toByteArray());
         final ICustomPacket<IPacket<?>> iPacketICustomPacket = dir.buildPacket(Pair.of(pb, 0), FMLNetworkConstants.MC_REGISTER_RESOURCE);
         manager.sendPacket(iPacketICustomPacket.getThis());
     }
