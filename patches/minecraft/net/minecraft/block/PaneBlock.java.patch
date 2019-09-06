@@ -24,7 +24,7 @@
     }
 +
 +   @Override
-+   public net.minecraft.util.ActionResultType canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
++   public net.minecraft.util.ActionResultType getConnectedToResult(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
 +      BlockPos offPos = pos.func_177972_a(direction);
 +      BlockState offState = world.func_180495_p(offPos);
 +      return func_220112_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d())) ?
@@ -32,7 +32,7 @@
 +   }
 +
 +   private boolean canPaneConnectTo(BlockState otherState, IBlockReader world, BlockPos otherPos, Direction direction) {
-+      net.minecraft.util.ActionResultType result = otherState.canBeConnectedTo(world, otherPos, direction);
++      net.minecraft.util.ActionResultType result = otherState.getConnectedToResult(world, otherPos, direction);
 +      if(result == net.minecraft.util.ActionResultType.PASS) {
 +         return func_220112_a(otherState, otherState.func_224755_d(world, otherPos, direction));
 +      }

@@ -728,9 +728,9 @@ public interface IForgeBlockState
      * @return {@link ActionResultType#SUCCESS} to allow connections, {@link ActionResultType#FAIL} to block connections
      * or {@link ActionResultType#PASS} to have vanilla logic take place.
      */
-    default ActionResultType canBeConnectedTo(IBlockReader world, BlockPos pos, Direction direction)
+    default ActionResultType getConnectedToResult(IBlockReader world, BlockPos pos, Direction direction)
     {
-        return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, direction);
+        return getBlockState().getBlock().getConnectedToResult(getBlockState(), world, pos, direction);
     }
 
     /**

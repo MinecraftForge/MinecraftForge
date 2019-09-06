@@ -862,7 +862,7 @@ public interface IForgeBlock
      * @return {@link ActionResultType#SUCCESS} to allow connections, {@link ActionResultType#FAIL} to block connections
      * or {@link ActionResultType#PASS} to have vanilla logic take place.
      */
-    default ActionResultType canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
+    default ActionResultType getConnectedToResult(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
     {
         return ActionResultType.PASS;
     }
