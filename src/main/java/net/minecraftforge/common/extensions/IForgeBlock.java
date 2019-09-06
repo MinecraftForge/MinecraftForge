@@ -61,11 +61,7 @@ import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -863,11 +859,12 @@ public interface IForgeBlock
      * @param world The current world
      * @param pos The position of this block
      * @param direction The side the connecting block is on
-     * @return True to allow another block to connect to this block
+     * @return {@link ActionResultType#SUCCESS} to allow connections, {@link ActionResultType#FAIL} to block connections
+     * or {@link ActionResultType#PASS} to have vanilla logic take place.
      */
-    default boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
+    default ActionResultType canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
     {
-        return false;
+        return ActionResultType.PASS;
     }
 
     /**
