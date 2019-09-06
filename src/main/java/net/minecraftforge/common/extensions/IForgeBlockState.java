@@ -724,12 +724,12 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos The position of this block
-     * @param facing The side the connecting block is on
+     * @param direction The side the connecting block is on
      * @return True to allow another block to connect to this block
      */
-    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, Direction facing)
+    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, Direction direction)
     {
-        return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, facing);
+        return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, direction);
     }
 
     /**

@@ -1,0 +1,36 @@
+--- a/net/minecraft/block/PaneBlock.java
++++ b/net/minecraft/block/PaneBlock.java
+@@ -30,7 +30,7 @@
+       BlockState blockstate1 = iblockreader.func_180495_p(blockpos2);
+       BlockState blockstate2 = iblockreader.func_180495_p(blockpos3);
+       BlockState blockstate3 = iblockreader.func_180495_p(blockpos4);
+-      return this.func_176223_P().func_206870_a(field_196409_a, Boolean.valueOf(this.func_220112_a(blockstate, blockstate.func_224755_d(iblockreader, blockpos1, Direction.SOUTH)))).func_206870_a(field_196413_c, Boolean.valueOf(this.func_220112_a(blockstate1, blockstate1.func_224755_d(iblockreader, blockpos2, Direction.NORTH)))).func_206870_a(field_196414_y, Boolean.valueOf(this.func_220112_a(blockstate2, blockstate2.func_224755_d(iblockreader, blockpos3, Direction.EAST)))).func_206870_a(field_196411_b, Boolean.valueOf(this.func_220112_a(blockstate3, blockstate3.func_224755_d(iblockreader, blockpos4, Direction.WEST)))).func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
++      return this.func_176223_P().func_206870_a(field_196409_a, canPaneConnectTo(blockstate, iblockreader, blockpos1, Direction.SOUTH)).func_206870_a(field_196413_c, canPaneConnectTo(blockstate1, iblockreader, blockpos2, Direction.NORTH)).func_206870_a(field_196414_y, canPaneConnectTo(blockstate2, iblockreader, blockpos3, Direction.EAST)).func_206870_a(field_196411_b, canPaneConnectTo(blockstate3, iblockreader, blockpos4, Direction.WEST)).func_206870_a(field_204514_u, ifluidstate.func_206886_c() == Fluids.field_204546_a);
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+@@ -38,7 +38,7 @@
+          p_196271_4_.func_205219_F_().func_205360_a(p_196271_5_, Fluids.field_204546_a, Fluids.field_204546_a.func_205569_a(p_196271_4_));
+       }
+ 
+-      return p_196271_2_.func_176740_k().func_176722_c() ? p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.func_220112_a(p_196271_3_, p_196271_3_.func_224755_d(p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d())))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
++      return p_196271_2_.func_176740_k().func_176722_c() ? p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(canPaneConnectTo(p_196271_3_, p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d()))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -68,4 +68,15 @@
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+       p_206840_1_.func_206894_a(field_196409_a, field_196411_b, field_196414_y, field_196413_c, field_204514_u);
+    }
++
++   @Override
++   public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
++      BlockPos offPos = pos.func_177972_a(direction);
++      BlockState offState = world.func_180495_p(pos);
++      return func_220112_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d()));
++   }
++
++   private boolean canPaneConnectTo(BlockState otherState, IBlockReader world, BlockPos otherPos, Direction direction) {
++      return otherState.canBeConnectedTo(world, otherPos, direction) || func_220112_a(otherState, otherState.func_224755_d(world, otherPos, direction));
++   }
+ }

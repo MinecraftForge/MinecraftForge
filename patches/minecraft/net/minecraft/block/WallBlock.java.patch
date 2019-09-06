@@ -1,0 +1,48 @@
+--- a/net/minecraft/block/WallBlock.java
++++ b/net/minecraft/block/WallBlock.java
+@@ -58,10 +58,10 @@
+       BlockState blockstate1 = iworldreader.func_180495_p(blockpos2);
+       BlockState blockstate2 = iworldreader.func_180495_p(blockpos3);
+       BlockState blockstate3 = iworldreader.func_180495_p(blockpos4);
+-      boolean flag = this.func_220113_a(blockstate, blockstate.func_224755_d(iworldreader, blockpos1, Direction.SOUTH), Direction.SOUTH);
+-      boolean flag1 = this.func_220113_a(blockstate1, blockstate1.func_224755_d(iworldreader, blockpos2, Direction.WEST), Direction.WEST);
+-      boolean flag2 = this.func_220113_a(blockstate2, blockstate2.func_224755_d(iworldreader, blockpos3, Direction.NORTH), Direction.NORTH);
+-      boolean flag3 = this.func_220113_a(blockstate3, blockstate3.func_224755_d(iworldreader, blockpos4, Direction.EAST), Direction.EAST);
++      boolean flag = canWallConnectTo(blockstate, iworldreader, blockpos1, Direction.SOUTH);
++      boolean flag1 = canWallConnectTo(blockstate1, iworldreader, blockpos2, Direction.WEST);
++      boolean flag2 = canWallConnectTo(blockstate2, iworldreader, blockpos3, Direction.NORTH);
++      boolean flag3 = canWallConnectTo(blockstate3, iworldreader, blockpos4, Direction.EAST);
+       boolean flag4 = (!flag || flag1 || !flag2 || flag3) && (flag || !flag1 || flag2 || !flag3);
+       return this.func_176223_P().func_206870_a(field_176256_a, Boolean.valueOf(flag4 || !iworldreader.func_175623_d(blockpos.func_177984_a()))).func_206870_a(field_196409_a, Boolean.valueOf(flag)).func_206870_a(field_196411_b, Boolean.valueOf(flag1)).func_206870_a(field_196413_c, Boolean.valueOf(flag2)).func_206870_a(field_196414_y, Boolean.valueOf(flag3)).func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
+    }
+@@ -75,10 +75,10 @@
+          return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+       } else {
+          Direction direction = p_196271_2_.func_176734_d();
+-         boolean flag = p_196271_2_ == Direction.NORTH ? this.func_220113_a(p_196271_3_, p_196271_3_.func_224755_d(p_196271_4_, p_196271_6_, direction), direction) : p_196271_1_.func_177229_b(field_196409_a);
+-         boolean flag1 = p_196271_2_ == Direction.EAST ? this.func_220113_a(p_196271_3_, p_196271_3_.func_224755_d(p_196271_4_, p_196271_6_, direction), direction) : p_196271_1_.func_177229_b(field_196411_b);
+-         boolean flag2 = p_196271_2_ == Direction.SOUTH ? this.func_220113_a(p_196271_3_, p_196271_3_.func_224755_d(p_196271_4_, p_196271_6_, direction), direction) : p_196271_1_.func_177229_b(field_196413_c);
+-         boolean flag3 = p_196271_2_ == Direction.WEST ? this.func_220113_a(p_196271_3_, p_196271_3_.func_224755_d(p_196271_4_, p_196271_6_, direction), direction) : p_196271_1_.func_177229_b(field_196414_y);
++         boolean flag = p_196271_2_ == Direction.NORTH ? canWallConnectTo(p_196271_3_, p_196271_4_, p_196271_6_, direction) : p_196271_1_.func_177229_b(field_196409_a);
++         boolean flag1 = p_196271_2_ == Direction.EAST ? canWallConnectTo(p_196271_3_, p_196271_4_, p_196271_6_, direction) : p_196271_1_.func_177229_b(field_196411_b);
++         boolean flag2 = p_196271_2_ == Direction.SOUTH ? canWallConnectTo(p_196271_3_, p_196271_4_, p_196271_6_, direction) : p_196271_1_.func_177229_b(field_196413_c);
++         boolean flag3 = p_196271_2_ == Direction.WEST ? canWallConnectTo(p_196271_3_, p_196271_4_, p_196271_6_, direction) : p_196271_1_.func_177229_b(field_196414_y);
+          boolean flag4 = (!flag || flag1 || !flag2 || flag3) && (flag || !flag1 || flag2 || !flag3);
+          return p_196271_1_.func_206870_a(field_176256_a, Boolean.valueOf(flag4 || !p_196271_4_.func_175623_d(p_196271_5_.func_177984_a()))).func_206870_a(field_196409_a, Boolean.valueOf(flag)).func_206870_a(field_196411_b, Boolean.valueOf(flag1)).func_206870_a(field_196413_c, Boolean.valueOf(flag2)).func_206870_a(field_196414_y, Boolean.valueOf(flag3));
+       }
+@@ -87,4 +87,15 @@
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+       p_206840_1_.func_206894_a(field_176256_a, field_196409_a, field_196411_b, field_196414_y, field_196413_c, field_204514_u);
+    }
++
++   @Override
++   public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
++      BlockPos offPos = pos.func_177972_a(direction);
++      BlockState offState = world.func_180495_p(pos);
++      return func_220113_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d()), direction.func_176734_d());
++   }
++
++   private boolean canWallConnectTo(BlockState otherState, IBlockReader world, BlockPos otherPos, Direction direction) {
++      return otherState.canBeConnectedTo(world, otherPos, direction) || func_220113_a(otherState, otherState.func_224755_d(world, otherPos, direction), direction);
++   }
+ }

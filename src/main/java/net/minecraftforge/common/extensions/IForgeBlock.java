@@ -862,10 +862,10 @@ public interface IForgeBlock
      *
      * @param world The current world
      * @param pos The position of this block
-     * @param facing The side the connecting block is on
+     * @param direction The side the connecting block is on
      * @return True to allow another block to connect to this block
      */
-    default boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction facing)
+    default boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
     {
         return false;
     }
