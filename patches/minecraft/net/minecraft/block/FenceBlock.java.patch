@@ -24,7 +24,7 @@
 +   @Override
 +   public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
 +      BlockPos offPos = pos.func_177972_a(direction);
-+      BlockState offState = world.func_180495_p(pos);
++      BlockState offState = world.func_180495_p(offPos);
 +      return func_220111_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d()), direction.func_176734_d());
 +   }
 +
