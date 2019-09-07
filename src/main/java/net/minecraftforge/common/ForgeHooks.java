@@ -838,7 +838,7 @@ public class ForgeHooks
                     new net.minecraft.util.ResourceLocation("white"),
                     new net.minecraft.util.ResourceLocation("white"))
                     .translationKey("block.minecraft.air")
-                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).density(0).build();
+                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build();
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(fluid,
                     new net.minecraft.util.ResourceLocation("block/water_still"),
