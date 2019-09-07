@@ -24,7 +24,7 @@
                             mobentity.func_70012_b((double)f, (double)k, (double)f1, p_222263_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
 -                           if (d0 > 16384.0D && mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
 +                           int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null, SpawnReason.NATURAL);
-+                           if (canSpawn == -1 || (canSpawn == 0 && d0 > 16384.0D && (mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)))) {
++                           if (canSpawn == -1 || (canSpawn == 0 && (d0 > 16384.0D && mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)))) {
                                break label115;
                             }
  
