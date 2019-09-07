@@ -131,17 +131,6 @@ public class FluidAttributes
      */
     private final int color;
 
-    /**
-     * Amount of time a bucket of the fluid will last for when used as a fuel.
-     *
-     * Note that this will include both things that are hot and things that are actively combusting.
-     * To differentiate them, place them in separate tags, such as forge:fluids/combustible
-     *
-     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks,
-     * and a bucket of lava lasts for 20000 ticks.
-     */
-    protected int fuelTime = 0;
-
     protected FluidAttributes(Builder builder)
     {
         this.translationKey = builder.translationKey;
@@ -157,7 +146,6 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-        this.fuelTime = builder.fuelTime;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -313,30 +301,6 @@ public class FluidAttributes
         return emptySound;
     }
 
-    /**
-     * Amount of time a bucket of the fluid will last for when used as a fuel.
-     *
-     * Note that this will include both things that are hot and things that are actively combusting.
-     * To differentiate them, place them in separate tags, such as forge:fluids/combustible
-     *
-     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks,
-     * and a bucket of lava lasts for 20000 ticks.
-     */
-    public final int getFuelTime()
-    {
-        return this.fuelTime;
-    }
-
-    /**
-     * Indicates if the fluid has been marked as a fuel,
-     * it does not imply that the fuel is a combustible.
-     * Hot things can also generate energy.
-     */
-    public boolean isFuel()
-    {
-        return (this.fuelTime > 0);
-    }
-
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
@@ -345,8 +309,6 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public int getFuelTime(FluidStack stack){ return getFuelTime(); }
-    public boolean isFuel(FluidStack stack){ return isFuel(); }
     public ResourceLocation getStill(FluidStack stack) { return getStillTexture(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowingTexture(); }
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
@@ -360,8 +322,6 @@ public class FluidAttributes
     public boolean isGaseous(IEnviromentBlockReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(IEnviromentBlockReader world, BlockPos pos){ return getRarity(); }
     public int getColor(IEnviromentBlockReader world, BlockPos pos){ return getColor(); }
-    public int getFuelTime(World world, BlockPos pos){ return getFuelTime(); }
-    public boolean isFuel(World world, BlockPos pos){ return isFuel(); }
     public ResourceLocation getStill(IEnviromentBlockReader world, BlockPos pos) { return getStillTexture(); }
     public ResourceLocation getFlowing(IEnviromentBlockReader world, BlockPos pos) { return getFlowingTexture(); }
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
@@ -393,7 +353,6 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
-        private int fuelTime = 0;
         private Function<Builder,FluidAttributes> factory;
 
         protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture, Function<Builder,FluidAttributes> factory) {
@@ -467,12 +426,6 @@ public class FluidAttributes
         {
             this.fillSound = fillSound;
             this.emptySound = emptySound;
-            return this;
-        }
-
-        public final Builder fuel(int fuelTime)
-        {
-            this.fuelTime = fuelTime;
             return this;
         }
 

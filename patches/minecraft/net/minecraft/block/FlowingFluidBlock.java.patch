@@ -1,32 +1,41 @@
 --- a/net/minecraft/block/FlowingFluidBlock.java
 +++ b/net/minecraft/block/FlowingFluidBlock.java
-@@ -33,6 +33,8 @@
-    protected final FlowingFluid field_204517_c;
+@@ -30,9 +30,11 @@
+ 
+ public class FlowingFluidBlock extends Block implements IBucketPickupHandler {
+    public static final IntegerProperty field_176367_b = BlockStateProperties.field_208132_ag;
+-   protected final FlowingFluid field_204517_c;
++   private final FlowingFluid field_204517_c;
     private final List<IFluidState> field_212565_c;
  
-+   // Forge: Use the other constructor and override getFluid instead
++   // Forge: Use the constructor that takes a supplier
 +   @Deprecated
     protected FlowingFluidBlock(FlowingFluid p_i49014_1_, Block.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
-@@ -45,8 +47,16 @@
+@@ -45,8 +47,21 @@
  
        this.field_212565_c.add(p_i49014_1_.func_207207_a(8, true));
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
 +      fluidStateCacheInitialized = true;
++      supplier = p_i49014_1_.delegate;
     }
  
-+   protected FlowingFluidBlock(Block.Properties p_i48368_1_) {
++   /**
++    * @param supplier A fluid supplier such as {@link net.minecraftforge.fml.RegistryObject<Fluid>}
++    */
++   public FlowingFluidBlock(java.util.function.Supplier<? extends Fluid> supplier, Block.Properties p_i48368_1_) {
 +      super(p_i48368_1_);
 +      this.field_204517_c = null;
 +      this.field_212565_c = Lists.newArrayList();
 +      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
++      this.supplier = supplier;
 +   }
 +
     public void func_196265_a(BlockState p_196265_1_, World p_196265_2_, BlockPos p_196265_3_, Random p_196265_4_) {
        p_196265_2_.func_204610_c(p_196265_3_).func_206891_b(p_196265_2_, p_196265_3_, p_196265_4_);
     }
-@@ -61,6 +71,7 @@
+@@ -61,6 +76,7 @@
  
     public IFluidState func_204507_t(BlockState p_204507_1_) {
        int i = p_204507_1_.func_177229_b(field_176367_b);
@@ -34,7 +43,7 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
-@@ -121,13 +132,13 @@
+@@ -121,13 +137,13 @@
           if (flag) {
              IFluidState ifluidstate = p_204515_1_.func_204610_c(p_204515_2_);
              if (ifluidstate.func_206889_d()) {
@@ -50,14 +59,15 @@
                 this.func_180688_d(p_204515_1_, p_204515_2_);
                 return false;
              }
-@@ -160,4 +171,21 @@
+@@ -160,4 +176,22 @@
        }
  
     }
 +
 +   // Forge start
++   private final java.util.function.Supplier<? extends Fluid> supplier;
 +   public FlowingFluid getFluid() {
-+      return field_204517_c;
++      return (FlowingFluid)supplier.get();
 +   }
 +
 +   private boolean fluidStateCacheInitialized;

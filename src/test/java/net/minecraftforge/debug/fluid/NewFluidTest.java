@@ -82,29 +82,19 @@ public class NewFluidTest
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
+        // TODO: use RegistryObject<Fluid> instead of a lambda
         event.getRegistry().registerAll(
-                new FlowingFluidBlock(Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
-                {
-                    @Override
-                    public FlowingFluid getFluid()
-                    {
-                        return test_fluid;
-                    }
-                }.setRegistryName("forge:test_fluid_block")
+                new FlowingFluidBlock(() -> test_fluid, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+                        .setRegistryName("forge:test_fluid_block")
         );
     }
 
     public void registerItems(RegistryEvent.Register<Item> event)
     {
+        // TODO: use RegistryObject<Fluid> instead of a lambda
         event.getRegistry().registerAll(
-                new BucketItem(new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
-                {
-                    @Override
-                    public Fluid getFluid()
-                    {
-                        return test_fluid;
-                    }
-                }.setRegistryName("forge:test_fluid_bucket")
+                new BucketItem(() -> test_fluid, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
+                        .setRegistryName("forge:test_fluid_bucket")
         );
     }
 

@@ -161,7 +161,7 @@ public class FluidStack
     }
 
     protected void updateEmpty() {
-        isEmpty = getRawFluid() == Fluids.EMPTY || amount == 0;
+        isEmpty = getRawFluid() == Fluids.EMPTY || amount <= 0;
     }
 
     public int getAmount()

@@ -851,7 +851,7 @@ public class ForgeHooks
                     new net.minecraft.util.ResourceLocation("block/lava_still"),
                     new net.minecraft.util.ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).fuel(20000).build();
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build();
         throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
