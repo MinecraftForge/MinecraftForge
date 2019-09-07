@@ -198,7 +198,7 @@ public class GameData
         // Worldgen
         makeRegistry(WORLD_CARVERS, WorldCarver.class).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
         makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
