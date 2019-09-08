@@ -20,7 +20,7 @@ function initializeCoreMod() {
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
                 var fn = asmapi.mapField('field_204517_c') // fluid field - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFluid'))
+                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // forge added method, doesn't need mapping
                 return classNode;
             }
         },
@@ -32,7 +32,7 @@ function initializeCoreMod() {
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
                 var fn = asmapi.mapField('field_77876_a') // containerFluid (wrongly named containedBlock) field - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFluid'))
+                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // forge added method, doesn't need mapping
                 return classNode;
             }
         }
