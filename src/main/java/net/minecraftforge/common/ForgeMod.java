@@ -30,6 +30,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.minecraftforge.server.command.EnumArgument;
+import net.minecraftforge.server.command.ForgeArguments;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -133,8 +134,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             VersionChecker.startVersionCheck();
         }
 
-        //ArgumentTypes.register("forge:enum", EnumArgument.class, new EnumArgument.Serialzier()); //This can't register, it breaks vanilla clients. As the packet serailzier doesn't discard unknown data
-        ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+        ForgeArguments.register();
     }
 
     public void serverStarting(FMLServerStartingEvent evt)

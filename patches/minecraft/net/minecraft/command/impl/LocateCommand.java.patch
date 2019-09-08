@@ -1,17 +1,17 @@
 --- a/net/minecraft/command/impl/LocateCommand.java
 +++ b/net/minecraft/command/impl/LocateCommand.java
-@@ -20,6 +20,14 @@
-    public static void func_198528_a(CommandDispatcher<CommandSource> p_198528_0_) {
-       p_198528_0_.register(Commands.func_197057_a("locate").requires((p_198533_0_) -> {
-          return p_198533_0_.func_197034_c(2);
-+      }).then(Commands.func_197056_a("structure_type", net.minecraftforge.common.command.StructureArgument.structure())
-+              .suggests(net.minecraftforge.common.command.StructureArgument.suggestions())
-+              .executes(ctx -> {
-+                  return func_198534_a(ctx.getSource(), ctx.getArgument("structure_type", net.minecraft.util.ResourceLocation.class).toString().replace("minecraft:", ""));
-+      })));
-+      if (true) return; // Forge: replace this code with above extensible version
-+      p_198528_0_.register(Commands.func_197057_a("locate").requires((p_198533_0_) -> {
-+         return p_198533_0_.func_197034_c(2);
-       }).then(Commands.func_197057_a("Pillager_Outpost").executes((p_198530_0_) -> {
-          return func_198534_a(p_198530_0_.getSource(), "Pillager_Outpost");
-       })).then(Commands.func_197057_a("Mineshaft").executes((p_198535_0_) -> {
+@@ -50,7 +50,13 @@
+          return func_198534_a(p_204758_0_.getSource(), "Shipwreck");
+       })).then(Commands.func_197057_a("Village").executes((p_218858_0_) -> {
+          return func_198534_a(p_218858_0_.getSource(), "Village");
+-      })));
++      // FORGE: Support modded structures via registry name
++      })).then(Commands.func_197056_a("structure_type", net.minecraft.command.arguments.ResourceLocationArgument.func_197197_a())
++              .suggests((ctx, sb) -> net.minecraft.command.ISuggestionProvider.func_197013_a(
++                      net.minecraftforge.registries.GameData.getStructureFeatures().func_148742_b().stream()
++                          .map(net.minecraft.util.ResourceLocation::toString), sb))
++              .executes(ctx -> func_198534_a(ctx.getSource(), ctx.getArgument("structure_type", net.minecraft.util.ResourceLocation.class).toString().replace("minecraft:", ""))
++      )));
+    }
+ 
+    private static int func_198534_a(CommandSource p_198534_0_, String p_198534_1_) throws CommandSyntaxException {
