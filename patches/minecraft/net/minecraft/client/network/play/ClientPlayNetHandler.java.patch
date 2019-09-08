@@ -91,3 +91,12 @@
              packetbuffer.release();
           }
  
+@@ -1909,7 +1924,7 @@
+             for(SEntityPropertiesPacket.Snapshot sentitypropertiespacket$snapshot : p_147290_1_.func_149441_d()) {
+                IAttributeInstance iattributeinstance = abstractattributemap.func_111152_a(sentitypropertiespacket$snapshot.func_151409_a());
+                if (iattributeinstance == null) {
+-                  iattributeinstance = abstractattributemap.func_111150_b(new RangedAttribute((IAttribute)null, sentitypropertiespacket$snapshot.func_151409_a(), 0.0D, Double.MIN_NORMAL, Double.MAX_VALUE));
++                  iattributeinstance = abstractattributemap.func_111150_b(new RangedAttribute((IAttribute)null, sentitypropertiespacket$snapshot.func_151409_a(), 0.0D, Double.MIN_VALUE, Double.MAX_VALUE)); // FORGE: Fix vanilla typo, MIN_NORMAL -> MIN_VALUE
+                }
+ 
+                iattributeinstance.func_111128_a(sentitypropertiespacket$snapshot.func_151410_b());
