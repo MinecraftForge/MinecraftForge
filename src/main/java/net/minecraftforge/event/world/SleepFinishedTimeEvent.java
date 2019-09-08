@@ -29,11 +29,13 @@ import net.minecraft.world.server.ServerWorld;
 public class SleepFinishedTimeEvent extends WorldEvent
 {
     private long newTime;
+    private final long minTime;
 
-    public SleepFinishedTimeEvent(ServerWorld worldIn, long newTimeIn)
+    public SleepFinishedTimeEvent(ServerWorld worldIn, long newTimeIn, long minTimeIn)
     {
         super(worldIn);
         this.newTime = newTimeIn;
+        this.minTime = minTimeIn;
     }
 
     /**
@@ -51,7 +53,7 @@ public class SleepFinishedTimeEvent extends WorldEvent
      */
     public boolean setTimeAddition(long newTimeIn)
     {
-        if (getWorld().getWorld().getDayTime() > newTimeIn)
+        if (minTime > newTimeIn)
             return false;
         this.newTime = newTimeIn;
         return true;

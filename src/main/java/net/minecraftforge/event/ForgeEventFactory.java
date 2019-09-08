@@ -697,9 +697,9 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
     }
 
-    public static long onSleepFinished(ServerWorld world, long newTime)
+    public static long onSleepFinished(ServerWorld world, long newTime, long minTime)
     {
-        SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime);
+        SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
     }

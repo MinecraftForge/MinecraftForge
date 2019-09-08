@@ -80,7 +80,7 @@
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
 -            this.func_72877_b(l - l % 24000L);
 +            long l = this.func_72820_D() + 24000L;
-+            this.func_72877_b(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, l - l % 24000L));
++            this.func_72877_b(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, l - l % 24000L, this.func_72820_D()));
           }
  
           this.field_217491_A.stream().filter(LivingEntity::func_70608_bn).forEach((p_217444_0_) -> {
