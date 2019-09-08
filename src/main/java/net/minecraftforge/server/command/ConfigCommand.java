@@ -46,7 +46,7 @@ public class ConfigCommand {
             return Commands.literal("showfile").
                     requires(cs->cs.hasPermissionLevel(0)).
                     then(Commands.argument("mod", ModIdArgument.modIdArgument()).
-                        then(Commands.argument("type", EnumArgument.enumArgument(ModConfig.Type.class)).
+                        then(Commands.argument("type", ConfigTypeArgument.configTypeArgument()).
                             executes(ShowFile::showFile)
                         )
                     );

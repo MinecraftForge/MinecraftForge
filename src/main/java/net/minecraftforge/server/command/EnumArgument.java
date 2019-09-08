@@ -31,13 +31,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Because {@link ArgumentType}s are registered by class, and we can't use a custom serializer (breaks vanilla clients),
+ * a subclass of this class must be created for each enum. Example: {@link ConfigTypeArgument}
+ */
 public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     private final Class<T> enumClass;
 
-    public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {
-        return new EnumArgument<>(enumClass);
-    }
-    private EnumArgument(final Class<T> enumClass) {
+    protected EnumArgument(final Class<T> enumClass) {
         this.enumClass = enumClass;
     }
 
@@ -55,29 +56,4 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     public Collection<String> getExamples() {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
-
-    /* JAVAC HATES RAW TYPES!
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static class Serialzier implements IArgumentSerializer<EnumArgument> {
-        @Override
-        public void write(EnumArgument argument, PacketBuffer buffer) {
-            buffer.writeString(argument.enumClass.getName());
-        }
-
-        @Override
-        public EnumArgument<?> read(PacketBuffer buffer) {
-            try {
-                String name = buffer.readString();
-                return new EnumArgument(Class.forName(name));
-            } catch (ClassNotFoundException e) {
-                return null;
-            }
-        }
-
-        @Override
-        public void write(EnumArgument argument, JsonObject json) {
-            json.addProperty("enum", argument.enumClass.getName());
-        }
-    }
-    */
 }

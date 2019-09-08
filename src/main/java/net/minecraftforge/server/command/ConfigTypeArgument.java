@@ -19,14 +19,14 @@
 
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraftforge.fml.config.ModConfig;
 
-public class ForgeArguments
-{
-    public static void register()
-    {
-        ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
-        ArgumentTypes.register("forge:config_type", ConfigTypeArgument.class, new ArgumentSerializer<>(ConfigTypeArgument::configTypeArgument));
+public class ConfigTypeArgument extends EnumArgument<ModConfig.Type> {
+    public ConfigTypeArgument() {
+        super(ModConfig.Type.class);
+    }
+
+    public static ConfigTypeArgument configTypeArgument() {
+        return new ConfigTypeArgument();
     }
 }
