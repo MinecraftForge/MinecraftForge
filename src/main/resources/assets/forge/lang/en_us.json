@@ -72,8 +72,6 @@
   "fml.messages.version.restriction.bounded.lowerexclusive":"above {0}, and {1} or below",
   "fml.messages.version.restriction.bounded.upperexclusive":"{0} or above, and below {1}",
 
-  "structure.notFound": "Unknown structure: %s",
-
   "commands.forge.dimensions.list": "Currently registered dimensions by type:",
   "commands.forge.entity.list.invalid": "Invalid filter, does not match any entities. Use /forge entity list for a proper list",
   "commands.forge.entity.list.invalidworld": "Could not load world for dimension {0}. Please select a valid dimension.",

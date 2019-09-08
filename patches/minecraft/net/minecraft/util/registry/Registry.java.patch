@@ -1,11 +1,6 @@
 --- a/net/minecraft/util/registry/Registry.java
 +++ b/net/minecraft/util/registry/Registry.java
-@@ -62,80 +62,83 @@
- import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+
- import org.apache.commons.lang3.Validate;
+@@ -66,76 +66,78 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -107,7 +102,7 @@
     public static final Registry<IStructurePieceType> field_218362_C = func_222935_a("structure_piece", () -> {
        return IStructurePieceType.field_214782_c;
     });
-@@ -148,37 +151,37 @@
+@@ -148,37 +150,37 @@
     public static final Registry<IJigsawDeserializer> field_218365_F = func_222935_a("structure_pool_element", () -> {
        return IJigsawDeserializer.field_214931_e;
     });
@@ -154,7 +149,7 @@
        return Activity.field_221366_b;
     });
  
-@@ -230,6 +233,14 @@
+@@ -230,6 +232,14 @@
        return ((MutableRegistry<T>)p_218343_0_).func_218382_a(p_218343_1_, new ResourceLocation(p_218343_2_), p_218343_3_);
     }
  
