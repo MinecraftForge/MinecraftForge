@@ -25,6 +25,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,8 +46,7 @@ import java.util.jar.Manifest;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
-public class ModFile
-{
+public class ModFile implements IModFile {
     private static final Manifest DEFAULTMANIFEST;
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -64,11 +65,13 @@ public class ModFile
         this.fileProperties = fileProperties;
     }
 
+    @Override
     public IModLanguageProvider getLoader()
     {
         return loader;
     }
 
+    @Override
     public Path findResource(String className)
     {
         return locator.findPath(this, className);
@@ -78,9 +81,6 @@ public class ModFile
         this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this, this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
     }
 
-    public enum Type {
-        MOD, LIBRARY, LANGPROVIDER
-    }
     private final Path filePath;
     private final Type modFileType;
     private final Manifest manifest;
@@ -104,17 +104,21 @@ public class ModFile
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("NONE");
     }
 
+    @Override
     public Supplier<Map<String,Object>> getSubstitutionMap() {
         return () -> ImmutableMap.<String,Object>builder().put("jarVersion", jarVersion).putAll(fileProperties).build();
     }
+    @Override
     public Type getType() {
         return modFileType;
     }
 
+    @Override
     public Path getFilePath() {
         return filePath;
     }
 
+    @Override
     public List<IModInfo> getModInfos() {
         return modFileInfo.getMods();
     }
@@ -122,6 +126,7 @@ public class ModFile
     public Optional<Path> getAccessTransformer() {
         return Optional.ofNullable(Files.exists(accessTransformer) ? accessTransformer : null);
     }
+
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this);
         if (this.modFileInfo == null) return false;
@@ -131,7 +136,6 @@ public class ModFile
         this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");
         return true;
     }
-
 
     public List<CoreModFile> getCoreMods() {
         return coreMods;
@@ -147,11 +151,13 @@ public class ModFile
     public void scanFile(Consumer<Path> pathConsumer) {
         locator.scanFile(this, pathConsumer);
     }
+
     public void setFutureScanResult(CompletableFuture<ModFileScanData> future)
     {
         this.futureScanResult = future;
     }
 
+    @Override
     public ModFileScanData getScanResult() {
         if (this.futureScanResult != null) {
             try {
@@ -179,14 +185,17 @@ public class ModFile
         return "Mod File: " + Objects.toString(this.filePath);
     }
 
+    @Override
     public String getFileName() {
         return getFilePath().getFileName().toString();
     }
 
+    @Override
     public IModLocator getLocator() {
         return locator;
     }
 
+    @Override
     public IModFileInfo getModFileInfo() {
         return modFileInfo;
     }

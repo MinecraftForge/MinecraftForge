@@ -64,7 +64,7 @@
           return this;
        }
     }
-@@ -776,7 +778,7 @@
+@@ -776,11 +778,11 @@
        BlockPos blockpos = new BlockPos(i, j, k);
        if (this.field_70170_p.func_175667_e(blockpos)) {
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -73,6 +73,11 @@
              BlockPos blockpos1 = blockpos.func_177977_b();
              BlockState blockstate1 = this.field_70170_p.func_180495_p(blockpos1);
              Block block = blockstate1.func_177230_c();
+-            if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock) {
++            if (blockstate.collisionExtendsVertically(this.field_70170_p, blockpos, this)) {
+                blockpos = blockpos1;
+                blockstate = blockstate1;
+             }
 @@ -819,6 +821,7 @@
              this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
              container.func_75132_a(this);
@@ -111,9 +116,9 @@
 +
 +      //Copy over a section of the Entity Data from the old player.
 +      //Allows mods to specify data that persists after players respawn.
-+      CompoundNBT old = p_193104_1_.getEntityData();
++      CompoundNBT old = p_193104_1_.getPersistantData();
 +      if (old.func_74764_b(PERSISTED_NBT_TAG))
-+          getEntityData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
++          getPersistantData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_193104_1_, !p_193104_2_);
     }
  

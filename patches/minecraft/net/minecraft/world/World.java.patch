@@ -63,7 +63,7 @@
           } else {
              BlockState blockstate1 = this.func_180495_p(p_180501_1_);
 -            if (blockstate1 != blockstate && (blockstate1.func_200016_a(this, p_180501_1_) != blockstate.func_200016_a(this, p_180501_1_) || blockstate1.func_185906_d() != blockstate.func_185906_d() || blockstate1.func_215691_g() || blockstate.func_215691_g())) {
-+            if (blockstate1 != blockstate && (blockstate1.func_200016_a(this, p_180501_1_) != oldOpacity || blockstate1.func_185906_d() != oldLight || blockstate1.func_215691_g() || blockstate.func_215691_g())) {
++            if (blockstate1 != blockstate && (blockstate1.func_200016_a(this, p_180501_1_) != oldOpacity || blockstate1.getLightValue(this, p_180501_1_) != oldLight || blockstate1.func_215691_g() || blockstate.func_215691_g())) {
                 this.field_72984_F.func_76320_a("queueCheckLight");
                 this.func_72863_F().func_212863_j_().func_215568_a(p_180501_1_);
                 this.field_72984_F.func_76319_b();

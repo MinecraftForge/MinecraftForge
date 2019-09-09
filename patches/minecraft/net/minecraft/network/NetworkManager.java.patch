@@ -16,6 +16,15 @@
  
        try {
           this.func_150723_a(ProtocolType.HANDSHAKING);
+@@ -173,7 +175,7 @@
+       ++this.field_211395_r;
+       if (protocoltype1 != protocoltype) {
+          field_150735_g.debug("Disabled auto read");
+-         this.field_150746_k.config().setAutoRead(false);
++         this.field_150746_k.eventLoop().execute(()->this.field_150746_k.config().setAutoRead(false));
+       }
+ 
+       if (this.field_150746_k.eventLoop().inEventLoop()) {
 @@ -257,7 +259,9 @@
  
     @OnlyIn(Dist.CLIENT)

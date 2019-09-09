@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.client.gui;
 
-import static net.minecraft.util.StringUtils.stripControlCodes;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -75,6 +73,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 
 public class GuiModList extends Screen
 {
+    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
     private static final Logger LOGGER = LogManager.getLogger();
     private enum SortType implements Comparator<ModInfo>
     {
@@ -172,7 +171,7 @@ public class GuiModList extends Screen
         }
 
         @Override
-        public int getContentHeight() 
+        public int getContentHeight()
         {
             int height = 50;
             height += (lines.size() * font.FONT_HEIGHT);

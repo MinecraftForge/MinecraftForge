@@ -29,12 +29,11 @@ import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-import static net.minecraft.util.StringUtils.stripControlCodes;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 
 public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 {
+    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
