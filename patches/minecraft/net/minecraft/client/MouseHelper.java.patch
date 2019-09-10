@@ -1,6 +1,13 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
-@@ -77,11 +77,15 @@
+@@ -71,17 +71,22 @@
+                if (!this.field_198051_p && flag) {
+                   this.func_198034_i();
+                }
++               if (net.minecraftforge.client.ForgeHooksClient.onRawMouseClicked(p_198023_3_, p_198023_4_, p_198023_5_)) return;
+             } else {
+                double d0 = this.field_198040_e * (double)this.field_198036_a.field_195558_d.func_198107_o() / (double)this.field_198036_a.field_195558_d.func_198105_m();
+                double d1 = this.field_198041_f * (double)this.field_198036_a.field_195558_d.func_198087_p() / (double)this.field_198036_a.field_195558_d.func_198083_n();
                 int p_198023_3_f = p_198023_3_;
                 if (flag) {
                    Screen.wrapScreenError(() -> {
@@ -18,7 +25,7 @@
                    }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
                 }
              }
-@@ -105,7 +109,7 @@
+@@ -105,7 +110,7 @@
                 }
              }
           }
@@ -27,7 +34,7 @@
        }
     }
  
-@@ -116,7 +120,9 @@
+@@ -116,7 +121,9 @@
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.field_195558_d.func_198107_o() / (double)this.field_198036_a.field_195558_d.func_198105_m();
                 double d2 = this.field_198041_f * (double)this.field_198036_a.field_195558_d.func_198087_p() / (double)this.field_198036_a.field_195558_d.func_198083_n();
@@ -38,7 +45,7 @@
              } else if (this.field_198036_a.field_71439_g != null) {
                 if (this.field_200542_o != 0.0D && Math.signum(d0) != Math.signum(this.field_200542_o)) {
                    this.field_200542_o = 0.0D;
-@@ -129,6 +135,7 @@
+@@ -129,6 +136,7 @@
                 }
  
                 this.field_200542_o -= (double)f1;
@@ -46,7 +53,7 @@
                 if (this.field_198036_a.field_71439_g.func_175149_v()) {
                    if (this.field_198036_a.field_71456_v.func_175187_g().func_175262_a()) {
                       this.field_198036_a.field_71456_v.func_175187_g().func_195621_a((double)(-f1));
-@@ -168,7 +175,9 @@
+@@ -168,7 +176,9 @@
                 double d2 = (p_198022_3_ - this.field_198040_e) * (double)this.field_198036_a.field_195558_d.func_198107_o() / (double)this.field_198036_a.field_195558_d.func_198105_m();
                 double d3 = (p_198022_5_ - this.field_198041_f) * (double)this.field_198036_a.field_195558_d.func_198087_p() / (double)this.field_198036_a.field_195558_d.func_198083_n();
                 Screen.wrapScreenError(() -> {
@@ -57,7 +64,7 @@
                 }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
              }
           }
-@@ -233,6 +242,10 @@
+@@ -233,6 +243,10 @@
        return this.field_198039_d;
     }
  
@@ -68,7 +75,7 @@
     public double func_198024_e() {
        return this.field_198040_e;
     }
-@@ -241,6 +254,14 @@
+@@ -241,6 +255,14 @@
        return this.field_198041_f;
     }
  

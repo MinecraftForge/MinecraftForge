@@ -1043,4 +1043,9 @@ public class ForgeHooksClient
         Event event = new InputEvent.MouseScrollEvent(scrollDelta, mouseHelper.isLeftDown(), mouseHelper.isMiddleDown(), mouseHelper.isRightDown(), mouseHelper.getMouseX(), mouseHelper.getMouseY());
         return MinecraftForge.EVENT_BUS.post(event);
     }
+
+    public static boolean onRawMouseClicked(int button, int action, int mods)
+    {
+        return MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods));
+    }
 }

@@ -28,6 +28,59 @@ import org.lwjgl.glfw.GLFW;
 public class InputEvent extends Event
 {
     /**
+     * A cancellable mouse event fired before key bindings are updated
+     */
+    public static class RawMouseEvent extends InputEvent
+    {
+        private final int button;
+        private final int action;
+        private final int mods;
+
+        public RawMouseEvent(int button, int action, int mods)
+        {
+            this.button = button;
+            this.action = action;
+            this.mods = mods;
+        }
+
+        /**
+         * The mouse button that triggered this event.
+         * https://www.glfw.org/docs/latest/group__buttons.html
+         *
+         * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
+         */
+        public int getButton()
+        {
+            return this.button;
+        }
+
+        /**
+         * Integer representing the mouse button's action.
+         *
+         * @see GLFW#GLFW_PRESS
+         * @see GLFW#GLFW_RELEASE
+         */
+        public int getAction()
+        {
+            return this.action;
+        }
+
+        /**
+         * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
+        public int getMods()
+        {
+            return this.mods;
+        }
+    }
+
+    /**
      * This event fires when a mouse input is detected.
      */
     public static class MouseInputEvent extends InputEvent
