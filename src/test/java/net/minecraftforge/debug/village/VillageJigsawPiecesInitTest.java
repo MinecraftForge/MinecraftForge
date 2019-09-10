@@ -31,7 +31,7 @@ import net.minecraft.world.gen.feature.template.RandomBlockMatchRuleTest;
 import net.minecraft.world.gen.feature.template.RuleEntry;
 import net.minecraft.world.gen.feature.template.RuleStructureProcessor;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.VillageEvent;
+import net.minecraftforge.event.VillageStructureInitEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -39,19 +39,20 @@ import net.minecraftforge.fml.common.Mod;
  * If this mod is enabled it adds a modified town_center to the plains village pool with high weight.
  * This new town_center has lava instead of water
  */
-@Mod(value = VillagePieceTest.MODID)
-public class VillagePieceTest
+@Mod.EventBusSubscriber(modid = VillageJigsawPiecesInitTest.MODID)
+@Mod(value = VillageJigsawPiecesInitTest.MODID)
+public class VillageJigsawPiecesInitTest
 {
-    public static final String MODID = "villagepiecetest";
+    public static final String MODID = "villagepiecesinittest";
 
-    public VillagePieceTest()
+    public VillageJigsawPiecesInitTest()
     {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public static void onStructuresFinished(VillageEvent event)
+    public static void onStructuresFinished(VillageStructureInitEvent event)
     {
-        JigsawManager.field_214891_a.get(new ResourceLocation("village/plains/town_centers")).addBuilding(new Pair<>(new SingleJigsawPiece("villagepiecetest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),500));
+        JigsawManager.field_214891_a.get(new ResourceLocation("village/plains/town_centers")).addBuilding(new Pair<>(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),500));
     }
 }
