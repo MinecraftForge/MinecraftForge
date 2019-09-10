@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.event;
 
 import com.mojang.datafixers.util.Pair;
@@ -31,6 +32,6 @@ import net.minecraftforge.eventbus.api.Event;
  * get {@link net.minecraft.world.gen.feature.jigsaw.JigsawPatternRegistry#get(ResourceLocation)} from {@link net.minecraft.world.gen.feature.jigsaw.JigsawManager#field_214891_a}
  * and call {@link net.minecraft.world.gen.feature.jigsaw.JigsawPattern#addBuilding(Pair)
  */
-public class VillageEvent extends Event {
+public class VillageStructureInitEvent extends Event {
 
 }
