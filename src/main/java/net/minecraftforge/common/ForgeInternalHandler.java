@@ -26,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.CloudRenderer;
+import net.minecraftforge.client.event.TagsUpdatedEvent;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -100,6 +101,12 @@ public class ForgeInternalHandler
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
         UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
+    }
+
+    @SubscribeEvent
+    public void tagsUpdated(TagsUpdatedEvent event)
+    {
+        ForgeHooks.updateBurns();
     }
 }
 

@@ -102,6 +102,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -1002,9 +1003,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static void onRecipesUpdated()
+    public static void onRecipesUpdated(List<IRecipe<?>> recipes)
     {
-        Event event = new RecipesUpdatedEvent();
+        Event event = new RecipesUpdatedEvent(recipes);
         MinecraftForge.EVENT_BUS.post(event);
     }
 

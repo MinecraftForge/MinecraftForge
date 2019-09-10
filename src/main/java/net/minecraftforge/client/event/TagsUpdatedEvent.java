@@ -19,31 +19,28 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.List;
-
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.tags.NetworkTagManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Fired on {@link Dist#CLIENT} when {@link RecipeManager} has all of its recipes synced from the server to the client (just after a client has connected),
+ * Fired on {@link Dist#CLIENT} when {@link NetworkTagManager} has all of its tags synced from the server to the client (just after a client has connected),
  */
-public class RecipesUpdatedEvent extends Event
+public class TagsUpdatedEvent extends Event
 {
     
-    private final List<IRecipe<?>> recipes;
+    private final NetworkTagManager manager;
     
-    public RecipesUpdatedEvent(List<IRecipe<?>> recipes)
+    public TagsUpdatedEvent(NetworkTagManager manager)
     {
-        this.recipes = recipes;
+        this.manager = manager;
     }
 
     /**
-     * @return The list of recipes that were sent to the client during this event.
+     * @return The network tag manager that has been updated with newly received tags.
      */
-    public List<IRecipe<?>> getRecipesSynced()
+    public NetworkTagManager getTagManager()
     {
-        return recipes;
+        return manager;
     }
 }

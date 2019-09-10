@@ -40,12 +40,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -141,6 +144,22 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         new ForgeCommand(evt.getCommandDispatcher());
         ConfigCommand.register(evt.getCommandDispatcher());
+        evt.getServer().getResourceManager().addReloadListener(new ReloadListener<Object>()
+        {
+
+            @Override
+            protected Object prepare(IResourceManager resourceManagerIn, IProfiler profilerIn)
+            {
+                return null;
+            }
+
+            @Override
+            protected void apply(Object splashList, IResourceManager resourceManagerIn, IProfiler profilerIn)
+            {
+                ForgeHooks.updateBurns();
+            }
+
+        });
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
