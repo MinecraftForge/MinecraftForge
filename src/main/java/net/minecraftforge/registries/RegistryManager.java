@@ -19,7 +19,6 @@
 
 package net.minecraftforge.registries;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +84,7 @@ public class RegistryManager
     {
         return this.registries.inverse().get(reg);
     }
-    
+
     public <V extends IForgeRegistryEntry<V>> ResourceLocation updateLegacyName(ResourceLocation legacyName)
     {
         while (getRegistry(legacyName) == null)
@@ -142,7 +141,7 @@ public class RegistryManager
             addLegacyName(legacyName, name);
         return getRegistry(name);
     }
-    
+
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)
     {
         if (this.legacyNames.containsKey(legacyName))

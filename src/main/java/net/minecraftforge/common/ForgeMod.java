@@ -29,10 +29,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.command.ConfigCommand;
-import net.minecraftforge.server.command.EnumArgument;
-import net.minecraftforge.server.command.ForgeArguments;
 import net.minecraftforge.server.command.ForgeCommand;
-import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -40,8 +37,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -68,7 +63,6 @@ import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -134,7 +128,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             VersionChecker.startVersionCheck();
         }
 
-        ForgeArguments.register();
+        /*
+         * We can't actually add any of these, because vanilla clients will choke on unknown argument types
+         * So our custom arguments will not validate client-side, but they do still work
+        ArgumentTypes.register("forge:enum", EnumArgument.class, new EnumArgument.Serializer());
+        ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+        ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
+        */
     }
 
     public void serverStarting(FMLServerStartingEvent evt)
