@@ -1160,24 +1160,29 @@ public class ForgeHooks
         return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 
-	private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
+    private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
 
-	/**
-	 * Gets the burn time of this itemstack.
-	 */
-	public static int getBurnTime(ItemStack stack) {
-		if (stack.isEmpty()) {
-			return 0;
-		} else {
-			Item item = stack.getItem();
-			int ret = stack.getBurnTime();
-			return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret);
-		}
-	}
+    /**
+     * Gets the burn time of this itemstack.
+     */
+    public static int getBurnTime(ItemStack stack)
+    {
+        if (stack.isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            Item item = stack.getItem();
+            int ret = stack.getBurnTime();
+            return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret);
+        }
+    }
 
-	public static void updateBurns() {
-		VANILLA_BURNS.clear();
-		FurnaceTileEntity.getBurnTimes().entrySet().stream().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
-	}
+    public static void updateBurns()
+    {
+        VANILLA_BURNS.clear();
+        FurnaceTileEntity.getBurnTimes().entrySet().stream().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
 
 }
