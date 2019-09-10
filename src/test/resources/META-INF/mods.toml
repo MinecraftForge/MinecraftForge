@@ -57,3 +57,6 @@ loaderVersion="[28,)"
     modId="player_xp_event_test"
 [[mods]]
     modId="forgeblockstatesloader"
+
+[[mods]]
+    modId="villagepiecetest"
