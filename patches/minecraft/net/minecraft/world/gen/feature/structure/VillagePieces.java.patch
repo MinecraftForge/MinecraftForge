@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/gen/feature/structure/VillagePieces.java
 +++ b/net/minecraft/world/gen/feature/structure/VillagePieces.java
-@@ -10,7 +10,22 @@
+@@ -10,7 +10,20 @@
  import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
  import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
  import net.minecraft.world.gen.feature.template.TemplateManager;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.VillageEvent;
  
 +
 +import net.minecraft.nbt.CompoundNBT;
@@ -18,16 +17,15 @@
 +import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 +import net.minecraft.world.gen.feature.template.TemplateManager;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.VillageEvent;
 +
  public class VillagePieces {
     public static void func_214838_a(ChunkGenerator<?> p_214838_0_, TemplateManager p_214838_1_, BlockPos p_214838_2_, List<StructurePiece> p_214838_3_, SharedSeedRandom p_214838_4_, VillageConfig p_214838_5_) {
        PlainsVillagePools.func_214744_a();
-@@ -18,6 +33,7 @@
+@@ -18,6 +31,7 @@
        SavannaVillagePools.func_214745_a();
        DesertVillagePools.func_222739_a();
        TaigaVillagePools.func_214806_a();
-+      MinecraftForge.EVENT_BUS.post(new VillageEvent());
++      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.VillageStructureInitEvent());
        JigsawManager.func_214889_a(p_214838_5_.field_214680_a, p_214838_5_.field_214681_b, VillagePieces.Village::new, p_214838_0_, p_214838_1_, p_214838_2_, p_214838_3_, p_214838_4_);
     }
  
