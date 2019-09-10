@@ -1,92 +1,48 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
-@@ -11,6 +11,7 @@
- import java.util.stream.Collectors;
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Rotation;
-+import net.minecraft.util.WeightedRandom;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.gen.Heightmap;
- import net.minecraft.world.gen.feature.template.GravityStructureProcessor;
-@@ -21,22 +22,31 @@
+@@ -21,7 +21,7 @@
     public static final JigsawPattern field_214949_a = new JigsawPattern(new ResourceLocation("empty"), new ResourceLocation("empty"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
     public static final JigsawPattern field_214950_b = new JigsawPattern(new ResourceLocation("invalid"), new ResourceLocation("invalid"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
     private final ResourceLocation field_214951_c;
 -   private final ImmutableList<Pair<JigsawPiece, Integer>> field_214952_d;
--   private final List<JigsawPiece> field_214953_e;
-+   private final ImmutableList<net.minecraftforge.common.JigsawCategory> field_214952_d;
-+   private final List<net.minecraftforge.common.JigsawCategory.PieceItem> field_214953_e;
++   private final List<Pair<JigsawPiece, Integer>> field_214952_d;
+    private final List<JigsawPiece> field_214953_e;
     private final ResourceLocation field_214954_f;
     private final JigsawPattern.PlacementBehaviour field_214955_g;
-    private int field_214956_h = Integer.MIN_VALUE;
-+   private final int pieceWeight;
- 
+@@ -29,7 +29,7 @@
+
     public JigsawPattern(ResourceLocation p_i51397_1_, ResourceLocation p_i51397_2_, List<Pair<JigsawPiece, Integer>> p_i51397_3_, JigsawPattern.PlacementBehaviour p_i51397_4_) {
-+      this(p_i51397_1_,p_i51397_2_,p_i51397_4_, Lists.newArrayList(new net.minecraftforge.common.JigsawCategory(p_i51397_3_,100,net.minecraftforge.common.JigsawCategory.DEFAULTCATEGORY)));
+       this.field_214951_c = p_i51397_1_;
+-      this.field_214952_d = ImmutableList.copyOf(p_i51397_3_);
++      this.field_214952_d = Lists.newArrayList(p_i51397_3_);
+       this.field_214953_e = Lists.newArrayList();
+
+       for(Pair<JigsawPiece, Integer> pair : p_i51397_3_) {
+@@ -56,6 +56,14 @@
+       return this.field_214954_f;
+    }
+
++   public void addBuilding(Pair<JigsawPiece,Integer> piece)
++   {
++      this.field_214952_d.add(piece);
++      for (int i = 0; i < piece.getSecond(); i++) {
++         this.field_214953_e.add(piece.getFirst().func_214845_a(field_214955_g));
++      }
 +   }
 +
-+   public JigsawPattern(ResourceLocation p_i51397_1_, ResourceLocation p_i51397_2_, JigsawPattern.PlacementBehaviour p_i51397_4_, List<net.minecraftforge.common.JigsawCategory> p_i51397_3_) {
-+      p_i51397_3_ = net.minecraftforge.event.ForgeEventFactory.onJigsawPatternInit(p_i51397_1_, Lists.newArrayList(p_i51397_3_));
-       this.field_214951_c = p_i51397_1_;
-       this.field_214952_d = ImmutableList.copyOf(p_i51397_3_);
-       this.field_214953_e = Lists.newArrayList();
- 
--      for(Pair<JigsawPiece, Integer> pair : p_i51397_3_) {
--         for(Integer integer = 0; integer < pair.getSecond(); integer = integer + 1) {
--            this.field_214953_e.add(pair.getFirst().func_214845_a(p_i51397_4_));
-+      int totalWeight = 0;
-+      for(net.minecraftforge.common.JigsawCategory category : p_i51397_3_) {
-+         for(Pair<JigsawPiece, Integer> pair : category.getPieces()){
-+            this.field_214953_e.add(new net.minecraftforge.common.JigsawCategory.PieceItem(pair.getSecond() * category.getCategoryWeight(),pair.getFirst().func_214845_a(p_i51397_4_)));
-+            totalWeight += pair.getSecond() * category.getCategoryWeight();
-          }
-       }
-+      this.pieceWeight = totalWeight;
- 
-       this.field_214954_f = p_i51397_2_;
-       this.field_214955_g = p_i51397_4_;
-@@ -45,7 +55,7 @@
-    public int func_214945_a(TemplateManager p_214945_1_) {
-       if (this.field_214956_h == Integer.MIN_VALUE) {
-          this.field_214956_h = this.field_214953_e.stream().mapToInt((p_214942_1_) -> {
--            return p_214942_1_.func_214852_a(p_214945_1_, BlockPos.field_177992_a, Rotation.NONE).func_78882_c();
-+            return p_214942_1_.getPiece().func_214852_a(p_214945_1_, BlockPos.field_177992_a, Rotation.NONE).func_78882_c();
-          }).max().orElse(0);
-       }
- 
-@@ -57,11 +67,20 @@
-    }
- 
     public JigsawPiece func_214944_a(Random p_214944_1_) {
--      return this.field_214953_e.get(p_214944_1_.nextInt(this.field_214953_e.size()));
-+      return WeightedRandom.func_76271_a(p_214944_1_, this.field_214953_e).getPiece();
+       return this.field_214953_e.get(p_214944_1_.nextInt(this.field_214953_e.size()));
     }
- 
-    public List<JigsawPiece> func_214943_b(Random p_214943_1_) {
--      return ImmutableList.copyOf(ObjectArrays.shuffle(this.field_214953_e.toArray(new JigsawPiece[0]), p_214943_1_));
-+      List<net.minecraftforge.common.JigsawCategory.PieceItem> full = Lists.newArrayList(this.field_214953_e);
-+      List<JigsawPiece> pieces = Lists.newArrayList();
-+      int weight = this.pieceWeight;
-+      while (!full.isEmpty()){
-+         net.minecraftforge.common.JigsawCategory.PieceItem picked = WeightedRandom.func_76273_a(p_214943_1_, full, weight);
-+         full.remove(picked);
-+         weight -= picked.field_76292_a;
-+         pieces.add(picked.getPiece());
-+      }
-+      return pieces;
-    }
- 
-    public ResourceLocation func_214947_b() {
-@@ -72,7 +91,7 @@
+@@ -72,7 +72,7 @@
        return this.field_214953_e.size();
     }
- 
+
 -   public static enum PlacementBehaviour {
 +   public static enum PlacementBehaviour implements net.minecraftforge.common.IExtensibleEnum {
        TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityStructureProcessor(Heightmap.Type.WORLD_SURFACE_WG, -1))),
        RIGID("rigid", ImmutableList.of());
- 
-@@ -98,5 +117,15 @@
+
+@@ -98,5 +98,15 @@
        public ImmutableList<StructureProcessor> func_214937_b() {
           return this.field_214941_e;
        }
