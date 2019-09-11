@@ -31,6 +31,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -131,9 +132,9 @@ public class FluidAttributes
      */
     private final int color;
 
-    protected FluidAttributes(Builder builder)
+    protected FluidAttributes(Builder builder, Fluid fluid)
     {
-        this.translationKey = builder.translationKey;
+        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeTranslationKey("fluid", fluid.getRegistryName());
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
@@ -327,8 +328,8 @@ public class FluidAttributes
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
     public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
 
-    public static Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-        return new Builder(owner, stillTexture, flowingTexture, FluidAttributes::new);
+    public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+        return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
     }
 
     public Stream<ResourceLocation> getTextures()
@@ -353,13 +354,12 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
-        private Function<Builder,FluidAttributes> factory;
+        private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
-        protected Builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture, Function<Builder,FluidAttributes> factory) {
+        protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
             this.factory = factory;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
-            this.translationKey = Util.makeTranslationKey("fluid", owner.getRegistryName());
         }
 
         public final Builder translationKey(String translationKey)
@@ -429,17 +429,17 @@ public class FluidAttributes
             return this;
         }
 
-        public FluidAttributes build()
+        public FluidAttributes build(Fluid fluid)
         {
-            return factory.apply(this);
+            return factory.apply(this, fluid);
         }
     }
 
     public static class Water extends FluidAttributes
     {
-        protected Water(Builder builder)
+        protected Water(Builder builder, Fluid fluid)
         {
-            super(builder);
+            super(builder, fluid);
         }
 
         @Override
@@ -448,8 +448,8 @@ public class FluidAttributes
             return BiomeColors.getWaterColor(world, pos);
         }
 
-        public static Builder builder(Fluid owner, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            return new Builder(owner, stillTexture, flowingTexture, Water::new);
+        public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            return new Builder(stillTexture, flowingTexture, Water::new);
         }
     }
 }

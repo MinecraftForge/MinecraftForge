@@ -834,24 +834,24 @@ public class ForgeHooks
     public static FluidAttributes createVanillaFluidAttributes(Fluid fluid)
     {
         if (fluid instanceof EmptyFluid)
-            return net.minecraftforge.fluids.FluidAttributes.builder(fluid,
+            return net.minecraftforge.fluids.FluidAttributes.builder(
                     new net.minecraft.util.ResourceLocation("white"),
                     new net.minecraft.util.ResourceLocation("white"))
                     .translationKey("block.minecraft.air")
-                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build();
+                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
-            return net.minecraftforge.fluids.FluidAttributes.Water.builder(fluid,
+            return net.minecraftforge.fluids.FluidAttributes.Water.builder(
                     new net.minecraft.util.ResourceLocation("block/water_still"),
                     new net.minecraft.util.ResourceLocation("block/water_flow"))
                     .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
-                    .color(0x3F76E4).build();
+                    .color(0x3F76E4).build(fluid);
         if (fluid instanceof LavaFluid)
-            return net.minecraftforge.fluids.FluidAttributes.builder(fluid,
+            return net.minecraftforge.fluids.FluidAttributes.builder(
                     new net.minecraft.util.ResourceLocation("block/lava_still"),
                     new net.minecraft.util.ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build();
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
