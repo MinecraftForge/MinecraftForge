@@ -24,12 +24,12 @@ import java.util.function.Supplier;
 
 public abstract class ForgeFlowingFluid extends FlowingFluid
 {
-    private final Supplier<Fluid> flowing;
-    private final Supplier<Fluid> still;
+    private final Supplier<? extends Fluid> flowing;
+    private final Supplier<? extends Fluid> still;
     @Nullable
-    private final Supplier<Item> bucket;
+    private final Supplier<? extends Item> bucket;
     @Nullable
-    private final Supplier<FlowingFluidBlock> block;
+    private final Supplier<? extends FlowingFluidBlock> block;
     private final FluidAttributes.Builder builder;
     private final boolean canMultiply;
     private final int slopeFindDistance;
@@ -180,19 +180,19 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
 
     public static class Properties
     {
-        private Supplier<Fluid> still;
-        private Supplier<Fluid> flowing;
+        private Supplier<? extends Fluid> still;
+        private Supplier<? extends Fluid> flowing;
         private FluidAttributes.Builder attributes;
         private boolean canMultiply;
-        private Supplier<Item> bucket;
-        private Supplier<FlowingFluidBlock> block;
+        private Supplier<? extends Item> bucket;
+        private Supplier<? extends FlowingFluidBlock> block;
         private int slopeFindDistance = 4;
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
         private BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
         private int tickRate = 5;
 
-        public Properties(Supplier<Fluid> still, Supplier<Fluid> flowing, FluidAttributes.Builder attributes)
+        public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
         {
             this.still = still;
             this.flowing = flowing;
@@ -205,13 +205,13 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             return this;
         }
 
-        public Properties bucket(Supplier<Item> bucket)
+        public Properties bucket(Supplier<? extends Item> bucket)
         {
             this.bucket = bucket;
             return this;
         }
 
-        public Properties block(Supplier<FlowingFluidBlock> block)
+        public Properties block(Supplier<? extends FlowingFluidBlock> block)
         {
             this.block = block;
             return this;

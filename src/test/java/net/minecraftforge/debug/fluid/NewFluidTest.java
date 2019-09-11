@@ -24,6 +24,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
@@ -52,25 +53,33 @@ public class NewFluidTest
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, MODID);
 
-    public static RegistryObject<Fluid> test_fluid = FLUIDS.register("test_fluid", () ->
-            new ForgeFlowingFluid.Source(new ForgeFlowingFluid.Properties(NewFluidTest.test_fluid, NewFluidTest.test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x1080FF)))
+    public static RegistryObject<FlowingFluid> test_fluid = FLUIDS.register("test_fluid", () ->
+            new ForgeFlowingFluid.Source(NewFluidTest.test_fluid_properties)
     );
-    public static RegistryObject<Fluid> test_fluid_flowing = FLUIDS.register("test_fluid_flowing", () ->
-            new ForgeFlowingFluid.Flowing(new ForgeFlowingFluid.Properties(NewFluidTest.test_fluid, NewFluidTest.test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x1080FF)))
+    public static RegistryObject<FlowingFluid> test_fluid_flowing = FLUIDS.register("test_fluid_flowing", () ->
+            new ForgeFlowingFluid.Flowing(NewFluidTest.test_fluid_properties)
     );
 
-    public static RegistryObject<Block> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
+    public static RegistryObject<FlowingFluidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
             new FlowingFluidBlock(test_fluid, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
     );
 
+    public static final ForgeFlowingFluid.Properties test_fluid_properties =
+            new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x1080FF))
+                    .bucket(test_fluid_bucket).block(test_fluid_block);
+
     public NewFluidTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::loadComplete);
+
+        BLOCKS.register(modEventBus);
+        ITEMS.register(modEventBus);
+        FLUIDS.register(modEventBus);
     }
 
     public void loadComplete(FMLLoadCompleteEvent event)

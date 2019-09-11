@@ -24,7 +24,7 @@
 +   /**
 +    * @param supplier A fluid supplier such as {@link net.minecraftforge.fml.RegistryObject<Fluid>}
 +    */
-+   public FlowingFluidBlock(java.util.function.Supplier<? extends Fluid> supplier, Block.Properties p_i48368_1_) {
++   public FlowingFluidBlock(java.util.function.Supplier<? extends FlowingFluid> supplier, Block.Properties p_i48368_1_) {
 +      super(p_i48368_1_);
 +      this.field_204517_c = null;
 +      this.field_212565_c = Lists.newArrayList();
