@@ -225,7 +225,7 @@ public class FluidAttributes
     }
 
     /**
-     * A FluidStack sensitive version of getUnlocalizedName
+     * A FluidStack sensitive version of getTranslationKey
      */
     public String getTranslationKey(FluidStack stack)
     {
@@ -233,7 +233,7 @@ public class FluidAttributes
     }
 
     /**
-     * Returns the unlocalized name of this fluid.
+     * Returns the translation key of this fluid.
      */
     public String getTranslationKey()
     {
