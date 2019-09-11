@@ -146,6 +146,7 @@ import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ForgeHooksClient
 {
@@ -380,9 +381,9 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(net.minecraft.client.renderer.model.ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
-        javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
+        Matrix4f m = new Matrix4f(), t = new Matrix4f();
         m.setIdentity();
         m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
         t.setIdentity();
@@ -569,6 +570,13 @@ public class ForgeHooksClient
         };
     }
 
+    public static void gatherFluidTextures(Set<ResourceLocation> textures)
+    {
+        ForgeRegistries.FLUIDS.getValues().stream()
+                .flatMap(f -> f.getAttributes().getTextures())
+                .forEach(textures::add);
+    }
+
     private static class LightGatheringTransformer extends QuadGatheringTransformer {
 
         private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
@@ -702,7 +710,7 @@ public class ForgeHooksClient
     private static void drawSegment(ItemRenderer ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean shade, boolean updateLighting, boolean updateShading)
     {
         BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.ITEM);
 
         float lastBl = GLX.lastBrightnessX;
         float lastSl = GLX.lastBrightnessY;

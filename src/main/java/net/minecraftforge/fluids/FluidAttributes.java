@@ -22,30 +22,25 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
 
-import java.util.Locale;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.LanguageMap;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.item.Rarity;
+import net.minecraft.world.biome.BiomeColors;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -67,10 +62,6 @@ public class FluidAttributes
 {
     public static final int BUCKET_VOLUME = 1000;
 
-    /** The unique identification name for this fluid. */
-    private final String fluidName;
-
-    /** The translation key of this fluid. */
     private String translationKey;
 
     private final ResourceLocation stillTexture;
@@ -141,10 +132,9 @@ public class FluidAttributes
      */
     private final int color;
 
-    protected FluidAttributes(Builder builder)
+    protected FluidAttributes(Builder builder, Fluid fluid)
     {
-        this.fluidName = builder.name;
-        this.translationKey = builder.translationKey;
+        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeTranslationKey("fluid", fluid.getRegistryName());
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
@@ -157,11 +147,6 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
-    }
-
-    public final String getName()
-    {
-        return this.fluidName;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -240,7 +225,7 @@ public class FluidAttributes
     }
 
     /**
-     * A FluidStack sensitive version of getUnlocalizedName
+     * A FluidStack sensitive version of getTranslationKey
      */
     public String getTranslationKey(FluidStack stack)
     {
@@ -248,11 +233,11 @@ public class FluidAttributes
     }
 
     /**
-     * Returns the unlocalized name of this fluid.
+     * Returns the translation key of this fluid.
      */
     public String getTranslationKey()
     {
-        return "fluid." + this.translationKey;
+        return this.translationKey;
     }
 
     /* Default Accessors */
@@ -343,17 +328,23 @@ public class FluidAttributes
     public SoundEvent getFillSound(IEnviromentBlockReader world, BlockPos pos) { return getFillSound(); }
     public SoundEvent getEmptySound(IEnviromentBlockReader world, BlockPos pos) { return getEmptySound(); }
 
-    public static Builder builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-        return new Builder(name, stillTexture, flowingTexture);
+    public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+        return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
+    }
+
+    public Stream<ResourceLocation> getTextures()
+    {
+        if (overlayTexture != null)
+            return Stream.of(stillTexture, flowingTexture, overlayTexture);
+        return Stream.of(stillTexture, flowingTexture);
     }
 
     public static class Builder
     {
-        private final String name;
         private final ResourceLocation stillTexture;
         private final ResourceLocation flowingTexture;
         private ResourceLocation overlayTexture;
-        private int color = 0xFFFFFF;
+        private int color = 0xFFFFFFFF;
         private String translationKey;
         private SoundEvent fillSound;
         private SoundEvent emptySound;
@@ -363,12 +354,12 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
+        private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
-        protected Builder(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            this.name = name.toLowerCase(Locale.ENGLISH);
+        protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
+            this.factory = factory;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
-            this.translationKey = "fluid." + this.name + ".name";
         }
 
         public final Builder translationKey(String translationKey)
@@ -380,12 +371,6 @@ public class FluidAttributes
         public final Builder color(int color)
         {
             this.color = color;
-            return this;
-        }
-
-        public final Builder vanillaColor()
-        {
-            this.color = -1;
             return this;
         }
 
@@ -444,9 +429,27 @@ public class FluidAttributes
             return this;
         }
 
-        public FluidAttributes build()
+        public FluidAttributes build(Fluid fluid)
         {
-            return new FluidAttributes(this);
+            return factory.apply(this, fluid);
+        }
+    }
+
+    public static class Water extends FluidAttributes
+    {
+        protected Water(Builder builder, Fluid fluid)
+        {
+            super(builder, fluid);
+        }
+
+        @Override
+        public int getColor(IEnviromentBlockReader world, BlockPos pos)
+        {
+            return BiomeColors.getWaterColor(world, pos);
+        }
+
+        public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
+            return new Builder(stillTexture, flowingTexture, Water::new);
         }
     }
 }

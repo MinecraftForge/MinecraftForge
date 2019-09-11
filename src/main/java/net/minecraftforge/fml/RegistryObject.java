@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-public final class RegistryObject<T extends IForgeRegistryEntry<? super T>>
+public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T>
 {
     private final ResourceLocation name;
     @Nullable
