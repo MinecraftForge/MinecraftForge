@@ -103,13 +103,14 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean func_215665_a(IFluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_)
+    protected boolean func_215665_a(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
-        return p_215665_5_ == Direction.DOWN && !p_215665_4_.isIn(FluidTags.WATER);
+        // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
+        return direction == Direction.DOWN && !isEquivalentTo(fluidIn);
     }
 
     @Override
-    public int getTickRate(IWorldReader p_205569_1_)
+    public int getTickRate(IWorldReader world)
     {
         return tickRate;
     }
@@ -152,8 +153,8 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             builder.add(LEVEL_1_8);
         }
 
-        public int getLevel(IFluidState p_207192_1_) {
-            return p_207192_1_.get(LEVEL_1_8);
+        public int getLevel(IFluidState state) {
+            return state.get(LEVEL_1_8);
         }
 
         public boolean isSource(IFluidState state) {
@@ -168,7 +169,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             super(properties);
         }
 
-        public int getLevel(IFluidState p_207192_1_) {
+        public int getLevel(IFluidState state) {
             return 8;
         }
 
