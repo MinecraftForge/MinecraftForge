@@ -12,7 +12,7 @@
      {
          if (p_186838_1_.length() >= 1)
          {
-+            net.minecraftforge.client.ClientCommandHandler.instance.autoComplete(p_186838_1_);
++            net.minecraftforge.client.ClientCommandHandler.instance.autoComplete(p_186838_1_, this.func_186839_b());
              Minecraft.func_71410_x().field_71439_g.field_71174_a.func_147297_a(new CPacketTabComplete(p_186838_1_, this.func_186839_b(), this.field_186845_b));
              this.field_186847_d = true;
          }
