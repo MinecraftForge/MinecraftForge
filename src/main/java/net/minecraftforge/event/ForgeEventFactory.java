@@ -19,6 +19,9 @@
 
 package net.minecraftforge.event;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
+
 import java.io.File;
 import java.util.*;
 
@@ -48,6 +51,8 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -709,5 +714,13 @@ public class ForgeEventFactory
         SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
+    }
+
+    public static void onVillagePiecesInit()
+    {
+        VillageStructureInitEvent event = new VillageStructureInitEvent();
+        MinecraftForge.EVENT_BUS.post(event);
+        for (Map.Entry<ResourceLocation, ImmutableList<Pair<JigsawPiece,Integer>>> entry: event.getBuildings().entrySet())
+            JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue());
     }
 }

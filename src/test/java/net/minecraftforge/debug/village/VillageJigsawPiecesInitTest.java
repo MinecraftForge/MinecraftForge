@@ -20,17 +20,14 @@
 package net.minecraftforge.debug.village;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
 import net.minecraft.world.gen.feature.jigsaw.SingleJigsawPiece;
 import net.minecraft.world.gen.feature.template.AlwaysTrueRuleTest;
 import net.minecraft.world.gen.feature.template.RandomBlockMatchRuleTest;
 import net.minecraft.world.gen.feature.template.RuleEntry;
 import net.minecraft.world.gen.feature.template.RuleStructureProcessor;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.VillageStructureInitEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,14 +42,9 @@ public class VillageJigsawPiecesInitTest
 {
     public static final String MODID = "villagepiecesinittest";
 
-    public VillageJigsawPiecesInitTest()
-    {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
     @SubscribeEvent
     public static void onStructuresFinished(VillageStructureInitEvent event)
     {
-        JigsawManager.field_214891_a.get(new ResourceLocation("village/plains/town_centers")).addBuilding(new Pair<>(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),500));
+        event.addBuilding(new ResourceLocation("village/plains/town_centers"), new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),500);
     }
 }
