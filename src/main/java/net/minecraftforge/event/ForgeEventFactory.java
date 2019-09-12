@@ -19,6 +19,9 @@
 
 package net.minecraftforge.event;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
+
 import java.io.File;
 import java.util.*;
 
@@ -33,7 +36,6 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.merchant.IMerchant;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
@@ -47,9 +49,10 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -70,8 +73,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.LootTable;
@@ -698,5 +699,13 @@ public class ForgeEventFactory
     public static boolean onPistonMovePost(World world, BlockPos pos, Direction direction, boolean extending)
     {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+    }
+
+    public static void onVillagePiecesInit()
+    {
+        VillageStructureInitEvent event = new VillageStructureInitEvent();
+        MinecraftForge.EVENT_BUS.post(event);
+        for (Map.Entry<ResourceLocation, ImmutableList<Pair<JigsawPiece,Integer>>> entry: event.getBuildings().entrySet())
+            JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue());
     }
 }
