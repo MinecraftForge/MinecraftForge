@@ -19,49 +19,13 @@
 
 package net.minecraftforge.client;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.vecmath.Matrix3f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
-
-import net.minecraft.client.MouseHelper;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.fml.ModLoader;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.ClientBossInfo;
@@ -70,27 +34,25 @@ import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -112,7 +74,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -120,8 +81,10 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -133,20 +96,43 @@ import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
+import org.lwjgl.BufferUtils;
+
+import javax.annotation.Nonnull;
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.*;
+
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class ForgeHooksClient
 {
@@ -574,6 +560,7 @@ public class ForgeHooksClient
     {
         ForgeRegistries.FLUIDS.getValues().stream()
                 .flatMap(f -> f.getAttributes().getTextures())
+                .filter(Objects::nonNull)
                 .forEach(textures::add);
     }
 
