@@ -18,7 +18,7 @@
        this.field_214953_e = Lists.newArrayList();
 
        for(Pair<JigsawPiece, Integer> pair : p_i51397_3_) {
-@@ -56,6 +56,14 @@
+@@ -56,6 +56,19 @@
        return this.field_214954_f;
     }
 
