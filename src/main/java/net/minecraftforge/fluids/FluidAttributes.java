@@ -445,7 +445,7 @@ public class FluidAttributes
         @Override
         public int getColor(IEnviromentBlockReader world, BlockPos pos)
         {
-            return BiomeColors.getWaterColor(world, pos);
+            return BiomeColors.getWaterColor(world, pos) | 0xFF000000;
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {

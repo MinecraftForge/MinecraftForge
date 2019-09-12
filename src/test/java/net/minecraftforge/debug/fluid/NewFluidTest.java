@@ -68,7 +68,7 @@ public class NewFluidTest
     );
 
     public static final ForgeFlowingFluid.Properties test_fluid_properties =
-            new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x1080FF))
+            new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x3F1080FF))
                     .bucket(test_fluid_bucket).block(test_fluid_block);
 
     public NewFluidTest()

@@ -834,9 +834,7 @@ public class ForgeHooks
     public static FluidAttributes createVanillaFluidAttributes(Fluid fluid)
     {
         if (fluid instanceof EmptyFluid)
-            return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new net.minecraft.util.ResourceLocation("white"),
-                    new net.minecraft.util.ResourceLocation("white"))
+            return net.minecraftforge.fluids.FluidAttributes.builder(null, null)
                     .translationKey("block.minecraft.air")
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
@@ -845,7 +843,7 @@ public class ForgeHooks
                     new net.minecraft.util.ResourceLocation("block/water_flow"))
                     .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
-                    .color(0x3F76E4).build(fluid);
+                    .color(0xFF3F76E4).build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
                     new net.minecraft.util.ResourceLocation("block/lava_still"),
