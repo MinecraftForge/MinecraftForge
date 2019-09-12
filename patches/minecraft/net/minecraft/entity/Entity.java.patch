@@ -156,7 +156,7 @@
  
 +         CompoundNBT caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
-+         if (persistantData != null) p_189511_1_.func_218657_a("ForgeData", persistantData);
++         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
 +
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
@@ -165,7 +165,7 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
                 this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
-+               if (p_70020_1_.func_150297_b("ForgeData", 10)) persistantData = p_70020_1_.func_74775_l("ForgeData");
++               if (p_70020_1_.func_150297_b("ForgeData", 10)) persistentData = p_70020_1_.func_74775_l("ForgeData");
 +               if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
 +               if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
                 if (p_70020_1_.func_150297_b("Tags", 9)) {
@@ -315,12 +315,12 @@
 +      this.captureDrops = value;
 +      return ret;
 +   }
-+   private CompoundNBT persistantData;
++   private CompoundNBT persistentData;
 +   @Override
-+   public CompoundNBT getPersistantData() {
-+      if (persistantData == null)
-+         persistantData = new CompoundNBT();
-+      return persistantData;
++   public CompoundNBT getPersistentData() {
++      if (persistentData == null)
++         persistentData = new CompoundNBT();
++      return persistentData;
 +   }
 +   @Override
 +   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {

@@ -74,7 +74,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      * It will be written, and read from disc, so it persists over world saves.
      * @return A NBTTagCompound
      */
-    CompoundNBT getPersistantData();
+    CompoundNBT getPersistentData();
 
     /**
      * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
