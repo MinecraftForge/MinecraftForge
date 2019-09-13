@@ -1,0 +1,9 @@
+{
+	"values":[
+		"#forge:tools/chestplate/leather",
+		"#forge:tools/chestplate/chainmail",
+		"#forge:tools/chestplate/iron",
+		"#forge:tools/chestplate/gold",
+		"#forge:tools/chestplate/diamond"
+	]
+}

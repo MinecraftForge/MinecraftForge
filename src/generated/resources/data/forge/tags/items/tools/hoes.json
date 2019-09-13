@@ -1,0 +1,9 @@
+{
+	"values":[
+		"#forge:tools/hoes/wooden",
+		"#forge:tools/hoes/stone",
+		"#forge:tools/hoes/iron",
+		"#forge:tools/hoes/gold",
+		"#forge:tools/hoes/diamond"
+	]
+}

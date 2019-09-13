@@ -1,0 +1,9 @@
+{
+	"values":[
+		"#forge:tools/swords/wooden",
+		"#forge:tools/swords/stone",
+		"#forge:tools/swords/iron",
+		"#forge:tools/swords/gold",
+		"#forge:tools/swords/diamond"
+	]
+}

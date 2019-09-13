@@ -1,0 +1,9 @@
+{
+	"values":[
+		"#forge:tools/helmets/leather",
+		"#forge:tools/helmets/chainmail",
+		"#forge:tools/helmets/iron",
+		"#forge:tools/helmets/gold",
+		"#forge:tools/helmets/diamond"
+	]
+}

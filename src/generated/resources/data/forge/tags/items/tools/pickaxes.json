@@ -1,0 +1,9 @@
+{
+	"values":[
+		"#forge:tools/pickaxes/wooden",
+		"#forge:tools/pickaxes/stone",
+		"#forge:tools/pickaxes/iron",
+		"#forge:tools/pickaxes/gold",
+		"#forge:tools/pickaxes/diamond"
+	]
+}
