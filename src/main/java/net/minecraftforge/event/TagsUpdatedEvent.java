@@ -17,14 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.event;
 
 import net.minecraft.tags.NetworkTagManager;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Fired on {@link Dist#CLIENT} when {@link NetworkTagManager} has all of its tags synced from the server to the client (just after a client has connected),
+ * Fired on the client when {@link NetworkTagManager} has all of its tags synced from the server to the client (just after a client has connected).
+ * Fired on the server when {@link NetworkTagManager} has read all tags from disk (during a data reload).
  */
 public class TagsUpdatedEvent extends Event
 {

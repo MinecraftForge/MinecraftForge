@@ -81,7 +81,7 @@
        }
  
        this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.TagsUpdatedEvent(this.field_199725_m));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.field_199725_m));
     }
  
     public void func_175098_a(SCombatPacket p_175098_1_) {
