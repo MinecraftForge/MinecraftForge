@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/structure/PillagerOutpostPieces.java
++++ b/net/minecraft/world/gen/feature/structure/PillagerOutpostPieces.java
+@@ -29,6 +29,7 @@
+       JigsawManager.field_214891_a.func_214932_a(new JigsawPattern(new ResourceLocation("pillager_outpost/towers"), new ResourceLocation("empty"), ImmutableList.of(Pair.of(new ListJigsawPiece(ImmutableList.of(new SingleJigsawPiece("pillager_outpost/watchtower"), new SingleJigsawPiece("pillager_outpost/watchtower_overgrown", ImmutableList.of(new IntegrityProcessor(0.05F))))), 1)), JigsawPattern.PlacementBehaviour.RIGID));
+       JigsawManager.field_214891_a.func_214932_a(new JigsawPattern(new ResourceLocation("pillager_outpost/feature_plates"), new ResourceLocation("empty"), ImmutableList.of(Pair.of(new SingleJigsawPiece("pillager_outpost/feature_plate"), 1)), JigsawPattern.PlacementBehaviour.TERRAIN_MATCHING));
+       JigsawManager.field_214891_a.func_214932_a(new JigsawPattern(new ResourceLocation("pillager_outpost/features"), new ResourceLocation("empty"), ImmutableList.of(Pair.of(new SingleJigsawPiece("pillager_outpost/feature_cage1"), 1), Pair.of(new SingleJigsawPiece("pillager_outpost/feature_cage2"), 1), Pair.of(new SingleJigsawPiece("pillager_outpost/feature_logs"), 1), Pair.of(new SingleJigsawPiece("pillager_outpost/feature_tent1"), 1), Pair.of(new SingleJigsawPiece("pillager_outpost/feature_tent2"), 1), Pair.of(new SingleJigsawPiece("pillager_outpost/feature_targets"), 1), Pair.of(EmptyJigsawPiece.field_214856_a, 6)), JigsawPattern.PlacementBehaviour.RIGID));
++      net.minecraftforge.event.world.jigsaw.ForgePillageOutpostPools.init();
+    }
+ 
+    public static class PillageOutpost extends AbstractVillagePiece {
