@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/EmptyJigsawPiece.java
++++ b/net/minecraft/world/gen/feature/jigsaw/EmptyJigsawPiece.java
+@@ -5,6 +5,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Random;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
+@@ -12,6 +13,15 @@
+ import net.minecraft.world.gen.feature.template.Template;
+ import net.minecraft.world.gen.feature.template.TemplateManager;
+ 
++
++import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.Rotation;
++import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.IWorld;
++import net.minecraft.world.gen.feature.template.Template;
++import net.minecraft.world.gen.feature.template.TemplateManager;
++
+ public class EmptyJigsawPiece extends JigsawPiece {
+    public static final EmptyJigsawPiece field_214856_a = new EmptyJigsawPiece();
+ 
+@@ -42,4 +52,8 @@
+    public String toString() {
+       return "Empty";
+    }
++
++   public ResourceLocation getIdentifier() {
++      return new ResourceLocation("empty");
++   }
+ }

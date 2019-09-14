@@ -135,6 +135,7 @@ import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.jigsaw.JigsawStructurePoolInitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -716,11 +717,12 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static void onVillagePiecesInit()
+    public static void onJigsawStructurePiecesInit(JigsawStructurePoolInitEvent event)
     {
-        VillageStructureInitEvent event = new VillageStructureInitEvent();
         MinecraftForge.EVENT_BUS.post(event);
-        for (Map.Entry<ResourceLocation, ImmutableList<Pair<JigsawPiece,Integer>>> entry: event.getBuildings().entrySet())
+        for (Map.Entry<ResourceLocation, ImmutableList<ResourceLocation>> entry: event.getRemoveBuildings().entrySet())
+            JigsawManager.field_214891_a.get(entry.getKey()).removeBuildings(entry.getValue());
+        for (Map.Entry<ResourceLocation, ImmutableList<Pair<JigsawPiece,Integer>>> entry: event.getNewBuildings().entrySet())
             JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue());
     }
 }
