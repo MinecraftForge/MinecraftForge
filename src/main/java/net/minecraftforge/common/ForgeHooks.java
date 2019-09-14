@@ -46,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.fluid.*;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -60,9 +61,7 @@ import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -143,6 +142,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -833,6 +833,30 @@ public class ForgeHooks
             ret.freeze();
 
         return ret;
+    }
+
+    public static FluidAttributes createVanillaFluidAttributes(Fluid fluid)
+    {
+        if (fluid instanceof EmptyFluid)
+            return net.minecraftforge.fluids.FluidAttributes.builder(
+                    new net.minecraft.util.ResourceLocation("white"),
+                    new net.minecraft.util.ResourceLocation("white"))
+                    .translationKey("block.minecraft.air")
+                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
+        if (fluid instanceof WaterFluid)
+            return net.minecraftforge.fluids.FluidAttributes.Water.builder(
+                    new net.minecraft.util.ResourceLocation("block/water_still"),
+                    new net.minecraft.util.ResourceLocation("block/water_flow"))
+                    .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
+                    .translationKey("block.minecraft.water")
+                    .color(0x3F76E4).build(fluid);
+        if (fluid instanceof LavaFluid)
+            return net.minecraftforge.fluids.FluidAttributes.builder(
+                    new net.minecraft.util.ResourceLocation("block/lava_still"),
+                    new net.minecraft.util.ResourceLocation("block/lava_flow"))
+                    .translationKey("block.minecraft.lava")
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
+        throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
     private static class LootTableContext

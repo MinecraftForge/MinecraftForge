@@ -65,7 +65,7 @@ public interface IFluidHandler
      * </p>
      *
      * @param tank Tank to query.
-     * @return FluidStack in a given tank. NULL if the tank is empty.
+     * @return FluidStack in a given tank. FluidStack.EMPTY if the tank is empty.
      */
     @Nonnull
     FluidStack getFluidInTank(int tank);

@@ -1,6 +1,26 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -38,6 +38,8 @@
+@@ -30,14 +30,28 @@
+ public class BucketItem extends Item {
+    private final Fluid field_77876_a;
+ 
++   // Forge: Use the other constructor that takes a Supplier
++   @Deprecated
+    public BucketItem(Fluid p_i49025_1_, Item.Properties p_i49025_2_) {
+       super(p_i49025_2_);
+       this.field_77876_a = p_i49025_1_;
++      this.fluidSupplier = p_i49025_1_.delegate;
+    }
+ 
++   /**
++    * @param supplier A fluid supplier such as {@link net.minecraftforge.fml.RegistryObject<Fluid>}
++    */
++   public BucketItem(java.util.function.Supplier<? extends Fluid> supplier, Item.Properties builder) {
++      super(builder);
++      this.field_77876_a = null;
++      this.fluidSupplier = supplier;
++   }
++
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        RayTraceResult raytraceresult = func_219968_a(p_77659_1_, p_77659_2_, this.field_77876_a == Fluids.field_204541_a ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
@@ -9,24 +29,24 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return new ActionResult<>(ActionResultType.PASS, itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -52,7 +54,10 @@
+@@ -52,7 +66,10 @@
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
 -                     p_77659_2_.func_184185_a(fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M, 1.0F, 1.0F);
 +
-+                     SoundEvent soundevent = field_77876_a.getAttributes().getEmptySound();
++                     SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
 +                     if(soundevent == null) soundevent = fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M;
 +                     p_77659_2_.func_184185_a(soundevent, 1.0F, 1.0F);
                       ItemStack itemstack1 = this.func_150910_a(itemstack, p_77659_2_, fluid.func_204524_b());
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-@@ -147,7 +152,18 @@
+@@ -147,7 +164,19 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {
 -      SoundEvent soundevent = this.field_77876_a.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187627_L : SoundEvents.field_187624_K;
-+      SoundEvent soundevent = field_77876_a.getAttributes().getEmptySound();
++      SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
 +      if(soundevent == null) soundevent = this.field_77876_a.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187627_L : SoundEvents.field_187624_K;
        p_203791_2_.func_184133_a(p_203791_1_, p_203791_3_, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
@@ -39,5 +59,6 @@
 +         return super.initCapabilities(stack, nbt);
 +   }
 +
-+   public Fluid getFluid() { return field_77876_a; }
++   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
++   public Fluid getFluid() { return fluidSupplier.get(); }
  }

@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fluids.capability;
 
-import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -39,7 +39,7 @@ public class CapabilityFluidHandler
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
-	public static void register()
+    public static void register()
     {
         CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(FluidAttributes.BUCKET_VOLUME));
 
@@ -48,27 +48,27 @@ public class CapabilityFluidHandler
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {
         @Override
-		public INBT writeNBT(Capability<T> capability, T instance, Direction side)
-		{
-			if (!(instance instanceof FluidTank))
-				throw new RuntimeException("Cannot serialize to an instance that isn't the default implementation");
-			CompoundNBT nbt = new CompoundNBT();
-			FluidTank tank = (FluidTank) instance;
-			FluidStack fluid = tank.getFluid();
-			fluid.writeToNBT(nbt);
-			nbt.putInt("Capacity", tank.getCapacity());
-			return nbt;
-		}
+        public INBT writeNBT(Capability<T> capability, T instance, Direction side)
+        {
+            if (!(instance instanceof FluidTank))
+                throw new RuntimeException("Cannot serialize to an instance that isn't the default implementation");
+            CompoundNBT nbt = new CompoundNBT();
+            FluidTank tank = (FluidTank) instance;
+            FluidStack fluid = tank.getFluid();
+            fluid.writeToNBT(nbt);
+            nbt.putInt("Capacity", tank.getCapacity());
+            return nbt;
+        }
 
         @Override
-		public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt)
-		{
-			if (!(instance instanceof FluidTank))
-				throw new RuntimeException("Cannot deserialize to an instance that isn't the default implementation");
-			CompoundNBT tags = (CompoundNBT) nbt;
-			FluidTank tank = (FluidTank) instance;
-			tank.setCapacity(tags.getInt("Capacity"));
-			tank.readFromNBT(tags);
-		}
+        public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt)
+        {
+            if (!(instance instanceof FluidTank))
+                throw new RuntimeException("Cannot deserialize to an instance that isn't the default implementation");
+            CompoundNBT tags = (CompoundNBT) nbt;
+            FluidTank tank = (FluidTank) instance;
+            tank.setCapacity(tags.getInt("Capacity"));
+            tank.readFromNBT(tags);
+        }
     }
 }

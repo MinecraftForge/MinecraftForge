@@ -1,4 +1,4 @@
-rootProject.name = 'Forge'
+rootProject.name = 'MinecraftForge'
 
 include ':mcp'
 include ':clean'
