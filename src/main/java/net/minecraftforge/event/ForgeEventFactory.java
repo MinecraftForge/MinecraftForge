@@ -44,6 +44,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
@@ -140,6 +141,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.mojang.authlib.GameProfile;
 
 public class ForgeEventFactory
 {
@@ -834,5 +837,13 @@ public class ForgeEventFactory
         MerchantTradeOffersEvent event = new MerchantTradeOffersEvent(merchant, player, dupeList);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getList();
+    }
+
+    @Nullable
+    public static String canUserConnect(MinecraftServer server, NetworkManager networkManager, GameProfile loginGameProfile, @Nullable String original)
+    {
+        ServerTryConnectEvent event = new ServerTryConnectEvent(server, networkManager, loginGameProfile, original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRejectionMessage();
     }
 }
