@@ -9,7 +9,16 @@
                  this.field_181025_l = null;
              }
          }
-@@ -132,7 +132,7 @@
+@@ -103,6 +103,8 @@
+ 
+         String s = this.field_147327_f.func_184103_al().func_148542_a(this.field_147333_a.func_74430_c(), this.field_147337_i);
+ 
++        s = net.minecraftforge.event.ForgeEventFactory.canUserConnect(this.field_147327_f,this.field_147333_a,this.field_147337_i,s);
++
+         if (s != null)
+         {
+             this.func_194026_b(new TextComponentTranslation(s, new Object[0]));
+@@ -132,7 +134,7 @@
              }
              else
              {
@@ -18,7 +27,7 @@
              }
          }
      }
-@@ -177,7 +177,7 @@
+@@ -177,7 +179,7 @@
              this.field_147335_k = p_147315_1_.func_149300_a(privatekey);
              this.field_147328_g = NetHandlerLoginServer.LoginState.AUTHENTICATING;
              this.field_147333_a.func_150727_a(this.field_147335_k);
