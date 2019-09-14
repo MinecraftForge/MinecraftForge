@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/FeatureJigsawPiece.java
++++ b/net/minecraft/world/gen/feature/jigsaw/FeatureJigsawPiece.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.block.JigsawBlock;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.util.Direction;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
+@@ -80,4 +81,8 @@
+    public String toString() {
+       return "Feature[" + Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a) + "]";
+    }
++
++   public ResourceLocation getIdentifier() {
++      return Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a);
++   }
+ }

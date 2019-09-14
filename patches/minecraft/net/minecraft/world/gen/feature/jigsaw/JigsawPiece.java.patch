@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/JigsawPiece.java
++++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPiece.java
+@@ -5,6 +5,7 @@
+ import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
+@@ -13,6 +14,16 @@
+ import net.minecraft.world.gen.feature.template.Template;
+ import net.minecraft.world.gen.feature.template.TemplateManager;
+ 
++
++import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.Rotation;
++import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.util.registry.Registry;
++import net.minecraft.world.IWorld;
++import net.minecraft.world.gen.feature.template.Template;
++import net.minecraft.world.gen.feature.template.TemplateManager;
++
+ public abstract class JigsawPiece {
+    @Nullable
+    private volatile JigsawPattern.PlacementBehaviour field_214855_a;
+@@ -61,4 +72,7 @@
+    public int func_214850_d() {
+       return 1;
+    }
++
++   public abstract ResourceLocation getIdentifier();
++
+ }

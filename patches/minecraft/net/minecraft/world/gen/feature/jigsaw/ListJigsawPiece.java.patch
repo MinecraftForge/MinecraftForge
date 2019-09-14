@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
++++ b/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
+@@ -7,6 +7,7 @@
+ import java.util.Random;
+ import java.util.stream.Collectors;
+ import net.minecraft.util.IDynamicDeserializer;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
+@@ -96,4 +97,8 @@
+          p_214863_1_.func_214845_a(p_214864_1_);
+       });
+    }
++
++   public ResourceLocation getIdentifier() {
++      return new ResourceLocation(this.field_214867_a.stream().map(Object::toString).collect(Collectors.joining(", ")));
++   }
+ }

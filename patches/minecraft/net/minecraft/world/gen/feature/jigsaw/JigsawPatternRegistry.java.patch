@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/JigsawPatternRegistry.java
++++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPatternRegistry.java
+@@ -4,6 +4,11 @@
+ import java.util.Map;
+ import net.minecraft.util.ResourceLocation;
+ 
++
++import java.util.Map;
++
++import net.minecraft.util.ResourceLocation;
++
+ public class JigsawPatternRegistry {
+    private final Map<ResourceLocation, JigsawPattern> field_214934_a = Maps.newHashMap();
+ 
+@@ -11,6 +16,9 @@
+       this.func_214932_a(JigsawPattern.field_214949_a);
+    }
+ 
++   /**
++    * use {@link net.minecraftforge.event.world.jigsaw.JigsawStructurePoolInitEvent#registerNewJigsawPattern(JigsawPattern)} for registering new patterns for existing structures
++    */
+    public void func_214932_a(JigsawPattern p_214932_1_) {
+       this.field_214934_a.put(p_214932_1_.func_214947_b(), p_214932_1_);
+    }
