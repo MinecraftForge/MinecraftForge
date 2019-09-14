@@ -78,6 +78,9 @@ public class ModelLoaderRegistry
     {
         loaders.add(loader);
         ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
+        // FIXME: Existing model loaders expect to receive a call as soon as they are registered, which was the old behaviour pre-1.13
+        // without this, their manager field is never initialized.
+        loader.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
     }
 
     public static boolean loaded(ResourceLocation location)

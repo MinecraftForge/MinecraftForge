@@ -1,0 +1,33 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {"wall": "block/obsidian"},
+		"model": "block/cobblestone_wall_post",
+		"uvlock": true,	// This and all other properties of "defaults" will be inherited by simple submodels. They will NOT be inherited by named submodels.
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"north": {
+			"true": {"submodel": "forgeblockstatesloader:block/wall_connect"},	// Simple submodel declaration. You can also specify multiple submodels for a variant.
+			"false": {}
+		},
+		"south": {
+			"true": {"submodel": "forgeblockstatesloader:block/wall_connect", "y": 180},
+			"false": {}
+		},
+		"east": {
+			"true": {"submodel": "forgeblockstatesloader:block/wall_connect", "y": 90},	// Submodel will be rotated.
+			"false": {}
+		},
+		"west": {
+			"true": {"submodel": "forgeblockstatesloader:block/wall_connect", "y": 270},
+			"false": {}
+		},
+		"up": {"true": {}, "false": {}},	// Must have this in here or the blockstates loader will not know of all the properties and values, and it will create the wrong vanilla state strings.
+		"waterlogged": {"true": {}, "false": {}},
+		"east=false,north=true,south=true,up=false,waterlogged=false,west=false": {"model": null},	// Fully specified variant, will inherit from variants above, but remove the model set in "defaults", removing the wall post.
+		"east=true,north=false,south=false,up=false,waterlogged=false,west=true": {"model": null},
+		"east=false,north=true,south=true,up=false,waterlogged=true,west=false": {"model": null},
+		"east=true,north=false,south=false,up=false,waterlogged=true,west=true": {"model": null}
+	}
+}
