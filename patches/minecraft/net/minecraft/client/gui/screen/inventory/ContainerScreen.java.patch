@@ -121,7 +121,7 @@
                 this.func_184098_a(slot, k, p_mouseReleased_5_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputMappings.func_216506_a(Minecraft.func_71410_x().field_195558_d.func_198092_i(), 340) || InputMappings.func_216506_a(Minecraft.func_71410_x().field_195558_d.func_198092_i(), 344));
-@@ -514,27 +523,32 @@
+@@ -514,15 +523,16 @@
        if (super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
           return true;
        } else {
@@ -129,29 +129,19 @@
 +         InputMappings.Input mouseKey = InputMappings.func_197954_a(p_keyPressed_1_, p_keyPressed_2_);
 +         if (p_keyPressed_1_ == 256 || this.minecraft.field_71474_y.field_151445_Q.isActiveAndMatches(mouseKey)) {
              this.minecraft.field_71439_g.func_71053_j();
-+            return true; // Forge MC-146650: Needs to return true when the key is handled.
           }
  
--         this.func_195363_d(p_keyPressed_1_, p_keyPressed_2_);
-+         if (this.func_195363_d(p_keyPressed_1_, p_keyPressed_2_))
-+            return true; // Forge MC-146650: Needs to return true when the key is handled.
+          this.func_195363_d(p_keyPressed_1_, p_keyPressed_2_);
           if (this.field_147006_u != null && this.field_147006_u.func_75216_d()) {
 -            if (this.minecraft.field_71474_y.field_74322_I.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
 +            if (this.minecraft.field_71474_y.field_74322_I.isActiveAndMatches(mouseKey)) {
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, 0, ClickType.CLONE);
 -            } else if (this.minecraft.field_71474_y.field_74316_C.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
-+               return true; // Forge MC-146650: Needs to return true when the key is handled.
 +            } else if (this.minecraft.field_71474_y.field_74316_C.isActiveAndMatches(mouseKey)) {
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, hasControlDown() ? 1 : 0, ClickType.THROW);
-+               return true; // Forge MC-146650: Needs to return true when the key is handled.
              }
           }
- 
--         return true;
-+         return false; // Forge MC-146650: Needs to return false when the key is not handled.
-       }
-    }
- 
+@@ -534,7 +544,7 @@
     protected boolean func_195363_d(int p_195363_1_, int p_195363_2_) {
        if (this.minecraft.field_71439_g.field_71071_by.func_70445_o().func_190926_b() && this.field_147006_u != null) {
           for(int i = 0; i < 9; ++i) {
@@ -160,7 +150,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -565,4 +579,16 @@
+@@ -565,4 +575,16 @@
     public T func_212873_a_() {
        return this.field_147002_h;
     }
