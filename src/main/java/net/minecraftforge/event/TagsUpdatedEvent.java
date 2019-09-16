@@ -17,30 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.event;
 
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.tags.NetworkTagManager;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Fired on {@link Dist#CLIENT} when {@link RecipeManager} has all of its recipes synced from the server to the client (just after a client has connected),
+ * Fired on the client when {@link NetworkTagManager} has all of its tags synced from the server to the client (just after a client has connected).
+ * Fired on the server when {@link NetworkTagManager} has read all tags from disk (during a data reload).
  */
-public class RecipesUpdatedEvent extends Event
+public class TagsUpdatedEvent extends Event
 {
     
-    private final RecipeManager mgr;
+    private final NetworkTagManager manager;
     
-    public RecipesUpdatedEvent(RecipeManager mgr)
+    public TagsUpdatedEvent(NetworkTagManager manager)
     {
-        this.mgr = mgr;
+        this.manager = manager;
     }
 
     /**
-     * @return The newly-updated recipe manager that now contains all the recipes that were just received.
+     * @return The network tag manager that has been updated with newly received tags.
      */
-    public RecipeManager getRecipeManager()
+    public NetworkTagManager getTagManager()
     {
-        return mgr;
+        return manager;
     }
 }

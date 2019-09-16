@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.spawner.AbstractSpawner;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ActionResultType;
@@ -145,6 +147,8 @@ import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IRegistryDelegate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -1178,4 +1182,30 @@ public class ForgeHooks
         BlockState state = world.getBlockState(pos);
         return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
+
+    private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
+
+    /**
+     * Gets the burn time of this itemstack.
+     */
+    public static int getBurnTime(ItemStack stack)
+    {
+        if (stack.isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            Item item = stack.getItem();
+            int ret = stack.getBurnTime();
+            return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret);
+        }
+    }
+
+    public static synchronized void updateBurns()
+    {
+        VANILLA_BURNS.clear();
+        FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
+
 }
