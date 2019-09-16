@@ -19,9 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.List;
-
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
@@ -32,18 +29,18 @@ import net.minecraftforge.eventbus.api.Event;
 public class RecipesUpdatedEvent extends Event
 {
     
-    private final List<IRecipe<?>> recipes;
+    private final RecipeManager mgr;
     
-    public RecipesUpdatedEvent(List<IRecipe<?>> recipes)
+    public RecipesUpdatedEvent(RecipeManager mgr)
     {
-        this.recipes = recipes;
+        this.mgr = mgr;
     }
 
     /**
-     * @return The list of recipes that were sent to the client during this event.
+     * @return The newly-updated recipe manager that now contains all the recipes that were just received.
      */
-    public List<IRecipe<?>> getRecipesSynced()
+    public RecipeManager getRecipeManager()
     {
-        return recipes;
+        return mgr;
     }
 }

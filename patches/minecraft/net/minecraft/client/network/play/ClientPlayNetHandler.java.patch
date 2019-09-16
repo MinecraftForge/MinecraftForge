@@ -64,7 +64,7 @@
        clientrecipebook.func_199644_c();
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
-+      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(p_199525_1_.func_199616_a());
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.field_199528_o);
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
