@@ -1203,7 +1203,7 @@ public class ForgeHooks
         }
     }
 
-    public static void updateBurns()
+    public static synchronized void updateBurns()
     {
         VANILLA_BURNS.clear();
         FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
