@@ -531,9 +531,10 @@ public class ForgeHooks
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
         ItemStack itemstack = entityPlayer.getHeldItemMainhand();
-        if (gameType.isCreative() && !itemstack.isEmpty()
-                && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+        if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+        {
             preCancelEvent = true;
+        }
 
         if (gameType.hasLimitedInteractions())
         {
