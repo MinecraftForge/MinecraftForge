@@ -104,12 +104,27 @@ public abstract class JigsawStructurePoolInitEvent extends Event {
     public void computeChanges()
     {
         if(computed.contains(this.getStructureRegistryName()))return;
-        for (Map.Entry<ResourceLocation,ImmutableList.Builder<ResourceLocation>> entry: remove.entrySet()) {
-            JigsawManager.field_214891_a.get(entry.getKey()).removeBuildings(entry.getValue().build());
+        for (Map.Entry<ResourceLocation,ImmutableList.Builder<ResourceLocation>> entry: remove.entrySet())
+        {
+            JigsawPattern pattern = JigsawManager.field_214891_a.get(entry.getKey());
+            pattern.field_214952_d.removeIf(pair -> entry.getValue().build().contains(pair.getFirst().getRegistryName()));
+            rebuildPattern(pattern);
         }
         for (Map.Entry<ResourceLocation,ImmutableList.Builder<Pair<JigsawPiece,Integer>>> entry: newBuildings.entrySet())
-            JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue().build());
+        {
+            JigsawPattern pattern = JigsawManager.field_214891_a.get(entry.getKey());
+            pattern.field_214952_d.addAll(entry.getValue().build());
+            rebuildPattern(pattern);
+        }
         computed.add(this.getStructureRegistryName());
+    }
+
+    private void rebuildPattern(JigsawPattern pattern)
+    {
+        pattern.field_214953_e.clear();
+        for(Pair<JigsawPiece, Integer> pair: pattern.field_214952_d)
+            for(Integer integer = 0; integer < pair.getSecond(); integer = integer + 1)
+                pattern.field_214953_e.add(pair.getFirst().setPlacementBehaviour(pattern.field_214955_g));
     }
 
     public boolean alreadyComputed()
