@@ -14,7 +14,7 @@
        return "Single[" + this.field_214861_a + "]";
     }
 +
-+   public ResourceLocation getIdentifier() {
++   public ResourceLocation getRegistryName() {
 +      return field_214861_a;
 +   }
  }

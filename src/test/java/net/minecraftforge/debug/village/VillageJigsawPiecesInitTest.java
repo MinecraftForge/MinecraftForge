@@ -29,7 +29,7 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.SingleJigsawPiece;
 import net.minecraft.world.gen.feature.structure.Structures;
 import net.minecraft.world.gen.feature.template.*;
-import net.minecraftforge.event.world.jigsaw.JigsawStructurePoolInitEvent;
+import net.minecraftforge.event.world.JigsawStructurePoolInitEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -51,14 +51,14 @@ public class VillageJigsawPiecesInitTest
     public static int test = 3;
 
     /**
-     * catch {@link JigsawStructurePoolInitEvent} and test for {@code event.getStructureName()} (intermod compatibility)
+     * catch {@link JigsawStructurePoolInitEvent} and test for {@code event.getStructureRegistryName()} (intermod compatibility)
      * <br>
      * or catch the exact event {@link JigsawStructurePoolInitEvent.Village}
      */
     @SubscribeEvent
     public static void onStructuresFinished(JigsawStructurePoolInitEvent event)
     {
-        if(!Structures.VILLAGE.getStructureName().equals(event.getStructureName()))return;
+        if(!Structures.VILLAGE.getRegistryName().equals(event.getStructureRegistryName()))return;
 
         switch (test){
             case 1:

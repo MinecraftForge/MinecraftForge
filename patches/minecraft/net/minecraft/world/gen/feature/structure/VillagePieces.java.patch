@@ -4,7 +4,7 @@
        SavannaVillagePools.func_214745_a();
        DesertVillagePools.func_222739_a();
        TaigaVillagePools.func_214806_a();
-+      net.minecraftforge.event.world.jigsaw.ForgeVillagePools.init();
++      net.minecraftforge.event.ForgeEventFactory.onJigsawStructurePiecesInit(new net.minecraftforge.event.world.JigsawStructurePoolInitEvent.Village());
        JigsawManager.func_214889_a(p_214838_5_.field_214680_a, p_214838_5_.field_214681_b, VillagePieces.Village::new, p_214838_0_, p_214838_1_, p_214838_2_, p_214838_3_, p_214838_4_);
     }
  

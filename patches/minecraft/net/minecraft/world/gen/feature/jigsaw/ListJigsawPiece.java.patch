@@ -1,19 +1,35 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
-@@ -7,6 +7,7 @@
- import java.util.Random;
- import java.util.stream.Collectors;
- import net.minecraft.util.IDynamicDeserializer;
-+import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Rotation;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MutableBoundingBox;
-@@ -96,4 +97,8 @@
+@@ -17,6 +17,7 @@
+ 
+ public class ListJigsawPiece extends JigsawPiece {
+    private final List<JigsawPiece> field_214867_a;
++   private final net.minecraft.util.ResourceLocation resourceLocation;
+ 
+    @Deprecated
+    public ListJigsawPiece(List<JigsawPiece> p_i51404_1_) {
+@@ -30,6 +31,7 @@
+       } else {
+          this.field_214867_a = p_i51405_1_;
+          this.func_214864_b(p_i51405_2_);
++         this.resourceLocation = new net.minecraft.util.ResourceLocation(this.field_214867_a.stream().map(Object::toString).collect(Collectors.joining(", ")));
+       }
+    }
+ 
+@@ -42,6 +44,7 @@
+          throw new IllegalArgumentException("Elements are empty");
+       } else {
+          this.field_214867_a = list;
++         this.resourceLocation = new net.minecraft.util.ResourceLocation(this.field_214867_a.stream().map(Object::toString).collect(Collectors.joining(", ")));
+       }
+    }
+ 
+@@ -96,4 +99,8 @@
           p_214863_1_.func_214845_a(p_214864_1_);
        });
     }
 +
-+   public ResourceLocation getIdentifier() {
-+      return new ResourceLocation(this.field_214867_a.stream().map(Object::toString).collect(Collectors.joining(", ")));
++   public net.minecraft.util.ResourceLocation getRegistryName() {
++      return resourceLocation;
 +   }
  }
