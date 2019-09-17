@@ -18,24 +18,19 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -68,4 +68,20 @@
+@@ -68,4 +68,15 @@
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_196409_a, field_196411_b, field_196414_y, field_196413_c, field_204514_u);
     }
 +
 +   @Override
-+   public net.minecraft.util.ActionResultType getConnectedToResult(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
++   public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
 +      BlockPos offPos = pos.func_177972_a(direction);
 +      BlockState offState = world.func_180495_p(offPos);
-+      return func_220112_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d())) ?
-+              net.minecraft.util.ActionResultType.SUCCESS : net.minecraft.util.ActionResultType.PASS;
++      return func_220112_a(offState, offState.func_224755_d(world, offPos, direction.func_176734_d()));
 +   }
 +
 +   private boolean canPaneConnectTo(BlockState otherState, IBlockReader world, BlockPos otherPos, Direction direction) {
-+      net.minecraft.util.ActionResultType result = otherState.getConnectedToResult(world, otherPos, direction);
-+      if(result == net.minecraft.util.ActionResultType.PASS) {
-+         return func_220112_a(otherState, otherState.func_224755_d(world, otherPos, direction));
-+      }
-+      return result == net.minecraft.util.ActionResultType.SUCCESS;
++      return otherState.canBeConnectedTo(world, otherPos, direction) || func_220112_a(otherState, otherState.func_224755_d(world, otherPos, direction));
 +   }
  }

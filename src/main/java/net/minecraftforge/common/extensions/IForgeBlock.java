@@ -859,12 +859,11 @@ public interface IForgeBlock
      * @param world The current world
      * @param pos The position of this block
      * @param direction The side the connecting block is on
-     * @return {@link ActionResultType#SUCCESS} to allow connections, {@link ActionResultType#FAIL} to block connections
-     * or {@link ActionResultType#PASS} to have vanilla logic take place.
+     * @return True to allow another block to connect to this block
      */
-    default ActionResultType getConnectedToResult(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
+    default boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction direction)
     {
-        return ActionResultType.PASS;
+        return false;
     }
 
     /**
