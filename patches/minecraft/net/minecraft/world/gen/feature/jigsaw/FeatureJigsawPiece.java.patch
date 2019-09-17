@@ -1,19 +1,34 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/FeatureJigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/FeatureJigsawPiece.java
-@@ -10,6 +10,7 @@
- import net.minecraft.block.JigsawBlock;
- import net.minecraft.nbt.CompoundNBT;
- import net.minecraft.util.Direction;
-+import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Rotation;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MutableBoundingBox;
-@@ -80,4 +81,8 @@
+@@ -23,6 +23,7 @@
+ public class FeatureJigsawPiece extends JigsawPiece {
+    private final ConfiguredFeature<?> field_214870_a;
+    private final CompoundNBT field_214871_b;
++   private final net.minecraft.util.ResourceLocation registryName;
+ 
+    @Deprecated
+    public FeatureJigsawPiece(ConfiguredFeature<?> p_i51409_1_) {
+@@ -33,12 +34,14 @@
+       super(p_i51410_2_);
+       this.field_214870_a = p_i51410_1_;
+       this.field_214871_b = this.func_214869_b();
++      this.registryName = Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a);
+    }
+ 
+    public <T> FeatureJigsawPiece(Dynamic<T> p_i51411_1_) {
+       super(p_i51411_1_);
+       this.field_214870_a = ConfiguredFeature.func_222736_a(p_i51411_1_.get("feature").orElseEmptyMap());
+       this.field_214871_b = this.func_214869_b();
++      this.registryName = Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a);
+    }
+ 
+    public CompoundNBT func_214869_b() {
+@@ -80,4 +83,8 @@
     public String toString() {
        return "Feature[" + Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a) + "]";
     }
 +
-+   public ResourceLocation getIdentifier() {
-+      return Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a);
++   public net.minecraft.util.ResourceLocation getRegistryName() {
++      return registryName;
 +   }
  }

@@ -19,9 +19,6 @@
 
 package net.minecraftforge.event;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
-
 import java.io.File;
 import java.util.*;
 
@@ -51,8 +48,6 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -135,7 +130,7 @@ import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.event.world.jigsaw.JigsawStructurePoolInitEvent;
+import net.minecraftforge.event.world.JigsawStructurePoolInitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -719,10 +714,10 @@ public class ForgeEventFactory
 
     public static void onJigsawStructurePiecesInit(JigsawStructurePoolInitEvent event)
     {
-        MinecraftForge.EVENT_BUS.post(event);
-        for (Map.Entry<ResourceLocation, ImmutableList<ResourceLocation>> entry: event.getRemoveBuildings().entrySet())
-            JigsawManager.field_214891_a.get(entry.getKey()).removeBuildings(entry.getValue());
-        for (Map.Entry<ResourceLocation, ImmutableList<Pair<JigsawPiece,Integer>>> entry: event.getNewBuildings().entrySet())
-            JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue());
+        if(!event.alreadyComputed())
+        {
+            MinecraftForge.EVENT_BUS.post(event);
+            event.computeChanges();
+        }
     }
 }
