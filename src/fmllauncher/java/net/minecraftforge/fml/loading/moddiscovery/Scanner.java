@@ -33,13 +33,25 @@ import java.nio.file.Path;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class Scanner {
+    /**
+    *
+    */
     private static final Logger LOGGER = LogManager.getLogger();
+    /**
+    *
+    */
     private final ModFile fileToScan;
 
+    /**
+    *
+    */
     public Scanner(final ModFile fileToScan) {
         this.fileToScan = fileToScan;
     }
 
+    /**
+    *
+    */
     public ModFileScanData scan() {
         ModFileScanData result = new ModFileScanData();
         result.addModFileInfo(fileToScan.getModFileInfo());
@@ -52,6 +64,9 @@ public class Scanner {
         return result;
     }
 
+    /**
+    *
+    */
     private void fileVisitor(final Path path, final ModFileScanData result) {
         LOGGER.debug(SCAN,"Scanning {} path {}", fileToScan, path);
         try (InputStream in = Files.newInputStream(path)){
