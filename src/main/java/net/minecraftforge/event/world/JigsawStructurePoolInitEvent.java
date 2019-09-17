@@ -17,9 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.event.world.jigsaw;
+package net.minecraftforge.event.world;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
@@ -49,6 +50,8 @@ public abstract class JigsawStructurePoolInitEvent extends Event {
     private Map<ResourceLocation,ImmutableList.Builder<Pair<JigsawPiece,Integer>>> newBuildings = Maps.newConcurrentMap();
     private Map<ResourceLocation,ImmutableList.Builder<ResourceLocation>> remove = Maps.newConcurrentMap();
 
+    private static List<ResourceLocation> computed = Lists.newArrayList();
+
     /**
      * add single JigsawPiece with weight to a pool
      * @param type The structure pool where the building should be added
@@ -57,10 +60,7 @@ public abstract class JigsawStructurePoolInitEvent extends Event {
      */
     public void addBuilding(@Nonnull ResourceLocation type, @Nonnull JigsawPiece piece, int weight)
     {
-        if(newBuildings.containsKey(type))
-            newBuildings.get(type).add(new Pair<>(piece, weight));
-        else
-            newBuildings.put(type,new ImmutableList.Builder<Pair<JigsawPiece, Integer>>().add(new Pair<>(piece, weight)));
+        newBuildings.computeIfAbsent(type,(resourceLocation -> new ImmutableList.Builder<>())).add(new Pair<>(piece, weight));
     }
 
     /**
@@ -70,36 +70,27 @@ public abstract class JigsawStructurePoolInitEvent extends Event {
      */
     public void addBuildings(@Nonnull ResourceLocation type, @Nonnull List<Pair<JigsawPiece, Integer>> pieces)
     {
-        if(newBuildings.containsKey(type))
-            newBuildings.get(type).addAll(pieces);
-        else
-            newBuildings.put(type,new ImmutableList.Builder<Pair<JigsawPiece, Integer>>().addAll(pieces));
+        newBuildings.computeIfAbsent(type,(resourceLocation -> new ImmutableList.Builder<>())).addAll(pieces);
     }
 
     /**
      * removes single JigsawPiece from a JigsawPattern
      * @param type The ResourceLocation of the JigsawPattern
-     * @param building The identifier of the JigsawPiece {@link JigsawPiece#getIdentifier()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
+     * @param building The identifier of the JigsawPiece {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
     public void removeBuilding(@Nonnull ResourceLocation type, @Nonnull ResourceLocation building)
     {
-        if(remove.containsKey(type))
-            remove.get(type).add(building);
-        else
-            remove.put(type,new ImmutableList.Builder<ResourceLocation>().add(building));
+        remove.computeIfAbsent(type,resourceLocation -> new ImmutableList.Builder<>()).add(building);
     }
 
     /**
      * removes multiple JigsawPieces from a JigsawPattern
      * @param type The ResourceLocation of the JigsawPattern
-     * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getIdentifier()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
+     * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
     public void removeBuildings(@Nonnull ResourceLocation type, @Nonnull List<ResourceLocation> buildings)
     {
-        if(remove.containsKey(type))
-            remove.get(type).addAll(buildings);
-        else
-            remove.put(type,new ImmutableList.Builder<ResourceLocation>().addAll(buildings));
+        remove.computeIfAbsent(type,resourceLocation -> new ImmutableList.Builder<>()).addAll(buildings);
     }
 
     /**
@@ -110,46 +101,40 @@ public abstract class JigsawStructurePoolInitEvent extends Event {
         JigsawManager.field_214891_a.register(pattern);
     }
 
-    @Nonnull
-    public Map<ResourceLocation, ImmutableList<Pair<JigsawPiece, Integer>>> getNewBuildings()
+    public void computeChanges()
     {
-        Map<ResourceLocation, ImmutableList<Pair<JigsawPiece, Integer>>> builds = Maps.newConcurrentMap();
-        for (Map.Entry<ResourceLocation,ImmutableList.Builder<Pair<JigsawPiece, Integer>>> entry: newBuildings.entrySet()){
-            builds.put(entry.getKey(),entry.getValue().build());
+        if(computed.contains(this.getStructureRegistryName()))return;
+        for (Map.Entry<ResourceLocation,ImmutableList.Builder<ResourceLocation>> entry: remove.entrySet()) {
+            JigsawManager.field_214891_a.get(entry.getKey()).removeBuildings(entry.getValue().build());
         }
-        return builds;
+        for (Map.Entry<ResourceLocation,ImmutableList.Builder<Pair<JigsawPiece,Integer>>> entry: newBuildings.entrySet())
+            JigsawManager.field_214891_a.get(entry.getKey()).addBuildings(entry.getValue().build());
+        computed.add(this.getStructureRegistryName());
     }
 
-    @Nonnull
-    public Map<ResourceLocation, ImmutableList<ResourceLocation>> getRemoveBuildings()
+    public boolean alreadyComputed()
     {
-        Map<ResourceLocation, ImmutableList<ResourceLocation>> builds = Maps.newConcurrentMap();
-        for (Map.Entry<ResourceLocation,ImmutableList.Builder<ResourceLocation>> entry: remove.entrySet()){
-            builds.put(entry.getKey(),entry.getValue().build());
-        }
-        return builds;
+        return computed.contains(getStructureRegistryName());
     }
 
-    @Nonnull
-    public abstract String getStructureName();
+    public abstract ResourceLocation getStructureRegistryName();
 
     public static class Village extends JigsawStructurePoolInitEvent
     {
-        @Nonnull
         @Override
-        public String getStructureName()
+        public ResourceLocation getStructureRegistryName()
         {
-            return Structures.VILLAGE.getStructureName();
+            return Structures.VILLAGE.getRegistryName();
         }
+
     }
 
     public static class PillageOutpost extends JigsawStructurePoolInitEvent
     {
-        @Nonnull
         @Override
-        public String getStructureName()
+        public ResourceLocation getStructureRegistryName()
         {
-            return Structures.PILLAGER_OUTPOST.getStructureName();
+            return Structures.PILLAGER_OUTPOST.getRegistryName();
         }
     }
 }
