@@ -20,8 +20,8 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowerPotBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -30,32 +30,30 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
 
-@Mod(StickyBlockTest.MODID)
+@Mod(FlowerPotTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
-public class StickyBlockTest
+public class FlowerPotTest
 {
-    static final String MODID = "custom_slime_block_test";
-    static final String BLOCK_ID = "test_block";
+    static final String MODID = "flower_pot_test";
+    static final String BLOCK_ID = "test_flower_pot";
 
     @ObjectHolder(BLOCK_ID)
-    public static Block BLUE_BLOCK;
+    public static FlowerPotBlock EMPTY_FLOWER_POT;
+
+    @ObjectHolder(BLOCK_ID)
+    public static FlowerPotBlock OAK_FLOWER_POT;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
-        {
-            @Override
-            public boolean isStickyBlock(BlockState state)
-            {
-                return true;
-            }
-        }).setRegistryName(MODID, BLOCK_ID));
+        FlowerPotBlock empty = new FlowerPotBlock(null, Blocks.AIR, Block.Properties.from(Blocks.FLOWER_POT));
+        event.getRegistry().register(empty.setRegistryName(BLOCK_ID));
+        event.getRegistry().register(new FlowerPotBlock(empty, Blocks.OAK_SAPLING, Block.Properties.from(empty)).setRegistryName(BLOCK_ID + "_oak"));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new BlockItem(BLUE_BLOCK, new Item.Properties()).setRegistryName(MODID, BLOCK_ID));
+        event.getRegistry().register(new BlockItem(EMPTY_FLOWER_POT, new Item.Properties()).setRegistryName(MODID, BLOCK_ID));
     }
 }
