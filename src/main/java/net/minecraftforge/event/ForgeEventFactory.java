@@ -19,6 +19,8 @@
 
 package net.minecraftforge.event;
 
+import com.mojang.datafixers.util.Pair;
+
 import java.io.File;
 import java.util.*;
 
@@ -46,6 +48,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -125,7 +128,7 @@ import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.event.world.JigsawStructurePoolInitEvent;
+import net.minecraftforge.event.world.JigsawPatternInitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -697,12 +700,10 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
     }
 
-    public static void onJigsawStructurePiecesInit(JigsawStructurePoolInitEvent event)
+    public static List<Pair<JigsawPiece, Integer>> onJigsawPatternInit(ResourceLocation patternName, List<Pair<JigsawPiece, Integer>> pool)
     {
-        if(!event.alreadyComputed())
-        {
-            MinecraftForge.EVENT_BUS.post(event);
-            event.computeChanges();
-        }
+        JigsawPatternInitEvent event = new JigsawPatternInitEvent(patternName, pool);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getPool();
     }
 }
