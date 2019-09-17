@@ -12,6 +12,7 @@
 @@ -29,7 +29,7 @@
  
     public JigsawPattern(ResourceLocation p_i51397_1_, ResourceLocation p_i51397_2_, List<Pair<JigsawPiece, Integer>> p_i51397_3_, JigsawPattern.PlacementBehaviour p_i51397_4_) {
++      p_i51397_3_ = net.minecraftforge.event.ForgeEventFactory.onJigsawPatternInit(p_i51397_1_, Lists.newArrayList(p_i51397_3_));
        this.field_214951_c = p_i51397_1_;
 -      this.field_214952_d = ImmutableList.copyOf(p_i51397_3_);
 +      this.field_214952_d = Lists.newArrayList(p_i51397_3_);
