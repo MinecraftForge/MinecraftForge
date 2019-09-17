@@ -4,7 +4,7 @@
           ItemTags.func_199902_a(this.field_199720_b);
           FluidTags.func_206953_a(this.field_205705_c);
           EntityTypeTags.func_219759_a(this.field_215299_d);
-+         net.minecraftforge.fml.DeferredWorkQueue.runLater(() -> net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this)));
++         ((net.minecraft.util.concurrent.ThreadTaskExecutor<?>) net.minecraftforge.fml.LogicalSidedProvider.WORKQUEUE.get(net.minecraftforge.fml.LogicalSide.SERVER)).deferTask(() -> net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this)));
        }, p_215226_6_);
     }
  
