@@ -182,6 +182,23 @@ public class SimpleChannel
             return this;
         }
 
+        public interface ToBooleanBiFunction<T, U> {
+            boolean applyAsBool(T first, U second);
+        }
+
+        /**
+         * Function returning a boolean "packet handled" indication, for simpler channel building.
+         * @param handler a handler
+         * @return this
+         */
+        public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
+            this.consumer = (msg, ctx) -> {
+                boolean handled = handler.applyAsBool(msg, ctx);
+                ctx.get().setPacketHandled(handled);
+            };
+            return this;
+        }
+
         public void add() {
             final IndexedMessageCodec.MessageHandler<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
             if (this.loginIndexSetter != null) {
