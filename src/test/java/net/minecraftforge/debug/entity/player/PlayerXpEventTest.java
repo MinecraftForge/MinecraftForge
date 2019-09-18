@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 public class PlayerXpEventTest
 {
 
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static Logger logger = LogManager.getLogger(PlayerXpEventTest.class);
     
     @SubscribeEvent
