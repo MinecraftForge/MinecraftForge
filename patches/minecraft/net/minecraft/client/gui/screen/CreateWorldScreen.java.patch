@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
-@@ -137,14 +137,7 @@
+@@ -58,6 +58,7 @@
+    public void tick() {
+       this.field_146333_g.func_146178_a();
+       this.field_146335_h.func_146178_a();
++      WorldType.field_77139_a[this.field_146331_K].onCreateWorldScreenTick(this);
+    }
+ 
+    protected void init() {
+@@ -137,14 +138,7 @@
        }));
        this.field_146320_D.visible = false;
        this.field_146322_F = this.addButton(new Button(this.width / 2 + 5, 120, 150, 20, I18n.func_135052_a("selectWorld.customizeType"), (p_214314_1_) -> {
@@ -16,7 +24,7 @@
        }));
        this.field_146322_F.visible = false;
        this.field_146321_E = this.addButton(new Button(this.width / 2 - 155, 151, 150, 20, I18n.func_135052_a("selectWorld.allowCommands"), (p_214315_1_) -> {
-@@ -223,6 +216,7 @@
+@@ -223,6 +217,7 @@
                 i = (long)s.hashCode();
              }
           }

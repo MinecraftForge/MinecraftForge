@@ -56,6 +56,16 @@ public interface IForgeWorldType
     }
 
     /**
+     * Called when CreateWorldScreen ticks, use to modify button values etc.
+     * 
+     * @param gui the createworld GUI
+     */
+    @OnlyIn(Dist.CLIENT)
+    default void onCreateWorldScreenTick(CreateWorldScreen gui)
+    {
+    }
+
+    /**
      * Called when the 'Customize' button is pressed on world creation GUI
      *
      * @param mc  The Minecraft instance
