@@ -19,7 +19,9 @@
 
 package net.minecraftforge.fml.loading;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -39,5 +41,13 @@ public class Java9BackportUtils
                 },
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics().toArray(new Collector.Characteristics[0]));
+    }
+
+    public static <T> void ifPresentOrElse(Optional<T> optional, Consumer<? super T> action, Runnable emptyAction) {
+        if (optional.isPresent()) {
+            action.accept(optional.get());
+        } else {
+            emptyAction.run();
+        }
     }
 }

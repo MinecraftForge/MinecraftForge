@@ -1,6 +1,14 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
-@@ -169,9 +169,9 @@
+@@ -85,6 +85,7 @@
+       this.field_214014_c = p_i49964_2_;
+    }
+ 
++   @Deprecated //Forge - get burn times by calling ForgeHooks#getBurnTime(ItemStack)
+    public static Map<Item, Integer> func_214001_f() {
+       Map<Item, Integer> map = Maps.newLinkedHashMap();
+       func_213996_a(map, Items.field_151129_at, 20000);
+@@ -169,9 +170,9 @@
        super.func_145839_a(p_145839_1_);
        this.field_214012_a = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
        ItemStackHelper.func_191283_b(p_145839_1_, this.field_214012_a);
@@ -13,7 +21,7 @@
        this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
        int i = p_145839_1_.func_74765_d("RecipesUsedSize");
  
-@@ -185,9 +185,9 @@
+@@ -185,9 +186,9 @@
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -26,7 +34,7 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
        p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_214022_n.size());
        int i = 0;
-@@ -217,12 +217,14 @@
+@@ -217,12 +218,14 @@
                 this.field_214019_k = this.field_214018_j;
                 if (this.func_214006_r()) {
                    flag1 = true;
@@ -43,7 +51,7 @@
                       }
                    }
                 }
-@@ -266,10 +268,10 @@
+@@ -266,10 +269,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -56,7 +64,7 @@
              }
           }
        } else {
-@@ -285,7 +287,7 @@
+@@ -285,7 +288,7 @@
           if (itemstack2.func_190926_b()) {
              this.field_214012_a.set(2, itemstack1.func_77946_l());
           } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
@@ -65,27 +73,25 @@
           }
  
           if (!this.field_145850_b.field_72995_K) {
-@@ -305,7 +307,8 @@
+@@ -305,7 +308,7 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
 -         return func_214001_f().getOrDefault(item, 0);
-+         int ret = p_213997_1_.getBurnTime();
-+         return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(p_213997_1_, ret == -1 ? func_214001_f().getOrDefault(item, 0) : ret);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213997_1_);
        }
     }
  
-@@ -314,7 +317,8 @@
+@@ -314,7 +317,7 @@
     }
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
 -      return func_214001_f().containsKey(p_213991_0_.func_77973_b());
-+      int ret = p_213991_0_.getBurnTime();
-+      return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(p_213991_0_, ret == -1 ? func_214001_f().getOrDefault(p_213991_0_.func_77973_b(), 0) : ret) > 0;
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213991_0_) > 0;
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -462,4 +466,27 @@
+@@ -462,4 +465,27 @@
        }
  
     }
