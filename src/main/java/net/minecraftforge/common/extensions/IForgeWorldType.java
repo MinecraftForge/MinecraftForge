@@ -56,12 +56,14 @@ public interface IForgeWorldType
     }
 
     /**
-     * Called when CreateWorldScreen ticks, use to modify button values etc.
+     * Called when CreateWorldScreen is initialized, worldType/moreWorldOptions button is pressed.
+     * Can be used to modify button, state values etc.
+     * Backup gametype as vanilla code do.
      * 
      * @param gui the createworld GUI
      */
     @OnlyIn(Dist.CLIENT)
-    default void onCreateWorldScreenTick(CreateWorldScreen gui)
+    default void onGUIUpdateMoreWorldOptions(CreateWorldScreen gui)
     {
     }
 

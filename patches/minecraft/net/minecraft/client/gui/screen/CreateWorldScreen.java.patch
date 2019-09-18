@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
-@@ -58,6 +58,7 @@
-    public void tick() {
-       this.field_146333_g.func_146178_a();
-       this.field_146335_h.func_146178_a();
-+      WorldType.field_77139_a[this.field_146331_K].onCreateWorldScreenTick(this);
-    }
- 
-    protected void init() {
-@@ -137,14 +138,7 @@
+@@ -137,14 +137,7 @@
        }));
        this.field_146320_D.visible = false;
        this.field_146322_F = this.addButton(new Button(this.width / 2 + 5, 120, 150, 20, I18n.func_135052_a("selectWorld.customizeType"), (p_214314_1_) -> {
@@ -24,7 +16,7 @@
        }));
        this.field_146322_F.visible = false;
        this.field_146321_E = this.addButton(new Button(this.width / 2 - 155, 151, 150, 20, I18n.func_135052_a("selectWorld.allowCommands"), (p_214315_1_) -> {
-@@ -223,6 +217,7 @@
+@@ -223,6 +216,7 @@
                 i = (long)s.hashCode();
              }
           }
@@ -32,3 +24,11 @@
  
           WorldSettings worldsettings = new WorldSettings(i, GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
           worldsettings.func_205390_a(Dynamic.convert(NBTDynamicOps.field_210820_a, JsonOps.INSTANCE, this.field_146334_a));
+@@ -253,6 +247,7 @@
+ 
+    private void func_146316_a(boolean p_146316_1_) {
+       this.field_146344_y = p_146316_1_;
++      WorldType.field_77139_a[this.field_146331_K].onGUIUpdateMoreWorldOptions(this);
+       if (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_180272_g) {
+          this.field_146343_z.visible = !this.field_146344_y;
+          this.field_146343_z.active = false;
