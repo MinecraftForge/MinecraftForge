@@ -24,11 +24,11 @@
  
           WorldSettings worldsettings = new WorldSettings(i, GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
           worldsettings.func_205390_a(Dynamic.convert(NBTDynamicOps.field_210820_a, JsonOps.INSTANCE, this.field_146334_a));
-@@ -253,6 +247,7 @@
- 
-    private void func_146316_a(boolean p_146316_1_) {
-       this.field_146344_y = p_146316_1_;
+@@ -280,6 +274,7 @@
+          this.field_146321_E.visible = this.field_146344_y;
+          this.field_146322_F.visible = this.field_146344_y && WorldType.field_77139_a[this.field_146331_K].func_205393_e();
+       }
 +      WorldType.field_77139_a[this.field_146331_K].onGUIUpdateMoreWorldOptions(this);
-       if (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_180272_g) {
-          this.field_146343_z.visible = !this.field_146344_y;
-          this.field_146343_z.active = false;
+ 
+       this.func_146319_h();
+       this.field_146335_h.func_146189_e(this.field_146344_y);
