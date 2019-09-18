@@ -64,7 +64,15 @@
                 }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
              }
           }
-@@ -233,6 +243,10 @@
+@@ -183,6 +193,7 @@
+          this.field_198040_e = p_198022_3_;
+          this.field_198041_f = p_198022_5_;
+          this.field_198036_a.func_213239_aq().func_76319_b();
++         net.minecraftforge.client.ForgeHooksClient.fireMouseMovement(p_198022_3_, p_198022_5_);
+       }
+    }
+ 
+@@ -233,6 +244,10 @@
        return this.field_198039_d;
     }
  
@@ -75,7 +83,7 @@
     public double func_198024_e() {
        return this.field_198040_e;
     }
-@@ -241,6 +255,14 @@
+@@ -241,6 +256,14 @@
        return this.field_198041_f;
     }
  

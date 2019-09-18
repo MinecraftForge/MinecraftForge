@@ -252,4 +252,28 @@ public class InputEvent extends Event
             return this.modifiers;
         }
     }
+
+    /**
+     * This event fires when a mouse movement is detected.
+     */
+    public static class MouseMovementEvent extends InputEvent
+    {
+        private final double xpos;
+        private final double ypos;
+        public MouseMovementEvent(double xpos, double ypos)
+        {
+            this.xpos = xpos;
+            this.ypos = ypos;
+        }
+
+        public double getXpos()
+        {
+            return this.xpos;
+        }
+
+        public double getYpos()
+        {
+            return this.ypos;
+        }
+    }
 }
