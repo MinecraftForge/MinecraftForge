@@ -51,3 +51,5 @@ loaderVersion="[28,)"
     modId="data_gen_test"
 [[mods]]
     modId="piston_event_test"
+[[mods]]
+    modId="player_xp_event_test"
