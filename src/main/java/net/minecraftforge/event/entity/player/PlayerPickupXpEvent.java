@@ -30,10 +30,10 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Deprecated
 public class PlayerPickupXpEvent extends PlayerXpEvent.PickupXp
 {
-	
+
     public PlayerPickupXpEvent(PlayerEntity player, ExperienceOrbEntity orb)
     {
         super(player, orb);
     }
-    
+
 }

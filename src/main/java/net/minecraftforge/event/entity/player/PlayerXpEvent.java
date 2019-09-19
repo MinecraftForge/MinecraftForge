@@ -34,87 +34,88 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class PlayerXpEvent extends PlayerEvent
 {
 
-	public PlayerXpEvent(PlayerEntity player)
-	{
-		super(player);
-	}
-	
-	/**
-	 * This event is fired after the player collides with an experience orb, but before the player has been given the experience.
-	 * It can be cancelled, and no further processing will be done.
-	 */
-	@Cancelable
-	public static class PickupXp extends PlayerXpEvent
-	{
-		
-		private final ExperienceOrbEntity orb;
+    public PlayerXpEvent(PlayerEntity player)
+    {
+        super(player);
+    }
 
-	    public PickupXp(PlayerEntity player, ExperienceOrbEntity orb)
-	    {
-	        super(player);
-	        this.orb = orb;
-	    }
+    /**
+     * This event is fired after the player collides with an experience orb, but before the player has been given the experience.
+     * It can be cancelled, and no further processing will be done.
+     */
+    @Cancelable
+    public static class PickupXp extends PlayerXpEvent
+    {
 
-	    public ExperienceOrbEntity getOrb()
-	    {
-	        return orb;
-	    }
-		
-	}
-	
-	/**
-	 * This event is fired when the player's experience changes through the {@link PlayerEntity#giveExperiencePoints} method.
-	 * It can be cancelled, and no further processing will be done.
-	 */
-	@Cancelable
-	public static class XpChange extends PlayerXpEvent
-	{
-		
-		private int amount;
-		
-	    public XpChange(PlayerEntity player, int amount)
-	    {
-	        super(player);
-	        this.amount = amount;
-	    }
-	    
-	    public int getAmount()
-	    {
-	        return this.amount;
-	    }
-	    
-	    public void setAmount(int amount) {
-	    	this.amount = amount;
-	    }
-		
-	}
-	
-	/**
-	 * This event is fired when the player's experience level changes through the {@link PlayerEntity#addExperienceLevel} method.
-	 * It can be cancelled, and no further processing will be done.
-	 */
-	@Cancelable
-	public static class LevelChange extends PlayerXpEvent
-	{
-		
-		private int levels;
-		
-		public LevelChange(PlayerEntity player, int levels)
-		{
-			super(player);
-			this.levels = levels;
-		}
-		
-	    public int getLevels()
-	    {
-	        return this.levels;
-	    }
+        private final ExperienceOrbEntity orb;
 
-	    public void setLevels(int levels)
-	    {
-	        this.levels = levels;
-	    }
-		
-	}
+        public PickupXp(PlayerEntity player, ExperienceOrbEntity orb)
+        {
+            super(player);
+            this.orb = orb;
+        }
+
+        public ExperienceOrbEntity getOrb()
+        {
+            return orb;
+        }
+
+    }
+
+    /**
+     * This event is fired when the player's experience changes through the {@link PlayerEntity#giveExperiencePoints} method.
+     * It can be cancelled, and no further processing will be done.
+     */
+    @Cancelable
+    public static class XpChange extends PlayerXpEvent
+    {
+
+        private int amount;
+
+        public XpChange(PlayerEntity player, int amount)
+        {
+            super(player);
+            this.amount = amount;
+        }
+
+        public int getAmount()
+        {
+            return this.amount;
+        }
+
+        public void setAmount(int amount)
+        {
+            this.amount = amount;
+        }
+
+    }
+
+    /**
+     * This event is fired when the player's experience level changes through the {@link PlayerEntity#addExperienceLevel} method.
+     * It can be cancelled, and no further processing will be done.
+     */
+    @Cancelable
+    public static class LevelChange extends PlayerXpEvent
+    {
+
+        private int levels;
+
+        public LevelChange(PlayerEntity player, int levels)
+        {
+            super(player);
+            this.levels = levels;
+        }
+
+        public int getLevels()
+        {
+            return this.levels;
+        }
+
+        public void setLevels(int levels)
+        {
+            this.levels = levels;
+        }
+
+    }
 
 }

@@ -15,35 +15,35 @@ public class PlayerXpEventTest
 
     private static final boolean ENABLE = true;
     private static Logger logger = LogManager.getLogger(PlayerXpEventTest.class);
-    
+
     @SubscribeEvent
     public static void onPlayerXpEvent(PlayerXpEvent event)
     {
-    	if (!ENABLE) return;
-    	logger.info("The PlayerXpEvent has been called!");
+        if (!ENABLE) return;
+        logger.info("The PlayerXpEvent has been called!");
     }
-    
+
     @SubscribeEvent
     public static void onPlayerPickupXpOld(PlayerPickupXpEvent event)
     {
-    	if (!ENABLE) return;
-    	logger.info("The deprecated PlayerPickupXpEvent has been called!");
+        if (!ENABLE) return;
+        logger.info("The deprecated PlayerPickupXpEvent has been called!");
     }
-    
+
     @SubscribeEvent
     public static void onPlayerPickupXp(PlayerXpEvent.PickupXp event)
     {
-    	if (!ENABLE) return;
-    	logger.info("{} picked up an experience orb worth {}", event.getPlayer().getName().getString(), event.getOrb().getXpValue());
+        if (!ENABLE) return;
+        logger.info("{} picked up an experience orb worth {}", event.getPlayer().getName().getString(), event.getOrb().getXpValue());
     }
-    
+
     @SubscribeEvent
     public static void onPlayerXpChange(PlayerXpEvent.XpChange event)
     {
         if (!ENABLE) return;
         logger.info("{} has been given {} experience", event.getPlayer().getName().getString(), event.getAmount());
     }
-    
+
     @SubscribeEvent
     public static void onPlayerLevelChange(PlayerXpEvent.LevelChange event)
     {
