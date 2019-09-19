@@ -256,11 +256,11 @@ public class InputEvent extends Event
     /**
      * This event fires when a mouse movement is detected.
      */
-    public static class MouseMovementEvent extends InputEvent
+    public static class MouseMoveEvent extends InputEvent
     {
         private final double xpos;
         private final double ypos;
-        public MouseMovementEvent(double xpos, double ypos)
+        public MouseMoveEvent(double xpos, double ypos)
         {
             this.xpos = xpos;
             this.ypos = ypos;

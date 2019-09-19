@@ -1031,7 +1031,7 @@ public class ForgeHooksClient
 
     public static void fireMouseMovement(double xpos, double ypos)
     {
-        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseMovementEvent(xpos, ypos));
+        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseMoveEvent(xpos, ypos));
     }
 
     public static void fireKeyInput(int key, int scanCode, int action, int modifiers)
