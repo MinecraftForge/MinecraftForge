@@ -77,12 +77,16 @@ public class NetworkHooks
     public static void registerServerLoginChannel(NetworkManager manager, CHandshakePacket packet)
     {
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());
+        if(ConnectionType.forVersionFlag(packet.getFMLVersion()) == ConnectionType.VANILLA)
+            manager.channel().attr(FMLNetworkConstants.FML_MOD_DATA).set(new PeerModInformation());
+        //else we set it in FMLHandshakeHandler#handleClientModListOnServer once we've got the mod list
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public synchronized static void registerClientLoginChannel(NetworkManager manager)
     {
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NOVERSION);
+        manager.channel().attr(FMLNetworkConstants.FML_MOD_DATA).set(new PeerModInformation());
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }
 
@@ -205,5 +209,10 @@ public class NetworkHooks
         trackingMap.put(dimensionType.getId(), dimensionType);
         final ClearableRegistry<DimensionType> dimtypereg = (ClearableRegistry<DimensionType>) Registry.DIMENSION_TYPE;
         dimtypereg.register(dimensionType.getId(), dimName, dimensionType);
+    }
+
+    public static PeerModInformation getModInformation(NetworkManager connection)
+    {
+        return connection.channel().attr(FMLNetworkConstants.FML_MOD_DATA).get();
     }
 }

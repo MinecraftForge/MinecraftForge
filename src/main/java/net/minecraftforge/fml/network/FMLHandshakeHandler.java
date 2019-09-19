@@ -184,6 +184,7 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NETVERSION);
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_MOD_DATA).set(new PeerModInformation(serverModList.getModList(), serverModList.getChannels()));
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
@@ -210,6 +211,8 @@ public class FMLHandshakeHandler {
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
+
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_MOD_DATA).set(new PeerModInformation(clientModList.getModList(), clientModList.getChannels()));
     }
 
     void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){

@@ -40,6 +40,7 @@ public class FMLNetworkConstants
     static final Marker NETWORK = MarkerManager.getMarker("FMLNETWORK");
     static final AttributeKey<String> FML_NETVERSION = AttributeKey.valueOf("fml:netversion");
     static final AttributeKey<FMLHandshakeHandler> FML_HANDSHAKE_HANDLER = AttributeKey.valueOf("fml:handshake");
+    static final AttributeKey<PeerModInformation> FML_MOD_DATA = AttributeKey.valueOf("fml:moddata");
     static final AttributeKey<FMLMCRegisterPacketHandler.ChannelList> FML_MC_REGISTRY = AttributeKey.valueOf("minecraft:netregistry");
     static final ResourceLocation FML_HANDSHAKE_RESOURCE = new ResourceLocation("fml:handshake");
     static final ResourceLocation FML_PLAY_RESOURCE = new ResourceLocation("fml:play");
