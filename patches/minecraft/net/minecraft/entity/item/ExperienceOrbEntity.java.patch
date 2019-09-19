@@ -18,10 +18,11 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -171,13 +173,14 @@
+@@ -171,13 +173,15 @@
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {
++        	if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp(p_70100_1_, this))) return;
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(p_70100_1_, this))) return;
              p_70100_1_.field_71090_bL = 2;
              p_70100_1_.func_71001_a(this, 1);
@@ -34,7 +35,7 @@
                    this.field_70530_e -= this.func_184515_b(i);
                    itemstack.func_196085_b(itemstack.func_77952_i() - i);
                 }
-@@ -258,6 +261,11 @@
+@@ -258,6 +262,11 @@
        return false;
     }
  

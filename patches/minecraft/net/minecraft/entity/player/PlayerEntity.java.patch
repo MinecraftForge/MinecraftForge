@@ -429,7 +429,7 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
-+      net.minecraftforge.event.entity.player.PlayerGiveXpEvent event = new net.minecraftforge.event.entity.player.PlayerGiveXpEvent(this, p_195068_1_);
++      net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange(this, p_195068_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +      p_195068_1_ = event.getAmount();
 +      
@@ -440,7 +440,7 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
-+      net.minecraftforge.event.entity.player.PlayerChangeLevelEvent event = new net.minecraftforge.event.entity.player.PlayerChangeLevelEvent(this, p_82242_1_);
++      net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange(this, p_82242_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +      p_82242_1_ = event.getLevels();
 +      
