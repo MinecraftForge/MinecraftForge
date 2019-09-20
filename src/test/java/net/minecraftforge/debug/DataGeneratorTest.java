@@ -19,8 +19,6 @@
 
 package net.minecraftforge.debug;
 
-import java.util.function.Consumer;
-
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
@@ -32,16 +30,17 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.crafting.ConditionalAdvancement;
-import net.minecraftforge.client.model.BlockModelBuilder.ElementBuilder;
 import net.minecraftforge.client.model.ItemModelBuilder;
 import net.minecraftforge.client.model.ModelProvider;
+import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+
+import java.util.function.Consumer;
 
 @Mod("data_gen_test")
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -130,18 +129,17 @@ public class DataGeneratorTest
                     .parent(new ResourceLocation("item/generated"))
                     .texture("layer0", "block/stone"));
 
-            ItemModelBuilder builder = (ItemModelBuilder) new ItemModelBuilder()
+            ItemModelBuilder builder = new ItemModelBuilder()
                     .parent(new ResourceLocation("block/block"))
-                    .texture("all", "block/dirt");
-
-            ElementBuilder element = builder.element();
-            for (Direction dir : Direction.values()) {
-                element = element.face(dir)
-                        .cullface(dir)
-                        .texture("#all")
-                        .build();
-            }
-            builder = (ItemModelBuilder) element.build();
+                    .texture("all", "block/dirt")
+                    .texture("top", "block/stone")
+                    .element()
+                        .cube("#all")
+                        .face(Direction.UP)
+                            .texture("#top")
+                            .end()
+                        .end();
+            
             builders.put(new ResourceLocation("forge", "test_block_model"), builder);
         }
 

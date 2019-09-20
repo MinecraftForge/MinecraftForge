@@ -46,8 +46,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.client.model.BlockModelBuilder.ElementBuilder;
+import net.minecraftforge.client.model.BlockModelBuilder;
 import net.minecraftforge.client.model.ItemModelBuilder;
+import net.minecraftforge.client.model.ModelBuilder;
 import net.minecraftforge.client.model.ModelProvider;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -68,10 +69,32 @@ import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.FMLWorldPersistenceHook;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.StartupMessageManager;
+import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.WorldPersistenceHooks;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.server.command.ConfigCommand;
+import net.minecraftforge.server.command.ForgeCommand;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -197,7 +220,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
     
-    public static class Models extends ModelProvider<ItemModelBuilder>
+    public static class Models extends ModelProvider<ModelBuilder<?>>
     {
 		public Models(DataGenerator generator)
 		{
@@ -207,22 +230,21 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 		@Override
 		protected void registerBuilders()
 		{
-			builders.put(new ResourceLocation("forge", "test_generated_model"), (ItemModelBuilder) new ItemModelBuilder()
+			builders.put(new ResourceLocation("forge", "test_generated_model"), new BlockModelBuilder()
 					.parent(new ResourceLocation("item/generated"))
 					.texture("layer0", "block/stone"));
 			
-			ItemModelBuilder builder = (ItemModelBuilder) new ItemModelBuilder()
+			ItemModelBuilder builder = new ItemModelBuilder()
 					.parent(new ResourceLocation("block/block"))
-					.texture("all", "block/dirt");
+					.texture("all", "block/dirt")
+					.texture("top", "block/stone")
+					.element()
+					    .cube("#all")
+					    .face(Direction.UP)
+					        .texture("#top")
+					        .end()
+					    .end();
 			
-			ElementBuilder element = builder.element();
-			for (Direction dir : Direction.values()) {
-				element = element.face(dir)
-						.cullface(dir)
-						.texture("#all")
-						.build();
-			}
-			builder = (ItemModelBuilder) element.build();
 			builders.put(new ResourceLocation("forge", "test_block_model"), builder);
 		}
 

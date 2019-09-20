@@ -8,7 +8,7 @@ import java.util.Map;
 import net.minecraft.client.renderer.model.ItemOverride;
 import net.minecraft.util.ResourceLocation;
 
-public class ItemModelBuilder extends BlockModelBuilder {
+public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 	
 	protected List<ItemOverride> overrides = new ArrayList<>();
 	

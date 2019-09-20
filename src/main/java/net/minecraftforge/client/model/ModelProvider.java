@@ -21,7 +21,7 @@ import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class ModelProvider<T extends BlockModelBuilder> implements IDataProvider {
+public abstract class ModelProvider<T extends ModelBuilder<?>> implements IDataProvider {
 	
 	public static final String BLOCK_FOLDER = "block";
 	public static final String ITEM_FOLDER = "item";
@@ -69,6 +69,6 @@ public abstract class ModelProvider<T extends BlockModelBuilder> implements IDat
 	}
 
 	protected Path getPath(ResourceLocation loc) {
-	      return this.generator.getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + folder + "/" + loc.getPath() + ".json");
+	    return this.generator.getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + folder + "/" + loc.getPath() + ".json");
 	}
 }
