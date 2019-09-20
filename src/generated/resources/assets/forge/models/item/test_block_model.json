@@ -1,7 +1,8 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "all": "block/dirt"
+    "all": "block/dirt",
+    "top": "block/stone"
   },
   "elements": [
     {
@@ -16,13 +17,21 @@
         16.0
       ],
       "faces": {
+        "east": {
+          "texture": "#all",
+          "cullface": "east"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
         "down": {
           "texture": "#all",
           "cullface": "down"
         },
-        "up": {
+        "west": {
           "texture": "#all",
-          "cullface": "up"
+          "cullface": "west"
         },
         "north": {
           "texture": "#all",
@@ -31,14 +40,6 @@
         "south": {
           "texture": "#all",
           "cullface": "south"
-        },
-        "west": {
-          "texture": "#all",
-          "cullface": "west"
-        },
-        "east": {
-          "texture": "#all",
-          "cullface": "east"
         }
       }
     }

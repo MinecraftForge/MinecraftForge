@@ -67,7 +67,13 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 	}
 	
 	public ElementBuilder element() {
-		return this.new ElementBuilder();
+	    ElementBuilder ret = new ElementBuilder();
+		elements.add(ret);
+		return ret;
+	}
+	
+	public ElementBuilder element(int index) {
+	    return elements.get(index);
 	}
 	
 	public JsonObject serialize() {
