@@ -53,7 +53,7 @@ public class DataGeneratorTest
 
         if (event.includeClient())
         {
-            gen.addProvider(new Models(gen));
+            gen.addProvider(new ItemModels(gen));
         }
         if (event.includeServer())
         {
@@ -115,21 +115,21 @@ public class DataGeneratorTest
         }
     }
     
-    public static class Models extends ModelProvider<ItemModelBuilder>
+    public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
-        public Models(DataGenerator generator)
+        public ItemModels(DataGenerator generator)
         {
-            super(generator, ITEM_FOLDER);
+            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new);
         }
-
+        
         @Override
         protected void registerBuilders()
         {
-            builders.put(new ResourceLocation("forge", "test_generated_model"), (ItemModelBuilder) new ItemModelBuilder()
+            getBuilder("test_generated_model")
                     .parent(new ResourceLocation("item/generated"))
-                    .texture("layer0", "block/stone"));
-
-            ItemModelBuilder builder = new ItemModelBuilder()
+                    .texture("layer0", "block/stone");
+            
+            getBuilder("test_block_model")
                     .parent(new ResourceLocation("block/block"))
                     .texture("all", "block/dirt")
                     .texture("top", "block/stone")
@@ -139,8 +139,6 @@ public class DataGeneratorTest
                             .texture("#top")
                             .end()
                         .end();
-            
-            builders.put(new ResourceLocation("forge", "test_block_model"), builder);
         }
 
         @Override
@@ -149,5 +147,4 @@ public class DataGeneratorTest
             return "Forge Test Item Models";
         }
     }
-
 }

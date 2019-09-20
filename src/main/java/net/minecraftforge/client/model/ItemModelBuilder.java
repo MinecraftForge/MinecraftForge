@@ -9,32 +9,32 @@ import net.minecraft.client.renderer.model.ItemOverride;
 import net.minecraft.util.ResourceLocation;
 
 public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
-	
-	protected List<ItemOverride> overrides = new ArrayList<>();
-	
-	public OverrideBuilder override() {
-		return this.new OverrideBuilder();
-	}
-	
-	public class OverrideBuilder {
-		
-		private ResourceLocation model;
-		private final Map<ResourceLocation, Float> predicates = new LinkedHashMap<>();
-		
-		public OverrideBuilder model(ResourceLocation model) {
-			this.model = model;
-			return this;
-		}
-		
-		public OverrideBuilder predicate(ResourceLocation key, float value) {
-			this.predicates.put(key, value);
-			return this;
-		}
-		
-		public ItemModelBuilder build() {
-			ItemModelBuilder.this.overrides.add(new ItemOverride(model, predicates));
-			return ItemModelBuilder.this;
-		}
-	}
+
+    protected List<ItemOverride> overrides = new ArrayList<>();
+
+    public OverrideBuilder override() {
+        return this.new OverrideBuilder();
+    }
+
+    public class OverrideBuilder {
+
+        private ResourceLocation model;
+        private final Map<ResourceLocation, Float> predicates = new LinkedHashMap<>();
+
+        public OverrideBuilder model(ResourceLocation model) {
+            this.model = model;
+            return this;
+        }
+
+        public OverrideBuilder predicate(ResourceLocation key, float value) {
+            this.predicates.put(key, value);
+            return this;
+        }
+
+        public ItemModelBuilder build() {
+            ItemModelBuilder.this.overrides.add(new ItemOverride(model, predicates));
+            return ItemModelBuilder.this;
+        }
+    }
 
 }

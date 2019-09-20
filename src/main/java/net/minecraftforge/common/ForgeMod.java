@@ -48,7 +48,6 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.BlockModelBuilder;
 import net.minecraftforge.client.model.ItemModelBuilder;
-import net.minecraftforge.client.model.ModelBuilder;
 import net.minecraftforge.client.model.ModelProvider;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -210,7 +209,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeClient())
         {
-        	gen.addProvider(new Models(gen));
+            gen.addProvider(new ItemModels(gen));
         }
         if (event.includeServer())
         {
@@ -220,39 +219,37 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
     
-    public static class Models extends ModelProvider<ModelBuilder<?>>
+    public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
-		public Models(DataGenerator generator)
-		{
-			super(generator, ITEM_FOLDER);
-		}
-    	
-		@Override
-		protected void registerBuilders()
-		{
-			builders.put(new ResourceLocation("forge", "test_generated_model"), new BlockModelBuilder()
-					.parent(new ResourceLocation("item/generated"))
-					.texture("layer0", "block/stone"));
-			
-			ItemModelBuilder builder = new ItemModelBuilder()
-					.parent(new ResourceLocation("block/block"))
-					.texture("all", "block/dirt")
-					.texture("top", "block/stone")
-					.element()
-					    .cube("#all")
-					    .face(Direction.UP)
-					        .texture("#top")
-					        .end()
-					    .end();
-			
-			builders.put(new ResourceLocation("forge", "test_block_model"), builder);
-		}
+        public ItemModels(DataGenerator generator)
+        {
+            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new);
+        }
+        
+        @Override
+        protected void registerBuilders()
+        {
+            getBuilder("test_generated_model")
+                    .parent(new ResourceLocation("item/generated"))
+                    .texture("layer0", "block/stone");
+            
+            getBuilder("test_block_model")
+                    .parent(new ResourceLocation("block/block"))
+                    .texture("all", "block/dirt")
+                    .texture("top", "block/stone")
+                    .element()
+                        .cube("#all")
+                        .face(Direction.UP)
+                            .texture("#top")
+                            .end()
+                        .end();
+        }
 
-		@Override
-		public String getName()
-		{
-			return "Forge Test Item Models";
-		}
+        @Override
+        public String getName()
+        {
+            return "Forge Test Item Models";
+        }
     }
 
     @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
