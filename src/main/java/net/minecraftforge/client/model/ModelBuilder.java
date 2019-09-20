@@ -128,11 +128,13 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 				}
 				
 				JsonObject faces = new JsonObject();
-				for (Entry<Direction, BlockPartFace> e : part.mapFaces.entrySet()) {
-					BlockPartFace face = e.getValue();
+				for (Direction dir : Direction.values()) {
+					BlockPartFace face = part.mapFaces.get(dir);
+					if (face == null) continue;
+					
 					JsonObject faceObj = new JsonObject();
 					faceObj.addProperty("texture", face.texture);
-					if (!Arrays.equals(face.blockFaceUV.uvs, part.getFaceUvs(e.getKey()))) {
+					if (!Arrays.equals(face.blockFaceUV.uvs, part.getFaceUvs(dir))) {
 					    faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
 					}
 					if (face.cullFace != null) {
@@ -144,7 +146,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 					if (face.tintIndex != -1) {
 					    faceObj.addProperty("tintindex", face.tintIndex);
 					}
-					faces.add(e.getKey().getName(), faceObj);
+					faces.add(dir.getName(), faceObj);
 				}
 				if (!part.mapFaces.isEmpty()) {
 					partObj.add("faces", faces);
