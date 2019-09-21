@@ -68,6 +68,9 @@ net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBit
 
 net/minecraft/world/end/DragonFightManager.<init>(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraft/nbt/CompoundNBT;Lnet/minecraft/world/dimension/EndDimension;)V=|p_i46669_1_,p_i46669_2_,dim
 
+net/minecraft/world/gen/feature/OreFeatureConfig$FillerBlockType.create(Ljava/lang/String;Ljava/lang/String;Ljava/util/function/Predicate;)Lnet/minecraft/world/gen/feature/OreFeatureConfig$FillerBlockType;=|enumName,p_i50618_3_,p_i50618_4_
+net/minecraft/world/gen/feature/jigsaw/JigsawPattern$PlacementBehaviour.create(Ljava/lang/String;Ljava/lang/String;Lcom/google/common/collect/ImmutableList;)Lnet/minecraft/world/gen/feature/jigsaw/JigsawPattern$PlacementBehaviour;=|enumName,p_i50487_3_,p_i50487_4_
+
 net/minecraft/entity/EntityType.<init>(Lnet/minecraft/entity/EntityType$IFactory;Lnet/minecraft/entity/EntityClassification;ZZZLcom/mojang/datafixers/types/Type;Lnet/minecraft/entity/EntitySize;Ljava/util/function/Predicate;Ljava/util/function/ToIntFunction;Ljava/util/function/ToIntFunction;Ljava/util/function/BiFunction;)V=|p_i50385_1_,p_i50385_2_,p_i50385_3_,p_i50385_4_,p_i50385_5_,p_i50385_6_,p_i50385_7_,velocityUpdateSupplier,trackingRangeSupplier,updateIntervalSupplier,customClientFactory
 net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222264_0_,p_222264_1_,p_222264_2_,p_222264_3_,world
 net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Lnet/minecraft/world/biome/Biome$SpawnListEntry;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222261_0_,p_222261_1_,p_222261_2_,p_222261_3_,world
