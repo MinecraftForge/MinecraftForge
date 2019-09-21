@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -209,14 +210,32 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
             return this;
         }
 
-        public ElementBuilder cube(String texture) {
-            for (Direction dir : Direction.values()) {
-                face(dir)
-                .cullface(dir)
-                .texture(texture)
-                .build();
-            }
+        public ElementBuilder allFaces(BiConsumer<Direction, FaceBuilder> action) {
+            Arrays.stream(Direction.values())
+                .forEach(d -> action.accept(d, face(d)));
             return this;
+        }
+
+        public ElementBuilder faces(BiConsumer<Direction, FaceBuilder> action) {
+            faces.entrySet().stream()
+                .forEach(e -> action.accept(e.getKey(), e.getValue()));
+            return this;
+        }
+
+        public ElementBuilder textureAll(String texture) {
+            return allFaces(addTexture(texture));
+        }
+
+        public ElementBuilder texture(String texture) {
+            return faces(addTexture(texture));
+        }
+
+        public ElementBuilder cube(String texture) {
+            return allFaces(addTexture(texture).andThen((dir, f) -> f.cullface(dir)));
+        }
+
+        private BiConsumer<Direction, FaceBuilder> addTexture(String texture) {
+            return ($, f) -> f.texture(texture);
         }
 
         BlockPart build() {
