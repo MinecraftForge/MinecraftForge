@@ -113,6 +113,7 @@ public interface IForgeBlockState
      * @param face The side to check
      * @return True if the block is opaque on the specified side.
      */
+    @Deprecated
     default boolean doesSideBlockRendering(IEnviromentBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
