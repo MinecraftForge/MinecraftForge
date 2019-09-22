@@ -448,6 +448,15 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
+@@ -952,7 +1044,7 @@
+    }
+ 
+    public int func_181545_F() {
+-      return 63;
++      return this.field_73020_y.func_201711_g().func_222530_f();
+    }
+ 
+    public World func_201672_e() {
 @@ -1000,7 +1092,7 @@
  
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
