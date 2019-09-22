@@ -1,13 +1,6 @@
 --- a/net/minecraft/world/gen/feature/OreFeatureConfig.java
 +++ b/net/minecraft/world/gen/feature/OreFeatureConfig.java
-@@ -1,5 +1,6 @@
- package net.minecraft.world.gen.feature;
- 
-+import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
- import com.mojang.datafixers.Dynamic;
- import com.mojang.datafixers.types.DynamicOps;
-@@ -34,7 +35,7 @@
+@@ -34,7 +34,7 @@
        return new OreFeatureConfig(orefeatureconfig$fillerblocktype, blockstate, i);
     }
  
@@ -16,7 +9,7 @@
        NATURAL_STONE("natural_stone", (p_214739_0_) -> {
           if (p_214739_0_ == null) {
              return false;
-@@ -67,5 +68,15 @@
+@@ -67,5 +67,15 @@
        public Predicate<BlockState> func_214738_b() {
           return this.field_214743_e;
        }
