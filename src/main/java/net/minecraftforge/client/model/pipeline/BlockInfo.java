@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IEnviromentBlockReader;
 
 public class BlockInfo
@@ -134,7 +135,10 @@ public class BlockInfo
         }
         for(Direction side : SIDES)
         {
-            if(!state.doesSideBlockRendering(world, blockPos, side))
+            BlockPos pos = blockPos.offset(side);
+            BlockState state = world.getBlockState(pos);
+
+            if(!VoxelShapes.func_223416_b(this.state.func_215702_a(world, blockPos, side), state.func_215702_a(world, pos, side.getOpposite())))
             {
                 int x = side.getXOffset() + 1;
                 int y = side.getYOffset() + 1;
