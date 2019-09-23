@@ -103,6 +103,15 @@
                      if (this.field_78531_r.field_71439_g.func_70644_a(MobEffects.field_76439_r))
                      {
                          float f15 = this.func_180438_a(this.field_78531_r.field_71439_g, p_78472_1_);
+@@ -994,7 +1002,7 @@
+ 
+         if (flag && Minecraft.field_142025_a && this.field_78531_r.field_71415_G && !Mouse.isInsideWindow())
+         {
+-            Mouse.setGrabbed(false);
++            if (Mouse.isGrabbed()) Mouse.setGrabbed(false);
+             Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2 - 20);
+             Mouse.setGrabbed(true);
+         }
 @@ -1101,6 +1109,10 @@
                  GlStateManager.func_179096_D();
                  this.func_78478_c();

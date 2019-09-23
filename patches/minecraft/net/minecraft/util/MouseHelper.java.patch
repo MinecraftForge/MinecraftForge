@@ -1,10 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/util/MouseHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/MouseHelper.java
-@@ -13,6 +13,7 @@
+@@ -13,7 +13,8 @@
  
      public void func_74372_a()
      {
+-        Mouse.setGrabbed(true);
 +        if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
-         Mouse.setGrabbed(true);
++        if (!Mouse.isGrabbed()) Mouse.setGrabbed(true);
          this.field_74377_a = 0;
          this.field_74375_b = 0;
+     }
+@@ -21,7 +22,7 @@
+     public void func_74373_b()
+     {
+         Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+-        Mouse.setGrabbed(false);
++        if (Mouse.isGrabbed()) Mouse.setGrabbed(false);
+     }
+ 
+     public void func_74374_c()
