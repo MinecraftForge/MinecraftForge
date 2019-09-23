@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/gen/feature/template/Template.java
++++ b/net/minecraft/world/gen/feature/template/Template.java
+@@ -177,7 +177,7 @@
+             int i1 = Integer.MIN_VALUE;
+             int j1 = Integer.MIN_VALUE;
+ 
+-            for(Template.BlockInfo template$blockinfo : func_215387_a(p_189962_1_, p_189962_2_, p_189962_3_, list)) {
++            for(Template.BlockInfo template$blockinfo : processBlockInfos(this, p_189962_1_, p_189962_2_, p_189962_3_, list)) {
+                BlockPos blockpos = template$blockinfo.field_186242_a;
+                if (mutableboundingbox == null || mutableboundingbox.func_175898_b(blockpos)) {
+                   IFluidState ifluidstate = p_189962_3_.func_204763_l() ? p_189962_1_.func_204610_c(blockpos) : null;
+@@ -317,14 +317,19 @@
+       });
+    }
+ 
++   @Deprecated
+    public static List<Template.BlockInfo> func_215387_a(IWorld p_215387_0_, BlockPos p_215387_1_, PlacementSettings p_215387_2_, List<Template.BlockInfo> p_215387_3_) {
++      return processBlockInfos(null, p_215387_0_, p_215387_1_, p_215387_2_, p_215387_3_);
++   }
++   
++   public static List<Template.BlockInfo> processBlockInfos(@Nullable Template template, IWorld p_215387_0_, BlockPos p_215387_1_, PlacementSettings p_215387_2_, List<Template.BlockInfo> p_215387_3_) {
+       List<Template.BlockInfo> list = Lists.newArrayList();
+ 
+       for(Template.BlockInfo template$blockinfo : p_215387_3_) {
+          BlockPos blockpos = func_186266_a(p_215387_2_, template$blockinfo.field_186242_a).func_177971_a(p_215387_1_);
+          Template.BlockInfo template$blockinfo1 = new Template.BlockInfo(blockpos, template$blockinfo.field_186243_b, template$blockinfo.field_186244_c);
+ 
+-         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); template$blockinfo1 != null && iterator.hasNext(); template$blockinfo1 = iterator.next().func_215194_a(p_215387_0_, p_215387_1_, template$blockinfo, template$blockinfo1, p_215387_2_)) {
++         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); template$blockinfo1 != null && iterator.hasNext(); template$blockinfo1 = iterator.next().process(p_215387_0_, p_215387_1_, template$blockinfo, template$blockinfo1, p_215387_2_, template)) {
+             ;
+          }
+ 
