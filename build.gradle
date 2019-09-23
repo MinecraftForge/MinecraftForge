@@ -187,6 +187,7 @@ project(':forge') {
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
+        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.6:fatjar'
     }
 
     def getVersion = {
@@ -487,17 +488,23 @@ project(':forge') {
         }
     
     // We apply the bin patches we just created to make a jar that is JUST our changes
+    genClientBinPatches.tool = BINPATCH_TOOL
     task applyClientBinPatches(type: ApplyBinPatches, dependsOn: genClientBinPatches) {
         clean = { genClientBinPatches.cleanJar }
         input = genClientBinPatches.output
+        tool = BINPATCH_TOOL
     }
+    genServerBinPatches.tool = BINPATCH_TOOL
     task applyServerBinPatches(type: ApplyBinPatches, dependsOn: genServerBinPatches) {
         clean = { genServerBinPatches.cleanJar }
         input = genServerBinPatches.output
+        tool = BINPATCH_TOOL
     }
+    genJoinedBinPatches.tool = BINPATCH_TOOL
     task applyJoinedBinPatches(type: ApplyBinPatches, dependsOn: genJoinedBinPatches) {
         clean = { genJoinedBinPatches.cleanJar }
         input = genJoinedBinPatches.output
+        tool = BINPATCH_TOOL
     }
     // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
     task createClientSRG(type: RenameJar, dependsOn: genClientBinPatches) {
@@ -736,10 +743,10 @@ project(':forge') {
         ext {
             output = file('build/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.4'
-            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.0'
+            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.1'
         }
         doFirst {
-            ext.BIN_PATCHER = 'net.minecraftforge:binarypatcher:' + genClientBinPatches.resolvedVersion
+            ext.BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
         }
         inputs.file applyClientBinPatches.output
         inputs.file applyServerBinPatches.output
@@ -784,16 +791,16 @@ project(':forge') {
                         server: '/data/server.lzma'
                     ],
                     MC_SLIM: [
-                        client: "[net.minecraft:client:${MC_VERSION}:slim]",
-                        server: "[net.minecraft:server:${MC_VERSION}:slim]"
+                        client: "[net.minecraft:client:${MC_VERSION}:slim-stable]",
+                        server: "[net.minecraft:server:${MC_VERSION}:slim-stable]"
                     ],
                     MC_SLIM_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
                         server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
                     ],
                     MC_EXTRA: [
-                        client: "[net.minecraft:client:${MC_VERSION}:extra]",
-                        server: "[net.minecraft:server:${MC_VERSION}:extra]"
+                        client: "[net.minecraft:client:${MC_VERSION}:extra-stable]",
+                        server: "[net.minecraft:server:${MC_VERSION}:extra-stable]"
                     ],
                     MC_EXTRA_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientExtra').output)}'",
@@ -881,7 +888,7 @@ project(':forge') {
         ['slim', 'extra'].each { type -> 
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
-                artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
+                artifact = "net.minecraft:${side}:${MC_VERSION}-stable:${type}"
             }
             installerJson.dependsOn(name)
             installerJson.inputs.file(tasks.getByName(name).output)
