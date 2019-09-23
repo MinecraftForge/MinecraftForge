@@ -453,8 +453,8 @@
  
     public int func_181545_F() {
 -      return 63;
-+      // FORGE: Allow modded dimensions to customize this value via ChunkGenerator
-+      return this.field_73020_y.func_201711_g().func_222530_f();
++      // FORGE: Allow modded dimensions to customize this value via Dimension
++      return this.func_201675_m().getSeaLevel();
     }
  
     public World func_201672_e() {
