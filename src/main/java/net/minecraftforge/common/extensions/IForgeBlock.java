@@ -67,8 +67,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IEnviromentBlockReader;
@@ -988,11 +990,11 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param start The start vector
      * @param end The end vector
-     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
+     * @param original The original result from {@link IBlockReader#func_217296_a(Vec3d, Vec3d, BlockPos, VoxelShape, BlockState)}
      * @return A result that suits your block
      */
     @Nullable
-    default RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
+    default BlockRayTraceResult getRayTraceResult(BlockState state, IBlockReader world, BlockPos pos, Vec3d start, Vec3d end, BlockRayTraceResult original)
     {
         return original;
     }

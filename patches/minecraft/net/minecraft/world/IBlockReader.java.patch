@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/IBlockReader.java
++++ b/net/minecraft/world/IBlockReader.java
+@@ -59,11 +59,11 @@
+       if (blockraytraceresult != null) {
+          BlockRayTraceResult blockraytraceresult1 = p_217296_5_.func_199611_f(this, p_217296_3_).func_212433_a(p_217296_1_, p_217296_2_, p_217296_3_);
+          if (blockraytraceresult1 != null && blockraytraceresult1.func_216347_e().func_178788_d(p_217296_1_).func_189985_c() < blockraytraceresult.func_216347_e().func_178788_d(p_217296_1_).func_189985_c()) {
+-            return blockraytraceresult.func_216351_a(blockraytraceresult1.func_216354_b());
++            blockraytraceresult = blockraytraceresult.func_216351_a(blockraytraceresult1.func_216354_b());
+          }
+       }
+ 
+-      return blockraytraceresult;
++      return p_217296_5_.func_177230_c().getRayTraceResult(p_217296_5_, this, p_217296_3_, p_217296_1_, p_217296_2_, blockraytraceresult);
+    }
+ 
+    static <T> T func_217300_a(RayTraceContext p_217300_0_, BiFunction<RayTraceContext, BlockPos, T> p_217300_1_, Function<RayTraceContext, T> p_217300_2_) {
