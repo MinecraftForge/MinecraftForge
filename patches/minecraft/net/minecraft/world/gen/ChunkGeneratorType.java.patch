@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/gen/ChunkGeneratorType.java
 +++ b/net/minecraft/world/gen/ChunkGeneratorType.java
-@@ -7,7 +7,7 @@
+@@ -7,7 +7,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class ChunkGeneratorType<C extends GenerationSettings, T extends ChunkGenerator<C>> implements IChunkGeneratorFactory<C, T> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class ChunkGeneratorType<C extends GenerationSettings, T extends ChunkGenerator<C>> extends net.minecraftforge.registries.ForgeRegistryEntry<ChunkGeneratorType<?, ?>> implements IChunkGeneratorFactory<C, T> {
     public static final ChunkGeneratorType<OverworldGenSettings, OverworldChunkGenerator> field_206911_b = func_212676_a("surface", OverworldChunkGenerator::new, OverworldGenSettings::new, true);
     public static final ChunkGeneratorType<NetherGenSettings, NetherChunkGenerator> field_206912_c = func_212676_a("caves", NetherChunkGenerator::new, NetherGenSettings::new, true);
