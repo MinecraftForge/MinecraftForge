@@ -41,6 +41,7 @@ public interface IRegistryDelegate<T> extends Supplier<T> {
      *
      * @return The referred object
      */
+    @Override
     T get();
 
     /**
