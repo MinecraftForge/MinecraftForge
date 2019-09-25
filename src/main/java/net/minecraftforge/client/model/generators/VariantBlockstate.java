@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.model;
+package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
-import net.minecraftforge.client.model.BlockstateProvider.ConfiguredModel;
+import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModel;
 
 import java.util.HashMap;
 import java.util.Map;
