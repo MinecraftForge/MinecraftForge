@@ -25,35 +25,41 @@ import net.minecraft.block.FlowerPotBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(FlowerPotTest.MODID)
-@Mod.EventBusSubscriber(bus = Bus.MOD)
+@Mod.EventBusSubscriber(modid = FlowerPotTest.MODID, bus = Bus.MOD)
 public class FlowerPotTest
 {
     static final String MODID = "flower_pot_test";
     static final String BLOCK_ID = "test_flower_pot";
+    
+    private static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
+    private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
 
-    @ObjectHolder(BLOCK_ID)
-    public static FlowerPotBlock EMPTY_FLOWER_POT;
-
-    @ObjectHolder(BLOCK_ID)
-    public static FlowerPotBlock OAK_FLOWER_POT;
-
+    public static final RegistryObject<FlowerPotBlock> EMPTY_FLOWER_POT = BLOCKS.register(BLOCK_ID, () -> new FlowerPotBlock(null, Blocks.AIR.delegate, Block.Properties.from(Blocks.FLOWER_POT)));
+    public static final RegistryObject<FlowerPotBlock> OAK_FLOWER_POT = BLOCKS.<FlowerPotBlock>register(
+            BLOCK_ID + "_oak", () -> new FlowerPotBlock(EMPTY_FLOWER_POT, Blocks.OAK_SAPLING.delegate, Block.Properties.from(Blocks.FLOWER_POT)));
+    
+    static {
+        ITEMS.register(BLOCK_ID, () -> new BlockItem(EMPTY_FLOWER_POT.get(), new Item.Properties()));
+    }
+    
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
-    {
-        FlowerPotBlock empty = new FlowerPotBlock(null, Blocks.AIR, Block.Properties.from(Blocks.FLOWER_POT));
-        event.getRegistry().register(empty.setRegistryName(BLOCK_ID));
-        event.getRegistry().register(new FlowerPotBlock(empty, Blocks.OAK_SAPLING, Block.Properties.from(empty)).setRegistryName(BLOCK_ID + "_oak"));
+    public static void onItemRegister(RegistryEvent.Register<Item> event) {
+        EMPTY_FLOWER_POT.get().addPlant(Blocks.OAK_SAPLING.getRegistryName(), OAK_FLOWER_POT);
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
-    {
-        event.getRegistry().register(new BlockItem(EMPTY_FLOWER_POT, new Item.Properties()).setRegistryName(MODID, BLOCK_ID));
+    public FlowerPotTest() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        BLOCKS.register(modBus);
+        ITEMS.register(modBus);
     }
 }

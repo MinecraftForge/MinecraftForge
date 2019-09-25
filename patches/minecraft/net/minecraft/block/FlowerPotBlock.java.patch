@@ -1,19 +1,19 @@
 --- a/net/minecraft/block/FlowerPotBlock.java
 +++ b/net/minecraft/block/FlowerPotBlock.java
-@@ -19,14 +19,35 @@
- import net.minecraft.world.World;
- 
- public class FlowerPotBlock extends Block {
--   private static final Map<Block, Block> field_196451_b = Maps.newHashMap();
+@@ -23,10 +23,37 @@
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
--   private final Block field_196452_c;
-+   private final FlowerPotBlock emptyPot;
-+   private final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, net.minecraftforge.registries.IRegistryDelegate<Block>> fullPots;
-+   private final net.minecraftforge.registries.IRegistryDelegate<Block> field_196452_c;
+    private final Block field_196452_c;
  
++   private final Map<net.minecraft.util.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
++   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
++   private final java.util.function.Supplier<? extends Block> flowerDelegate;
++
 +   @Deprecated // Mods should use the constructor below
     public FlowerPotBlock(Block p_i48395_1_, Block.Properties p_i48395_2_) {
-+      this((FlowerPotBlock) Blocks.field_150457_bL, p_i48395_1_, p_i48395_2_);
++      this(Blocks.field_150457_bL == null ? null : () -> (FlowerPotBlock) Blocks.field_150457_bL.delegate.get(), () -> p_i48395_1_.delegate.get(), p_i48395_2_);
++      if (Blocks.field_150457_bL != null) {
++         ((FlowerPotBlock)Blocks.field_150457_bL).addPlant(p_i48395_1_.getRegistryName(), () -> this);
++      }
 +   }
 +
 +   /**
@@ -24,65 +24,56 @@
 +    * @param p_i48395_1_ The flower block.
 +    * @param p_i48395_2_
 +    */
-+   public FlowerPotBlock(FlowerPotBlock emptyPot, Block p_i48395_1_, Block.Properties p_i48395_2_) {
++   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, Block.Properties p_i48395_2_) {
        super(p_i48395_2_);
 -      this.field_196452_c = p_i48395_1_;
 -      field_196451_b.put(p_i48395_1_, this);
-+      this.field_196452_c = p_i48395_1_.delegate;
++      this.field_196452_c = null; // Unused, redirected by coremod
++      this.flowerDelegate = p_i48395_1_;
 +      if (emptyPot == null) {
 +         this.fullPots = Maps.newHashMap();
-+         this.emptyPot = this;
++         this.emptyPot = null;
 +      } else {
++         this.fullPots = java.util.Collections.emptyMap();
 +         this.emptyPot = emptyPot;
-+         this.fullPots = emptyPot.fullPots;
-+         this.fullPots.put(p_i48395_1_.delegate, this.delegate);
 +      }
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-@@ -40,9 +61,9 @@
+@@ -40,7 +67,7 @@
     public boolean func_220051_a(BlockState p_220051_1_, World p_220051_2_, BlockPos p_220051_3_, PlayerEntity p_220051_4_, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
        ItemStack itemstack = p_220051_4_.func_184586_b(p_220051_5_);
        Item item = itemstack.func_77973_b();
 -      Block block = item instanceof BlockItem ? field_196451_b.getOrDefault(((BlockItem)item).func_179223_d(), Blocks.field_150350_a) : Blocks.field_150350_a;
-+      Block block = item instanceof BlockItem ? fullPots.getOrDefault(((BlockItem)item).func_179223_d().delegate, Blocks.field_150350_a.delegate).get() : Blocks.field_150350_a;
++      Block block = item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).func_179223_d().getRegistryName(), Blocks.field_150350_a.delegate).get() : Blocks.field_150350_a;
        boolean flag = block == Blocks.field_150350_a;
--      boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
-+      boolean flag1 = this.field_196452_c.get() == Blocks.field_150350_a;
+       boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
        if (flag != flag1) {
-          if (flag1) {
-             p_220051_2_.func_180501_a(p_220051_3_, block.func_176223_P(), 3);
-@@ -51,14 +72,14 @@
-                itemstack.func_190918_g(1);
-             }
-          } else {
--            ItemStack itemstack1 = new ItemStack(this.field_196452_c);
-+            ItemStack itemstack1 = new ItemStack(this.field_196452_c.get());
-             if (itemstack.func_190926_b()) {
-                p_220051_4_.func_184611_a(p_220051_5_, itemstack1);
-             } else if (!p_220051_4_.func_191521_c(itemstack1)) {
+@@ -58,7 +85,7 @@
                 p_220051_4_.func_71019_a(itemstack1, false);
              }
  
 -            p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150457_bL.func_176223_P(), 3);
-+            p_220051_2_.func_180501_a(p_220051_3_, emptyPot.func_176223_P(), 3);
++            p_220051_2_.func_180501_a(p_220051_3_, getEmptyPot().func_176223_P(), 3);
           }
        }
  
-@@ -66,7 +87,7 @@
-    }
- 
-    public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
--      return this.field_196452_c == Blocks.field_150350_a ? super.func_185473_a(p_185473_1_, p_185473_2_, p_185473_3_) : new ItemStack(this.field_196452_c);
-+      return this.field_196452_c.get() == Blocks.field_150350_a ? super.func_185473_a(p_185473_1_, p_185473_2_, p_185473_3_) : new ItemStack(this.field_196452_c.get());
-    }
- 
-    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
-@@ -78,6 +99,6 @@
+@@ -78,6 +105,17 @@
     }
  
     public Block func_220276_d() {
 -      return this.field_196452_c;
-+      return this.field_196452_c.get();
++      return flowerDelegate.get();
     }
++   
++   public FlowerPotBlock getEmptyPot() {
++      return emptyPot == null ? this : emptyPot.get();
++   }
++   
++   public void addPlant(net.minecraft.util.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
++      if (getEmptyPot() != this) {
++          throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
++      }
++      fullPots.put(flower, fullPot);
++   }
  }
