@@ -46,7 +46,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.client.model.BlockModelBuilder;
 import net.minecraftforge.client.model.ItemModelBuilder;
 import net.minecraftforge.client.model.ModelProvider;
 import net.minecraftforge.common.crafting.CompoundIngredient;
