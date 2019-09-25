@@ -271,16 +271,18 @@
        return this.field_181018_ap;
     }
  
-@@ -2274,7 +2299,7 @@
+@@ -2273,8 +2298,9 @@
+       EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
        EntitySize entitysize1 = this.func_213305_a(pose);
++      if(this instanceof net.minecraft.entity.player.PlayerEntity) entitysize1 = net.minecraftforge.event.ForgeEventFactory.getPlayerSize((net.minecraft.entity.player.PlayerEntity)this,pose,entitysize1);
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
 +      this.field_213326_aJ = getEyeHeightForge(pose, entitysize1);
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.field_70165_t - d0, this.field_70163_u, this.field_70161_v - d0, this.field_70165_t + d0, this.field_70163_u + (double)entitysize1.field_220316_b, this.field_70161_v + d0));
-@@ -2641,6 +2666,7 @@
+@@ -2641,6 +2667,7 @@
        return this.field_211517_W;
     }
  
@@ -288,7 +290,7 @@
     public final float func_213311_cf() {
        return this.field_213325_aI.field_220315_a;
     }
-@@ -2670,4 +2696,69 @@
+@@ -2670,4 +2697,69 @@
     public void func_213293_j(double p_213293_1_, double p_213293_3_, double p_213293_5_) {
        this.func_213317_d(new Vec3d(p_213293_1_, p_213293_3_, p_213293_5_));
     }
