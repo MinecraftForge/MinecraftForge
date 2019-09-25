@@ -8,7 +8,7 @@
 +         for(Template.BlockInfo template$blockinfo : Template.processBlockInfos(template, p_225575_2_, p_225575_4_, placementsettings, this.func_214857_a(p_225575_1_, p_225575_4_, p_225575_5_, false))) {
              this.func_214846_a(p_225575_2_, template$blockinfo, p_225575_4_, p_225575_5_, p_225575_7_, p_225575_6_);
           }
-
+ 
 @@ -122,4 +122,8 @@
     public String toString() {
        return "Single[" + this.field_214861_a + "]";

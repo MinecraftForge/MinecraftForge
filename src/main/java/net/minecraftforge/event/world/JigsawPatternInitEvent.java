@@ -106,18 +106,18 @@ public class JigsawPatternInitEvent extends Event {
             JigsawManager.field_214891_a.register(jigsawPattern);
         }
 
-        public abstract ResourceLocation getStructureResourceLocation();
+        public abstract ResourceLocation getStructureRegistryName();
 
         public static class Village extends StructureJigsawPoolInitEvent{
             @Override
-            public ResourceLocation getStructureResourceLocation() {
+            public ResourceLocation getStructureRegistryName() {
                 return Structures.VILLAGE.getRegistryName();
             }
         }
 
         public static class PillageOutpost extends StructureJigsawPoolInitEvent{
             @Override
-            public ResourceLocation getStructureResourceLocation() {
+            public ResourceLocation getStructureRegistryName() {
                 return Structures.PILLAGER_OUTPOST.getRegistryName();
             }
         }
