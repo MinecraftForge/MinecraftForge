@@ -51,7 +51,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     private final String owningNamespace;
     @Nullable
-    protected ResourceLocation parent;
+    protected ModelFile parent;
     protected final Map<String, ResourceLocation> textures = new HashMap<>();
     protected final TransformsBuilder transforms = new TransformsBuilder();
 
@@ -67,7 +67,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     @SuppressWarnings("unchecked")
     private T self() { return (T) this; }
 
-    public T parent(ResourceLocation parent) {
+    public T parent(ModelFile parent) {
+        parent.assertExistence();
         this.parent = parent;
         return self();
     }
@@ -116,7 +117,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     public JsonObject serialize() {
         JsonObject root = new JsonObject();
         if (this.parent != null) {
-            root.addProperty("parent", this.parent.toString());
+            root.addProperty("parent", this.parent.getLocation().toString());
         }
 
         if (!this.ambientOcclusion) {

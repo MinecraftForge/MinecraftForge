@@ -308,8 +308,8 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
                         '--input', rootProject.file('src/main/resources/'),
-                        //TODO how can this be done more generally?
-                        '--input', '/home/malte/.gradle/caches/forge_gradle/minecraft_repo/versions/1.14.4/client-extra.jar'
+                        //TODO this isn't ideal
+                        '--input', rootProject.gradle.gradleUserHomeDir.toPath().resolve('caches/forge_gradle/minecraft_repo/versions/1.14.4/client-extra.jar').toString()
             }
 
             forge_test_data {

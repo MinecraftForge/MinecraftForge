@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
@@ -267,6 +268,7 @@ public class ModLoader
 
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
+        ExistingFileHelper.INSTANCE = new ExistingFileHelper(inputs, structureValidator);
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);

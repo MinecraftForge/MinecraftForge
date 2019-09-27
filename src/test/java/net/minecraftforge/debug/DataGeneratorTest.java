@@ -31,6 +31,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
+import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -126,11 +129,11 @@ public class DataGeneratorTest
         protected void registerBuilders()
         {
             getBuilder("test_generated_model")
-                    .parent(new ResourceLocation("item/generated"))
+                    .parent(new UncheckedModelFile("item/generated"))
                     .texture("layer0", "block/stone");
             
             getBuilder("test_block_model")
-                    .parent(new ResourceLocation("block/block"))
+                    .parent(new ExistingModelFile("block/block"))
                     .texture("all", "block/dirt")
                     .texture("top", "block/stone")
                     .element()

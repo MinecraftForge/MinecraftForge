@@ -45,8 +45,12 @@ public abstract class ModelFile {
     protected abstract boolean exists();
 
     public ResourceLocation getLocation() {
-        Preconditions.checkState(exists(), "Model at " + location + " does not exist!");
+        assertExistence();
         return location;
+    }
+
+    public void assertExistence() {
+        Preconditions.checkState(exists(), "Model at " + location + " does not exist!");
     }
 
     public ResourceLocation getUncheckedLocation() {
@@ -55,6 +59,9 @@ public abstract class ModelFile {
 
     public static class UncheckedModelFile extends ModelFile {
 
+        public UncheckedModelFile(String location) {
+           this(new ResourceLocation(location));
+        }
         public UncheckedModelFile(ResourceLocation location) {
             super(location);
         }
@@ -66,7 +73,11 @@ public abstract class ModelFile {
     }
 
     public static class ExistingModelFile extends ModelFile {
-        protected ExistingModelFile(ResourceLocation location) {
+        public ExistingModelFile(String location) {
+            this(new ResourceLocation(location));
+        }
+
+        public ExistingModelFile(ResourceLocation location) {
             super(location);
         }
 

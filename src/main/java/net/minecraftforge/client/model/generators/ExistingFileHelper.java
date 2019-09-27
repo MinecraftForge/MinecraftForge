@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -18,10 +19,10 @@ public class ExistingFileHelper {
     private final List<Function<Path, Path>> resolve;
     private final boolean enable;
 
-    public ExistingFileHelper(DataGenerator gen, boolean enable) {
+    public ExistingFileHelper(Collection<Path> inputs, boolean enable) {
         this.enable = enable;
         ImmutableList.Builder<Function<Path, Path>> resolve = ImmutableList.builder();
-        for (Path base:gen.getInputFolders()) {
+        for (Path base:inputs) {
             if (Files.isRegularFile(base)) {
                 try {
                     FileSystem jarSystem = FileSystems.newFileSystem(base, null);
