@@ -305,16 +305,17 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         protected void registerStates(Consumer<VariantBlockstate> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased) {
             PartialBlockstate base = new PartialBlockstate(Blocks.ACACIA_FENCE_GATE);
             VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
-            for (Direction dir: FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
+            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
                 PartialBlockstate withFacing = base.with(FenceGateBlock.HORIZONTAL_FACING, dir);
                 int angle = (int) dir.getHorizontalAngle();
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, false),
-                        new ConfiguredModel(models.acaciaFenceGate, 0, angle, true));
-                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
+                        new ConfiguredModel(models.acaciaFenceGate, 0, angle, true, 100),
+                        new ConfiguredModel(new ModelFile.ExistingModelFile(new ResourceLocation("builtin/generated")), 0, 0, false, 1));
+                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
                         new ConfiguredModel(models.acaciaFenceGateOpen, 0, angle, true));
-                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),
+                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),
                         new ConfiguredModel(models.acaciaFenceGateWall, 0, angle, true));
-                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, true),
+                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, true),
                         new ConfiguredModel(models.acaciaFenceGateWallOpen, 0, angle, true));
             }
             variantBased.accept(builder.build());

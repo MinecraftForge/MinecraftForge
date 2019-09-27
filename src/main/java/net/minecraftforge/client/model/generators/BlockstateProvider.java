@@ -20,10 +20,8 @@
 package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.*;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
@@ -39,6 +37,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import static net.minecraftforge.client.model.generators.VariantBlockstate.*;
 
 public abstract class BlockstateProvider implements IDataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -65,8 +65,8 @@ public abstract class BlockstateProvider implements IDataProvider {
         ResourceLocation blockName = Preconditions.checkNotNull(block.getRegistryName());
         Preconditions.checkArgument(generatedStates.add(blockName));
         JsonObject variants = new JsonObject();
-        for (Map.Entry<VariantBlockstate.PartialBlockstate, ConfiguredModel> entry : out.getModels().entrySet()) {
-            variants.add(entry.getKey().toString(), entry.getValue().toJSON());
+        for (Map.Entry<PartialBlockstate, ConfiguredModelList> entry : out.getModels().entrySet()) {
+                variants.add(entry.getKey().toString(), entry.getValue().toJSON());
         }
         JsonObject main = new JsonObject();
         main.add("variants", variants);
@@ -109,19 +109,25 @@ public abstract class BlockstateProvider implements IDataProvider {
         public final int rotationX;
         public final int rotationY;
         public final boolean uvLock;
+        public final int weight;
 
-        public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock) {
+        public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock, int weight) {
             this.name = name;
             this.rotationX = rotationX;
             this.rotationY = rotationY;
             this.uvLock = uvLock;
+            this.weight = weight;
+        }
+
+        public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock) {
+            this(name, rotationX, rotationY, uvLock, 0);
         }
 
         public ConfiguredModel(ModelFile name) {
-            this(name, 0, 0, false);
+            this(name, 0, 0, false, 0);
         }
 
-        public JsonObject toJSON() {
+        public JsonObject toJSON(boolean includeWeight) {
             JsonObject modelJson = new JsonObject();
             modelJson.addProperty("model", name.getLocation().toString());
             if (rotationX != 0)
@@ -130,7 +136,38 @@ public abstract class BlockstateProvider implements IDataProvider {
                 modelJson.addProperty("y", rotationY);
             if (uvLock && (rotationX != 0 || rotationY != 0))
                 modelJson.addProperty("uvlock", uvLock);
+            if (includeWeight)
+                modelJson.addProperty("weight", weight);
             return modelJson;
+        }
+    }
+
+    public static class ConfiguredModelList {
+        private final List<ConfiguredModel> models;
+
+        public ConfiguredModelList(List<ConfiguredModel> models) {
+            Preconditions.checkArgument(!models.isEmpty());
+            this.models = models;
+        }
+
+        public ConfiguredModelList(ConfiguredModel model) {
+            this(ImmutableList.of(model));
+        }
+
+        public ConfiguredModelList(ConfiguredModel... models) {
+            this(Arrays.asList(models));
+        }
+
+        public JsonElement toJSON() {
+            if (models.size()==1) {
+                return models.get(0).toJSON(false);
+            } else {
+                JsonArray ret = new JsonArray();
+                for (ConfiguredModel m:models) {
+                    ret.add(m.toJSON(true));
+                }
+                return ret;
+            }
         }
     }
 
@@ -145,18 +182,18 @@ public abstract class BlockstateProvider implements IDataProvider {
     }
 
     public static final class MultiPart {
-        public final ConfiguredModel model;
+        public final ConfiguredModelList models;
         public final boolean useOr;
         public final List<PropertyWithValues> conditions;
 
-        public MultiPart(ConfiguredModel model, boolean useOr, PropertyWithValues... conditionsArray) {
+        public MultiPart(ConfiguredModelList models, boolean useOr, PropertyWithValues... conditionsArray) {
             conditions = Arrays.asList(conditionsArray);
             Preconditions.checkArgument(conditions.size() == conditions.stream()
                     .map(pwv -> pwv.prop)
                     .distinct()
                     .count());
             Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()));
-            this.model = model;
+            this.models = models;
             this.useOr = useOr;
         }
 
@@ -180,7 +217,7 @@ public abstract class BlockstateProvider implements IDataProvider {
                 }
                 out.add("when", when);
             }
-            out.add("apply", model.toJSON());
+            out.add("apply", models.toJSON());
             return out;
         }
 

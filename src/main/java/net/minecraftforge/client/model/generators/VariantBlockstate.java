@@ -29,11 +29,13 @@ import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredM
 import java.util.*;
 import java.util.function.Predicate;
 
+import static net.minecraftforge.client.model.generators.BlockstateProvider.*;
+
 public class VariantBlockstate {
     private final Block owner;
-    private final Map<PartialBlockstate, ConfiguredModel> models;
+    private final Map<PartialBlockstate, ConfiguredModelList> models;
 
-    public VariantBlockstate(Block owner, Map<PartialBlockstate, ConfiguredModel> models) {
+    public VariantBlockstate(Block owner, Map<PartialBlockstate, ConfiguredModelList> models) {
         this.owner = owner;
         this.models = models;
         for (BlockState state:owner.getStateContainer().getValidStates()) {
@@ -48,7 +50,7 @@ public class VariantBlockstate {
         }
     }
 
-    public Map<PartialBlockstate, ConfiguredModel> getModels() {
+    public Map<PartialBlockstate, ConfiguredModelList> getModels() {
         return models;
     }
 
@@ -58,19 +60,19 @@ public class VariantBlockstate {
 
     public static class Builder {
         private final Block owner;
-        private final Map<PartialBlockstate, ConfiguredModel> models = new HashMap<>();
+        private final Map<PartialBlockstate, ConfiguredModelList> models = new HashMap<>();
         private final Set<BlockState> coveredStates = new HashSet<>();
 
         public Builder(Block owner) {
             this.owner = owner;
         }
 
-        public Builder setModel(PartialBlockstate state, ConfiguredModel model) {
+        public Builder setModel(PartialBlockstate state, ConfiguredModel... model) {
             Preconditions.checkNotNull(state);
-            Preconditions.checkNotNull(model);
+            Preconditions.checkArgument(model.length>0);
             Preconditions.checkArgument(state.getOwner() == owner);
             Preconditions.checkArgument(disjointToAll(state));
-            models.put(state, model);
+            models.put(state, new ConfiguredModelList(model));
             for (BlockState fullState: owner.getStateContainer().getValidStates()) {
                 if (state.test(fullState)) {
                     coveredStates.add(fullState);
@@ -87,8 +89,8 @@ public class VariantBlockstate {
             return new VariantBlockstate(owner, models);
         }
     }
-
-    public static class PartialBlockstate implements Predicate<BlockState> {
+    //TODO a weird compiler issue happened here, didn't work without the full name
+    public static class PartialBlockstate implements java.util.function.Predicate<BlockState> {
         private final Block owner;
         private final Map<IProperty<?>, Comparable<?>> setStates;
         public PartialBlockstate(Block owner) {
