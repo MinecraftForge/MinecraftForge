@@ -71,7 +71,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * @return A RegistryObject that will be updated with when the entries in the registry change.
      */
     @SuppressWarnings("unchecked")
-    public <I extends T> RegistryObject<I> register(final String name, final Supplier<I> sup)
+    public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
     {
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);

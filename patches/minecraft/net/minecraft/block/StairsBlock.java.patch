@@ -14,7 +14,7 @@
 +      this.stateSupplier = () -> p_i48321_1_;
     }
  
-+   protected StairsBlock(java.util.function.Supplier<BlockState> state, Block.Properties properties) {
++   public StairsBlock(java.util.function.Supplier<BlockState> state, Block.Properties properties) {
 +      super(properties);
 +      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176309_a, Direction.NORTH).func_206870_a(field_176308_b, Half.BOTTOM).func_206870_a(field_176310_M, StairsShape.STRAIGHT).func_206870_a(field_204513_t, Boolean.valueOf(false)));
 +      this.field_150149_b = Blocks.field_150350_a; // These are unused, fields are redirected
