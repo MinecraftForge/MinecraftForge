@@ -212,6 +212,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public void gatherData(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        ExistingFileHelper.INSTANCE = new ExistingFileHelper(gen, event.validate());
 
         if (event.includeClient())
         {
@@ -240,12 +241,12 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             getBuilder("test_generated_model")
                     .parent(new ResourceLocation("item/generated"))
-                    .texture("layer0", "block/stone");
+                    .texture("layer0", new ResourceLocation("block/stone"));
             
             getBuilder("test_block_model")
                     .parent(new ResourceLocation("block/block"))
-                    .texture("all", "block/dirt")
-                    .texture("top", "block/stone")
+                    .texture("all", new ResourceLocation("block/dirt"))
+                    .texture("top", new ResourceLocation("block/stone"))
                     .element()
                         .cube("#all")
                         .face(Direction.UP)
@@ -274,16 +275,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         protected void registerBuilders() {
             (acaciaFenceGate = getModelFile("acacia_fence_gate")).getBuilder()
                     .parent(new ResourceLocation("block/template_fence_gate"))
-                    .texture("texture", "block/acacia_planks");
+                    .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateOpen = getModelFile("acacia_fence_gate_open")).getBuilder()
                     .parent(new ResourceLocation("block/template_fence_gate_open"))
-                    .texture("texture", "block/acacia_planks");
+                    .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateWall = getModelFile("acacia_fence_gate_wall")).getBuilder()
                     .parent(new ResourceLocation("block/template_fence_gate_wall"))
-                    .texture("texture", "block/acacia_planks");
+                    .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateWallOpen = getModelFile("acacia_fence_gate_wall_open")).getBuilder()
                     .parent(new ResourceLocation("block/template_fence_gate_wall_open"))
-                    .texture("texture", "block/acacia_planks");
+                    .texture("texture", new ResourceLocation("block/acacia_planks"));
         }
 
         @Override
@@ -310,7 +311,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                 int angle = (int) dir.getHorizontalAngle();
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, false),
                         new ConfiguredModel(models.acaciaFenceGate, 0, angle, true, 100),
-                        new ConfiguredModel(new ModelFile.ExistingModelFile(new ResourceLocation("builtin/generated")), 0, 0, false, 1));
+                        new ConfiguredModel(new ModelFile.UncheckedModelFile(new ResourceLocation("builtin/generated")), 0, 0, false, 1));
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
                         new ConfiguredModel(models.acaciaFenceGateOpen, 0, angle, true));
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),

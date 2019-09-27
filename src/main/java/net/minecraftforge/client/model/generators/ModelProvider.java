@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
@@ -54,6 +55,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         this.modid = modid;
         this.folder = folder;
         this.factory = factory;
+    }
+
+    public ModelProvider(DataGenerator generator, String modid, String folder, Function<String, T> builderFromModId) {
+        this(generator, modid, folder, ()->builderFromModId.apply(modid));
     }
 
     protected T getBuilder(String path) {

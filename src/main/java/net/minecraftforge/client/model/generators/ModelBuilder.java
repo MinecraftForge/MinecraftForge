@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.generators;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
@@ -47,9 +49,10 @@ import java.util.stream.Collectors;
 @SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> {
 
+    private final String owningNamespace;
     @Nullable
     protected ResourceLocation parent;
-    protected final Map<String, String> textures = new HashMap<>();
+    protected final Map<String, ResourceLocation> textures = new HashMap<>();
     protected final TransformsBuilder transforms = new TransformsBuilder();
 
     protected boolean ambientOcclusion = true;
@@ -57,7 +60,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
-    protected ModelBuilder() {}
+    protected ModelBuilder(String owningNamespace) {
+        this.owningNamespace = owningNamespace;
+    }
 
     @SuppressWarnings("unchecked")
     private T self() { return (T) this; }
@@ -68,8 +73,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     }
 
     public T texture(String key, String texture) {
-        //TODO check that texture exists?
-        //TODO support using textures from other mods/vanilla?
+        ResourceLocation asLoc;
+        if (texture.contains(":")) {
+            asLoc = new ResourceLocation(texture);
+        } else {
+            asLoc = new ResourceLocation(owningNamespace, texture);
+        }
+        return texture(key, asLoc);
+    }
+
+    public T texture(String key, ResourceLocation texture) {
+        Preconditions.checkArgument(ExistingFileHelper.INSTANCE.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
+                "Texture "+texture+" exists in none of the specified directories!");
         this.textures.put(key, texture);
         return self();
     }
@@ -131,8 +146,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
         if (!this.textures.isEmpty()) {
             JsonObject textures = new JsonObject();
-            for (Entry<String, String> e : this.textures.entrySet()) {
-                textures.addProperty(e.getKey(), e.getValue());
+            for (Entry<String, ResourceLocation> e : this.textures.entrySet()) {
+                String texName;
+                if (e.getValue().getNamespace().equals(owningNamespace)) {
+                    texName = e.getValue().getPath();
+                } else {
+                    texName = e.getValue().toString();
+                }
+                textures.addProperty(e.getKey(), texName);
             }
             root.add("textures", textures);
         }

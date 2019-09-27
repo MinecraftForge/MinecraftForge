@@ -20,4 +20,7 @@
 package net.minecraftforge.client.model.generators;
 
 public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
+    public BlockModelBuilder(String owningNamespace) {
+        super(owningNamespace);
+    }
 }

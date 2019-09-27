@@ -31,6 +31,10 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     protected List<ItemOverride> overrides = new ArrayList<>();
 
+    public ItemModelBuilder(String owningNamespace) {
+        super(owningNamespace);
+    }
+
     public OverrideBuilder override() {
         return this.new OverrideBuilder();
     }

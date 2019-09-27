@@ -306,7 +306,10 @@ project(':forge') {
                 source sourceSets.main
                 source sourceSets.userdev
                 
-                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
+                        '--input', rootProject.file('src/main/resources/'),
+                        //TODO how can this be done more generally?
+                        '--input', '/home/malte/.gradle/caches/forge_gradle/minecraft_repo/versions/1.14.4/client-extra.jar'
             }
 
             forge_test_data {

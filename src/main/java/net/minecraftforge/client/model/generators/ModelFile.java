@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,16 +53,29 @@ public abstract class ModelFile {
         return location;
     }
 
-    public static class ExistingModelFile extends ModelFile {
+    public static class UncheckedModelFile extends ModelFile {
 
-        public ExistingModelFile(ResourceLocation location) {
+        public UncheckedModelFile(ResourceLocation location) {
             super(location);
         }
 
         @Override
         protected boolean exists() {
-            //TODO proper check for non-generated model file
             return true;
+        }
+    }
+
+    public static class ExistingModelFile extends ModelFile {
+        protected ExistingModelFile(ResourceLocation location) {
+            super(location);
+        }
+
+        @Override
+        protected boolean exists() {
+            if (getUncheckedLocation().getPath().contains("."))
+                return ExistingFileHelper.INSTANCE.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, "", "models");
+            else
+                return ExistingFileHelper.INSTANCE.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
         }
     }
 
