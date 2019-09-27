@@ -25,7 +25,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
@@ -37,11 +36,9 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public abstract class BlockstateProvider implements IDataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -63,22 +60,13 @@ public abstract class BlockstateProvider implements IDataProvider {
         registerStates(this::createVariantModel, this::createMultipartModel);
     }
 
-    private void createVariantModel(Block block, IVariantModelGenerator out) {
+    private void createVariantModel(VariantBlockstate out) {
+        Block block = out.getOwner();
         ResourceLocation blockName = Preconditions.checkNotNull(block.getRegistryName());
         Preconditions.checkArgument(generatedStates.add(blockName));
         JsonObject variants = new JsonObject();
-        for (BlockState b : block.getStateContainer().getValidStates()) {
-            ConfiguredModel model = out.getModel(b);
-            Preconditions.checkNotNull(model);
-            StringBuilder name = new StringBuilder();
-            for (IProperty<?> prop : block.getStateContainer().getProperties()) {
-                if (name.length() > 0)
-                    name.append(",");
-                name.append(prop.getName())
-                        .append("=")
-                        .append(b.get(prop));
-            }
-            variants.add(name.toString(), model.toJSON());
+        for (Map.Entry<VariantBlockstate.PartialBlockstate, ConfiguredModel> entry : out.getModels().entrySet()) {
+            variants.add(entry.getKey().toString(), entry.getValue().toJSON());
         }
         JsonObject main = new JsonObject();
         main.add("variants", variants);
@@ -96,7 +84,7 @@ public abstract class BlockstateProvider implements IDataProvider {
         saveBlockState(main, block);
     }
 
-    protected abstract void registerStates(BiConsumer<Block, IVariantModelGenerator> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased);
+    protected abstract void registerStates(Consumer<VariantBlockstate> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased);
 
     private void saveBlockState(JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
@@ -114,10 +102,6 @@ public abstract class BlockstateProvider implements IDataProvider {
     @Override
     public String getName() {
         return "Block States";
-    }
-
-    public interface IVariantModelGenerator {
-        ConfiguredModel getModel(BlockState state);
     }
 
     public static final class ConfiguredModel {

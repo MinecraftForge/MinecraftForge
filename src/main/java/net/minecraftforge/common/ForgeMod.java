@@ -38,6 +38,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -46,8 +49,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelProvider;
+import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.VariantBlockstate.PartialBlockstate;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -95,6 +98,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -209,6 +216,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         if (event.includeClient())
         {
             gen.addProvider(new ItemModels(gen));
+            BlockModels blockModels = new BlockModels(gen);
+            gen.addProvider(blockModels);
+            gen.addProvider(new BlockStates(gen, blockModels));
         }
         if (event.includeServer())
         {
@@ -248,6 +258,66 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         public String getName()
         {
             return "Forge Test Item Models";
+        }
+    }
+
+    public static class BlockModels extends ModelProvider<BlockModelBuilder> {
+        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGate;
+        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateOpen;
+        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWall;
+        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWallOpen;
+        public BlockModels(DataGenerator generator) {
+            super(generator, "forge", BLOCK_FOLDER, BlockModelBuilder::new);
+        }
+
+        @Override
+        protected void registerBuilders() {
+            (acaciaFenceGate = getModelFile("acacia_fence_gate")).getBuilder()
+                    .parent(new ResourceLocation("block/template_fence_gate"))
+                    .texture("texture", "block/acacia_planks");
+            (acaciaFenceGateOpen = getModelFile("acacia_fence_gate_open")).getBuilder()
+                    .parent(new ResourceLocation("block/template_fence_gate_open"))
+                    .texture("texture", "block/acacia_planks");
+            (acaciaFenceGateWall = getModelFile("acacia_fence_gate_wall")).getBuilder()
+                    .parent(new ResourceLocation("block/template_fence_gate_wall"))
+                    .texture("texture", "block/acacia_planks");
+            (acaciaFenceGateWallOpen = getModelFile("acacia_fence_gate_wall_open")).getBuilder()
+                    .parent(new ResourceLocation("block/template_fence_gate_wall_open"))
+                    .texture("texture", "block/acacia_planks");
+        }
+
+        @Override
+        public String getName() {
+            return "Forge Test Block Models";
+        }
+    }
+
+    public static class BlockStates extends BlockstateProvider {
+
+        private final BlockModels models;
+
+        public BlockStates(DataGenerator gen, BlockModels models) {
+            super(gen);
+            this.models = models;
+        }
+
+        @Override
+        protected void registerStates(Consumer<VariantBlockstate> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased) {
+            PartialBlockstate base = new PartialBlockstate(Blocks.ACACIA_FENCE_GATE);
+            VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
+            for (Direction dir: FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
+                PartialBlockstate withFacing = base.with(FenceGateBlock.HORIZONTAL_FACING, dir);
+                int angle = (int) dir.getHorizontalAngle();
+                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, false),
+                        new ConfiguredModel(models.acaciaFenceGate, 0, angle, true));
+                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
+                        new ConfiguredModel(models.acaciaFenceGateOpen, 0, angle, true));
+                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),
+                        new ConfiguredModel(models.acaciaFenceGateWall, 0, angle, true));
+                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, true),
+                        new ConfiguredModel(models.acaciaFenceGateWallOpen, 0, angle, true));
+            }
+            variantBased.accept(builder.build());
         }
     }
 

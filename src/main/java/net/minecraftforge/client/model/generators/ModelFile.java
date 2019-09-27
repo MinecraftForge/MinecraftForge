@@ -68,12 +68,10 @@ public abstract class ModelFile {
     public static class GeneratedModelFile<T extends ModelBuilder<T>> extends ModelFile {
         private boolean generated = false;
         private final T generator;
-        private final String folder;
 
         public GeneratedModelFile(ResourceLocation location, T generator, String folder) {
-            super(location);
+            super(new ResourceLocation(location.getNamespace(), folder+"/"+location.getPath()));
             this.generator = generator;
-            this.folder = folder;
         }
 
         @Override
@@ -93,7 +91,7 @@ public abstract class ModelFile {
 
         protected Path getPath(Path basePath) {
             ResourceLocation loc = getUncheckedLocation();
-            return basePath.resolve("assets/" + loc.getNamespace() + "/models/" + folder + "/" + loc.getPath() + ".json");
+            return basePath.resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
         }
 
         public T getBuilder() {

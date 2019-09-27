@@ -69,6 +69,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     public T texture(String key, String texture) {
         //TODO check that texture exists?
+        //TODO support using textures from other mods/vanilla?
         this.textures.put(key, texture);
         return self();
     }
