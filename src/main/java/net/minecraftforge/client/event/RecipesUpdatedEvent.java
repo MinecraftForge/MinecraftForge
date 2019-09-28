@@ -28,7 +28,19 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class RecipesUpdatedEvent extends Event
 {
-    public RecipesUpdatedEvent()
+    
+    private final RecipeManager mgr;
+    
+    public RecipesUpdatedEvent(RecipeManager mgr)
     {
+        this.mgr = mgr;
+    }
+
+    /**
+     * @return The newly-updated recipe manager that now contains all the recipes that were just received.
+     */
+    public RecipeManager getRecipeManager()
+    {
+        return mgr;
     }
 }

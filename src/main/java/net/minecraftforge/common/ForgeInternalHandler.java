@@ -33,6 +33,7 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -100,6 +101,12 @@ public class ForgeInternalHandler
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
         UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
+    }
+
+    @SubscribeEvent
+    public synchronized void tagsUpdated(TagsUpdatedEvent event)
+    {
+        ForgeHooks.updateBurns();
     }
 }
 

@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.fluid.*;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -52,15 +54,14 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -85,6 +86,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.spawner.AbstractSpawner;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ActionResultType;
@@ -140,10 +142,13 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IRegistryDelegate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -530,9 +535,10 @@ public class ForgeHooks
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
         ItemStack itemstack = entityPlayer.getHeldItemMainhand();
-        if (gameType.isCreative() && !itemstack.isEmpty()
-                && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+        if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+        {
             preCancelEvent = true;
+        }
 
         if (gameType.hasLimitedInteractions())
         {
@@ -588,17 +594,14 @@ public class ForgeHooks
             return ActionResultType.PASS;
 
         // handle all placement events here
+        Item item = itemstack.getItem();
         int size = itemstack.getCount();
         CompoundNBT nbt = null;
         if (itemstack.getTag() != null)
-        {
             nbt = itemstack.getTag().copy();
-        }
 
         if (!(itemstack.getItem() instanceof BucketItem)) // if not bucket
-        {
             world.captureBlockSnapshots = true;
-        }
 
         ItemStack copy = itemstack.isDamageable() ? itemstack.copy() : null;
         ActionResultType ret = itemstack.getItem().onItemUse(context);
@@ -665,7 +668,7 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(Stats.ITEM_USED.get(itemstack.getItem()));
+                player.addStat(Stats.ITEM_USED.get(item));
             }
         }
         world.capturedBlockSnapshots.clear();
@@ -831,6 +834,28 @@ public class ForgeHooks
             ret.freeze();
 
         return ret;
+    }
+
+    public static FluidAttributes createVanillaFluidAttributes(Fluid fluid)
+    {
+        if (fluid instanceof EmptyFluid)
+            return net.minecraftforge.fluids.FluidAttributes.builder(null, null)
+                    .translationKey("block.minecraft.air")
+                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
+        if (fluid instanceof WaterFluid)
+            return net.minecraftforge.fluids.FluidAttributes.Water.builder(
+                    new net.minecraft.util.ResourceLocation("block/water_still"),
+                    new net.minecraft.util.ResourceLocation("block/water_flow"))
+                    .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
+                    .translationKey("block.minecraft.water")
+                    .color(0xFF3F76E4).build(fluid);
+        if (fluid instanceof LavaFluid)
+            return net.minecraftforge.fluids.FluidAttributes.builder(
+                    new net.minecraft.util.ResourceLocation("block/lava_still"),
+                    new net.minecraft.util.ResourceLocation("block/lava_flow"))
+                    .translationKey("block.minecraft.lava")
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
+        throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
     private static class LootTableContext
@@ -1052,8 +1077,8 @@ public class ForgeHooks
         return event.getVanillaNoteId();
     }
 
-    public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner) {
-        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
+    public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {
+        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
@@ -1157,4 +1182,30 @@ public class ForgeHooks
         BlockState state = world.getBlockState(pos);
         return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
+
+    private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
+
+    /**
+     * Gets the burn time of this itemstack.
+     */
+    public static int getBurnTime(ItemStack stack)
+    {
+        if (stack.isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            Item item = stack.getItem();
+            int ret = stack.getBurnTime();
+            return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret);
+        }
+    }
+
+    public static synchronized void updateBurns()
+    {
+        VANILLA_BURNS.clear();
+        FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
+
 }

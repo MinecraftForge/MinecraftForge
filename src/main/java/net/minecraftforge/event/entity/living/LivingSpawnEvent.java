@@ -25,6 +25,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -76,6 +77,7 @@ public class LivingSpawnEvent extends LivingEvent
     {
         @Nullable
         private final AbstractSpawner spawner;
+        private final SpawnReason spawnReason;
 
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
@@ -87,10 +89,11 @@ public class LivingSpawnEvent extends LivingEvent
          * @param spawner position of the MobSpawner
          *                  null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(MobEntity entity, IWorld world, double x, double y, double z, @Nullable AbstractSpawner spawner)
+        public CheckSpawn(MobEntity entity, IWorld world, double x, double y, double z, @Nullable AbstractSpawner spawner, SpawnReason spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
+            this.spawnReason = spawnReason;
         }
 
         public boolean isSpawner()
@@ -102,6 +105,11 @@ public class LivingSpawnEvent extends LivingEvent
         public AbstractSpawner getSpawner()
         {
             return spawner;
+        }
+
+        public SpawnReason getSpawnReason()
+        {
+            return spawnReason;
         }
     }
 
@@ -123,20 +131,27 @@ public class LivingSpawnEvent extends LivingEvent
     {
         @Nullable
         private final AbstractSpawner spawner;
+        private final SpawnReason spawnReason;
 
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(MobEntity entity, World world, double x, double y, double z, @Nullable AbstractSpawner spawner)
+        public SpecialSpawn(MobEntity entity, World world, double x, double y, double z, @Nullable AbstractSpawner spawner, SpawnReason spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
+            this.spawnReason = spawnReason;
         }
 
         @Nullable
         public AbstractSpawner getSpawner()
         {
             return spawner;
+        }
+
+        public SpawnReason getSpawnReason()
+        {
+            return spawnReason;
         }
     }
 

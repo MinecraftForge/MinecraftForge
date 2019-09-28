@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
++++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
+@@ -72,7 +72,7 @@
+       return this.field_214953_e.size();
+    }
+ 
+-   public static enum PlacementBehaviour {
++   public static enum PlacementBehaviour implements net.minecraftforge.common.IExtensibleEnum {
+       TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityStructureProcessor(Heightmap.Type.WORLD_SURFACE_WG, -1))),
+       RIGID("rigid", ImmutableList.of());
+ 
+@@ -98,5 +98,15 @@
+       public ImmutableList<StructureProcessor> func_214937_b() {
+          return this.field_214941_e;
+       }
++      
++      public static PlacementBehaviour create(String enumName, String p_i50487_3_, ImmutableList<StructureProcessor> p_i50487_4_) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      @Override
++      @Deprecated
++      public void init() {
++         field_214939_c.put(func_214936_a(), this);
++      }
+    }
+ }

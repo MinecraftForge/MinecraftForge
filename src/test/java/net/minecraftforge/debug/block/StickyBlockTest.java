@@ -27,10 +27,11 @@ import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(StickyBlockTest.MODID)
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(bus = Bus.MOD)
 public class StickyBlockTest
 {
     static final String MODID = "custom_slime_block_test";

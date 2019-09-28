@@ -21,6 +21,8 @@ package net.minecraftforge.registries;
 
 import net.minecraft.util.ResourceLocation;
 
+import java.util.function.Supplier;
+
 
 /**
  * A registry delegate for holding references to items or blocks
@@ -31,7 +33,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @param <T> the type of thing we're holding onto
  */
-public interface IRegistryDelegate<T> {
+public interface IRegistryDelegate<T> extends Supplier<T> {
     /**
      * Get the referent pointed at by this delegate. This will be the currently active item or block, and will change
      * as world saves come and go. Note that item.delegate.get() may NOT be the same object as item, due to item and
@@ -39,6 +41,7 @@ public interface IRegistryDelegate<T> {
      *
      * @return The referred object
      */
+    @Override
     T get();
 
     /**

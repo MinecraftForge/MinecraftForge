@@ -83,4 +83,9 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     protected String getNaming() {
         return "srg";
     }
+
+    @Override
+    public Path[] getPaths() {
+        return FMLLoader.getMCPaths();
+    }
 }

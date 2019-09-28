@@ -21,11 +21,13 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,9 +42,11 @@ public class BackgroundScanHandler
     private final List<ModFile> pendingFiles;
     private final List<ModFile> scannedFiles;
     private final List<ModFile> allFiles;
+    private final Map<IModFile.Type, List<ModFile>> modFiles;
     private LoadingModList loadingModList;
 
-    public BackgroundScanHandler() {
+    public BackgroundScanHandler(final Map<IModFile.Type, List<ModFile>> modFiles) {
+        this.modFiles = modFiles;
         modContentScanner = Executors.newSingleThreadExecutor(r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             thread.setDaemon(true);
@@ -51,6 +55,10 @@ public class BackgroundScanHandler
         scannedFiles = new ArrayList<>();
         pendingFiles = new ArrayList<>();
         allFiles = new ArrayList<>();
+    }
+
+    public Map<IModFile.Type, List<ModFile>> getModFiles() {
+        return modFiles;
     }
 
     public void submitForScanning(final ModFile file) {

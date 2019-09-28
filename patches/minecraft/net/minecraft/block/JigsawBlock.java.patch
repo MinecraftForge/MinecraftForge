@@ -1,0 +1,16 @@
+--- a/net/minecraft/block/JigsawBlock.java
++++ b/net/minecraft/block/JigsawBlock.java
+@@ -29,6 +29,13 @@
+       return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
+    }
+ 
++   // FORGE: Fix jigsaw blocks not mirroring properly
++   @Override
++   @Deprecated
++   public BlockState func_185471_a(BlockState state, net.minecraft.util.Mirror mirrorIn) {
++      return state.func_206870_a(field_176387_N, mirrorIn.func_185803_b(state.func_177229_b(field_176387_N)));
++   }
++
+    public BlockState func_196258_a(BlockItemUseContext p_196258_1_) {
+       return this.func_176223_P().func_206870_a(field_176387_N, p_196258_1_.func_196000_l());
+    }

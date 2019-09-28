@@ -89,7 +89,7 @@ public class ModDiscoverer {
                 .collect(Collectors.groupingBy(IModFile::getType));
 
         FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(IModFile.Type.LANGPROVIDER));
-        BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
+        BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler(modFiles);
         final List<ModFile> mods = modFiles.getOrDefault(IModFile.Type.MOD, Collections.emptyList());
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )

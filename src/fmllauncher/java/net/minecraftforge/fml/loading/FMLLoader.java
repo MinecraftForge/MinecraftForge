@@ -36,6 +36,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,7 +86,7 @@ public class FMLLoader
         LOGGER.debug(CORE,"FML {} loading", version);
         final Package modLauncherPackage = ITransformationService.class.getPackage();
         LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
-        if (!modLauncherPackage.isCompatibleWith("2.0")) {
+        if (!modLauncherPackage.isCompatibleWith("4.0")) {
             LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
@@ -195,12 +196,13 @@ public class FMLLoader
 
         runtimeDistCleaner.getExtension().accept(dist);
     }
-    public static void beginModScan(final Map<String,?> arguments)
+    public static Map<IModFile.Type, List<ModFile>> beginModScan(final Map<String,?> arguments)
     {
         LOGGER.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer(arguments);
         final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
         loadingModList = backgroundScanHandler.getLoadingModList();
+        return backgroundScanHandler.getModFiles();
     }
 
     public static ICoreModProvider getCoreModProvider() {

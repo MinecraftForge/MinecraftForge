@@ -44,8 +44,12 @@ loaderVersion="[28,)"
 [[mods]]
     modId="entity_selector_test"
 [[mods]]
+    modId="gravity_attribute_test"
+[[mods]]
     modId="new_fluid_test"
 [[mods]]
     modId="data_gen_test"
 [[mods]]
     modId="piston_event_test"
+[[mods]]
+    modId="flower_pot_test"

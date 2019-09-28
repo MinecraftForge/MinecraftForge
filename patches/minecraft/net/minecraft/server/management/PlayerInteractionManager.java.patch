@@ -25,7 +25,7 @@
 -      if (d3 > 36.0D) {
 +      double dist = field_73090_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 1;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_225416_1_, p_225416_3_);
-+      if (event.isCanceled()) { // Restore block and te data
++      if (event.isCanceled() || (!this.func_73083_d() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
 +         field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
 +         field_73092_a.func_184138_a(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), field_73092_a.func_180495_p(p_225416_1_), 3);
 +         return;
@@ -35,12 +35,13 @@
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
        } else if (p_225416_1_.func_177956_o() >= p_225416_4_) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false));
-@@ -145,12 +153,12 @@
+@@ -145,12 +153,13 @@
              this.field_73089_e = this.field_73100_i;
              float f = 1.0F;
              BlockState blockstate = this.field_73092_a.func_180495_p(p_225416_1_);
 -            if (!blockstate.func_196958_f()) {
 +            if (!blockstate.isAir(field_73092_a, p_225416_1_)) {
++               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
                 blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
                 f = blockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_225416_1_);
              }
@@ -50,7 +51,7 @@
                 this.func_225415_a(p_225416_1_, p_225416_2_);
              } else {
                 this.field_73088_d = true;
-@@ -203,7 +211,8 @@
+@@ -203,7 +212,8 @@
  
     public boolean func_180237_b(BlockPos p_180237_1_) {
        BlockState blockstate = this.field_73092_a.func_180495_p(p_180237_1_);
@@ -60,7 +61,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
-@@ -211,25 +220,30 @@
+@@ -211,25 +221,30 @@
           if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_73090_b.func_195070_dx()) {
              this.field_73092_a.func_184138_a(p_180237_1_, blockstate, blockstate, 3);
              return false;
@@ -98,7 +99,7 @@
  
                 return true;
              }
-@@ -237,12 +251,22 @@
+@@ -237,12 +252,22 @@
        }
     }
  
@@ -121,7 +122,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -285,12 +309,18 @@
+@@ -285,12 +310,18 @@
              return ActionResultType.PASS;
           }
        } else {

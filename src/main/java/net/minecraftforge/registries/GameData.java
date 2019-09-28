@@ -20,10 +20,11 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
-import net.minecraft.block.Block;
+
 import net.minecraft.block.AirBlock;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -34,9 +35,9 @@ import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.BlockItem;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
@@ -47,15 +48,17 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
-import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraft.world.gen.carver.WorldCarver;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.MinecraftForge;
@@ -69,11 +72,13 @@ import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -142,6 +147,8 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
+    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
+    private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
@@ -191,7 +198,7 @@ public class GameData
         // Worldgen
         makeRegistry(WORLD_CARVERS, WorldCarver.class).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, Feature.class).disableSaving().disableSync().create();
+        makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
         makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
@@ -251,6 +258,18 @@ public class GameData
     public static Map<IDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
         return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static Registry<Structure<?>> getStructureFeatures()
+    {
+        return (Registry<Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURE_FEATURES, Registry.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static BiMap<String, Structure<?>> getStructureMap()
+    {
+        return (BiMap<String, Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURES, BiMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -592,6 +611,44 @@ public class GameData
         public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
         {
             owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
+        }
+    }
+    
+    private static class FeatureCallbacks implements IForgeRegistry.AddCallback<Feature<?>>, IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
+    {
+        static final FeatureCallbacks INSTANCE = new FeatureCallbacks();
+        
+        @Override
+        public void onAdd(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage, int id, Feature<?> obj, Feature<?> oldObj)
+        {
+            if (obj instanceof Structure)
+            {
+                Structure<?> structure = (Structure<?>) obj;
+                String key = structure.getStructureName().toLowerCase(Locale.ROOT);
+                
+                @SuppressWarnings("unchecked")
+                Registry<Structure<?>> reg = owner.getSlaveMap(STRUCTURE_FEATURES, Registry.class);
+                Registry.register(reg, key, structure);
+                
+                @SuppressWarnings("unchecked")
+                BiMap<String, Structure<?>> map = owner.getSlaveMap(STRUCTURES, BiMap.class);
+                if (oldObj != null && oldObj instanceof Structure) map.remove(((Structure<?>)oldObj).getStructureName());
+                map.put(key, structure);
+            }
+        }
+        
+        @Override
+        public void onClear(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(STRUCTURE_FEATURES, ClearableRegistry.class).clear();
+            owner.getSlaveMap(STRUCTURES, BiMap.class).clear();
+        }
+
+        @Override
+        public void onCreate(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(STRUCTURE_FEATURES, new ClearableRegistry<>(owner.getRegistryName()));
+            owner.setSlaveMap(STRUCTURES, HashBiMap.create());
         }
     }
 

@@ -67,7 +67,7 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     public ClearableRegistry(ResourceLocation name, Class<T> superType)
     {
         this.name = name;
-        this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
+        this.isDelegated =  superType != null && ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
     }
 
     @Override

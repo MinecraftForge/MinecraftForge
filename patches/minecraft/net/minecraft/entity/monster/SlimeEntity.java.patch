@@ -17,7 +17,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -170,7 +171,8 @@
+@@ -170,9 +171,10 @@
        return (EntityType<? extends SlimeEntity>) super.func_200600_R();
     }
  
@@ -25,8 +25,11 @@
 +   @Override
 +   public void remove(boolean keepData) {
        int i = this.func_70809_q();
-       if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
+-      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
++      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F && !this.field_70128_L) {
           int j = 2 + this.field_70146_Z.nextInt(3);
+ 
+          for(int k = 0; k < j; ++k) {
 @@ -193,7 +195,7 @@
           }
        }

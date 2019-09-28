@@ -10,17 +10,17 @@
     public boolean func_178309_b() {
        return this.field_178315_d != null ? this.field_178315_d.func_178309_b() : this.field_178322_i;
     }
-@@ -90,6 +93,10 @@
-    private ItemOverrideList func_217646_a(ModelBakery p_217646_1_, BlockModel p_217646_2_) {
+@@ -91,6 +94,10 @@
        return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
     }
-+   
+ 
 +   public ItemOverrideList getOverrides(ModelBakery p_217646_1_, BlockModel p_217646_2_, Function<ResourceLocation, TextureAtlasSprite> textureGetter, net.minecraft.client.renderer.vertex.VertexFormat format) {
 +      return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, textureGetter, this.field_187968_k, format);
 +   }
- 
++
     public Collection<ResourceLocation> func_187965_e() {
        Set<ResourceLocation> set = Sets.newHashSet();
+ 
 @@ -160,25 +167,33 @@
        return set1;
     }
@@ -38,7 +38,7 @@
     public IBakedModel func_217644_a(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_) {
 +       return bake(p_217644_1_, p_217644_2_, p_217644_3_, p_217644_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +   }
-+   
++
 +   public IBakedModel bake(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
        TextureAtlasSprite textureatlassprite = p_217644_3_.apply(new ResourceLocation(this.func_178308_c("particle")));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {
@@ -57,7 +57,7 @@
 +                  simplebakedmodel$builder.func_177648_a(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 } else {
 -                  simplebakedmodel$builder.func_177650_a(p_217644_4_.func_188048_b().func_177523_a(blockpartface.field_178244_b), func_217645_a(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
-+                  simplebakedmodel$builder.func_177650_a(p_217644_4_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(blockpartface.field_178244_b)).orElse(blockpartface.field_178244_b), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
++                  simplebakedmodel$builder.func_177650_a(p_217644_4_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotateTransform(blockpartface.field_178244_b)).orElse(blockpartface.field_178244_b), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 }
              }
           }

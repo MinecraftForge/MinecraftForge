@@ -16,6 +16,6 @@
 +
 +   public java.util.Optional<net.minecraftforge.common.model.TRSRTransformation> apply(java.util.Optional<? extends net.minecraftforge.common.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(this, part); }
 +   public javax.vecmath.Matrix4f getMatrixVec() { return net.minecraftforge.common.model.TRSRTransformation.from(this).getMatrixVec(); }
-+   public Direction rotate(Direction facing) { return func_177523_a(facing); }
++   public Direction rotateTransform(Direction facing) { return func_177523_a(facing); }
 +   public int rotate(Direction facing, int vertexIndex) { return func_177520_a(facing, vertexIndex); }
  }

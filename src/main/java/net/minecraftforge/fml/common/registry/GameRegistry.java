@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 
 
@@ -34,7 +34,7 @@ public class GameRegistry
      * @param registryType The base class of items in this registry.
      * @return The registry, Null if none is registered.
      */
-    public static <K extends ForgeRegistryEntry<K>> IForgeRegistry<K> findRegistry(Class<K> registryType)
+    public static <K extends IForgeRegistryEntry<K>> IForgeRegistry<K> findRegistry(Class<K> registryType)
     {
         return RegistryManager.ACTIVE.getRegistry(registryType);
     }

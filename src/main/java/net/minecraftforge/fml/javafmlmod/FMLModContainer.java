@@ -136,9 +136,14 @@ public class FMLModContainer extends ModContainer
             LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, event.fromStage(), "fml.modloading.failedtoloadmod", e, modClass);
         }
-        LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
-        AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
-        LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
+        try {
+            LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
+            AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
+            LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
+        } catch (Throwable e) {
+            LOGGER.error(LOADING,"Failed to register automatic subscribers. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            throw new ModLoadingException(modInfo, event.fromStage(), "fml.modloading.failedtoloadmod", e, modClass);
+        }
     }
 
     @Override

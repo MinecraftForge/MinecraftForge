@@ -442,7 +442,7 @@ public final class ModelDynBucket implements IUnbakedModel
                         BakedDynBucket model = (BakedDynBucket)originalModel;
 
                         Fluid fluid = fluidStack.getFluid();
-                        String name = fluid.getAttributes().getName();
+                        String name = fluid.getRegistryName().toString();
 
                         if (!model.cache.containsKey(name))
                         {

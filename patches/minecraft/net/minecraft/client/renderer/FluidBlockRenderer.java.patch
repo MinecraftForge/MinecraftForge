@@ -1,15 +1,77 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -58,8 +58,10 @@
+@@ -58,8 +58,9 @@
  
     public boolean func_217638_a(IEnviromentBlockReader p_217638_1_, BlockPos p_217638_2_, BufferBuilder p_217638_3_, IFluidState p_217638_4_) {
        boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b);
 -      TextureAtlasSprite[] atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
 -      int i = flag ? 16777215 : BiomeColors.func_217612_c(p_217638_1_, p_217638_2_);
 +      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_217638_1_, p_217638_2_, p_217638_4_);
-+      if (atextureatlassprite == null) atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
 +      int i = p_217638_4_.func_206886_c().getAttributes().getColor(p_217638_1_, p_217638_2_);
-+      if (i < 0) i = flag ? 16777215 : BiomeColors.func_217612_c(p_217638_1_, p_217638_2_);
++      float alpha = (float)(i >> 24 & 255) / 255.0F;
        float f = (float)(i >> 16 & 255) / 255.0F;
        float f1 = (float)(i >> 8 & 255) / 255.0F;
        float f2 = (float)(i & 255) / 255.0F;
+@@ -145,15 +146,15 @@
+             float f24 = 1.0F * f;
+             float f25 = 1.0F * f1;
+             float f26 = 1.0F * f2;
+-            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
+-            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
+-            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
+-            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
+             if (p_217638_4_.func_205586_a(p_217638_1_, p_217638_2_.func_177984_a())) {
+-               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
+-               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
+-               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
+-               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
++               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
++               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
++               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
++               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
+             }
+          }
+ 
+@@ -168,10 +169,10 @@
+             float f37 = 0.5F * f;
+             float f38 = 0.5F * f1;
+             float f40 = 0.5F * f2;
+-            p_217638_3_.func_181662_b(d0, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f31, (double)f36).func_187314_a(j2, k2).func_181675_d();
+-            p_217638_3_.func_181662_b(d0, d1, d2).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f31, (double)f34).func_187314_a(j2, k2).func_181675_d();
+-            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f32, (double)f34).func_187314_a(j2, k2).func_181675_d();
+-            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f32, (double)f36).func_187314_a(j2, k2).func_181675_d();
++            p_217638_3_.func_181662_b(d0, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f31, (double)f36).func_187314_a(j2, k2).func_181675_d();
++            p_217638_3_.func_181662_b(d0, d1, d2).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f31, (double)f34).func_187314_a(j2, k2).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f32, (double)f34).func_187314_a(j2, k2).func_181675_d();
++            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f32, (double)f36).func_187314_a(j2, k2).func_181675_d();
+             flag7 = true;
+          }
+ 
+@@ -245,15 +246,15 @@
+                float f28 = 1.0F * f27 * f;
+                float f29 = 1.0F * f27 * f1;
+                float f30 = 1.0F * f27 * f2;
+-               p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
+-               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
+-               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
+-               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
++               p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
++               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
++               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
++               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
+                if (textureatlassprite2 != this.field_187501_d) {
+-                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
+-                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
+-                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
+-                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
+                }
+             }
+          }

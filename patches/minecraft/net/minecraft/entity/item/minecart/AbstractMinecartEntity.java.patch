@@ -226,7 +226,7 @@
 +   @Override public double getDragAir() { return dragAir; }
 +   @Override public void setDragAir(double value) { dragAir = value; }
 +   @Override
-+   public double getMaxSpeed() { //Non-default because getMaximumSpeed is protected
++   public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
 +      if (!canUseRail()) return func_174898_m();
 +      BlockPos pos = this.getCurrentRailPosition();
 +      BlockState state = getMinecart().field_70170_p.func_180495_p(pos);

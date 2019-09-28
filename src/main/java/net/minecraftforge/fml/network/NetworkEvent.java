@@ -46,7 +46,7 @@ public class NetworkEvent extends Event
 
     private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source)
     {
-        this.payload = payload.getData();
+        this.payload = payload.getInternalData();
         this.source = source;
         this.loginIndex = payload.getIndex();
     }

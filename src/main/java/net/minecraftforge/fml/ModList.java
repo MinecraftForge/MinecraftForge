@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -138,7 +139,14 @@ public class ModList
         }
         catch (InterruptedException | ExecutionException e)
         {
-            LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
+            LOGGER.error(LOADING, "Encountered an exception during parallel processing - sleeping 10 seconds to wait for jobs to finish", e);
+            errorHandler.accept(Collections.singletonList(new UncaughtModLoadingException(lifecycleEvent.fromStage(), e)));
+            modLoadingThreadPool.awaitQuiescence(10, TimeUnit.SECONDS);
+            if (!modLoadingThreadPool.isQuiescent()) {
+                LOGGER.fatal(LOADING, "The parallel pool has failed to quiesce correctly, forcing a shutdown. There is something really wrong here");
+                modLoadingThreadPool.shutdownNow();
+                throw new RuntimeException("Forge played \"STOP IT NOW MODS!\" - it was \"NOT VERY EFFECTIVE\"");
+            }
         }
         DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler, executor);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
@@ -211,5 +219,11 @@ public class ModList
 
     public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {
         return indexedMods.values().stream().map(function);
+    }
+
+    private static class UncaughtModLoadingException extends ModLoadingException {
+        public UncaughtModLoadingException(ModLoadingStage stage, Throwable originalException) {
+            super(null, stage, "fml.modloading.uncaughterror", originalException);
+        }
     }
 }
