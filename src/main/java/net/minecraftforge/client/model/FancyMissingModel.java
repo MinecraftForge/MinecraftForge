@@ -34,6 +34,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -209,7 +210,7 @@ final class FancyMissingModel implements IUnbakedModel
                 case HEAD:
                     break;
                 case GUI:
-                    if (ForgeMod.zoomInMissingModelTextInGui)
+                    if (ForgeConfig.CLIENT.zoomInMissingModelTextInGui.get())
                     {
                         transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), new Vector3f(4, 4, 4), null);
                         big = false;
