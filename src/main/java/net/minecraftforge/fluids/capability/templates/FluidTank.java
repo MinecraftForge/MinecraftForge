@@ -190,7 +190,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
             drained = fluid.getAmount();
         }
         FluidStack stack = new FluidStack(fluid, drained);
-        if (action.execute())
+        if (action.execute() && drained > 0)
         {
             fluid.shrink(drained);
         }
