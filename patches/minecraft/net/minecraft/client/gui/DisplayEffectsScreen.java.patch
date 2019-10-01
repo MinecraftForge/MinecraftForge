@@ -8,7 +8,15 @@
           this.field_147003_i = 160 + (this.width - this.field_146999_f - 200) / 2;
           this.field_147045_u = true;
        }
-@@ -84,6 +85,7 @@
+@@ -71,6 +72,7 @@
+       int i = this.field_147009_r;
+ 
+       for(EffectInstance effectinstance : p_214079_3_) {
++         if (!effectinstance.func_188419_a().shouldRender(effectinstance)) continue;
+          GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+          this.blit(p_214079_1_, i, 0, 166, 140, 32);
+          i += p_214079_2_;
+@@ -84,6 +86,7 @@
        int i = this.field_147009_r;
  
        for(EffectInstance effectinstance : p_214077_3_) {
@@ -16,7 +24,7 @@
           Effect effect = effectinstance.func_188419_a();
           blit(p_214077_1_ + 6, i + 7, this.blitOffset, 18, 18, potionspriteuploader.func_215288_a(effect));
           i += p_214077_2_;
-@@ -95,6 +97,9 @@
+@@ -95,6 +98,9 @@
        int i = this.field_147009_r;
  
        for(EffectInstance effectinstance : p_214078_3_) {
