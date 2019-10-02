@@ -109,7 +109,7 @@
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
 -         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.func_215695_r() : p_180429_2_.func_215695_r();
-+         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.func_215695_r() : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
++         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.getSoundType(field_70170_p, p_180429_1_, this) : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }

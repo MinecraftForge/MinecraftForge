@@ -1,6 +1,6 @@
---- a/net/minecraft/entity/passive/FoxEntity.java
-+++ b/net/minecraft/entity/passive/FoxEntity.java
-@@ -573,9 +573,10 @@
+--- a/net/minecraft/entity/passive/horse/LlamaEntity.java
++++ b/net/minecraft/entity/passive/horse/LlamaEntity.java
+@@ -364,9 +364,10 @@
              }
           }
  
@@ -13,12 +13,3 @@
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
           }
  
-@@ -767,7 +768,7 @@
-       }
- 
-       protected void func_220730_m() {
--         if (FoxEntity.this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
-+         if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(FoxEntity.this.field_70170_p, FoxEntity.this)) {
-             BlockState blockstate = FoxEntity.this.field_70170_p.func_180495_p(this.field_179494_b);
-             if (blockstate.func_177230_c() == Blocks.field_222434_lW) {
-                int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);
