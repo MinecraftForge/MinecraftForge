@@ -1,0 +1,13 @@
+--- a/net/minecraft/block/SweetBerryBushBlock.java
++++ b/net/minecraft/block/SweetBerryBushBlock.java
+@@ -47,8 +47,9 @@
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+       super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
+       int i = p_196267_1_.func_177229_b(field_220125_a);
+-      if (i < 3 && p_196267_4_.nextInt(5) == 0 && p_196267_2_.func_201669_a(p_196267_3_.func_177984_a(), 0) >= 9) {
++      if (i < 3 && p_196267_2_.func_201669_a(p_196267_3_.func_177984_a(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt(5) == 0)) {
+          p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_220125_a, Integer.valueOf(i + 1)), 2);
++         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+       }
+ 
+    }
