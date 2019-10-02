@@ -1,0 +1,20 @@
+--- a/net/minecraft/command/impl/TimeCommand.java
++++ b/net/minecraft/command/impl/TimeCommand.java
+@@ -43,6 +43,8 @@
+    }
+ 
+    public static int func_198829_a(CommandSource p_198829_0_, int p_198829_1_) {
++      p_198829_0_.func_197023_e().func_72877_b(p_198829_1_); // FORGE: Don't change time of modded dimensions
++      if (false)
+       for(ServerWorld serverworld : p_198829_0_.func_197028_i().func_212370_w()) {
+          serverworld.func_72877_b((long)p_198829_1_);
+       }
+@@ -52,6 +54,8 @@
+    }
+ 
+    public static int func_198826_b(CommandSource p_198826_0_, int p_198826_1_) {
++      p_198826_0_.func_197023_e().func_72877_b(p_198826_0_.func_197023_e().func_72820_D() + p_198826_1_); // FORGE: Don't change time of modded dimensions
++      if (false)
+       for(ServerWorld serverworld : p_198826_0_.func_197028_i().func_212370_w()) {
+          serverworld.func_72877_b(serverworld.func_72820_D() + (long)p_198826_1_);
+       }

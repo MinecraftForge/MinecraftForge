@@ -19,13 +19,16 @@
 
 package net.minecraftforge.common;
 
-import java.util.function.BiFunction;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.DerivedWorldInfo;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.registries.ForgeRegistryEntry;
+
+import java.util.function.BiFunction;
 
 /**
  * In 1.13.2, Mojang made DimensionType as the unique holder/identifier for each Dimension.
@@ -36,6 +39,22 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
 {
     public abstract BiFunction<World, DimensionType, ? extends Dimension> getFactory();
+
+    /**
+     * Allow mods to control the WorldInfo used for the dimension. In vanilla, all
+     * dimensions use a {@link DerivedWorldInfo} except the overworld, which ties
+     * weather and other data to the overworld. Instead, the default implementation
+     * here creates a new {@link WorldInfo}, but can be overriden for more
+     * advanced behavior.
+     * 
+     * @param parent   The parent {@link WorldInfo}, mostly likely from the
+     *                 overworld.
+     * @return A {@link WorldInfo} for the dimension world being created.
+     */
+    public WorldInfo createWorldInfo(WorldInfo parent)
+    {
+        return new WorldInfo(new WorldSettings(parent), parent.getWorldName());
+    }
 
     /**
      * Serialize any necessary data, this is called both when saving the world on the server.

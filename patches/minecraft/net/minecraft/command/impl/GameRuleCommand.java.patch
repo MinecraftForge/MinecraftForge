@@ -1,0 +1,19 @@
+--- a/net/minecraft/command/impl/GameRuleCommand.java
++++ b/net/minecraft/command/impl/GameRuleCommand.java
+@@ -27,14 +27,14 @@
+ 
+    private static <T extends GameRules.RuleValue<T>> int func_223485_b(CommandContext<CommandSource> p_223485_0_, GameRules.RuleKey<T> p_223485_1_) {
+       CommandSource commandsource = p_223485_0_.getSource();
+-      T t = commandsource.func_197028_i().func_200252_aR().func_223585_a(p_223485_1_);
++      T t = commandsource.func_197023_e().func_82736_K().func_223585_a(p_223485_1_); // FORGE: Modify only the current world's gamerules
+       t.func_223554_b(p_223485_0_, "value");
+       commandsource.func_197030_a(new TranslationTextComponent("commands.gamerule.set", p_223485_1_.func_223576_a(), t.toString()), true);
+       return t.func_223557_c();
+    }
+ 
+    private static <T extends GameRules.RuleValue<T>> int func_223486_b(CommandSource p_223486_0_, GameRules.RuleKey<T> p_223486_1_) {
+-      T t = p_223486_0_.func_197028_i().func_200252_aR().func_223585_a(p_223486_1_);
++      T t = p_223486_0_.func_197023_e().func_82736_K().func_223585_a(p_223486_1_); // FORGE: Modify only the current world's gamerules
+       p_223486_0_.func_197030_a(new TranslationTextComponent("commands.gamerule.query", p_223486_1_.func_223576_a(), t.toString()), false);
+       return t.func_223557_c();
+    }

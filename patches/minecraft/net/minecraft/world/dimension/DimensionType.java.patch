@@ -61,12 +61,17 @@
     }
  
     @Nullable
-@@ -65,7 +80,21 @@
+@@ -65,7 +80,26 @@
        return Registry.field_212622_k.func_148745_a(p_186069_0_ - -1);
     }
  
 +   public boolean isVanilla() {
 +      return this.isVanilla;
++   }
++   
++   public net.minecraft.world.storage.WorldInfo createWorldInfo(net.minecraft.world.storage.WorldInfo parent) {
++      net.minecraftforge.common.ModDimension modType = getModType();
++      return modType == null ? new net.minecraft.world.storage.DerivedWorldInfo(parent) : modType.createWorldInfo(parent);
 +   }
 +
     @Nullable
