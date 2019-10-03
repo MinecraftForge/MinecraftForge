@@ -33,12 +33,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * This event should be called for all jigsaw-based structures after all basic JigsawPieces are initialized.
+ * This event is called every time a {@link JigsawPattern} is created. Use this event to modify the pools of the JigsawPattern
  * <br>
  * Use {@link #addBuilding(JigsawPiece, int)} to add custom JigsawPiece to structure pools
  * <br>
  * Use {@link #removeBuilding(ResourceLocation)} to remove a JigsawPiece from structure pools.
- * <b>Be careful to not to remove all JigsawPieces from the startPool("village/plains/town_centers" for Village and "pillager_outpost/base_plates" for PillageOutpost</b>
+ * <b>Be careful to not to remove all JigsawPieces from the startPool ("village/plains/town_centers" for Village and "pillager_outpost/base_plates" for PillageOutpost)</b>
  *
  */
 public class JigsawPatternInitEvent extends Event {
@@ -100,6 +100,10 @@ public class JigsawPatternInitEvent extends Event {
         return jigsawPoolName.toString().equals(name);
     }
 
+    /**
+     * This event should be fired whenever a Jigsaw bases structure initializes its pools.
+     * Use this event to register custom JigsawPattern before the corresponding structure is constructed.
+     */
     public static abstract class StructureJigsawPoolInitEvent extends Event{
 
         public void register(JigsawPattern jigsawPattern){
