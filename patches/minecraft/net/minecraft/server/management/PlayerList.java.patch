@@ -23,15 +23,16 @@
        p_72355_2_.func_70029_a(serverworld);
        p_72355_2_.field_71134_c.func_73080_a((ServerWorld)p_72355_2_.field_70170_p);
        String s1 = "local";
-@@ -121,6 +130,7 @@
+@@ -121,6 +130,8 @@
        WorldInfo worldinfo = serverworld.func_72912_H();
        this.func_72381_a(p_72355_2_, (ServerPlayerEntity)null, serverworld);
        ServerPlayNetHandler serverplaynethandler = new ServerPlayNetHandler(this.field_72400_f, p_72355_1_, p_72355_2_);
 +      net.minecraftforge.fml.network.NetworkHooks.sendMCRegistryPackets(p_72355_1_, "PLAY_TO_CLIENT");
++      net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(p_72355_1_, p_72355_2_);
        serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), serverworld.field_73011_w.func_186058_p(), this.func_72352_l(), worldinfo.func_76067_t(), this.field_72402_d, serverworld.func_82736_K().func_223586_b(GameRules.field_223612_o)));
        serverplaynethandler.func_147359_a(new SCustomPayloadPlayPacket(SCustomPayloadPlayPacket.field_209911_b, (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
        serverplaynethandler.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
-@@ -142,7 +152,7 @@
+@@ -142,7 +153,7 @@
  
        this.func_148539_a(itextcomponent.func_211708_a(TextFormatting.YELLOW));
        serverplaynethandler.func_147364_a(p_72355_2_.field_70165_t, p_72355_2_.field_70163_u, p_72355_2_.field_70161_v, p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
@@ -40,7 +41,7 @@
        this.field_177454_f.put(p_72355_2_.func_110124_au(), p_72355_2_);
        this.func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
  
-@@ -163,8 +173,9 @@
+@@ -163,8 +174,9 @@
  
        if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
@@ -51,7 +52,7 @@
           });
           if (entity1 != null) {
              UUID uuid = compoundnbt1.func_186857_a("Attach");
-@@ -191,6 +202,7 @@
+@@ -191,6 +203,7 @@
        }
  
        p_72355_2_.func_71116_b();
@@ -59,7 +60,7 @@
     }
  
     protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
-@@ -252,6 +264,7 @@
+@@ -252,6 +265,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -67,7 +68,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_75752_b(p_72380_1_);
        }
-@@ -260,6 +273,7 @@
+@@ -260,6 +274,7 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -75,7 +76,7 @@
        this.field_72412_k.func_75753_a(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -274,6 +288,7 @@
+@@ -274,6 +289,7 @@
     }
  
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -83,7 +84,7 @@
        ServerWorld serverworld = p_72367_1_.func_71121_q();
        p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -295,7 +310,7 @@
+@@ -295,7 +311,7 @@
        p_72367_1_.func_213319_R();
        serverworld.func_217434_e(p_72367_1_);
        p_72367_1_.func_192039_O().func_192745_a();
@@ -92,7 +93,7 @@
        this.field_72400_f.func_201300_aS().func_201382_b(p_72367_1_);
        UUID uuid = p_72367_1_.func_110124_au();
        ServerPlayerEntity serverplayerentity = this.field_177454_f.get(uuid);
-@@ -364,10 +379,18 @@
+@@ -364,10 +380,18 @@
     }
  
     public ServerPlayerEntity func_72368_a(ServerPlayerEntity p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
@@ -115,7 +116,7 @@
        p_72368_1_.field_71093_bK = p_72368_2_;
        PlayerInteractionManager playerinteractionmanager;
        if (this.field_72400_f.func_71242_L()) {
-@@ -379,6 +402,8 @@
+@@ -379,6 +403,8 @@
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
        serverplayerentity.field_71135_a = p_72368_1_.field_71135_a;
        serverplayerentity.func_193104_a(p_72368_1_, p_72368_3_);
@@ -124,7 +125,7 @@
        serverplayerentity.func_145769_d(p_72368_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_72368_1_.func_184591_cq());
  
-@@ -393,7 +418,7 @@
+@@ -393,7 +419,7 @@
           if (optional.isPresent()) {
              Vec3d vec3d = optional.get();
              serverplayerentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, 0.0F, 0.0F);
@@ -133,7 +134,15 @@
           } else {
              serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(0, 0.0F));
           }
-@@ -413,10 +438,11 @@
+@@ -404,6 +430,7 @@
+       }
+ 
+       WorldInfo worldinfo = serverplayerentity.field_70170_p.func_72912_H();
++      net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(serverplayerentity.field_71135_a.field_147371_a, serverplayerentity);
+       serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverplayerentity.field_71093_bK, worldinfo.func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
+       BlockPos blockpos1 = serverworld.func_175694_M();
+       serverplayerentity.field_71135_a.func_147364_a(serverplayerentity.field_70165_t, serverplayerentity.field_70163_u, serverplayerentity.field_70161_v, serverplayerentity.field_70177_z, serverplayerentity.field_70125_A);
+@@ -413,10 +440,11 @@
        this.func_72354_b(serverplayerentity, serverworld);
        this.func_187243_f(serverplayerentity);
        serverworld.func_217433_d(serverplayerentity);
@@ -146,7 +155,7 @@
        return serverplayerentity;
     }
  
-@@ -736,7 +762,7 @@
+@@ -736,7 +764,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -155,7 +164,7 @@
     }
  
     @Nullable
-@@ -766,4 +792,12 @@
+@@ -766,4 +794,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
