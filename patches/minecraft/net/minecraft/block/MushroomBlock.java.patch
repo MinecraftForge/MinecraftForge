@@ -1,6 +1,28 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -62,7 +62,7 @@
+@@ -23,7 +23,7 @@
+    }
+ 
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+-      if (p_196267_4_.nextInt(25) == 0) {
++      if (net.minecraftforge.common.ForgeHooks.onCropsSpreadPre(p_196267_2_, p_196267_3_, p_196267_1_,p_196267_4_.nextInt(25) == 0)) {
+          int i = 5;
+          int j = 4;
+ 
+@@ -47,7 +47,11 @@
+          }
+ 
+          if (p_196267_2_.func_175623_d(blockpos1) && p_196267_1_.func_196955_c(p_196267_2_, blockpos1)) {
+-            p_196267_2_.func_180501_a(blockpos1, p_196267_1_, 2);
++            if (p_196267_2_.func_180501_a(blockpos1, p_196267_1_, 2)) {
++               net.minecraft.util.NonNullList<BlockPos> positions = net.minecraft.util.NonNullList.func_191196_a();
++               positions.add(blockpos1);
++               net.minecraftforge.common.ForgeHooks.onCropsSpreadPost(p_196267_2_, p_196267_3_, p_196267_1_, positions);
++            }
+          }
+       }
+ 
+@@ -62,7 +66,7 @@
        BlockState blockstate = p_196260_2_.func_180495_p(blockpos);
        Block block = blockstate.func_177230_c();
        if (block != Blocks.field_150391_bh && block != Blocks.field_196661_l) {

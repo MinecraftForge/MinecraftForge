@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.*;
-import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -88,13 +88,6 @@ import net.minecraft.tags.Tag;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IntIdentityHashBiMap;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -941,6 +934,18 @@ public class ForgeHooks
             name = "empty";
 
         return ctx.validateEntryName(name);
+    }
+
+    public static boolean onCropsSpreadPre(World worldIn, BlockPos pos, BlockState state, boolean def)
+    {
+        BlockEvent ev = new BlockEvent.BlockSpreadEvent.Pre(worldIn,pos,state);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
+    }
+
+    public static void onCropsSpreadPost(World worldIn, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.BlockSpreadEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos), spreadPositions));
     }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, BlockState state, boolean def)

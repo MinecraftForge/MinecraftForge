@@ -340,6 +340,69 @@ public class BlockEvent extends Event
     }
 
     /**
+     * Fired when a crop block spreads.  See subevents.
+     */
+    public static class BlockSpreadEvent extends BlockEvent
+    {
+        public BlockSpreadEvent(World world, BlockPos pos, BlockState state)
+        {
+            super(world, pos, state);
+        }
+
+        /**
+         * Fired when any "spreading" block (for example grass, mycelium, mushroom, fire or
+         * sea pickle in vanilla) attempt to spread to nearby blocks during a random tick.<br>
+         * <br>
+         * {@link Result#DEFAULT} will pass on to the vanilla spread mechanics.<br>
+         * {@link Result#ALLOW} will force the block to spread.<br>
+         * {@link Result#DENY} will prevent the block from spreading.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         */
+        @HasResult
+        public static class Pre extends BlockSpreadEvent
+        {
+            public Pre(World world, BlockPos pos, BlockState state)
+            {
+                super(world, pos, state);
+            }
+        }
+
+        /**
+         * Fired when "spreading" blocks (for example grass, mycelium, mushroom, fire or
+         * sea pickle in vanilla) have successfully spread. The block's original state
+         * is available, in addition to its new state and a list of all spread block positions.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult}<br>
+         */
+        public static class Post extends BlockSpreadEvent
+        {
+            private final BlockState originalState;
+            private final NonNullList<BlockPos> spreadBlockPositions;
+
+            public Post(World world, BlockPos pos, BlockState original, BlockState state, NonNullList<BlockPos> spreadPositions)
+            {
+                super(world, pos, state);
+                originalState = original;
+                spreadBlockPositions = spreadPositions;
+            }
+
+            public BlockState getOriginalState()
+            {
+                return originalState;
+            }
+
+            public NonNullList<BlockPos> getGeneratedBlockPositions()
+            {
+                return spreadBlockPositions;
+            }
+        }
+    }
+
+    /**
      * Fired when a crop block grows.  See subevents.
      *
      */
