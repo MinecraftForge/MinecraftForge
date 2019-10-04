@@ -66,7 +66,7 @@ public class NetworkHooks
 
     public static IPacket<?> getEntitySpawningPacket(Entity entity)
     {
-    	return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+        return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
@@ -198,7 +198,7 @@ public class NetworkHooks
     // internal tracking map for custom dimensions received from servers for use on client.
     private static Int2ObjectMap<DimensionType> trackingMap = new Int2ObjectOpenHashMap<>();
     public static DimensionType getDummyDimType(final int dimension) {
-        return trackingMap.getOrDefault(dimension, DimensionType.OVERWORLD);
+        return trackingMap.computeIfAbsent(dimension, id -> DimensionType.getById(id));
     }
 
     static void addCachedDimensionType(final DimensionType dimensionType, final ResourceLocation dimName) {
