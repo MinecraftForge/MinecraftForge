@@ -405,8 +405,7 @@ public class GuiModList extends Screen
             return;
         }
         ModInfo selectedMod = selected.getInfo();
-
-        this.configButton.active = selectedMod.hasConfigUI();
+        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent();
         List<String> lines = new ArrayList<>();
         VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 
