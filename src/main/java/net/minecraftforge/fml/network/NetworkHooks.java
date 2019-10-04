@@ -97,6 +97,8 @@ public class NetworkHooks
     public synchronized static void sendDimensionDataPacket(NetworkManager manager, ServerPlayerEntity player) {
         // don't send vanilla dims
         if (player.dimension.isVanilla()) return;
+        // don't sent to local - we already have a valid dim registry locally
+        if (manager.isLocalChannel()) return;
         FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
