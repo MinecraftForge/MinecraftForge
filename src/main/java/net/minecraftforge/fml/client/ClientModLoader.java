@@ -26,6 +26,7 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,13 +39,17 @@ import net.minecraftforge.fml.BrandingControl;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.fml.server.LanguageHook;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,11 +57,15 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 @OnlyIn(Dist.CLIENT)
@@ -77,7 +86,7 @@ public class ClientModLoader
         LanguageHook.loadForgeAndMCLangs();
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
-        ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
+        ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
         ModelLoaderRegistry.init();
@@ -162,5 +171,27 @@ public class ClientModLoader
     public static boolean isLoading()
     {
         return loading;
+    }
+
+    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter) {
+        return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
+    }
+
+    private static <T extends ResourcePackInfo> void clientPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<T> factory) {
+        for (Map.Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
+        {
+            IModInfo mod = e.getKey().getModInfos().get(0);
+            if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
+            final String name = "mod:" + mod.getModId();
+            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+            if (packInfo == null) {
+                // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
+                ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
+                continue;
+            }
+            packSetter.accept(e.getValue(), packInfo);
+            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+            packList.put(name, packInfo);
+        }
     }
 }
