@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.resources.IPackFinder;
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.fml.ModList;
@@ -49,7 +50,7 @@ public class ResourcePackLoader
                 map(ModFileInfo::getFile).map(mf->modResourcePacks.get(mf));
     }
 
-    public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks, BiFunction<Map<ModFile, ModFileResourcePack>, BiConsumer<ModFileResourcePack, T>, IPackInfoFinder> packFinder) {
+    public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, T>, IPackInfoFinder> packFinder) {
         resourcePackList = resourcePacks;
         modResourcePacks = ModList.get().getModFiles().stream().
                 filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).

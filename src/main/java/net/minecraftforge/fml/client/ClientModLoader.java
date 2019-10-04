@@ -19,15 +19,37 @@
 
 package net.minecraftforge.fml.client;
 
+import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.client.resources.ClientResourcePackInfo;
+import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
+import net.minecraft.resources.data.PackMetadataSection;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -46,27 +68,12 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.packs.DelegatableResourcePack;
+import net.minecraftforge.fml.packs.DelegatingResourcePack;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.fml.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.mojang.blaze3d.platform.GlStateManager;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader
@@ -173,17 +180,18 @@ public class ClientModLoader
         return loading;
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter) {
+    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
         return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
-    private static <T extends ResourcePackInfo> void clientPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<T> factory) {
-        for (Map.Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
+    private static <T extends ResourcePackInfo> void clientPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+        List<DelegatableResourcePack> hiddenPacks = new ArrayList<>();
+        for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+            final T packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
@@ -191,7 +199,15 @@ public class ClientModLoader
             }
             packSetter.accept(e.getValue(), packInfo);
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
-            packList.put(name, packInfo);
+            if (mod.getOwningFile().showAsResourcePack()) {
+                packList.put(name, packInfo);
+            } else {
+                hiddenPacks.add(e.getValue());
+            }
         }
+        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources", 
+                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 4),
+                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM);
+        packList.put("mod_resources", packInfo);
     }
 }

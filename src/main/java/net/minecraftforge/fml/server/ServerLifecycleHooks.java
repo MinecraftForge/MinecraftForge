@@ -19,8 +19,23 @@
 
 package net.minecraftforge.fml.server;
 
-import net.minecraft.network.ProtocolType;
+import static net.minecraftforge.fml.Logging.CORE;
+
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.ProtocolType;
 import net.minecraft.network.handshake.client.CHandshakePacket;
 import net.minecraft.network.login.server.SDisconnectLoginPacket;
 import net.minecraft.resources.ResourcePackInfo;
@@ -36,8 +51,8 @@ import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
@@ -49,19 +64,6 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-
-import static net.minecraftforge.fml.Logging.CORE;
 
 public class ServerLifecycleHooks
 {
@@ -193,17 +195,17 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter) {
+    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
-    private static <T extends ResourcePackInfo> void serverPackFinder(Map<ModFile, ModFileResourcePack> modResourcePacks, BiConsumer<ModFileResourcePack, T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<T> factory) {
-        for (Map.Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
+    private static <T extends ResourcePackInfo> void serverPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+        for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.TOP);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
