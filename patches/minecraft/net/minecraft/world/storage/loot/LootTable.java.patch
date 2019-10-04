@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/storage/loot/LootTable.java
 +++ b/net/minecraft/world/storage/loot/LootTable.java
-@@ -33,13 +33,13 @@
+@@ -24,6 +24,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.storage.loot.functions.ILootFunction;
+ import net.minecraft.world.storage.loot.functions.LootFunctionManager;
++
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -33,13 +34,13 @@
     public static final LootTable field_186464_a = new LootTable(LootParameterSets.field_216260_a, new LootPool[0], new ILootFunction[0]);
     public static final LootParameterSet field_216126_b = LootParameterSets.field_216266_g;
     private final LootParameterSet field_216127_d;
@@ -16,7 +24,18 @@
        this.field_216128_f = p_i51265_3_;
        this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
     }
-@@ -92,8 +92,8 @@
+@@ -84,6 +85,10 @@
+    public List<ItemStack> func_216113_a(LootContext p_216113_1_) {
+       List<ItemStack> list = Lists.newArrayList();
+       this.func_216120_b(p_216113_1_, list::add);
++      net.minecraftforge.common.loot.LootModifierManager man = net.minecraftforge.common.loot.LootModifierManager.getInstance();
++      for(ResourceLocation loc : man.getAllLootMods()) {
++    	  list = man.getLootModifierFromLocation(loc).apply(list, p_216113_1_);
++      }
+       return list;
+    }
+ 
+@@ -92,8 +97,8 @@
     }
  
     public void func_216117_a(ValidationResults p_216117_1_, Function<ResourceLocation, LootTable> p_216117_2_, Set<ResourceLocation> p_216117_3_, LootParameterSet p_216117_4_) {
@@ -27,7 +46,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -204,6 +204,41 @@
+@@ -204,6 +209,41 @@
        }
     }
  
@@ -69,7 +88,7 @@
     public static class Serializer implements JsonDeserializer<LootTable>, JsonSerializer<LootTable> {
        public LootTable deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
           JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot table");
-@@ -229,7 +264,7 @@
+@@ -229,7 +269,7 @@
              }
           }
  
