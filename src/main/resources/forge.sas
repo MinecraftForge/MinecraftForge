@@ -31,6 +31,9 @@ net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/PotatoBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 net/minecraft/block/SoundType func_185845_c()Lnet/minecraft/util/SoundEvent; # getBreakSound
 net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # getHitSound
+net/minecraft/item/DyeColor func_196057_c()I # getSwappedColorValue
+net/minecraft/item/DyeColor func_218388_g()I # getTextColor
+net/minecraft/item/DyeColor func_196058_b(I)Lnet/minecraft/item/DyeColor; # byFireworkColor
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks
 net/minecraft/item/crafting/Ingredient func_193369_a([Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/crafting/Ingredient; # fromStacks
 net/minecraft/item/crafting/IRecipe func_222128_h()Lnet/minecraft/item/ItemStack; # getIcon
