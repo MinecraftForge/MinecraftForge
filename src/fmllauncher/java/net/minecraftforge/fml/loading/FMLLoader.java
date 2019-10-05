@@ -34,6 +34,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.progress.EarlyProgressVisualization;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -176,6 +178,8 @@ public class FMLLoader
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
+        EarlyProgressVisualization.INSTANCE.accept(dist);
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
         mcVersion = (String) arguments.get("mcVersion");
@@ -232,13 +236,12 @@ public class FMLLoader
     public static void beforeStart(ITransformingClassLoader launchClassLoader)
     {
         FMLLoader.launchClassLoader = (TransformingClassLoader) launchClassLoader.getInstance();
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Launching minecraft"));
     }
-
 
     public static LoadingModList getLoadingModList()
     {
         return loadingModList;
-
     }
 
     public static TransformingClassLoader getLaunchClassLoader()

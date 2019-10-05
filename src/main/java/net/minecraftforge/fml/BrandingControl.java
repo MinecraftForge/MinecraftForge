@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -35,6 +36,7 @@ public class BrandingControl
 {
     private static List<String> brandings;
     private static List<String> brandingsNoMC;
+    private static List<String> overCopyrightBrandings;
 
     private static void computeBranding()
     {
@@ -61,9 +63,22 @@ public class BrandingControl
         }
     }
 
+    private static void computeOverCopyrightBrandings() {
+        if (overCopyrightBrandings == null) {
+            ImmutableList.Builder<String> brd = ImmutableList.builder();
+            if (ForgeHooksClient.forgeStatusLine != null) brd.add(ForgeHooksClient.forgeStatusLine);
+            overCopyrightBrandings = brd.build();
+        }
+    }
+
     public static void forEachLine(boolean includeMC, boolean reverse, BiConsumer<Integer, String> lineConsumer) {
         final List<String> brandings = getBrandings(includeMC, reverse);
         IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
+    }
+
+    public static void forEachAboveCopyrightLine(BiConsumer<Integer, String> lineConsumer) {
+        computeOverCopyrightBrandings();
+        IntStream.range(0, overCopyrightBrandings.size()).boxed().forEachOrdered(idx->lineConsumer.accept(idx, overCopyrightBrandings.get(idx)));
     }
 
     public static String getClientBranding() {
