@@ -72,7 +72,7 @@
 +
 +   private boolean fluidStateCacheInitialized = false;
 +   protected synchronized void initFluidStateCache() {
-+      if (fluidStateCacheInitialized = false)
++      if (fluidStateCacheInitialized == false)
 +      {
 +         this.field_212565_c.add(getFluid().func_207204_a(false));
 +
