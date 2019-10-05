@@ -47,7 +47,7 @@ public class EmptyFluidHandler implements IFluidHandler
     @Override
     public int fill(FluidStack resource, FluidAction action)
     {
-        return resource.getAmount();
+        return 0;
     }
 
     @Nonnull
