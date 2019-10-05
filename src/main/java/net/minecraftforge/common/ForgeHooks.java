@@ -936,16 +936,16 @@ public class ForgeHooks
         return ctx.validateEntryName(name);
     }
 
-    public static boolean onCropsSpreadPre(World worldIn, BlockPos pos, BlockState state, boolean def)
+    public static boolean onRandomSpreadPre(World worldIn, BlockPos pos, BlockState state, boolean def, NonNullList<BlockPos> spreadPositions)
     {
-        BlockEvent ev = new BlockEvent.BlockSpreadEvent.Pre(worldIn,pos,state);
+        BlockEvent ev = new BlockEvent.RandomSpreadEvent.Pre(worldIn,pos,state,spreadPositions,def);
         MinecraftForge.EVENT_BUS.post(ev);
         return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
     }
 
-    public static void onCropsSpreadPost(World worldIn, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
+    public static void onRandomSpreadPost(World worldIn, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
     {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.BlockSpreadEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos), spreadPositions));
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.RandomSpreadEvent.Post(worldIn, pos, state, spreadPositions));
     }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, BlockState state, boolean def)

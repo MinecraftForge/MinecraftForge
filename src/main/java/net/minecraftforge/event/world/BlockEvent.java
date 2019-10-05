@@ -340,13 +340,21 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a crop block spreads.  See subevents.
+     * Fired when a block spreads by random chance.  See subevents.
      */
-    public static class BlockSpreadEvent extends BlockEvent
+    public static abstract class RandomSpreadEvent extends BlockEvent
     {
-        public BlockSpreadEvent(World world, BlockPos pos, BlockState state)
+        private final NonNullList<BlockPos> spreadBlockPositions;
+        
+        public RandomSpreadEvent(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
         {
             super(world, pos, state);
+            this.spreadBlockPositions = spreadPositions;
+        }
+        
+        public NonNullList<BlockPos> getGeneratedBlockPositions()
+        {
+            return spreadBlockPositions;
         }
 
         /**
@@ -361,11 +369,18 @@ public class BlockEvent extends Event
          * <br>
          */
         @HasResult
-        public static class Pre extends BlockSpreadEvent
+        public static class Pre extends RandomSpreadEvent
         {
-            public Pre(World world, BlockPos pos, BlockState state)
+            private final boolean willSpread;
+            
+            public Pre(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions, boolean willSpread)
             {
-                super(world, pos, state);
+                super(world, pos, state, spreadPositions);
+                this.willSpread = willSpread;
+            }
+            
+            public boolean willSpread() {
+                return willSpread;
             }
         }
 
@@ -378,26 +393,12 @@ public class BlockEvent extends Event
          * <br>
          * This event does not have a result. {@link HasResult}<br>
          */
-        public static class Post extends BlockSpreadEvent
+        public static class Post extends RandomSpreadEvent
         {
-            private final BlockState originalState;
-            private final NonNullList<BlockPos> spreadBlockPositions;
 
-            public Post(World world, BlockPos pos, BlockState original, BlockState state, NonNullList<BlockPos> spreadPositions)
+            public Post(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
             {
-                super(world, pos, state);
-                originalState = original;
-                spreadBlockPositions = spreadPositions;
-            }
-
-            public BlockState getOriginalState()
-            {
-                return originalState;
-            }
-
-            public NonNullList<BlockPos> getGeneratedBlockPositions()
-            {
-                return spreadBlockPositions;
+                super(world, pos, state, spreadPositions);
             }
         }
     }
