@@ -340,7 +340,7 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a block spreads by random chance.  See subevents.
+     * Fired when a block attempt to spread to a nearby block.  See subevents.
      */
     public static abstract class PossibleSpreadEvent extends BlockEvent
     {
@@ -368,6 +368,7 @@ public class BlockEvent extends Event
          * Fired when any "spreading" block (for example grass, mycelium, mushroom, fire or
          * sea pickle in vanilla) attempt to spread to a nearby block.<br>
          * <br>
+         * This event has a result. {@link HasResult}.<br>
          * {@link Result#DEFAULT} will pass on to the vanilla spread mechanics.<br>
          * {@link Result#ALLOW} will force the block to spread.<br>
          * {@link Result#DENY} will prevent the block from spreading.<br>
