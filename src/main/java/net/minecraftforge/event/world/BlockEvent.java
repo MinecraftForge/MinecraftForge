@@ -342,24 +342,31 @@ public class BlockEvent extends Event
     /**
      * Fired when a block spreads by random chance.  See subevents.
      */
-    public static abstract class RandomSpreadEvent extends BlockEvent
+    public static abstract class PossibleSpreadEvent extends BlockEvent
     {
-        private final NonNullList<BlockPos> spreadBlockPositions;
+        private final BlockPos spreadPos;
+        private final BlockState spreadState;
         
-        public RandomSpreadEvent(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
+        public PossibleSpreadEvent(World world, BlockPos pos, BlockState state, BlockPos spreadPos, BlockState spreadState)
         {
             super(world, pos, state);
-            this.spreadBlockPositions = spreadPositions;
+            this.spreadPos = spreadPos;
+            this.spreadState = spreadState;
         }
-        
-        public NonNullList<BlockPos> getGeneratedBlockPositions()
+
+        public BlockPos getSpreadPos()
         {
-            return spreadBlockPositions;
+            return this.spreadPos;
+        }
+
+        public BlockState getSpreadState()
+        {
+            return this.spreadState;
         }
 
         /**
          * Fired when any "spreading" block (for example grass, mycelium, mushroom, fire or
-         * sea pickle in vanilla) attempt to spread to nearby blocks during a random tick.<br>
+         * sea pickle in vanilla) attempt to spread to a nearby block.<br>
          * <br>
          * {@link Result#DEFAULT} will pass on to the vanilla spread mechanics.<br>
          * {@link Result#ALLOW} will force the block to spread.<br>
@@ -369,13 +376,13 @@ public class BlockEvent extends Event
          * <br>
          */
         @HasResult
-        public static class Pre extends RandomSpreadEvent
+        public static class Pre extends PossibleSpreadEvent
         {
             private final boolean willSpread;
             
-            public Pre(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions, boolean willSpread)
+            public Pre(World world, BlockPos pos, BlockState state, BlockPos spreadPos, BlockState spreadState, boolean willSpread)
             {
-                super(world, pos, state, spreadPositions);
+                super(world, pos, state, spreadPos, spreadState);
                 this.willSpread = willSpread;
             }
             
@@ -385,20 +392,19 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Fired when "spreading" blocks (for example grass, mycelium, mushroom, fire or
-         * sea pickle in vanilla) have successfully spread. The block's original state
-         * is available, in addition to its new state and a list of all spread block positions.<br>
+         * Fired when "spreading" block (for example grass, mycelium, mushroom, fire or
+         * sea pickle in vanilla) have successfully spread to the given nearby position.<br>
          * <br>
          * This event is not {@link Cancelable}.<br>
          * <br>
          * This event does not have a result. {@link HasResult}<br>
          */
-        public static class Post extends RandomSpreadEvent
+        public static class Post extends PossibleSpreadEvent
         {
 
-            public Post(World world, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
+            public Post(World world, BlockPos pos, BlockState state, BlockPos spreadPos, BlockState spreadState)
             {
-                super(world, pos, state, spreadPositions);
+                super(world, pos, state, spreadPos, spreadState);
             }
         }
     }

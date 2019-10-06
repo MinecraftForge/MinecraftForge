@@ -936,16 +936,16 @@ public class ForgeHooks
         return ctx.validateEntryName(name);
     }
 
-    public static boolean onRandomSpreadPre(World worldIn, BlockPos pos, BlockState state, boolean def, NonNullList<BlockPos> spreadPositions)
+    public static boolean onPossibleSpreadPre(World worldIn, BlockPos pos, BlockState state, BlockPos spreadPos, BlockState spreadState, boolean willSpread)
     {
-        BlockEvent ev = new BlockEvent.RandomSpreadEvent.Pre(worldIn,pos,state,spreadPositions,def);
+        BlockEvent ev = new BlockEvent.PossibleSpreadEvent.Pre(worldIn, pos, state, spreadPos, spreadState, willSpread);
         MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
+        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && willSpread));
     }
 
-    public static void onRandomSpreadPost(World worldIn, BlockPos pos, BlockState state, NonNullList<BlockPos> spreadPositions)
+    public static void onPossibleSpreadPost(World worldIn, BlockPos pos, BlockState state, BlockPos spreadPos)
     {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.RandomSpreadEvent.Post(worldIn, pos, state, spreadPositions));
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.PossibleSpreadEvent.Post(worldIn, pos, state, spreadPos, worldIn.getBlockState(spreadPos)));
     }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, BlockState state, boolean def)

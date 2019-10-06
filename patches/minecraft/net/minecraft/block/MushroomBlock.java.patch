@@ -13,9 +13,9 @@
  
           if (p_196267_2_.func_175623_d(blockpos1) && p_196267_1_.func_196955_c(p_196267_2_, blockpos1)) {
 -            p_196267_2_.func_180501_a(blockpos1, p_196267_1_, 2);
-+            if (net.minecraftforge.common.ForgeHooks.onRandomSpreadPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt(25) == 0, net.minecraft.util.NonNullList.func_191197_a(1, blockpos1))) {
++            if (net.minecraftforge.common.ForgeHooks.onPossibleSpreadPre(p_196267_2_, p_196267_3_, p_196267_1_, blockpos1, p_196267_1_, p_196267_4_.nextInt(25) == 0)) {
 +                if (p_196267_2_.func_180501_a(blockpos1, p_196267_1_, 2)) {
-+                    net.minecraftforge.common.ForgeHooks.onRandomSpreadPost(p_196267_2_, p_196267_3_, p_196267_1_, net.minecraft.util.NonNullList.func_191197_a(1, blockpos1));
++                    net.minecraftforge.common.ForgeHooks.onPossibleSpreadPost(p_196267_2_, p_196267_3_, p_196267_1_, blockpos1);
 +                }
 +            }
           }

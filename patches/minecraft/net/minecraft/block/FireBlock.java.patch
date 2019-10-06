@@ -60,7 +60,7 @@
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -169,16 +171,18 @@
+@@ -169,19 +171,22 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
@@ -83,7 +83,11 @@
        if (p_176536_4_.nextInt(p_176536_3_) < i) {
           BlockState blockstate = p_176536_1_.func_180495_p(p_176536_2_);
           if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
-@@ -199,7 +203,7 @@
++
+             int j = Math.min(p_176536_5_ + p_176536_4_.nextInt(5) / 4, 15);
+             p_176536_1_.func_180501_a(p_176536_2_, this.func_196448_a(p_176536_1_, p_176536_2_).func_206870_a(field_176543_a, Integer.valueOf(j)), 3);
+          } else {
+@@ -199,7 +204,7 @@
  
     private boolean func_196447_a(IBlockReader p_196447_1_, BlockPos p_196447_2_) {
        for(Direction direction : Direction.values()) {
@@ -92,7 +96,7 @@
              return true;
           }
        }
-@@ -215,13 +219,14 @@
+@@ -215,13 +220,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -108,7 +112,7 @@
     public boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -246,8 +251,8 @@
+@@ -246,8 +252,8 @@
  
        BlockPos blockpos = p_180655_3_.func_177977_b();
        BlockState blockstate = p_180655_2_.func_180495_p(blockpos);
@@ -119,7 +123,7 @@
              for(int j = 0; j < 2; ++j) {
                 double d3 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble() * (double)0.1F;
                 double d8 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -256,7 +261,7 @@
+@@ -256,7 +262,7 @@
              }
           }
  
@@ -128,7 +132,7 @@
              for(int k = 0; k < 2; ++k) {
                 double d4 = (double)(p_180655_3_.func_177958_n() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
                 double d9 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -265,7 +270,7 @@
+@@ -265,7 +271,7 @@
              }
           }
  
@@ -137,7 +141,7 @@
              for(int l = 0; l < 2; ++l) {
                 double d5 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d10 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -274,7 +279,7 @@
+@@ -274,7 +280,7 @@
              }
           }
  
@@ -146,7 +150,7 @@
              for(int i1 = 0; i1 < 2; ++i1) {
                 double d6 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d11 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -283,7 +288,7 @@
+@@ -283,7 +289,7 @@
              }
           }
  
@@ -155,7 +159,7 @@
              for(int j1 = 0; j1 < 2; ++j1) {
                 double d7 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d12 = (double)(p_180655_3_.func_177956_o() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
-@@ -311,10 +316,23 @@
+@@ -311,10 +317,23 @@
     }
  
     public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
