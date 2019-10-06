@@ -19,27 +19,21 @@
 
 package net.minecraftforge.fml.client;
 
-import com.google.common.base.Ascii;
-import com.google.common.base.CharMatcher;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.StartupMessageManager;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.stb.STBEasyFont;
-import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryUtil;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class EarlyLoaderGUI {
     private final MainWindow window;

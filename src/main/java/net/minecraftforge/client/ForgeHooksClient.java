@@ -320,13 +320,10 @@ public class ForgeHooksClient
             default: break;
         }
 
-        if (line != null)
-        {
-            // if we have a line, render it in the bottom right, above Mojang's copyright line
-            gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
-        }
+        forgeStatusLine = line;
     }
 
+    public static String forgeStatusLine;
     public static ISound playSound(SoundEngine manager, ISound sound)
     {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);

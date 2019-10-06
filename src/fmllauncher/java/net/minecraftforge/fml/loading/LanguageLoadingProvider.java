@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -127,6 +128,7 @@ public class LanguageLoadingProvider
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
             }
             LOGGER.debug(CORE, "Found language provider {}, version {}", lp.name(), impl);
+            StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Loaded language provider "+lp.name()+ " " + impl));
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(impl)));
         });
     }
