@@ -202,8 +202,12 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a tick of a block with "ticksRandomly" property was triggered.
-     * {@link Result#DENY} or cancelling this event cancels the standard random tick behaviour.
+     * Fired when a tick of a block with "ticksRandomly" property was triggered.<br>
+     * <br>
+     * This event is {@link Cancelable}.<br>
+     * Cancelling this event cancels the standard random tick behaviour.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}
      */
     @Cancelable
     public static class RandomTickEvent extends BlockEvent
