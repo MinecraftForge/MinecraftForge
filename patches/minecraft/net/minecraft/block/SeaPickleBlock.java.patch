@@ -1,0 +1,18 @@
+--- a/net/minecraft/block/SeaPickleBlock.java
++++ b/net/minecraft/block/SeaPickleBlock.java
+@@ -123,10 +123,12 @@
+ 
+                for(int j2 = i2 - 2; j2 < i2; ++j2) {
+                   BlockPos blockpos = new BlockPos(i1 + k1, j2, p_176474_3_.func_177952_p() - j1 + l1);
+-                  if (blockpos != p_176474_3_ && p_176474_2_.nextInt(6) == 0 && p_176474_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150355_j) {
+                      BlockState blockstate = p_176474_1_.func_180495_p(blockpos.func_177977_b());
+-                     if (blockstate.func_203425_a(BlockTags.field_205598_B)) {
+-                        p_176474_1_.func_180501_a(blockpos, Blocks.field_204913_jW.func_176223_P().func_206870_a(field_204902_a, Integer.valueOf(p_176474_2_.nextInt(4) + 1)), 3);
++                  BlockState newBlockState = Blocks.field_204913_jW.func_176223_P().func_206870_a(field_204902_a, Integer.valueOf(p_176474_2_.nextInt(4) + 1));
++                  boolean eventResult = net.minecraftforge.common.ForgeHooks.onPossibleSpreadPre(p_176474_1_, p_176474_3_, p_176474_4_, blockpos, newBlockState, blockpos != p_176474_3_ && p_176474_2_.nextInt(6) == 0 && p_176474_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150355_j && blockstate.func_203425_a(BlockTags.field_205598_B));
++                  if (eventResult) {
++                     if (p_176474_1_.func_180501_a(blockpos, newBlockState, 3)) {
++                        net.minecraftforge.common.ForgeHooks.onPossibleSpreadPost(p_176474_1_, p_176474_3_, p_176474_4_, blockpos);
+                      }
+                   }
+                }
