@@ -53,3 +53,5 @@ loaderVersion="[28,)"
     modId="piston_event_test"
 [[mods]]
     modId="flower_pot_test"
+[[mods]]
+    modId="random_spread_event_test"

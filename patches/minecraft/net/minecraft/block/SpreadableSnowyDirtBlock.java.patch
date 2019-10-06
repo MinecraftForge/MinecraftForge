@@ -8,3 +8,16 @@
           if (!func_220257_b(p_196267_1_, p_196267_2_, p_196267_3_)) {
              p_196267_2_.func_175656_a(p_196267_3_, Blocks.field_150346_d.func_176223_P());
           } else {
+@@ -39,8 +40,10 @@
+ 
+                for(int i = 0; i < 4; ++i) {
+                   BlockPos blockpos = p_196267_3_.func_177982_a(p_196267_4_.nextInt(3) - 1, p_196267_4_.nextInt(5) - 3, p_196267_4_.nextInt(3) - 1);
+-                  if (p_196267_2_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150346_d && func_220256_c(blockstate, p_196267_2_, blockpos)) {
+-                     p_196267_2_.func_175656_a(blockpos, blockstate.func_206870_a(field_196382_a, Boolean.valueOf(p_196267_2_.func_180495_p(blockpos.func_177984_a()).func_177230_c() == Blocks.field_150433_aE)));
++                  if (net.minecraftforge.common.ForgeHooks.onRandomSpreadPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_2_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150346_d && func_220256_c(blockstate, p_196267_2_, blockpos), net.minecraft.util.NonNullList.func_191197_a(1, blockpos))) {
++                     if(p_196267_2_.func_175656_a(blockpos, blockstate.func_206870_a(field_196382_a, Boolean.valueOf(p_196267_2_.func_180495_p(blockpos.func_177984_a()).func_177230_c() == Blocks.field_150433_aE)))) {
++                         net.minecraftforge.common.ForgeHooks.onRandomSpreadPost(p_196267_2_, p_196267_3_, p_196267_1_, net.minecraft.util.NonNullList.func_191197_a(1, blockpos));
++                     }
+                   }
+                }
+             }
