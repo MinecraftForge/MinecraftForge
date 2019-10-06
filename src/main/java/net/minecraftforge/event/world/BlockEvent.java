@@ -21,6 +21,7 @@ package net.minecraftforge.event.world;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
@@ -198,6 +199,26 @@ public class BlockEvent extends Event
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public BlockState getPlacedBlock() { return placedBlock; }
         public BlockState getPlacedAgainst() { return placedAgainst; }
+    }
+
+    /**
+     * Fired when a tick of a block with "ticksRandomly" property was triggered.
+     * {@link Result#DENY} or cancelling this event cancels the standard random tick behaviour.
+     */
+    @Cancelable
+    public static class RandomTickEvent extends BlockEvent
+    {
+        private final Random rand;
+
+        public RandomTickEvent(IWorld world, BlockPos pos, BlockState state, Random rand)
+        {
+            super(world, pos, state);
+            this.rand = rand;
+        }
+
+        public Random getRandom() {
+            return this.rand;
+        }
     }
 
     /**

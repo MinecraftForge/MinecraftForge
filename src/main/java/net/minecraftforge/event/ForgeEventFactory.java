@@ -675,6 +675,13 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : result == Result.ALLOW;
     }
 
+    public static boolean onRandomTick(World worldIn, BlockState state, BlockPos pos, Random rand)
+    {
+        BlockEvent.RandomTickEvent event = new BlockEvent.RandomTickEvent(worldIn, pos, state, rand);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() != Result.DENY && !event.isCanceled();
+    }
+
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);

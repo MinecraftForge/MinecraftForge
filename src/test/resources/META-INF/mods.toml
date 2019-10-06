@@ -32,6 +32,8 @@ loaderVersion="[28,)"
 #[[mods]]
 #    modId="portal_spawn_event_test"
 [[mods]]
+    modId="random_tick_event_test"
+[[mods]]
     modId="slipperiness_test"
 [[mods]]
     modId="custom_slime_block_test"
