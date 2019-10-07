@@ -54,8 +54,8 @@ import org.apache.logging.log4j.Logger;
  * sea pickle test
  * - force spreading sea pickles under water on diamond blocks
  */
-@Mod("random_spread_event_test")
-@Mod.EventBusSubscriber(modid = "random_spread_event_test")
+@Mod("possible_spread_event_test")
+@Mod.EventBusSubscriber(modid = "possible_spread_event_test")
 public class PossibleSpreadEventTest {
 
     private static final boolean SEND_MESSAGE_TO_PLAYERS = true;
