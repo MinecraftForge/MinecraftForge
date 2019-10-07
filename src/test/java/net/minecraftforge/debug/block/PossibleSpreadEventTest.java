@@ -114,15 +114,17 @@ public class PossibleSpreadEventTest {
         if ((GRASS_TEST && block == Blocks.GRASS_BLOCK) ||
                 (MYCELIUM_TEST && block == Blocks.MYCELIUM)) {
             sendPreSpreadMessage(event);
-            //disable spreading to dirt blocks, where dirt is below
-            if (spreadBlock == Blocks.DIRT && blockBelowSpreadBlock == Blocks.DIRT) {
-                sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto dirt at " + spreadPos);
-                event.setResult(Result.DENY);
-            }
-            //force spreading to dirt blocks, where stone is below
-            if (spreadBlock == Blocks.DIRT && blockBelowSpreadBlock == Blocks.STONE) {
-                sendMessageToAllPlayersWithDebugItem(world, "Forcing " + event.getState() + " spread onto stone at " + spreadPos);
-                event.setResult(Result.ALLOW);
+            if (spreadBlock == Blocks.DIRT && world.getLight(spreadPos.up()) >= 9) {
+                //disable spreading to dirt blocks, where dirt is below
+                if (blockBelowSpreadBlock == Blocks.DIRT) {
+                    sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto dirt at " + spreadPos);
+                    event.setResult(Result.DENY);
+                }
+                //force spreading to dirt blocks, where stone is below
+                if (blockBelowSpreadBlock == Blocks.STONE) {
+                    sendMessageToAllPlayersWithDebugItem(world, "Forcing " + event.getState() + " spread onto stone at " + spreadPos);
+                    event.setResult(Result.ALLOW);
+                }
             }
         }
 
