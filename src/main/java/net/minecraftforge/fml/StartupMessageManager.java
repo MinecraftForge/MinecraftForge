@@ -19,7 +19,12 @@
 
 package net.minecraftforge.fml;
 
+@Deprecated
 public class StartupMessageManager {
+    /**
+     * @deprecated Use {@link net.minecraftforge.fml.loading.progress.StartupMessageManager#addModMessage(String)} instead
+     */
+    @Deprecated
     public static void addModMessage(final String message) {
         net.minecraftforge.fml.loading.progress.StartupMessageManager.addModMessage(message);
     }

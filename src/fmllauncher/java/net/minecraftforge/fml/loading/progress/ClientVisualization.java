@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.loading.progress;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -43,11 +45,12 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 class ClientVisualization implements EarlyProgressVisualization.Visualization {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final int screenWidth = 800;
     private final int screenHeight = 400;
     private long window;
     private Thread thread;
-    private boolean running;
+    private volatile boolean running = true;
 
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
@@ -223,8 +226,10 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     }
 
     private void closeWindow() {
+        LOGGER.debug("Destroying early loading screen");
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
+        GL.setCapabilities(null);
         glfwTerminate();
         glfwSetErrorCallback(null).free();
     }
@@ -232,21 +237,25 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     @Override
     public void start() {
         thread = new Thread(this::run);
+        thread.setUncaughtExceptionHandler((t, e) -> LOGGER.error("Exception rendering early loading screen!", e));
+        thread.setName("Early loading screen renderer");
         thread.setDaemon(true);
         thread.start();
     }
 
     private void run() {
         initWindow();
-        running = true;
-        while (running) {
-            renderProgress();
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
+        try {
+            while (running) {
+                renderProgress();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
             }
+        } finally {
+            closeWindow();
         }
-        closeWindow();
     }
 
     @Override
@@ -255,10 +264,13 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 //            Thread.sleep(10000);
 //        } catch (InterruptedException e) {
 //        }
+        LOGGER.debug("Asking early loading window to destroy");
         running = false;
         try {
+            thread.interrupt();
             thread.join();
         } catch (InterruptedException e) {
         }
+        LOGGER.debug("Early loading window destroyed");
     }
 }
