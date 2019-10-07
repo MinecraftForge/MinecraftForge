@@ -57,7 +57,7 @@
  
     @Deprecated
     public void func_196265_a(BlockState p_196265_1_, World p_196265_2_, BlockPos p_196265_3_, Random p_196265_4_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onRandomTick(p_196265_2_, p_196265_1_, p_196265_3_, p_196265_4_)) return;
++      if (!net.minecraftforge.event.ForgeEventFactory.onRandomTick(p_196265_2_, p_196265_1_, p_196265_3_, p_196265_4_)) return;
        this.func_196267_b(p_196265_1_, p_196265_2_, p_196265_3_, p_196265_4_);
     }
  
