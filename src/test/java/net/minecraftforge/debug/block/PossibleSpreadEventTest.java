@@ -43,7 +43,8 @@ import net.minecraftforge.fml.common.Mod;
  * - disable spreading to dirt blocks, where dirt is below
  * - force spreading to dirt blocks, where stone is below
  *
- * fire test TODO
+ * fire test
+ * - disable spreading to air blocks. (only replace flammable blocks nearby)
  *
  * mushroom test
  * - force spreading mushrooms on dirt
@@ -107,20 +108,11 @@ public class PossibleSpreadEventTest {
         }
 
         if (FIRE_TEST && block == Blocks.FIRE) {
-            //TODO
-            sendPreSpreadMessage(event);
-            /*
-            //disable spreading to oak logs
-            if (spreadBlock == Blocks.OAK_LOG) {
-                sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto oak log at " + spreadPos);
+            //sendPreSpreadMessage(event);
+            if (world.isAirBlock(spreadPos)) {
+                sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto air block at " + spreadPos);
                 event.setResult(Result.DENY);
             }
-            //force spreading to oak planks
-            if (blockBelowSpreadBlock == Blocks.OAK_PLANKS) {
-                sendMessageToAllPlayersWithDebugItem(world, "Forcing " + event.getState() + " spread onto oak planks at " + spreadPos);
-                event.setResult(Result.ALLOW);
-            }
-             */
         }
 
         if (MUSHROOM_TEST && block instanceof MushroomBlock) {
