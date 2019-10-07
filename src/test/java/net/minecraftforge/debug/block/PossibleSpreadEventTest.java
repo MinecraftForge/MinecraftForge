@@ -32,6 +32,8 @@ import net.minecraftforge.event.world.BlockEvent.PossibleSpreadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This test mod:
@@ -56,11 +58,19 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = "random_spread_event_test")
 public class PossibleSpreadEventTest {
 
+    private static final boolean SEND_MESSAGE_TO_PLAYERS = true;
+    private static final boolean SEND_MESSAGE_TO_DEBUG_CONSOLE = false;
+
+    private static final boolean SEND_PRE_MESSAGE = true;
+    private static final boolean SEND_POST_MESSAGE = true;
+
     private static final boolean GRASS_TEST = true;
     private static final boolean MYCELIUM_TEST = true;
     private static final boolean FIRE_TEST = true;
     private static final boolean MUSHROOM_TEST = true;
     private static final boolean SEA_PICKLE_TEST = true;
+
+    private static Logger logger = LogManager.getLogger();
 
     private static boolean hasDebugItem(PlayerEntity player) {
         return player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == Items.LEATHER_HELMET;
@@ -74,14 +84,23 @@ public class PossibleSpreadEventTest {
         });
     }
 
+    private static void sendMessage(IWorld world, String message) {
+        if (SEND_MESSAGE_TO_PLAYERS) {
+            sendMessageToAllPlayersWithDebugItem(world, message);
+        }
+        if (SEND_MESSAGE_TO_DEBUG_CONSOLE) {
+            logger.info(message);
+        }
+    }
+
     private static void sendPreSpreadMessage(PossibleSpreadEvent.Pre event) {
-        sendMessageToAllPlayersWithDebugItem(event.getWorld(),
-                "Pre-spread of " + event.getState() + " to position " + event.getSpreadPos().toString() + ", " + (event.willSpread() ? "will spread" : "will not spread"));
+        if (!SEND_PRE_MESSAGE) return;
+        sendMessage(event.getWorld(), "Pre-spread of " + event.getState() + " to position " + event.getSpreadPos().toString() + ", " + (event.willSpread() ? "will spread" : "will not spread"));
     }
 
     private static void sendPostSpreadMessage(PossibleSpreadEvent.Post event) {
-        sendMessageToAllPlayersWithDebugItem(event.getWorld(),
-                "Post-spread of " + event.getState() + " to position " + event.getSpreadPos().toString());
+        if (!SEND_POST_MESSAGE) return;
+        sendMessage(event.getWorld(), "Post-spread of " + event.getState() + " to position " + event.getSpreadPos().toString());
     }
 
     @SubscribeEvent
@@ -108,7 +127,7 @@ public class PossibleSpreadEventTest {
         }
 
         if (FIRE_TEST && block == Blocks.FIRE) {
-            //sendPreSpreadMessage(event);
+            sendPreSpreadMessage(event);
             if (world.isAirBlock(spreadPos)) {
                 sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto air block at " + spreadPos);
                 event.setResult(Result.DENY);
@@ -137,11 +156,11 @@ public class PossibleSpreadEventTest {
     @SubscribeEvent
     public static void onPossibleSpreadEventPost(PossibleSpreadEvent.Post event) {
         Block block = event.getState().getBlock();
-        if (GRASS_TEST && block == Blocks.GRASS_BLOCK
-                || MYCELIUM_TEST && block == Blocks.MYCELIUM
-                || FIRE_TEST && block == Blocks.FIRE
-                || MUSHROOM_TEST && block instanceof MushroomBlock
-                || SEA_PICKLE_TEST && block == Blocks.SEA_PICKLE) {
+        if ((GRASS_TEST && block == Blocks.GRASS_BLOCK)
+                || (MYCELIUM_TEST && block == Blocks.MYCELIUM)
+                || (FIRE_TEST && block == Blocks.FIRE)
+                || (MUSHROOM_TEST && block instanceof MushroomBlock)
+                || (SEA_PICKLE_TEST && block == Blocks.SEA_PICKLE)) {
             sendPostSpreadMessage(event);
         }
     }
