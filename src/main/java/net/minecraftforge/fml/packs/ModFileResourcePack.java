@@ -52,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
-public class ModFileResourcePack extends ResourcePack
+public class ModFileResourcePack extends DelegatableResourcePack
 {
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
@@ -74,14 +74,14 @@ public class ModFileResourcePack extends ResourcePack
     }
 
     @Override
-    protected InputStream getInputStream(String name) throws IOException
+    public InputStream getInputStream(String name) throws IOException
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
     @Override
-    protected boolean resourceExists(String name)
+    public boolean resourceExists(String name)
     {
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
@@ -146,7 +146,6 @@ public class ModFileResourcePack extends ResourcePack
         }
     }
 
-
     @Override
     public void close() throws IOException
     {
@@ -159,10 +158,5 @@ public class ModFileResourcePack extends ResourcePack
 
     <T extends ResourcePackInfo> T getPackInfo() {
         return (T)this.packInfo;
-    }
-    
-    @Override
-    public boolean isHidden() {
-    	return !modFile.getModFileInfo().showAsResourcePack();
     }
 }

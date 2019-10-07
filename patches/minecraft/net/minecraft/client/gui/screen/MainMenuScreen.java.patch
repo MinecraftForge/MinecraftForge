@@ -48,7 +48,7 @@
           if (this.field_73975_c != null) {
              GlStateManager.pushMatrix();
              GlStateManager.translatef((float)(this.width / 2 + 90), 70.0F, 0.0F);
-@@ -222,7 +229,10 @@
+@@ -222,7 +229,13 @@
              s = s + ("release".equalsIgnoreCase(this.minecraft.func_184123_d()) ? "" : "/" + this.minecraft.func_184123_d());
           }
  
@@ -57,10 +57,13 @@
 +            this.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.field_78288_b + 1)), 16777215 | l)
 +         );
 +
++         net.minecraftforge.fml.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
++              this.drawString(this.font, brd, this.width - font.func_78256_a(brd), this.height - (10 + (brdline + 1) * ( this.font.field_78288_b + 1)), 16777215 | l)
++         );
           this.drawString(this.font, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.height - 10, 16777215 | l);
           if (p_render_1_ > this.field_193979_N && p_render_1_ < this.field_193979_N + this.field_193978_M && p_render_2_ > this.height - 10 && p_render_2_ < this.height) {
              fill(this.field_193979_N, this.height - 1, this.field_193979_N + this.field_193978_M, this.height, 16777215 | l);
-@@ -240,6 +250,7 @@
+@@ -240,6 +253,7 @@
           if (this.func_183501_a() && f1 >= 1.0F) {
              this.field_183503_M.render(p_render_1_, p_render_2_, p_render_3_);
           }
