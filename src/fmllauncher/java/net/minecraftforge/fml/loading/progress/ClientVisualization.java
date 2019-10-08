@@ -65,7 +65,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 
         window = glfwCreateWindow(screenWidth, screenHeight, "FML early loading progress", NULL, NULL);
         if (window == NULL) {
-            throw new RuntimeException("Failed to create the GLFW window"); // ignore it and make the GUI optional?
+            throw new RuntimeException("Failed to create the GLFW window");
         }
 
         try (MemoryStack stack = stackPush()) {
@@ -98,15 +98,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glOrtho(0.0D, screenWidth, screenHeight, 0.0D, -1000.0D, 1000.0D);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-
-//            // replace with more modern opengl?
-//            glBegin(GL_QUADS);
-//            glColor3f(0.1f, 0.1f, 0.9f);
-//            glVertex2f(0, 0);
-//            glVertex2f(0, screenHeight);
-//            glVertex2f(screenWidth * progress, screenHeight);
-//            glVertex2f(screenWidth * progress, 0);
-//            glEnd();
 
         glEnableClientState(GL11.GL_VERTEX_ARRAY);
         glEnable(GL_BLEND);
@@ -260,10 +251,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 
     @Override
     public void join() {
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//        }
         LOGGER.debug("Asking early loading window to destroy");
         running = false;
         try {
