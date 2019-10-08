@@ -142,7 +142,7 @@ public class ClientModLoader
         return VersionChecker.Status.UP_TO_DATE;
     }
 
-    public static void complete()
+    public static boolean complete()
     {
         GlStateManager.disableTexture();
         GlStateManager.enableTexture();
@@ -161,14 +161,16 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
-        if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
-        } else {
-            ClientHooks.logMissingTextureErrors();
-        }
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
+        }
+        if (error != null || !warnings.isEmpty()) {
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
+            return true;
+        } else {
+            ClientHooks.logMissingTextureErrors();
+            return false;
         }
     }
 
