@@ -31,8 +31,8 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     protected List<ItemOverride> overrides = new ArrayList<>();
 
-    public ItemModelBuilder(String owningNamespace) {
-        super(owningNamespace);
+    public ItemModelBuilder(String owningNamespace, ExistingFileHelper existingFileHelper) {
+        super(owningNamespace, existingFileHelper);
     }
 
     public OverrideBuilder override() {

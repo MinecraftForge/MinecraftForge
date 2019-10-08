@@ -54,14 +54,16 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     protected ModelFile parent;
     protected final Map<String, ResourceLocation> textures = new HashMap<>();
     protected final TransformsBuilder transforms = new TransformsBuilder();
+    protected final ExistingFileHelper existingFileHelper;
 
     protected boolean ambientOcclusion = true;
     protected boolean gui3d = false;
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
-    protected ModelBuilder(String owningNamespace) {
+    protected ModelBuilder(String owningNamespace, ExistingFileHelper existingFileHelper) {
         this.owningNamespace = owningNamespace;
+        this.existingFileHelper = existingFileHelper;
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +86,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     }
 
     public T texture(String key, ResourceLocation texture) {
-        Preconditions.checkArgument(ExistingFileHelper.INSTANCE.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
+        Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
                 "Texture "+texture+" exists in none of the specified directories!");
         this.textures.put(key, texture);
         return self();

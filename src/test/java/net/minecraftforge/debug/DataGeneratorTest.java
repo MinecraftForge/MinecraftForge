@@ -30,8 +30,8 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
@@ -56,7 +56,7 @@ public class DataGeneratorTest
 
         if (event.includeClient())
         {
-            gen.addProvider(new ItemModels(gen));
+            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -120,9 +120,9 @@ public class DataGeneratorTest
     
     public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
-        public ItemModels(DataGenerator generator)
+        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
-            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new);
+            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
         }
         
         @Override
@@ -133,7 +133,7 @@ public class DataGeneratorTest
                     .texture("layer0", "block/stone");
             
             getBuilder("test_block_model")
-                    .parent(new ExistingModelFile("block/block"))
+                    .parent(getExistingFile("block/block"))
                     .texture("all", "block/dirt")
                     .texture("top", "block/stone")
                     .element()

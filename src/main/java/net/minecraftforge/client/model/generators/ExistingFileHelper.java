@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.function.Function;
 
 public class ExistingFileHelper {
-    public static ExistingFileHelper INSTANCE;
-
     private final List<Function<Path, Path>> resolve;
     private final boolean enable;
 

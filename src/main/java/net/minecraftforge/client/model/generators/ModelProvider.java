@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -47,18 +48,20 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected final String folder;
     protected final Supplier<T> factory;
     protected final Map<ResourceLocation, GeneratedModelFile<T>> generatedModels = new HashMap<>();
+    protected final ExistingFileHelper existingFileHelper;
 
     protected abstract void registerBuilders();
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, Supplier<T> factory) {
+    public ModelProvider(DataGenerator generator, String modid, String folder, Supplier<T> factory, ExistingFileHelper existingFileHelper) {
         this.generator = generator;
         this.modid = modid;
         this.folder = folder;
         this.factory = factory;
+        this.existingFileHelper = existingFileHelper;
     }
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, Function<String, T> builderFromModId) {
-        this(generator, modid, folder, ()->builderFromModId.apply(modid));
+    public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<String, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
+        this(generator, modid, folder, ()->builderFromModId.apply(modid, existingFileHelper), existingFileHelper);
     }
 
     protected T getBuilder(String path) {
@@ -68,6 +71,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected GeneratedModelFile<T> getModelFile(String path) {
         ResourceLocation loc = new ResourceLocation(modid, path);
         return generatedModels.computeIfAbsent(loc, $ -> new GeneratedModelFile<>(loc, factory.get(), folder));
+    }
+
+    protected ModelFile.ExistingModelFile getExistingFile(String path) {
+        return new ModelFile.ExistingModelFile(path, existingFileHelper);
     }
 
     @Override

@@ -217,8 +217,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeClient())
         {
-            gen.addProvider(new ItemModels(gen));
-            BlockModels blockModels = new BlockModels(gen);
+            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
+            BlockModels blockModels = new BlockModels(gen, event.getExistingFileHelper());
             gen.addProvider(blockModels);
             gen.addProvider(new BlockStates(gen, blockModels));
         }
@@ -232,9 +232,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     
     public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
-        public ItemModels(DataGenerator generator)
+        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
-            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new);
+            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
         }
         
         @Override
@@ -245,7 +245,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                     .texture("layer0", new ResourceLocation("block/stone"));
             
             getBuilder("test_block_model")
-                    .parent(new ExistingModelFile("block/block"))
+                    .parent(getExistingFile("block/block"))
                     .texture("all", new ResourceLocation("block/dirt"))
                     .texture("top", new ResourceLocation("block/stone"))
                     .element()
@@ -268,23 +268,23 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateOpen;
         public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWall;
         public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWallOpen;
-        public BlockModels(DataGenerator generator) {
-            super(generator, "forge", BLOCK_FOLDER, BlockModelBuilder::new);
+        public BlockModels(DataGenerator generator, ExistingFileHelper helper) {
+            super(generator, "forge", BLOCK_FOLDER, BlockModelBuilder::new, helper);
         }
 
         @Override
         protected void registerBuilders() {
             (acaciaFenceGate = getModelFile("acacia_fence_gate")).getBuilder()
-                    .parent(new ExistingModelFile("block/template_fence_gate"))
+                    .parent(getExistingFile("block/template_fence_gate"))
                     .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateOpen = getModelFile("acacia_fence_gate_open")).getBuilder()
-                    .parent(new ExistingModelFile("block/template_fence_gate_open"))
+                    .parent(getExistingFile("block/template_fence_gate_open"))
                     .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateWall = getModelFile("acacia_fence_gate_wall")).getBuilder()
-                    .parent(new ExistingModelFile("block/template_fence_gate_wall"))
+                    .parent(getExistingFile("block/template_fence_gate_wall"))
                     .texture("texture", new ResourceLocation("block/acacia_planks"));
             (acaciaFenceGateWallOpen = getModelFile("acacia_fence_gate_wall_open")).getBuilder()
-                    .parent(new ExistingModelFile("block/template_fence_gate_wall_open"))
+                    .parent(getExistingFile("block/template_fence_gate_wall_open"))
                     .texture("texture", new ResourceLocation("block/acacia_planks"));
         }
 

@@ -104,6 +104,7 @@ public class ModLoader
     private final List<ModLoadingException> loadingExceptions;
     private final List<ModLoadingWarning> loadingWarnings;
     private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
+    private ExistingFileHelper existingFileHelper;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
 
@@ -268,16 +269,16 @@ public class ModLoader
 
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
-        ExistingFileHelper.INSTANCE = new ExistingFileHelper(inputs, structureValidator);
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
+        existingFileHelper = new ExistingFileHelper(inputs, structureValidator);
         gatherAndInitializeMods(null);
         dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, null);
         dataGeneratorConfig.runAll();
     }
 
     public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig);
+        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
     }
 }

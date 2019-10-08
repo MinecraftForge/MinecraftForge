@@ -73,20 +73,23 @@ public abstract class ModelFile {
     }
 
     public static class ExistingModelFile extends ModelFile {
-        public ExistingModelFile(String location) {
-            this(new ResourceLocation(location));
+        private final ExistingFileHelper existingHelper;
+
+        public ExistingModelFile(String location, ExistingFileHelper existingHelper) {
+            this(new ResourceLocation(location), existingHelper);
         }
 
-        public ExistingModelFile(ResourceLocation location) {
+        public ExistingModelFile(ResourceLocation location, ExistingFileHelper existingHelper) {
             super(location);
+            this.existingHelper = existingHelper;
         }
 
         @Override
         protected boolean exists() {
             if (getUncheckedLocation().getPath().contains("."))
-                return ExistingFileHelper.INSTANCE.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, "", "models");
+                return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, "", "models");
             else
-                return ExistingFileHelper.INSTANCE.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+                return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
         }
     }
 
