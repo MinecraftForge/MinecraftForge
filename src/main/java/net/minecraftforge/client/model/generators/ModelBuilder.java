@@ -30,12 +30,14 @@ import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.data.DirectoryCache;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -49,7 +51,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> {
 
-    private final String owningNamespace;
+    private final ResourceLocation outputLocation;
+    private ModelFile.GeneratedModelFile<T> outputFile;
     @Nullable
     protected ModelFile parent;
     protected final Map<String, ResourceLocation> textures = new HashMap<>();
@@ -61,31 +64,38 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
-    protected ModelBuilder(String owningNamespace, ExistingFileHelper existingFileHelper) {
-        this.owningNamespace = owningNamespace;
+    protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
+        this.outputLocation = outputLocation;
         this.existingFileHelper = existingFileHelper;
     }
 
     @SuppressWarnings("unchecked")
     private T self() { return (T) this; }
 
+    private void checkNotGenerated() {
+        Preconditions.checkState(outputFile==null);
+    }
+
     public T parent(ModelFile parent) {
+        checkNotGenerated();
         parent.assertExistence();
         this.parent = parent;
         return self();
     }
 
     public T texture(String key, String texture) {
+        checkNotGenerated();
         ResourceLocation asLoc;
         if (texture.contains(":")) {
             asLoc = new ResourceLocation(texture);
         } else {
-            asLoc = new ResourceLocation(owningNamespace, texture);
+            asLoc = new ResourceLocation(outputLocation.getNamespace(), texture);
         }
         return texture(key, asLoc);
     }
 
     public T texture(String key, ResourceLocation texture) {
+        checkNotGenerated();
         Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
                 "Texture "+texture+" exists in none of the specified directories!");
         this.textures.put(key, texture);
@@ -97,16 +107,19 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     }
 
     public T ao(boolean ao) {
+        checkNotGenerated();
         this.ambientOcclusion = ao;
         return self();
     }
 
     public T gui3d(boolean gui3d) {
+        checkNotGenerated();
         this.gui3d = gui3d;
         return self();
     }
 
     public ElementBuilder element() {
+        checkNotGenerated();
         ElementBuilder ret = new ElementBuilder();
         elements.add(ret);
         return ret;
@@ -114,6 +127,12 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     public ElementBuilder element(int index) {
         return elements.get(index);
+    }
+
+    public ModelFile.GeneratedModelFile<T> build(Path basepath, DirectoryCache cache) {
+        checkNotGenerated();
+        outputFile = new ModelFile.GeneratedModelFile<>(outputLocation, self(), basepath, cache);
+        return outputFile;
     }
 
     public JsonObject serialize() {
@@ -151,7 +170,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
             JsonObject textures = new JsonObject();
             for (Entry<String, ResourceLocation> e : this.textures.entrySet()) {
                 String texName;
-                if (e.getValue().getNamespace().equals(owningNamespace)) {
+                if (e.getValue().getNamespace().equals(outputLocation.getNamespace())) {
                     texName = e.getValue().getPath();
                 } else {
                     texName = e.getValue().toString();
@@ -221,6 +240,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
         ret.add(vec.getY());
         ret.add(vec.getZ());
         return ret;
+    }
+
+    public ModelFile.GeneratedModelFile<T> getOutputFile() {
+        return outputFile;
     }
 
     public class ElementBuilder {

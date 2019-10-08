@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.generators;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
@@ -34,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
 
@@ -46,13 +46,15 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected final DataGenerator generator;
     protected final String modid;
     protected final String folder;
-    protected final Supplier<T> factory;
-    protected final Map<ResourceLocation, GeneratedModelFile<T>> generatedModels = new HashMap<>();
+    protected final Function<ResourceLocation, T> factory;
+    protected final Map<ResourceLocation, T> generatedModels = new HashMap<>();
     protected final ExistingFileHelper existingFileHelper;
+
+    protected DirectoryCache cache;
 
     protected abstract void registerBuilders();
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, Supplier<T> factory, ExistingFileHelper existingFileHelper) {
+    public ModelProvider(DataGenerator generator, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
         this.generator = generator;
         this.modid = modid;
         this.folder = folder;
@@ -60,17 +62,23 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         this.existingFileHelper = existingFileHelper;
     }
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<String, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
-        this(generator, modid, folder, ()->builderFromModId.apply(modid, existingFileHelper), existingFileHelper);
+    public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
+        this(generator, modid, folder, loc->builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
     }
 
     protected T getBuilder(String path) {
-        return getModelFile(path).getBuilder();
+        ResourceLocation loc = new ResourceLocation(modid, path);
+        ResourceLocation outputLoc = new ResourceLocation(modid, folder+"/"+path);
+        return generatedModels.computeIfAbsent(loc, $->factory.apply(outputLoc));
     }
 
     protected GeneratedModelFile<T> getModelFile(String path) {
         ResourceLocation loc = new ResourceLocation(modid, path);
-        return generatedModels.computeIfAbsent(loc, $ -> new GeneratedModelFile<>(loc, factory.get(), folder));
+        T builder = generatedModels.get(loc);
+        Preconditions.checkNotNull(builder);
+        GeneratedModelFile<T> ret = builder.getOutputFile();
+        Preconditions.checkNotNull(ret);
+        return ret;
     }
 
     protected ModelFile.ExistingModelFile getExistingFile(String path) {
@@ -79,10 +87,9 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
 
     @Override
     public void act(DirectoryCache cache) throws IOException {
+        this.cache = cache;
         generatedModels.clear();
         registerBuilders();
-        for (GeneratedModelFile<T> e : generatedModels.values()) {
-            e.generate(generator.getOutputFolder(), cache);
-        }
+        this.cache = null;
     }
 }

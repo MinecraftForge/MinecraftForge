@@ -35,32 +35,30 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static net.minecraftforge.client.model.generators.VariantBlockstate.*;
 
-public abstract class BlockstateProvider implements IDataProvider {
+public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
     private final DataGenerator gen;
 
-    public BlockstateProvider(DataGenerator gen) {
+    public BlockstateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
+        super(gen, modid, BLOCK_FOLDER, BlockModelBuilder::new, exFileHelper);
         this.gen = gen;
     }
 
     private Set<ResourceLocation> generatedStates;
-    private DirectoryCache cache;
-
     @Override
     public void act(@Nonnull DirectoryCache cache) throws IOException {
         generatedStates = new HashSet<>();
         this.cache = cache;
-        registerStates(this::createVariantModel, this::createMultipartModel);
+        registerStates();
+        this.cache = null;
     }
 
-    private void createVariantModel(VariantBlockstate out) {
+    protected void createVariantBlockState(VariantBlockstate out) {
         Block block = out.getOwner();
         ResourceLocation blockName = Preconditions.checkNotNull(block.getRegistryName());
         Preconditions.checkArgument(generatedStates.add(blockName));
@@ -73,7 +71,12 @@ public abstract class BlockstateProvider implements IDataProvider {
         BlockstateProvider.this.saveBlockState(main, block);
     }
 
-    private void createMultipartModel(Block block, List<MultiPart> parts) {
+    @Override
+    protected final void registerBuilders() {
+
+    }
+
+    protected void createMultipartBlockstate(Block block, List<MultiPart> parts) {
         JsonArray variants = new JsonArray();
         for (MultiPart part : parts) {
             Preconditions.checkArgument(part.canApplyTo(block));
@@ -84,7 +87,7 @@ public abstract class BlockstateProvider implements IDataProvider {
         saveBlockState(main, block);
     }
 
-    protected abstract void registerStates(Consumer<VariantBlockstate> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased);
+    protected abstract void registerStates();
 
     private void saveBlockState(JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());

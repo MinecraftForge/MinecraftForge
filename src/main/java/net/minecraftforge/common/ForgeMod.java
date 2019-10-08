@@ -42,6 +42,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
@@ -50,7 +51,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockstate.PartialBlockstate;
 import net.minecraftforge.common.crafting.CompoundIngredient;
@@ -101,9 +101,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.nio.file.Path;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -218,9 +216,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         if (event.includeClient())
         {
             gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
-            BlockModels blockModels = new BlockModels(gen, event.getExistingFileHelper());
-            gen.addProvider(blockModels);
-            gen.addProvider(new BlockStates(gen, blockModels));
+            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -240,10 +236,12 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         @Override
         protected void registerBuilders()
         {
+            Path basePath = generator.getOutputFolder();
             getBuilder("test_generated_model")
                     .parent(new UncheckedModelFile("item/generated"))
-                    .texture("layer0", new ResourceLocation("block/stone"));
-            
+                    .texture("layer0", new ResourceLocation("block/stone"))
+                    .build(basePath, cache);
+
             getBuilder("test_block_model")
                     .parent(getExistingFile("block/block"))
                     .texture("all", new ResourceLocation("block/dirt"))
@@ -253,7 +251,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                         .face(Direction.UP)
                             .texture("#top")
                             .end()
-                        .end();
+                        .end()
+                    .build(basePath, cache);
         }
 
         @Override
@@ -263,64 +262,47 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
 
-    public static class BlockModels extends ModelProvider<BlockModelBuilder> {
-        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGate;
-        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateOpen;
-        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWall;
-        public ModelFile.GeneratedModelFile<BlockModelBuilder> acaciaFenceGateWallOpen;
-        public BlockModels(DataGenerator generator, ExistingFileHelper helper) {
-            super(generator, "forge", BLOCK_FOLDER, BlockModelBuilder::new, helper);
+   public static class BlockStates extends BlockstateProvider {
+
+        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {
+            super(gen, "forge", exFileHelper);
         }
 
         @Override
-        protected void registerBuilders() {
-            (acaciaFenceGate = getModelFile("acacia_fence_gate")).getBuilder()
+        protected void registerStates() {
+            Path basePath = generator.getOutputFolder();
+            ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
                     .parent(getExistingFile("block/template_fence_gate"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"));
-            (acaciaFenceGateOpen = getModelFile("acacia_fence_gate_open")).getBuilder()
+                    .texture("texture", new ResourceLocation("block/acacia_planks"))
+                    .build(basePath, cache);
+            ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
                     .parent(getExistingFile("block/template_fence_gate_open"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"));
-            (acaciaFenceGateWall = getModelFile("acacia_fence_gate_wall")).getBuilder()
+                    .texture("texture", new ResourceLocation("block/acacia_planks"))
+                    .build(basePath, cache);
+            ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
                     .parent(getExistingFile("block/template_fence_gate_wall"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"));
-            (acaciaFenceGateWallOpen = getModelFile("acacia_fence_gate_wall_open")).getBuilder()
+                    .texture("texture", new ResourceLocation("block/acacia_planks"))
+                    .build(basePath, cache);
+            ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
                     .parent(getExistingFile("block/template_fence_gate_wall_open"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"));
-        }
-
-        @Override
-        public String getName() {
-            return "Forge Test Block Models";
-        }
-    }
-
-    public static class BlockStates extends BlockstateProvider {
-
-        private final BlockModels models;
-
-        public BlockStates(DataGenerator gen, BlockModels models) {
-            super(gen);
-            this.models = models;
-        }
-
-        @Override
-        protected void registerStates(Consumer<VariantBlockstate> variantBased, BiConsumer<Block, List<MultiPart>> multipartBased) {
+                    .texture("texture", new ResourceLocation("block/acacia_planks"))
+                    .build(basePath, cache);
             PartialBlockstate base = new PartialBlockstate(Blocks.ACACIA_FENCE_GATE);
             VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
             for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
                 PartialBlockstate withFacing = base.with(FenceGateBlock.HORIZONTAL_FACING, dir);
                 int angle = (int) dir.getHorizontalAngle();
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, false),
-                        new ConfiguredModel(models.acaciaFenceGate, 0, angle, true, 100),
+                        new ConfiguredModel(acaciaFenceGate, 0, angle, true, 100),
                         new ConfiguredModel(new UncheckedModelFile(new ResourceLocation("builtin/generated")), 0, 0, false, 1));
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
-                        new ConfiguredModel(models.acaciaFenceGateOpen, 0, angle, true));
+                        new ConfiguredModel(acaciaFenceGateOpen, 0, angle, true));
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),
-                        new ConfiguredModel(models.acaciaFenceGateWall, 0, angle, true));
+                        new ConfiguredModel(acaciaFenceGateWall, 0, angle, true));
                 builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, true),
-                        new ConfiguredModel(models.acaciaFenceGateWallOpen, 0, angle, true));
+                        new ConfiguredModel(acaciaFenceGateWallOpen, 0, angle, true));
             }
-            variantBased.accept(builder.build());
+            createVariantBlockState(builder.build());
         }
     }
 

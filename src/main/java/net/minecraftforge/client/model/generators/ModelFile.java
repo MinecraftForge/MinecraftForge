@@ -94,36 +94,29 @@ public abstract class ModelFile {
     }
 
     public static class GeneratedModelFile<T extends ModelBuilder<T>> extends ModelFile {
-        private boolean generated = false;
-        private final T generator;
 
-        public GeneratedModelFile(ResourceLocation location, T generator, String folder) {
-            super(new ResourceLocation(location.getNamespace(), folder+"/"+location.getPath()));
-            this.generator = generator;
+        public GeneratedModelFile(ResourceLocation location, T generator, Path basePath, DirectoryCache cache) {
+            super(location);
+           generate(generator, basePath, cache);
         }
 
         @Override
         protected boolean exists() {
-            return generated;
+            return true;
         }
 
-        public void generate(Path basePath, DirectoryCache cache) {
+        public void generate(T generator, Path basePath, DirectoryCache cache) {
             Path target = getPath(basePath);
             try {
                 IDataProvider.save(GSON, cache, generator.serialize(), target);
             } catch (IOException e) {
-                LOGGER.error("Couldn't save model to {}", target, e);
+                throw new RuntimeException(e);
             }
-            generated = true;
         }
 
         protected Path getPath(Path basePath) {
             ResourceLocation loc = getUncheckedLocation();
             return basePath.resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
-        }
-
-        public T getBuilder() {
-            return generator;
         }
     }
 }
