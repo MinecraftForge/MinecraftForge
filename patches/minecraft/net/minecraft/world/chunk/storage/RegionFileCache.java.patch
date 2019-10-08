@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/chunk/storage/RegionFileCache.java
++++ b/net/minecraft/world/chunk/storage/RegionFileCache.java
+@@ -18,7 +18,7 @@
+       this.field_219101_a = p_i49938_1_;
+    }
+ 
+-   private RegionFile func_219098_a(ChunkPos p_219098_1_) throws IOException {
++   private synchronized RegionFile func_219098_a(ChunkPos p_219098_1_) throws IOException {
+       long i = ChunkPos.func_77272_a(p_219098_1_.func_222241_h(), p_219098_1_.func_222242_i());
+       RegionFile regionfile = this.field_219102_c.getAndMoveToFirst(i);
+       if (regionfile != null) {
+@@ -65,7 +65,7 @@
+ 
+    }
+ 
+-   public void close() throws IOException {
++   public synchronized void close() throws IOException {
+       for(RegionFile regionfile : this.field_219102_c.values()) {
+          regionfile.close();
+       }
