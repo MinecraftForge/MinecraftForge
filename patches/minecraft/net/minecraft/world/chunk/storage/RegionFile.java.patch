@@ -65,6 +65,15 @@
                 return null;
              } else {
                 byte b0 = this.field_76719_c.readByte();
+@@ -101,7 +123,7 @@
+       }
+    }
+ 
+-   public boolean func_222662_b(ChunkPos p_222662_1_) {
++   public synchronized boolean func_222662_b(ChunkPos p_222662_1_) {
+       int i = this.func_222660_e(p_222662_1_);
+       if (i == 0) {
+          return false;
 @@ -134,10 +156,16 @@
        int i = this.func_222660_e(p_222664_1_);
        int j = i >> 8;
