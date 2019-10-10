@@ -55,7 +55,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     private ModelFile.GeneratedModelFile<T> outputFile;
     @Nullable
     protected ModelFile parent;
-    protected final Map<String, ResourceLocation> textures = new HashMap<>();
+    protected final Map<String, String> textures = new HashMap<>();
     protected final TransformsBuilder transforms = new TransformsBuilder();
     protected final ExistingFileHelper existingFileHelper;
 
@@ -85,20 +85,25 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     public T texture(String key, String texture) {
         checkNotGenerated();
-        ResourceLocation asLoc;
-        if (texture.contains(":")) {
-            asLoc = new ResourceLocation(texture);
+        if (texture.charAt(0)=='#') {
+            this.textures.put(key, texture);
+            return self();
         } else {
-            asLoc = new ResourceLocation(outputLocation.getNamespace(), texture);
+            ResourceLocation asLoc;
+            if (texture.contains(":")) {
+                asLoc = new ResourceLocation(outputLocation.getNamespace());
+            } else {
+                asLoc = new ResourceLocation(outputLocation.getNamespace(), texture);
+            }
+            return texture(key, asLoc);
         }
-        return texture(key, asLoc);
     }
 
     public T texture(String key, ResourceLocation texture) {
         checkNotGenerated();
         Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
                 "Texture "+texture+" exists in none of the specified directories!");
-        this.textures.put(key, texture);
+        this.textures.put(key, texture.toString());
         return self();
     }
 
@@ -168,14 +173,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
         if (!this.textures.isEmpty()) {
             JsonObject textures = new JsonObject();
-            for (Entry<String, ResourceLocation> e : this.textures.entrySet()) {
-                String texName;
-                if (e.getValue().getNamespace().equals(outputLocation.getNamespace())) {
-                    texName = e.getValue().getPath();
-                } else {
-                    texName = e.getValue().toString();
-                }
-                textures.addProperty(e.getKey(), texName);
+            for (Entry<String, String> e : this.textures.entrySet()) {
+                textures.addProperty(e.getKey(), e.getValue());
             }
             root.add("textures", textures);
         }
