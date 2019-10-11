@@ -24,8 +24,8 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
-import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModel;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -88,18 +88,24 @@ public class VariantBlockstate {
         public VariantBlockstate build() {
             return new VariantBlockstate(owner, models);
         }
+
+        public PartialBlockstate partialState() {
+            return new PartialBlockstate(owner, this);
+        }
     }
-    //TODO a weird compiler issue happened here, didn't work without the full name
-    public static class PartialBlockstate implements java.util.function.Predicate<BlockState> {
+    public static class PartialBlockstate implements Predicate<BlockState> {
         private final Block owner;
         private final Map<IProperty<?>, Comparable<?>> setStates;
-        public PartialBlockstate(Block owner) {
-           this(owner, ImmutableMap.of());
+        @Nullable
+        private final VariantBlockstate.Builder outerBuilder;
+        public PartialBlockstate(Block owner, @Nullable Builder outerBuilder) {
+           this(owner, ImmutableMap.of(), outerBuilder);
         }
 
-        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates) {
+        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable Builder outerBuilder) {
            this.owner = owner;
-           for (Map.Entry<IProperty<?>, Comparable<?>> entry:setStates.entrySet()) {
+            this.outerBuilder = outerBuilder;
+            for (Map.Entry<IProperty<?>, Comparable<?>> entry:setStates.entrySet()) {
                IProperty<?> prop = entry.getKey();
                Comparable<?> value = entry.getValue();
                Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property "+entry+" not found on block "+ this.owner);
@@ -112,7 +118,16 @@ public class VariantBlockstate {
             Preconditions.checkArgument(!setStates.containsKey(prop), "Property "+prop+" has already been set");
             Map<IProperty<?>, Comparable<?>> newState = new HashMap<>(setStates);
             newState.put(prop, value);
-            return new PartialBlockstate(owner, newState);
+            return new PartialBlockstate(owner, newState, outerBuilder);
+        }
+
+        public ConfiguredModel.Builder modelForState() {
+            return ConfiguredModel.builder(outerBuilder, this);
+        }
+
+        public Builder setModel(ConfiguredModel... model) {
+            Preconditions.checkNotNull(outerBuilder);
+            return outerBuilder.setModel(this, model);
         }
 
         @Override

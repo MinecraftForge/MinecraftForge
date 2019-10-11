@@ -42,7 +42,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
@@ -52,7 +51,6 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockstate.PartialBlockstate;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -264,47 +262,78 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
    public static class BlockStates extends BlockstateProvider {
 
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {
-            super(gen, "forge", exFileHelper);
-        }
+       public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {
+           super(gen, "forge", exFileHelper);
+       }
 
-        @Override
-        protected void registerStates() {
-            Path basePath = generator.getOutputFolder();
-            ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
-                    .parent(getExistingFile("block/template_fence_gate"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"))
-                    .build(basePath, cache);
-            ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
-                    .parent(getExistingFile("block/template_fence_gate_open"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"))
-                    .build(basePath, cache);
-            ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
-                    .parent(getExistingFile("block/template_fence_gate_wall"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"))
-                    .build(basePath, cache);
-            ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
-                    .parent(getExistingFile("block/template_fence_gate_wall_open"))
-                    .texture("texture", new ResourceLocation("block/acacia_planks"))
-                    .build(basePath, cache);
-            PartialBlockstate base = new PartialBlockstate(Blocks.ACACIA_FENCE_GATE);
-            VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
-            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
-                PartialBlockstate withFacing = base.with(FenceGateBlock.HORIZONTAL_FACING, dir);
-                int angle = (int) dir.getHorizontalAngle();
-                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, false),
-                        new ConfiguredModel(acaciaFenceGate, 0, angle, true, 100),
-                        new ConfiguredModel(new UncheckedModelFile(new ResourceLocation("builtin/generated")), 0, 0, false, 1));
-                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, false).with(FenceGateBlock.OPEN, true),
-                        new ConfiguredModel(acaciaFenceGateOpen, 0, angle, true));
-                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, false),
-                        new ConfiguredModel(acaciaFenceGateWall, 0, angle, true));
-                builder.setModel(withFacing.with(FenceGateBlock.IN_WALL, true).with(FenceGateBlock.OPEN, true),
-                        new ConfiguredModel(acaciaFenceGateWallOpen, 0, angle, true));
-            }
-            createVariantBlockState(builder.build());
-        }
-    }
+       @Override
+       protected void registerStates() {
+           Path basePath = generator.getOutputFolder();
+           ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
+                   .parent(getExistingFile("block/template_fence_gate"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"))
+                   .build(basePath, cache);
+           ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
+                   .parent(getExistingFile("block/template_fence_gate_open"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"))
+                   .build(basePath, cache);
+           ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
+                   .parent(getExistingFile("block/template_fence_gate_wall"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"))
+                   .build(basePath, cache);
+           ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
+                   .parent(getExistingFile("block/template_fence_gate_wall_open"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"))
+                   .build(basePath, cache);
+           ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
+           VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
+           for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
+               int angle = (int) dir.getHorizontalAngle();
+               builder
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, false)
+                            .with(FenceGateBlock.OPEN, false)
+                            .modelForState()
+                                .modelFile(invisbleModel)
+                                .weight(1)
+                            .nextModel()
+                                .modelFile(acaciaFenceGate)
+                                .rotationY(angle)
+                                .uvLock(true)
+                                .weight(100)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, false)
+                            .with(FenceGateBlock.OPEN, true)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateOpen)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, true)
+                            .with(FenceGateBlock.OPEN, false)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateWall)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, true)
+                            .with(FenceGateBlock.OPEN, true)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateWallOpen)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel();
+           }
+           createVariantBlockState(builder.build());
+       }
+   }
 
     @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
     public void registerRecipeSerialziers(RegistryEvent.Register<IRecipeSerializer<?>> event)

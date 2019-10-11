@@ -107,44 +107,6 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
         return "Block States";
     }
 
-    public static final class ConfiguredModel {
-        public final ModelFile name;
-        public final int rotationX;
-        public final int rotationY;
-        public final boolean uvLock;
-        public final int weight;
-
-        public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock, int weight) {
-            this.name = name;
-            this.rotationX = rotationX;
-            this.rotationY = rotationY;
-            this.uvLock = uvLock;
-            this.weight = weight;
-        }
-
-        public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock) {
-            this(name, rotationX, rotationY, uvLock, 0);
-        }
-
-        public ConfiguredModel(ModelFile name) {
-            this(name, 0, 0, false, 0);
-        }
-
-        public JsonObject toJSON(boolean includeWeight) {
-            JsonObject modelJson = new JsonObject();
-            modelJson.addProperty("model", name.getLocation().toString());
-            if (rotationX != 0)
-                modelJson.addProperty("x", rotationX);
-            if (rotationY != 0)
-                modelJson.addProperty("y", rotationY);
-            if (uvLock && (rotationX != 0 || rotationY != 0))
-                modelJson.addProperty("uvlock", uvLock);
-            if (includeWeight)
-                modelJson.addProperty("weight", weight);
-            return modelJson;
-        }
-    }
-
     public static class ConfiguredModelList {
         private final List<ConfiguredModel> models;
 
