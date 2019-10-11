@@ -39,7 +39,17 @@
        this.field_187241_h.add(p_78873_1_);
     }
  
-@@ -342,7 +343,7 @@
+@@ -306,7 +307,8 @@
+       Particle.field_70554_ao = p_215233_1_.func_216785_c().field_72448_b;
+       Particle.field_70555_ap = p_215233_1_.func_216785_c().field_72449_c;
+ 
+-      for(IParticleRenderType iparticlerendertype : field_215241_b) {
++      for(IParticleRenderType iparticlerendertype : this.field_78876_b.keySet()) { // Forge: allow custom IParticleRenderType's
++         if(iparticlerendertype == IParticleRenderType.field_217606_f) continue;
+          Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
+          if (iterable != null) {
+             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+@@ -342,7 +344,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
@@ -48,7 +58,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_199284_3_, p_199284_5_, p_199284_7_, p_199284_9_, p_199284_11_, p_199284_13_) -> {
-@@ -414,6 +415,12 @@
+@@ -414,6 +416,12 @@
        return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
     }
  
