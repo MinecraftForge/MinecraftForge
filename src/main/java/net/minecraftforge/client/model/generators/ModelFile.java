@@ -22,15 +22,10 @@ package net.minecraftforge.client.model.generators;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 public abstract class ModelFile {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -90,33 +85,6 @@ public abstract class ModelFile {
                 return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, "", "models");
             else
                 return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
-        }
-    }
-
-    public static class GeneratedModelFile<T extends ModelBuilder<T>> extends ModelFile {
-
-        public GeneratedModelFile(ResourceLocation location, T generator, Path basePath, DirectoryCache cache) {
-            super(location);
-           generate(generator, basePath, cache);
-        }
-
-        @Override
-        protected boolean exists() {
-            return true;
-        }
-
-        public void generate(T generator, Path basePath, DirectoryCache cache) {
-            Path target = getPath(basePath);
-            try {
-                IDataProvider.save(GSON, cache, generator.serialize(), target);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        protected Path getPath(Path basePath) {
-            ResourceLocation loc = getUncheckedLocation();
-            return basePath.resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
         }
     }
 }

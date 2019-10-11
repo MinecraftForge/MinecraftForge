@@ -24,9 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
-import net.minecraft.state.IProperty;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,60 +32,57 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
-
-import static net.minecraftforge.client.model.generators.VariantBlockstate.*;
+import java.util.Arrays;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
     private final DataGenerator gen;
+    private final Map<Block, IGeneratedBlockstate> registeredBlocks = new IdentityHashMap<>();
 
     public BlockstateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
         super(gen, modid, BLOCK_FOLDER, BlockModelBuilder::new, exFileHelper);
         this.gen = gen;
     }
 
-    private Set<ResourceLocation> generatedStates;
-    @Override
-    public void act(@Nonnull DirectoryCache cache) throws IOException {
-        generatedStates = new HashSet<>();
-        this.cache = cache;
-        registerStates();
-        this.cache = null;
-    }
-
-    protected void createVariantBlockState(VariantBlockstate out) {
-        Block block = out.getOwner();
-        ResourceLocation blockName = Preconditions.checkNotNull(block.getRegistryName());
-        Preconditions.checkArgument(generatedStates.add(blockName));
-        JsonObject variants = new JsonObject();
-        for (Map.Entry<PartialBlockstate, ConfiguredModelList> entry : out.getModels().entrySet()) {
-                variants.add(entry.getKey().toString(), entry.getValue().toJSON());
+   @Override
+    protected final void registerModels() {
+        registeredBlocks.clear();
+        registerStatesAndModels();
+        for (Map.Entry<Block, IGeneratedBlockstate> entry : registeredBlocks.entrySet()) {
+            saveBlockState(entry.getValue().toJson(), entry.getKey());
         }
-        JsonObject main = new JsonObject();
-        main.add("variants", variants);
-        BlockstateProvider.this.saveBlockState(main, block);
     }
 
-    @Override
-    protected final void registerBuilders() {
+    protected abstract void registerStatesAndModels();
 
-    }
-
-    protected void createMultipartBlockstate(Block block, List<MultiPart> parts) {
-        JsonArray variants = new JsonArray();
-        for (MultiPart part : parts) {
-            Preconditions.checkArgument(part.canApplyTo(block));
-            variants.add(part.toJson());
+    public VariantBlockstate getVariantBuilder(Block b) {
+        if (registeredBlocks.containsKey(b)) {
+            IGeneratedBlockstate old = registeredBlocks.get(b);
+            Preconditions.checkState(old instanceof VariantBlockstate);
+            return (VariantBlockstate) old;
+        } else {
+            VariantBlockstate ret = new VariantBlockstate(b);
+            registeredBlocks.put(b, ret);
+            return ret;
         }
-        JsonObject main = new JsonObject();
-        main.add("multipart", variants);
-        saveBlockState(main, block);
     }
 
-    protected abstract void registerStates();
+    public MultiPartBlockstate getMultipartBuilder(Block b) {
+        if (registeredBlocks.containsKey(b)) {
+            IGeneratedBlockstate old = registeredBlocks.get(b);
+            Preconditions.checkState(old instanceof MultiPartBlockstate);
+            return (MultiPartBlockstate) old;
+        } else {
+            MultiPartBlockstate ret = new MultiPartBlockstate(b);
+            registeredBlocks.put(b, ret);
+            return ret;
+        }
+    }
 
     private void saveBlockState(JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
@@ -133,64 +128,6 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
                 }
                 return ret;
             }
-        }
-    }
-
-    public static final class PropertyWithValues<T extends Comparable<T>> {
-        public final IProperty<T> prop;
-        public final List<T> values;
-
-        public PropertyWithValues(IProperty<T> prop, T... values) {
-            this.prop = prop;
-            this.values = Arrays.asList(values);
-        }
-    }
-
-    public static final class MultiPart {
-        public final ConfiguredModelList models;
-        public final boolean useOr;
-        public final List<PropertyWithValues> conditions;
-
-        public MultiPart(ConfiguredModelList models, boolean useOr, PropertyWithValues... conditionsArray) {
-            conditions = Arrays.asList(conditionsArray);
-            Preconditions.checkArgument(conditions.size() == conditions.stream()
-                    .map(pwv -> pwv.prop)
-                    .distinct()
-                    .count());
-            Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()));
-            this.models = models;
-            this.useOr = useOr;
-        }
-
-        public JsonObject toJson() {
-            JsonObject out = new JsonObject();
-            if (!conditions.isEmpty()) {
-                JsonObject when = new JsonObject();
-                for (PropertyWithValues<?> prop : conditions) {
-                    StringBuilder activeString = new StringBuilder();
-                    for (Object val : prop.values) {
-                        if (activeString.length() > 0)
-                            activeString.append("|");
-                        activeString.append(val.toString());
-                    }
-                    when.addProperty(prop.prop.getName(), activeString.toString());
-                }
-                if (useOr) {
-                    JsonObject innerWhen = when;
-                    when = new JsonObject();
-                    when.add("OR", innerWhen);
-                }
-                out.add("when", when);
-            }
-            out.add("apply", models.toJSON());
-            return out;
-        }
-
-        public boolean canApplyTo(Block b) {
-            for (PropertyWithValues<?> p : conditions)
-                if (!b.getStateContainer().getProperties().contains(p.prop))
-                    return false;
-            return true;
         }
     }
 }

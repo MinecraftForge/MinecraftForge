@@ -19,18 +19,17 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.ModelFile.GeneratedModelFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -52,7 +51,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
 
     protected DirectoryCache cache;
 
-    protected abstract void registerBuilders();
+    protected abstract void registerModels();
 
     public ModelProvider(DataGenerator generator, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
         this.generator = generator;
@@ -72,15 +71,6 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return generatedModels.computeIfAbsent(loc, $->factory.apply(outputLoc));
     }
 
-    protected GeneratedModelFile<T> getModelFile(String path) {
-        ResourceLocation loc = new ResourceLocation(modid, path);
-        T builder = generatedModels.get(loc);
-        Preconditions.checkNotNull(builder);
-        GeneratedModelFile<T> ret = builder.getOutputFile();
-        Preconditions.checkNotNull(ret);
-        return ret;
-    }
-
     protected ModelFile.ExistingModelFile getExistingFile(String path) {
         return new ModelFile.ExistingModelFile(path, existingFileHelper);
     }
@@ -89,7 +79,24 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public void act(DirectoryCache cache) throws IOException {
         this.cache = cache;
         generatedModels.clear();
-        registerBuilders();
+        registerModels();
+        generateAll();
         this.cache = null;
+    }
+
+    private void generateAll() {
+        for (T model : generatedModels.values()) {
+            Path target = getPath(model);
+            try {
+                IDataProvider.save(GSON, cache, model.serialize(), target);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private Path getPath(T model) {
+        ResourceLocation loc = model.getLocation();
+        return generator.getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
     }
 }

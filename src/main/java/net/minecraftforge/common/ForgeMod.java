@@ -51,19 +51,8 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
-import net.minecraftforge.common.crafting.CompoundIngredient;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IngredientNBT;
-import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
-import net.minecraftforge.common.crafting.conditions.AndCondition;
-import net.minecraftforge.common.crafting.conditions.FalseCondition;
-import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.common.crafting.conditions.NotCondition;
-import net.minecraftforge.common.crafting.conditions.OrCondition;
-import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
-import net.minecraftforge.common.crafting.conditions.TrueCondition;
+import net.minecraftforge.common.crafting.*;
+import net.minecraftforge.common.crafting.conditions.*;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
@@ -73,12 +62,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.FMLWorldPersistenceHook;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.StartupMessageManager;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -92,14 +76,11 @@ import net.minecraftforge.server.command.ConfigCommand;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import java.nio.file.Path;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -232,13 +213,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
         
         @Override
-        protected void registerBuilders()
+        protected void registerModels()
         {
-            Path basePath = generator.getOutputFolder();
             getBuilder("test_generated_model")
                     .parent(new UncheckedModelFile("item/generated"))
-                    .texture("layer0", new ResourceLocation("block/stone"))
-                    .build(basePath, cache);
+                    .texture("layer0", new ResourceLocation("block/stone"));
 
             getBuilder("test_block_model")
                     .parent(getExistingFile("block/block"))
@@ -249,8 +228,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                         .face(Direction.UP)
                             .texture("#top")
                             .end()
-                        .end()
-                    .build(basePath, cache);
+                        .end();
         }
 
         @Override
@@ -267,26 +245,21 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
        }
 
        @Override
-       protected void registerStates() {
-           Path basePath = generator.getOutputFolder();
+       protected void registerStatesAndModels() {
            ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
                    .parent(getExistingFile("block/template_fence_gate"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"))
-                   .build(basePath, cache);
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
            ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
                    .parent(getExistingFile("block/template_fence_gate_open"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"))
-                   .build(basePath, cache);
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
            ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
                    .parent(getExistingFile("block/template_fence_gate_wall"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"))
-                   .build(basePath, cache);
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
            ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
                    .parent(getExistingFile("block/template_fence_gate_wall_open"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"))
-                   .build(basePath, cache);
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
            ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
-           VariantBlockstate.Builder builder = new VariantBlockstate.Builder(Blocks.ACACIA_FENCE_GATE);
+           VariantBlockstate builder = getVariantBuilder(Blocks.ACACIA_FENCE_GATE);
            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
                int angle = (int) dir.getHorizontalAngle();
                builder
@@ -331,7 +304,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                                 .uvLock(true)
                             .addModel();
            }
-           createVariantBlockState(builder.build());
        }
    }
 

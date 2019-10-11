@@ -23,36 +23,20 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.BlockFaceUV;
-import net.minecraft.client.renderer.model.BlockPart;
-import net.minecraft.client.renderer.model.BlockPartFace;
-import net.minecraft.client.renderer.model.BlockPartRotation;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.data.DirectoryCache;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
-public class ModelBuilder<T extends ModelBuilder<T>> {
-
-    private final ResourceLocation outputLocation;
-    private ModelFile.GeneratedModelFile<T> outputFile;
+public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     @Nullable
     protected ModelFile parent;
     protected final Map<String, String> textures = new HashMap<>();
@@ -65,42 +49,40 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
     protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
-        this.outputLocation = outputLocation;
+        super(outputLocation);
         this.existingFileHelper = existingFileHelper;
     }
 
     @SuppressWarnings("unchecked")
     private T self() { return (T) this; }
 
-    private void checkNotGenerated() {
-        Preconditions.checkState(outputFile==null);
+    @Override
+    protected boolean exists() {
+        return true;
     }
 
     public T parent(ModelFile parent) {
-        checkNotGenerated();
         parent.assertExistence();
         this.parent = parent;
         return self();
     }
 
     public T texture(String key, String texture) {
-        checkNotGenerated();
         if (texture.charAt(0)=='#') {
             this.textures.put(key, texture);
             return self();
         } else {
             ResourceLocation asLoc;
             if (texture.contains(":")) {
-                asLoc = new ResourceLocation(outputLocation.getNamespace());
+                asLoc = new ResourceLocation(texture);
             } else {
-                asLoc = new ResourceLocation(outputLocation.getNamespace(), texture);
+                asLoc = new ResourceLocation(getLocation().getNamespace(), texture);
             }
             return texture(key, asLoc);
         }
     }
 
     public T texture(String key, ResourceLocation texture) {
-        checkNotGenerated();
         Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
                 "Texture "+texture+" exists in none of the specified directories!");
         this.textures.put(key, texture.toString());
@@ -112,19 +94,16 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
     }
 
     public T ao(boolean ao) {
-        checkNotGenerated();
         this.ambientOcclusion = ao;
         return self();
     }
 
     public T gui3d(boolean gui3d) {
-        checkNotGenerated();
         this.gui3d = gui3d;
         return self();
     }
 
     public ElementBuilder element() {
-        checkNotGenerated();
         ElementBuilder ret = new ElementBuilder();
         elements.add(ret);
         return ret;
@@ -132,12 +111,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
 
     public ElementBuilder element(int index) {
         return elements.get(index);
-    }
-
-    public ModelFile.GeneratedModelFile<T> build(Path basepath, DirectoryCache cache) {
-        checkNotGenerated();
-        outputFile = new ModelFile.GeneratedModelFile<>(outputLocation, self(), basepath, cache);
-        return outputFile;
     }
 
     public JsonObject serialize() {
@@ -239,10 +212,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> {
         ret.add(vec.getY());
         ret.add(vec.getZ());
         return ret;
-    }
-
-    public ModelFile.GeneratedModelFile<T> getOutputFile() {
-        return outputFile;
     }
 
     public class ElementBuilder {

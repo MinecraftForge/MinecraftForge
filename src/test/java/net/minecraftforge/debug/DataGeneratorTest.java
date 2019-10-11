@@ -32,7 +32,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
@@ -126,7 +125,7 @@ public class DataGeneratorTest
         }
         
         @Override
-        protected void registerBuilders()
+        protected void registerModels()
         {
             getBuilder("test_generated_model")
                     .parent(new UncheckedModelFile("item/generated"))

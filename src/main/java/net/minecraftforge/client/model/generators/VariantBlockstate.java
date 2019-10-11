@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
@@ -29,25 +30,15 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraftforge.client.model.generators.BlockstateProvider.*;
+import static net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
 
-public class VariantBlockstate {
+public class VariantBlockstate implements IGeneratedBlockstate {
     private final Block owner;
-    private final Map<PartialBlockstate, ConfiguredModelList> models;
+    private final Map<PartialBlockstate, ConfiguredModelList> models = new HashMap<>();
+    private final Set<BlockState> coveredStates = new HashSet<>();
 
-    public VariantBlockstate(Block owner, Map<PartialBlockstate, ConfiguredModelList> models) {
+    public VariantBlockstate(Block owner) {
         this.owner = owner;
-        this.models = models;
-        for (BlockState state:owner.getStateContainer().getValidStates()) {
-            PartialBlockstate matching = null;
-            for (PartialBlockstate partialState:models.keySet()) {
-                if (partialState.test(state)) {
-                    Preconditions.checkState(matching==null, "Both "+matching+" and "+partialState+" match "+state);
-                    matching = partialState;
-                }
-            }
-            Preconditions.checkState(matching!=null, "No partial state matches "+state);
-        }
     }
 
     public Map<PartialBlockstate, ConfiguredModelList> getModels() {
@@ -58,64 +49,64 @@ public class VariantBlockstate {
         return owner;
     }
 
-    public static class Builder {
-        private final Block owner;
-        private final Map<PartialBlockstate, ConfiguredModelList> models = new HashMap<>();
-        private final Set<BlockState> coveredStates = new HashSet<>();
-
-        public Builder(Block owner) {
-            this.owner = owner;
+    @Override
+    public JsonObject toJson() {
+        Preconditions.checkState(coveredStates.size()==owner.getStateContainer().getValidStates().size());
+        JsonObject variants = new JsonObject();
+        for (Map.Entry<PartialBlockstate, ConfiguredModelList> entry : getModels().entrySet()) {
+            variants.add(entry.getKey().toString(), entry.getValue().toJSON());
         }
-
-        public Builder setModel(PartialBlockstate state, ConfiguredModel... model) {
-            Preconditions.checkNotNull(state);
-            Preconditions.checkArgument(model.length>0);
-            Preconditions.checkArgument(state.getOwner() == owner);
-            Preconditions.checkArgument(disjointToAll(state));
-            models.put(state, new ConfiguredModelList(model));
-            for (BlockState fullState: owner.getStateContainer().getValidStates()) {
-                if (state.test(fullState)) {
-                    coveredStates.add(fullState);
-                }
-            }
-            return this;
-        }
-
-        private boolean disjointToAll(PartialBlockstate newState) {
-            return coveredStates.stream().noneMatch(newState);
-        }
-
-        public VariantBlockstate build() {
-            return new VariantBlockstate(owner, models);
-        }
-
-        public PartialBlockstate partialState() {
-            return new PartialBlockstate(owner, this);
-        }
+        JsonObject main = new JsonObject();
+        main.add("variants", variants);
+        return main;
     }
+
+    public VariantBlockstate setModel(PartialBlockstate state, ConfiguredModel... model) {
+        Preconditions.checkNotNull(state);
+        Preconditions.checkArgument(model.length > 0);
+        Preconditions.checkArgument(state.getOwner() == owner);
+        Preconditions.checkArgument(disjointToAll(state));
+        models.put(state, new ConfiguredModelList(model));
+        for (BlockState fullState : owner.getStateContainer().getValidStates()) {
+            if (state.test(fullState)) {
+                coveredStates.add(fullState);
+            }
+        }
+        return this;
+    }
+
+    private boolean disjointToAll(PartialBlockstate newState) {
+        return coveredStates.stream().noneMatch(newState);
+    }
+
+    public PartialBlockstate partialState() {
+        return new PartialBlockstate(owner, this);
+    }
+
     public static class PartialBlockstate implements Predicate<BlockState> {
         private final Block owner;
         private final Map<IProperty<?>, Comparable<?>> setStates;
         @Nullable
-        private final VariantBlockstate.Builder outerBuilder;
-        public PartialBlockstate(Block owner, @Nullable Builder outerBuilder) {
-           this(owner, ImmutableMap.of(), outerBuilder);
+        private final VariantBlockstate outerBuilder;
+
+        public PartialBlockstate(Block owner, @Nullable VariantBlockstate outerBuilder) {
+            this(owner, ImmutableMap.of(), outerBuilder);
         }
 
-        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable Builder outerBuilder) {
-           this.owner = owner;
+        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable VariantBlockstate outerBuilder) {
+            this.owner = owner;
             this.outerBuilder = outerBuilder;
-            for (Map.Entry<IProperty<?>, Comparable<?>> entry:setStates.entrySet()) {
-               IProperty<?> prop = entry.getKey();
-               Comparable<?> value = entry.getValue();
-               Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property "+entry+" not found on block "+ this.owner);
-               Preconditions.checkArgument(prop.getAllowedValues().contains(value), value+" is not a valid value for "+prop);
-           }
-           this.setStates = setStates;
+            for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
+                IProperty<?> prop = entry.getKey();
+                Comparable<?> value = entry.getValue();
+                Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property " + entry + " not found on block " + this.owner);
+                Preconditions.checkArgument(prop.getAllowedValues().contains(value), value + " is not a valid value for " + prop);
+            }
+            this.setStates = setStates;
         }
 
         public <T extends Comparable<T>> PartialBlockstate with(IProperty<T> prop, T value) {
-            Preconditions.checkArgument(!setStates.containsKey(prop), "Property "+prop+" has already been set");
+            Preconditions.checkArgument(!setStates.containsKey(prop), "Property " + prop + " has already been set");
             Map<IProperty<?>, Comparable<?>> newState = new HashMap<>(setStates);
             newState.put(prop, value);
             return new PartialBlockstate(owner, newState, outerBuilder);
@@ -125,7 +116,7 @@ public class VariantBlockstate {
             return ConfiguredModel.builder(outerBuilder, this);
         }
 
-        public Builder setModel(ConfiguredModel... model) {
+        public VariantBlockstate setModel(ConfiguredModel... model) {
             Preconditions.checkNotNull(outerBuilder);
             return outerBuilder.setModel(this, model);
         }
@@ -154,22 +145,22 @@ public class VariantBlockstate {
 
         @Override
         public boolean test(BlockState blockState) {
-           if (blockState.getBlock()!=getOwner()) {
-               return false;
-           }
-           for (Map.Entry<IProperty<?>, Comparable<?>> entry:setStates.entrySet()) {
-              if (blockState.get(entry.getKey())!=entry.getValue()) {
-                  return false;
-              }
-           }
-           return true;
+            if (blockState.getBlock() != getOwner()) {
+                return false;
+            }
+            for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
+                if (blockState.get(entry.getKey()) != entry.getValue()) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         @Override
         public String toString() {
             StringBuilder ret = new StringBuilder();
-            for (Map.Entry<IProperty<?>, Comparable<?>> entry:setStates.entrySet()) {
-                if (ret.length()>0) {
+            for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
+                if (ret.length() > 0) {
                     ret.append(',');
                 }
                 ret.append(entry.getKey().getName())

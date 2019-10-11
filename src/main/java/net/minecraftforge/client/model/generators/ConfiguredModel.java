@@ -49,14 +49,14 @@ public final class ConfiguredModel {
         return new Builder();
     }
 
-    static Builder builder(VariantBlockstate.Builder outer, VariantBlockstate.PartialBlockstate state) {
+    static Builder builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
         return new Builder(outer, state, ImmutableList.of());
     }
 
     public static class Builder {
         private ModelFile name;
         @Nullable
-        private final VariantBlockstate.Builder outer;
+        private final VariantBlockstate outer;
         @Nullable
         private final VariantBlockstate.PartialBlockstate state;
         private final List<ConfiguredModel> otherModels;
@@ -68,7 +68,7 @@ public final class ConfiguredModel {
             this(null, null, ImmutableList.of());
         }
 
-        private Builder(@Nullable VariantBlockstate.Builder outer,
+        private Builder(@Nullable VariantBlockstate outer,
                         @Nullable VariantBlockstate.PartialBlockstate state,
                         List<ConfiguredModel> otherModels) {
             this.otherModels = otherModels;
@@ -116,7 +116,7 @@ public final class ConfiguredModel {
             return new ConfiguredModel(name, rotX, rotY, uvLock, weight);
         }
 
-        public VariantBlockstate.Builder addModel() {
+        public VariantBlockstate addModel() {
             Preconditions.checkState(outer!=null);
             List<ConfiguredModel> allModels = new ArrayList<>(otherModels);
             allModels.add(this.build());
