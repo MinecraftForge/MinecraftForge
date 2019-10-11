@@ -84,9 +84,13 @@ public class ModelDataManager
             for (BlockPos pos : needUpdate)
             {
                 TileEntity toUpdate = world.getTileEntity(pos);
-                if (toUpdate != null)
+                if (toUpdate != null && !toUpdate.isRemoved())
                 {
                     data.put(pos, toUpdate.getModelData());
+                }
+                else
+                {
+                    data.remove(pos);
                 }
             }
         }

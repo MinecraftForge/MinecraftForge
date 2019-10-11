@@ -49,15 +49,16 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -139,6 +146,7 @@
+@@ -139,6 +146,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
 +      this.invalidateCaps();
++      requestModelDataUpdate();
     }
  
     public void func_145829_t() {
-@@ -181,6 +189,13 @@
+@@ -181,6 +190,13 @@
        return this.field_200663_e;
     }
  
