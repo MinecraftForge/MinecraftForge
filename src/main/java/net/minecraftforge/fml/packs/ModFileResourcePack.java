@@ -126,7 +126,14 @@ public class ModFileResourcePack extends DelegatableResourcePack
         }
         catch (IOException e)
         {
-            return Collections.emptySet();
+            if (type == ResourcePackType.SERVER_DATA) //We still have to add the resource namespace if client resources exist, as we load langs (which are in assets) on server
+            {
+                return this.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            }
+            else
+            {
+                return Collections.emptySet();
+            }
         }
     }
 
