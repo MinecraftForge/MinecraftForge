@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/entity/BoatRenderer.java
++++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
+@@ -63,7 +63,8 @@
+    }
+ 
+    protected ResourceLocation func_110775_a(BoatEntity p_110775_1_) {
+-      return field_110782_f[p_110775_1_.func_184453_r().ordinal()];
++      ResourceLocation typeResourceLocation = p_110775_1_.getTypeOfBoat().getRegistryName();
++      return new ResourceLocation(typeResourceLocation.func_110624_b(), "textures/entity/boat/" + typeResourceLocation.func_110623_a() + ".png");
+    }
+ 
+    public boolean func_188295_H_() {

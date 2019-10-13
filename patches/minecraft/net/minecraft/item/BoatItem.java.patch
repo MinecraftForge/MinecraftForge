@@ -1,0 +1,27 @@
+--- a/net/minecraft/item/BoatItem.java
++++ b/net/minecraft/item/BoatItem.java
+@@ -18,11 +18,11 @@
+ 
+ public class BoatItem extends Item {
+    private static final Predicate<Entity> field_219989_a = EntityPredicates.field_180132_d.and(Entity::func_70067_L);
+-   private final BoatEntity.Type field_185057_a;
++   private final net.minecraftforge.entity.item.BoatType field_185057_a;
+ 
+-   public BoatItem(BoatEntity.Type p_i48526_1_, Item.Properties p_i48526_2_) {
+-      super(p_i48526_2_);
+-      this.field_185057_a = p_i48526_1_;
++   public BoatItem(net.minecraftforge.entity.item.BoatType typeIn, Item.Properties properties) {
++      super(properties);
++      this.field_185057_a = typeIn;
+    }
+ 
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+@@ -47,7 +47,7 @@
+ 
+          if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK) {
+             BoatEntity boatentity = new BoatEntity(p_77659_1_, raytraceresult.func_216347_e().field_72450_a, raytraceresult.func_216347_e().field_72448_b, raytraceresult.func_216347_e().field_72449_c);
+-            boatentity.func_184458_a(this.field_185057_a);
++            boatentity.setTypeOfBoat(this.field_185057_a);
+             boatentity.field_70177_z = p_77659_2_.field_70177_z;
+             if (!p_77659_1_.func_195586_b(boatentity, boatentity.func_174813_aQ().func_186662_g(-0.1D))) {
+                return new ActionResult<>(ActionResultType.FAIL, itemstack);

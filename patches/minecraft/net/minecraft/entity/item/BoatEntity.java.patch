@@ -1,6 +1,47 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -459,7 +459,7 @@
+@@ -49,6 +49,7 @@
+    private static final DataParameter<Integer> field_184462_b = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Float> field_184464_c = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187193_c);
+    private static final DataParameter<Integer> field_184466_d = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
++   private static final DataParameter<String> BOAT_TYPE_NAME = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187194_d);
+    private static final DataParameter<Boolean> field_199704_e = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<Boolean> field_199705_f = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<Integer> field_203064_g = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
+@@ -99,7 +100,8 @@
+       this.field_70180_af.func_187214_a(field_184460_a, 0);
+       this.field_70180_af.func_187214_a(field_184462_b, 1);
+       this.field_70180_af.func_187214_a(field_184464_c, 0.0F);
+-      this.field_70180_af.func_187214_a(field_184466_d, BoatEntity.Type.OAK.ordinal());
++      this.field_70180_af.func_187214_a(field_184466_d, BoatEntity.Type.OAK.ordinal);
++      this.field_70180_af.func_187214_a(BOAT_TYPE_NAME, BoatEntity.Type.OAK.func_184980_a());
+       this.field_70180_af.func_187214_a(field_199704_e, false);
+       this.field_70180_af.func_187214_a(field_199705_f, false);
+       this.field_70180_af.func_187214_a(field_203064_g, 0);
+@@ -178,21 +180,7 @@
+    }
+ 
+    public Item func_184455_j() {
+-      switch(this.func_184453_r()) {
+-      case OAK:
+-      default:
+-         return Items.field_151124_az;
+-      case SPRUCE:
+-         return Items.field_185150_aH;
+-      case BIRCH:
+-         return Items.field_185151_aI;
+-      case JUNGLE:
+-         return Items.field_185152_aJ;
+-      case ACACIA:
+-         return Items.field_185153_aK;
+-      case DARK_OAK:
+-         return Items.field_185154_aL;
+-      }
++      return this.func_184453_r().getBoatItem();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -459,7 +447,7 @@
                          blockpos$pooledmutableblockpos.func_181079_c(l1, k2, i2);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
                          if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,7 +50,69 @@
                             ++k1;
                          }
                       }
-@@ -778,6 +778,20 @@
+@@ -652,12 +640,12 @@
+    }
+ 
+    protected void func_213281_b(CompoundNBT p_213281_1_) {
+-      p_213281_1_.func_74778_a("Type", this.func_184453_r().func_184980_a());
++      p_213281_1_.func_74778_a("Type", this.getTypeOfBoat().getRegistryName().toString());
+    }
+ 
+    protected void func_70037_a(CompoundNBT p_70037_1_) {
+       if (p_70037_1_.func_150297_b("Type", 8)) {
+-         this.func_184458_a(BoatEntity.Type.func_184981_a(p_70037_1_.func_74779_i("Type")));
++         this.setTypeOfBoat(net.minecraftforge.registries.ForgeRegistries.BOAT_TYPES.getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("Type"))));
+       }
+ 
+    }
+@@ -688,13 +676,9 @@
+                if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
+                   this.func_70106_y();
+                   if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
+-                     for(int i = 0; i < 3; ++i) {
+-                        this.func_199703_a(this.func_184453_r().func_195933_b());
++                     for(net.minecraft.util.IItemProvider item : this.func_184453_r().getOnBreakItems()) {
++                        this.func_199703_a(item);
+                      }
+-
+-                     for(int j = 0; j < 2; ++j) {
+-                        this.func_199703_a(Items.field_151055_y);
+-                     }
+                   }
+                }
+             }
+@@ -748,10 +732,29 @@
+       return this.field_70180_af.func_187225_a(field_184462_b);
+    }
+ 
++   public void setTypeOfBoat(net.minecraftforge.entity.item.BoatType boatType) {
++      this.field_70180_af.func_187227_b(BOAT_TYPE_NAME, boatType.getRegistryName().toString());
++      //compatibility with vanilla
++      if (boatType instanceof Type) {
++         this.field_70180_af.func_187227_b(field_184466_d, ((Type)boatType).ordinal);
++      }
++   }
++
++   @Deprecated //Forge: Better use setTypeOfBoat method
+    public void func_184458_a(BoatEntity.Type p_184458_1_) {
+-      this.field_70180_af.func_187227_b(field_184466_d, p_184458_1_.ordinal());
++      this.field_70180_af.func_187227_b(field_184466_d, p_184458_1_.ordinal);
+    }
+ 
++   public net.minecraftforge.entity.item.BoatType getTypeOfBoat() {
++      try {
++         return net.minecraftforge.registries.ForgeRegistries.BOAT_TYPES.getValue(new net.minecraft.util.ResourceLocation(this.field_70180_af.func_187225_a(BOAT_TYPE_NAME)));
++      } catch (Throwable throwable) {
++         //compatibility with vanilla
++         return net.minecraftforge.registries.ForgeRegistries.BOAT_TYPES.getValue(new net.minecraft.util.ResourceLocation(BoatEntity.Type.func_184979_a(this.field_70180_af.func_187225_a(field_184466_d)).func_184980_a()));
++      }
++   }
++
++   @Deprecated //Forge: Better use getTypeOfBoat method
+    public BoatEntity.Type func_184453_r() {
+       return BoatEntity.Type.func_184979_a(this.field_70180_af.func_187225_a(field_184466_d));
+    }
+@@ -778,6 +781,20 @@
        return new SSpawnObjectPacket(this);
     }
  
@@ -30,3 +133,74 @@
     public static enum Status {
        IN_WATER,
        UNDER_WATER,
+@@ -786,18 +803,22 @@
+       IN_AIR;
+    }
+ 
+-   public static enum Type {
+-      OAK(Blocks.field_196662_n, "oak"),
+-      SPRUCE(Blocks.field_196664_o, "spruce"),
+-      BIRCH(Blocks.field_196666_p, "birch"),
+-      JUNGLE(Blocks.field_196668_q, "jungle"),
+-      ACACIA(Blocks.field_196670_r, "acacia"),
+-      DARK_OAK(Blocks.field_196672_s, "dark_oak");
++   public static class Type extends net.minecraftforge.entity.item.BoatType {
++      public static Type OAK = register(new Type(Blocks.field_196662_n, "oak", 0, Items.field_151124_az));
++      public static Type SPRUCE = register(new Type(Blocks.field_196664_o, "spruce", 1, Items.field_185150_aH));
++      public static Type BIRCH = register(new Type(Blocks.field_196666_p, "birch", 2, Items.field_185151_aI));
++      public static Type JUNGLE = register(new Type(Blocks.field_196668_q, "jungle", 3, Items.field_185152_aJ));
++      public static Type ACACIA = register(new Type(Blocks.field_196670_r, "acacia", 4, Items.field_185153_aK));
++      public static Type DARK_OAK = register(new Type(Blocks.field_196672_s, "dark_oak", 5, Items.field_185154_aL));
+ 
++      final int ordinal;
++      private final Item boatItem;
+       private final String field_184990_g;
+       private final Block field_195934_h;
+ 
+-      private Type(Block p_i48146_3_, String p_i48146_4_) {
++      Type(Block p_i48146_3_, String p_i48146_4_, int ordinal, Item boatItem) {
++         this.ordinal = ordinal;
++         this.boatItem = boatItem;
+          this.field_184990_g = p_i48146_4_;
+          this.field_195934_h = p_i48146_3_;
+       }
+@@ -815,7 +836,7 @@
+       }
+ 
+       public static BoatEntity.Type func_184979_a(int p_184979_0_) {
+-         BoatEntity.Type[] aboatentity$type = values();
++         BoatEntity.Type[] aboatentity$type = {OAK,SPRUCE,BIRCH,JUNGLE,ACACIA,DARK_OAK};
+          if (p_184979_0_ < 0 || p_184979_0_ >= aboatentity$type.length) {
+             p_184979_0_ = 0;
+          }
+@@ -824,7 +845,7 @@
+       }
+ 
+       public static BoatEntity.Type func_184981_a(String p_184981_0_) {
+-         BoatEntity.Type[] aboatentity$type = values();
++         BoatEntity.Type[] aboatentity$type = {OAK,SPRUCE,BIRCH,JUNGLE,ACACIA,DARK_OAK};
+ 
+          for(int i = 0; i < aboatentity$type.length; ++i) {
+             if (aboatentity$type[i].func_184980_a().equals(p_184981_0_)) {
+@@ -834,5 +855,21 @@
+ 
+          return aboatentity$type[0];
+       }
++
++      @Override
++      public Item getBoatItem() {
++         return this.boatItem;
++      }
++
++      @Override
++      public net.minecraft.util.IItemProvider[] getOnBreakItems() {
++         return new net.minecraft.util.IItemProvider[]{ Items.field_151055_y, Items.field_151055_y, this.func_195933_b(), this.func_195933_b(), this.func_195933_b() };
++      }
++
++      private static Type register(Type boatType) {
++         boatType.setRegistryName(new net.minecraft.util.ResourceLocation(boatType.func_184980_a()));
++         net.minecraftforge.registries.ForgeRegistries.BOAT_TYPES.register(boatType);
++         return boatType;
++      }
+    }
+ }

@@ -1,0 +1,23 @@
+--- a/net/minecraft/dispenser/DispenseBoatBehavior.java
++++ b/net/minecraft/dispenser/DispenseBoatBehavior.java
+@@ -10,9 +10,9 @@
+ 
+ public class DispenseBoatBehavior extends DefaultDispenseItemBehavior {
+    private final DefaultDispenseItemBehavior field_218402_b = new DefaultDispenseItemBehavior();
+-   private final BoatEntity.Type field_218403_c;
++   private final net.minecraftforge.entity.item.BoatType field_218403_c;
+ 
+-   public DispenseBoatBehavior(BoatEntity.Type p_i50793_1_) {
++   public DispenseBoatBehavior(net.minecraftforge.entity.item.BoatType p_i50793_1_) {
+       this.field_218403_c = p_i50793_1_;
+    }
+ 
+@@ -35,7 +35,7 @@
+       }
+ 
+       BoatEntity boatentity = new BoatEntity(world, d0, d1 + d3, d2);
+-      boatentity.func_184458_a(this.field_218403_c);
++      boatentity.setTypeOfBoat(this.field_218403_c);
+       boatentity.field_70177_z = direction.func_185119_l();
+       world.func_217376_c(boatentity);
+       p_82487_2_.func_190918_g(1);
