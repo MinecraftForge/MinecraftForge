@@ -50,12 +50,13 @@
                             ++k1;
                          }
                       }
-@@ -652,12 +640,12 @@
+@@ -652,12 +640,13 @@
     }
  
     protected void func_213281_b(CompoundNBT p_213281_1_) {
 -      p_213281_1_.func_74778_a("Type", this.func_184453_r().func_184980_a());
-+      p_213281_1_.func_74778_a("Type", this.getTypeOfBoat().getRegistryName().toString());
++      net.minecraft.util.ResourceLocation resourceLocation = this.getTypeOfBoat().getRegistryName();
++      p_213281_1_.func_74778_a("Type", resourceLocation.func_110624_b().equals("minecraft") ? resourceLocation.func_110623_a() : resourceLocation.toString());
     }
  
     protected void func_70037_a(CompoundNBT p_70037_1_) {
@@ -65,7 +66,7 @@
        }
  
     }
-@@ -688,13 +676,9 @@
+@@ -688,13 +677,9 @@
                 if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
                    this.func_70106_y();
                    if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
@@ -81,7 +82,7 @@
                    }
                 }
              }
-@@ -748,10 +732,29 @@
+@@ -748,10 +733,29 @@
        return this.field_70180_af.func_187225_a(field_184462_b);
     }
  
@@ -112,7 +113,7 @@
     public BoatEntity.Type func_184453_r() {
        return BoatEntity.Type.func_184979_a(this.field_70180_af.func_187225_a(field_184466_d));
     }
-@@ -778,6 +781,20 @@
+@@ -778,6 +782,20 @@
        return new SSpawnObjectPacket(this);
     }
  
@@ -133,7 +134,7 @@
     public static enum Status {
        IN_WATER,
        UNDER_WATER,
-@@ -786,18 +803,22 @@
+@@ -786,18 +804,22 @@
        IN_AIR;
     }
  
@@ -164,7 +165,7 @@
           this.field_184990_g = p_i48146_4_;
           this.field_195934_h = p_i48146_3_;
        }
-@@ -815,7 +836,7 @@
+@@ -815,7 +837,7 @@
        }
  
        public static BoatEntity.Type func_184979_a(int p_184979_0_) {
@@ -173,7 +174,7 @@
           if (p_184979_0_ < 0 || p_184979_0_ >= aboatentity$type.length) {
              p_184979_0_ = 0;
           }
-@@ -824,7 +845,7 @@
+@@ -824,7 +846,7 @@
        }
  
        public static BoatEntity.Type func_184981_a(String p_184981_0_) {
@@ -182,7 +183,7 @@
  
           for(int i = 0; i < aboatentity$type.length; ++i) {
              if (aboatentity$type[i].func_184980_a().equals(p_184981_0_)) {
-@@ -834,5 +855,21 @@
+@@ -834,5 +856,21 @@
  
           return aboatentity$type[0];
        }
