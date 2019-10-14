@@ -142,7 +142,12 @@ public class ClientModLoader
         return VersionChecker.Status.UP_TO_DATE;
     }
 
-    public static boolean complete()
+    public static void complete()
+    {
+        completeModLoading();
+    }
+
+    public static boolean completeModLoading()
     {
         GlStateManager.disableTexture();
         GlStateManager.enableTexture();
