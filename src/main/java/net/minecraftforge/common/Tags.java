@@ -271,7 +271,7 @@ public class Tags
         public static final Tag<Item> WEAPONS_SWORDS_WOODEN = tag("weapons/swords/wooden");
         public static final Tag<Item> WEAPONS_SWORDS_STONE = tag("weapons/swords/stone");
         public static final Tag<Item> WEAPONS_SWORDS_IRON = tag("weapons/swords/iron");
-        public static final Tag<Item> WEAPONS_SWORDS_GOLDEN = tag("weapons/swords/gold");
+        public static final Tag<Item> WEAPONS_SWORDS_GOLDEN = tag("weapons/swords/golden");
         public static final Tag<Item> WEAPONS_SWORDS_DIAMOND = tag("weapons/swords/diamond");
         public static final Tag<Item> WEAPONS_BOWS = tag("weapons/bows");
         public static final Tag<Item> WEAPONS_CROSSBOWS = tag("weapons/crossbows");
