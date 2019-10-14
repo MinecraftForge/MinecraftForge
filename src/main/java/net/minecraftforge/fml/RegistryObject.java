@@ -22,8 +22,11 @@ package net.minecraftforge.fml;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.IRegistryDelegate;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 import net.minecraftforge.registries.RegistryManager;
+
+import javax.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -33,19 +36,27 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T>
 {
     private final ResourceLocation name;
     @Nullable
     private T value;
 
+    @Deprecated
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
+        return of(new ResourceLocation(name), registryType);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
     }
 
+    @Deprecated
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, IForgeRegistry<T> registry) {
+        return of(new ResourceLocation(name), registry);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry) {
         return new RegistryObject<>(name, registry);
     }
 
@@ -61,17 +72,17 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         this.name = null;
     }
 
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<? super V>> registryType)
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, Supplier<Class<? super V>> registryType)
     {
         this(name, RegistryManager.ACTIVE.<V>getRegistry(registryType.get()));
     }
 
     @SuppressWarnings("unchecked")
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(String name, IForgeRegistry<V> registry)
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, IForgeRegistry<V> registry)
     {
         if (registry == null)
             throw new IllegalArgumentException("Invalid registry argument, must not be null");
-        this.name = new ResourceLocation(name);
+        this.name = name;
         ObjectHolderRegistry.addHandler(pred ->
         {
             if (pred.test(registry.getRegistryName()))
@@ -83,13 +94,28 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
      */
     @Nullable
+    @Override
     public T get()
     {
         return this.value;
     }
 
+    public void updateReference(IForgeRegistry<? extends T> registry)
+    {
+        this.value = registry.getValue(getId());
+    }
+
+    public ResourceLocation getId() 
+    {
+        return this.name;
+    }
+
+    /**
+     * @deprecated Prefer {@link #getId()}
+     */
+    @Deprecated
     public String getName() {
-        return this.name.toString();
+        return getId().toString();
     }
 
     public Stream<T> stream() {
@@ -186,6 +212,26 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
             return Objects.requireNonNull(mapper.apply(get()));
         }
     }
+    
+    /**
+     * If a mod object is present, lazily apply the provided mapping function to it,
+     * returning a supplier for the transformed result. If this object is empty, or the
+     * mapping function returns {@code null}, the supplier will return {@code null}.
+     *
+     * @apiNote This method supports post-processing on optional values, without
+     * the need to explicitly check for a return status.
+     *
+     * @param <U> The type of the result of the mapping function
+     * @param mapper A mapping function to apply to the mod object, if present
+     * @return A {@code Supplier} lazily providing the result of applying a mapping
+     * function to the mod object of this {@code RegistryObject}, if a mod object is present,
+     * otherwise a supplier returning {@code null}
+     * @throws NullPointerException if the mapping function is {@code null}
+     */
+    public<U> Supplier<U> lazyMap(Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+        return () -> isPresent() ? mapper.apply(get()) : null;
+    }
 
     /**
      * Return the mod object if present, otherwise return {@code other}.
@@ -195,7 +241,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * @return the mod object, if present, otherwise {@code other}
      */
     public T orElse(T other) {
-        return get() != null ? get() : other;
+        return isPresent() ? get() : other;
     }
 
     /**
@@ -209,7 +255,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * null
      */
     public T orElseGet(Supplier<? extends T> other) {
-        return get() != null ? get() : other.get();
+        return isPresent() ? get() : other.get();
     }
 
     /**

@@ -1,0 +1,28 @@
+--- a/net/minecraft/network/play/server/SJoinGamePacket.java
++++ b/net/minecraft/network/play/server/SJoinGamePacket.java
+@@ -19,6 +19,7 @@
+    private WorldType field_149201_g;
+    private int field_218729_g;
+    private boolean field_179745_h;
++   private int dimensionInt;
+ 
+    public SJoinGamePacket() {
+    }
+@@ -40,7 +41,7 @@
+       this.field_149204_b = (i & 8) == 8;
+       i = i & -9;
+       this.field_149205_c = GameType.func_77146_a(i);
+-      this.field_149202_d = DimensionType.func_186069_a(p_148837_1_.readInt());
++      this.dimensionInt = p_148837_1_.readInt();
+       this.field_149200_f = p_148837_1_.readUnsignedByte();
+       this.field_149201_g = WorldType.func_77130_a(p_148837_1_.func_150789_c(16));
+       if (this.field_149201_g == null) {
+@@ -87,7 +88,7 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public DimensionType func_212642_e() {
+-      return this.field_149202_d;
++      return this.field_149202_d == null ? this.field_149202_d = net.minecraftforge.fml.network.NetworkHooks.getDummyDimType(this.dimensionInt) : this.field_149202_d;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

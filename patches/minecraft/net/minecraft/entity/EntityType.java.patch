@@ -85,7 +85,7 @@
     }
  
 +   public T customClientSpawn(net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity packet, World world) {
-+      if (customClientFactory == null) throw new RuntimeException("Missing custom spawn data for entity type "+this);
++      if (customClientFactory == null) return this.func_200721_a(world);
 +      return customClientFactory.apply(packet, world);
 +   }
 +
@@ -111,7 +111,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -553,11 +591,31 @@
+@@ -553,11 +591,35 @@
           return this;
        }
  
@@ -130,6 +130,10 @@
 +         return this;
 +      }
 +
++      /**
++       * By default, entities are spawned clientside via {@link EntityType#create(World)}.
++       * If you need finer control over the spawning process, use this to get read access to the spawn packet.
++       */
 +      public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
 +         this.customClientFactory = customClientFactory;
 +         return this;
@@ -144,7 +148,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -566,7 +624,7 @@
+@@ -566,7 +628,7 @@
              }
           }
  

@@ -215,6 +215,9 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 //EnumHelper.cleanEnumCache(ThisType.class)
                 ins.visitLdcInsn(classType);
                 ins.invokestatic(UNSAFE_HACKS.getInternalName(), "cleanEnumCache", CLEAN_DESC, false);
+                //init ret
+                ins.load(vars, classType);
+                ins.invokeinterface(MARKER_IFACE.getInternalName(), "init", "()V");
                 //return ret
                 ins.load(vars, classType);
                 ins.areturn(classType);

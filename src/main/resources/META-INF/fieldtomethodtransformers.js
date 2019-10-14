@@ -35,6 +35,32 @@ function initializeCoreMod() {
                 asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // forge added method, doesn't need mapping
                 return classNode;
             }
+        },
+        'stairsblock': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.block.StairsBlock'
+            },
+            'transformer': function(classNode) {
+                var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
+                var blockField = asmapi.mapField('field_150149_b') // modelBlock - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, blockField, 'getModelBlock') // forge added method, doesn't need mapping
+                var stateField = asmapi.mapField('field_150151_M') // modelState - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, stateField, 'getModelState') // forge added method, doesn't need mapping
+                return classNode;
+            }
+        },
+        'flowerpotblock': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.block.FlowerPotBlock'
+            },
+            'transformer': function(classNode) {
+                var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
+                var fn = asmapi.mapField('field_196452_c') // flower - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('func_220276_d'))
+                return classNode;
+            }
         }
     }
 }

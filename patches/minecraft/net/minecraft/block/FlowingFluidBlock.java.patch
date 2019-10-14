@@ -59,7 +59,7 @@
                 this.func_180688_d(p_204515_1_, p_204515_2_);
                 return false;
              }
-@@ -160,4 +176,22 @@
+@@ -160,4 +176,27 @@
        }
  
     }
@@ -70,15 +70,20 @@
 +      return (FlowingFluid)supplier.get();
 +   }
 +
-+   private boolean fluidStateCacheInitialized;
-+   protected void initFluidStateCache() {
-+      this.field_212565_c.add(getFluid().func_207204_a(false));
++   private boolean fluidStateCacheInitialized = false;
++   protected synchronized void initFluidStateCache() {
++      if (fluidStateCacheInitialized == false)
++      {
++         this.field_212565_c.add(getFluid().func_207204_a(false));
 +
-+      for(int i = 1; i < 8; ++i) {
-+         this.field_212565_c.add(getFluid().func_207207_a(8 - i, false));
++         for (int i = 1; i < 8; ++i)
++         {
++            this.field_212565_c.add(getFluid().func_207207_a(8 - i, false));
++         }
++
++         this.field_212565_c.add(getFluid().func_207207_a(8, true));
++
++         fluidStateCacheInitialized = true;
 +      }
-+
-+      this.field_212565_c.add(getFluid().func_207207_a(8, true));
-+      fluidStateCacheInitialized = true;
 +   }
  }

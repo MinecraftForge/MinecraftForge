@@ -448,7 +448,17 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -1000,7 +1092,7 @@
+@@ -952,7 +1044,8 @@
+    }
+ 
+    public int func_181545_F() {
+-      return 63;
++      // FORGE: Allow modded dimensions to customize this value via Dimension
++      return this.func_201675_m().getSeaLevel();
+    }
+ 
+    public World func_201672_e() {
+@@ -1000,7 +1093,7 @@
  
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
        BlockState blockstate = this.func_180495_p(p_175651_1_);
@@ -457,7 +467,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -1045,7 +1137,7 @@
+@@ -1045,7 +1138,7 @@
     }
  
     public long func_72905_C() {
@@ -466,7 +476,7 @@
     }
  
     public long func_82737_E() {
-@@ -1053,11 +1145,11 @@
+@@ -1053,11 +1146,11 @@
     }
  
     public long func_72820_D() {
@@ -480,7 +490,7 @@
     }
  
     protected void func_217389_a() {
-@@ -1069,7 +1161,7 @@
+@@ -1069,7 +1162,7 @@
     }
  
     public BlockPos func_175694_M() {
@@ -489,7 +499,7 @@
        if (!this.func_175723_af().func_177746_a(blockpos)) {
           blockpos = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, new BlockPos(this.func_175723_af().func_177731_f(), 0.0D, this.func_175723_af().func_177721_g()));
        }
-@@ -1078,10 +1170,14 @@
+@@ -1078,10 +1171,14 @@
     }
  
     public void func_175652_B(BlockPos p_175652_1_) {
@@ -505,7 +515,7 @@
        return true;
     }
  
-@@ -1149,8 +1245,7 @@
+@@ -1149,8 +1246,7 @@
     }
  
     public boolean func_180502_D(BlockPos p_180502_1_) {
@@ -515,7 +525,7 @@
     }
  
     @Nullable
-@@ -1164,11 +1259,11 @@
+@@ -1164,11 +1260,11 @@
     }
  
     public int func_72940_L() {
@@ -529,7 +539,7 @@
     }
  
     public CrashReportCategory func_72914_a(CrashReport p_72914_1_) {
-@@ -1199,16 +1294,15 @@
+@@ -1199,16 +1295,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -550,7 +560,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1287,4 +1381,16 @@
+@@ -1287,4 +1382,16 @@
     public BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_) {
        return new BlockPos(p_205770_2_.func_177958_n(), this.func_201676_a(p_205770_1_, p_205770_2_.func_177958_n(), p_205770_2_.func_177952_p()), p_205770_2_.func_177952_p());
     }

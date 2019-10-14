@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
++++ b/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
+@@ -88,7 +88,7 @@
+       if (!template.func_189962_a(p_214848_2_, p_214848_3_, placementsettings, 18)) {
+          return false;
+       } else {
+-         for(Template.BlockInfo template$blockinfo : Template.func_215387_a(p_214848_2_, p_214848_3_, placementsettings, this.func_214857_a(p_214848_1_, p_214848_3_, p_214848_4_, false))) {
++         for(Template.BlockInfo template$blockinfo : Template.processBlockInfos(template, p_214848_2_, p_214848_3_, placementsettings, this.func_214857_a(p_214848_1_, p_214848_3_, p_214848_4_, false))) {
+             this.func_214846_a(p_214848_2_, template$blockinfo, p_214848_3_, p_214848_4_, p_214848_6_, p_214848_5_);
+          }
+ 
