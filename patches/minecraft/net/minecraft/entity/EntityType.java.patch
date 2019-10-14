@@ -80,7 +80,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -503,12 +523,30 @@
+@@ -503,12 +523,31 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
@@ -107,11 +107,12 @@
 +      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
 +      private java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++      private boolean noDataFixer = false;
 +
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -553,11 +591,35 @@
+@@ -553,11 +592,44 @@
           return this;
        }
  
@@ -139,8 +140,18 @@
 +         return this;
 +      }
 +
++      /**
++       * Disables the lookup of data fixers for this entity.
++       * If this is called, the id in {@link #build(String)} is completely ignored
++       */
++      public EntityType.Builder<T> noDataFixer() {
++         this.noDataFixer = true;
++         return this;
++      }
++
        public EntityType<T> func_206830_a(String p_206830_1_) {
-          if (this.field_200710_b) {
+-         if (this.field_200710_b) {
++         if (this.field_200710_b && !this.noDataFixer) { // Forge: allow skipping data fixers
              try {
                 DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
 -            } catch (IllegalStateException illegalstateexception) {
@@ -148,7 +159,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -566,7 +628,7 @@
+@@ -566,7 +638,7 @@
              }
           }
  
