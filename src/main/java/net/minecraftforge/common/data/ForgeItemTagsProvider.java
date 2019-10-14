@@ -152,7 +152,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.CROSSBOWS).add(Items.CROSSBOW);
         getBuilder(Tags.Items.TRIDENTS).add(Items.TRIDENT);
         
-        getBuilder(Tags.Items.TOOLS).add(Tags.Items.HOES, Tags.Items.AXES, Tags.Items.PICKAXES, Tags.Items.SHOVELS);
+        getBuilder(Tags.Items.TOOLS).add(Tags.Items.HOES, Tags.Items.AXES, Tags.Items.PICKAXES, Tags.Items.SHOVELS, Tags.Items.SHEARS);
         getBuilder(Tags.Items.HOES).add(Tags.Items.HOES_WOODEN, Tags.Items.HOES_STONE, Tags.Items.HOES_IRON, Tags.Items.HOES_GOLDEN, Tags.Items.HOES_DIAMOND);
         getBuilder(Tags.Items.HOES_WOODEN).add(Items.WOODEN_HOE);
         getBuilder(Tags.Items.HOES_STONE).add(Items.STONE_HOE);
