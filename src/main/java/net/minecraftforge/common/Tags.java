@@ -302,6 +302,7 @@ public class Tags
         public static final Tag<Item> SHOVELS_IRON = tag("tools/shovels/iron");
         public static final Tag<Item> SHOVELS_GOLDEN = tag("tools/shovels/golden");
         public static final Tag<Item> SHOVELS_DIAMOND = tag("tools/shovels/diamond");
+        public static final Tag<Item> SHEARS = tag("tools/shears");
 
         public static final Tag<Item> ARMOR = tag("armor");
         public static final Tag<Item> SHIELDS = tag("armor/shields");

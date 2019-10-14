@@ -177,6 +177,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.SHOVELS_IRON).add(Items.IRON_SHOVEL);
         getBuilder(Tags.Items.SHOVELS_GOLDEN).add(Items.GOLDEN_SHOVEL);
         getBuilder(Tags.Items.SHOVELS_DIAMOND).add(Items.DIAMOND_SHOVEL);
+        getBuilder(Tags.Items.SHEARS).add(Items.SHEARS);
         
         getBuilder(Tags.Items.ARMOR).add(Tags.Items.SHIELDS, Tags.Items.HELMETS, Tags.Items.CHESTPLATES, Tags.Items.LEGGINGS, Tags.Items.BOOTS);
         getBuilder(Tags.Items.SHIELDS).add(Items.SHIELD);
