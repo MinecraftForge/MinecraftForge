@@ -142,6 +142,7 @@ public class ClientModLoader
         return VersionChecker.Status.UP_TO_DATE;
     }
 
+    @Deprecated // TODO: remove in 1.15
     public static void complete()
     {
         completeModLoading();
