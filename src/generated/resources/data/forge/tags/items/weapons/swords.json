@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:weapons/swords/wooden",
+    "#forge:weapons/swords/stone",
+    "#forge:weapons/swords/iron",
+    "#forge:weapons/swords/gold",
+    "#forge:weapons/swords/diamond"
+  ]
+}

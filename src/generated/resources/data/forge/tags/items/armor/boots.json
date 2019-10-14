@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:armor/boots/leather",
+    "#forge:armor/boots/iron",
+    "#forge:armor/boots/chain",
+    "#forge:armor/boots/golden",
+    "#forge:armor/boots/diamond"
+  ]
+}

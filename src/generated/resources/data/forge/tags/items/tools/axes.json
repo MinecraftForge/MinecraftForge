@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:tools/axes/wooden",
+    "#forge:tools/axes/stone",
+    "#forge:tools/axes/iron",
+    "#forge:tools/axes/golden",
+    "#forge:tools/axes/diamond"
+  ]
+}

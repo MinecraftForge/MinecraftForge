@@ -266,6 +266,70 @@ public class Tags
         public static final Tag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final Tag<Item> STRING = tag("string");
 
+        public static final Tag<Item> WEAPONS = tag("weapons");
+        public static final Tag<Item> SWORDS = tag("weapons/swords");
+        public static final Tag<Item> SWORDS_WOODEN = tag("weapons/swords/wooden");
+        public static final Tag<Item> SWORDS_STONE = tag("weapons/swords/stone");
+        public static final Tag<Item> SWORDS_IRON = tag("weapons/swords/iron");
+        public static final Tag<Item> SWORDS_GOLDEN = tag("weapons/swords/gold");
+        public static final Tag<Item> SWORDS_DIAMOND = tag("weapons/swords/diamond");
+        public static final Tag<Item> BOWS = tag("weapons/bows");
+        public static final Tag<Item> CROSSBOWS = tag("weapons/crossbows");
+        public static final Tag<Item> TRIDENTS = tag("weapons/tridents");
+
+        public static final Tag<Item> TOOLS = tag("tools");
+        public static final Tag<Item> HOES = tag("tools/hoes");
+        public static final Tag<Item> HOES_WOODEN = tag("tools/hoes/wooden");
+        public static final Tag<Item> HOES_STONE = tag("tools/hoes/stone");
+        public static final Tag<Item> HOES_IRON = tag("tools/hoes/iron");
+        public static final Tag<Item> HOES_GOLDEN = tag("tools/hoes/golden");
+        public static final Tag<Item> HOES_DIAMOND = tag("tools/hoes/diamond");
+        public static final Tag<Item> AXES = tag("tools/axes");
+        public static final Tag<Item> AXES_WOODEN = tag("tools/axes/wooden");
+        public static final Tag<Item> AXES_STONE = tag("tools/axes/stone");
+        public static final Tag<Item> AXES_IRON = tag("tools/axes/iron");
+        public static final Tag<Item> AXES_GOLDEN = tag("tools/axes/golden");
+        public static final Tag<Item> AXES_DIAMOND = tag("tools/axes/diamond");
+        public static final Tag<Item> PICKAXES = tag("tools/pickaxes");
+        public static final Tag<Item> PICKAXES_WOODEN = tag("tools/pickaxes/wooden");
+        public static final Tag<Item> PICKAXES_STONE = tag("tools/pickaxes/stone");
+        public static final Tag<Item> PICKAXES_IRON = tag("tools/pickaxes/iron");
+        public static final Tag<Item> PICKAXES_GOLDEN = tag("tools/pickaxes/golden");
+        public static final Tag<Item> PICKAXES_DIAMOND = tag("tools/pickaxes/diamond");
+        public static final Tag<Item> SHOVELS = tag("tools/shovels");
+        public static final Tag<Item> SHOVELS_WOODEN = tag("tools/shovels/wooden");
+        public static final Tag<Item> SHOVELS_STONE = tag("tools/shovels/stone");
+        public static final Tag<Item> SHOVELS_IRON = tag("tools/shovels/iron");
+        public static final Tag<Item> SHOVELS_GOLDEN = tag("tools/shovels/golden");
+        public static final Tag<Item> SHOVELS_DIAMOND = tag("tools/shovels/diamond");
+
+        public static final Tag<Item> ARMOR = tag("armor");
+        public static final Tag<Item> SHIELDS = tag("armor/shields");
+        public static final Tag<Item> HELMETS = tag("armor/helmets");
+        public static final Tag<Item> HELMETS_LEATHER = tag("armor/helmets/leather");
+        public static final Tag<Item> HELMETS_IRON = tag("armor/helmets/iron");
+        public static final Tag<Item> HELMETS_CHAIN = tag("armor/helmets/chain");
+        public static final Tag<Item> HELMETS_GOLDEN = tag("armor/helmets/golden");
+        public static final Tag<Item> HELMETS_DIAMOND = tag("armor/helmets/diamond");
+        public static final Tag<Item> CHESTPLATES = tag("armor/chestplates");
+        public static final Tag<Item> CHESTPLATES_LEATHER = tag("armor/chestplates/leather");
+        public static final Tag<Item> CHESTPLATES_IRON = tag("armor/chestplates/iron");
+        public static final Tag<Item> CHESTPLATES_CHAIN = tag("armor/chestplates/chain");
+        public static final Tag<Item> CHESTPLATES_GOLDEN = tag("armor/chestplates/golden");
+        public static final Tag<Item> CHESTPLATES_DIAMOND = tag("armor/chestplates/diamond");
+        public static final Tag<Item> LEGGINGS_LEATHER = tag("armor/leggings/leather");
+        public static final Tag<Item> LEGGINGS = tag("armor/leggings");
+        public static final Tag<Item> LEGGINGS_IRON = tag("armor/leggings/iron");
+        public static final Tag<Item> LEGGINGS_CHAIN = tag("armor/leggings/chain");
+        public static final Tag<Item> LEGGINGS_GOLDEN = tag("armor/leggings/golden");
+        public static final Tag<Item> LEGGINGS_DIAMOND = tag("armor/leggings/diamond");
+        public static final Tag<Item> BOOTS = tag("armor/boots");
+        public static final Tag<Item> BOOTS_LEATHER = tag("armor/boots/leather");
+        public static final Tag<Item> BOOTS_IRON = tag("armor/boots/iron");
+        public static final Tag<Item> BOOTS_CHAIN = tag("armor/boots/chain");
+        public static final Tag<Item> BOOTS_GOLDEN = tag("armor/boots/golden");
+        public static final Tag<Item> BOOTS_DIAMOND = tag("armor/boots/diamond");
+
         private static Tag<Item> tag(String name)
         {
             return new ItemTags.Wrapper(new ResourceLocation("forge", name));

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:armor/leggings/leather",
+    "#forge:armor/leggings/iron",
+    "#forge:armor/leggings/chain",
+    "#forge:armor/leggings/golden",
+    "#forge:armor/leggings/diamond"
+  ]
+}

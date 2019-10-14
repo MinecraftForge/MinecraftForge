@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:tools/shovels/wooden",
+    "#forge:tools/shovels/stone",
+    "#forge:tools/shovels/iron",
+    "#forge:tools/shovels/golden",
+    "#forge:tools/shovels/diamond"
+  ]
+}

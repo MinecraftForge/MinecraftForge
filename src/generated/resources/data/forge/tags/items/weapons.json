@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:weapons/swords",
+    "#forge:weapons/bows",
+    "#forge:weapons/crossbows",
+    "#forge:weapons/tridents"
+  ]
+}

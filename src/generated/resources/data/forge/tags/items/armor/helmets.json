@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:armor/helmets/leather",
+    "#forge:armor/helmets/iron",
+    "#forge:armor/helmets/chain",
+    "#forge:armor/helmets/golden",
+    "#forge:armor/helmets/diamond"
+  ]
+}

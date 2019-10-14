@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:armor/chestplates/leather",
+    "#forge:armor/chestplates/iron",
+    "#forge:armor/chestplates/chain",
+    "#forge:armor/chestplates/golden",
+    "#forge:armor/chestplates/diamond"
+  ]
+}
