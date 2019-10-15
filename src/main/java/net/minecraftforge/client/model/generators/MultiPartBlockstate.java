@@ -18,9 +18,10 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         this.owner = owner;
     }
 
-    public void addPart(MultiPart part) {
-        Preconditions.checkArgument(part.canApplyTo(owner));
-        parts.add(part);
+    public MultiPart addPart(ConfiguredModel... models) {
+        MultiPart ret = new MultiPart(new BlockstateProvider.ConfiguredModelList(models));
+        parts.add(ret);
+        return ret;
     }
 
     @Override
@@ -34,16 +35,20 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         return main;
     }
 
-    public static class MultiPart {
-        public final BlockstateProvider.ConfiguredModelList models;
-        public final boolean useOr;
-        public final List<PropertyWithValues> conditions;
+    public class MultiPart {
+        public BlockstateProvider.ConfiguredModelList models;
+        public boolean useOr;
+        public final List<PropertyWithValues<?>> conditions;
+        
+        public MultiPart(BlockstateProvider.ConfiguredModelList models, PropertyWithValues<?>... conditionsArray) {
+            this(models, false);
+        }
 
-        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, PropertyWithValues... conditionsArray) {
+        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, PropertyWithValues<?>... conditionsArray) {
             this(models, useOr, Arrays.asList(conditionsArray));
         }
 
-        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, List<PropertyWithValues> conditionsArray) {
+        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, List<PropertyWithValues<?>> conditionsArray) {
             conditions = conditionsArray;
             Preconditions.checkArgument(conditions.size() == conditions.stream()
                     .map(pwv -> pwv.prop)
@@ -52,6 +57,22 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
             Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()));
             this.models = models;
             this.useOr = useOr;
+        }
+        
+        public MultiPart useOr() {
+            this.useOr = true;
+            return this;
+        }
+        
+        @SafeVarargs
+        public final <T extends Comparable<T>> MultiPart condition(IProperty<T> prop, T... values) {
+            this.conditions.add(new PropertyWithValues<>(prop, values));
+            Preconditions.checkArgument(canApplyTo(owner), "IProperty " + prop + " is not valid for the block " + owner);
+            return this;
+        }
+        
+        public MultiPartBlockstate build() {
+            return MultiPartBlockstate.this;
         }
 
         public JsonObject toJson() {
@@ -90,6 +111,7 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         public final IProperty<T> prop;
         public final List<T> values;
 
+        @SafeVarargs
         public PropertyWithValues(IProperty<T> prop, T... values) {
             this.prop = prop;
             this.values = Arrays.asList(values);
