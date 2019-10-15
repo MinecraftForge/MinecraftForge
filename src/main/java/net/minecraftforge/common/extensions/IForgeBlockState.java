@@ -112,6 +112,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @param face The side to check
      * @return True if the block is opaque on the specified side.
+     * @deprecated This is no longer used for rendering logic. //TODO: remove in 1.15
      */
     @Deprecated
     default boolean doesSideBlockRendering(IEnviromentBlockReader world, BlockPos pos, Direction face)
