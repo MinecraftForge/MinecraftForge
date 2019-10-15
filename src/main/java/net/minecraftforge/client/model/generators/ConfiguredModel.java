@@ -1,12 +1,14 @@
 package net.minecraftforge.client.model.generators;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
 
 public final class ConfiguredModel {
     public final ModelFile name;
@@ -45,88 +47,79 @@ public final class ConfiguredModel {
         return modelJson;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    static Builder builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
-        return new Builder(outer, state, ImmutableList.of());
+    static Builder<VariantBlockstate> builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
+        return new Builder<>(models -> outer.setModel(state, models), ImmutableList.of());
+    }
+    
+    static Builder<MultiPart> builder(MultiPartBlockstate outer) {
+        return new Builder<MultiPart>(models -> {
+            MultiPart ret = outer.new MultiPart(new BlockstateProvider.ConfiguredModelList(models));
+            outer.addPart(ret);
+            return ret;
+        }, ImmutableList.of());
     }
 
-    public static class Builder {
+    public static class Builder<T> {
         private ModelFile name;
-        @Nullable
-        private final VariantBlockstate outer;
-        @Nullable
-        private final VariantBlockstate.PartialBlockstate state;
+        private final Function<ConfiguredModel[], T> callback;
         private final List<ConfiguredModel> otherModels;
-        private Integer rotationX;
-        private Integer rotationY;
-        private Boolean uvLock;
-        private Integer weight;
+        private int rotationX;
+        private int rotationY;
+        private boolean uvLock;
+        private int weight;
         private Builder() {
-            this(null, null, ImmutableList.of());
+            this($ -> null, ImmutableList.of());
         }
 
-        private Builder(@Nullable VariantBlockstate outer,
-                        @Nullable VariantBlockstate.PartialBlockstate state,
-                        List<ConfiguredModel> otherModels) {
+        private Builder(Function<ConfiguredModel[], T> callback, List<ConfiguredModel> otherModels) {
+            this.callback = callback;
             this.otherModels = otherModels;
-            Preconditions.checkArgument((outer==null)==(state==null));
-            this.outer = outer;
-            this.state = state;
         }
 
-        public Builder modelFile(ModelFile model) {
-            Preconditions.checkState(name==null);
+        public Builder<T> modelFile(ModelFile model) {
             name = model;
             return this;
         }
 
-        public Builder rotationX(int value) {
-            Preconditions.checkState(rotationX==null);
+        public Builder<T> rotationX(int value) {
             rotationX = value;
             return this;
         }
 
-        public Builder rotationY(int value) {
-            Preconditions.checkState(rotationY==null);
+        public Builder<T> rotationY(int value) {
             rotationY = value;
             return this;
         }
 
-        public Builder uvLock(boolean value) {
-            Preconditions.checkState(uvLock==null);
+        public Builder<T> uvLock(boolean value) {
             uvLock = value;
             return this;
         }
 
-        public Builder weight(int value) {
-            Preconditions.checkState(weight==null);
+        public Builder<T> weight(int value) {
             weight = value;
             return this;
         }
 
         public ConfiguredModel build() {
             Preconditions.checkNotNull(name);
-            int rotX = rotationX!=null?rotationX:0;
-            int rotY = rotationY!=null?rotationY:0;
-            boolean uvLock = this.uvLock!=null?this.uvLock:false;
-            int weight = this.weight!=null?this.weight:0;
-            return new ConfiguredModel(name, rotX, rotY, uvLock, weight);
+            return new ConfiguredModel(name, rotationX, rotationY, uvLock, weight);
         }
 
-        public VariantBlockstate addModel() {
-            Preconditions.checkState(outer!=null);
+        public T addModel() {
             List<ConfiguredModel> allModels = new ArrayList<>(otherModels);
             allModels.add(this.build());
-            return outer.setModel(state, allModels.toArray(new ConfiguredModel[0]));
+            return callback.apply(allModels.toArray(new ConfiguredModel[0]));
         }
 
-        public Builder nextModel() {
+        public Builder<T> nextModel() {
             List<ConfiguredModel> allModels = new ArrayList<>(otherModels);
             allModels.add(this.build());
-            return new Builder(outer, state, allModels);
+            return new Builder<>(callback, allModels);
         }
    }
 }

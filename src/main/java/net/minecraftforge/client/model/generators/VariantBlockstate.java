@@ -112,7 +112,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
             return new PartialBlockstate(owner, newState, outerBuilder);
         }
 
-        public ConfiguredModel.Builder modelForState() {
+        public ConfiguredModel.Builder<VariantBlockstate> modelForState() {
             return ConfiguredModel.builder(outerBuilder, this);
         }
 

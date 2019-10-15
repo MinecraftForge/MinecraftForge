@@ -315,11 +315,15 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                    .texture("texture", new ResourceLocation("block/acacia_planks"));
            
            getMultipartBuilder(Blocks.ACACIA_FENCE)
-                   .addPart(new ConfiguredModel(acaciaFencePost)).build()
-                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 0, true)).condition(FenceBlock.NORTH, true).build()
-                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 90, true)).condition(FenceBlock.EAST, true).build()
-                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 180, true)).condition(FenceBlock.SOUTH, true).build()
-                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 270, true)).condition(FenceBlock.WEST, true).build();
+                   .part().modelFile(acaciaFencePost).addModel().build()
+                   .part().modelFile(acaciaFenceSide).uvLock(true).addModel()
+                           .condition(FenceBlock.NORTH, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(90).uvLock(true).addModel()
+                           .condition(FenceBlock.EAST, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(180).uvLock(true).addModel()
+                           .condition(FenceBlock.SOUTH, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(270).uvLock(true).addModel()
+                           .condition(FenceBlock.WEST, true).build();
        }
    }
 

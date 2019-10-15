@@ -19,10 +19,13 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         this.owner = owner;
     }
 
-    public MultiPart addPart(ConfiguredModel... models) {
-        MultiPart ret = new MultiPart(new BlockstateProvider.ConfiguredModelList(models));
-        parts.add(ret);
-        return ret;
+    public ConfiguredModel.Builder<MultiPart> part() {
+        return ConfiguredModel.builder(this);
+    }
+    
+    MultiPartBlockstate addPart(MultiPart part) {
+        this.parts.add(part);
+        return this;
     }
 
     @Override
