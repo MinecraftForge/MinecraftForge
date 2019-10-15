@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
@@ -45,7 +46,7 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         }
 
         public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, PropertyWithValues<?>... conditionsArray) {
-            this(models, useOr, Arrays.asList(conditionsArray));
+            this(models, useOr, Lists.newArrayList(conditionsArray));
         }
 
         public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, List<PropertyWithValues<?>> conditionsArray) {

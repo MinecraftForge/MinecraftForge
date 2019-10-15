@@ -40,6 +40,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
@@ -304,6 +305,21 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                                 .uvLock(true)
                             .addModel();
            }
+
+           ModelFile acaciaFencePost = getBuilder("acacia_fence_post")
+                   .parent(getExistingFile("block/fence_post"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           
+           ModelFile acaciaFenceSide = getBuilder("acacia_fence_side")
+                   .parent(getExistingFile("block/fence_side"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           
+           getMultipartBuilder(Blocks.ACACIA_FENCE)
+                   .addPart(new ConfiguredModel(acaciaFencePost)).build()
+                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 0, true)).condition(FenceBlock.NORTH, true).build()
+                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 90, true)).condition(FenceBlock.EAST, true).build()
+                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 180, true)).condition(FenceBlock.SOUTH, true).build()
+                   .addPart(new ConfiguredModel(acaciaFenceSide, 0, 270, true)).condition(FenceBlock.WEST, true).build();
        }
    }
 
