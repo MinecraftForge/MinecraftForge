@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -138,7 +139,10 @@ public class BlockInfo
             BlockPos pos = blockPos.offset(side);
             BlockState state = world.getBlockState(pos);
 
-            if(!VoxelShapes.func_223416_b(this.state.func_215702_a(world, blockPos, side), state.func_215702_a(world, pos, side.getOpposite())))
+            BlockState thisStateShape = this.state.isSolid() && this.state.func_215691_g() ? this.state : Blocks.AIR.getDefaultState();
+            BlockState otherStateShape = state.isSolid() && state.func_215691_g() ? state : Blocks.AIR.getDefaultState();
+
+            if(state.getOpacity(world, blockPos) == 15 || VoxelShapes.func_223416_b(thisStateShape.func_215702_a(world, blockPos, side), otherStateShape.func_215702_a(world, pos, side.getOpposite())))
             {
                 int x = side.getXOffset() + 1;
                 int y = side.getYOffset() + 1;
