@@ -52,8 +52,8 @@ public class FMLPlayMessages
      * Used to spawn a custom entity without the same restrictions as
      * {@link net.minecraft.network.play.server.SSpawnObjectPacket} or {@link net.minecraft.network.play.server.SSpawnMobPacket}
      *
-     * Ensure your {@link EntityType} registration supplies a {@link EntityType.Builder#customClientFactory} or the
-     * mob won't actually spawn on the client.
+     * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
+     * see {@link EntityType.Builder#setCustomClientFactory}.
      */
     public static class SpawnEntity
     {

@@ -150,7 +150,7 @@ public final class ItemTextureQuadConverter
             for (int y = 0; y < h; y++)
             {
                 // current pixel
-                boolean isVisible = !sprite.isPixelTransparent(0, x, y);
+                boolean isVisible = !template.isPixelTransparent(0, x, y);
 
                 // no current quad but found a new one
                 if (start < 0 && isVisible)
@@ -168,7 +168,7 @@ public final class ItemTextureQuadConverter
                     {
                         for (int i = 0; i < h; i++)
                         {
-                            if (sprite.isPixelTransparent(0, x, i) != sprite.isPixelTransparent(0, endX, i))
+                            if (template.isPixelTransparent(0, x, i) != template.isPixelTransparent(0, endX, i))
                             {
                                 sameColumn = false;
                                 break;

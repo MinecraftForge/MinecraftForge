@@ -9,20 +9,11 @@
     private final ResourceLocation field_188050_a;
     private final ModelRotation field_188051_b;
     private final boolean field_188052_c;
-@@ -30,10 +30,16 @@
+@@ -30,6 +30,7 @@
        return this.field_188050_a;
     }
  
 +   @Deprecated
     public ModelRotation func_188048_b() {
        return this.field_188051_b;
-    }
- 
-+   @Override
-+   public net.minecraftforge.common.model.IModelState getState() {
-+      return this.field_188051_b;
-+   }
-+
-    public boolean func_188049_c() {
-       return this.field_188052_c;
     }

@@ -26,7 +26,7 @@
     public void func_213612_dV() {
        if (!this.field_70170_p.field_72995_K) {
           this.func_70893_e(true);
-@@ -353,4 +354,23 @@
+@@ -353,4 +354,24 @@
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
     }
@@ -47,6 +47,7 @@
 +            ret.add(new ItemStack(field_200206_bz.get(this.func_175509_cj())));
 +         }
 +      }
++      this.func_184185_a(SoundEvents.field_187763_eJ, 1.0F, 1.0F);
 +      return ret;
 +   }
  }
