@@ -983,6 +983,17 @@ public interface IForgeBlock
     }
 
     /**
+     * This is the 1.13 version and is now dead, use the new version bellow
+     * TODO: Remove in 1.15
+     */
+    @Deprecated
+    @Nullable
+    default RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
+    {
+        return original;
+    }
+
+    /**
      * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit.
      *
      * @param state The current state
