@@ -151,6 +151,10 @@ public class ModInfo implements IModInfo
         return this.logoFile;
     }
 
+    /**
+     * This is no longer used. The Mods List GUI currently directly checks whether there is an EntryPoint registered.
+     */
+    @Deprecated
     public boolean hasConfigUI()
     {
         return false;

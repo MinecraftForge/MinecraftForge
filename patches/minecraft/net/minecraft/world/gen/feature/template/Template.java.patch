@@ -1,0 +1,97 @@
+--- a/net/minecraft/world/gen/feature/template/Template.java
++++ b/net/minecraft/world/gen/feature/template/Template.java
+@@ -152,6 +152,11 @@
+       return func_207669_a(p_186266_1_, p_186266_0_.func_186212_b(), p_186266_0_.func_186215_c(), p_186266_0_.func_207664_d());
+    }
+ 
++   // FORGE: Add overload accepting Vec3d
++   public static Vec3d transformedVec3d(PlacementSettings p_186266_0_, Vec3d p_186266_1_) {
++      return func_207667_a(p_186266_1_, p_186266_0_.func_186212_b(), p_186266_0_.func_186215_c(), p_186266_0_.func_207664_d());
++   }
++
+    public void func_186260_a(IWorld p_186260_1_, BlockPos p_186260_2_, PlacementSettings p_186260_3_) {
+       p_186260_3_.func_186224_i();
+       this.func_186253_b(p_186260_1_, p_186260_2_, p_186260_3_);
+@@ -177,7 +182,7 @@
+             int i1 = Integer.MIN_VALUE;
+             int j1 = Integer.MIN_VALUE;
+ 
+-            for(Template.BlockInfo template$blockinfo : func_215387_a(p_189962_1_, p_189962_2_, p_189962_3_, list)) {
++            for(Template.BlockInfo template$blockinfo : processBlockInfos(this, p_189962_1_, p_189962_2_, p_189962_3_, list)) {
+                BlockPos blockpos = template$blockinfo.field_186242_a;
+                if (mutableboundingbox == null || mutableboundingbox.func_175898_b(blockpos)) {
+                   IFluidState ifluidstate = p_189962_3_.func_204763_l() ? p_189962_1_.func_204610_c(blockpos) : null;
+@@ -288,7 +293,7 @@
+             }
+ 
+             if (!p_189962_3_.func_186221_e()) {
+-               this.func_207668_a(p_189962_1_, p_189962_2_, p_189962_3_.func_186212_b(), p_189962_3_.func_186215_c(), p_189962_3_.func_207664_d(), mutableboundingbox);
++               this.addEntitiesToWorld(p_189962_1_, p_189962_2_, p_189962_3_, p_189962_3_.func_186212_b(), p_189962_3_.func_186215_c(), p_189962_3_.func_207664_d(), p_189962_3_.func_186213_g());
+             }
+ 
+             return true;
+@@ -317,14 +322,19 @@
+       });
+    }
+ 
++   @Deprecated // FORGE: Add template parameter
+    public static List<Template.BlockInfo> func_215387_a(IWorld p_215387_0_, BlockPos p_215387_1_, PlacementSettings p_215387_2_, List<Template.BlockInfo> p_215387_3_) {
++      return processBlockInfos(null, p_215387_0_, p_215387_1_, p_215387_2_, p_215387_3_);
++   }
++
++   public static List<Template.BlockInfo> processBlockInfos(@Nullable Template template, IWorld p_215387_0_, BlockPos p_215387_1_, PlacementSettings p_215387_2_, List<Template.BlockInfo> p_215387_3_) {
+       List<Template.BlockInfo> list = Lists.newArrayList();
+ 
+       for(Template.BlockInfo template$blockinfo : p_215387_3_) {
+          BlockPos blockpos = func_186266_a(p_215387_2_, template$blockinfo.field_186242_a).func_177971_a(p_215387_1_);
+          Template.BlockInfo template$blockinfo1 = new Template.BlockInfo(blockpos, template$blockinfo.field_186243_b, template$blockinfo.field_186244_c);
+ 
+-         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); template$blockinfo1 != null && iterator.hasNext(); template$blockinfo1 = iterator.next().func_215194_a(p_215387_0_, p_215387_1_, template$blockinfo, template$blockinfo1, p_215387_2_)) {
++         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); template$blockinfo1 != null && iterator.hasNext(); template$blockinfo1 = iterator.next().process(p_215387_0_, p_215387_1_, template$blockinfo, template$blockinfo1, p_215387_2_, template)) {
+             ;
+          }
+ 
+@@ -336,13 +346,41 @@
+       return list;
+    }
+ 
++   // FORGE: Add processing for entities
++   public static List<Template.EntityInfo> processEntityInfos(@Nullable Template template, IWorld p_215387_0_, BlockPos p_215387_1_, PlacementSettings p_215387_2_, List<Template.EntityInfo> p_215387_3_) {
++      List<Template.EntityInfo> list = Lists.newArrayList();
++
++      for(Template.EntityInfo entityInfo : p_215387_3_) {
++         Vec3d pos = transformedVec3d(p_215387_2_, entityInfo.field_186247_a).func_178787_e(new Vec3d(p_215387_1_));
++         BlockPos blockpos = func_186266_a(p_215387_2_, entityInfo.field_186248_b).func_177971_a(p_215387_1_);
++         Template.EntityInfo entityInfo1 = new Template.EntityInfo(pos, blockpos, entityInfo.field_186249_c);
++
++         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); entityInfo1 != null && iterator.hasNext(); entityInfo1 = iterator.next().processEntity(p_215387_0_, p_215387_1_, entityInfo, entityInfo1, p_215387_2_, template)) {
++            ;
++         }
++
++         if (entityInfo1 != null) {
++            list.add(entityInfo1);
++         }
++      }
++
++      return list;
++   }
++
++   @Deprecated // FORGE: Add PlacementSettings parameter (below) to pass to entity processors
+    private void func_207668_a(IWorld p_207668_1_, BlockPos p_207668_2_, Mirror p_207668_3_, Rotation p_207668_4_, BlockPos p_207668_5_, @Nullable MutableBoundingBox p_207668_6_) {
+-      for(Template.EntityInfo template$entityinfo : this.field_186271_b) {
++      addEntitiesToWorld(p_207668_1_, p_207668_2_, new PlacementSettings().func_186214_a(p_207668_3_).func_186220_a(p_207668_4_).func_207665_a(p_207668_5_).func_186223_a(p_207668_6_), p_207668_3_, p_207668_4_, p_207668_2_, p_207668_6_);
++   }
++
++   private void addEntitiesToWorld(IWorld p_207668_1_, BlockPos p_207668_2_, PlacementSettings placementIn, Mirror p_207668_3_, Rotation p_207668_4_, BlockPos p_207668_5_, @Nullable MutableBoundingBox p_207668_6_) {
++      for(Template.EntityInfo template$entityinfo : processEntityInfos(this, p_207668_1_, p_207668_2_, placementIn, this.field_186271_b)) {
+          BlockPos blockpos = func_207669_a(template$entityinfo.field_186248_b, p_207668_3_, p_207668_4_, p_207668_5_).func_177971_a(p_207668_2_);
++         blockpos = template$entityinfo.field_186248_b; // FORGE: Position will have already been transformed by processEntityInfos
+          if (p_207668_6_ == null || p_207668_6_.func_175898_b(blockpos)) {
+             CompoundNBT compoundnbt = template$entityinfo.field_186249_c;
+             Vec3d vec3d = func_207667_a(template$entityinfo.field_186247_a, p_207668_3_, p_207668_4_, p_207668_5_);
+-            Vec3d vec3d1 = vec3d.func_72441_c((double)p_207668_2_.func_177958_n(), (double)p_207668_2_.func_177956_o(), (double)p_207668_2_.func_177952_p());
++            vec3d = vec3d.func_72441_c((double)p_207668_2_.func_177958_n(), (double)p_207668_2_.func_177956_o(), (double)p_207668_2_.func_177952_p());
++            Vec3d vec3d1 = template$entityinfo.field_186247_a; // FORGE: Position will have already been transformed by processEntityInfos
+             ListNBT listnbt = new ListNBT();
+             listnbt.add(new DoubleNBT(vec3d1.field_72450_a));
+             listnbt.add(new DoubleNBT(vec3d1.field_72448_b));

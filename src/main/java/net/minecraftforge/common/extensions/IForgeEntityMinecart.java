@@ -62,7 +62,7 @@ public interface IForgeEntityMinecart
         return pos;
     }
 
-    double getMaxSpeed();
+    double getMaxSpeedWithRail();
 
     /**
      * Moved to allow overrides.

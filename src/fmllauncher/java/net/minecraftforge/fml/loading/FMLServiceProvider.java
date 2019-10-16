@@ -25,13 +25,23 @@ import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.Environment;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
@@ -86,8 +96,19 @@ public class FMLServiceProvider implements ITransformationService
 
     @Override
     public void beginScanning(final IEnvironment environment) {
+        throw new IllegalStateException("WHY ARE YOU HERE??????");
+    }
+
+    @Override
+    public List<Map.Entry<String, Path>> runScan(final IEnvironment environment) {
         LOGGER.debug(CORE,"Initiating mod scan");
-        FMLLoader.beginModScan(arguments);
+        final Map<IModFile.Type, List<ModFile>> foundFiles = FMLLoader.beginModScan(arguments);
+        return foundFiles
+                .values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(modFile -> new AbstractMap.SimpleImmutableEntry<>(modFile.getFileName(), modFile.getFilePath()))
+                .collect(Collectors.toList());
     }
 
     @Override

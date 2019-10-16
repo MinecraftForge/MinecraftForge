@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2019.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.network;
 
 import io.netty.buffer.Unpooled;
@@ -6,6 +25,7 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +41,9 @@ public class FMLMCRegisterPacketHandler {
         private Set<ResourceLocation> locations = new HashSet<>();
 
         public void updateFrom(PacketBuffer buffer) {
-            locations = bytesToResLocation(buffer.readByteArray());
+            byte[] data = new byte[buffer.readableBytes() < 0 ? 0 : buffer.readableBytes()];
+            buffer.readBytes(data);
+            locations = bytesToResLocation(data);
         }
 
         byte[] toByteArray() {
@@ -82,7 +104,7 @@ public class FMLMCRegisterPacketHandler {
 
     public void sendRegistry(NetworkManager manager, final NetworkDirection dir) {
         PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
-        pb.writeByteArray(getFrom(manager).toByteArray());
+        pb.writeBytes(getFrom(manager).toByteArray());
         final ICustomPacket<IPacket<?>> iPacketICustomPacket = dir.buildPacket(Pair.of(pb, 0), FMLNetworkConstants.MC_REGISTER_RESOURCE);
         manager.sendPacket(iPacketICustomPacket.getThis());
     }

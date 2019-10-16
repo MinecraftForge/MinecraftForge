@@ -98,6 +98,12 @@ class NetworkInitialization {
                 consumer(FMLPlayMessages.OpenContainer::handle).
                 add();
 
+        playChannel.messageBuilder(FMLPlayMessages.DimensionInfoMessage.class, 2)
+                .decoder(FMLPlayMessages.DimensionInfoMessage::decode)
+                .encoder(FMLPlayMessages.DimensionInfoMessage::encode)
+                .consumer(FMLPlayMessages.DimensionInfoMessage::handle)
+                .add();
+
         return playChannel;
     }
 

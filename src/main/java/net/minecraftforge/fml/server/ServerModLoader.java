@@ -21,10 +21,7 @@ package net.minecraftforge.fml.server;
 
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.network.FMLStatusPing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,17 +34,31 @@ public class ServerModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static DedicatedServer server;
+    private static boolean hasErrors = false;
+
     public static void begin(DedicatedServer dedicatedServer) {
         ServerModLoader.server = dedicatedServer;
         SidedProvider.setServer(()->dedicatedServer);
         LogicalSidedProvider.setServer(()->dedicatedServer);
         LanguageHook.loadForgeAndMCLangs();
-        ModLoader.get().gatherAndInitializeMods(null);
-        ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
+        try {
+            ModLoader.get().gatherAndInitializeMods(null);
+            ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
+        } catch (LoadingFailedException e) {
+            ServerModLoader.hasErrors = true;
+            throw e;
+        }
     }
 
+
     public static void end() {
-        ModLoader.get().finishMods(Runnable::run);
+        try {
+            ModLoader.get().finishMods(Runnable::run);
+        } catch (LoadingFailedException e) {
+            ServerModLoader.hasErrors = true;
+            throw e;
+
+        }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {
             LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());
@@ -55,5 +66,9 @@ public class ServerModLoader
         }
         MinecraftForge.EVENT_BUS.start();
         server.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
+    }
+
+    public static boolean hasErrors() {
+        return ServerModLoader.hasErrors;
     }
 }

@@ -47,7 +47,7 @@
              BlockPos blockpos2 = chunkrender4.func_178568_j().func_177982_a(8, 8, 8);
              boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;
 -            if (!chunkrender4.func_188281_o() && !flag3) {
-+            if (net.minecraftforge.common.ForgeMod.alwaysSetupTerrainOffThread || !chunkrender4.func_188281_o() && !flag3) {
++            if (net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() || !chunkrender4.func_188281_o() && !flag3) {
                 this.field_175009_l.add(chunkrender4);
              } else {
                 this.field_72777_q.func_213239_aq().func_76320_a("build near");
@@ -102,15 +102,17 @@
              GlStateManager.enableBlend();
              GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
              GlStateManager.lineWidth(Math.max(2.5F, (float)this.field_72777_q.field_195558_d.func_198109_k() / 1920.0F * 2.5F));
-@@ -1994,7 +2008,7 @@
+@@ -1994,8 +2008,8 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
 -         if (!blockstate.func_196958_f()) {
+-            SoundType soundtype = blockstate.func_215695_r();
 +         if (!blockstate.isAir(this.field_72769_h, p_180439_3_)) {
-             SoundType soundtype = blockstate.func_215695_r();
++            SoundType soundtype = blockstate.getSoundType(field_72769_h, p_180439_3_, null);
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
+ 
 @@ -2118,6 +2132,11 @@
        }
     }

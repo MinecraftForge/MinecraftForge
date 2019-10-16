@@ -31,7 +31,7 @@ public interface ITransformation
 {
     Matrix4f getMatrixVec();
 
-    Direction rotate(Direction facing);
+    Direction rotateTransform(Direction facing);
 
     int rotate(Direction facing, int vertexIndex);
 }

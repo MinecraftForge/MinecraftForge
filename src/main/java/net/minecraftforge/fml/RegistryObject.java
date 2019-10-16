@@ -21,8 +21,12 @@ package net.minecraftforge.fml;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.registries.ObjectHolderRegistry;
 import net.minecraftforge.registries.RegistryManager;
+
+import javax.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -32,69 +36,99 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
+public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T>
 {
-    private final String name;
-    private final IForgeRegistry<?> owningRegistry;
+    private final ResourceLocation name;
+    @Nullable
     private T value;
-    private boolean searched;
 
-    public static <T extends ForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
+    @Deprecated
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
+        return of(new ResourceLocation(name), registryType);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
+    }
+
+    @Deprecated
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, IForgeRegistry<T> registry) {
+        return of(new ResourceLocation(name), registry);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry) {
+        return new RegistryObject<>(name, registry);
     }
 
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
 
-    private static <T extends ForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
+    private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
         @SuppressWarnings("unchecked")
         RegistryObject<T> t = (RegistryObject<T>) EMPTY;
         return t;
     }
 
     private RegistryObject() {
-        this.searched = true;
-        this.name = "";
-        this.owningRegistry = null;
+        this.name = null;
     }
 
-    private <V extends ForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<? super V>> registryType)
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, Supplier<Class<? super V>> registryType)
     {
+        this(name, RegistryManager.ACTIVE.<V>getRegistry(registryType.get()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, IForgeRegistry<V> registry)
+    {
+        if (registry == null)
+            throw new IllegalArgumentException("Invalid registry argument, must not be null");
         this.name = name;
-        IForgeRegistry<V> registry;
-        try {
-            registry = RegistryManager.ACTIVE.<V>getRegistry(registryType.get());
-        } catch (Throwable t) {
-            registry = null;
-        }
-        this.owningRegistry = registry;
+        ObjectHolderRegistry.addHandler(pred ->
+        {
+            if (pred.test(registry.getRegistryName()))
+                this.value = registry.containsKey(this.name) ? (T)registry.getValue(this.name) : null;
+        });
     }
 
-    private T getValue()
+    /**
+     * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
+     */
+    @Nullable
+    @Override
+    public T get()
     {
-        if (!searched) {
-            if (this.owningRegistry != null) {
-                //noinspection unchecked
-                this.value = (T)this.owningRegistry.getValue(new ResourceLocation(this.name));
-            }
-            searched = true;
-        }
         return this.value;
     }
 
-    public String getName() {
+    public void updateReference(IForgeRegistry<? extends T> registry)
+    {
+        this.value = registry.getValue(getId());
+    }
+
+    public ResourceLocation getId() 
+    {
         return this.name;
     }
 
-    public Stream<T> stream() {
-        return isPresent() ? Stream.of(getValue()) : Stream.of();
+    /**
+     * @deprecated Prefer {@link #getId()}
+     */
+    @Deprecated
+    public String getName() {
+        return getId().toString();
     }
+
+    public Stream<T> stream() {
+        return isPresent() ? Stream.of(get()) : Stream.of();
+    }
+
     /**
      * Return {@code true} if there is a mod object present, otherwise {@code false}.
      *
      * @return {@code true} if there is a mod object present, otherwise {@code false}
      */
     public boolean isPresent() {
-        return getValue() != null;
+        return get() != null;
     }
 
     /**
@@ -106,8 +140,8 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
      * null
      */
     public void ifPresent(Consumer<? super T> consumer) {
-        if (getValue() != null)
-            consumer.accept(getValue());
+        if (get() != null)
+            consumer.accept(get());
     }
 
     /**
@@ -126,7 +160,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
         if (!isPresent())
             return this;
         else
-            return predicate.test(getValue()) ? this : empty();
+            return predicate.test(get()) ? this : empty();
     }
 
     /**
@@ -149,7 +183,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
         if (!isPresent())
             return Optional.empty();
         else {
-            return Optional.ofNullable(mapper.apply(getValue()));
+            return Optional.ofNullable(mapper.apply(get()));
         }
     }
 
@@ -175,8 +209,28 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
         if (!isPresent())
             return Optional.empty();
         else {
-            return Objects.requireNonNull(mapper.apply(getValue()));
+            return Objects.requireNonNull(mapper.apply(get()));
         }
+    }
+    
+    /**
+     * If a mod object is present, lazily apply the provided mapping function to it,
+     * returning a supplier for the transformed result. If this object is empty, or the
+     * mapping function returns {@code null}, the supplier will return {@code null}.
+     *
+     * @apiNote This method supports post-processing on optional values, without
+     * the need to explicitly check for a return status.
+     *
+     * @param <U> The type of the result of the mapping function
+     * @param mapper A mapping function to apply to the mod object, if present
+     * @return A {@code Supplier} lazily providing the result of applying a mapping
+     * function to the mod object of this {@code RegistryObject}, if a mod object is present,
+     * otherwise a supplier returning {@code null}
+     * @throws NullPointerException if the mapping function is {@code null}
+     */
+    public<U> Supplier<U> lazyMap(Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+        return () -> isPresent() ? mapper.apply(get()) : null;
     }
 
     /**
@@ -187,7 +241,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
      * @return the mod object, if present, otherwise {@code other}
      */
     public T orElse(T other) {
-        return getValue() != null ? getValue() : other;
+        return isPresent() ? get() : other;
     }
 
     /**
@@ -201,7 +255,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
      * null
      */
     public T orElseGet(Supplier<? extends T> other) {
-        return getValue() != null ? getValue() : other.get();
+        return isPresent() ? get() : other.get();
     }
 
     /**
@@ -221,8 +275,8 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
      * {@code exceptionSupplier} is null
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (getValue() != null) {
-            return getValue();
+        if (get() != null) {
+            return get();
         } else {
             throw exceptionSupplier.get();
         }
@@ -233,7 +287,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
     {
         if (this == obj) return true;
         if (obj instanceof RegistryObject) {
-            return Objects.equals(((RegistryObject)obj).name, name);
+            return Objects.equals(((RegistryObject<?>)obj).name, name);
         }
         return false;
     }

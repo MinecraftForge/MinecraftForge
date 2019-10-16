@@ -14,7 +14,7 @@
 -               for(SheepEntity sheepentity : world.func_217357_a(SheepEntity.class, new AxisAlignedBB(blockpos))) {
 -                  if (sheepentity.func_70089_S() && !sheepentity.func_70892_o() && !sheepentity.func_70631_g_()) {
 -                     sheepentity.func_213612_dV();
-+               for(net.minecraft.entity.Entity entity : world.func_175674_a(null, new AxisAlignedBB(blockpos), e -> !e.func_175149_v() && e instanceof net.minecraftforge.common.IShearable)) {
++               for(net.minecraft.entity.Entity entity : world.func_175674_a((net.minecraft.entity.Entity)null, new AxisAlignedBB(blockpos), e -> !e.func_175149_v() && e instanceof net.minecraftforge.common.IShearable)) {
 +                  net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)entity;
 +                  if (target.isShearable(p_82487_2_, world, blockpos)) {
 +                     java.util.List<ItemStack> drops = target.onSheared(p_82487_2_, entity.field_70170_p, blockpos,

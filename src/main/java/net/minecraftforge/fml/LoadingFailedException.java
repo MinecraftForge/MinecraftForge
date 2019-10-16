@@ -20,6 +20,7 @@
 package net.minecraftforge.fml;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoadingFailedException extends RuntimeException {
     private final List<ModLoadingException> loadingExceptions;
@@ -30,5 +31,10 @@ public class LoadingFailedException extends RuntimeException {
 
     public List<ModLoadingException> getErrors() {
         return this.loadingExceptions;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Loading errors encountered: " + this.loadingExceptions.stream().map(ModLoadingException::getMessage).collect(Collectors.joining(",\n\t", "[\n\t", "\n]"));
     }
 }

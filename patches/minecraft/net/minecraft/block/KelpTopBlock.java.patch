@@ -1,0 +1,13 @@
+--- a/net/minecraft/block/KelpTopBlock.java
++++ b/net/minecraft/block/KelpTopBlock.java
+@@ -57,8 +57,9 @@
+       } else {
+          BlockPos blockpos = p_196267_3_.func_177984_a();
+          BlockState blockstate = p_196267_2_.func_180495_p(blockpos);
+-         if (blockstate.func_177230_c() == Blocks.field_150355_j && p_196267_1_.func_177229_b(field_203163_a) < 25 && p_196267_4_.nextDouble() < 0.14D) {
++         if (blockstate.func_177230_c() == Blocks.field_150355_j && p_196267_1_.func_177229_b(field_203163_a) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, p_196267_4_.nextDouble() < 0.14D)) {
+             p_196267_2_.func_175656_a(blockpos, p_196267_1_.func_177231_a(field_203163_a));
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+          }
+ 
+       }

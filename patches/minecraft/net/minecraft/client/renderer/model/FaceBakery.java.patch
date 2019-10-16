@@ -60,7 +60,7 @@
 +   }
 +
 +   private void fillVertexData(int[] p_188015_1_, int p_188015_2_, Direction p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, net.minecraftforge.common.model.ITransformation p_188015_7_, @Nullable BlockPartRotation p_188015_8_, boolean p_188015_9_) {
-+      Direction direction = p_188015_7_.rotate(p_188015_3_);
++      Direction direction = p_188015_7_.rotateTransform(p_188015_3_);
        int i = p_188015_9_ ? this.func_178413_a(direction) : -1;
        FaceDirection.VertexInformation facedirection$vertexinformation = FaceDirection.func_179027_a(p_188015_3_).func_179025_a(p_188015_2_);
        Vector3f vector3f = new Vector3f(p_188015_5_[facedirection$vertexinformation.field_179184_a], p_188015_5_[facedirection$vertexinformation.field_179182_b], p_188015_5_[facedirection$vertexinformation.field_179183_c]);

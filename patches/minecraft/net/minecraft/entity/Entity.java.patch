@@ -109,7 +109,7 @@
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
 -         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.func_215695_r() : p_180429_2_.func_215695_r();
-+         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.func_215695_r() : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
++         SoundType soundtype = blockstate.func_177230_c() == Blocks.field_150433_aE ? blockstate.getSoundType(field_70170_p, p_180429_1_, this) : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
@@ -156,7 +156,7 @@
  
 +         CompoundNBT caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
-+         if (entityData != null) p_189511_1_.func_218657_a("ForgeData", entityData);
++         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
 +
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
@@ -165,7 +165,7 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
                 this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
-+               if (p_70020_1_.func_150297_b("ForgeData", 10)) entityData = p_70020_1_.func_74775_l("ForgeData");
++               if (p_70020_1_.func_150297_b("ForgeData", 10)) persistentData = p_70020_1_.func_74775_l("ForgeData");
 +               if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
 +               if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
                 if (p_70020_1_.func_150297_b("Tags", 9)) {
@@ -315,12 +315,12 @@
 +      this.captureDrops = value;
 +      return ret;
 +   }
-+   private CompoundNBT entityData;
++   private CompoundNBT persistentData;
 +   @Override
-+   public CompoundNBT getEntityData() {
-+      if (entityData == null)
-+         entityData = new CompoundNBT();
-+      return entityData;
++   public CompoundNBT getPersistentData() {
++      if (persistentData == null)
++         persistentData = new CompoundNBT();
++      return persistentData;
 +   }
 +   @Override
 +   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {

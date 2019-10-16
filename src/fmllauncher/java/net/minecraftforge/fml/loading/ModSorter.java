@@ -144,20 +144,31 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(ModInfo.class::cast);
+        final Stream<ModInfo> modInfos = modFiles.stream()
+                .map(ModFile::getModInfos)
+                .flatMap(Collection::stream)
+                .map(ModInfo.class::cast);
         final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
 
         // TODO: make this figure out dupe handling better
-        final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toList());
+        final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().size() > 1)
+                .collect(Collectors.toList());
 
         if (!dupedMods.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream().
-                    map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm.getValue().get(0))).
-                    collect(Collectors.toList());
+            final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods
+                    .stream()
+                    .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm.getValue().get(0)))
+                    .collect(Collectors.toList());
             throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
 
-        modIdNameLookup = modIds.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
+        modIdNameLookup = modIds
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
     }
 
     private void verifyDependencyVersions()

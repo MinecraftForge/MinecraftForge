@@ -1,6 +1,19 @@
 --- a/net/minecraft/entity/passive/FoxEntity.java
 +++ b/net/minecraft/entity/passive/FoxEntity.java
-@@ -767,7 +767,7 @@
+@@ -573,9 +573,10 @@
+             }
+          }
+ 
+-         BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v));
++         BlockPos pos = new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v);
++         BlockState blockstate = this.field_70170_p.func_180495_p(pos);
+          if (!blockstate.func_196958_f() && !this.func_174814_R()) {
+-            SoundType soundtype = blockstate.func_215695_r();
++            SoundType soundtype = blockstate.getSoundType(field_70170_p, pos, this);
+             this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
+          }
+ 
+@@ -767,7 +768,7 @@
        }
  
        protected void func_220730_m() {

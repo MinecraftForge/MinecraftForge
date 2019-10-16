@@ -25,6 +25,11 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.registries.ClearableRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,7 +66,7 @@ public class NetworkHooks
 
     public static IPacket<?> getEntitySpawningPacket(Entity entity)
     {
-    	return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+        return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
@@ -87,6 +92,14 @@ public class NetworkHooks
                 collect(Collectors.toSet());
         FMLMCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
         FMLMCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
+    }
+
+    public synchronized static void sendDimensionDataPacket(NetworkManager manager, ServerPlayerEntity player) {
+        // don't send vanilla dims
+        if (player.dimension.isVanilla()) return;
+        // don't sent to local - we already have a valid dim registry locally
+        if (manager.isLocalChannel()) return;
+        FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void handleClientLoginSuccess(NetworkManager manager) {
@@ -180,5 +193,17 @@ public class NetworkHooks
         player.openContainer = c;
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+    }
+
+    // internal tracking map for custom dimensions received from servers for use on client.
+    private static Int2ObjectMap<DimensionType> trackingMap = new Int2ObjectOpenHashMap<>();
+    public static DimensionType getDummyDimType(final int dimension) {
+        return trackingMap.computeIfAbsent(dimension, id -> DimensionType.getById(id));
+    }
+
+    static void addCachedDimensionType(final DimensionType dimensionType, final ResourceLocation dimName) {
+        trackingMap.put(dimensionType.getId(), dimensionType);
+        final ClearableRegistry<DimensionType> dimtypereg = (ClearableRegistry<DimensionType>) Registry.DIMENSION_TYPE;
+        dimtypereg.register(dimensionType.getId(), dimName, dimensionType);
     }
 }

@@ -60,6 +60,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.StartupQuery;
+import net.minecraftforge.fml.server.ServerModLoader;
 import net.minecraftforge.registries.ClearableRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -86,6 +87,21 @@ public class DimensionManager
     private static volatile Set<World> playerWorlds = new HashSet<>();
 
     /**
+     * Register or get the existing dimension type for the given dimtype name.
+     *
+     * Dimensions already known to the save are loaded into the DimensionType map before the {@link RegisterDimensionsEvent} is fired.
+     * You can use this helper to get your existing dimension, or create it if it is not found.
+     *
+     * @param name Registry name
+     * @param type ModDimension type data
+     * @param data Extra data for the ModDimension
+     * @param hasSkyLight does this dimension have a skylight?
+     * @return the DimensionType for the dimension.
+     */
+    public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight) {
+        return REGISTRY.getValue(name).orElseGet(()->registerDimension(name, type, data, hasSkyLight));
+    }
+    /**
      * Registers a real unique dimension, Should be called on server init, or when the dimension is created.
      * On the client, the list will be reset/reloaded every time a InternalServer is refreshed.
      *
@@ -94,6 +110,8 @@ public class DimensionManager
      * @param name Registry name for this new dimension.
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
+     * @param hasSkyLight skylight for this dimension
+     * @return the DimensionType for the dimension.
      */
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
@@ -160,6 +178,9 @@ public class DimensionManager
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Dimension type must not be null");
 
+        if (ServerModLoader.hasErrors()) {
+            throw new RuntimeException("The server has failed to initialize correctly due to mod loading errors. Examine the crash report for more details.");
+        }
         // If we're in the early stages of loading, we need to return null so CommandSource can work properly for command function
         if (StartupQuery.pendingQuery()) {
             return null;

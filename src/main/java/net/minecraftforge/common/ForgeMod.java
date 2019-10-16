@@ -28,10 +28,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.server.command.ConfigCommand;
-import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ForgeCommand;
-import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -39,8 +38,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -67,7 +64,6 @@ import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -81,13 +77,22 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
+    //TODO: Remove all of these, use ForgeConfig instead
+    @Deprecated
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
+    @Deprecated
     public static boolean disableVersionCheck = false;
+    @Deprecated
     public static boolean forgeLightPipelineEnabled = true;
+    @Deprecated
     public static boolean zoomInMissingModelTextInGui = false;
+    @Deprecated
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
+    @Deprecated
     public static boolean alwaysSetupTerrainOffThread = false; // In WorldRenderer.setupTerrain, always force the chunk render updates to be queued to the thread
+    @Deprecated
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    @Deprecated
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
@@ -128,13 +133,15 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
 
-        if (!ForgeMod.disableVersionCheck)
-        {
-            VersionChecker.startVersionCheck();
-        }
+        VersionChecker.startVersionCheck();
 
-        //ArgumentTypes.register("forge:enum", EnumArgument.class, new EnumArgument.Serialzier()); //This can't register, it breaks vanilla clients. As the packet serailzier doesn't discard unknown data
+        /*
+         * We can't actually add any of these, because vanilla clients will choke on unknown argument types
+         * So our custom arguments will not validate client-side, but they do still work
+        ArgumentTypes.register("forge:enum", EnumArgument.class, new EnumArgument.Serializer());
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+        ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
+        */
     }
 
     public void serverStarting(FMLServerStartingEvent evt)

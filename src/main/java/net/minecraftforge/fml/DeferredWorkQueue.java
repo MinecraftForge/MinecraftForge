@@ -52,7 +52,10 @@ import net.minecraftforge.forgespi.language.IModInfo;
  * <p>
  * Exceptions from tasks will be handled gracefully, causing a mod loading
  * error. Tasks that take egregiously long times to run will be logged.
+ *
+ * This is being deprecated in favour of a new interface on loading events, to remove confusion about how it operates. #TODO
  */
+@Deprecated
 public class DeferredWorkQueue
 {
     private static class TaskInfo

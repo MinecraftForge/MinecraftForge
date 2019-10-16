@@ -140,7 +140,7 @@
              this.field_71304_b.func_76319_b();
              this.field_71304_b.func_76319_b();
           }
-+         tickTimes.computeIfAbsent(serverworld.func_201675_m().func_186058_p(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
++         perWorldTickTimes.computeIfAbsent(serverworld.func_201675_m().func_186058_p(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
        }
  
 +      this.field_71304_b.func_219895_b("dim_unloading");
@@ -189,10 +189,10 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
-+   private Map<DimensionType, long[]> tickTimes = Maps.newIdentityHashMap();
++   private Map<DimensionType, long[]> perWorldTickTimes = Maps.newIdentityHashMap();
 +   @Nullable
 +   public long[] getTickTime(DimensionType dim) {
-+      return tickTimes.get(dim);
++      return perWorldTickTimes.get(dim);
 +   }
 +
 +   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.

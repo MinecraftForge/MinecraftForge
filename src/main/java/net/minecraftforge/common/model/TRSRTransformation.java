@@ -589,7 +589,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @Override
-    public Direction rotate(Direction facing)
+    public Direction rotateTransform(Direction facing)
     {
         return rotate(matrix, facing);
     }
@@ -836,7 +836,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation getUVLockTransform(Direction originalSide)
     {
-        Direction newSide = rotate(originalSide);
+        Direction newSide = rotateTransform(originalSide);
         try
         {
             return blockCenterToCorner(vanillaUvTransformGlobalToLocal.get(originalSide).compose(blockCornerToCenter(this.inverse())).compose(vanillaUvTransformLocalToGlobal.get(newSide)));

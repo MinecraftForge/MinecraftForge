@@ -136,10 +136,11 @@ public final class ModelLoader extends ModelBakery
 
     public ModelLoader(IResourceManager manager, AtlasTexture map, BlockColors colours, IProfiler profiler)
     {
-        super(manager, map, colours, profiler);
+        super(manager, map, colours, false);
         VanillaLoader.INSTANCE.setLoader(this);
         VariantLoader.INSTANCE.setLoader(this);
         ModelLoaderRegistry.clearModelCache(manager);
+        processLoading(profiler);
     }
 
     private static Set<ResourceLocation> specialModels = new HashSet<>();
@@ -328,7 +329,7 @@ public final class ModelLoader extends ModelBakery
                     }
                     else
                     {
-                        builder.addFaceQuad(baseState.rotate(e.getValue().cullFace), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
+                        builder.addFaceQuad(baseState.rotateTransform(e.getValue().cullFace), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
                     }
                 }
             }
@@ -483,8 +484,6 @@ public final class ModelLoader extends ModelBakery
                     model = ModelLoaderRegistry.getModel(loc);
                 }
 
-                // FIXME: is this the place? messes up dependency and texture resolution
-                model = v.process(model);
                 for(ResourceLocation location : model.getDependencies())
                 {
                     ModelLoaderRegistry.getModelOrMissing(location);
