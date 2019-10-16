@@ -20,7 +20,9 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.IPacket;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -68,7 +70,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-     * {@link PlayerChunkMapEntry#addPlayer(EntityPlayerMP)} and {@link PlayerChunkMapEntry#sendToPlayers()}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#sendChunkData(ServerPlayerEntity, IPacket[], Chunk)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
@@ -84,7 +86,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.UnWatch is fired when an EntityPlayer stops watching a chunk.<br>
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
-     * {@link PlayerChunkMapEntry#removePlayer(EntityPlayerMP)}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#setChunkLoadedAtClient(ServerPlayerEntity, ChunkPos, IPacket[], boolean, boolean)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

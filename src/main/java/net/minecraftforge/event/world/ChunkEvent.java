@@ -19,7 +19,12 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.server.ChunkHolder;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -49,8 +54,8 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
-     * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
-     * Chunk.onChunkLoad(). <br>
+     * {@link net.minecraft.world.server.ChunkManager#func_219200_b(ChunkHolder)}, <br>
+     * {@link net.minecraft.client.multiplayer.ClientChunkProvider#func_217250_a(World, int, int, PacketBuffer, CompoundNBT, int, boolean)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
@@ -69,7 +74,8 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Unload is fired when vanilla Minecraft attempts to unload a Chunk from the world.<br>
      * This event is fired during chunk unloading in <br>
-     * Chunk.onChunkUnload(). <br>
+     * {@link net.minecraft.world.server.ServerWorld#onChunkUnloading(Chunk)}, <br>
+     * {@link net.minecraft.client.world.ClientWorld#onChunkUnloaded(Chunk)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
