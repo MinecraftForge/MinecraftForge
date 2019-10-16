@@ -178,9 +178,7 @@ public class FluidUtil
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
-
-                    // We are acting on a COPY of the stack, so performing changes is acceptable even if we are simulating.
-                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, doDrain);
                     if (transfer.isEmpty())
                         return FluidActionResult.FAILURE;
 
