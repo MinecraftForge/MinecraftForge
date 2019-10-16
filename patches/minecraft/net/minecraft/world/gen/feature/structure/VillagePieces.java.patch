@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/gen/feature/structure/VillagePieces.java
 +++ b/net/minecraft/world/gen/feature/structure/VillagePieces.java
-@@ -18,6 +18,7 @@
+@@ -18,6 +18,8 @@
        SavannaVillagePools.func_214745_a();
        DesertVillagePools.func_222739_a();
        TaigaVillagePools.func_214806_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.JigsawPatternInitEvent.StructureJigsawPoolInitEvent.Village());
++      if(!net.minecraftforge.event.world.JigsawPatternInitEvent.StructureJigsawPoolInitEvent.Village.isFired())
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.JigsawPatternInitEvent.StructureJigsawPoolInitEvent.Village());
        JigsawManager.func_214889_a(p_214838_5_.field_214680_a, p_214838_5_.field_214681_b, VillagePieces.Village::new, p_214838_0_, p_214838_1_, p_214838_2_, p_214838_3_, p_214838_4_);
     }
  
