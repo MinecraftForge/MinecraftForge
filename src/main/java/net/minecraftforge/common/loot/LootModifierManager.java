@@ -98,7 +98,7 @@ public class LootModifierManager extends JsonReloadListener {
 				LOGGER.error("Couldn't parse loot modifier {}", location, exception);
 			}
 		});
-		builder.put(LootModifier.EMPTY, LootModifier.EMPTY_LOOT_MOD);
+		//builder.put(LootModifier.EMPTY, LootModifier.EMPTY_LOOT_MOD);
 		ImmutableMap<ResourceLocation, LootModifier> immutablemap = builder.build();
 		this.registeredLootModifiers = immutablemap;
 	}
