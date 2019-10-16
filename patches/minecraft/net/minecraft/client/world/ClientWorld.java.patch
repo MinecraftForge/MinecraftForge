@@ -25,7 +25,15 @@
              p_217418_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -265,9 +269,11 @@
+@@ -221,6 +225,7 @@
+    public void func_217409_a(Chunk p_217409_1_) {
+       this.field_147483_b.addAll(p_217409_1_.func_177434_r().values());
+       this.field_73020_y.func_212863_j_().func_215571_a(p_217409_1_.func_76632_l(), false);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(p_217409_1_));
+    }
+ 
+    public boolean func_217354_b(int p_217354_1_, int p_217354_2_) {
+@@ -265,9 +270,11 @@
     }
  
     private void func_217424_b(int p_217424_1_, Entity p_217424_2_) {
@@ -37,7 +45,7 @@
     }
  
     public void func_217413_d(int p_217413_1_) {
-@@ -286,6 +292,7 @@
+@@ -286,6 +293,7 @@
        }
  
        this.field_217431_w.remove(p_217414_1_);
@@ -45,7 +53,7 @@
     }
  
     public void func_217417_b(Chunk p_217417_1_) {
-@@ -411,6 +418,11 @@
+@@ -411,6 +419,11 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -57,7 +65,7 @@
        if (p_184148_1_ == this.field_73037_M.field_71439_g) {
           this.func_184134_a(p_184148_2_, p_184148_4_, p_184148_6_, p_184148_8_, p_184148_9_, p_184148_10_, p_184148_11_, false);
        }
-@@ -418,6 +430,11 @@
+@@ -418,6 +431,11 @@
     }
  
     public void func_217384_a(@Nullable PlayerEntity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {

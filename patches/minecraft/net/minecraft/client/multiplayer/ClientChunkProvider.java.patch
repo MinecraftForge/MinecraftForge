@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
-@@ -72,6 +72,7 @@
-       if (this.field_217256_d.func_217183_b(p_212849_1_, p_212849_2_)) {
-          Chunk chunk = this.field_217256_d.func_217192_a(this.field_217256_d.func_217191_a(p_212849_1_, p_212849_2_));
-          if (func_217249_a(chunk, p_212849_1_, p_212849_2_)) {
+@@ -100,6 +100,7 @@
+             chunk = new Chunk(p_217250_1_, new ChunkPos(p_217250_2_, p_217250_3_), new Biome[256]);
+             chunk.func_217326_a(p_217250_4_, p_217250_5_, p_217250_6_, p_217250_7_);
+             this.field_217256_d.func_217181_a(i, chunk);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
-             return chunk;
+          } else {
+             chunk.func_217326_a(p_217250_4_, p_217250_5_, p_217250_6_, p_217250_7_);
           }
-       }

@@ -222,8 +222,11 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -915,12 +937,17 @@
+@@ -913,14 +935,20 @@
+          }
+       }
  
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(p_217466_1_));
     }
  
 +   @Deprecated //Forge: Use removeEntityComplete(entity,boolean)
@@ -241,7 +244,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -934,6 +961,7 @@
+@@ -934,6 +962,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -249,7 +252,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -954,15 +982,19 @@
+@@ -954,15 +983,19 @@
           }
        }
  
@@ -270,7 +273,7 @@
        }
     }
  
-@@ -975,8 +1007,11 @@
+@@ -975,8 +1008,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -284,7 +287,7 @@
        this.func_72854_c();
     }
  
-@@ -1000,10 +1035,20 @@
+@@ -1000,10 +1036,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -305,7 +308,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.field_70165_t, p_217384_2_.field_70163_u, p_217384_2_.field_70161_v, p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1039,6 +1084,7 @@
+@@ -1039,6 +1085,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -313,7 +316,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1289,6 +1335,17 @@
+@@ -1289,6 +1336,17 @@
        p_217489_3_.func_213739_a(p_217489_1_, p_217489_2_);
     }
  
