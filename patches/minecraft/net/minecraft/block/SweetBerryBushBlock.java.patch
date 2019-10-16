@@ -11,3 +11,12 @@
        }
  
     }
+@@ -74,7 +75,7 @@
+          return false;
+       } else if (i > 1) {
+          int j = 1 + p_220051_2_.field_73012_v.nextInt(2);
+-         func_180635_a(p_220051_2_, p_220051_3_, new ItemStack(Items.field_222112_pR, j + (flag ? 1 : 0)));
++         net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(p_220051_2_, p_220051_3_, p_220051_1_, p_220051_4_, new ItemStack(Items.field_222112_pR, j + (flag ? 1 : 0)));
+          p_220051_2_.func_184133_a((PlayerEntity)null, p_220051_3_, SoundEvents.field_219693_lB, SoundCategory.BLOCKS, 1.0F, 0.8F + p_220051_2_.field_73012_v.nextFloat() * 0.4F);
+          p_220051_2_.func_180501_a(p_220051_3_, p_220051_1_.func_206870_a(field_220125_a, Integer.valueOf(1)), 2);
+          return true;
