@@ -38,6 +38,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -530,7 +531,7 @@ public class PlayerEvent extends LivingEvent
         public PlayerSizeEvent(PlayerEntity player, @Nonnull Pose pose, @Nonnull EntitySize size)
         {
             super(player);
-            this.pose=pose;
+            this.pose = pose;
             this.originalSize = size;
             this.size = size;
         }
@@ -554,6 +555,27 @@ public class PlayerEvent extends LivingEvent
         public EntitySize getSize()
         {
             return size;
+        }
+    }
+
+    @Cancelable
+    public static class PlayerPoseEvent extends PlayerEvent {
+        private Pose pose;
+
+        public PlayerPoseEvent(PlayerEntity player)
+        {
+            super(player);
+        }
+
+        public void setForcedPose(Pose pose)
+        {
+            this.pose = pose;
+        }
+
+        @Nullable
+        public Pose getForcedPose()
+        {
+            return this.pose;
         }
     }
 }

@@ -712,4 +712,14 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getSize();
     }
+
+    @Nullable
+    public static Pose getForcedPlayerPose(PlayerEntity player)
+    {
+        PlayerEvent.PlayerPoseEvent event = new PlayerEvent.PlayerPoseEvent(player);
+        if(MinecraftForge.EVENT_BUS.post(event)){
+            return event.getForcedPose();
+        }
+        return null;
+    }
 }
