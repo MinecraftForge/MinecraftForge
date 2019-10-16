@@ -113,6 +113,16 @@ public class JigsawPatternInitEvent extends Event {
         public abstract ResourceLocation getStructureRegistryName();
 
         public static class Village extends StructureJigsawPoolInitEvent{
+            private static boolean fired;
+
+            public Village() {
+                fired = true;
+            }
+
+            public static boolean isFired(){
+                return fired;
+            }
+
             @Override
             public ResourceLocation getStructureRegistryName() {
                 return Structures.VILLAGE.getRegistryName();
