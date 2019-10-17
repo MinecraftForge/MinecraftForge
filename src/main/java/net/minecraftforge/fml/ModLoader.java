@@ -267,12 +267,12 @@ public class ModLoader
         this.loadingWarnings.add(warning);
     }
 
-    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
+    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
-        existingFileHelper = new ExistingFileHelper(inputs, structureValidator);
+        existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
         gatherAndInitializeMods(null);
         dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, null);
         dataGeneratorConfig.runAll();

@@ -307,9 +307,7 @@ project(':forge') {
                 source sourceSets.userdev
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
-                        '--input', rootProject.file('src/main/resources/'),
-                        //TODO this isn't ideal
-                        '--input', rootProject.gradle.gradleUserHomeDir.toPath().resolve('caches/forge_gradle/minecraft_repo/versions/1.14.4/client-extra.jar').toString()
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
 
             forge_test_data {
