@@ -84,7 +84,7 @@ public class ClientModLoader
     private static LoadingFailedException error;
     private static EarlyLoaderGUI earlyLoaderGUI;
 
-    public static void begin(final Minecraft minecraft, final ResourcePackList<ClientResourcePackInfo> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
+    public static void begin(final Minecraft minecraft, final IReloadableResourceManager mcResourceManager)
     {
         loading = true;
         ClientModLoader.mc = minecraft;
@@ -93,7 +93,6 @@ public class ClientModLoader
         LanguageHook.loadForgeAndMCLangs();
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
-        ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
         ModelLoaderRegistry.init();
@@ -188,34 +187,42 @@ public class ClientModLoader
         return loading;
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
-        return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
+    public static void addForgePackFinder(ResourcePackList<ClientResourcePackInfo> resourcePackRepository)
+    {
+        ResourcePackLoader.loadResourcePacks(resourcePackRepository, ClientModLoader::buildPackFinder);
     }
 
-    private static <T extends ResourcePackInfo> void clientPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
-        List<DelegatableResourcePack> hiddenPacks = new ArrayList<>();
-        for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
-        {
-            IModInfo mod = e.getKey().getModInfos().get(0);
-            if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
-            final String name = "mod:" + mod.getModId();
-            final T packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
-            if (packInfo == null) {
-                // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
-                ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
-                continue;
+    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
+        return (packList, factory) -> clientPackFinder(packSetter, packList, factory);
+    }
+
+    private static <T extends ResourcePackInfo> void clientPackFinder(BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> {
+            List<DelegatableResourcePack> hiddenPacks = new ArrayList<>();
+            Map<ModFile, ? extends ModFileResourcePack> modResourcePacks = ResourcePackLoader.gatherModResourcePacks();
+            for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
+            {
+                IModInfo mod = e.getKey().getModInfos().get(0);
+                if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
+                final String name = "mod:" + mod.getModId();
+                final T innerPackInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+                if (innerPackInfo == null) {
+                    // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
+                    ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
+                    continue;
+                }
+                packSetter.accept(e.getValue(), innerPackInfo);
+                LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+                if (mod.getOwningFile().showAsResourcePack()) {
+                    packList.put(name, innerPackInfo);
+                } else {
+                    hiddenPacks.add(e.getValue());
+                }
             }
-            packSetter.accept(e.getValue(), packInfo);
-            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
-            if (mod.getOwningFile().showAsResourcePack()) {
-                packList.put(name, packInfo);
-            } else {
-                hiddenPacks.add(e.getValue());
-            }
-        }
-        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources", 
+            return new DelegatingResourcePack("mod_resources", "Mod Resources",
                 new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 4),
-                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM);
+                hiddenPacks);
+        }, factory, ResourcePackInfo.Priority.BOTTOM);
         packList.put("mod_resources", packInfo);
     }
 }

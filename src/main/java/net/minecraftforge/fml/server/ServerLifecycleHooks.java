@@ -195,11 +195,12 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
-        return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
+    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
+        return (packList, factory) -> serverPackFinder(packSetter, packList, factory);
     }
 
-    private static <T extends ResourcePackInfo> void serverPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+    private static <T extends ResourcePackInfo> void serverPackFinder(BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+        Map<ModFile, ? extends ModFileResourcePack> modResourcePacks = ResourcePackLoader.gatherModResourcePacks();
         for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);

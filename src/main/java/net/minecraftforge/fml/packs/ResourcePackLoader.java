@@ -20,12 +20,14 @@
 package net.minecraftforge.fml.packs;
 
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +43,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
 public class ResourcePackLoader
 {
-    private static Map<ModFile, ModFileResourcePack> modResourcePacks;
+    private static Map<ModFile, ModFileResourcePack> modResourcePacks = null;
     private static ResourcePackList<?> resourcePackList;
 
     public static Optional<ModFileResourcePack> getResourcePackFor(String modId)
@@ -50,13 +52,37 @@ public class ResourcePackLoader
                 map(ModFileInfo::getFile).map(mf->modResourcePacks.get(mf));
     }
 
-    public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, T>, IPackInfoFinder> packFinder) {
+    public static Map<ModFile, ModFileResourcePack> gatherModResourcePacks()
+    {
+        if (modResourcePacks == null)
+        {
+            ModList modList = ModList.get();
+            if (modList == null)
+                return Collections.emptyMap();
+            modResourcePacks = modList.getModFiles().stream().
+                    filter(mf -> !Objects.equals(mf.getModLoader(), "minecraft")).
+                    map(mf -> new ModFileResourcePack(mf.getFile())).
+                    collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
+        }
+        return modResourcePacks;
+    }
+
+    public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks, Function<BiConsumer<? super ModFileResourcePack, T>, IPackInfoFinder> packFinder) {
         resourcePackList = resourcePacks;
-        modResourcePacks = ModList.get().getModFiles().stream().
-                filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).
-                map(mf -> new ModFileResourcePack(mf.getFile())).
-                collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
-        resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
+        resourcePacks.addPackFinder(new IPackFinder()
+        {
+            private IPackFinder finder;
+
+            @Override
+            public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
+            {
+                if (finder == null)
+                {
+                    finder = new LambdaFriendlyPackFinder(packFinder.apply(ModFileResourcePack::setPackInfo));
+                }
+                finder.addPackInfosToMap(packList, factory);
+            }
+        });
     }
 
     public interface IPackInfoFinder<T extends ResourcePackInfo> {
