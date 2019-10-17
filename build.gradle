@@ -157,7 +157,10 @@ project(':forge') {
                 ]
             }
             resources {
-                srcDirs = ["$rootDir/src/test/resources"]
+                srcDirs = [
+                    "$rootDir/src/test/resources",
+                    "$rootDir/src/generated_test/resources"
+                ]
             }
         }
         userdev {
@@ -320,7 +323,8 @@ project(':forge') {
                     tests { sources  sourceSets.test }
                 }
                 
-                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/'), '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }

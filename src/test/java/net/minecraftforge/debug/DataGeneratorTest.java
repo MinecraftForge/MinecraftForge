@@ -19,10 +19,16 @@
 
 package net.minecraftforge.debug;
 
+import static net.minecraftforge.debug.DataGeneratorTest.MODID;
+
+import java.util.function.Consumer;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -30,10 +36,13 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.model.generators.BlockstateProvider;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
+import net.minecraftforge.client.model.generators.VariantBlockstate;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
@@ -42,12 +51,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-import java.util.function.Consumer;
-
-@Mod("data_gen_test")
+@Mod(MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class DataGeneratorTest
 {
+    static final String MODID = "data_gen_test";
+    
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
@@ -56,6 +65,7 @@ public class DataGeneratorTest
         if (event.includeClient())
         {
             gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
+            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -117,11 +127,12 @@ public class DataGeneratorTest
         }
     }
     
+    
     public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
         public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
-            super(generator, "forge", ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
+            super(generator, MODID, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
         }
         
         @Override
@@ -129,12 +140,12 @@ public class DataGeneratorTest
         {
             getBuilder("test_generated_model")
                     .parent(new UncheckedModelFile("item/generated"))
-                    .texture("layer0", "block/stone");
-            
+                    .texture("layer0", new ResourceLocation("block/stone"));
+
             getBuilder("test_block_model")
                     .parent(getExistingFile("block/block"))
-                    .texture("all", "block/dirt")
-                    .texture("top", "block/stone")
+                    .texture("all", new ResourceLocation("block/dirt"))
+                    .texture("top", new ResourceLocation("block/stone"))
                     .element()
                         .cube("#all")
                         .face(Direction.UP)
@@ -148,5 +159,102 @@ public class DataGeneratorTest
         {
             return "Forge Test Item Models";
         }
+    }
+
+   public static class BlockStates extends BlockstateProvider
+   {
+
+       public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+       {
+           super(gen, MODID, exFileHelper);
+       }
+
+       @Override
+       protected void registerStatesAndModels()
+       {
+           ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
+                   .parent(getExistingFile("block/template_fence_gate"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
+                   .parent(getExistingFile("block/template_fence_gate_open"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
+                   .parent(getExistingFile("block/template_fence_gate_wall"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
+                   .parent(getExistingFile("block/template_fence_gate_wall_open"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
+           VariantBlockstate builder = getVariantBuilder(Blocks.ACACIA_FENCE_GATE);
+           for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
+               int angle = (int) dir.getHorizontalAngle();
+               builder
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, false)
+                            .with(FenceGateBlock.OPEN, false)
+                            .modelForState()
+                                .modelFile(invisbleModel)
+                                .weight(1)
+                            .nextModel()
+                                .modelFile(acaciaFenceGate)
+                                .rotationY(angle)
+                                .uvLock(true)
+                                .weight(100)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, false)
+                            .with(FenceGateBlock.OPEN, true)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateOpen)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, true)
+                            .with(FenceGateBlock.OPEN, false)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateWall)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel()
+                       .partialState()
+                            .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                            .with(FenceGateBlock.IN_WALL, true)
+                            .with(FenceGateBlock.OPEN, true)
+                            .modelForState()
+                                .modelFile(acaciaFenceGateWallOpen)
+                                .rotationY(angle)
+                                .uvLock(true)
+                            .addModel();
+           }
+
+           ModelFile acaciaFencePost = getBuilder("acacia_fence_post")
+                   .parent(getExistingFile("block/fence_post"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           
+           ModelFile acaciaFenceSide = getBuilder("acacia_fence_side")
+                   .parent(getExistingFile("block/fence_side"))
+                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           
+           getMultipartBuilder(Blocks.ACACIA_FENCE)
+                   .part().modelFile(acaciaFencePost).addModel().build()
+                   .part().modelFile(acaciaFenceSide).uvLock(true).addModel()
+                           .condition(FenceBlock.NORTH, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(90).uvLock(true).addModel()
+                           .condition(FenceBlock.EAST, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(180).uvLock(true).addModel()
+                           .condition(FenceBlock.SOUTH, true).build()
+                   .part().modelFile(acaciaFenceSide).rotationY(270).uvLock(true).addModel()
+                           .condition(FenceBlock.WEST, true).build();
+       }
+
+       @Override
+       public String getName()
+       {
+           return "Forge Test Blockstates";
+       }
     }
 }
