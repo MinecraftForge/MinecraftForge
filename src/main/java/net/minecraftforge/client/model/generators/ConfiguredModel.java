@@ -53,7 +53,7 @@ public final class ConfiguredModel {
             modelJson.addProperty("y", rotationY);
         if (uvLock && (rotationX != 0 || rotationY != 0))
             modelJson.addProperty("uvlock", uvLock);
-        if (includeWeight && weight != 0)
+        if (includeWeight && weight != 1)
             modelJson.addProperty("weight", weight);
         return modelJson;
     }
