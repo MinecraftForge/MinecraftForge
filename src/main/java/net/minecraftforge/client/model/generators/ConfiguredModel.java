@@ -121,5 +121,5 @@ public final class ConfiguredModel {
             allModels.add(this.build());
             return new Builder<>(callback, allModels);
         }
-   }
+    }
 }
