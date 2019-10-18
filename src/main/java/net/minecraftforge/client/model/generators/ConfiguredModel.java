@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 
+import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
 
 public final class ConfiguredModel {
@@ -19,10 +20,20 @@ public final class ConfiguredModel {
 
     public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock, int weight) {
         this.name = name;
+        checkRotation(rotationX, rotationY);
         this.rotationX = rotationX;
         this.rotationY = rotationY;
         this.uvLock = uvLock;
+        checkWeight(weight);
         this.weight = weight;
+    }
+    
+    static void checkRotation(int rotationX, int rotationY) {
+        Preconditions.checkNotNull(ModelRotation.getModelRotation(rotationX, rotationY), "Invalid model rotation x=" + rotationX + ", y=" + rotationY);
+    }
+    
+    static void checkWeight(int weight) {
+        Preconditions.checkArgument(weight >= 1, "Model weight must be greater than or equal to 1. Found: " + weight);
     }
 
     public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock) {
@@ -42,7 +53,7 @@ public final class ConfiguredModel {
             modelJson.addProperty("y", rotationY);
         if (uvLock && (rotationX != 0 || rotationY != 0))
             modelJson.addProperty("uvlock", uvLock);
-        if (includeWeight)
+        if (includeWeight && weight != 0)
             modelJson.addProperty("weight", weight);
         return modelJson;
     }
@@ -70,7 +81,7 @@ public final class ConfiguredModel {
         private int rotationX;
         private int rotationY;
         private boolean uvLock;
-        private int weight;
+        private int weight = 1;
         private Builder() {
             this($ -> null, ImmutableList.of());
         }
@@ -86,11 +97,13 @@ public final class ConfiguredModel {
         }
 
         public Builder<T> rotationX(int value) {
+            checkRotation(value, rotationY);
             rotationX = value;
             return this;
         }
 
         public Builder<T> rotationY(int value) {
+            checkRotation(rotationX, value);
             rotationY = value;
             return this;
         }
@@ -101,6 +114,7 @@ public final class ConfiguredModel {
         }
 
         public Builder<T> weight(int value) {
+            checkWeight(value);
             weight = value;
             return this;
         }

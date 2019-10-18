@@ -195,7 +195,6 @@ public class DataGeneratorTest
                             .with(FenceGateBlock.OPEN, false)
                             .modelForState()
                                 .modelFile(invisbleModel)
-                                .weight(1)
                             .nextModel()
                                 .modelFile(acaciaFenceGate)
                                 .rotationY(angle)
