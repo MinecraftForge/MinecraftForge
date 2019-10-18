@@ -70,6 +70,14 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         ResourceLocation outputLoc = new ResourceLocation(modid, folder+"/"+path);
         return generatedModels.computeIfAbsent(loc, $->factory.apply(outputLoc));
     }
+    
+    public T withExistingParent(String name, String parent) {
+        return getBuilder(name).parent(getExistingFile(parent));
+    }
+    
+    public T cubeAll(String name, String texture) {
+        return withExistingParent(name, "block/cube_all").texture("all", new ResourceLocation(this.modid, texture));
+    }
 
     protected ModelFile.ExistingModelFile getExistingFile(String path) {
         return new ModelFile.ExistingModelFile(path, existingFileHelper);
