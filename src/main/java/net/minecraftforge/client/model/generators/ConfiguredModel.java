@@ -12,6 +12,9 @@ import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
 
 public final class ConfiguredModel {
+    
+    static final int DEFAULT_WEIGHT = 1;
+    
     public final ModelFile name;
     public final int rotationX;
     public final int rotationY;
@@ -27,21 +30,21 @@ public final class ConfiguredModel {
         checkWeight(weight);
         this.weight = weight;
     }
-    
-    static void checkRotation(int rotationX, int rotationY) {
-        Preconditions.checkNotNull(ModelRotation.getModelRotation(rotationX, rotationY), "Invalid model rotation x=" + rotationX + ", y=" + rotationY);
-    }
-    
-    static void checkWeight(int weight) {
-        Preconditions.checkArgument(weight >= 1, "Model weight must be greater than or equal to 1. Found: " + weight);
-    }
 
     public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock) {
-        this(name, rotationX, rotationY, uvLock, 0);
+        this(name, rotationX, rotationY, uvLock, DEFAULT_WEIGHT);
     }
 
     public ConfiguredModel(ModelFile name) {
-        this(name, 0, 0, false, 0);
+        this(name, 0, 0, false);
+    }
+
+    static void checkRotation(int rotationX, int rotationY) {
+        Preconditions.checkNotNull(ModelRotation.getModelRotation(rotationX, rotationY), "Invalid model rotation x=" + rotationX + ", y=" + rotationY);
+    }
+
+    static void checkWeight(int weight) {
+        Preconditions.checkArgument(weight >= 1, "Model weight must be greater than or equal to 1. Found: " + weight);
     }
 
     public JsonObject toJSON(boolean includeWeight) {
@@ -53,7 +56,7 @@ public final class ConfiguredModel {
             modelJson.addProperty("y", rotationY);
         if (uvLock && (rotationX != 0 || rotationY != 0))
             modelJson.addProperty("uvlock", uvLock);
-        if (includeWeight && weight != 1)
+        if (includeWeight && weight != DEFAULT_WEIGHT)
             modelJson.addProperty("weight", weight);
         return modelJson;
     }
@@ -65,7 +68,7 @@ public final class ConfiguredModel {
     static Builder<VariantBlockstate> builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
         return new Builder<>(models -> outer.setModel(state, models), ImmutableList.of());
     }
-    
+
     static Builder<MultiPart> builder(MultiPartBlockstate outer) {
         return new Builder<MultiPart>(models -> {
             MultiPart ret = outer.new MultiPart(new BlockstateProvider.ConfiguredModelList(models));
@@ -81,7 +84,7 @@ public final class ConfiguredModel {
         private int rotationX;
         private int rotationY;
         private boolean uvLock;
-        private int weight = 1;
+        private int weight = DEFAULT_WEIGHT;
         private Builder() {
             this($ -> null, ImmutableList.of());
         }
