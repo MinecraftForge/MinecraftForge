@@ -275,7 +275,7 @@ public class GuiModList extends Screen
         this.modList.setLeftPos(6);
 
         int modInfoWidth = this.width - this.listWidth - 20;
-        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - 30, 10);
+        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - 40, 10);
 
         int doneButtonWidth = Math.min(modInfoWidth, 200);
         this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
@@ -405,8 +405,7 @@ public class GuiModList extends Screen
             return;
         }
         ModInfo selectedMod = selected.getInfo();
-
-        this.configButton.active = selectedMod.hasConfigUI();
+        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent();
         List<String> lines = new ArrayList<>();
         VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 

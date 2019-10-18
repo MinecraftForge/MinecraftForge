@@ -8,19 +8,19 @@
           this.field_147003_i = 160 + (this.width - this.field_146999_f - 200) / 2;
           this.field_147045_u = true;
        }
-@@ -84,6 +85,7 @@
-       int i = this.field_147009_r;
+@@ -59,7 +60,7 @@
+             j = 132 / (collection.size() - 1);
+          }
  
-       for(EffectInstance effectinstance : p_214077_3_) {
-+         if (!effectinstance.func_188419_a().shouldRender(effectinstance)) continue;
-          Effect effect = effectinstance.func_188419_a();
-          blit(p_214077_1_ + 6, i + 7, this.blitOffset, 18, 18, potionspriteuploader.func_215288_a(effect));
-          i += p_214077_2_;
-@@ -95,6 +97,9 @@
+-         Iterable<EffectInstance> iterable = Ordering.<EffectInstance>natural().sortedCopy(collection);
++         Iterable<EffectInstance> iterable = collection.stream().filter( effectInstance -> effectInstance.func_188419_a().shouldRender(effectInstance)).sorted().collect(java.util.stream.Collectors.toList());
+          this.func_214079_a(i, j, iterable);
+          this.func_214077_b(i, j, iterable);
+          this.func_214078_c(i, j, iterable);
+@@ -95,6 +96,8 @@
        int i = this.field_147009_r;
  
        for(EffectInstance effectinstance : p_214078_3_) {
-+         if (!effectinstance.func_188419_a().shouldRender(effectinstance)) continue;
 +         effectinstance.func_188419_a().renderInventoryEffect(effectinstance, this, p_214078_1_, i, this.blitOffset);
 +         if (!effectinstance.func_188419_a().shouldRenderInvText(effectinstance)) { i += p_214078_2_; continue; }
           String s = I18n.func_135052_a(effectinstance.func_188419_a().func_76393_a());

@@ -19,27 +19,21 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * This event is called when a player collides with a EntityXPOrb on the ground.
- * The event can be canceled, and no further processing will be done.  
+ * Use {@link PlayerXpEvent.PickupXp}
  */
 @Cancelable
-public class PlayerPickupXpEvent extends PlayerEvent
+@Deprecated
+public class PlayerPickupXpEvent extends PlayerXpEvent.PickupXp
 {
-    private final ExperienceOrbEntity orb;
 
     public PlayerPickupXpEvent(PlayerEntity player, ExperienceOrbEntity orb)
     {
-        super(player);
-        this.orb = orb;
+        super(player, orb);
     }
 
-    public ExperienceOrbEntity getOrb()
-    {
-        return orb;
-    }
 }

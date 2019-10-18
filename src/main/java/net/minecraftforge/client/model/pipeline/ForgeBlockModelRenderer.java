@@ -32,10 +32,8 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.ForgeConfig;
 
 public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
@@ -54,7 +52,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     @Override
     public boolean renderModelFlat(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
-        if(ForgeMod.forgeLightPipelineEnabled)
+        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerFlat.get();
             consumer.setBuffer(buffer);
@@ -74,7 +72,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     @Override
     public boolean renderModelSmooth(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
-        if(ForgeMod.forgeLightPipelineEnabled)
+        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerSmooth.get();
             consumer.setBuffer(buffer);
