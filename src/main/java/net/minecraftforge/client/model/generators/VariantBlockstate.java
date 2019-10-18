@@ -126,16 +126,46 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         public ConfiguredModel.Builder<VariantBlockstate> modelForState() {
             return ConfiguredModel.builder(outerBuilder, this);
         }
-        
+
+        /**
+         * Add models to the current state's variant. For use when it is more convenient
+         * to add multiple sets of models, as a replacement for
+         * {@link #setModels(ConfiguredModel...)}.
+         * 
+         * @param models The models to add.
+         * @return {@code this}
+         * @throws NullPointerException If the parent builder is null
+         */
         public PartialBlockstate addModels(ConfiguredModel... models) {
             Preconditions.checkNotNull(outerBuilder);
             outerBuilder.addModels(this, models);
             return this;
         }
 
+        /**
+         * Set this variant's models, and return the parent builder.
+         * 
+         * @param models The models to set
+         * @return The parent builder instance
+         * @throws NullPointerException If the parent builder is null
+         */
         public VariantBlockstate setModels(ConfiguredModel... models) {
             Preconditions.checkNotNull(outerBuilder);
             return outerBuilder.setModels(this, models);
+        }
+
+        /**
+         * Complete this state without adding any new models, and return a new partial
+         * state via the parent builder. For use after calling
+         * {@link #addModels(ConfiguredModel...)}.
+         * 
+         * @return A fresh partial state as specified by
+         *         {@link VariantBlockstate#partialState()}.
+         * @throws NullPointerException If the parent builder is null
+         */
+        public PartialBlockstate partialState() {
+            Preconditions.checkNotNull(outerBuilder);
+            return outerBuilder.partialState();
         }
 
         @Override
