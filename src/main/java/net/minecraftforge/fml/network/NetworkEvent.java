@@ -232,7 +232,7 @@ public class NetworkEvent extends Event
             return null;
         }
 
-        NetworkManager getNetworkManager() {
+        public NetworkManager getNetworkManager() {
             return networkManager;
         }
     }
