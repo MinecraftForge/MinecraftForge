@@ -96,7 +96,7 @@ public class BiomeDictionary
         public static final Type BEACH = new Type("BEACH");
         public static final Type VOID = new Type("VOID");
 
-        /*Tags specifying the dimension a biome generates in. Specifying neither implies a biome that generates in a modded dimension*/
+        /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
         public static final Type OVERWORLD = new Type("OVERWORLD");
         public static final Type NETHER = new Type("NETHER");
         public static final Type END = new Type("END");
