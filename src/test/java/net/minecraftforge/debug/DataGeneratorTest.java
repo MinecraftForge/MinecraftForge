@@ -37,6 +37,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.generators.BlockstateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -248,6 +249,15 @@ public class DataGeneratorTest
                            .condition(FenceBlock.SOUTH, true).build()
                    .part().modelFile(acaciaFenceSide).rotationY(270).uvLock(true).addModel()
                            .condition(FenceBlock.WEST, true).build();
+           
+           ModelFile stone = getBuilder("stone")
+                   .parent(getExistingFile("block/cube_all"))
+                   .texture("all", new ResourceLocation("block/stone"));
+           getVariantBuilder(Blocks.STONE)
+               .partialState()
+                   .addModels(ConfiguredModel.allYRotations(stone, 0, false))
+                   .addModels(ConfiguredModel.allYRotations(stone, 180, false));
+
        }
 
        @Override

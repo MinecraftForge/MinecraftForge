@@ -19,23 +19,30 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.*;
-import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.IDataProvider;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder> {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -105,7 +112,7 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
     public static class ConfiguredModelList {
         private final List<ConfiguredModel> models;
 
-        public ConfiguredModelList(List<ConfiguredModel> models) {
+        private ConfiguredModelList(List<ConfiguredModel> models) {
             Preconditions.checkArgument(!models.isEmpty());
             this.models = models;
         }
@@ -128,6 +135,10 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
                 }
                 return ret;
             }
+        }
+
+        public ConfiguredModelList append(ConfiguredModel... models) {
+            return new ConfiguredModelList(ImmutableList.<ConfiguredModel>builder().addAll(this.models).add(models).build());
         }
     }
 }

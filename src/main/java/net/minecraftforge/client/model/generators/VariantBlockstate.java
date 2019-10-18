@@ -60,8 +60,19 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         main.add("variants", variants);
         return main;
     }
+    
+    public VariantBlockstate addModels(PartialBlockstate state, ConfiguredModel... model) {
+        if (!models.containsKey(state)) {
+            return setModels(state, model);
+        }
+        Preconditions.checkNotNull(state);
+        Preconditions.checkArgument(model.length > 0);
+        Preconditions.checkArgument(state.getOwner() == owner);
+        models.compute(state, ($, cml) -> cml.append(model));
+        return this;
+    }
 
-    public VariantBlockstate setModel(PartialBlockstate state, ConfiguredModel... model) {
+    public VariantBlockstate setModels(PartialBlockstate state, ConfiguredModel... model) {
         Preconditions.checkNotNull(state);
         Preconditions.checkArgument(model.length > 0);
         Preconditions.checkArgument(state.getOwner() == owner);
@@ -115,10 +126,16 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         public ConfiguredModel.Builder<VariantBlockstate> modelForState() {
             return ConfiguredModel.builder(outerBuilder, this);
         }
-
-        public VariantBlockstate setModel(ConfiguredModel... model) {
+        
+        public PartialBlockstate addModels(ConfiguredModel... models) {
             Preconditions.checkNotNull(outerBuilder);
-            return outerBuilder.setModel(this, model);
+            outerBuilder.addModels(this, models);
+            return this;
+        }
+
+        public VariantBlockstate setModels(ConfiguredModel... models) {
+            Preconditions.checkNotNull(outerBuilder);
+            return outerBuilder.setModels(this, models);
         }
 
         @Override

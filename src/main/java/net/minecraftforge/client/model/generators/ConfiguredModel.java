@@ -1,8 +1,10 @@
 package net.minecraftforge.client.model.generators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -13,13 +15,38 @@ import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
 
 public final class ConfiguredModel {
     
-    static final int DEFAULT_WEIGHT = 1;
+    public static final int DEFAULT_WEIGHT = 1;
     
     public final ModelFile name;
     public final int rotationX;
     public final int rotationY;
     public final boolean uvLock;
     public final int weight;
+    
+    private static IntStream validRotations() {
+        return IntStream.range(0, 4).map(i -> i * 90);
+    }
+    
+    public static ConfiguredModel[] allYRotations(ModelFile model, int x, boolean uvlock) {
+        return allYRotations(model, x, uvlock, DEFAULT_WEIGHT);
+    }
+    
+    public static ConfiguredModel[] allYRotations(ModelFile model, int x, boolean uvlock, int weight) {
+        return validRotations()
+                .mapToObj(y -> new ConfiguredModel(model, x, y, uvlock, weight))
+                .toArray(ConfiguredModel[]::new);
+    }
+    
+    public static ConfiguredModel[] allRotations(ModelFile model, boolean uvlock) {
+        return allRotations(model, uvlock, DEFAULT_WEIGHT);
+    }
+        
+    public static ConfiguredModel[] allRotations(ModelFile model, boolean uvlock, int weight) {
+        return validRotations()
+                .mapToObj(x -> allYRotations(model, x, uvlock, weight))
+                .flatMap(Arrays::stream)
+                .toArray(ConfiguredModel[]::new);
+    }
 
     public ConfiguredModel(ModelFile name, int rotationX, int rotationY, boolean uvLock, int weight) {
         this.name = name;
@@ -66,7 +93,7 @@ public final class ConfiguredModel {
     }
 
     static Builder<VariantBlockstate> builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
-        return new Builder<>(models -> outer.setModel(state, models), ImmutableList.of());
+        return new Builder<>(models -> outer.setModels(state, models), ImmutableList.of());
     }
 
     static Builder<MultiPart> builder(MultiPartBlockstate outer) {
