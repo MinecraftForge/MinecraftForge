@@ -19,25 +19,32 @@
 
 package net.minecraftforge.client.model.generators;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
+import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
 
 public class VariantBlockstate implements IGeneratedBlockstate {
 
     private final Block owner;
-    private final Map<PartialBlockstate, ConfiguredModelList> models = new HashMap<>();
+    private final Map<PartialBlockstate, ConfiguredModelList> models = new LinkedHashMap<>();
     private final Set<BlockState> coveredStates = new HashSet<>();
 
     public VariantBlockstate(Block owner) {
