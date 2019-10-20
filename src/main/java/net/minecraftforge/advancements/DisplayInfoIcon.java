@@ -27,12 +27,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
+import net.minecraftforge.common.util.Constants.NBT;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Used for rendering of a texture as an advancement icon instead of need of providing a proxy item.
+ * Used for rendering a texture as an advancement icon instead of providing an item.
  */
 public class DisplayInfoIcon
 {
@@ -52,12 +54,9 @@ public class DisplayInfoIcon
      * 
      *  === PROPERTIES ===
      * 
-     * json format: <json key>:<value>
-     * ResourceLocation is string, example of loc property: loc:"modid:textures/advancements/test.png"
-     * 
      * json key | type             | def value | description
      * 
-     * loc      | ResourceLocation | REQUIRED  | texture location
+     * loc      | ResourceLocation | REQUIRED  | texture location, example loc:"modid:textures/advancements/test.png"
      * offX     | Integer          | 0         | translate x before drawing
      * offY     | Integer          | 0         | translate y before drawing
      * w        | Integer          | 16        | texture width
@@ -84,7 +83,7 @@ public class DisplayInfoIcon
     private static final String NBT_DATA_DRAW_AS_HEIGHT = "asH";
 
     /**
-     * Validates provided properties and missing properties to default values.
+     * Validates provided properties and sets missing properties to default values.
      */
     public static void validateAndSetupForgeIcon(final ItemStack itemStack)
     {
@@ -95,30 +94,31 @@ public class DisplayInfoIcon
             if (!(itemStack.getItem().shouldSyncTag() || itemStack.getItem().isDamageable()))
             {
                 LOGGER.error("Invalid item \"{}\" for forge advancement icon, nbt: {}", itemStack.getItem().getRegistryName(), iconNBT.toString());
-                markValidated(iconNBT, false);
+                iconNBT.putBoolean(NBT_VALIDATED, false);
                 return;
             }
 
-            if (validateTextureLocation(iconNBT, NBT_DATA_LOCATION) ||
-                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_X, -MAX_SIZE, MAX_SIZE, 0) ||
-                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_Y, -MAX_SIZE, MAX_SIZE, 0) ||
-                validateInteger(iconNBT, NBT_DATA_DRAW_WIDTH, 1, Integer.MAX_VALUE, 16) ||
-                validateInteger(iconNBT, NBT_DATA_DRAW_HEIGHT, 1, Integer.MAX_VALUE, 16) ||
-                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_X, 0.0f, Float.MAX_VALUE, 0.0f) ||
-                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_Y, 0.0f, Float.MAX_VALUE, 0.0f) ||
-                validateInteger(iconNBT, NBT_DATA_DRAW_AS_WIDTH, 1, MAX_SIZE, 16) ||
+            if (validateTextureLocation(iconNBT, NBT_DATA_LOCATION) &&
+                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_X, -MAX_SIZE, MAX_SIZE, 0) &&
+                validateInteger(iconNBT, NBT_DATA_DRAW_OFFSET_Y, -MAX_SIZE, MAX_SIZE, 0) &&
+                validateInteger(iconNBT, NBT_DATA_DRAW_WIDTH, 1, Integer.MAX_VALUE, 16) &&
+                validateInteger(iconNBT, NBT_DATA_DRAW_HEIGHT, 1, Integer.MAX_VALUE, 16) &&
+                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_X, 0.0f, Float.MAX_VALUE, 0.0f) &&
+                validateFloat(iconNBT, NBT_DATA_TEXTURE_OFFSET_Y, 0.0f, Float.MAX_VALUE, 0.0f) &&
+                validateInteger(iconNBT, NBT_DATA_DRAW_AS_WIDTH, 1, MAX_SIZE, 16) &&
                 validateInteger(iconNBT, NBT_DATA_DRAW_AS_HEIGHT, 1, MAX_SIZE, 16))
             {
-                markValidated(iconNBT, false);
+                iconNBT.putBoolean(NBT_VALIDATED, false);
                 return;
             }
 
-            markValidated(iconNBT, true);
+            iconNBT.putBoolean(NBT_VALIDATED, true);
         }
     }
 
     /**
-     * Tries to render given itemStack as an advancement icon if itemstack passes through {@link #isForgeIcon()}.
+     * Tries to render given itemStack as an advancement icon if itemstack is validated.
+     * Logic copied from {@link net.minecraft.client.renderer.ItemRenderer#renderItemModelIntoGUI(ItemStack, int, int, IBakedModel)}.
      * 
      * @return true if forge icon item, false if not or provided resource location is not parsable
      */
@@ -131,19 +131,12 @@ public class DisplayInfoIcon
 
         CompoundNBT iconNBT = itemStack.getTag().getCompound(NBT_KEY);
 
-        if (!iconNBT.contains(NBT_VALIDATED))
-        {
-            validateAndSetupForgeIcon(itemStack);
-            iconNBT = itemStack.getTag().getCompound(NBT_KEY);
-        }
-
         if (!iconNBT.getBoolean(NBT_VALIDATED))
         {
             // falls back to render the default icon
             return false;
         }
 
-        // copied from net.minecraft.client.renderer.ItemRenderer.renderItemModelIntoGUI(ItemStack, int, int, IBakedModel)
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlphaTest();
@@ -170,23 +163,18 @@ public class DisplayInfoIcon
      */
     public static boolean isForgeIcon(final ItemStack itemStack)
     {
-        return itemStack.hasTag() && itemStack.getTag().contains(NBT_KEY, 10);
-    }
-
-    private static void markValidated(CompoundNBT nbt, boolean validated)
-    {
-        nbt.putBoolean(NBT_VALIDATED, validated);
+        return itemStack.hasTag() && itemStack.getTag().contains(NBT_KEY, NBT.TAG_COMPOUND);
     }
 
     /**
-     * @return false if key passed the check, true if not
+     * @return true if key passed the check, false if not
      */
     private static boolean validateTextureLocation(CompoundNBT nbt, String nbtKey)
     {
         if (!nbt.contains(nbtKey))
         {
             LOGGER.error("No texture location \"{}\" found for forge advancement icon, nbt: {}", nbtKey, nbt.toString());
-            return true;
+            return false;
         }
 
         final String textureLoc = nbt.getString(nbtKey);
@@ -198,21 +186,21 @@ public class DisplayInfoIcon
         catch (ResourceLocationException e)
         {
             LOGGER.error("Invalid texture location \"" + nbtKey + "\":\"" + textureLoc + "\" for forge advancement icon, nbt: " + nbt.toString(), e);
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     /**
-     * @return false if key passed the check, true if not
+     * @return true if key passed the check, false if not
      */
     private static boolean validateInteger(CompoundNBT nbt, String nbtKey, int minValue, int maxValue, int defaultValue)
     {
         if (!nbt.contains(nbtKey))
         {
             nbt.putInt(nbtKey, defaultValue);
-            return false;
+            return true;
         }
 
         final int nbtValue = nbt.getInt(nbtKey);
@@ -220,20 +208,20 @@ public class DisplayInfoIcon
         if (nbtValue < minValue || nbtValue > maxValue)
         {
             LOGGER.error("Wrong \"{}\" for forge advancement icon, allowed range: [{} | {}], nbt: {}", nbtKey, minValue, maxValue, nbt.toString());
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
-     * @return false if key passed the check, true if not
+     * @return true if key passed the check, false if not
      */
     private static boolean validateFloat(CompoundNBT nbt, String nbtKey, float minValue, float maxValue, float defaultValue)
     {
         if (!nbt.contains(nbtKey))
         {
             nbt.putFloat(nbtKey, defaultValue);
-            return false;
+            return true;
         }
 
         final float nbtValue = nbt.getFloat(nbtKey);
@@ -241,8 +229,8 @@ public class DisplayInfoIcon
         if (nbtValue < minValue || nbtValue > maxValue)
         {
             LOGGER.error("Wrong \"{}\" for forge advancement icon, allowed range: [{} | {}], nbt: {}", nbtKey, minValue, maxValue, nbt.toString());
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }
