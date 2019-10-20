@@ -1,6 +1,6 @@
 {
   "variants": {
-    "in_wall=false,facing=south,open=false": [
+    "open=false,facing=south,in_wall=false": [
       {
         "model": "minecraft:builtin/generated"
       },
@@ -9,15 +9,10 @@
         "weight": 100
       }
     ],
-    "in_wall=true,facing=south,open=true": {
+    "open=true,facing=south,in_wall=true": {
       "model": "data_gen_test:block/acacia_fence_gate_wall_open"
     },
-    "in_wall=true,facing=west,open=false": {
-      "model": "data_gen_test:block/acacia_fence_gate_wall",
-      "y": 90,
-      "uvlock": true
-    },
-    "in_wall=false,facing=east,open=false": [
+    "open=false,facing=east,in_wall=false": [
       {
         "model": "minecraft:builtin/generated"
       },
@@ -28,59 +23,40 @@
         "weight": 100
       }
     ],
-    "in_wall=true,facing=east,open=true": {
+    "open=true,facing=east,in_wall=true": {
       "model": "data_gen_test:block/acacia_fence_gate_wall_open",
       "y": 270,
       "uvlock": true
     },
-    "in_wall=true,facing=north,open=false": {
+    "open=false,facing=north,in_wall=true": {
       "model": "data_gen_test:block/acacia_fence_gate_wall",
       "y": 180,
       "uvlock": true
     },
-    "in_wall=false,facing=south,open=true": {
-      "model": "data_gen_test:block/acacia_fence_gate_open"
-    },
-    "in_wall=false,facing=west,open=false": [
-      {
-        "model": "minecraft:builtin/generated"
-      },
-      {
-        "model": "data_gen_test:block/acacia_fence_gate",
-        "y": 90,
-        "uvlock": true,
-        "weight": 100
-      }
-    ],
-    "in_wall=true,facing=west,open=true": {
-      "model": "data_gen_test:block/acacia_fence_gate_wall_open",
-      "y": 90,
-      "uvlock": true
-    },
-    "in_wall=true,facing=east,open=false": {
-      "model": "data_gen_test:block/acacia_fence_gate_wall",
-      "y": 270,
-      "uvlock": true
-    },
-    "in_wall=false,facing=north,open=true": {
-      "model": "data_gen_test:block/acacia_fence_gate_open",
-      "y": 180,
-      "uvlock": true
-    },
-    "in_wall=false,facing=east,open=true": {
-      "model": "data_gen_test:block/acacia_fence_gate_open",
-      "y": 270,
-      "uvlock": true
-    },
-    "in_wall=false,facing=west,open=true": {
-      "model": "data_gen_test:block/acacia_fence_gate_open",
-      "y": 90,
-      "uvlock": true
-    },
-    "in_wall=true,facing=south,open=false": {
+    "open=false,facing=south,in_wall=true": {
       "model": "data_gen_test:block/acacia_fence_gate_wall"
     },
-    "in_wall=false,facing=north,open=false": [
+    "open=false,facing=west,in_wall=true": {
+      "model": "data_gen_test:block/acacia_fence_gate_wall",
+      "y": 90,
+      "uvlock": true
+    },
+    "open=true,facing=north,in_wall=false": {
+      "model": "data_gen_test:block/acacia_fence_gate_open",
+      "y": 180,
+      "uvlock": true
+    },
+    "open=false,facing=east,in_wall=true": {
+      "model": "data_gen_test:block/acacia_fence_gate_wall",
+      "y": 270,
+      "uvlock": true
+    },
+    "open=true,facing=west,in_wall=false": {
+      "model": "data_gen_test:block/acacia_fence_gate_open",
+      "y": 90,
+      "uvlock": true
+    },
+    "open=false,facing=north,in_wall=false": [
       {
         "model": "minecraft:builtin/generated"
       },
@@ -91,10 +67,34 @@
         "weight": 100
       }
     ],
-    "in_wall=true,facing=north,open=true": {
+    "open=true,facing=north,in_wall=true": {
       "model": "data_gen_test:block/acacia_fence_gate_wall_open",
       "y": 180,
       "uvlock": true
+    },
+    "open=true,facing=east,in_wall=false": {
+      "model": "data_gen_test:block/acacia_fence_gate_open",
+      "y": 270,
+      "uvlock": true
+    },
+    "open=false,facing=west,in_wall=false": [
+      {
+        "model": "minecraft:builtin/generated"
+      },
+      {
+        "model": "data_gen_test:block/acacia_fence_gate",
+        "y": 90,
+        "uvlock": true,
+        "weight": 100
+      }
+    ],
+    "open=true,facing=west,in_wall=true": {
+      "model": "data_gen_test:block/acacia_fence_gate_wall_open",
+      "y": 90,
+      "uvlock": true
+    },
+    "open=true,facing=south,in_wall=false": {
+      "model": "data_gen_test:block/acacia_fence_gate_open"
     }
   }
 }

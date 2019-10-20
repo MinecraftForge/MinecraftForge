@@ -56,7 +56,7 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
         this.gen = gen;
     }
 
-   @Override
+    @Override
     protected final void registerModels() {
         registeredBlocks.clear();
         registerStatesAndModels();

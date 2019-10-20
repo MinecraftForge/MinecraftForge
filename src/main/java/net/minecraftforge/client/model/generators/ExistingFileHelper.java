@@ -13,6 +13,7 @@ import net.minecraft.resources.VanillaPack;
 import net.minecraft.util.ResourceLocation;
 
 public class ExistingFileHelper {
+
     private final IResourceManager resources;
     private final boolean enable;
 

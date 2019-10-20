@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
+
     @Nullable
     protected ModelFile parent;
     protected final Map<String, String> textures = new HashMap<>();

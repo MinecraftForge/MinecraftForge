@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -28,11 +29,13 @@ import net.minecraft.state.IProperty;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
 
 public class VariantBlockstate implements IGeneratedBlockstate {
+
     private final Block owner;
     private final Map<PartialBlockstate, ConfiguredModelList> models = new HashMap<>();
     private final Set<BlockState> coveredStates = new HashSet<>();
@@ -51,7 +54,9 @@ public class VariantBlockstate implements IGeneratedBlockstate {
 
     @Override
     public JsonObject toJson() {
-        Preconditions.checkState(coveredStates.size()==owner.getStateContainer().getValidStates().size());
+        List<BlockState> missingStates = Lists.newArrayList(owner.getStateContainer().getValidStates());
+        missingStates.removeAll(coveredStates);
+        Preconditions.checkState(missingStates.isEmpty(), "Blockstate for block %s does not cover all states. Missing: %s", owner, missingStates);
         JsonObject variants = new JsonObject();
         for (Map.Entry<PartialBlockstate, ConfiguredModelList> entry : getModels().entrySet()) {
             variants.add(entry.getKey().toString(), entry.getValue().toJSON());
@@ -60,29 +65,28 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         main.add("variants", variants);
         return main;
     }
-    
+
     public VariantBlockstate addModels(PartialBlockstate state, ConfiguredModel... model) {
+        Preconditions.checkNotNull(state, "state must not be null");
+        Preconditions.checkArgument(model.length > 0, "Cannot set models to empty array");
+        Preconditions.checkArgument(state.getOwner() == owner, "Cannot set models for a different block. Found: %s, Current: %s", state.getOwner(), owner);
         if (!models.containsKey(state)) {
-            return setModels(state, model);
+            Preconditions.checkArgument(disjointToAll(state), "Cannot set models for a state for which a partial match has already been configured");
+            models.put(state, new ConfiguredModelList(model));
+            for (BlockState fullState : owner.getStateContainer().getValidStates()) {
+                if (state.test(fullState)) {
+                    coveredStates.add(fullState);
+                }
+            }
+        } else {
+            models.compute(state, ($, cml) -> cml.append(model));
         }
-        Preconditions.checkNotNull(state);
-        Preconditions.checkArgument(model.length > 0);
-        Preconditions.checkArgument(state.getOwner() == owner);
-        models.compute(state, ($, cml) -> cml.append(model));
         return this;
     }
 
     public VariantBlockstate setModels(PartialBlockstate state, ConfiguredModel... model) {
-        Preconditions.checkNotNull(state);
-        Preconditions.checkArgument(model.length > 0);
-        Preconditions.checkArgument(state.getOwner() == owner);
-        Preconditions.checkArgument(disjointToAll(state));
-        models.put(state, new ConfiguredModelList(model));
-        for (BlockState fullState : owner.getStateContainer().getValidStates()) {
-            if (state.test(fullState)) {
-                coveredStates.add(fullState);
-            }
-        }
+        Preconditions.checkArgument(!models.containsKey(state), "Cannot set models for a state that has already been configured");
+        addModels(state, model);
         return this;
     }
 
@@ -92,6 +96,13 @@ public class VariantBlockstate implements IGeneratedBlockstate {
 
     public PartialBlockstate partialState() {
         return new PartialBlockstate(owner, this);
+    }
+
+    public VariantBlockstate forAllStates(Function<BlockState, ConfiguredModel[]> mapper) {
+        for (BlockState fullState : owner.getStateContainer().getValidStates()) {
+            setModels(new PartialBlockstate(owner, fullState.getValues(), this), mapper.apply(fullState));
+        }
+        return this;
     }
 
     public static class PartialBlockstate implements Predicate<BlockState> {
@@ -110,20 +121,25 @@ public class VariantBlockstate implements IGeneratedBlockstate {
             for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
                 IProperty<?> prop = entry.getKey();
                 Comparable<?> value = entry.getValue();
-                Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property " + entry + " not found on block " + this.owner);
-                Preconditions.checkArgument(prop.getAllowedValues().contains(value), value + " is not a valid value for " + prop);
+                Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property %s not found on block %s", entry, this.owner);
+                Preconditions.checkArgument(prop.getAllowedValues().contains(value), "%s is not a valid value for %s", value, prop);
             }
             this.setStates = setStates;
         }
 
         public <T extends Comparable<T>> PartialBlockstate with(IProperty<T> prop, T value) {
-            Preconditions.checkArgument(!setStates.containsKey(prop), "Property " + prop + " has already been set");
+            Preconditions.checkArgument(!setStates.containsKey(prop), "Property %s has already been set", prop);
             Map<IProperty<?>, Comparable<?>> newState = new HashMap<>(setStates);
             newState.put(prop, value);
             return new PartialBlockstate(owner, newState, outerBuilder);
         }
 
+        private void checkValidOwner() {
+            Preconditions.checkNotNull(outerBuilder, "Partial blockstate must have a valid owner to perform this action");
+        }
+
         public ConfiguredModel.Builder<VariantBlockstate> modelForState() {
+            checkValidOwner();
             return ConfiguredModel.builder(outerBuilder, this);
         }
 
@@ -137,7 +153,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
          * @throws NullPointerException If the parent builder is null
          */
         public PartialBlockstate addModels(ConfiguredModel... models) {
-            Preconditions.checkNotNull(outerBuilder);
+            checkValidOwner();
             outerBuilder.addModels(this, models);
             return this;
         }
@@ -150,7 +166,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
          * @throws NullPointerException If the parent builder is null
          */
         public VariantBlockstate setModels(ConfiguredModel... models) {
-            Preconditions.checkNotNull(outerBuilder);
+            checkValidOwner();
             return outerBuilder.setModels(this, models);
         }
 
@@ -164,7 +180,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
          * @throws NullPointerException If the parent builder is null
          */
         public PartialBlockstate partialState() {
-            Preconditions.checkNotNull(outerBuilder);
+            checkValidOwner();
             return outerBuilder.partialState();
         }
 

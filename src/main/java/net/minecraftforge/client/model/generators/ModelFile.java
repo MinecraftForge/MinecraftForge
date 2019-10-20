@@ -20,16 +20,11 @@
 package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public abstract class ModelFile {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
     protected ResourceLocation location;
 
@@ -70,6 +65,7 @@ public abstract class ModelFile {
     public static class ExistingModelFile extends ModelFile {
         private final ExistingFileHelper existingHelper;
 
+        @Deprecated
         public ExistingModelFile(String location, ExistingFileHelper existingHelper) {
             this(new ResourceLocation(location), existingHelper);
         }

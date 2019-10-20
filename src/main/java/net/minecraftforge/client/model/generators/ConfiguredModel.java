@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model.generators;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -8,39 +7,40 @@ import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ObjectArrays;
 import com.google.gson.JsonObject;
 
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
 
 public final class ConfiguredModel {
-    
+
     public static final int DEFAULT_WEIGHT = 1;
-    
+
     public final ModelFile name;
     public final int rotationX;
     public final int rotationY;
     public final boolean uvLock;
     public final int weight;
-    
+
     private static IntStream validRotations() {
         return IntStream.range(0, 4).map(i -> i * 90);
     }
-    
+
     public static ConfiguredModel[] allYRotations(ModelFile model, int x, boolean uvlock) {
         return allYRotations(model, x, uvlock, DEFAULT_WEIGHT);
     }
-    
+
     public static ConfiguredModel[] allYRotations(ModelFile model, int x, boolean uvlock, int weight) {
         return validRotations()
                 .mapToObj(y -> new ConfiguredModel(model, x, y, uvlock, weight))
                 .toArray(ConfiguredModel[]::new);
     }
-    
+
     public static ConfiguredModel[] allRotations(ModelFile model, boolean uvlock) {
         return allRotations(model, uvlock, DEFAULT_WEIGHT);
     }
-        
+
     public static ConfiguredModel[] allRotations(ModelFile model, boolean uvlock, int weight) {
         return validRotations()
                 .mapToObj(x -> allYRotations(model, x, uvlock, weight))
@@ -149,21 +149,21 @@ public final class ConfiguredModel {
             return this;
         }
 
-        public ConfiguredModel build() {
+        public ConfiguredModel buildLast() {
             Preconditions.checkNotNull(name);
             return new ConfiguredModel(name, rotationX, rotationY, uvLock, weight);
         }
 
+        public ConfiguredModel[] build() {
+            return ObjectArrays.concat(otherModels.toArray(new ConfiguredModel[0]), buildLast());
+        }
+
         public T addModel() {
-            List<ConfiguredModel> allModels = new ArrayList<>(otherModels);
-            allModels.add(this.build());
-            return callback.apply(allModels.toArray(new ConfiguredModel[0]));
+            return callback.apply(build());
         }
 
         public Builder<T> nextModel() {
-            List<ConfiguredModel> allModels = new ArrayList<>(otherModels);
-            allModels.add(this.build());
-            return new Builder<>(callback, allModels);
+            return new Builder<>(callback, Arrays.asList(build()));
         }
     }
 }

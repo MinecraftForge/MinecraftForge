@@ -29,6 +29,7 @@ import net.minecraft.advancements.FrameType;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -57,7 +58,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 public class DataGeneratorTest
 {
     static final String MODID = "data_gen_test";
-    
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
@@ -127,26 +128,25 @@ public class DataGeneratorTest
             .build(consumer, ID);
         }
     }
-    
-    
+
     public static class ItemModels extends ModelProvider<ItemModelBuilder>
     {
         public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, MODID, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
         }
-        
+
         @Override
         protected void registerModels()
         {
             getBuilder("test_generated_model")
                     .parent(new UncheckedModelFile("item/generated"))
-                    .texture("layer0", new ResourceLocation("block/stone"));
+                    .texture("layer0", mcLoc("block/stone"));
 
             getBuilder("test_block_model")
-                    .parent(getExistingFile("block/block"))
-                    .texture("all", new ResourceLocation("block/dirt"))
-                    .texture("top", new ResourceLocation("block/stone"))
+                    .parent(getExistingFile(mcLoc("block/block")))
+                    .texture("all", mcLoc("block/dirt"))
+                    .texture("top", mcLoc("block/stone"))
                     .element()
                         .cube("#all")
                         .face(Direction.UP)
@@ -173,18 +173,10 @@ public class DataGeneratorTest
        @Override
        protected void registerStatesAndModels()
        {
-           ModelFile acaciaFenceGate = getBuilder("acacia_fence_gate")
-                   .parent(getExistingFile("block/template_fence_gate"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
-           ModelFile acaciaFenceGateOpen = getBuilder("acacia_fence_gate_open")
-                   .parent(getExistingFile("block/template_fence_gate_open"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
-           ModelFile acaciaFenceGateWall = getBuilder("acacia_fence_gate_wall")
-                   .parent(getExistingFile("block/template_fence_gate_wall"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
-           ModelFile acaciaFenceGateWallOpen = getBuilder("acacia_fence_gate_wall_open")
-                   .parent(getExistingFile("block/template_fence_gate_wall_open"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
+           ModelFile acaciaFenceGate = fenceGate("acacia_fence_gate", mcLoc("block/acacia_planks"));
+           ModelFile acaciaFenceGateOpen = fenceGateOpen("acacia_fence_gate_open", mcLoc("block/acacia_planks"));
+           ModelFile acaciaFenceGateWall = fenceGateWall("acacia_fence_gate_wall", mcLoc("block/acacia_planks"));
+           ModelFile acaciaFenceGateWallOpen = fenceGateWallOpen("acacia_fence_gate_wall_open", mcLoc("block/acacia_planks"));
            ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
            VariantBlockstate builder = getVariantBuilder(Blocks.ACACIA_FENCE_GATE);
            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
@@ -231,14 +223,9 @@ public class DataGeneratorTest
                             .addModel();
            }
 
-           ModelFile acaciaFencePost = getBuilder("acacia_fence_post")
-                   .parent(getExistingFile("block/fence_post"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
-           
-           ModelFile acaciaFenceSide = getBuilder("acacia_fence_side")
-                   .parent(getExistingFile("block/fence_side"))
-                   .texture("texture", new ResourceLocation("block/acacia_planks"));
-           
+           ModelFile acaciaFencePost = fencePost("acacia_fence_post", mcLoc("block/acacia_planks"));
+           ModelFile acaciaFenceSide = fenceSide("acacia_fence_side", mcLoc("block/acacia_planks"));
+
            getMultipartBuilder(Blocks.ACACIA_FENCE)
                    .part().modelFile(acaciaFencePost).addModel().build()
                    .part().modelFile(acaciaFenceSide).uvLock(true).addModel()
@@ -249,15 +236,22 @@ public class DataGeneratorTest
                            .condition(FenceBlock.SOUTH, true).build()
                    .part().modelFile(acaciaFenceSide).rotationY(270).uvLock(true).addModel()
                            .condition(FenceBlock.WEST, true).build();
-           
-           ModelFile stone = getBuilder("stone")
-                   .parent(getExistingFile("block/cube_all"))
-                   .texture("all", new ResourceLocation("block/stone"));
+
+           ModelFile stone = cubeAll("stone", mcLoc("block/stone"));
            getVariantBuilder(Blocks.STONE)
                .partialState()
                    .addModels(ConfiguredModel.allYRotations(stone, 0, false))
                    .addModels(ConfiguredModel.allYRotations(stone, 180, false));
 
+           ModelFile furnace = orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
+           ModelFile furnaceLit = orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
+
+           getVariantBuilder(Blocks.FURNACE)
+               .forAllStates(state -> ConfiguredModel.builder()
+                       .modelFile(state.get(FurnaceBlock.LIT) ? furnaceLit : furnace)
+                       .rotationY((int) state.get(FurnaceBlock.FACING).getOpposite().getHorizontalAngle())
+                       .build()
+               );
        }
 
        @Override

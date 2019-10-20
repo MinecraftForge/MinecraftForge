@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class MultiPartBlockstate implements IGeneratedBlockstate {
+
     private final List<MultiPart> parts = new ArrayList<>();
     private final Block owner;
 
@@ -22,7 +23,7 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
     public ConfiguredModel.Builder<MultiPart> part() {
         return ConfiguredModel.builder(this);
     }
-    
+
     MultiPartBlockstate addPart(MultiPart part) {
         this.parts.add(part);
         return this;
@@ -43,7 +44,7 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         public BlockstateProvider.ConfiguredModelList models;
         public boolean useOr;
         public final List<PropertyWithValues<?>> conditions;
-        
+
         public MultiPart(BlockstateProvider.ConfiguredModelList models, PropertyWithValues<?>... conditionsArray) {
             this(models, false);
         }
@@ -57,24 +58,24 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
             Preconditions.checkArgument(conditions.size() == conditions.stream()
                     .map(pwv -> pwv.prop)
                     .distinct()
-                    .count());
-            Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()));
+                    .count(), "Condition list must not have duplicates");
+            Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()), "Conditions must not have empty model lists");
             this.models = models;
             this.useOr = useOr;
         }
-        
+
         public MultiPart useOr() {
             this.useOr = true;
             return this;
         }
-        
+
         @SafeVarargs
         public final <T extends Comparable<T>> MultiPart condition(IProperty<T> prop, T... values) {
             this.conditions.add(new PropertyWithValues<>(prop, values));
-            Preconditions.checkArgument(canApplyTo(owner), "IProperty " + prop + " is not valid for the block " + owner);
+            Preconditions.checkArgument(canApplyTo(owner), "IProperty %s is not valid for the block %s", prop, owner);
             return this;
         }
-        
+
         public MultiPartBlockstate build() {
             return MultiPartBlockstate.this;
         }
