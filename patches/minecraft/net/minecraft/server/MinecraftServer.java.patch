@@ -185,7 +185,15 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1529,6 +1556,31 @@
+@@ -1073,6 +1100,7 @@
+    }
+ 
+    public void func_147139_a(Difficulty p_147139_1_, boolean p_147139_2_) {
++      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_147139_1_, func_147135_j());
+       for(ServerWorld serverworld : this.func_212370_w()) {
+          WorldInfo worldinfo = serverworld.func_72912_H();
+          if (p_147139_2_ || !worldinfo.func_176123_z()) {
+@@ -1529,6 +1557,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
