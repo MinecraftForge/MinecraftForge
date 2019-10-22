@@ -122,7 +122,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -285,12 +310,20 @@
+@@ -285,12 +310,19 @@
              return ActionResultType.PASS;
           }
        } else {
