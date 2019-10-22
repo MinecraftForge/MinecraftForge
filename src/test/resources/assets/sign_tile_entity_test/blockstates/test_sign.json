@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "sign_tile_entity_test:block/test_sign" }
+    }
+}

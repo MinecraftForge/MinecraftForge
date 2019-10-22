@@ -21,8 +21,8 @@ public class SignTileEntityTest {
     private static final String SIGN_KEY = "test_sign";
     private static final String WALL_SIGN_KEY = "test_wall_sign";
 
-    private static final Block TEST_SIGN = new StandingSignBlock(Block.Properties.create(Material.WOOD, MaterialColor.GREEN).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD));
-    private static final Block TEST_WALL_SIGN = new WallSignBlock(Block.Properties.create(Material.WOOD, MaterialColor.GREEN).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD).lootFrom(TEST_SIGN));
+    private static final Block TEST_SIGN = new StandingSignBlock(Block.Properties.create(Material.WOOL, MaterialColor.LIME).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD));
+    private static final Block TEST_WALL_SIGN = new WallSignBlock(Block.Properties.create(Material.WOOL, MaterialColor.LIME).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD).lootFrom(TEST_SIGN));
     private static final Item TEST_SIGN_ITEM = new SignItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.DECORATIONS), TEST_SIGN, TEST_WALL_SIGN);
 
     @SubscribeEvent
