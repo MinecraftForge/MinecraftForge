@@ -18,3 +18,23 @@
           if (SharedConstants.field_206244_b) {
              throw illegalstateexception;
           }
+@@ -90,6 +90,10 @@
+       return (T)(this.field_200995_z.get());
+    }
+ 
++   public void addValidBlocks(Block ... blocks) {
++      this.field_223046_I.addAll(java.util.Arrays.asList(blocks));
++   }
++
+    public boolean func_223045_a(Block p_223045_1_) {
+       return this.field_223046_I.contains(p_223045_1_);
+    }
+@@ -104,7 +108,7 @@
+       }
+ 
+       public static <T extends TileEntity> TileEntityType.Builder<T> func_223042_a(Supplier<? extends T> p_223042_0_, Block... p_223042_1_) {
+-         return new TileEntityType.Builder<>(p_223042_0_, ImmutableSet.copyOf(p_223042_1_));
++         return new TileEntityType.Builder<T>(p_223042_0_, new java.util.HashSet(java.util.Arrays.asList(p_223042_1_)));
+       }
+ 
+       public TileEntityType<T> func_206865_a(Type<?> p_206865_1_) {

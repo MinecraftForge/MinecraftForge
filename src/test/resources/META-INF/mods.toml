@@ -52,6 +52,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="piston_event_test"
 [[mods]]
+    modId="sign_tile_entity_test"
+[[mods]]
     modId="flower_pot_test"
 [[mods]]
     modId="player_xp_event_test"

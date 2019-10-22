@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "sign_tile_entity_test:item/test_sign"
+  }
+} 

@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
+@@ -118,7 +118,19 @@
+             if (p_217658_1_ != Blocks.field_222386_bZ && p_217658_1_ != Blocks.field_222394_cj) {
+                if (p_217658_1_ != Blocks.field_222389_ca && p_217658_1_ != Blocks.field_222395_ck) {
+                   if (p_217658_1_ != Blocks.field_222390_cb && p_217658_1_ != Blocks.field_222396_cl) {
+-                     return p_217658_1_ != Blocks.field_222391_cc && p_217658_1_ != Blocks.field_222397_cm ? field_217659_c : field_217664_h;
++                     if (p_217658_1_ != Blocks.field_222391_cc && p_217658_1_ != Blocks.field_222397_cm) {
++                        //Forge: don't forget to add your signs to valid blocks for entity: TileEntityType.SIGN.addValidBlocks(...)
++                        String path = p_217658_1_.getRegistryName().func_110623_a();
++                        if (path.endsWith("_wall_sign")) {
++                           return new ResourceLocation(p_217658_1_.getRegistryName().func_110624_b(), "textures/entity/signs/" + path.substring(0, path.length() - 10) + ".png");
++                        } else if (path.endsWith("_sign")) {
++                           return new ResourceLocation(p_217658_1_.getRegistryName().func_110624_b(), "textures/entity/signs/" + path.substring(0, path.length() - 5) + ".png");
++                        } else {
++                           return field_217659_c;
++                        }
++                     } else {
++                        return field_217664_h;
++                     }
+                   } else {
+                      return field_217663_g;
+                   }
