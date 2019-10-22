@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "data_gen_test:block/acacia_log",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "data_gen_test:block/acacia_log"
+    },
+    "axis=z": {
+      "model": "data_gen_test:block/acacia_log",
+      "x": 90
+    }
+  }
+}

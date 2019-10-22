@@ -33,4 +33,8 @@ public class ExistingFileHelper {
         }
         return resources.hasResource(new ResourceLocation(loc.getNamespace(), pathPrefix + "/" + loc.getPath() + pathSuffix));
     }
+
+    public boolean isEnabled() {
+        return enable;
+    }
 }

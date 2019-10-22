@@ -23,7 +23,8 @@
         },
         "up": {
           "texture": "#top",
-          "cullface": "up"
+          "cullface": "up",
+          "tintindex": 0
         },
         "north": {
           "texture": "#all",

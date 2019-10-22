@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=top": {
+      "model": "data_gen_test:block/acacia_slab_top"
+    },
+    "type=bottom": {
+      "model": "data_gen_test:block/acacia_slab"
+    },
+    "type=double": {
+      "model": "minecraft:block/acacia_planks"
+    }
+  }
+}

@@ -19,13 +19,18 @@
 
 package net.minecraftforge.client.model.generators;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -34,6 +39,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 
 import net.minecraft.block.Block;
@@ -65,9 +71,9 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         missingStates.removeAll(coveredStates);
         Preconditions.checkState(missingStates.isEmpty(), "Blockstate for block %s does not cover all states. Missing: %s", owner, missingStates);
         JsonObject variants = new JsonObject();
-        for (Map.Entry<PartialBlockstate, ConfiguredModelList> entry : getModels().entrySet()) {
-            variants.add(entry.getKey().toString(), entry.getValue().toJSON());
-        }
+        getModels().entrySet().stream()
+            .sorted(Entry.comparingByKey(PartialBlockstate.comparingByProperties()))
+            .forEach(entry -> variants.add(entry.getKey().toString(), entry.getValue().toJSON()));
         JsonObject main = new JsonObject();
         main.add("variants", variants);
         return main;
@@ -92,7 +98,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
     }
 
     public VariantBlockstate setModels(PartialBlockstate state, ConfiguredModel... model) {
-        Preconditions.checkArgument(!models.containsKey(state), "Cannot set models for a state that has already been configured");
+        Preconditions.checkArgument(!models.containsKey(state), "Cannot set models for a state that has already been configured: %s", state);
         addModels(state, model);
         return this;
     }
@@ -106,15 +112,27 @@ public class VariantBlockstate implements IGeneratedBlockstate {
     }
 
     public VariantBlockstate forAllStates(Function<BlockState, ConfiguredModel[]> mapper) {
+        return forAllStatesExcept(mapper);
+    }
+
+    public VariantBlockstate forAllStatesExcept(Function<BlockState, ConfiguredModel[]> mapper, IProperty<?>... ignored) {
+        Set<PartialBlockstate> seen = new HashSet<>();
         for (BlockState fullState : owner.getStateContainer().getValidStates()) {
-            setModels(new PartialBlockstate(owner, fullState.getValues(), this), mapper.apply(fullState));
+            Map<IProperty<?>, Comparable<?>> propertyValues = Maps.newLinkedHashMap(fullState.getValues());
+            for (IProperty<?> p : ignored) {
+                propertyValues.remove(p);
+            }
+            PartialBlockstate partialState = new PartialBlockstate(owner, propertyValues, this);
+            if (seen.add(partialState)) {
+                setModels(partialState, mapper.apply(fullState));
+            }
         }
         return this;
     }
 
     public static class PartialBlockstate implements Predicate<BlockState> {
         private final Block owner;
-        private final Map<IProperty<?>, Comparable<?>> setStates;
+        private final SortedMap<IProperty<?>, Comparable<?>> setStates;
         @Nullable
         private final VariantBlockstate outerBuilder;
 
@@ -131,7 +149,8 @@ public class VariantBlockstate implements IGeneratedBlockstate {
                 Preconditions.checkArgument(owner.getStateContainer().getProperties().contains(prop), "Property %s not found on block %s", entry, this.owner);
                 Preconditions.checkArgument(prop.getAllowedValues().contains(value), "%s is not a valid value for %s", value, prop);
             }
-            this.setStates = setStates;
+            this.setStates = Maps.newTreeMap(Comparator.comparing(IProperty::getName));
+            this.setStates.putAll(setStates);
         }
 
         public <T extends Comparable<T>> PartialBlockstate with(IProperty<T> prop, T value) {
@@ -209,7 +228,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
             return owner;
         }
 
-        public Map<IProperty<?>, Comparable<?>> getSetStates() {
+        public SortedMap<IProperty<?>, Comparable<?>> getSetStates() {
             return setStates;
         }
 
@@ -238,6 +257,31 @@ public class VariantBlockstate implements IGeneratedBlockstate {
                         .append(entry.getValue());
             }
             return ret.toString();
+        }
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        public static Comparator<PartialBlockstate> comparingByProperties() {
+            // Sort variants inversely by property values, to approximate vanilla style
+            return (s1, s2) -> {
+                SortedSet<IProperty<?>> propUniverse = new TreeSet<>(s1.getSetStates().comparator().reversed());
+                propUniverse.addAll(s1.getSetStates().keySet());
+                propUniverse.addAll(s2.getSetStates().keySet());
+                for (IProperty<?> prop : propUniverse) {
+                    Comparable val1 = s1.getSetStates().get(prop);
+                    Comparable val2 = s2.getSetStates().get(prop);
+                    if (val1 == null && val2 != null) {
+                        return -1;
+                    } else if (val2 == null && val1 != null) {
+                        return 1;
+                    } else if (val1 != null && val2 != null){
+                        int cmp = val1.compareTo(val2);
+                        if (cmp != 0) {
+                            return cmp;
+                        }
+                    }
+                }
+                return 0;
+            };
         }
     }
 }

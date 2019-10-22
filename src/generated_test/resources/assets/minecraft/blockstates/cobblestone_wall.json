@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_post"
+        "model": "data_gen_test:block/cobblestone_wall_post"
       }
     },
     {
@@ -10,7 +10,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_side"
+        "model": "data_gen_test:block/cobblestone_wall_side"
       }
     },
     {
@@ -18,7 +18,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_side",
+        "model": "data_gen_test:block/cobblestone_wall_side",
         "y": 180,
         "uvlock": true
       }
@@ -28,7 +28,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_side",
+        "model": "data_gen_test:block/cobblestone_wall_side",
         "y": 270,
         "uvlock": true
       }
@@ -38,7 +38,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_side",
+        "model": "data_gen_test:block/cobblestone_wall_side",
         "y": 90,
         "uvlock": true
       }

@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.generators;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -32,9 +33,28 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
+
+    private class ExistingFileHelperIncludingGenerated extends ExistingFileHelper {
+
+        private final ExistingFileHelper delegate;
+
+        public ExistingFileHelperIncludingGenerated(ExistingFileHelper delegate) {
+            super(Collections.emptyList(), true);
+            this.delegate = delegate;
+        }
+
+        @Override
+        public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
+            if (generatedModels.containsKey(loc)) {
+                return true;
+            }
+            return delegate.exists(loc, type, pathSuffix, pathPrefix);
+        }
+    }
 
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
@@ -56,7 +76,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         this.modid = modid;
         this.folder = folder;
         this.factory = factory;
-        this.existingFileHelper = existingFileHelper;
+        this.existingFileHelper = new ExistingFileHelperIncludingGenerated(existingFileHelper);
     }
 
     public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
@@ -64,9 +84,8 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     protected T getBuilder(String path) {
-        ResourceLocation loc = path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path);
-        ResourceLocation outputLoc = extendWithFolder(new ResourceLocation(modid, path));
-        return generatedModels.computeIfAbsent(loc, $->factory.apply(outputLoc));
+        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+        return generatedModels.computeIfAbsent(outputLoc, factory);
     }
 
     private ResourceLocation extendWithFolder(ResourceLocation rl) {
@@ -241,41 +260,41 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("edge", edge);
     }
 
-    protected T glassPanePost(String name, ResourceLocation pane, ResourceLocation edge) {
+    protected T panePost(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_post", pane, edge);
     }
 
-    protected T glassPaneSide(String name, ResourceLocation pane, ResourceLocation edge) {
+    protected T paneSide(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_side", pane, edge);
     }
 
-    protected T glassPaneSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
+    protected T paneSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_side_alt", pane, edge);
     }
 
-    protected T glassPaneNoSide(String name, ResourceLocation pane, ResourceLocation edge) {
+    protected T paneNoSide(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_noside", pane, edge);
     }
 
-    protected T glassPaneNoSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
+    protected T paneNoSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_noside_alt", pane, edge);
     }
 
-    protected T doorBottom(String name, ResourceLocation bottom) {
+    protected T doorBottomLeft(String name, ResourceLocation bottom) {
         return singleTexture(name, BLOCK_FOLDER + "/door_bottom", "bottom", bottom);
     }
 
-    protected T doorBottomOpen(String name, ResourceLocation bottom) {
+    protected T doorBottomRight(String name, ResourceLocation bottom) {
         return singleTexture(name, BLOCK_FOLDER + "/door_bottom_rh", "bottom", bottom);
     }
 
-    protected T doorTop(String name, ResourceLocation bottom, ResourceLocation top) {
+    protected T doorTopLeft(String name, ResourceLocation bottom, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/door_top")
                 .texture("bottom", bottom)
                 .texture("top", top);
     }
 
-    protected T doorTopOpen(String name, ResourceLocation bottom, ResourceLocation top) {
+    protected T doorTopRight(String name, ResourceLocation bottom, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/door_top_rh")
                 .texture("bottom", bottom)
                 .texture("top", top);
@@ -318,7 +337,9 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     protected ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
-        return new ModelFile.ExistingModelFile(extendWithFolder(path), existingFileHelper);
+        ModelFile.ExistingModelFile ret = new ModelFile.ExistingModelFile(extendWithFolder(path), existingFileHelper);
+        ret.assertExistence();
+        return ret;
     }
 
     @Override

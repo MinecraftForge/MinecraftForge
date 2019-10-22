@@ -23,13 +23,23 @@ import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.util.function.Consumer;
 
+import com.google.common.collect.ObjectArrays;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
+import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.FurnaceBlock;
+import net.minecraft.block.LogBlock;
+import net.minecraft.block.PaneBlock;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.TrapDoorBlock;
+import net.minecraft.block.WallBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -151,6 +161,7 @@ public class DataGeneratorTest
                         .cube("#all")
                         .face(Direction.UP)
                             .texture("#top")
+                            .tintindex(0)
                             .end()
                         .end();
         }
@@ -173,12 +184,13 @@ public class DataGeneratorTest
        @Override
        protected void registerStatesAndModels()
        {
-           ModelFile acaciaFenceGate = fenceGate("acacia_fence_gate", mcLoc("block/acacia_planks"));
-           ModelFile acaciaFenceGateOpen = fenceGateOpen("acacia_fence_gate_open", mcLoc("block/acacia_planks"));
-           ModelFile acaciaFenceGateWall = fenceGateWall("acacia_fence_gate_wall", mcLoc("block/acacia_planks"));
-           ModelFile acaciaFenceGateWallOpen = fenceGateWallOpen("acacia_fence_gate_wall_open", mcLoc("block/acacia_planks"));
+           // Unnecessarily complicated example to showcase how manual building works
+           ModelFile birchFenceGate = fenceGate("birch_fence_gate", mcLoc("block/birch_planks"));
+           ModelFile birchFenceGateOpen = fenceGateOpen("birch_fence_gate_open", mcLoc("block/birch_planks"));
+           ModelFile birchFenceGateWall = fenceGateWall("birch_fence_gate_wall", mcLoc("block/birch_planks"));
+           ModelFile birchFenceGateWallOpen = fenceGateWallOpen("birch_fence_gate_wall_open", mcLoc("block/birch_planks"));
            ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
-           VariantBlockstate builder = getVariantBuilder(Blocks.ACACIA_FENCE_GATE);
+           VariantBlockstate builder = getVariantBuilder(Blocks.BIRCH_FENCE_GATE);
            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
                int angle = (int) dir.getHorizontalAngle();
                builder
@@ -189,7 +201,7 @@ public class DataGeneratorTest
                             .modelForState()
                                 .modelFile(invisbleModel)
                             .nextModel()
-                                .modelFile(acaciaFenceGate)
+                                .modelFile(birchFenceGate)
                                 .rotationY(angle)
                                 .uvLock(true)
                                 .weight(100)
@@ -199,7 +211,7 @@ public class DataGeneratorTest
                             .with(FenceGateBlock.IN_WALL, false)
                             .with(FenceGateBlock.OPEN, true)
                             .modelForState()
-                                .modelFile(acaciaFenceGateOpen)
+                                .modelFile(birchFenceGateOpen)
                                 .rotationY(angle)
                                 .uvLock(true)
                             .addModel()
@@ -208,7 +220,7 @@ public class DataGeneratorTest
                             .with(FenceGateBlock.IN_WALL, true)
                             .with(FenceGateBlock.OPEN, false)
                             .modelForState()
-                                .modelFile(acaciaFenceGateWall)
+                                .modelFile(birchFenceGateWall)
                                 .rotationY(angle)
                                 .uvLock(true)
                             .addModel()
@@ -217,31 +229,17 @@ public class DataGeneratorTest
                             .with(FenceGateBlock.IN_WALL, true)
                             .with(FenceGateBlock.OPEN, true)
                             .modelForState()
-                                .modelFile(acaciaFenceGateWallOpen)
+                                .modelFile(birchFenceGateWallOpen)
                                 .rotationY(angle)
                                 .uvLock(true)
                             .addModel();
            }
 
-           ModelFile acaciaFencePost = fencePost("acacia_fence_post", mcLoc("block/acacia_planks"));
-           ModelFile acaciaFenceSide = fenceSide("acacia_fence_side", mcLoc("block/acacia_planks"));
-
-           getMultipartBuilder(Blocks.ACACIA_FENCE)
-                   .part().modelFile(acaciaFencePost).addModel().build()
-                   .part().modelFile(acaciaFenceSide).uvLock(true).addModel()
-                           .condition(FenceBlock.NORTH, true).build()
-                   .part().modelFile(acaciaFenceSide).rotationY(90).uvLock(true).addModel()
-                           .condition(FenceBlock.EAST, true).build()
-                   .part().modelFile(acaciaFenceSide).rotationY(180).uvLock(true).addModel()
-                           .condition(FenceBlock.SOUTH, true).build()
-                   .part().modelFile(acaciaFenceSide).rotationY(270).uvLock(true).addModel()
-                           .condition(FenceBlock.WEST, true).build();
-
-           ModelFile stone = cubeAll("stone", mcLoc("block/stone"));
-           getVariantBuilder(Blocks.STONE)
-               .partialState()
-                   .addModels(ConfiguredModel.allYRotations(stone, 0, false))
-                   .addModels(ConfiguredModel.allYRotations(stone, 180, false));
+           // Realistic examples using helpers
+           simpleBlock(Blocks.STONE, model -> ObjectArrays.concat(
+                   ConfiguredModel.allYRotations(model, 0, false),
+                   ConfiguredModel.allYRotations(model, 180, false),
+                   ConfiguredModel.class));
 
            ModelFile furnace = orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
            ModelFile furnaceLit = orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
@@ -252,6 +250,29 @@ public class DataGeneratorTest
                        .rotationY((int) state.get(FurnaceBlock.FACING).getOpposite().getHorizontalAngle())
                        .build()
                );
+
+           ModelFile barrel = cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
+           ModelFile barrelOpen = cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
+           directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
+
+           logBlock((LogBlock) Blocks.ACACIA_LOG);
+
+           stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
+           slabBlock((SlabBlock) Blocks.ACACIA_SLAB, Blocks.ACACIA_PLANKS.getRegistryName(), mcLoc("block/acacia_planks"));
+
+           fenceBlock((FenceBlock) Blocks.ACACIA_FENCE, "acacia", mcLoc("block/acacia_planks"));
+           fenceGateBlock((FenceGateBlock) Blocks.ACACIA_FENCE_GATE, "acacia", mcLoc("block/acacia_planks"));
+
+           wallBlock((WallBlock) Blocks.COBBLESTONE_WALL, "cobblestone", mcLoc("block/cobblestone"));
+
+           paneBlock((PaneBlock) Blocks.GLASS_PANE, "glass", mcLoc("block/glass"), mcLoc("block/glass_pane_top"));
+
+           doorBlock((DoorBlock) Blocks.ACACIA_DOOR, "acacia", mcLoc("block/acacia_door_bottom"), mcLoc("block/acacia_door_top"));
+           trapdoorBlock((TrapDoorBlock) Blocks.ACACIA_TRAPDOOR, "acacia", mcLoc("block/acacia_trapdoor"), true);
+           trapdoorBlock((TrapDoorBlock) Blocks.OAK_TRAPDOOR, "oak", mcLoc("block/oak_trapdoor"), false); // Test a non-orientable trapdoor
+
+           simpleBlock(Blocks.TORCH, torch("torch", mcLoc("block/torch")));
+           horizontalBlock(Blocks.WALL_TORCH, torchWall("wall_torch", mcLoc("block/torch")), 90);
        }
 
        @Override
