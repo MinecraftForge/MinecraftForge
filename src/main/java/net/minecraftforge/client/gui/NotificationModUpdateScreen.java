@@ -29,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
@@ -66,7 +67,7 @@ public class NotificationModUpdateScreen extends Screen
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
-        if (showNotification == null || !showNotification.shouldDraw() || ForgeMod.disableVersionCheck)
+        if (showNotification == null || !showNotification.shouldDraw() || !FMLConfig.runVersionCheck())
         {
             return;
         }

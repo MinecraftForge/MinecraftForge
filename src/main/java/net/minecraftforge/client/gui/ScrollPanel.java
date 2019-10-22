@@ -191,7 +191,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
 
         double scale = client.mainWindow.getGuiScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(left      * scale), (int)(client.mainWindow.getHeight() - (bottom * scale)),
+        GL11.glScissor((int)(left  * scale), (int)(client.mainWindow.getFramebufferHeight() - (bottom * scale)),
                        (int)(width * scale), (int)(height * scale));
 
         if (this.client.world != null)

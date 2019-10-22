@@ -81,7 +81,7 @@
              this.func_213256_aB();
           }
 -
-+         net.minecraftforge.fml.client.ClientModLoader.complete();
++         if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error sceen
 +         // FORGE: Move opening initial screen to after startup and events are enabled.
 +         // Also Fixes MC-145102
 +         if (this.field_71475_ae != null) {

@@ -255,7 +255,7 @@ public class ForgeHooksClient
         skyInit = true;
 
         GameSettings settings = Minecraft.getInstance().gameSettings;
-        int[] ranges = ForgeMod.blendRanges;
+        int[] ranges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         int distance = 0;
         if (settings.fancyGraphics && ranges.length > 0)
         {

@@ -52,7 +52,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
     @Override
     public void setup(final IEnvironment environment, final Map<String, ?> arguments) {
         if (!forgeJar.getFileName().toString().endsWith(".jar")) {
-            LOGGER.fatal(CORE, "Userdev Launcher attempted to be used with non-jar version of Forge: {}" + forgeJar);
+            LOGGER.fatal(CORE, "Userdev Launcher attempted to be used with non-jar version of Forge: {}", forgeJar);
             throw new RuntimeException("Userdev Launcher can only be used with dev-jar version of Forge");
         }
 

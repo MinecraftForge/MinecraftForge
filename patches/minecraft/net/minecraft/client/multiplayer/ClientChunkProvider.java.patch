@@ -1,10 +1,18 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
-@@ -72,6 +72,7 @@
-       if (this.field_217256_d.func_217183_b(p_212849_1_, p_212849_2_)) {
-          Chunk chunk = this.field_217256_d.func_217192_a(this.field_217256_d.func_217191_a(p_212849_1_, p_212849_2_));
-          if (func_217249_a(chunk, p_212849_1_, p_212849_2_)) {
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
-             return chunk;
+@@ -61,6 +61,7 @@
+          int i = this.field_217256_d.func_217191_a(p_73234_1_, p_73234_2_);
+          Chunk chunk = this.field_217256_d.func_217192_a(i);
+          if (func_217249_a(chunk, p_73234_1_, p_73234_2_)) {
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(chunk));
+             this.field_217256_d.func_217190_a(i, chunk, (Chunk)null);
           }
+ 
+@@ -113,6 +114,7 @@
+             worldlightmanager.func_215566_a(SectionPos.func_218154_a(p_217250_2_, j, p_217250_3_), ChunkSection.func_222628_a(chunksection));
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+          return chunk;
        }
+    }
