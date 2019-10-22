@@ -1,6 +1,29 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -459,7 +459,7 @@
+@@ -178,21 +178,7 @@
+    }
+ 
+    public Item func_184455_j() {
+-      switch(this.func_184453_r()) {
+-      case OAK:
+-      default:
+-         return Items.field_151124_az;
+-      case SPRUCE:
+-         return Items.field_185150_aH;
+-      case BIRCH:
+-         return Items.field_185151_aI;
+-      case JUNGLE:
+-         return Items.field_185152_aJ;
+-      case ACACIA:
+-         return Items.field_185153_aK;
+-      case DARK_OAK:
+-         return Items.field_185154_aL;
+-      }
++      return this.func_184453_r().getBoatItem();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -459,7 +445,7 @@
                          blockpos$pooledmutableblockpos.func_181079_c(l1, k2, i2);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
                          if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,7 +32,23 @@
                             ++k1;
                          }
                       }
-@@ -778,6 +778,20 @@
+@@ -688,13 +674,9 @@
+                if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
+                   this.func_70106_y();
+                   if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
+-                     for(int i = 0; i < 3; ++i) {
+-                        this.func_199703_a(this.func_184453_r().func_195933_b());
++                     for(net.minecraft.util.IItemProvider item : this.func_184453_r().getDrops()) {
++                        this.func_199703_a(item);
+                      }
+-
+-                     for(int j = 0; j < 2; ++j) {
+-                        this.func_199703_a(Items.field_151055_y);
+-                     }
+                   }
+                }
+             }
+@@ -778,6 +760,20 @@
        return new SSpawnObjectPacket(this);
     }
  
@@ -30,3 +69,62 @@
     public static enum Status {
        IN_WATER,
        UNDER_WATER,
+@@ -786,22 +782,51 @@
+       IN_AIR;
+    }
+ 
+-   public static enum Type {
+-      OAK(Blocks.field_196662_n, "oak"),
+-      SPRUCE(Blocks.field_196664_o, "spruce"),
+-      BIRCH(Blocks.field_196666_p, "birch"),
+-      JUNGLE(Blocks.field_196668_q, "jungle"),
+-      ACACIA(Blocks.field_196670_r, "acacia"),
+-      DARK_OAK(Blocks.field_196672_s, "dark_oak");
++   public static enum Type implements net.minecraftforge.common.IExtensibleEnum {
++      OAK(Blocks.field_196662_n, "oak") { public Item getBoatItem() { return Items.field_151124_az; } },
++      SPRUCE(Blocks.field_196664_o, "spruce") { public Item getBoatItem() { return Items.field_185150_aH; } },
++      BIRCH(Blocks.field_196666_p, "birch") { public Item getBoatItem() { return Items.field_185151_aI; } },
++      JUNGLE(Blocks.field_196668_q, "jungle") { public Item getBoatItem() { return Items.field_185152_aJ; } },
++      ACACIA(Blocks.field_196670_r, "acacia") { public Item getBoatItem() { return Items.field_185153_aK; } },
++      DARK_OAK(Blocks.field_196672_s, "dark_oak") { public Item getBoatItem() { return Items.field_185154_aL; } };
+ 
+       private final String field_184990_g;
+       private final Block field_195934_h;
++      private final net.minecraft.util.IItemProvider[] drops;
++      private Item boatItem;
+ 
+       private Type(Block p_i48146_3_, String p_i48146_4_) {
+          this.field_184990_g = p_i48146_4_;
+          this.field_195934_h = p_i48146_3_;
++         this.drops = new net.minecraft.util.IItemProvider[]{ Items.field_151055_y, Items.field_151055_y, p_i48146_3_, p_i48146_3_, p_i48146_3_ };
+       }
+ 
++      private Type(Block planks, String name, net.minecraft.util.IItemProvider[] drops) {
++         this.field_184990_g = name;
++         this.field_195934_h = planks;
++         this.drops = drops;
++      }
++
++      public static Type create(String enumName, Block planks, String name) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      public static Type create(String enumName, Block planks, String name, net.minecraft.util.IItemProvider[] drops) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      public void setBoatItem(Item boatItem) {
++         this.boatItem = boatItem;
++      }
++
++      public Item getBoatItem() {
++         return (this.boatItem == null) ? OAK.boatItem : this.boatItem;
++      }
++
++      public net.minecraft.util.IItemProvider[] getDrops() {
++         return this.drops;
++      }
++
+       public String func_184980_a() {
+          return this.field_184990_g;
+       }
