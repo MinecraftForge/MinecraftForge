@@ -1,16 +1,17 @@
 --- a/net/minecraft/network/rcon/ClientThread.java
 +++ b/net/minecraft/network/rcon/ClientThread.java
-@@ -31,8 +31,8 @@
+@@ -31,8 +31,9 @@
     }
  
     public void run() {
 -      while(true) {
           try {
++            // FORGE: fix RCON server; the socket was closed after every loop - while still waiting for data
 +            while(true) {
              if (!this.field_72619_a) {
                 return;
              }
-@@ -83,6 +83,7 @@
+@@ -83,6 +84,7 @@
                    continue;
                 }
              }
@@ -18,7 +19,7 @@
           } catch (SocketTimeoutException var17) {
              return;
           } catch (IOException var18) {
-@@ -94,8 +95,6 @@
+@@ -94,8 +96,6 @@
              this.func_72653_g();
           }
  
