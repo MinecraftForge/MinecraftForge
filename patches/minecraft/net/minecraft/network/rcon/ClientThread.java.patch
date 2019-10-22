@@ -1,0 +1,29 @@
+--- a/net/minecraft/network/rcon/ClientThread.java
++++ b/net/minecraft/network/rcon/ClientThread.java
+@@ -31,8 +31,8 @@
+    }
+ 
+    public void run() {
+-      while(true) {
+          try {
++            while(true) {
+             if (!this.field_72619_a) {
+                return;
+             }
+@@ -83,6 +83,7 @@
+                   continue;
+                }
+             }
++            }
+          } catch (SocketTimeoutException var17) {
+             return;
+          } catch (IOException var18) {
+@@ -94,8 +95,6 @@
+             this.func_72653_g();
+          }
+ 
+-         return;
+-      }
+    }
+ 
+    private void func_72654_a(int p_72654_1_, int p_72654_2_, String p_72654_3_) throws IOException {
