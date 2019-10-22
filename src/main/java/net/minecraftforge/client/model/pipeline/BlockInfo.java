@@ -21,10 +21,12 @@ package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IEnviromentBlockReader;
 
 public class BlockInfo
@@ -134,7 +136,13 @@ public class BlockInfo
         }
         for(Direction side : SIDES)
         {
-            if(!state.doesSideBlockRendering(world, blockPos, side))
+            BlockPos pos = blockPos.offset(side);
+            BlockState state = world.getBlockState(pos);
+
+            BlockState thisStateShape = this.state.isSolid() && this.state.func_215691_g() ? this.state : Blocks.AIR.getDefaultState();
+            BlockState otherStateShape = state.isSolid() && state.func_215691_g() ? state : Blocks.AIR.getDefaultState();
+
+            if(state.getOpacity(world, blockPos) == 15 || VoxelShapes.func_223416_b(thisStateShape.func_215702_a(world, blockPos, side), otherStateShape.func_215702_a(world, pos, side.getOpposite())))
             {
                 int x = side.getXOffset() + 1;
                 int y = side.getYOffset() + 1;
