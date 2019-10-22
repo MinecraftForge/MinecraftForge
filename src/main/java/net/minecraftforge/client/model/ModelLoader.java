@@ -258,6 +258,10 @@ public final class ModelLoader extends ModelBakery
                     builder.add(new ResourceLocation(s));
                 }
             }
+
+            if (model.parent != null)
+                builder.addAll(model.parent.getTextures(modelGetter, missingTextureErrors));
+
             return builder.build();
         }
 
