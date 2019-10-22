@@ -90,25 +90,25 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
 
     protected abstract void registerStatesAndModels();
 
-    protected VariantBlockstate getVariantBuilder(Block b) {
+    protected VariantBlockStateBuilder getVariantBuilder(Block b) {
         if (registeredBlocks.containsKey(b)) {
             IGeneratedBlockstate old = registeredBlocks.get(b);
-            Preconditions.checkState(old instanceof VariantBlockstate);
-            return (VariantBlockstate) old;
+            Preconditions.checkState(old instanceof VariantBlockStateBuilder);
+            return (VariantBlockStateBuilder) old;
         } else {
-            VariantBlockstate ret = new VariantBlockstate(b);
+            VariantBlockStateBuilder ret = new VariantBlockStateBuilder(b);
             registeredBlocks.put(b, ret);
             return ret;
         }
     }
 
-    protected MultiPartBlockstate getMultipartBuilder(Block b) {
+    protected MultiPartBlockStateBuilder getMultipartBuilder(Block b) {
         if (registeredBlocks.containsKey(b)) {
             IGeneratedBlockstate old = registeredBlocks.get(b);
-            Preconditions.checkState(old instanceof MultiPartBlockstate);
-            return (MultiPartBlockstate) old;
+            Preconditions.checkState(old instanceof MultiPartBlockStateBuilder);
+            return (MultiPartBlockStateBuilder) old;
         } else {
-            MultiPartBlockstate ret = new MultiPartBlockstate(b);
+            MultiPartBlockStateBuilder ret = new MultiPartBlockStateBuilder(b);
             registeredBlocks.put(b, ret);
             return ret;
         }
@@ -306,7 +306,7 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
     }
 
     protected void fourWayBlock(FourWayBlock block, ModelFile post, ModelFile side) {
-        MultiPartBlockstate builder = getMultipartBuilder(block)
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().build();
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
@@ -386,7 +386,7 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
     }
 
     protected void paneBlock(PaneBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
-        MultiPartBlockstate builder = getMultipartBuilder(block)
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().build();
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();

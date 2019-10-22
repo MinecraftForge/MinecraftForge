@@ -47,13 +47,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
 import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
 
-public class VariantBlockstate implements IGeneratedBlockstate {
+public class VariantBlockStateBuilder implements IGeneratedBlockstate {
 
     private final Block owner;
     private final Map<PartialBlockstate, ConfiguredModelList> models = new LinkedHashMap<>();
     private final Set<BlockState> coveredStates = new HashSet<>();
 
-    public VariantBlockstate(Block owner) {
+    public VariantBlockStateBuilder(Block owner) {
         this.owner = owner;
     }
 
@@ -79,7 +79,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         return main;
     }
 
-    public VariantBlockstate addModels(PartialBlockstate state, ConfiguredModel... model) {
+    public VariantBlockStateBuilder addModels(PartialBlockstate state, ConfiguredModel... model) {
         Preconditions.checkNotNull(state, "state must not be null");
         Preconditions.checkArgument(model.length > 0, "Cannot set models to empty array");
         Preconditions.checkArgument(state.getOwner() == owner, "Cannot set models for a different block. Found: %s, Current: %s", state.getOwner(), owner);
@@ -97,7 +97,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         return this;
     }
 
-    public VariantBlockstate setModels(PartialBlockstate state, ConfiguredModel... model) {
+    public VariantBlockStateBuilder setModels(PartialBlockstate state, ConfiguredModel... model) {
         Preconditions.checkArgument(!models.containsKey(state), "Cannot set models for a state that has already been configured: %s", state);
         addModels(state, model);
         return this;
@@ -111,11 +111,11 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         return new PartialBlockstate(owner, this);
     }
 
-    public VariantBlockstate forAllStates(Function<BlockState, ConfiguredModel[]> mapper) {
+    public VariantBlockStateBuilder forAllStates(Function<BlockState, ConfiguredModel[]> mapper) {
         return forAllStatesExcept(mapper);
     }
 
-    public VariantBlockstate forAllStatesExcept(Function<BlockState, ConfiguredModel[]> mapper, IProperty<?>... ignored) {
+    public VariantBlockStateBuilder forAllStatesExcept(Function<BlockState, ConfiguredModel[]> mapper, IProperty<?>... ignored) {
         Set<PartialBlockstate> seen = new HashSet<>();
         for (BlockState fullState : owner.getStateContainer().getValidStates()) {
             Map<IProperty<?>, Comparable<?>> propertyValues = Maps.newLinkedHashMap(fullState.getValues());
@@ -134,13 +134,13 @@ public class VariantBlockstate implements IGeneratedBlockstate {
         private final Block owner;
         private final SortedMap<IProperty<?>, Comparable<?>> setStates;
         @Nullable
-        private final VariantBlockstate outerBuilder;
+        private final VariantBlockStateBuilder outerBuilder;
 
-        public PartialBlockstate(Block owner, @Nullable VariantBlockstate outerBuilder) {
+        public PartialBlockstate(Block owner, @Nullable VariantBlockStateBuilder outerBuilder) {
             this(owner, ImmutableMap.of(), outerBuilder);
         }
 
-        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable VariantBlockstate outerBuilder) {
+        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable VariantBlockStateBuilder outerBuilder) {
             this.owner = owner;
             this.outerBuilder = outerBuilder;
             for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
@@ -164,7 +164,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
             Preconditions.checkNotNull(outerBuilder, "Partial blockstate must have a valid owner to perform this action");
         }
 
-        public ConfiguredModel.Builder<VariantBlockstate> modelForState() {
+        public ConfiguredModel.Builder<VariantBlockStateBuilder> modelForState() {
             checkValidOwner();
             return ConfiguredModel.builder(outerBuilder, this);
         }
@@ -191,7 +191,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
          * @return The parent builder instance
          * @throws NullPointerException If the parent builder is null
          */
-        public VariantBlockstate setModels(ConfiguredModel... models) {
+        public VariantBlockStateBuilder setModels(ConfiguredModel... models) {
             checkValidOwner();
             return outerBuilder.setModels(this, models);
         }
@@ -202,7 +202,7 @@ public class VariantBlockstate implements IGeneratedBlockstate {
          * {@link #addModels(ConfiguredModel...)}.
          * 
          * @return A fresh partial state as specified by
-         *         {@link VariantBlockstate#partialState()}.
+         *         {@link VariantBlockStateBuilder#partialState()}.
          * @throws NullPointerException If the parent builder is null
          */
         public PartialBlockstate partialState() {

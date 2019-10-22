@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class MultiPartBlockstate implements IGeneratedBlockstate {
+public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
 
     private final List<MultiPart> parts = new ArrayList<>();
     private final Block owner;
 
-    public MultiPartBlockstate(Block owner) {
+    public MultiPartBlockStateBuilder(Block owner) {
         this.owner = owner;
     }
 
@@ -24,7 +24,7 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
         return ConfiguredModel.builder(this);
     }
 
-    MultiPartBlockstate addPart(MultiPart part) {
+    MultiPartBlockStateBuilder addPart(MultiPart part) {
         this.parts.add(part);
         return this;
     }
@@ -76,8 +76,8 @@ public final class MultiPartBlockstate implements IGeneratedBlockstate {
             return this;
         }
 
-        public MultiPartBlockstate build() {
-            return MultiPartBlockstate.this;
+        public MultiPartBlockStateBuilder build() {
+            return MultiPartBlockStateBuilder.this;
         }
 
         public JsonObject toJson() {

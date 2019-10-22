@@ -11,7 +11,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.gson.JsonObject;
 
 import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraftforge.client.model.generators.MultiPartBlockstate.MultiPart;
+import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder.MultiPart;
 
 public final class ConfiguredModel {
 
@@ -92,11 +92,11 @@ public final class ConfiguredModel {
         return new Builder<>();
     }
 
-    static Builder<VariantBlockstate> builder(VariantBlockstate outer, VariantBlockstate.PartialBlockstate state) {
+    static Builder<VariantBlockStateBuilder> builder(VariantBlockStateBuilder outer, VariantBlockStateBuilder.PartialBlockstate state) {
         return new Builder<>(models -> outer.setModels(state, models), ImmutableList.of());
     }
 
-    static Builder<MultiPart> builder(MultiPartBlockstate outer) {
+    static Builder<MultiPart> builder(MultiPartBlockStateBuilder outer) {
         return new Builder<MultiPart>(models -> {
             MultiPart ret = outer.new MultiPart(new BlockstateProvider.ConfiguredModelList(models));
             outer.addPart(ret);
