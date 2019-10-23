@@ -141,6 +141,22 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
         getBuilder(Tags.Items.STRING).add(Items.STRING);
+        getBuilder(Tags.Items.AXES).add(Items.WOODEN_AXE,Items.STONE_AXE,Items.IRON_AXE,Items.GOLDEN_AXE,Items.DIAMOND_AXE);
+        getBuilder(Tags.Items.PICKAXES).add(Items.WOODEN_PICKAXE,Items.STONE_PICKAXE,Items.IRON_PICKAXE,Items.GOLDEN_PICKAXE,Items.DIAMOND_PICKAXE);
+        getBuilder(Tags.Items.SHOVELS).add(Items.WOODEN_SHOVEL,Items.STONE_SHOVEL,Items.IRON_SHOVEL,Items.GOLDEN_SHOVEL,Items.DIAMOND_SHOVEL);
+        getBuilder(Tags.Items.HOES).add(Items.WOODEN_HOE,Items.STONE_HOE,Items.IRON_HOE,Items.GOLDEN_HOE,Items.DIAMOND_HOE);
+        getBuilder(Tags.Items.SHEARS).add(Items.SHEARS);
+        getBuilder(Tags.Items.TOOLS).add(Tags.Items.AXES,Tags.Items.PICKAXES,Tags.Items.SHOVELS,Tags.Items.HOES,Tags.Items.SHEARS);
+        getBuilder(Tags.Items.HELMETS).add(Items.LEATHER_HELMET,Items.CHAINMAIL_HELMET,Items.IRON_HELMET,Items.GOLDEN_HELMET,Items.DIAMOND_HELMET);
+        getBuilder(Tags.Items.CHESTPLATES).add(Items.LEATHER_CHESTPLATE,Items.CHAINMAIL_CHESTPLATE,Items.IRON_CHESTPLATE,Items.GOLDEN_CHESTPLATE,Items.DIAMOND_CHESTPLATE);
+        getBuilder(Tags.Items.LEGGINGS).add(Items.LEATHER_LEGGINGS,Items.CHAINMAIL_LEGGINGS,Items.IRON_LEGGINGS,Items.GOLDEN_LEGGINGS,Items.DIAMOND_LEGGINGS);
+        getBuilder(Tags.Items.BOOTS).add(Items.LEATHER_BOOTS,Items.CHAINMAIL_BOOTS,Items.IRON_BOOTS,Items.GOLDEN_BOOTS,Items.DIAMOND_BOOTS);
+        getBuilder(Tags.Items.ARMOR).add(Tags.Items.HELMETS,Tags.Items.CHESTPLATES,Tags.Items.LEGGINGS,Tags.Items.BOOTS);
+        getBuilder(Tags.Items.SWORDS).add(Items.WOODEN_SWORD,Items.STONE_SWORD,Items.IRON_SWORD,Items.GOLDEN_SWORD,Items.DIAMOND_SWORD);
+        getBuilder(Tags.Items.BOWS).add(Items.BOW,Items.CROSSBOW);
+        getBuilder(Tags.Items.RANGED_WEAPONS).add(Items.TRIDENT).add(Tags.Items.BOWS);
+        getBuilder(Tags.Items.WEAPONS).add(Tags.Items.SWORDS,Tags.Items.RANGED_WEAPONS);
+        getBuilder(Tags.Items.ELYTRA).add(Items.ELYTRA);
     }
 
     private void addColored(Consumer<Item> consumer, Tag<Item> group, String pattern)

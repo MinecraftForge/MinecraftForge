@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:armor/helmets",
+    "#forge:armor/chestplates",
+    "#forge:armor/leggings",
+    "#forge:armor/boots"
+  ]
+}

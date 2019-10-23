@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:weapons/swords",
+    "#forge:weapons/ranged"
+  ]
+}

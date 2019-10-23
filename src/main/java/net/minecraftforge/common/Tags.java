@@ -266,6 +266,26 @@ public class Tags
         public static final Tag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final Tag<Item> STRING = tag("string");
 
+        public static final Tag<Item> TOOLS = tag("tools");
+        public static final Tag<Item> PICKAXES = tag("tools/pickaxes");
+        public static final Tag<Item> AXES = tag("tools/axes");
+        public static final Tag<Item> SHOVELS = tag("tools/shovels");
+        public static final Tag<Item> HOES = tag("tools/hoes");
+        public static final Tag<Item> SHEARS = tag("tools/shears");
+
+        public static final Tag<Item> WEAPONS = tag("weapons");
+        public static final Tag<Item> SWORDS = tag("weapons/swords");
+        public static final Tag<Item> RANGED_WEAPONS = tag("weapons/ranged");
+        public static final Tag<Item> BOWS = tag("weapons/bows");
+
+        public static final Tag<Item> ARMOR = tag("armor");
+        public static final Tag<Item> HELMETS = tag("armor/helmets");
+        public static final Tag<Item> CHESTPLATES = tag("armor/chestplates");
+        public static final Tag<Item> LEGGINGS = tag("armor/leggings");
+        public static final Tag<Item> BOOTS = tag("armor/boots");
+
+        public static final Tag<Item> ELYTRA = tag("elytra");
+
         private static Tag<Item> tag(String name)
         {
             return new ItemTags.Wrapper(new ResourceLocation("forge", name));
