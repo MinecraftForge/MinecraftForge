@@ -25,6 +25,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.WorldRenderer;
 
+//TODO: remove in 1.15, use DrawHighlightEvent instead
+@Deprecated
 @Cancelable
 public class DrawBlockHighlightEvent extends Event
 {
