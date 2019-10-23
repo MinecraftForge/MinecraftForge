@@ -102,7 +102,6 @@ public class Tags
         public static final Tag<Block> STAINED_GLASS = tag("stained_glass");
         public static final Tag<Block> STAINED_GLASS_PANES = tag("stained_glass_panes");
         public static final Tag<Block> STONE = tag("stone");
-
         public static final Tag<Block> STORAGE_BLOCKS = tag("storage_blocks");
         public static final Tag<Block> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
         public static final Tag<Block> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
@@ -256,8 +255,6 @@ public class Tags
         public static final Tag<Item> STAINED_GLASS = tag("stained_glass");
         public static final Tag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
         public static final Tag<Item> STONE = tag("stone");
-        public static final Tag<Item> STONECUTTER_MASS_CRAFTABLE = tag("stonecutter_mass_craftable");
-
         public static final Tag<Item> STORAGE_BLOCKS = tag("storage_blocks");
         public static final Tag<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
         public static final Tag<Item> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
