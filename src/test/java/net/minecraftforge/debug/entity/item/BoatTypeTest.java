@@ -22,12 +22,8 @@ public class BoatTypeTest {
     private static final String BOAT_KEY = "test";
     private static final String ITEM_KEY = "test_boat";
 
-    private static final BoatEntity.Type GREEN_BOAT_TYPE = BoatEntity.Type.create("GREEN", Blocks.GREEN_WOOL, MOD_ID + ":" + BOAT_KEY);
+    private static final BoatEntity.Type GREEN_BOAT_TYPE = BoatEntity.Type.create("GREEN", Blocks.GREEN_WOOL, MOD_ID + ":" + BOAT_KEY, () -> BoatTypeTest.TEST_BOAT_ITEM);
     private static final BoatItem TEST_BOAT_ITEM = new BoatItem(GREEN_BOAT_TYPE, (new Item.Properties()).maxStackSize(1).group(ItemGroup.TRANSPORTATION));
-
-    public BoatTypeTest() {
-        GREEN_BOAT_TYPE.setBoatItem(TEST_BOAT_ITEM);
-    }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {

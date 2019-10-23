@@ -38,8 +38,8 @@
                    if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
 -                     for(int i = 0; i < 3; ++i) {
 -                        this.func_199703_a(this.func_184453_r().func_195933_b());
-+                     for(net.minecraft.util.IItemProvider item : this.func_184453_r().getDrops()) {
-+                        this.func_199703_a(item);
++                     for(net.minecraft.item.ItemStack itemStack : this.func_184453_r().getDrops()) {
++                        this.func_199701_a_(itemStack);
                       }
 -
 -                     for(int j = 0; j < 2; ++j) {
@@ -69,7 +69,7 @@
     public static enum Status {
        IN_WATER,
        UNDER_WATER,
-@@ -786,22 +782,51 @@
+@@ -786,22 +782,49 @@
        IN_AIR;
     }
  
@@ -81,48 +81,47 @@
 -      ACACIA(Blocks.field_196670_r, "acacia"),
 -      DARK_OAK(Blocks.field_196672_s, "dark_oak");
 +   public static enum Type implements net.minecraftforge.common.IExtensibleEnum {
-+      OAK(Blocks.field_196662_n, "oak") { public Item getBoatItem() { return Items.field_151124_az; } },
-+      SPRUCE(Blocks.field_196664_o, "spruce") { public Item getBoatItem() { return Items.field_185150_aH; } },
-+      BIRCH(Blocks.field_196666_p, "birch") { public Item getBoatItem() { return Items.field_185151_aI; } },
-+      JUNGLE(Blocks.field_196668_q, "jungle") { public Item getBoatItem() { return Items.field_185152_aJ; } },
-+      ACACIA(Blocks.field_196670_r, "acacia") { public Item getBoatItem() { return Items.field_185153_aK; } },
-+      DARK_OAK(Blocks.field_196672_s, "dark_oak") { public Item getBoatItem() { return Items.field_185154_aL; } };
++      OAK(Blocks.field_196662_n, "oak", () -> Items.field_151124_az),
++      SPRUCE(Blocks.field_196664_o, "spruce", () -> Items.field_185150_aH),
++      BIRCH(Blocks.field_196666_p, "birch", () -> Items.field_185151_aI),
++      JUNGLE(Blocks.field_196668_q, "jungle", () -> Items.field_185152_aJ),
++      ACACIA(Blocks.field_196670_r, "acacia", () -> Items.field_185153_aK),
++      DARK_OAK(Blocks.field_196672_s, "dark_oak", () -> Items.field_185154_aL);
  
        private final String field_184990_g;
        private final Block field_195934_h;
-+      private final net.minecraft.util.IItemProvider[] drops;
-+      private Item boatItem;
++      private final java.util.function.Supplier<net.minecraft.item.ItemStack[]> dropSupplier;
++      private java.util.function.Supplier<Item> boatItemSupplier;
  
-       private Type(Block p_i48146_3_, String p_i48146_4_) {
+-      private Type(Block p_i48146_3_, String p_i48146_4_) {
++      private Type(Block p_i48146_3_, String p_i48146_4_, java.util.function.Supplier<Item> boatItemSupplier) {
           this.field_184990_g = p_i48146_4_;
           this.field_195934_h = p_i48146_3_;
-+         this.drops = new net.minecraft.util.IItemProvider[]{ Items.field_151055_y, Items.field_151055_y, p_i48146_3_, p_i48146_3_, p_i48146_3_ };
++         this.boatItemSupplier = boatItemSupplier;
++         this.dropSupplier = () -> new net.minecraft.item.ItemStack[]{ new net.minecraft.item.ItemStack(Items.field_151055_y, 2), new net.minecraft.item.ItemStack(p_i48146_3_, 3) };
        }
  
-+      private Type(Block planks, String name, net.minecraft.util.IItemProvider[] drops) {
++      private Type(Block planks, String name, java.util.function.Supplier<Item> boatItemSupplier, java.util.function.Supplier<net.minecraft.item.ItemStack[]> drops) {
 +         this.field_184990_g = name;
 +         this.field_195934_h = planks;
-+         this.drops = drops;
++         this.boatItemSupplier = boatItemSupplier;
++         this.dropSupplier = drops;
 +      }
 +
-+      public static Type create(String enumName, Block planks, String name) {
++      public static Type create(String enumName, Block planks, String name, java.util.function.Supplier<Item> boatItemSupplier) {
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +
-+      public static Type create(String enumName, Block planks, String name, net.minecraft.util.IItemProvider[] drops) {
++      public static Type create(String enumName, Block planks, String name, java.util.function.Supplier<Item> boatItemSupplier, java.util.function.Supplier<net.minecraft.item.ItemStack[]> drops) {
 +         throw new IllegalStateException("Enum not extended");
-+      }
-+
-+      public void setBoatItem(Item boatItem) {
-+         this.boatItem = boatItem;
 +      }
 +
 +      public Item getBoatItem() {
-+         return (this.boatItem == null) ? OAK.boatItem : this.boatItem;
++         return this.boatItemSupplier.get();
 +      }
 +
-+      public net.minecraft.util.IItemProvider[] getDrops() {
-+         return this.drops;
++      public com.google.common.collect.ImmutableSet<net.minecraft.item.ItemStack> getDrops() {
++         return com.google.common.collect.ImmutableSet.copyOf(this.dropSupplier.get());
 +      }
 +
        public String func_184980_a() {
