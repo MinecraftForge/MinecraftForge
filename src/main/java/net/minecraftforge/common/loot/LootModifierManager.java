@@ -26,6 +26,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
@@ -48,7 +49,12 @@ public class LootModifierManager extends JsonReloadListener {
 		instance = this;
 	}
 	public static LootModifierManager getInstance() {
+		if(instance == null) instance = new LootModifierManager();
 		return instance;
+	}
+
+	public static void loadOnServer(MinecraftServer server) {
+		server.getResourceManager().addReloadListener(getInstance());
 	}
 
 	public static <T extends IGlobalLootModification> void registerFunction(IGlobalLootModification.Serializer<? extends T> serializer) {

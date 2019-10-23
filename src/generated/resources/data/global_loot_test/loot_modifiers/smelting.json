@@ -5,7 +5,7 @@
       "predicate": {
         "enchantments": [
           {
-            "enchantment": "minecraft:silk_touch",
+            "enchantment": "global_loot_test:smelt",
             "levels": {
               "min": 1
             }
@@ -14,5 +14,5 @@
       }
     }
   ],
-  "function": "global_loot_test:smelting_test"
+  "function": "global_loot_test:smelting"
 }

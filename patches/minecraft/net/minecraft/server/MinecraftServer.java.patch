@@ -9,22 +9,22 @@
        p_213187_0_.setUncaughtExceptionHandler((p_213206_0_, p_213206_1_) -> {
           field_147145_h.error(p_213206_1_);
        });
-@@ -211,6 +211,7 @@
-    private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
-    private final CustomServerBossInfoManager field_201301_aj = new CustomServerBossInfoManager(this);
+@@ -213,6 +213,7 @@
     private final LootTableManager field_200256_aj = new LootTableManager();
-+   private final net.minecraftforge.common.loot.LootModifierManager modifierManager = new net.minecraftforge.common.loot.LootModifierManager();
     private final AdvancementManager field_200257_ak = new AdvancementManager();
     private final FunctionManager field_200258_al = new FunctionManager(this);
++   private final net.minecraftforge.common.loot.LootModifierManager lootModifierManager = new net.minecraftforge.common.loot.LootModifierManager();
     private final FrameTimer field_213215_ap = new FrameTimer();
-@@ -238,6 +239,7 @@
-       this.field_195576_ac.func_219534_a(this.field_199736_ah);
-       this.field_195576_ac.func_219534_a(this.field_199530_ag);
+    private boolean field_205745_an;
+    private boolean field_212205_ao;
+@@ -240,6 +241,7 @@
        this.field_195576_ac.func_219534_a(this.field_200256_aj);
-+      this.field_195576_ac.func_219534_a(this.modifierManager);
        this.field_195576_ac.func_219534_a(this.field_200258_al);
        this.field_195576_ac.func_219534_a(this.field_200257_ak);
++      this.field_195576_ac.func_219534_a(this.lootModifierManager);
        this.field_213217_au = Util.func_215072_e();
+       this.field_71294_K = p_i50590_10_;
+    }
 @@ -327,6 +329,8 @@
        this.func_200245_b(new TranslationTextComponent("menu.loadingLevel"));
        SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
@@ -201,18 +201,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1477,6 +1506,10 @@
-       return this.field_200256_aj;
-    }
- 
-+   //public net.minecraftforge.common.loot.LootModifierManager getLootModifierManager() {
-+   //   return this.modifierManager;
-+   //}
-+
-    public GameRules func_200252_aR() {
-       return this.func_71218_a(DimensionType.field_223227_a_).func_82736_K();
-    }
-@@ -1529,6 +1562,31 @@
+@@ -1529,6 +1558,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  

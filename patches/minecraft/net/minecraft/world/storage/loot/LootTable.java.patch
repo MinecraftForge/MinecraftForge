@@ -30,7 +30,7 @@
        this.func_216120_b(p_216113_1_, list::add);
 +      net.minecraftforge.common.loot.LootModifierManager man = net.minecraftforge.common.loot.LootModifierManager.getInstance();
 +      for(ResourceLocation loc : man.getAllLootMods()) {
-+    	  list = man.getLootModifierFromLocation(loc).apply(list, p_216113_1_);
++         list = man.getLootModifierFromLocation(loc).apply(list, p_216113_1_);
 +      }
        return list;
     }
