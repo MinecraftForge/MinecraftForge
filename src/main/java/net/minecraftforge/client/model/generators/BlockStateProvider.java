@@ -67,16 +67,19 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder> {
+/**
+ * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
+ * blockstates and their referenced models can be provided in tandem.
+ */
+public abstract class BlockStateProvider extends BlockModelProvider {
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
-    private final DataGenerator gen;
     private final Map<Block, IGeneratedBlockstate> registeredBlocks = new IdentityHashMap<>();
 
-    public BlockstateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
-        super(gen, modid, BLOCK_FOLDER, BlockModelBuilder::new, exFileHelper);
-        this.gen = gen;
+    public BlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
+        super(gen, modid, exFileHelper);
     }
 
     @Override
@@ -307,12 +310,12 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
 
     protected void fourWayBlock(FourWayBlock block, ModelFile post, ModelFile side) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
-                .part().modelFile(post).addModel().build();
+                .part().modelFile(post).addModel().end();
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 builder.part().modelFile(side).rotationY((((int) dir.getHorizontalAngle()) + 180) % 360).uvLock(true).addModel()
-                    .condition(e.getValue(), true).build();
+                    .condition(e.getValue(), true);
             }
         });
     }
@@ -387,16 +390,16 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
 
     protected void paneBlock(PaneBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
-                .part().modelFile(post).addModel().build();
+                .part().modelFile(post).addModel().end();
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 boolean alt = dir == Direction.SOUTH || dir == Direction.WEST;
                 int rotY = dir.getAxis() == Axis.X ? 90 : 0;
                 builder.part().modelFile(alt ? sideAlt : side).rotationY(rotY).addModel()
-                    .condition(e.getValue(), true).build()
+                    .condition(e.getValue(), true).end()
                 .part().modelFile(alt ? noSideAlt : noSide).rotationY(rotY).addModel()
-                    .condition(e.getValue(), false).build();
+                    .condition(e.getValue(), false);
             }
         });
     }
@@ -473,7 +476,7 @@ public abstract class BlockstateProvider extends ModelProvider<BlockModelBuilder
 
     private void saveBlockState(JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
-        Path mainOutput = gen.getOutputFolder();
+        Path mainOutput = generator.getOutputFolder();
         String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
         Path outputPath = mainOutput.resolve(pathSuffix);
         try {

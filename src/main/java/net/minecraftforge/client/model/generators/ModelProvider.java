@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -72,10 +73,15 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected abstract void registerModels();
 
     public ModelProvider(DataGenerator generator, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
+        Preconditions.checkNotNull(generator);
         this.generator = generator;
+        Preconditions.checkNotNull(modid);
         this.modid = modid;
+        Preconditions.checkNotNull(folder);
         this.folder = folder;
+        Preconditions.checkNotNull(factory);
         this.factory = factory;
+        Preconditions.checkNotNull(existingFileHelper);
         this.existingFileHelper = new ExistingFileHelperIncludingGenerated(existingFileHelper);
     }
 
@@ -84,6 +90,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     protected T getBuilder(String path) {
+        Preconditions.checkNotNull(path, "Path must not be null");
         ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
         return generatedModels.computeIfAbsent(outputLoc, factory);
     }

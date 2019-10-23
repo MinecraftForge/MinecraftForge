@@ -19,22 +19,45 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.BlockFaceUV;
+import net.minecraft.client.renderer.model.BlockPart;
+import net.minecraft.client.renderer.model.BlockPartFace;
+import net.minecraft.client.renderer.model.BlockPartRotation;
+import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+
+/**
+ * General purpose model builder, contains all the commonalities between item
+ * and block models.
+ * 
+ * @see ModelProvider
+ * @see BlockModelBuilder
+ * @see ItemModelBuilder
+ * 
+ * @param <T> Self type, for simpler chaining of methods.
+ */
 @SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
@@ -62,14 +85,37 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return true;
     }
 
+    /**
+     * Set the parent model for the current model.
+     * 
+     * @param parent the parent model
+     * @return this builder
+     * @throws NullPointerException  if {@code parent} is {@code null}
+     * @throws IllegalStateException if {@code parent} does not {@link ModelFile#assertExistence() exist}
+     */
     public T parent(ModelFile parent) {
+        Preconditions.checkNotNull(parent, "Parent must not be null");
         parent.assertExistence();
         this.parent = parent;
         return self();
     }
 
+    /**
+     * Set the texture for a given dictionary key.
+     * 
+     * @param key     the texture key
+     * @param texture the texture, can be another key e.g. {@code "#all"}
+     * @return this builder
+     * @throws NullPointerException  if {@code key} is {@code null}
+     * @throws NullPointerException  if {@code texture} is {@code null}
+     * @throws IllegalStateException if {@code texture} is not a key (does not start
+     *                               with {@code '#'}) and does not exist in any
+     *                               known resource pack
+     */
     public T texture(String key, String texture) {
-        if (texture.charAt(0)=='#') {
+        Preconditions.checkNotNull(key, "Key must not be null");
+        Preconditions.checkNotNull(texture, "Texture must not be null");
+        if (texture.charAt(0) == '#') {
             this.textures.put(key, texture);
             return self();
         } else {
@@ -83,9 +129,23 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
     }
 
+    /**
+     * Set the texture for a given dictionary key.
+     * 
+     * @param key     the texture key
+     * @param texture the texture
+     * @return this builder
+     * @throws NullPointerException  if {@code key} is {@code null}
+     * @throws NullPointerException  if {@code texture} is {@code null}
+     * @throws IllegalStateException if {@code texture} is not a key (does not start
+     *                               with {@code '#'}) and does not exist in any
+     *                               known resource pack
+     */
     public T texture(String key, ResourceLocation texture) {
+        Preconditions.checkNotNull(key, "Key must not be null");
+        Preconditions.checkNotNull(texture, "Texture must not be null");
         Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
-                "Texture "+texture+" exists in none of the specified directories!");
+                "Texture %s does not exist in any known resource pack", texture);
         this.textures.put(key, texture.toString());
         return self();
     }
@@ -110,11 +170,19 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return ret;
     }
 
+    /**
+     * Get an existing element builder
+     * 
+     * @param index the index of the existing element builder
+     * @return the element builder
+     * @throws IndexOutOfBoundsException if {@code} index is out of bounds
+     */
     public ElementBuilder element(int index) {
+        Preconditions.checkElementIndex(index, elements.size(), "Element index");
         return elements.get(index);
     }
 
-    public JsonObject serialize() {
+    JsonObject serialize() {
         JsonObject root = new JsonObject();
         if (this.parent != null) {
             root.addProperty("parent", this.parent.getLocation().toString());
@@ -220,26 +288,70 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         private Vector3f from = new Vector3f();
         private Vector3f to = new Vector3f(16, 16, 16);
         private final Map<Direction, FaceBuilder> faces = new EnumMap<>(Direction.class);
-        private BlockPartRotation rotation;
+        private RotationBuilder rotation;
         private boolean shade = true;
 
+        private void validateCoordinate(float coord, char name) {
+            Preconditions.checkArgument(!(coord < -16.0F) && !(coord > 32.0F), "Position " + name + " out of range, must be within [-16, 32]. Found: %d", coord);
+        }
+
+        private void validatePosition(Vector3f pos) {
+            validateCoordinate(pos.getX(), 'x');
+            validateCoordinate(pos.getY(), 'y');
+            validateCoordinate(pos.getZ(), 'z');
+        }
+
+        /**
+         * Set the "from" position for this element.
+         * 
+         * @param x x-position for this vector
+         * @param y y-position for this vector
+         * @param z z-position for this vector
+         * @return this builder
+         * @throws IllegalArgumentException if the vector is out of bounds (any
+         *                                  coordinate not between -16 and 32,
+         *                                  inclusive)
+         */
         public ElementBuilder from(float x, float y, float z) {
             this.from = new Vector3f(x, y, z);
+            validatePosition(this.from);
             return this;
         }
 
+        /**
+         * Set the "to" position for this element.
+         * 
+         * @param x x-position for this vector
+         * @param y y-position for this vector
+         * @param z z-position for this vector
+         * @return this builder
+         * @throws IllegalArgumentException if the vector is out of bounds (any
+         *                                  coordinate not between -16 and 32,
+         *                                  inclusive)
+         */
         public ElementBuilder to(float x, float y, float z) {
             this.to = new Vector3f(x, y, z);
+            validatePosition(this.to);
             return this;
         }
 
+        /**
+         * Return or create the face builder for the given direction.
+         * 
+         * @param dir the direction
+         * @return the face builder for the given direction
+         * @throws NullPointerException if {@code dir} is {@code null}
+         */
         public FaceBuilder face(Direction dir) {
+            Preconditions.checkNotNull(dir, "Direction must not be null");
             return faces.computeIfAbsent(dir, FaceBuilder::new);
         }
 
-        public ElementBuilder rotation(BlockPartRotation rotation) {
-            this.rotation = rotation;
-            return this;
+        public RotationBuilder rotation(BlockPartRotation rotation) {
+            if (this.rotation == null) {
+                this.rotation = new RotationBuilder();
+            }
+            return this.rotation;
         }
 
         public ElementBuilder shade(boolean shade) {
@@ -247,26 +359,65 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return this;
         }
 
+        /**
+         * Modify all <em>possible</em> faces dynamically using a function, creating new
+         * faces as necessary.
+         * 
+         * @param action the function to apply to each direction
+         * @return this builder
+         * @throws NullPointerException if {@code action} is {@code null}
+         */
         public ElementBuilder allFaces(BiConsumer<Direction, FaceBuilder> action) {
             Arrays.stream(Direction.values())
                 .forEach(d -> action.accept(d, face(d)));
             return this;
         }
 
+        /**
+         * Modify all <em>existing</em> faces dynamically using a function.
+         * 
+         * @param action the function to apply to each direction
+         * @return this builder
+         * @throws NullPointerException if {@code action} is {@code null}
+         */
         public ElementBuilder faces(BiConsumer<Direction, FaceBuilder> action) {
             faces.entrySet().stream()
                 .forEach(e -> action.accept(e.getKey(), e.getValue()));
             return this;
         }
 
+        /**
+         * Texture all <em>possible</em> faces in the current element with the given
+         * texture, creating new faces where necessary.
+         * 
+         * @param texture the texture
+         * @return this builder
+         * @throws NullPointerException if {@code texture} is {@code null}
+         */
         public ElementBuilder textureAll(String texture) {
             return allFaces(addTexture(texture));
         }
 
+        /**
+         * Texture all <em>existing</em> faces in the current element with the given
+         * texture.
+         * 
+         * @param texture the texture
+         * @return this builder
+         * @throws NullPointerException if {@code texture} is {@code null}
+         */
         public ElementBuilder texture(String texture) {
             return faces(addTexture(texture));
         }
 
+        /**
+         * Create a typical cube element, creating new faces as needed, applying the
+         * given texture, and setting the cullface.
+         * 
+         * @param texture the texture
+         * @return this builder
+         * @throws NullPointerException if {@code texture} is {@code null}
+         */
         public ElementBuilder cube(String texture) {
             return allFaces(addTexture(texture).andThen((dir, f) -> f.cullface(dir)));
         }
@@ -278,7 +429,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         BlockPart build() {
             Map<Direction, BlockPartFace> faces = this.faces.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build()));
-            return new BlockPart(from, to, faces, rotation, shade);
+            return new BlockPart(from, to, faces, rotation == null ? null : rotation.build(), shade);
         }
 
         public T end() { return self(); }
@@ -287,7 +438,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
             private Direction cullface;
             private int tintindex = -1;
-            private String texture;
+            private String texture = MissingTextureSprite.getLocation().toString();
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
 
@@ -295,7 +446,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 // param unused for functional match
             }
 
-            public FaceBuilder cullface(Direction dir) {
+            public FaceBuilder cullface(@Nullable Direction dir) {
                 this.cullface = dir;
                 return this;
             }
@@ -305,7 +456,15 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 return this;
             }
 
+            /**
+             * Set the texture for the current face.
+             * 
+             * @param texture the texture
+             * @return this builder
+             * @throws NullPointerException if {@code texture} is {@code null}
+             */
             public FaceBuilder texture(String texture) {
+                Preconditions.checkNotNull(texture, "Texture must not be null");
                 this.texture = texture;
                 return this;
             }
@@ -315,7 +474,15 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 return this;
             }
 
+            /**
+             * Set the texture rotation for the current face.
+             * 
+             * @param rot the rotation
+             * @return this builder
+             * @throws NullPointerException if {@code rot} is {@code null}
+             */
             public FaceBuilder rotation(FaceRotation rot) {
+                Preconditions.checkNotNull(rot, "Rotation must not be null");
                 this.rotation = rot;
                 return this;
             }
@@ -325,6 +492,53 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     throw new IllegalStateException("A model face must have a texture");
                 }
                 return new BlockPartFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation));
+            }
+
+            public ElementBuilder end() { return ElementBuilder.this; }
+        }
+
+        public class RotationBuilder {
+
+            private Vector3f origin;
+            private Direction.Axis axis;
+            private float angle;
+            private boolean rescale;
+
+            public RotationBuilder origin(float x, float y, float z) {
+                this.origin = new Vector3f(x, y, z);
+                return this;
+            }
+
+            /**
+             * @param axis the axis of rotation
+             * @return this builder
+             * @throws NullPointerException if {@code axis} is {@code null}
+             */
+            public RotationBuilder axis(Direction.Axis axis) {
+                Preconditions.checkNotNull(axis, "Axis must not be null");
+                this.axis = axis;
+                return this;
+            }
+
+            /**
+             * @param angle the rotation angle
+             * @return this builder
+             * @throws IllegalArgumentException if {@code angle} is invalid (not one of 0, +/-22.5, +/-45)
+             */
+            public RotationBuilder angle(float angle) {
+                // Same logic from BlockPart.Deserializer#parseAngle
+                Preconditions.checkArgument(angle != 0.0F && MathHelper.abs(angle) != 22.5F && MathHelper.abs(angle) != 45.0F, "Invalid rotation %f found, only -45/-22.5/0/22.5/45 allowed", angle);
+                this.angle = angle;
+                return this;
+            }
+
+            public RotationBuilder rescale(boolean rescale) {
+                this.rescale = rescale;
+                return this;
+            }
+
+            BlockPartRotation build() {
+                return new BlockPartRotation(origin, axis, angle, rescale);
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }
@@ -369,7 +583,15 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         private final Map<Perspective, TransformVecBuilder> transforms = new EnumMap<>(Perspective.class);
 
+        /**
+         * Begin building a new transform for the given perspective.
+         * 
+         * @param type the perspective to create or return the builder for
+         * @return the builder for the given perspective
+         * @throws NullPointerException if {@code type} is {@code null}
+         */
         public TransformVecBuilder transform(Perspective type) {
+            Preconditions.checkNotNull(type, "Perspective cannot be null");
             return transforms.computeIfAbsent(type, TransformVecBuilder::new);
         }
 

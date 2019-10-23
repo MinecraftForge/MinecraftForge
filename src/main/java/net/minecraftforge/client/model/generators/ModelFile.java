@@ -39,8 +39,12 @@ public abstract class ModelFile {
         return location;
     }
 
+    /**
+     * Assert that this model exists.
+     * @throws IllegalStateException if this model does not exist
+     */
     public void assertExistence() {
-        Preconditions.checkState(exists(), "Model at " + location + " does not exist!");
+        Preconditions.checkState(exists(), "Model at %s does not exist", location);
     }
 
     public ResourceLocation getUncheckedLocation() {

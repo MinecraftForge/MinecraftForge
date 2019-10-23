@@ -1,30 +1,42 @@
 package net.minecraftforge.client.model.generators;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import net.minecraft.block.Block;
 import net.minecraft.state.IProperty;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
 
-    private final List<MultiPart> parts = new ArrayList<>();
+    private final List<PartBuilder> parts = new ArrayList<>();
     private final Block owner;
 
     public MultiPartBlockStateBuilder(Block owner) {
         this.owner = owner;
     }
 
-    public ConfiguredModel.Builder<MultiPart> part() {
+    /**
+     * Creates a builder for models to assign to a {@link PartBuilder}, which when
+     * completed via {@link ConfiguredModel.Builder#addModel()} will assign the
+     * resultant set of models to the part and return it for further processing.
+     * 
+     * @return the model builder
+     * @see ConfiguredModel.Builder
+     */
+    public ConfiguredModel.Builder<PartBuilder> part() {
         return ConfiguredModel.builder(this);
     }
 
-    MultiPartBlockStateBuilder addPart(MultiPart part) {
+    MultiPartBlockStateBuilder addPart(PartBuilder part) {
         this.parts.add(part);
         return this;
     }
@@ -32,7 +44,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
     @Override
     public JsonObject toJson() {
         JsonArray variants = new JsonArray();
-        for (MultiPart part : parts) {
+        for (PartBuilder part : parts) {
             variants.add(part.toJson());
         }
         JsonObject main = new JsonObject();
@@ -40,58 +52,60 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         return main;
     }
 
-    public class MultiPart {
-        public BlockstateProvider.ConfiguredModelList models;
+    public class PartBuilder {
+        public BlockStateProvider.ConfiguredModelList models;
         public boolean useOr;
-        public final List<PropertyWithValues<?>> conditions;
+        public final Multimap<IProperty<?>, Comparable<?>> conditions = HashMultimap.create();
 
-        public MultiPart(BlockstateProvider.ConfiguredModelList models, PropertyWithValues<?>... conditionsArray) {
-            this(models, false);
-        }
-
-        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, PropertyWithValues<?>... conditionsArray) {
-            this(models, useOr, Lists.newArrayList(conditionsArray));
-        }
-
-        public MultiPart(BlockstateProvider.ConfiguredModelList models, boolean useOr, List<PropertyWithValues<?>> conditionsArray) {
-            conditions = conditionsArray;
-            Preconditions.checkArgument(conditions.size() == conditions.stream()
-                    .map(pwv -> pwv.prop)
-                    .distinct()
-                    .count(), "Condition list must not have duplicates");
-            Preconditions.checkArgument(conditions.stream().noneMatch(pwv -> pwv.values.isEmpty()), "Conditions must not have empty model lists");
+        PartBuilder(BlockStateProvider.ConfiguredModelList models) {
             this.models = models;
-            this.useOr = useOr;
         }
 
-        public MultiPart useOr() {
+        public PartBuilder useOr() {
             this.useOr = true;
             return this;
         }
 
+        /**
+         * Set a condition for this part, which consists of a property and a set of
+         * valid values. Can be called multiple times for multiple different properties.
+         * 
+         * @param <T>    the type of the property value
+         * @param prop   the property
+         * @param values a set of valid values
+         * @return this builder
+         * @throws NullPointerException     if {@code prop} is {@code null}
+         * @throws NullPointerException     if {@code values} is {@code null}
+         * @throws IllegalArgumentException if {@code values} is empty
+         * @throws IllegalArgumentException if {@code prop} has already been configured
+         * @throws IllegalArgumentException if {@code prop} is not applicable to the
+         *                                  current block's state
+         */
         @SafeVarargs
-        public final <T extends Comparable<T>> MultiPart condition(IProperty<T> prop, T... values) {
-            this.conditions.add(new PropertyWithValues<>(prop, values));
+        public final <T extends Comparable<T>> PartBuilder condition(IProperty<T> prop, T... values) {
+            Preconditions.checkNotNull(prop, "Property must not be null");
+            Preconditions.checkNotNull(values, "Value list must not be null");
+            Preconditions.checkArgument(values.length > 0, "Value list must not be empty");
+            Preconditions.checkArgument(!conditions.containsKey(prop), "Cannot set condition for property \"%s\" more than once", prop.getName());
             Preconditions.checkArgument(canApplyTo(owner), "IProperty %s is not valid for the block %s", prop, owner);
+            this.conditions.putAll(prop, Arrays.asList(values));
             return this;
         }
 
-        public MultiPartBlockStateBuilder build() {
-            return MultiPartBlockStateBuilder.this;
-        }
+        public MultiPartBlockStateBuilder end() { return MultiPartBlockStateBuilder.this; }
 
-        public JsonObject toJson() {
+        JsonObject toJson() {
             JsonObject out = new JsonObject();
             if (!conditions.isEmpty()) {
                 JsonObject when = new JsonObject();
-                for (PropertyWithValues<?> prop : conditions) {
+                for (Entry<IProperty<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet()) {
                     StringBuilder activeString = new StringBuilder();
-                    for (Object val : prop.values) {
+                    for (Object val : e.getValue()) {
                         if (activeString.length() > 0)
                             activeString.append("|");
                         activeString.append(val.toString());
                     }
-                    when.addProperty(prop.prop.getName(), activeString.toString());
+                    when.addProperty(e.getKey().getName(), activeString.toString());
                 }
                 if (useOr) {
                     JsonObject innerWhen = when;
@@ -105,21 +119,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         }
 
         public boolean canApplyTo(Block b) {
-            for (PropertyWithValues<?> p : conditions)
-                if (!b.getStateContainer().getProperties().contains(p.prop))
-                    return false;
-            return true;
-        }
-    }
-
-    public static final class PropertyWithValues<T extends Comparable<T>> {
-        public final IProperty<T> prop;
-        public final List<T> values;
-
-        @SafeVarargs
-        public PropertyWithValues(IProperty<T> prop, T... values) {
-            this.prop = prop;
-            this.values = Arrays.asList(values);
+            return b.getStateContainer().getProperties().containsAll(conditions.keySet());
         }
     }
 }

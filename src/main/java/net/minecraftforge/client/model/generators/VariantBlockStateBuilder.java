@@ -45,15 +45,34 @@ import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
-import net.minecraftforge.client.model.generators.BlockstateProvider.ConfiguredModelList;
+import net.minecraftforge.client.model.generators.BlockStateProvider.ConfiguredModelList;
 
+/**
+ * Builder for variant-type blockstates, i.e. non-multipart blockstates. Should
+ * not be manually instantiated, instead use
+ * {@link BlockStateProvider#getVariantBuilder(Block)}.
+ * <p>
+ * Variants can either be set via
+ * {@link #setModels(PartialBlockstate, ConfiguredModel...)} or
+ * {@link #addModels(PartialBlockstate, ConfiguredModel...)}, where model(s) can
+ * be assigned directly to {@link PartialBlockstate partial states}, or builder
+ * style via {@link #partialState()} and its subsequent methods.
+ * <p>
+ * This class also provides the convenience methods
+ * {@link #forAllStates(Function)} and
+ * {@link #forAllStatesExcept(Function, IProperty...)} for cases where the model
+ * for each variant can be decided dynamically based on the state's property
+ * values.
+ * 
+ * @see BlockStateProvider
+ */
 public class VariantBlockStateBuilder implements IGeneratedBlockstate {
 
     private final Block owner;
     private final Map<PartialBlockstate, ConfiguredModelList> models = new LinkedHashMap<>();
     private final Set<BlockState> coveredStates = new HashSet<>();
 
-    public VariantBlockStateBuilder(Block owner) {
+    VariantBlockStateBuilder(Block owner) {
         this.owner = owner;
     }
 
@@ -79,24 +98,50 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
         return main;
     }
 
-    public VariantBlockStateBuilder addModels(PartialBlockstate state, ConfiguredModel... model) {
+    /**
+     * Assign some models to a given {@link PartialBlockstate partial state}.
+     * 
+     * @param state  The {@link PartialBlockstate partial state} for which to add
+     *               the models
+     * @param models A set of models to add to this state
+     * @return this builder
+     * @throws NullPointerException     if {@code state} is {@code null}
+     * @throws IllegalArgumentException if {@code models} is empty
+     * @throws IllegalArgumentException if {@code state}'s owning block differs from
+     *                                  the builder's
+     * @throws IllegalArgumentException if {@code state} partially matches another
+     *                                  state which has already been configured
+     */
+    public VariantBlockStateBuilder addModels(PartialBlockstate state, ConfiguredModel... models) {
         Preconditions.checkNotNull(state, "state must not be null");
-        Preconditions.checkArgument(model.length > 0, "Cannot set models to empty array");
+        Preconditions.checkArgument(models.length > 0, "Cannot set models to empty array");
         Preconditions.checkArgument(state.getOwner() == owner, "Cannot set models for a different block. Found: %s, Current: %s", state.getOwner(), owner);
-        if (!models.containsKey(state)) {
+        if (!this.models.containsKey(state)) {
             Preconditions.checkArgument(disjointToAll(state), "Cannot set models for a state for which a partial match has already been configured");
-            models.put(state, new ConfiguredModelList(model));
+            this.models.put(state, new ConfiguredModelList(models));
             for (BlockState fullState : owner.getStateContainer().getValidStates()) {
                 if (state.test(fullState)) {
                     coveredStates.add(fullState);
                 }
             }
         } else {
-            models.compute(state, ($, cml) -> cml.append(model));
+            this.models.compute(state, ($, cml) -> cml.append(models));
         }
         return this;
     }
 
+    /**
+     * Assign some models to a given {@link PartialBlockstate partial state},
+     * throwing an exception if the state has already been configured. Otherwise,
+     * simply calls {@link #addModels(PartialBlockstate, ConfiguredModel...)}.
+     * 
+     * @param state  The {@link PartialBlockstate partial state} for which to set
+     *               the models
+     * @param models A set of models to assign to this state
+     * @return this builder
+     * @throws IllegalArgumentException if {@code state} has already been configured
+     * @see #addModels(PartialBlockstate, ConfiguredModel...)
+     */
     public VariantBlockStateBuilder setModels(PartialBlockstate state, ConfiguredModel... model) {
         Preconditions.checkArgument(!models.containsKey(state), "Cannot set models for a state that has already been configured: %s", state);
         addModels(state, model);
@@ -136,11 +181,11 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
         @Nullable
         private final VariantBlockStateBuilder outerBuilder;
 
-        public PartialBlockstate(Block owner, @Nullable VariantBlockStateBuilder outerBuilder) {
+        PartialBlockstate(Block owner, @Nullable VariantBlockStateBuilder outerBuilder) {
             this(owner, ImmutableMap.of(), outerBuilder);
         }
 
-        public PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable VariantBlockStateBuilder outerBuilder) {
+        PartialBlockstate(Block owner, Map<IProperty<?>, Comparable<?>> setStates, @Nullable VariantBlockStateBuilder outerBuilder) {
             this.owner = owner;
             this.outerBuilder = outerBuilder;
             for (Map.Entry<IProperty<?>, Comparable<?>> entry : setStates.entrySet()) {
@@ -164,6 +209,14 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
             Preconditions.checkNotNull(outerBuilder, "Partial blockstate must have a valid owner to perform this action");
         }
 
+        /**
+         * Creates a builder for models to assign to this state, which when completed
+         * via {@link ConfiguredModel.Builder#addModel()} will assign the resultant set
+         * of models to this state.
+         * 
+         * @return the model builder
+         * @see ConfiguredModel.Builder
+         */
         public ConfiguredModel.Builder<VariantBlockStateBuilder> modelForState() {
             checkValidOwner();
             return ConfiguredModel.builder(outerBuilder, this);
@@ -176,7 +229,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * 
          * @param models The models to add.
          * @return {@code this}
-         * @throws NullPointerException If the parent builder is null
+         * @throws NullPointerException If the parent builder is {@code null}
          */
         public PartialBlockstate addModels(ConfiguredModel... models) {
             checkValidOwner();
@@ -189,7 +242,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * 
          * @param models The models to set
          * @return The parent builder instance
-         * @throws NullPointerException If the parent builder is null
+         * @throws NullPointerException If the parent builder is {@code null}
          */
         public VariantBlockStateBuilder setModels(ConfiguredModel... models) {
             checkValidOwner();
@@ -203,7 +256,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * 
          * @return A fresh partial state as specified by
          *         {@link VariantBlockStateBuilder#partialState()}.
-         * @throws NullPointerException If the parent builder is null
+         * @throws NullPointerException If the parent builder is {@code null}
          */
         public PartialBlockstate partialState() {
             checkValidOwner();

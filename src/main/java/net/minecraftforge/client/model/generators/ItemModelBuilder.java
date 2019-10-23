@@ -27,6 +27,10 @@ import java.util.Map;
 import net.minecraft.client.renderer.model.ItemOverride;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * Builder for item models, adds the ability to build overrides via
+ * {@link #override()}.
+ */
 public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     protected List<ItemOverride> overrides = new ArrayList<>();

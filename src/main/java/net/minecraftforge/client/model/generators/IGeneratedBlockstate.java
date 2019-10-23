@@ -2,7 +2,7 @@ package net.minecraftforge.client.model.generators;
 
 import com.google.gson.JsonObject;
 
-public interface IGeneratedBlockstate {
+interface IGeneratedBlockstate {
 
     JsonObject toJson();
 }

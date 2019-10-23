@@ -47,7 +47,7 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.client.model.generators.BlockstateProvider;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -173,7 +173,7 @@ public class DataGeneratorTest
         }
     }
 
-   public static class BlockStates extends BlockstateProvider
+   public static class BlockStates extends BlockStateProvider
    {
 
        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
