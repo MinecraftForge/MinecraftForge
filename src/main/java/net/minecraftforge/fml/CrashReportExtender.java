@@ -25,12 +25,13 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class CrashReportExtender
 {
-    private static List<ICrashCallable> crashCallables = new ArrayList<>();
+    private static List<ICrashCallable> crashCallables = Collections.synchronizedList(new ArrayList<>());
 
     public static void enhanceCrashReport(final CrashReport crashReport, final CrashReportCategory category)
     {

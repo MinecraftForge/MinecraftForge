@@ -1,15 +1,34 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -69,7 +69,7 @@
+@@ -69,8 +69,8 @@
                    }
                 }
  
 -               SoundType soundtype = blockstate1.func_215695_r();
+-               world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
 +               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
-                world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++               world.func_184133_a(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, p_195942_1_.func_195999_j()), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                 itemstack.func_190918_g(1);
                 return ActionResultType.SUCCESS;
-@@ -189,10 +189,18 @@
+             }
+@@ -78,10 +78,16 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
+    protected SoundEvent func_219983_a(BlockState p_219983_1_) {
+       return p_219983_1_.func_215695_r().func_185841_e();
+    }
+ 
++   //Forge: Sensitive version of BlockItem#getPlaceSound
++   protected SoundEvent getPlaceSound(BlockState state, World world, BlockPos pos, PlayerEntity entity) {
++      return state.getSoundType(world, pos, entity).func_185841_e();
++   }
++
+    @Nullable
+    public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
+       return p_219984_1_;
+@@ -189,10 +195,18 @@
     }
  
     public Block func_179223_d() {

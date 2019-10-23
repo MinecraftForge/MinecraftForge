@@ -34,12 +34,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -51,8 +52,8 @@ public class FMLPlayMessages
      * Used to spawn a custom entity without the same restrictions as
      * {@link net.minecraft.network.play.server.SSpawnObjectPacket} or {@link net.minecraft.network.play.server.SSpawnMobPacket}
      *
-     * Ensure your {@link EntityType} registration supplies a {@link EntityType.Builder#customClientFactory} or the
-     * mob won't actually spawn on the client.
+     * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
+     * see {@link EntityType.Builder#setCustomClientFactory}.
      */
     public static class SpawnEntity
     {
@@ -256,7 +257,7 @@ public class FMLPlayMessages
             this(Registry.MENU.getId(id), windowId, name, additionalData);
         }
 
-        private OpenContainer(int id, int windowId, ITextComponent name, PacketBuffer additionalData) 
+        private OpenContainer(int id, int windowId, ITextComponent name, PacketBuffer additionalData)
         {
             this.id = id;
             this.windowId = windowId;
@@ -306,6 +307,62 @@ public class FMLPlayMessages
 
         public PacketBuffer getAdditionalData() {
             return additionalData;
+        }
+    }
+
+    public static class DimensionInfoMessage
+    {
+        private ResourceLocation dimName;
+        private boolean skylight;
+        private int id;
+        private ResourceLocation modDimensionName;
+        private PacketBuffer extraData;
+
+        DimensionInfoMessage(DimensionType type) {
+            id = type.getId() + 1;
+            dimName = type.getRegistryName();
+            modDimensionName = type.getModType().getRegistryName();
+            skylight = type.func_218272_d();
+            extraData = new PacketBuffer(Unpooled.buffer());
+            type.getModType().write(extraData, true);
+        }
+
+        DimensionInfoMessage(final int dimId, final ResourceLocation dimname, final ResourceLocation modDimensionName, final boolean skylight, final PacketBuffer extraData) {
+            id = dimId;
+            this.dimName = dimname;
+            this.modDimensionName = modDimensionName;
+            this.skylight = skylight;
+            this.extraData = extraData;
+        }
+
+        public static DimensionInfoMessage decode(PacketBuffer buffer) {
+            int dimId = buffer.readInt();
+            ResourceLocation dimname = buffer.readResourceLocation();
+            ResourceLocation moddimname = buffer.readResourceLocation();
+            boolean skylight = buffer.readBoolean();
+            PacketBuffer pb = new PacketBuffer(Unpooled.wrappedBuffer(buffer.readByteArray()));
+            return new DimensionInfoMessage(dimId, dimname, moddimname, skylight, pb);
+        }
+
+        public static void encode(DimensionInfoMessage message, PacketBuffer buffer) {
+            buffer.writeInt(message.id);
+            buffer.writeResourceLocation(message.dimName);
+            buffer.writeResourceLocation(message.modDimensionName);
+            buffer.writeBoolean(message.skylight);
+            buffer.writeByteArray(message.extraData.array());
+        }
+
+        private DimensionType makeDummyDimensionType() {
+            final ModDimension modDim = ForgeRegistries.MOD_DIMENSIONS.getValue(modDimensionName);
+            // default to overworld if no moddim found
+            if (modDim == null) return DimensionType.OVERWORLD;
+            modDim.read(extraData, true);
+            return new DimensionType(id, "dummy", "dummy", modDim.getFactory(), skylight, modDim, extraData);
+        }
+
+        public static boolean handle(final DimensionInfoMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
+            contextSupplier.get().enqueueWork(()-> NetworkHooks.addCachedDimensionType(message.makeDummyDimensionType(), message.dimName));
+            return true;
         }
     }
 }

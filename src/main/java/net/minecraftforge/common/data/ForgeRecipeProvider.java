@@ -87,6 +87,10 @@ public class ForgeRecipeProvider extends RecipeProvider
         exclude(Items.IRON_NUGGET);
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
+        
+        exclude(Blocks.COBBLESTONE_STAIRS);
+        exclude(Blocks.COBBLESTONE_SLAB);
+        exclude(Blocks.COBBLESTONE_WALL);
 
         super.registerRecipes(vanilla -> {
             IFinishedRecipe modified = enhance(vanilla);

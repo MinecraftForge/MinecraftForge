@@ -255,7 +255,7 @@ public class ForgeHooksClient
         skyInit = true;
 
         GameSettings settings = Minecraft.getInstance().gameSettings;
-        int[] ranges = ForgeMod.blendRanges;
+        int[] ranges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         int distance = 0;
         if (settings.fancyGraphics && ranges.length > 0)
         {
@@ -320,13 +320,10 @@ public class ForgeHooksClient
             default: break;
         }
 
-        if (line != null)
-        {
-            // if we have a line, render it in the bottom right, above Mojang's copyright line
-            gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
-        }
+        forgeStatusLine = line;
     }
 
+    public static String forgeStatusLine;
     public static ISound playSound(SoundEngine manager, ISound sound)
     {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);

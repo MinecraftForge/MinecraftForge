@@ -8,8 +8,26 @@
 +   private final Map<Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean>, IBakedModel> field_217850_G = Maps.newHashMap();
     private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
     private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
-    private final AtlasTexture.SheetData field_217853_J;
-@@ -142,12 +142,19 @@
+    private AtlasTexture.SheetData field_217853_J;
+@@ -107,9 +107,17 @@
+    });
+ 
+    public ModelBakery(IResourceManager p_i51735_1_, AtlasTexture p_i51735_2_, BlockColors p_i51735_3_, IProfiler p_i51735_4_) {
++      this(p_i51735_1_, p_i51735_2_, p_i51735_3_, true);
++      processLoading(p_i51735_4_);
++   }
++
++   protected ModelBakery(IResourceManager p_i51735_1_, AtlasTexture p_i51735_2_, BlockColors p_i51735_3_, boolean vanillaBakery) {
+       this.field_177598_f = p_i51735_1_;
+       this.field_177609_j = p_i51735_2_;
+       this.field_225365_D = p_i51735_3_;
++   }
++
++   protected void processLoading(IProfiler p_i51735_4_) {
+       p_i51735_4_.func_76320_a("missing_model");
+ 
+       try {
+@@ -142,12 +150,19 @@
  
        p_i51735_4_.func_219895_b("special");
        this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
@@ -29,16 +47,16 @@
        set.forEach((p_217833_0_) -> {
           field_177603_c.warn("Unable to resolve texture reference: {}", (Object)p_217833_0_);
        });
-@@ -288,7 +295,7 @@
+@@ -288,7 +303,7 @@
                       {
                          lvt_13_5_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_217839_1_) -> {
                             try (InputStream inputstream = p_217839_1_.func_199027_b()) {
 -                              Pair<String, BlockModelDefinition> pair2 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.func_209577_a(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8)));
-+                              Pair<String, BlockModelDefinition> pair2 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_));
++                              Pair<String, BlockModelDefinition> pair2 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_, this, this::func_209593_a));
                                return pair2;
                             } catch (Exception exception1) {
                                throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
-@@ -404,7 +411,12 @@
+@@ -404,7 +419,12 @@
  
     @Nullable
     public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
@@ -52,7 +70,7 @@
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
        } else {
-@@ -412,11 +424,11 @@
+@@ -412,11 +432,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
@@ -66,7 +84,7 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -471,6 +483,10 @@
+@@ -471,6 +491,10 @@
        return this.field_225367_M;
     }
  
