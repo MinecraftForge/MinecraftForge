@@ -34,6 +34,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(GlobalLootModifiersTest.MODID)
@@ -84,16 +85,11 @@ public class GlobalLootModifiersTest {
 		}
 
 		private static ItemStack smelt(ItemStack stack, LootContext context) {
-			Optional<FurnaceRecipe> optional = context.getWorld().getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(stack), context.getWorld());
-			if (optional.isPresent()) {
-				ItemStack itemstack = optional.get().getRecipeOutput();
-				if (!itemstack.isEmpty()) {
-					ItemStack itemstack1 = itemstack.copy();
-					itemstack1.setCount(stack.getCount() * itemstack.getCount());
-					return itemstack1;
-				}
-			}
-			return stack;
+			return context.getWorld().getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(stack), context.getWorld())
+	                .map(FurnaceRecipe::getRecipeOutput)
+	                .filter(itemStack -> !itemStack.isEmpty())
+	                .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
+	                .orElse(stack);
 		}
 
 		private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
