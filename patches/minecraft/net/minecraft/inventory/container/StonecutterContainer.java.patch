@@ -1,0 +1,11 @@
+--- a/net/minecraft/inventory/container/StonecutterContainer.java
++++ b/net/minecraft/inventory/container/StonecutterContainer.java
+@@ -183,7 +183,7 @@
+             if (!this.func_75135_a(itemstack1, 2, 38, false)) {
+                return ItemStack.field_190927_a;
+             }
+-         } else if (field_217084_c.contains(item)) {
++         } else if (net.minecraftforge.common.Tags.Items.STONECUTTER_MASS_CRAFTABLE.func_199685_a_(item)) {
+             if (!this.func_75135_a(itemstack1, 0, 1, false)) {
+                return ItemStack.field_190927_a;
+             }
