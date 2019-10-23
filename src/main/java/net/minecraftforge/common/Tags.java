@@ -269,6 +269,9 @@ public class Tags
         public static final Tag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final Tag<Item> STRING = tag("string");
 
+        public static final Tag<Item> SUPPORTS_BEACON = tag("supports_beacon");
+        public static final Tag<Item> SUPPORTS_CONDUIT = tag("supports_conduit");
+
         private static Tag<Item> tag(String name)
         {
             return new ItemTags.Wrapper(new ResourceLocation("forge", name));
