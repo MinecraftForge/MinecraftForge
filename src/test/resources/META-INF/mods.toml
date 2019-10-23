@@ -55,3 +55,7 @@ loaderVersion="[28,)"
     modId="flower_pot_test"
 [[mods]]
     modId="global_loot_test"
+[[mods]]
+    modId="player_xp_event_test"
+[[mods]]
+    modId="forgeblockstatesloader"

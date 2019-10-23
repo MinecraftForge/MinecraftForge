@@ -58,6 +58,12 @@ public class NetworkEvent extends Event
         this.loginIndex = loginIndex;
     }
 
+    public NetworkEvent(final Supplier<Context> source) {
+        this.source = source;
+        this.payload = null;
+        this.loginIndex = -1;
+    }
+
     public PacketBuffer getPayload()
     {
         return payload;
@@ -120,6 +126,30 @@ public class NetworkEvent extends Event
     public static class LoginPayloadEvent extends NetworkEvent {
         LoginPayloadEvent(final PacketBuffer payload, final Supplier<Context> source, final int loginIndex) {
             super(payload, source, loginIndex);
+        }
+    }
+
+    public enum RegistrationChangeType {
+        REGISTER, UNREGISTER;
+    }
+
+    /**
+     * Fired when the channel registration (see minecraft custom channel documentation) changes. Note the payload
+     * is not exposed. This fires to the resource location that owns the channel, when it's registration changes state.
+     *
+     * It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
+     * It just directly dispatches upon receipt.
+     */
+    public static class ChannelRegistrationChangeEvent extends NetworkEvent {
+        private final RegistrationChangeType changeType;
+
+        ChannelRegistrationChangeEvent(final Supplier<Context> source, RegistrationChangeType changeType) {
+            super(source);
+            this.changeType = changeType;
+        }
+
+        public RegistrationChangeType getRegistrationChangeType() {
+            return this.changeType;
         }
     }
     /**
@@ -202,7 +232,7 @@ public class NetworkEvent extends Event
             return null;
         }
 
-        NetworkManager getNetworkManager() {
+        public NetworkManager getNetworkManager() {
             return networkManager;
         }
     }

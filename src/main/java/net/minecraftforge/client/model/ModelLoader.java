@@ -136,10 +136,11 @@ public final class ModelLoader extends ModelBakery
 
     public ModelLoader(IResourceManager manager, AtlasTexture map, BlockColors colours, IProfiler profiler)
     {
-        super(manager, map, colours, profiler);
+        super(manager, map, colours, false);
         VanillaLoader.INSTANCE.setLoader(this);
         VariantLoader.INSTANCE.setLoader(this);
         ModelLoaderRegistry.clearModelCache(manager);
+        processLoading(profiler);
     }
 
     private static Set<ResourceLocation> specialModels = new HashSet<>();
@@ -257,6 +258,10 @@ public final class ModelLoader extends ModelBakery
                     builder.add(new ResourceLocation(s));
                 }
             }
+
+            if (model.parent != null)
+                builder.addAll(model.parent.getTextures(modelGetter, missingTextureErrors));
+
             return builder.build();
         }
 
@@ -483,8 +488,6 @@ public final class ModelLoader extends ModelBakery
                     model = ModelLoaderRegistry.getModel(loc);
                 }
 
-                // FIXME: is this the place? messes up dependency and texture resolution
-                model = v.process(model);
                 for(ResourceLocation location : model.getDependencies())
                 {
                     ModelLoaderRegistry.getModelOrMissing(location);
