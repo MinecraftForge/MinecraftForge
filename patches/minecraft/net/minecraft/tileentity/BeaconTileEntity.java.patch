@@ -17,7 +17,7 @@
              for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
 -               Block block = this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).func_177230_c();
 -               if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S) {
-+               if (!this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).isBeaconBase(this.field_145850_b, new BlockPos(k, j, l), func_174877_v())) {
++               if (!(this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).isBeaconBase(this.field_145850_b, new BlockPos(k, j, l), func_174877_v()) || net.minecraftforge.common.Tags.Blocks.SUPPORTS_BEACON.func_199685_a_(this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).func_177230_c()))) {
                    flag = false;
                    break;
                 }
