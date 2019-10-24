@@ -56,14 +56,14 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
     @Override
     public List<IModFile> scanMods() {
         LOGGER.debug(SCAN,"Scanning mods dir {} for mods", this.modFolder);
-        List<Path> excluded = new ModDirTransformerDiscoverer().candidates(FMLPaths.GAMEDIR.get());
-        return uncheck(()-> Files.list(this.modFolder)).
-                filter(p->!excluded.contains(p)).
-                sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString()))).
-                filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX)).
-                map(p->new ModFile(p, this)).
-                peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf))).
-                collect(Collectors.toList());
+        List<Path> excluded = ModDirTransformerDiscoverer.allExcluded();
+        return uncheck(()-> Files.list(this.modFolder))
+                .filter(p->!excluded.contains(p))
+                .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
+                .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
+                .map(p->new ModFile(p, this))
+                .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
+                .collect(Collectors.toList());
     }
 
     @Override
