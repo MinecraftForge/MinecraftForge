@@ -47,7 +47,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
         overrides.add(ret);
         return ret;
     }
-    
+
     /**
      * Get an existing override builder
      * 
@@ -59,7 +59,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
         Preconditions.checkElementIndex(index, overrides.size(), "override");
         return overrides.get(index);
     }
-    
+
     @Override
     public JsonObject toJson() {
         JsonObject root = super.toJson();
@@ -72,7 +72,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
     }
 
     public class OverrideBuilder {
-        
+
         private ModelFile model;
         private final Map<ResourceLocation, Float> predicates = new LinkedHashMap<>();
 
@@ -88,7 +88,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
         }
 
         public ItemModelBuilder end() { return ItemModelBuilder.this; }
-        
+
         JsonObject toJson() {
             JsonObject ret = new JsonObject();
             JsonObject predicatesJson = new JsonObject();

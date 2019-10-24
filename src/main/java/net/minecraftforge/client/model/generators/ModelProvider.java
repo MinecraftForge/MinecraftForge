@@ -288,7 +288,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected T paneNoSideAlt(String name, ResourceLocation pane) {
         return singleTexture(name, BLOCK_FOLDER + "/template_glass_pane_noside_alt", "pane", pane);
     }
-    
+
     private T door(String name, String model, ResourceLocation bottom, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/" + model)
                 .texture("bottom", bottom)

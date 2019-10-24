@@ -42,11 +42,11 @@ public class ExistingFileHelper {
         };
         this.enable = enable;
     }
-    
+
     private IResourceManager getManager(ResourcePackType type) {
         return type == ResourcePackType.CLIENT_RESOURCES ? clientResources : serverData;
     }
-    
+
     private ResourceLocation getLocation(ResourceLocation base, String suffix, String prefix) {
         return new ResourceLocation(base.getNamespace(), prefix + "/" + base.getPath() + suffix);
     }

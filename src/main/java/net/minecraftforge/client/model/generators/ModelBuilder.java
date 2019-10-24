@@ -276,14 +276,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         return root;
     }
-    
+
     private String serializeLocOrKey(String tex) {
         if (tex.charAt(0) == '#') {
             return tex;
         }
         return serializeLoc(new ResourceLocation(tex));
     }
-    
+
     String serializeLoc(ResourceLocation loc) {
         if (loc.getNamespace().equals("minecraft")) {
             return loc.getPath();
@@ -298,7 +298,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         ret.add(serializeFloat(vec.getZ()));
         return ret;
     }
-    
+
     private Number serializeFloat(float f) {
         if ((int) f == f) {
             return (int) f;
@@ -646,7 +646,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 this.translation = new Vector3f(x, y, z);
                 return this;
             }
-            
+
             public TransformVecBuilder scale(float sc) {
                 return scale(sc, sc, sc);
             }

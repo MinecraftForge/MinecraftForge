@@ -267,7 +267,7 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     protected void stairsBlock(StairsBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         stairsBlockInternal(block, name + "_stairs", side, bottom, top);
     }
-    
+
     private void stairsBlockInternal(StairsBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         ModelFile stairs = stairs(baseName, side, bottom, top);
         ModelFile stairsInner = stairsInner(baseName + "_inner", side, bottom, top);
@@ -319,7 +319,7 @@ public abstract class BlockStateProvider extends BlockModelProvider {
                 .part().modelFile(post).addModel().end();
         fourWayMultipart(builder, side);
     }
-    
+
     protected void fourWayMultipart(MultiPartBlockStateBuilder builder, ModelFile side) {
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
@@ -379,11 +379,11 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     protected void wallBlock(WallBlock block, String name, ResourceLocation texture) {
         wallBlockInternal(block, name + "_wall", texture);
     }
-    
+
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, wallPost(baseName + "_post", texture), wallSide(baseName + "_side", texture));
     }
-    
+
     protected void wallBlock(WallBlock block, ModelFile post, ModelFile side) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel()
