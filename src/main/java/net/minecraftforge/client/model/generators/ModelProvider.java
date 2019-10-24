@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -65,6 +66,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected final String modid;
     protected final String folder;
     protected final Function<ResourceLocation, T> factory;
+    @VisibleForTesting
     protected final Map<ResourceLocation, T> generatedModels = new HashMap<>();
     protected final ExistingFileHelper existingFileHelper;
 
@@ -226,7 +228,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     protected T fenceSide(String name, ResourceLocation texture) {
-        return singleTexture(name, BLOCK_FOLDER + "/fence_post", texture);
+        return singleTexture(name, BLOCK_FOLDER + "/fence_side", texture);
     }
 
     protected T fenceInventory(String name, ResourceLocation texture) {
@@ -249,12 +251,12 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return singleTexture(name, BLOCK_FOLDER + "/template_fence_gate_wall_open", texture);
     }
 
-    protected T wallPost(String name, ResourceLocation texture) {
-        return singleTexture(name, BLOCK_FOLDER + "/template_wall_post", texture);
+    protected T wallPost(String name, ResourceLocation wall) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_wall_post", "wall", wall);
     }
 
-    protected T wallSide(String name, ResourceLocation texture) {
-        return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", texture);
+    protected T wallSide(String name, ResourceLocation wall) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
 
     protected T wallInventory(String name, ResourceLocation wall) {
@@ -279,32 +281,34 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return pane(name, "template_glass_pane_side_alt", pane, edge);
     }
 
-    protected T paneNoSide(String name, ResourceLocation pane, ResourceLocation edge) {
-        return pane(name, "template_glass_pane_noside", pane, edge);
+    protected T paneNoSide(String name, ResourceLocation pane) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_glass_pane_noside", "pane", pane);
     }
 
-    protected T paneNoSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
-        return pane(name, "template_glass_pane_noside_alt", pane, edge);
+    protected T paneNoSideAlt(String name, ResourceLocation pane) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_glass_pane_noside_alt", "pane", pane);
+    }
+    
+    private T door(String name, String model, ResourceLocation bottom, ResourceLocation top) {
+        return withExistingParent(name, BLOCK_FOLDER + "/" + model)
+                .texture("bottom", bottom)
+                .texture("top", top);
     }
 
-    protected T doorBottomLeft(String name, ResourceLocation bottom) {
-        return singleTexture(name, BLOCK_FOLDER + "/door_bottom", "bottom", bottom);
+    protected T doorBottomLeft(String name, ResourceLocation bottom, ResourceLocation top) {
+        return door(name, "door_bottom", bottom, top);
     }
 
-    protected T doorBottomRight(String name, ResourceLocation bottom) {
-        return singleTexture(name, BLOCK_FOLDER + "/door_bottom_rh", "bottom", bottom);
+    protected T doorBottomRight(String name, ResourceLocation bottom, ResourceLocation top) {
+        return door(name, "door_bottom_rh", bottom, top);
     }
 
     protected T doorTopLeft(String name, ResourceLocation bottom, ResourceLocation top) {
-        return withExistingParent(name, BLOCK_FOLDER + "/door_top")
-                .texture("bottom", bottom)
-                .texture("top", top);
+        return door(name, "door_top", bottom, top);
     }
 
     protected T doorTopRight(String name, ResourceLocation bottom, ResourceLocation top) {
-        return withExistingParent(name, BLOCK_FOLDER + "/door_top_rh")
-                .texture("bottom", bottom)
-                .texture("top", top);
+        return door(name, "door_top_rh", bottom, top);
     }
 
     protected T trapdoorBottom(String name, ResourceLocation texture) {
@@ -362,7 +366,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         for (T model : generatedModels.values()) {
             Path target = getPath(model);
             try {
-                IDataProvider.save(GSON, cache, model.serialize(), target);
+                IDataProvider.save(GSON, cache, model.toJson(), target);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

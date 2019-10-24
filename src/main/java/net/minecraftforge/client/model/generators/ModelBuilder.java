@@ -21,8 +21,7 @@ package net.minecraftforge.client.model.generators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -41,6 +41,7 @@ import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
+import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.resources.ResourcePackType;
@@ -63,7 +64,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     @Nullable
     protected ModelFile parent;
-    protected final Map<String, String> textures = new HashMap<>();
+    protected final Map<String, String> textures = new LinkedHashMap<>();
     protected final TransformsBuilder transforms = new TransformsBuilder();
     protected final ExistingFileHelper existingFileHelper;
 
@@ -182,10 +183,11 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return elements.get(index);
     }
 
-    JsonObject serialize() {
+    @VisibleForTesting
+    public JsonObject toJson() {
         JsonObject root = new JsonObject();
         if (this.parent != null) {
-            root.addProperty("parent", this.parent.getLocation().toString());
+            root.addProperty("parent", serializeLoc(this.parent.getLocation()));
         }
 
         if (!this.ambientOcclusion) {
@@ -216,7 +218,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         if (!this.textures.isEmpty()) {
             JsonObject textures = new JsonObject();
             for (Entry<String, String> e : this.textures.entrySet()) {
-                textures.addProperty(e.getKey(), e.getValue());
+                textures.addProperty(e.getKey(), serializeLocOrKey(e.getValue()));
             }
             root.add("textures", textures);
         }
@@ -249,7 +251,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face == null) continue;
 
                     JsonObject faceObj = new JsonObject();
-                    faceObj.addProperty("texture", face.texture);
+                    faceObj.addProperty("texture", serializeLocOrKey(face.texture));
                     if (!Arrays.equals(face.blockFaceUV.uvs, part.getFaceUvs(dir))) {
                         faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
                     }
@@ -274,20 +276,41 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         return root;
     }
+    
+    private String serializeLocOrKey(String tex) {
+        if (tex.charAt(0) == '#') {
+            return tex;
+        }
+        return serializeLoc(new ResourceLocation(tex));
+    }
+    
+    String serializeLoc(ResourceLocation loc) {
+        if (loc.getNamespace().equals("minecraft")) {
+            return loc.getPath();
+        }
+        return loc.toString();
+    }
 
     private JsonArray serializeVector3f(Vector3f vec) {
         JsonArray ret = new JsonArray();
-        ret.add(vec.getX());
-        ret.add(vec.getY());
-        ret.add(vec.getZ());
+        ret.add(serializeFloat(vec.getX()));
+        ret.add(serializeFloat(vec.getY()));
+        ret.add(serializeFloat(vec.getZ()));
         return ret;
+    }
+    
+    private Number serializeFloat(float f) {
+        if ((int) f == f) {
+            return (int) f;
+        }
+        return f;
     }
 
     public class ElementBuilder {
 
         private Vector3f from = new Vector3f();
         private Vector3f to = new Vector3f(16, 16, 16);
-        private final Map<Direction, FaceBuilder> faces = new EnumMap<>(Direction.class);
+        private final Map<Direction, FaceBuilder> faces = new LinkedHashMap<>();
         private RotationBuilder rotation;
         private boolean shade = true;
 
@@ -428,7 +451,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         BlockPart build() {
             Map<Direction, BlockPartFace> faces = this.faces.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build()));
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
             return new BlockPart(from, to, faces, rotation == null ? null : rotation.build(), shade);
         }
 
@@ -562,26 +585,28 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     // Since vanilla doesn't keep the name in TransformType...
     public enum Perspective {
 
-        THRIDPERSON_RIGHT("thirdperson_righthand"),
-        THIRDPERSON_LEFT("thirdperson_lefthand"),
-        FIRSTPERSON_RIGHT("firstperson_righthand"),
-        FIRSTPERSON_LEFT("firstperson_lefthand"),
-        HEAD("head"),
-        GUI("gui"),
-        GROUND("ground"),
-        FIXED("fixed"),
+        THIRDPERSON_RIGHT(TransformType.THIRD_PERSON_RIGHT_HAND, "thirdperson_righthand"),
+        THIRDPERSON_LEFT(TransformType.THIRD_PERSON_LEFT_HAND, "thirdperson_lefthand"),
+        FIRSTPERSON_RIGHT(TransformType.FIRST_PERSON_RIGHT_HAND, "firstperson_righthand"),
+        FIRSTPERSON_LEFT(TransformType.FIRST_PERSON_LEFT_HAND, "firstperson_lefthand"),
+        HEAD(TransformType.HEAD, "head"),
+        GUI(TransformType.GUI, "gui"),
+        GROUND(TransformType.GROUND, "ground"),
+        FIXED(TransformType.FIXED, "fixed"),
         ;
 
+        public final TransformType vanillaType;
         final String name;
 
-        private Perspective(String name) {
+        private Perspective(TransformType vanillaType, String name) {
+            this.vanillaType = vanillaType;
             this.name = name;
         }
     }
 
     public class TransformsBuilder {
 
-        private final Map<Perspective, TransformVecBuilder> transforms = new EnumMap<>(Perspective.class);
+        private final Map<Perspective, TransformVecBuilder> transforms = new LinkedHashMap<>();
 
         /**
          * Begin building a new transform for the given perspective.
@@ -597,7 +622,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         Map<Perspective, ItemTransformVec3f> build() {
             return this.transforms.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build()));
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
         }
 
         public T end() { return self(); }
@@ -620,6 +645,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             public TransformVecBuilder translation(float x, float y, float z) {
                 this.translation = new Vector3f(x, y, z);
                 return this;
+            }
+            
+            public TransformVecBuilder scale(float sc) {
+                return scale(sc, sc, sc);
             }
 
             public TransformVecBuilder scale(float x, float y, float z) {

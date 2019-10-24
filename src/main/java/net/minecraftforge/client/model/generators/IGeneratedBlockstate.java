@@ -1,8 +1,10 @@
 package net.minecraftforge.client.model.generators;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonObject;
 
-interface IGeneratedBlockstate {
+@VisibleForTesting
+public interface IGeneratedBlockstate {
 
     JsonObject toJson();
 }

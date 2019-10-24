@@ -1,5 +1,5 @@
 {
-  "parent": "block/slab",
+  "parent": "block/outer_stairs",
   "textures": {
     "side": "block/acacia_planks",
     "bottom": "block/acacia_planks",

@@ -1,20 +1,20 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "block/block",
   "textures": {
-    "all": "minecraft:block/dirt",
-    "top": "minecraft:block/stone"
+    "all": "block/dirt",
+    "top": "block/stone"
   },
   "elements": [
     {
       "from": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
       "to": [
-        16.0,
-        16.0,
-        16.0
+        16,
+        16,
+        16
       ],
       "faces": {
         "down": {

@@ -34,7 +34,8 @@
         "south": "false"
       },
       "apply": {
-        "model": "data_gen_test:block/glass_pane_noside_alt"
+        "model": "data_gen_test:block/glass_pane_noside_alt",
+        "y": 90
       }
     },
     {
@@ -51,8 +52,8 @@
         "west": "false"
       },
       "apply": {
-        "model": "data_gen_test:block/glass_pane_noside_alt",
-        "y": 90
+        "model": "data_gen_test:block/glass_pane_noside",
+        "y": 270
       }
     },
     {
@@ -69,8 +70,7 @@
         "east": "false"
       },
       "apply": {
-        "model": "data_gen_test:block/glass_pane_noside",
-        "y": 90
+        "model": "data_gen_test:block/glass_pane_noside_alt"
       }
     }
   ]

@@ -10,7 +10,8 @@
         "north": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/acacia_fence_side"
+        "model": "data_gen_test:block/acacia_fence_side",
+        "uvlock": true
       }
     },
     {

@@ -1,6 +1,9 @@
 {
   "multipart": [
     {
+      "when": {
+        "up": "true"
+      },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_post"
       }
@@ -10,7 +13,8 @@
         "north": "true"
       },
       "apply": {
-        "model": "data_gen_test:block/cobblestone_wall_side"
+        "model": "data_gen_test:block/cobblestone_wall_side",
+        "uvlock": true
       }
     },
     {

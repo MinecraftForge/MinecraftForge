@@ -17,6 +17,7 @@
       },
       {
         "model": "data_gen_test:block/birch_fence_gate",
+        "uvlock": true,
         "weight": 100
       }
     ],
@@ -48,7 +49,8 @@
       "uvlock": true
     },
     "facing=south,in_wall=true,open=false": {
-      "model": "data_gen_test:block/birch_fence_gate_wall"
+      "model": "data_gen_test:block/birch_fence_gate_wall",
+      "uvlock": true
     },
     "facing=west,in_wall=true,open=false": {
       "model": "data_gen_test:block/birch_fence_gate_wall",
@@ -66,7 +68,8 @@
       "uvlock": true
     },
     "facing=south,in_wall=false,open=true": {
-      "model": "data_gen_test:block/birch_fence_gate_open"
+      "model": "data_gen_test:block/birch_fence_gate_open",
+      "uvlock": true
     },
     "facing=west,in_wall=false,open=true": {
       "model": "data_gen_test:block/birch_fence_gate_open",
@@ -84,7 +87,8 @@
       "uvlock": true
     },
     "facing=south,in_wall=true,open=true": {
-      "model": "data_gen_test:block/birch_fence_gate_wall_open"
+      "model": "data_gen_test:block/birch_fence_gate_wall_open",
+      "uvlock": true
     },
     "facing=west,in_wall=true,open=true": {
       "model": "data_gen_test:block/birch_fence_gate_wall_open",

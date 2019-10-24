@@ -1,11 +1,15 @@
 package net.minecraftforge.client.model.generators;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
+import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
@@ -38,6 +42,14 @@ public class ExistingFileHelper {
         };
         this.enable = enable;
     }
+    
+    private IResourceManager getManager(ResourcePackType type) {
+        return type == ResourcePackType.CLIENT_RESOURCES ? clientResources : serverData;
+    }
+    
+    private ResourceLocation getLocation(ResourceLocation base, String suffix, String prefix) {
+        return new ResourceLocation(base.getNamespace(), prefix + "/" + base.getPath() + suffix);
+    }
 
     /**
      * Check if a given resource exists in the known resource packs.
@@ -55,8 +67,12 @@ public class ExistingFileHelper {
         if (!enable) {
             return true;
         }
-        IResourceManager resources = type == ResourcePackType.CLIENT_RESOURCES ? clientResources : serverData;
-        return resources.hasResource(new ResourceLocation(loc.getNamespace(), pathPrefix + "/" + loc.getPath() + pathSuffix));
+        return getManager(type).hasResource(getLocation(loc, pathSuffix, pathPrefix));
+    }
+
+    @VisibleForTesting
+    public IResource getResource(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) throws IOException {
+        return getManager(type).getResource(getLocation(loc, pathSuffix, pathPrefix));
     }
 
     /**

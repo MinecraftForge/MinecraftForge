@@ -24,7 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.client.renderer.model.ItemOverride;
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -33,23 +36,49 @@ import net.minecraft.util.ResourceLocation;
  */
 public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
-    protected List<ItemOverride> overrides = new ArrayList<>();
+    protected List<OverrideBuilder> overrides = new ArrayList<>();
 
     public ItemModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation, existingFileHelper);
     }
 
     public OverrideBuilder override() {
-        return this.new OverrideBuilder();
+        OverrideBuilder ret = new OverrideBuilder();
+        overrides.add(ret);
+        return ret;
+    }
+    
+    /**
+     * Get an existing override builder
+     * 
+     * @param index the index of the existing override builder
+     * @return the override builder
+     * @throws IndexOutOfBoundsException if {@code} index is out of bounds
+     */
+    public OverrideBuilder override(int index) {
+        Preconditions.checkElementIndex(index, overrides.size(), "override");
+        return overrides.get(index);
+    }
+    
+    @Override
+    public JsonObject toJson() {
+        JsonObject root = super.toJson();
+        if (!overrides.isEmpty()) {
+            JsonArray overridesJson = new JsonArray();
+            overrides.stream().map(OverrideBuilder::toJson).forEach(overridesJson::add);
+            root.add("overrides", overridesJson);
+        }
+        return root;
     }
 
     public class OverrideBuilder {
-
-        private ResourceLocation model;
+        
+        private ModelFile model;
         private final Map<ResourceLocation, Float> predicates = new LinkedHashMap<>();
 
-        public OverrideBuilder model(ResourceLocation model) {
+        public OverrideBuilder model(ModelFile model) {
             this.model = model;
+            model.assertExistence();
             return this;
         }
 
@@ -58,9 +87,15 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
             return this;
         }
 
-        public ItemModelBuilder build() {
-            ItemModelBuilder.this.overrides.add(new ItemOverride(model, predicates));
-            return ItemModelBuilder.this;
+        public ItemModelBuilder end() { return ItemModelBuilder.this; }
+        
+        JsonObject toJson() {
+            JsonObject ret = new JsonObject();
+            JsonObject predicatesJson = new JsonObject();
+            predicates.forEach((key, val) -> predicatesJson.addProperty(serializeLoc(key), val));
+            ret.add("predicate", predicatesJson);
+            ret.addProperty("model", serializeLoc(model.getLocation()));
+            return ret;
         }
     }
 

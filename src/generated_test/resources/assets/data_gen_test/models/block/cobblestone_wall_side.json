@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/template_wall_side",
+  "parent": "block/template_wall_side",
   "textures": {
-    "texture": "minecraft:block/cobblestone"
+    "wall": "block/cobblestone"
   }
 }

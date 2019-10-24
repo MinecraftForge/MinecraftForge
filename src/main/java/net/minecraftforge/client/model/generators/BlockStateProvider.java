@@ -22,7 +22,7 @@ package net.minecraftforge.client.model.generators;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -76,7 +77,8 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
-    private final Map<Block, IGeneratedBlockstate> registeredBlocks = new IdentityHashMap<>();
+    @VisibleForTesting
+    protected final Map<Block, IGeneratedBlockstate> registeredBlocks = new LinkedHashMap<>();
 
     public BlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
         super(gen, modid, exFileHelper);
@@ -259,17 +261,17 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     }
 
     protected void stairsBlock(StairsBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
-        String baseName = block.getRegistryName().toString();
-        ModelFile stairs = stairs(baseName, side, bottom, top);
-        ModelFile stairsInner = stairsInner(baseName.replace("stairs", "inner_stairs"), side, bottom, top);
-        ModelFile stairsOuter = stairsOuter(baseName.replace("stairs", "outer_stairs"), side, bottom, top);
-        stairsBlock(block, stairs, stairsInner, stairsOuter);
+        stairsBlockInternal(block, block.getRegistryName().toString(), side, bottom, top);
     }
 
     protected void stairsBlock(StairsBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
-        ModelFile stairs = stairs(name + "_stairs", side, bottom, top);
-        ModelFile stairsInner = stairsInner(name + "_inner_stairs", side, bottom, top);
-        ModelFile stairsOuter = stairsOuter(name + "_outer_stairs", side, bottom, top);
+        stairsBlockInternal(block, name + "_stairs", side, bottom, top);
+    }
+    
+    private void stairsBlockInternal(StairsBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+        ModelFile stairs = stairs(baseName, side, bottom, top);
+        ModelFile stairsInner = stairsInner(baseName + "_inner", side, bottom, top);
+        ModelFile stairsOuter = stairsOuter(baseName + "_outer", side, bottom, top);
         stairsBlock(block, stairs, stairsInner, stairsOuter);
     }
 
@@ -281,8 +283,12 @@ public abstract class BlockStateProvider extends BlockModelProvider {
                StairsShape shape = state.get(StairsBlock.SHAPE);
                int yRot = (int) facing.rotateY().getHorizontalAngle(); // Stairs model is rotated 90 degrees clockwise for some reason
                if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
-                   yRot = (yRot + 270) % 360; // Left facing stairs are rotated 90 degrees clockwise
+                   yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
                }
+               if (shape != StairsShape.STRAIGHT && half == Half.TOP) {
+                   yRot += 90; // Top stairs are rotated 90 degrees clockwise
+               }
+               yRot %= 360;
                boolean uvlock = yRot != 0 || half == Half.TOP; // Don't set uvlock for states that have no rotation
                return ConfiguredModel.builder()
                        .modelFile(shape == StairsShape.STRAIGHT ? stairs : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? stairsInner : stairsOuter)
@@ -311,6 +317,10 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     protected void fourWayBlock(FourWayBlock block, ModelFile post, ModelFile side) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().end();
+        fourWayMultipart(builder, side);
+    }
+    
+    protected void fourWayMultipart(MultiPartBlockStateBuilder builder, ModelFile side) {
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
@@ -363,12 +373,22 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     }
 
     protected void wallBlock(WallBlock block, ResourceLocation texture) {
-        String baseName = block.getRegistryName().toString();
-        fourWayBlock(block, wallPost(baseName + "_post", texture), wallSide(baseName + "_side", texture));
+        wallBlockInternal(block, block.getRegistryName().toString(), texture);
     }
 
     protected void wallBlock(WallBlock block, String name, ResourceLocation texture) {
-        fourWayBlock(block, wallPost(name + "_wall_post", texture), wallSide(name + "_wall_side", texture));
+        wallBlockInternal(block, name + "_wall", texture);
+    }
+    
+    private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
+        wallBlock(block, wallPost(baseName + "_post", texture), wallSide(baseName + "_side", texture));
+    }
+    
+    protected void wallBlock(WallBlock block, ModelFile post, ModelFile side) {
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
+                .part().modelFile(post).addModel()
+                    .condition(WallBlock.UP, true).end();
+        fourWayMultipart(builder, side);
     }
 
     protected void paneBlock(PaneBlock block, ResourceLocation pane, ResourceLocation edge) {
@@ -383,8 +403,8 @@ public abstract class BlockStateProvider extends BlockModelProvider {
         ModelFile post = panePost(baseName + "_post", pane, edge);
         ModelFile side = paneSide(baseName + "_side", pane, edge);
         ModelFile sideAlt = paneSideAlt(baseName + "_side_alt", pane, edge);
-        ModelFile noSide = paneNoSide(baseName + "_noside", pane, edge);
-        ModelFile noSideAlt = paneNoSideAlt(baseName + "_noside_alt", pane, edge);
+        ModelFile noSide = paneNoSide(baseName + "_noside", pane);
+        ModelFile noSideAlt = paneNoSideAlt(baseName + "_noside_alt", pane);
         paneBlock(block, post, side, sideAlt, noSide, noSideAlt);
     }
 
@@ -394,11 +414,10 @@ public abstract class BlockStateProvider extends BlockModelProvider {
         SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
-                boolean alt = dir == Direction.SOUTH || dir == Direction.WEST;
-                int rotY = dir.getAxis() == Axis.X ? 90 : 0;
-                builder.part().modelFile(alt ? sideAlt : side).rotationY(rotY).addModel()
+                boolean alt = dir == Direction.SOUTH;
+                builder.part().modelFile(alt || dir == Direction.WEST ? sideAlt : side).rotationY(dir.getAxis() == Axis.X ? 90 : 0).addModel()
                     .condition(e.getValue(), true).end()
-                .part().modelFile(alt ? noSideAlt : noSide).rotationY(rotY).addModel()
+                .part().modelFile(alt || dir == Direction.EAST ? noSideAlt : noSide).rotationY(dir == Direction.WEST ? 270 : dir == Direction.SOUTH ? 90 : 0).addModel()
                     .condition(e.getValue(), false);
             }
         });
@@ -413,8 +432,8 @@ public abstract class BlockStateProvider extends BlockModelProvider {
     }
 
     private void doorBlockInternal(DoorBlock block, String baseName, ResourceLocation bottom, ResourceLocation top) {
-        ModelFile bottomLeft = doorBottomLeft(baseName + "_bottom", bottom);
-        ModelFile bottomRight = doorBottomRight(baseName + "_bottom_hinge", bottom);
+        ModelFile bottomLeft = doorBottomLeft(baseName + "_bottom", bottom, top);
+        ModelFile bottomRight = doorBottomRight(baseName + "_bottom_hinge", bottom, top);
         ModelFile topLeft = doorTopLeft(baseName + "_top", bottom, top);
         ModelFile topRight = doorTopRight(baseName + "_top_hinge", bottom, top);
         doorBlock(block, bottomLeft, bottomRight, topLeft, topRight);
