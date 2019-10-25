@@ -32,15 +32,16 @@ import java.util.List;
 import java.util.zip.ZipFile;
 
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
+
+    private static List<Path> transformers = new ArrayList<>();
+    private static List<Path> locators = new ArrayList<>();
+
     @Override
     public List<Path> candidates(final Path gameDirectory) {
         ModDirTransformerDiscoverer.scan(gameDirectory);
         return ModDirTransformerDiscoverer.transformers;
     }
 
-    private static List<Path> transformers;
-
-    private static List<Path> locators;
     public static List<Path> allExcluded() {
         ArrayList<Path> paths = new ArrayList<>();
         paths.addAll(transformers);
