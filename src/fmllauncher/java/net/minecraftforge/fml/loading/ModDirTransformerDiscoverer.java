@@ -38,9 +38,9 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         return ModDirTransformerDiscoverer.transformers;
     }
 
-    private static List<Path> transformers;
+    private static List<Path> transformers = new ArrayList<>();
+    private static List<Path> locators = new ArrayList<>();
 
-    private static List<Path> locators;
     public static List<Path> allExcluded() {
         ArrayList<Path> paths = new ArrayList<>();
         paths.addAll(transformers);
