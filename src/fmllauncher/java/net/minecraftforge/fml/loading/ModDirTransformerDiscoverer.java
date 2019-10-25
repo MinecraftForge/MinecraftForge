@@ -54,12 +54,12 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
 
     private static void scan(final Path gameDirectory) {
         final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative());
+        transformers = new ArrayList<>();
+        locators = new ArrayList<>();
         if (!Files.exists(modsDir)) {
             // Skip if the mods dir doesn't exist yet.
             return;
         }
-        transformers = new ArrayList<>();
-        locators = new ArrayList<>();
         try {
             Files.createDirectories(modsDir);
             Files.walk(modsDir, 1).forEach(ModDirTransformerDiscoverer::visitFile);
