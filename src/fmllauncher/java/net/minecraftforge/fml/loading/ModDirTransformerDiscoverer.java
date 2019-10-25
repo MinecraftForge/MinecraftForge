@@ -32,16 +32,15 @@ import java.util.List;
 import java.util.zip.ZipFile;
 
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
-
-    private static List<Path> transformers = new ArrayList<>();
-    private static List<Path> locators = new ArrayList<>();
-
     @Override
     public List<Path> candidates(final Path gameDirectory) {
         ModDirTransformerDiscoverer.scan(gameDirectory);
         return ModDirTransformerDiscoverer.transformers;
     }
 
+    private static List<Path> transformers;
+
+    private static List<Path> locators;
     public static List<Path> allExcluded() {
         ArrayList<Path> paths = new ArrayList<>();
         paths.addAll(transformers);
@@ -55,12 +54,12 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
 
     private static void scan(final Path gameDirectory) {
         final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative());
+        transformers = new ArrayList<>();
+        locators = new ArrayList<>();
         if (!Files.exists(modsDir)) {
             // Skip if the mods dir doesn't exist yet.
             return;
         }
-        transformers = new ArrayList<>();
-        locators = new ArrayList<>();
         try {
             Files.createDirectories(modsDir);
             Files.walk(modsDir, 1).forEach(ModDirTransformerDiscoverer::visitFile);
