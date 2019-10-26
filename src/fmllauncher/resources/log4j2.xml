@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util,cpw.mods.modlauncher.log">
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util,cpw.mods.modlauncher.log" shutdownHook="disable">
     <filters>
         <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:forge.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
