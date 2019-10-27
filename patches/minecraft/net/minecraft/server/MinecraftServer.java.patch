@@ -13,7 +13,7 @@
     private final LootTableManager field_200256_aj = new LootTableManager();
     private final AdvancementManager field_200257_ak = new AdvancementManager();
     private final FunctionManager field_200258_al = new FunctionManager(this);
-+   private final net.minecraftforge.common.loot.LootModifierManager lootModifierManager = new net.minecraftforge.common.loot.LootModifierManager();
++   private final net.minecraftforge.common.loot.LootModifierManager lootManager = new net.minecraftforge.common.loot.LootModifierManager();
     private final FrameTimer field_213215_ap = new FrameTimer();
     private boolean field_205745_an;
     private boolean field_212205_ao;
@@ -21,7 +21,7 @@
        this.field_195576_ac.func_219534_a(this.field_200256_aj);
        this.field_195576_ac.func_219534_a(this.field_200258_al);
        this.field_195576_ac.func_219534_a(this.field_200257_ak);
-+      this.field_195576_ac.func_219534_a(this.lootModifierManager);
++      field_195576_ac.func_219534_a(lootManager);
        this.field_213217_au = Util.func_215072_e();
        this.field_71294_K = p_i50590_10_;
     }
