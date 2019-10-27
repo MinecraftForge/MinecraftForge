@@ -2,11 +2,9 @@ package net.minecraftforge.debug.gameplay.loot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
 import net.minecraft.enchantment.Enchantment;
@@ -22,19 +20,19 @@ import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
+import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(GlobalLootModifiersTest.MODID)
@@ -44,22 +42,28 @@ public class GlobalLootModifiersTest {
 	@ObjectHolder(value = MODID)
 	public static final Enchantment smelt = null;
 	public GlobalLootModifiersTest() {
-		if (ENABLE)
-		{
-			LootModifierManager.registerFunction(new SmeltingEnchantmentModifier.Serializer());
-			LootModifierManager.registerFunction(new SilkTouchTestModifier.Serializer());
-			LootModifierManager.registerFunction(new WheatSeedsConverterModifier.Serializer());
-		}
+
 	}
-	
+
 	@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
 	public static class EventHandlers {
 		@SubscribeEvent
 		public static void registerEnchantments(@Nonnull final RegistryEvent.Register<Enchantment> event) {
-			event.getRegistry().register(new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND}).setRegistryName(new ResourceLocation(MODID,"smelt")));
+			if (ENABLE) {
+				event.getRegistry().register(new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND}).setRegistryName(new ResourceLocation(MODID,"smelt")));
+			}
+		}
+
+		@SubscribeEvent
+		public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<IGlobalLootModifierSerializer<?>> event) {
+			if (ENABLE) {
+				event.getRegistry().register(new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest")));
+				event.getRegistry().register(new SmeltingEnchantmentModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"smelting")));
+				event.getRegistry().register(new SilkTouchTestModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"silk_touch_bamboo")));
+			}
 		}
 	}
-	
+
 	private static class SmelterEnchantment extends Enchantment {
 		protected SmelterEnchantment(Rarity rarityIn, EnchantmentType typeIn, EquipmentSlotType[] slots) {
 			super(rarityIn, typeIn, slots);
@@ -73,7 +77,7 @@ public class GlobalLootModifiersTest {
 	 */
 	private static class SmeltingEnchantmentModifier extends LootModifier {
 		public SmeltingEnchantmentModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
-			super(name, conditionsIn);
+			super(conditionsIn);
 
 		}
 
@@ -93,15 +97,8 @@ public class GlobalLootModifiersTest {
 		}
 
 		private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
-			/**
-			 * This resource location is what the json files reference via the "function" object
-			 */
-			public Serializer() {
-				super(new ResourceLocation("global_loot_test:smelting"), SmeltingEnchantmentModifier.class);
-			}
-
 			@Override
-			public SmeltingEnchantmentModifier deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ResourceLocation name, ILootCondition[] conditionsIn) {
+			public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
 				return new SmeltingEnchantmentModifier(name, conditionsIn);
 			}
 		}
@@ -114,7 +111,7 @@ public class GlobalLootModifiersTest {
 	 */
 	private static class SilkTouchTestModifier extends LootModifier {
 		public SilkTouchTestModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
-			super(name, conditionsIn);
+			super(conditionsIn);
 		}
 
 		@Override
@@ -138,20 +135,13 @@ public class GlobalLootModifiersTest {
 		}
 
 		private static class Serializer extends LootModifier.Serializer<SilkTouchTestModifier> {
-			/**
-			 * This resource location is what the json files reference via the "function" object
-			 */
-			public Serializer() {
-				super(new ResourceLocation("global_loot_test:silk_touch_bamboo"), SilkTouchTestModifier.class);
-			}
-
 			@Override
-			public SilkTouchTestModifier deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ResourceLocation name, ILootCondition[] conditionsIn) {
+			public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
 				return new SilkTouchTestModifier(name, conditionsIn);
 			}
 		}
 	}
-	
+
 	/**
 	 * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json 
 	 * @author Draco18s
@@ -161,8 +151,8 @@ public class GlobalLootModifiersTest {
 		private final int numSeedsToConvert;
 		private final Item itemToCheck;
 		private final Item itemReward;
-		public WheatSeedsConverterModifier(ResourceLocation name, ILootCondition[] conditionsIn, int numSeeds, Item itemCheck, Item reward) {
-			super(name, conditionsIn);
+		public WheatSeedsConverterModifier(ILootCondition[] conditionsIn, int numSeeds, Item itemCheck, Item reward) {
+			super(conditionsIn);
 			numSeedsToConvert = numSeeds;
 			itemToCheck = itemCheck;
 			itemReward = reward;
@@ -170,9 +160,9 @@ public class GlobalLootModifiersTest {
 
 		@Override
 		public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-			/**
-			 * Additional conditions can be checked, though as much logic as possible should be parameterized via JSON data.
-			 */
+			//
+			// Additional conditions can be checked, though as much logic as possible should be parameterized via JSON data.
+			//
 			int numSeeds = 0;
 			for(ItemStack stack : generatedLoot) {
 				if(stack.getItem() == itemToCheck)
@@ -187,21 +177,15 @@ public class GlobalLootModifiersTest {
 			}
 			return generatedLoot;
 		}
-		
+
 		private static class Serializer extends LootModifier.Serializer<WheatSeedsConverterModifier> {
-			/**
-			 * This resource location is what the json files reference via the "function" object
-			 */
-			public Serializer() {
-				super(new ResourceLocation("global_loot_test:wheat_seeds_test"), WheatSeedsConverterModifier.class);
-			}
 
 			@Override
-			public WheatSeedsConverterModifier deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ResourceLocation name, ILootCondition[] conditionsIn) {
+			public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
 				int numSeeds = JSONUtils.getInt(object, "numSeeds");
-				Item seed = Registry.ITEM.getOrDefault(new ResourceLocation((JSONUtils.getString(object, "seedItem"))));
-				Item wheat = Registry.ITEM.getOrDefault(new ResourceLocation(JSONUtils.getString(object, "replacement")));
-				return new WheatSeedsConverterModifier(name, conditionsIn, numSeeds, seed, wheat);
+				Item seed = ForgeRegistries.ITEMS.getValue(new ResourceLocation((JSONUtils.getString(object, "seedItem"))));
+				Item wheat = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getString(object, "replacement")));
+				return new WheatSeedsConverterModifier(conditionsIn, numSeeds, seed, wheat);
 			}
 		}
 	}
