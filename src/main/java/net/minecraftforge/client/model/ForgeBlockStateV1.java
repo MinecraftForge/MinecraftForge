@@ -390,7 +390,11 @@ public class ForgeBlockStateV1 extends Marker
 
         boolean isVanillaCompatible()
         {
-            return model != null && submodels.isEmpty() && textures.isEmpty() && customData.isEmpty() && !smooth.isPresent() && !gui3d.isPresent() && state.orElse(ModelRotation.X0_Y0) instanceof ModelRotation;
+            return model != null && !ModelLoaderRegistry.isCustomModel(model)
+                    && submodels.isEmpty()
+                    && textures.isEmpty() && customData.isEmpty()
+                    && !smooth.isPresent() && !gui3d.isPresent()
+                    && state.orElse(ModelRotation.X0_Y0) instanceof ModelRotation;
         }
 
         protected SubModel asGenericSubModel()

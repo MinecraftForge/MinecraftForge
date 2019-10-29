@@ -193,6 +193,27 @@ public class ModelLoaderRegistry
         return model;
     }
 
+    public static boolean isCustomModel(ResourceLocation location)
+    {
+        ResourceLocation actual = getActualLocation(location);
+        for(ICustomModelLoader loader : loaders)
+        {
+            try
+            {
+                if(loader.accepts(actual))
+                {
+                    return true;
+                }
+            }
+            catch(Exception e)
+            {
+                LOGGER.warn("Exception checking if model {} can be loaded with loader {}: {}", location, loader, e);
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Use this if you don't care about the exception and want some model anyway.
      */
