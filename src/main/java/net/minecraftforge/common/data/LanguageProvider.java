@@ -82,7 +82,7 @@ public abstract class LanguageProvider implements IDataProvider {
         cache.func_208316_a(target, hash);
     }
 
-    protected void addBlock(Supplier<Block> key, String name) {
+    protected void addBlock(Supplier<? extends Block> key, String name) {
         add(key.get(), name);
     }
 
@@ -90,7 +90,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addItem(Supplier<Item> key, String name) {
+    protected void addItem(Supplier<? extends Item> key, String name) {
         add(key.get(), name);
     }
 
@@ -106,7 +106,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addEnchantment(Supplier<Enchantment> key, String name) {
+    protected void addEnchantment(Supplier<? extends Enchantment> key, String name) {
         add(key.get(), name);
     }
 
@@ -114,7 +114,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getName(), name);
     }
 
-    protected void addBiome(Supplier<Biome> key, String name) {
+    protected void addBiome(Supplier<? extends Biome> key, String name) {
         add(key.get(), name);
     }
 
@@ -122,7 +122,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addEffect(Supplier<Effect> key, String name) {
+    protected void addEffect(Supplier<? extends Effect> key, String name) {
         add(key.get(), name);
     }
 
@@ -130,7 +130,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getName(), name);
     }
 
-    protected void addEntityType(Supplier<EntityType<?>> key, String name) {
+    protected void addEntityType(Supplier<? extends EntityType<?>> key, String name) {
         add(key.get(), name);
     }
 
