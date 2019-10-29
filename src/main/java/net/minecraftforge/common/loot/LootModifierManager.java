@@ -1,7 +1,7 @@
 package net.minecraftforge.common.loot;
 
 import java.util.Collection;
-
+import java.util.HashMap;
 //import static net.minecraft.client.resources.JsonReloadListener.LOGGER;
 
 import java.util.Map;
@@ -46,13 +46,18 @@ public class LootModifierManager extends JsonReloadListener {
 	@Override
 	protected void apply(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
 		Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
+		Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
 		splashList.forEach((location, object) -> {
 			try {
 				IGlobalLootModifier modifier = deserializeModifier(location, object);
 				builder.put(location, modifier);
+				toLocation.put(modifier, location);
 			} catch (Exception exception) {
 				LOGGER.error("Couldn't parse loot modifier {}", location, exception);
 			}
+		});
+		builder.orderEntriesByValue((x,y) -> {
+			return toLocation.get(x).compareTo(toLocation.get(y));
 		});
 		ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();
 		this.registeredLootModifiers = immutablemap;
