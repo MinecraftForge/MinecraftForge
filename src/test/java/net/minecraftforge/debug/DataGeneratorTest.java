@@ -70,11 +70,16 @@ import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.Items;
+import net.minecraft.potion.Effects;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -88,6 +93,7 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -113,6 +119,7 @@ public class DataGeneratorTest
 
         if (event.includeClient())
         {
+            gen.addProvider(new Lang(gen));
             gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
             gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
         }
@@ -173,6 +180,26 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+        }
+    }
+    
+    public static class Lang extends LanguageProvider
+    {
+        public Lang(DataGenerator gen)
+        {
+            super(gen, MODID, "en_us");
+        }    
+     
+        @Override
+        protected void addTranslations()
+        {
+            add(Blocks.STONE, "Stone");
+            add(Items.DIAMOND, "Diamond");
+            add(Biomes.BEACH, "Beach");
+            add(Effects.POISON, "Poison");
+            add(Enchantments.SHARPNESS, "Sharpness");
+            add(EntityType.CAT, "Cat");
+            add(MODID + ".test.unicode", "\u0287s\u01DD\u2534 \u01DDpo\u0254\u1D09u\u2229");
         }
     }
 
