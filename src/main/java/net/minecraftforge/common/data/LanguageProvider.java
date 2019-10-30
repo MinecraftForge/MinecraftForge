@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -41,6 +43,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
 
+@SuppressWarnings("deprecation")
 public abstract class LanguageProvider implements IDataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private final Map<String, String> data = new TreeMap<>();
@@ -70,6 +73,7 @@ public abstract class LanguageProvider implements IDataProvider {
 
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
         String data = GSON.toJson(object);
+        data = StringEscapeUtils.escapeJava(data); // Escape control chars and unicode
         String hash = IDataProvider.HASH_FUNCTION.hashUnencodedChars(data).toString();
         if (!Objects.equals(cache.getPreviousHash(target), hash) || !Files.exists(target)) {
            Files.createDirectories(target.getParent());
