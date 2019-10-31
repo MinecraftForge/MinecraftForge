@@ -1,5 +1,14 @@
 --- a/net/minecraft/dispenser/IDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/IDispenseItemBehavior.java
+@@ -271,7 +271,7 @@
+             } else if (FlintAndSteelItem.func_219997_a(blockstate)) {
+                world.func_175656_a(blockpos, blockstate.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)));
+             } else if (blockstate.func_177230_c() instanceof TNTBlock) {
+-               TNTBlock.func_196534_a(world, blockpos);
++               ((TNTBlock) blockstate.func_177230_c()).createExplosion(world, blockpos);
+                world.func_217377_a(blockpos, false);
+             } else {
+                this.field_218407_b = false;
 @@ -370,15 +370,23 @@
        }
  
