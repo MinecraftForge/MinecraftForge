@@ -5,7 +5,7 @@
        if (p_220082_4_.func_177230_c() != p_220082_1_.func_177230_c()) {
           if (p_220082_2_.func_175640_z(p_220082_3_)) {
 -            func_196534_a(p_220082_2_, p_220082_3_);
-+            createExplosion(p_220082_2_, p_220082_3_);
++            createExplosion(p_220082_2_, p_220082_3_, null);
              p_220082_2_.func_217377_a(p_220082_3_, false);
           }
  
@@ -14,7 +14,7 @@
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
        if (p_220069_2_.func_175640_z(p_220069_3_)) {
 -         func_196534_a(p_220069_2_, p_220069_3_);
-+         createExplosion(p_220069_2_, p_220069_3_);
++         createExplosion(p_220069_2_, p_220069_3_, null);
           p_220069_2_.func_217377_a(p_220069_3_, false);
        }
  
@@ -23,7 +23,7 @@
     public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
        if (!p_176208_1_.func_201670_d() && !p_176208_4_.func_184812_l_() && p_176208_3_.func_177229_b(field_212569_a)) {
 -         func_196534_a(p_176208_1_, p_176208_2_);
-+         createExplosion(p_176208_1_, p_176208_2_);
++         createExplosion(p_176208_1_, p_176208_2_, null);
        }
  
        super.func_176208_a(p_176208_1_, p_176208_2_, p_176208_3_, p_176208_4_);
@@ -40,14 +40,10 @@
     private static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
        if (!p_196535_0_.field_72995_K) {
           TNTEntity tntentity = new TNTEntity(p_196535_0_, (double)((float)p_196535_1_.func_177958_n() + 0.5F), (double)p_196535_1_.func_177956_o(), (double)((float)p_196535_1_.func_177952_p() + 0.5F), p_196535_2_);
-@@ -74,13 +76,21 @@
+@@ -74,13 +76,17 @@
        }
     }
  
-+   public void createExplosion(World world, BlockPos pos) {
-+      createExplosion(world, pos, null);
-+   }
-+
 +   public void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter) {
 +      func_196535_a(world, pos, igniter);
 +   }
@@ -63,7 +59,7 @@
           p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150350_a.func_176223_P(), 11);
           if (item == Items.field_151033_d) {
              itemstack.func_222118_a(1, p_220051_4_, (p_220287_1_) -> {
-@@ -100,7 +110,7 @@
+@@ -100,7 +106,7 @@
           Entity entity = abstractarrowentity.func_212360_k();
           if (abstractarrowentity.func_70027_ad()) {
              BlockPos blockpos = p_220066_3_.func_216350_a();

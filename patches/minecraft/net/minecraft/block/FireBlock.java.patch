@@ -88,7 +88,7 @@
           if (block instanceof TNTBlock) {
              TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
-+            tntblock.createExplosion(p_176536_1_, p_176536_2_);
++            tntblock.createExplosion(p_176536_1_, p_176536_2_, null);
           }
        }
  
