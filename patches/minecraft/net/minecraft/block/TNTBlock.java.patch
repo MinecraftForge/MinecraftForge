@@ -1,30 +1,6 @@
 --- a/net/minecraft/block/TNTBlock.java
 +++ b/net/minecraft/block/TNTBlock.java
-@@ -22,16 +22,31 @@
- 
- public class TNTBlock extends Block {
-    public static final BooleanProperty field_212569_a = BlockStateProperties.field_212646_x;
-+   private static final TNTEntityCreator defaultTNTEntityCreator = TNTEntity::new;
- 
-+   private final TNTEntityCreator tntEntityCreator;
-+
-+   /**
-+    * @deprecated Mods should use the constructor that allows for specifying which TNT Entity will be created
-+    */
-+   @Deprecated
-    public TNTBlock(Block.Properties p_i48309_1_) {
-+      this(p_i48309_1_, defaultTNTEntityCreator);
-+   }
-+
-+   /**
-+    * For mod use, eliminates (or at least lowers) the need to extend this class for purposes of creating custom TNT.
-+    */
-+   public TNTBlock(Block.Properties p_i48309_1_, TNTEntityCreator tntEntityCreator) {
-       super(p_i48309_1_);
-       this.func_180632_j(this.func_176223_P().func_206870_a(field_212569_a, Boolean.valueOf(false)));
-+      this.tntEntityCreator = tntEntityCreator;
-    }
- 
+@@ -31,7 +31,7 @@
     public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
        if (p_220082_4_.func_177230_c() != p_220082_1_.func_177230_c()) {
           if (p_220082_2_.func_175640_z(p_220082_3_)) {
@@ -33,7 +9,7 @@
              p_220082_2_.func_217377_a(p_220082_3_, false);
           }
  
-@@ -40,7 +55,7 @@
+@@ -40,7 +40,7 @@
  
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
        if (p_220069_2_.func_175640_z(p_220069_3_)) {
@@ -42,7 +18,7 @@
           p_220069_2_.func_217377_a(p_220069_3_, false);
        }
  
-@@ -48,7 +63,7 @@
+@@ -48,7 +48,7 @@
  
     public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
        if (!p_176208_1_.func_201670_d() && !p_176208_4_.func_184812_l_() && p_176208_3_.func_177229_b(field_212569_a)) {
@@ -51,46 +27,29 @@
        }
  
        super.func_176208_a(p_176208_1_, p_176208_2_, p_176208_3_, p_176208_4_);
-@@ -56,16 +71,24 @@
- 
-    public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
-       if (!p_180652_1_.field_72995_K) {
--         TNTEntity tntentity = new TNTEntity(p_180652_1_, (double)((float)p_180652_2_.func_177958_n() + 0.5F), (double)p_180652_2_.func_177956_o(), (double)((float)p_180652_2_.func_177952_p() + 0.5F), p_180652_3_.func_94613_c());
-+         TNTEntity tntentity = tntEntityCreator.create(p_180652_1_, (double)((float)p_180652_2_.func_177958_n() + 0.5F), (double)p_180652_2_.func_177956_o(), (double)((float)p_180652_2_.func_177952_p() + 0.5F), p_180652_3_.func_94613_c());
-          tntentity.func_184534_a((short)(p_180652_1_.field_73012_v.nextInt(tntentity.func_184536_l() / 4) + tntentity.func_184536_l() / 8));
-          p_180652_1_.func_217376_c(tntentity);
+@@ -62,10 +62,12 @@
        }
     }
  
-+   /**
-+    * @deprecated Prefer using the local method
-+    */
-+   @Deprecated
++   @Deprecated //Forge: Prefer using the instance method that mods can override
     public static void func_196534_a(World p_196534_0_, BlockPos p_196534_1_) {
        func_196535_a(p_196534_0_, p_196534_1_, (LivingEntity)null);
     }
  
-+   /**
-+    * @deprecated Prefer using the one that mods can override
-+    */
-+   @Deprecated
++   @Deprecated //Forge: Prefer using the instance method that mods can override
     private static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
        if (!p_196535_0_.field_72995_K) {
           TNTEntity tntentity = new TNTEntity(p_196535_0_, (double)((float)p_196535_1_.func_177958_n() + 0.5F), (double)p_196535_1_.func_177956_o(), (double)((float)p_196535_1_.func_177952_p() + 0.5F), p_196535_2_);
-@@ -74,13 +97,25 @@
+@@ -74,13 +76,21 @@
        }
     }
  
-+   public void createExplosion(World p_196534_0_, BlockPos p_196534_1_) {
-+      createExplosion(p_196534_0_, p_196534_1_, null);
++   public void createExplosion(World world, BlockPos pos) {
++      createExplosion(world, pos, null);
 +   }
 +
-+   private void createExplosion(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
-+      if (!p_196535_0_.field_72995_K) {
-+         TNTEntity tntentity = tntEntityCreator.create(p_196535_0_, (double)((float)p_196535_1_.func_177958_n() + 0.5F), (double)p_196535_1_.func_177956_o(), (double)((float)p_196535_1_.func_177952_p() + 0.5F), p_196535_2_);
-+         p_196535_0_.func_217376_c(tntentity);
-+         p_196535_0_.func_184148_a(null, tntentity.field_70165_t, tntentity.field_70163_u, tntentity.field_70161_v, SoundEvents.field_187904_gd, SoundCategory.BLOCKS, 1.0F, 1.0F);
-+      }
++   public void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter) {
++      func_196535_a(world, pos, igniter);
 +   }
 +
     public boolean func_220051_a(BlockState p_220051_1_, World p_220051_2_, BlockPos p_220051_3_, PlayerEntity p_220051_4_, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
@@ -104,7 +63,7 @@
           p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150350_a.func_176223_P(), 11);
           if (item == Items.field_151033_d) {
              itemstack.func_222118_a(1, p_220051_4_, (p_220287_1_) -> {
-@@ -100,7 +135,7 @@
+@@ -100,7 +110,7 @@
           Entity entity = abstractarrowentity.func_212360_k();
           if (abstractarrowentity.func_70027_ad()) {
              BlockPos blockpos = p_220066_3_.func_216350_a();
@@ -113,14 +72,3 @@
              p_220066_1_.func_217377_a(blockpos, false);
           }
        }
-@@ -114,4 +149,10 @@
-    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
-       p_206840_1_.func_206894_a(field_212569_a);
-    }
-+
-+   @FunctionalInterface
-+   public interface TNTEntityCreator {
-+
-+      TNTEntity create(World world, double xPos, double yPos, double zPos, @Nullable LivingEntity entity);
-+   }
- }
