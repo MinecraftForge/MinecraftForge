@@ -97,16 +97,19 @@ public class CustomTNTTest {
         }
     }
 
+    /**
+     * Custom TNT Entity that has a fuse of a quarter length, and four times the explosion strength
+     */
     public static class CustomTNTEntity extends TNTEntity {
 
         public CustomTNTEntity(EntityType<CustomTNTEntity> type, World world) {
             super(type, world);
-            setFuse(20);
+            setFuse(getFuse() / 4);
         }
 
         public CustomTNTEntity(World world, double x, double y, double z, @Nullable LivingEntity placer) {
             super(world, x, y, z, placer);
-            setFuse(20);
+            setFuse(getFuse() / 4);
         }
 
         @Nonnull
@@ -117,7 +120,7 @@ public class CustomTNTTest {
 
         @Override
         protected void explode() {
-            this.world.createExplosion(this, this.posX, this.posY, this.posZ, 10.0F, Explosion.Mode.BREAK);
+            this.world.createExplosion(this, this.posX, this.posY, this.posZ, 16.0F, Explosion.Mode.BREAK);
         }
 
         @Nonnull
