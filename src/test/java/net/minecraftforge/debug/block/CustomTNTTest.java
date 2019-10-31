@@ -30,6 +30,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.network.IPacket;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +41,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -116,6 +118,12 @@ public class CustomTNTTest {
         @Override
         protected void explode() {
             this.world.createExplosion(this, this.posX, this.posY, this.posZ, 10.0F, Explosion.Mode.BREAK);
+        }
+
+        @Nonnull
+        @Override
+        public IPacket<?> createSpawnPacket() {
+            return NetworkHooks.getEntitySpawningPacket(this);
         }
     }
 }
