@@ -1,0 +1,26 @@
+--- /dev/null
++++ b/net/minecraft/block/IBubbleSource.java
+@@ -0,0 +1,23 @@
++package net.minecraft.block;
++
++import net.minecraft.util.math.BlockPos;
++import net.minecraft.world.IWorldReader;
++import net.minecraft.world.World;
++import java.util.Random;
++
++
++import java.util.Random;
++
++public interface IBubbleSource {
++    default void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
++        BubbleColumnBlock.func_203159_a(worldIn, pos.func_177984_a(), this.isDragging());
++    }
++
++    default int tickRate(IWorldReader worldIn) { return 20; }
++
++    default void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
++        worldIn.func_205220_G_().func_205360_a(pos, (Block) this, this.tickRate(worldIn));
++    }
++
++    boolean isDragging();
++}
