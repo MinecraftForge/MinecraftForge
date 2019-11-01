@@ -201,7 +201,7 @@ public abstract class BlockStateProvider extends BlockModelProvider {
         getVariantBuilder(block)
             .forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(modelFunc.apply(state))
-                    .rotationY((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle() + angleOffset)
+                    .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle() + angleOffset) % 360)
                     .build()
             );
     }
