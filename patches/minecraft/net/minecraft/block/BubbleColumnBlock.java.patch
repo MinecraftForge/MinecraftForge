@@ -1,6 +1,14 @@
 --- a/net/minecraft/block/BubbleColumnBlock.java
 +++ b/net/minecraft/block/BubbleColumnBlock.java
-@@ -80,9 +80,11 @@
+@@ -24,6 +24,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.block.IBubbleSource;
+ 
+ public class BubbleColumnBlock extends Block implements IBucketPickupHandler {
+    public static final BooleanProperty field_203160_a = BlockStateProperties.field_208179_f;
+@@ -80,9 +81,11 @@
        Block block = blockstate.func_177230_c();
        if (block == Blocks.field_203203_C) {
           return blockstate.func_177229_b(field_203160_a);
@@ -14,7 +22,7 @@
     }
  
     public int func_149738_a(IWorldReader p_149738_1_) {
-@@ -126,7 +128,7 @@
+@@ -126,7 +129,7 @@
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
