@@ -9,3 +9,12 @@
     }
  
     public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {
+@@ -32,6 +32,8 @@
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       World world = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a();
++      int hook = net.minecraftforge.event.ForgeEventFactory.onAxeUse(p_195939_1_);
++      if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+       BlockState blockstate = world.func_180495_p(blockpos);
+       Block block = field_203176_a.get(blockstate.func_177230_c());
+       if (block != null) {
