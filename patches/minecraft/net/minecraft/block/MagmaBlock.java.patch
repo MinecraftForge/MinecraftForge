@@ -11,24 +11,3 @@
     public MagmaBlock(Block.Properties p_i48366_1_) {
        super(p_i48366_1_);
     }
-@@ -41,7 +42,7 @@
-    }
- 
-    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
--      BubbleColumnBlock.func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), true);
-+      BubbleColumnBlock.func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), this.isDragging());
-    }
- 
-    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
-@@ -71,6 +72,11 @@
-       p_220082_2_.func_205220_G_().func_205360_a(p_220082_3_, this, this.func_149738_a(p_220082_2_));
-    }
- 
-+   @Override
-+   public boolean isDragging() {
-+      return true;
-+   }
-+
-    public boolean func_220067_a(BlockState p_220067_1_, IBlockReader p_220067_2_, BlockPos p_220067_3_, EntityType<?> p_220067_4_) {
-       return p_220067_4_.func_220338_c();
-    }

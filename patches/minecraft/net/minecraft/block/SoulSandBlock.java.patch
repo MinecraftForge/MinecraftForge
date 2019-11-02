@@ -11,22 +11,3 @@
     protected static final VoxelShape field_196509_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
  
     public SoulSandBlock(Block.Properties p_i48326_1_) {
-@@ -27,7 +28,7 @@
-    }
- 
-    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
--      BubbleColumnBlock.func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), false);
-+      BubbleColumnBlock.func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), this.isDragging());
-    }
- 
-    public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
-@@ -53,4 +54,9 @@
-    public boolean func_220067_a(BlockState p_220067_1_, IBlockReader p_220067_2_, BlockPos p_220067_3_, EntityType<?> p_220067_4_) {
-       return true;
-    }
-+
-+   @Override
-+   public boolean isDragging() {
-+      return false;
-+   }
- }

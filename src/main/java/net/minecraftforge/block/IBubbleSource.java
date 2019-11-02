@@ -1,5 +1,6 @@
 package net.minecraftforge.block;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.block.BubbleColumnBlock;
 
 /**
@@ -10,7 +11,9 @@ import net.minecraft.block.BubbleColumnBlock;
 public interface IBubbleSource {
     /**
      * This should return TRUE, if block is maintaining a bubble column block with downward drag. (like Magma Block)
-     * And it should return FALSE, if it is maintaining a bubble column block with upward pushing. (like Soul Sand)
+     * And it should return FALSE, if it is maintaining a bubble column block with upward push. (like Soul Sand)
      */
-    boolean isDragging();
+    default boolean isDragging() {
+        return this != Blocks.SOUL_SAND;
+    }
 }
