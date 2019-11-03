@@ -1037,4 +1037,23 @@ public interface IForgeBlock
     {
         return getBlock().isIn(BlockTags.FENCES) || getBlock().isIn(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
     }
+
+    /**
+     * Called by {@link BubbleColumnBlock} when determining, if the bubble column is still above a valid bubble source.
+     */
+    default boolean isBubbleSource() {
+        return this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
+    }
+
+    /**
+     * Called by {@link BubbleColumnBlock} in to determine, if this is a bubble source block,
+     * which is dragging (getDrag() == true) like when a Magma Block is the source,
+     * or if it is pushing (getDrag() == false) like when Soul Sand is the source.
+     *
+     * NOTE: This will return true for your Block by default, but it is never called, as long as a BubbleColumnBlock
+     * isn't added above your block and the BubbleColumnBlock won't stay, if IForgeBlock.isBubbleSource returns false.
+     */
+    default boolean getDrag() {
+        return this.getBlock() != Blocks.SOUL_SAND;
+    }
 }
