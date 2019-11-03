@@ -19,9 +19,9 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,16 +43,20 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
     private static final String SUFFIX = ".jar";
     private static final Logger LOGGER = LogManager.getLogger();
     private final Path modFolder;
+    private final String customName;
 
     public ModsFolderLocator() {
         this(FMLPaths.MODSDIR.get());
     }
 
     ModsFolderLocator(Path modFolder) {
-        super();
-        this.modFolder = modFolder;
+        this(modFolder, "mods folder");
     }
 
+    ModsFolderLocator(Path modFolder, String name) {
+        this.modFolder = modFolder;
+        this.customName = name;
+    }
     @Override
     public List<IModFile> scanMods() {
         LOGGER.debug(SCAN,"Scanning mods dir {} for mods", this.modFolder);
@@ -68,16 +72,15 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
 
     @Override
     public String name() {
-        return "mods folder";
+        return customName;
     }
 
     @Override
     public String toString() {
-        return "{ModJarsFolder locator at "+this.modFolder+"}";
+        return "{"+customName+" locator at "+this.modFolder+"}";
     }
 
     @Override
     public void initArguments(final Map<String, ?> arguments) {
-
     }
 }

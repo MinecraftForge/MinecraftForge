@@ -74,6 +74,7 @@ public class ModDiscoverer {
 
     public ModDiscoverer(Map<String, ?> arguments) {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODFOLDERFACTORY.get(), v->ModsFolderLocator::new);
+        Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODDIRECTORYFACTORY.get(), v->ModsFolderLocator::new);
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v->StartupMessageManager.locatorConsumer().orElseGet(()->s->{}));
         locatorClassLoader = new LocatorClassLoader();
         Launcher.INSTANCE.environment().computePropertyIfAbsent(FMLEnvironment.Keys.LOCATORCLASSLOADER.get(), v->locatorClassLoader);

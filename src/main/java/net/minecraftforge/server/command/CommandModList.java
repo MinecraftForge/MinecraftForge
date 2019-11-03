@@ -24,6 +24,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.util.stream.Collectors;
@@ -35,9 +36,15 @@ public class CommandModList {
                 .requires(cs->cs.hasPermissionLevel(0)) //permission
                 .executes(ctx -> {
                             ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
-                                    ModList.get().applyForEachModContainer(
-                                            mc->String.format("%s:%s(%s)", mc.getModId(), mc.getModInfo().getVersion().toString(), mc.getCurrentState())).
-                                        collect(Collectors.joining(","))),
+                                    ModList.get().applyForEachModFile(modFile ->
+                                            // locator - filename : firstmod (version) - numberofmods\n
+                                            String.format("%s %s : %s (%s) - %d",
+                                                    modFile.getLocator().name().replace(' ', '_'),
+                                                    modFile.getFileName(),
+                                                    modFile.getModInfos().get(0).getModId(),
+                                                    modFile.getModInfos().get(0).getVersion(),
+                                                    modFile.getModInfos().size())).
+                                        collect(Collectors.joining("\n• ","• ", ""))),
                                     true);
                             return 0;
                         }
