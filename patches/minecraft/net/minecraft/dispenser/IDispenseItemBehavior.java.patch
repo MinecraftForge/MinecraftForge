@@ -1,6 +1,14 @@
 --- a/net/minecraft/dispenser/IDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/IDispenseItemBehavior.java
-@@ -370,15 +370,23 @@
+@@ -161,6 +161,7 @@
+          }
+       };
+ 
++      if (false) // FORGE: Do this on demand in GameData.ItemCallbacks
+       for(SpawnEggItem spawneggitem : SpawnEggItem.func_195985_g()) {
+          DispenserBlock.func_199774_a(spawneggitem, defaultdispenseitembehavior);
+       }
+@@ -370,15 +371,23 @@
        }
  
        DispenserBlock.func_199774_a(Items.field_151097_aZ.func_199767_j(), new OptionalDispenseBehavior() {

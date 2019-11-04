@@ -1,0 +1,54 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -30,18 +30,28 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class SpawnEggItem extends Item {
+-   private static final Map<EntityType<?>, SpawnEggItem> field_195987_b = Maps.newIdentityHashMap();
++   private static final Map<EntityType<?>, SpawnEggItem> field_195987_b = net.minecraftforge.registries.GameData.getSpawnEggMap();
++   private static final java.util.List<SpawnEggItem> ALL_EGGS = net.minecraftforge.registries.GameData.getSpawnEggs();
+    private final int field_195988_c;
+    private final int field_195989_d;
+    private final EntityType<?> field_200890_d;
++   private final java.util.function.Supplier<EntityType<?>> typeSupplier;
+ 
+    public SpawnEggItem(EntityType<?> p_i48465_1_, int p_i48465_2_, int p_i48465_3_, Item.Properties p_i48465_4_) {
+       super(p_i48465_4_);
+       this.field_200890_d = p_i48465_1_;
++      this.typeSupplier = () -> p_i48465_1_;
+       this.field_195988_c = p_i48465_2_;
+       this.field_195989_d = p_i48465_3_;
+-      field_195987_b.put(p_i48465_1_, this);
+    }
++   
++   public SpawnEggItem(java.util.function.Supplier<EntityType<?>> typeIn, int primaryColorIn, int secondaryColorIn, Item.Properties builder) {
++      super(builder);
++      this.field_200890_d = EntityType.field_200784_X;
++      this.typeSupplier = typeIn;
++      this.field_195988_c = primaryColorIn;
++      this.field_195989_d = secondaryColorIn;
++   }
+ 
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       World world = p_195939_1_.func_195991_k();
+@@ -129,17 +139,17 @@
+    }
+ 
+    public static Iterable<SpawnEggItem> func_195985_g() {
+-      return Iterables.unmodifiableIterable(field_195987_b.values());
++      return Iterables.unmodifiableIterable(ALL_EGGS);
+    }
+ 
+    public EntityType<?> func_208076_b(@Nullable CompoundNBT p_208076_1_) {
+       if (p_208076_1_ != null && p_208076_1_.func_150297_b("EntityTag", 10)) {
+          CompoundNBT compoundnbt = p_208076_1_.func_74775_l("EntityTag");
+          if (compoundnbt.func_150297_b("id", 8)) {
+-            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElse(this.field_200890_d);
++            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElseGet(this.typeSupplier);
+          }
+       }
+ 
+-      return this.field_200890_d;
++      return this.typeSupplier.get();
+    }
+ }

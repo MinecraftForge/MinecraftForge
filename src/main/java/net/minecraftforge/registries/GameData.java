@@ -24,19 +24,26 @@ import com.google.common.collect.*;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.schedule.Schedule;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.ParticleType;
@@ -45,6 +52,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -80,7 +88,9 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,6 +155,8 @@ public class GameData
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
+    private static final ResourceLocation ENTITY_TO_EGG = new ResourceLocation("minecraft:entitytoeggmap");
+    private static final ResourceLocation ALL_EGGS = new ResourceLocation("minecraft:egglist");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
     private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
@@ -246,6 +258,18 @@ public class GameData
     public static Map<Block,Item> getBlockItemMap()
     {
         return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static Map<EntityType<?>, SpawnEggItem> getSpawnEggMap()
+    {
+        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(ENTITY_TO_EGG, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<SpawnEggItem> getSpawnEggs()
+    {
+        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(ALL_EGGS, List.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -483,9 +507,22 @@ public class GameData
         }
     }
 
-    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>, IForgeRegistry.ClearCallback<Item>, IForgeRegistry.CreateCallback<Item>
+    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>, IForgeRegistry.ClearCallback<Item>, IForgeRegistry.CreateCallback<Item>, IForgeRegistry.BakeCallback<Item>
     {
         static final ItemCallbacks INSTANCE = new ItemCallbacks();
+
+        // Porting note, compare this to IDispenseItemBehavior.init() where spawn egg behaviors are added
+        private static final DefaultDispenseItemBehavior SPAWN_EGG_BEHAVIOR = new DefaultDispenseItemBehavior()
+        {
+            public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
+            {
+                Direction direction = source.getBlockState().get(DispenserBlock.FACING);
+                EntityType<?> entitytype = ((SpawnEggItem)stack.getItem()).getType(stack.getTag());
+                entitytype.spawn(source.getWorld(), stack, (PlayerEntity)null, source.getBlockPos().offset(direction), SpawnReason.DISPENSER, direction != Direction.UP, false);
+                stack.shrink(1);
+                return stack;
+            }
+        };
 
         @Override
         public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
@@ -502,6 +539,21 @@ public class GameData
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
                 ((BlockItem)item).addToBlockToItemMap(blockToItem, item);
             }
+
+            if (oldItem instanceof SpawnEggItem)
+            {
+                @SuppressWarnings("unchecked")
+                List<SpawnEggItem> allEggs = owner.getSlaveMap(ALL_EGGS, List.class);
+                allEggs.remove(item);
+            }
+            if (item instanceof SpawnEggItem)
+            {
+                @SuppressWarnings("unchecked")
+                List<SpawnEggItem> allEggs = owner.getSlaveMap(ALL_EGGS, List.class);
+                allEggs.add((SpawnEggItem) item);
+                // Do this here as IDispenseItemBehavior.init() is called far too early
+                DispenserBlock.registerDispenseBehavior(item, SPAWN_EGG_BEHAVIOR);
+            }
         }
 
         @Override
@@ -516,6 +568,23 @@ public class GameData
             // We share the blockItem map between items and blocks registries
             Map<?, ?> map = stage.getRegistry(BLOCKS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
             owner.setSlaveMap(BLOCK_TO_ITEM, map);
+            owner.setSlaveMap(ENTITY_TO_EGG, new HashMap<>());
+            owner.setSlaveMap(ALL_EGGS, new ArrayList<>());
+        }
+        
+        @Override
+        public void onBake(IForgeRegistryInternal<Item> owner, RegistryManager stage)
+        {
+            @SuppressWarnings("unchecked")
+            Map<EntityType<?>, SpawnEggItem> entityToEgg = owner.getSlaveMap(ENTITY_TO_EGG, Map.class);
+            entityToEgg.clear();
+            for (Item item : owner.getValues())
+            {
+                if (item instanceof SpawnEggItem)
+                {
+                    entityToEgg.put(((SpawnEggItem) item).getType(null), (SpawnEggItem) item);
+                }
+            }
         }
     }
 
