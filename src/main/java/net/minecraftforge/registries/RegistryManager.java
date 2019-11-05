@@ -87,12 +87,13 @@ public class RegistryManager
 
     public <V extends IForgeRegistryEntry<V>> ResourceLocation updateLegacyName(ResourceLocation legacyName)
     {
+        ResourceLocation originalName = legacyName;
         while (getRegistry(legacyName) == null)
         {
             legacyName = legacyNames.get(legacyName);
             if (legacyName == null)
             {
-                return null;
+                return originalName;
             }
         }
         return legacyName;
