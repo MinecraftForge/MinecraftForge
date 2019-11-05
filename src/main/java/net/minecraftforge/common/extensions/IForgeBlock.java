@@ -35,6 +35,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.TNTBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
@@ -1027,6 +1028,34 @@ public interface IForgeBlock
     {
         world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         getBlock().onExplosionDestroy(world, pos, explosion);
+    }
+
+    /**
+     * Determines if the block is explosive and {@link #createExplosion(World, BlockPos, LivingEntity)} should be called.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True if the block can explode, false otherwise.
+     */
+    default boolean isExplosive(BlockState state, IBlockReader world, BlockPos pos)
+    {
+        return getBlock() instanceof TNTBlock;
+    }
+
+    /**
+     * If the block is explosive, this is called when it should create an explosion.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param igniter The entity that caused the explosion to occur
+     */
+    default void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter)
+    {
+        if (getBlock() instanceof TNTBlock)
+        {
+            TNTBlock.explode(world, pos, igniter);
+        }
     }
 
     /**

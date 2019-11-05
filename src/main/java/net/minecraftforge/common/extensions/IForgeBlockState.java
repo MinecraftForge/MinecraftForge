@@ -872,6 +872,31 @@ public interface IForgeBlockState
     }
 
     /**
+     * Determines if the block is explosive and {@link #createExplosion(World, BlockPos, LivingEntity)} should be called.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True if the block can explode, false otherwise.
+     */
+    default boolean isExplosive(BlockState state, IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().isExplosive(getBlockState(), world, pos);
+    }
+
+    /**
+     * If the block is explosive, this is called when it should create an explosion.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param igniter The entity that caused the explosion to occur
+     */
+    default void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter)
+    {
+        getBlockState().getBlock().createExplosion(world, pos, igniter);
+    }
+
+    /**
      * Determines if this block's collision box should be treated as though it can extend above its block space.
      * This can be used to replicate fence and wall behavior.
      */

@@ -31,26 +31,16 @@
        }
     }
  
-+   @Deprecated //Forge: Prefer using the instance method that mods can override
++   @Deprecated //Forge: Prefer using IForgeBlock#onBlockExploded
     public static void func_196534_a(World p_196534_0_, BlockPos p_196534_1_) {
        func_196535_a(p_196534_0_, p_196534_1_, (LivingEntity)null);
     }
  
-+   @Deprecated //Forge: Prefer using the instance method that mods can override
-    private static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
++   @Deprecated //Forge: Prefer using IForgeBlock#onBlockExploded
+    public static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
        if (!p_196535_0_.field_72995_K) {
           TNTEntity tntentity = new TNTEntity(p_196535_0_, (double)((float)p_196535_1_.func_177958_n() + 0.5F), (double)p_196535_1_.func_177956_o(), (double)((float)p_196535_1_.func_177952_p() + 0.5F), p_196535_2_);
-@@ -74,13 +76,17 @@
-       }
-    }
- 
-+   public void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter) {
-+      func_196535_a(world, pos, igniter);
-+   }
-+
-    public boolean func_220051_a(BlockState p_220051_1_, World p_220051_2_, BlockPos p_220051_3_, PlayerEntity p_220051_4_, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
-       ItemStack itemstack = p_220051_4_.func_184586_b(p_220051_5_);
-       Item item = itemstack.func_77973_b();
+@@ -80,7 +82,7 @@
        if (item != Items.field_151033_d && item != Items.field_151059_bz) {
           return super.func_220051_a(p_220051_1_, p_220051_2_, p_220051_3_, p_220051_4_, p_220051_5_, p_220051_6_);
        } else {
@@ -59,7 +49,7 @@
           p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150350_a.func_176223_P(), 11);
           if (item == Items.field_151033_d) {
              itemstack.func_222118_a(1, p_220051_4_, (p_220287_1_) -> {
-@@ -100,7 +106,7 @@
+@@ -100,7 +102,7 @@
           Entity entity = abstractarrowentity.func_212360_k();
           if (abstractarrowentity.func_70027_ad()) {
              BlockPos blockpos = p_220066_3_.func_216350_a();
