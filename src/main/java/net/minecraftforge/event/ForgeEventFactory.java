@@ -83,6 +83,7 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
+import net.minecraftforge.common.JigsawCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -715,7 +716,7 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<Pair<JigsawPiece, Integer>> onJigsawPatternInit(ResourceLocation patternName, List<Pair<JigsawPiece, Integer>> pool)
+    public static List<JigsawCategory> onJigsawPatternInit(ResourceLocation patternName, List<JigsawCategory> pool)
     {
         JigsawPatternInitEvent event = new JigsawPatternInitEvent(patternName, pool);
         MinecraftForge.EVENT_BUS.post(event);

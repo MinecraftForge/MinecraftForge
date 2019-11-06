@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.util.ResourceLocation;
@@ -27,10 +28,15 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.structure.Structures;
+import net.minecraftforge.common.JigsawCategory;
 import net.minecraftforge.eventbus.api.Event;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This event is called every time a {@link JigsawPattern} is created. Use this event to modify the pools of the JigsawPattern
@@ -42,43 +48,74 @@ import java.util.List;
  *
  */
 public class JigsawPatternInitEvent extends Event {
-    private List<Pair<JigsawPiece,Integer>> newBuildings = Lists.newArrayList();
-    private List<ResourceLocation> remove = Lists.newArrayList();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private Map<ResourceLocation,List<Pair<JigsawPiece,Integer>>> newBuildings = Maps.newHashMap();
+    private Map<ResourceLocation,List<ResourceLocation>> remove = Maps.newHashMap();
+    private Map<ResourceLocation,JigsawCategory> newCategories = Maps.newHashMap();
+    private List<ResourceLocation> removeCategories = Lists.newArrayList();
 
     public final ResourceLocation jigsawPoolName;
-    private final List<Pair<JigsawPiece, Integer>> jigsawPieces;
+    private final Map<ResourceLocation,JigsawCategory> jigsawPieces = Maps.newHashMap();
 
-    public JigsawPatternInitEvent(ResourceLocation location, List<Pair<JigsawPiece, Integer>> jigsawPieces) {
+    public JigsawPatternInitEvent(ResourceLocation location, List<JigsawCategory> jigsawPieces) {
         this.jigsawPoolName = location;
-        this.jigsawPieces = jigsawPieces;
+        jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(),category)));
     }
 
+    public void addCategory(List<Pair<JigsawPiece,Integer>> pieces, int weight, ResourceLocation registryName){
+        if(jigsawPieces.containsKey(registryName)){
+            LOGGER.warn("the category with the registryname {} already exists", registryName);
+            return;
+        }
+        if(newCategories.containsKey(registryName)){
+            LOGGER.warn("a category with the registryname {} was already added", registryName);
+            return;
+        }
+        newCategories.put(registryName,new JigsawCategory(pieces, weight, registryName));
+    }
+
+    public void removeCategory(ResourceLocation registryName){
+        removeCategories.add(registryName);
+    }
+
+    public void addBuilding(@Nonnull JigsawPiece piece, int weight)
+    {
+        this.addBuilding(JigsawCategory.DEFAULTCATEGORY,piece,weight);
+    }
     /**
      * add single JigsawPiece with weight to a pool
      * @param piece The structure that should be added
      * @param weight The weight of the structure
      */
-    public void addBuilding(@Nonnull JigsawPiece piece, int weight)
+    public void addBuilding(ResourceLocation category, @Nonnull JigsawPiece piece, int weight)
     {
-        newBuildings.add(new Pair<>(piece, weight));
+        newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(new Pair<>(piece, weight));
     }
 
+    public void addBuildings(@Nonnull List<Pair<JigsawPiece, Integer>> pieces)
+    {
+        this.addBuildings(JigsawCategory.DEFAULTCATEGORY,pieces);
+    }
     /**
      * Add multiple JigsawPieces with weight to a pool at the same time
      * @param pieces A list of JigsawPieces and weights that should be added to the pool
      */
-    public void addBuildings(@Nonnull List<Pair<JigsawPiece, Integer>> pieces)
+    public void addBuildings(ResourceLocation category, @Nonnull List<Pair<JigsawPiece, Integer>> pieces)
     {
-        newBuildings.addAll(pieces);
+        newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(pieces);
     }
 
+    public void removeBuilding(@Nonnull ResourceLocation building)
+    {
+        remove.computeIfAbsent(JigsawCategory.DEFAULTCATEGORY, categoryName -> Lists.newArrayList()).add(building);
+    }
     /**
      * removes single JigsawPiece from a JigsawPattern
      * @param building The identifier of the JigsawPiece {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
-    public void removeBuilding(@Nonnull ResourceLocation building)
+    public void removeBuilding(ResourceLocation category, @Nonnull ResourceLocation building)
     {
-        remove.add(building);
+        remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(building);
     }
 
     /**
@@ -87,13 +124,31 @@ public class JigsawPatternInitEvent extends Event {
      */
     public void removeBuildings(@Nonnull List<ResourceLocation> buildings)
     {
-        remove.addAll(buildings);
+        remove.computeIfAbsent(JigsawCategory.DEFAULTCATEGORY, categoryName -> Lists.newArrayList()).addAll(buildings);
+    }
+    /**
+     * removes multiple JigsawPieces from a JigsawPattern
+     * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
+     */
+    public void removeBuildings(ResourceLocation category, @Nonnull List<ResourceLocation> buildings)
+    {
+        remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
     }
 
-    public List<Pair<JigsawPiece, Integer>> getPool(){
-        jigsawPieces.removeIf((jigsawPieceIntegerPair -> remove.contains(jigsawPieceIntegerPair.getFirst().getRegistryName())));
-        jigsawPieces.addAll(newBuildings);
-        return jigsawPieces;
+    public List<JigsawCategory> getPool(){
+        for(ResourceLocation remove:removeCategories){
+            jigsawPieces.remove(remove);
+        }
+        jigsawPieces.putAll(this.newCategories);
+        jigsawPieces.values().forEach((category -> {
+            if(remove.containsKey(category.getRegistryName())){
+                category.getPieces().removeIf(pieceItem -> remove.get(category.getRegistryName()).contains(pieceItem.getFirst().getRegistryName()));
+            }
+        }));
+        for(Map.Entry<ResourceLocation,List<Pair<JigsawPiece,Integer>>> entry:this.newBuildings.entrySet()){
+            jigsawPieces.get(entry.getKey()).getPieces().addAll(entry.getValue());
+        }
+        return Lists.newArrayList(jigsawPieces.values());
     }
 
     public boolean isPool(String name){
