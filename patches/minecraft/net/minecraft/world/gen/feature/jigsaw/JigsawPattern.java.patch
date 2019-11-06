@@ -1,14 +1,51 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
-@@ -28,6 +28,7 @@
+@@ -11,30 +11,40 @@
+ import java.util.stream.Collectors;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Rotation;
++import net.minecraft.util.WeightedRandom;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.gen.Heightmap;
+ import net.minecraft.world.gen.feature.template.GravityStructureProcessor;
+ import net.minecraft.world.gen.feature.template.StructureProcessor;
+ import net.minecraft.world.gen.feature.template.TemplateManager;
++import net.minecraftforge.common.JigsawCategory;
++import org.apache.logging.log4j.LogManager;
+ 
+ public class JigsawPattern {
+    public static final JigsawPattern field_214949_a = new JigsawPattern(new ResourceLocation("empty"), new ResourceLocation("empty"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
+    public static final JigsawPattern field_214950_b = new JigsawPattern(new ResourceLocation("invalid"), new ResourceLocation("invalid"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
+    private final ResourceLocation field_214951_c;
+-   private final ImmutableList<Pair<JigsawPiece, Integer>> field_214952_d;
++   private final ImmutableList<JigsawCategory> field_214952_d;
+    private final List<JigsawPiece> field_214953_e;
+    private final ResourceLocation field_214954_f;
+    private final JigsawPattern.PlacementBehaviour field_214955_g;
     private int field_214956_h = Integer.MIN_VALUE;
  
     public JigsawPattern(ResourceLocation p_i51397_1_, ResourceLocation p_i51397_2_, List<Pair<JigsawPiece, Integer>> p_i51397_3_, JigsawPattern.PlacementBehaviour p_i51397_4_) {
-+      p_i51397_3_ = net.minecraftforge.event.ForgeEventFactory.onJigsawPatternInit(p_i51397_1_, Lists.newArrayList(p_i51397_3_));
++      this(p_i51397_1_,p_i51397_2_,p_i51397_4_,Lists.newArrayList(new net.minecraftforge.common.JigsawCategory(p_i51397_3_, 100, net.minecraftforge.common.JigsawCategory.DEFAULTCATEGORY)));
++   }
++
++   public JigsawPattern(ResourceLocation p_i51397_1_, ResourceLocation p_i51397_2_, JigsawPattern.PlacementBehaviour p_i51397_4_, List<net.minecraftforge.common.JigsawCategory> p_i51397_3_) {
++      p_i51397_3_ = net.minecraftforge.event.ForgeEventFactory.onJigsawPatternInit(p_i51397_1_, p_i51397_3_);
        this.field_214951_c = p_i51397_1_;
        this.field_214952_d = ImmutableList.copyOf(p_i51397_3_);
        this.field_214953_e = Lists.newArrayList();
-@@ -72,7 +73,7 @@
+ 
+-      for(Pair<JigsawPiece, Integer> pair : p_i51397_3_) {
+-         for(Integer integer = 0; integer < pair.getSecond(); integer = integer + 1) {
+-            this.field_214953_e.add(pair.getFirst().func_214845_a(p_i51397_4_));
++      for(net.minecraftforge.common.JigsawCategory category : p_i51397_3_) {
++         for (Pair<JigsawPiece, Integer> pair : category.getPieces()) {
++            for (Integer integer = 0; integer < pair.getSecond() * category.getCategoryWeight(); integer = integer + 1) {
++               field_214953_e.add(pair.getFirst().func_214845_a(p_i51397_4_));
++            }
+          }
+       }
+ 
+@@ -72,7 +82,7 @@
        return this.field_214953_e.size();
     }
  
@@ -17,7 +54,7 @@
        TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityStructureProcessor(Heightmap.Type.WORLD_SURFACE_WG, -1))),
        RIGID("rigid", ImmutableList.of());
  
-@@ -98,5 +99,15 @@
+@@ -98,5 +108,15 @@
        public ImmutableList<StructureProcessor> func_214937_b() {
           return this.field_214941_e;
        }

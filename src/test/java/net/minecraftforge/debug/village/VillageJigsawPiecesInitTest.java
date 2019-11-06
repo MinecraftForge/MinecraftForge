@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.Mod;
 public class VillageJigsawPiecesInitTest
 {
     public static final String MODID = "villagepiecesinittest";
-    public static int test = 3;
+    public static int test = 0;
 
     @SubscribeEvent
     public static void onStructuresFinished(JigsawPatternInitEvent event)
