@@ -5,7 +5,7 @@
           return blockstate.func_177229_b(field_203160_a);
        } else {
 -         return block != Blocks.field_150425_aM;
-+         return block.getDrag();
++         return block.getBubbleElevatorDirection() != Direction.UP;
        }
     }
  
@@ -14,7 +14,7 @@
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return block == Blocks.field_203203_C || block == Blocks.field_196814_hQ || block == Blocks.field_150425_aM;
-+      return block == Blocks.field_203203_C || block.isBubbleSource();
++      return block == Blocks.field_203203_C || block.isValidBubbleColumnOrigin();
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {

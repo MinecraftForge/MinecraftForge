@@ -1039,21 +1039,28 @@ public interface IForgeBlock
     }
 
     /**
-     * Called by {@link BubbleColumnBlock} when determining, if the bubble column is still above a valid bubble source.
+     * Called in {@link BubbleColumnBlock#isValidPosition} to determine, if it is still above a valid Block.
+     * Don't forget to also override {@link IForgeBlock#getBubbleElevatorDirection()}.
+     *
+     * NOTE: This doesn't mean, that this block also created the bubble column block.
+     * (see methods tick(), tickRate() and onBlockAdded() of {@link SoulSandBlock} as an example.)
      */
-    default boolean isBubbleSource() {
+    default boolean isValidBubbleColumnOrigin() {
         return this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
     }
 
     /**
-     * Called by {@link BubbleColumnBlock} in to determine, if this is a bubble source block,
-     * which is dragging (getDrag() == true) like when a Magma Block is the source,
-     * or if it is pushing (getDrag() == false) like when Soul Sand is the source.
+     * Called in {@link BubbleColumnBlock#getDrag()} to determine, in which direction the bubble column block
+     * above this block should push the player.
      *
-     * NOTE: This will return true for your Block by default, but it is never called, as long as a BubbleColumnBlock
-     * isn't added above your block and the BubbleColumnBlock won't stay, if IForgeBlock.isBubbleSource returns false.
+     * NOTE: The vanilla BubbleColumnBlock only has two directions right now:
+     *          up, if Direction.UP is passed; down, if any other Direction is passed.
+     *       Because it is calling {@link Entity#onEnterBubbleColumnWithAirAbove(boolean)} and
+     *       {@link Entity#onEnterBubbleColumn(boolean)}, which only account for a boolean (true is downward motion;
+     *       false is upward motion). You would have to implement your own bubble column block and override
+     *       onEntityCollision, if you want different behavior.
      */
-    default boolean getDrag() {
-        return this.getBlock() != Blocks.SOUL_SAND;
+    default Direction getBubbleElevatorDirection() {
+        return (this.getBlock() == Blocks.MAGMA_BLOCK) ? Direction.DOWN : Direction.UP;
     }
 }
