@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 
 import java.util.List;
@@ -30,5 +31,18 @@ public class JigsawCategory {
 
     public int getCategoryWeight(){
         return categoryWeight;
+    }
+
+    public static class PieceItem extends WeightedRandom.Item {
+        private final JigsawPiece piece;
+
+        public PieceItem(int itemWeightIn, JigsawPiece piece) {
+            super(itemWeightIn);
+            this.piece = piece;
+        }
+
+        public JigsawPiece getPiece() {
+            return piece;
+        }
     }
 }
