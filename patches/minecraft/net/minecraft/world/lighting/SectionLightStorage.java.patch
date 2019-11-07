@@ -6,7 +6,7 @@
  
 +      // FORGE: Optimize loop when lighting update count is lower than section size
 +      if (p_215528_1_.queuedUpdateSize() < 16 * 16 * 16) {
-+         p_215528_1_.bulkCancel(l -> SectionPos.func_218169_f(l) == p_215528_2_);
++         p_215528_1_.bulkCancel(l -> SectionPos.func_218162_e(l) == p_215528_2_);
 +         return;
 +      }
        for(int l = 0; l < 16; ++l) {

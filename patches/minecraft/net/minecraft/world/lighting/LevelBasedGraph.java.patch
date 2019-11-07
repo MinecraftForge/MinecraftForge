@@ -11,7 +11,7 @@
 +      return field_215488_c.size();
 +   }
 +
-+   public void bulkCancel(java.util.function.LongPredicate pred) {
++   public final void bulkCancel(java.util.function.LongPredicate pred) {
 +      ((Long2ByteOpenHashMap)field_215488_c).keySet().forEach((long l) -> {
 +          if (pred.test(l)) {
 +              func_215479_e(l);
