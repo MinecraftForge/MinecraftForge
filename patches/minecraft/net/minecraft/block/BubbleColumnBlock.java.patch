@@ -1,20 +1,34 @@
 --- a/net/minecraft/block/BubbleColumnBlock.java
 +++ b/net/minecraft/block/BubbleColumnBlock.java
-@@ -81,7 +81,7 @@
+@@ -66,8 +66,9 @@
+    public static void func_203159_a(IWorld p_203159_0_, BlockPos p_203159_1_, boolean p_203159_2_) {
+       if (func_208072_b(p_203159_0_, p_203159_1_)) {
+          p_203159_0_.func_180501_a(p_203159_1_, Blocks.field_203203_C.func_176223_P().func_206870_a(field_203160_a, Boolean.valueOf(p_203159_2_)), 2);
++      } else {
++         p_203159_0_.func_180495_p(p_203159_1_).convertIntoBubbleElevator(p_203159_0_, p_203159_1_, p_203159_2_ ? Direction.DOWN : Direction.UP);
+       }
+-
+    }
+ 
+    public static boolean func_208072_b(IWorld p_208072_0_, BlockPos p_208072_1_) {
+@@ -81,7 +82,7 @@
        if (block == Blocks.field_203203_C) {
           return blockstate.func_177229_b(field_203160_a);
        } else {
 -         return block != Blocks.field_150425_aM;
-+         return block.getBubbleElevatorDirection() != Direction.UP;
++         return blockstate.getBubbleElevatorDirection() != Direction.UP;
        }
     }
  
-@@ -126,7 +126,7 @@
+@@ -125,8 +126,9 @@
+    }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-       Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
+-      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return block == Blocks.field_203203_C || block == Blocks.field_196814_hQ || block == Blocks.field_150425_aM;
-+      return block == Blocks.field_203203_C || block.isValidBubbleColumnOrigin();
++      BlockState blockBelow = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      Block block = blockBelow.func_177230_c();
++      return block == Blocks.field_203203_C || blockBelow.isValidBubbleColumnRelay();
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {

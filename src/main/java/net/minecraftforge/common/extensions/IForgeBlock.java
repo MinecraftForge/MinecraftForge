@@ -26,17 +26,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.FireBlock;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.IBeaconBeamColorProvider;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -51,7 +42,6 @@ import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.block.Blocks;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
@@ -1039,18 +1029,20 @@ public interface IForgeBlock
     }
 
     /**
-     * Called in {@link BubbleColumnBlock#isValidPosition} to determine, if it is still above a valid Block.
-     * Don't forget to also override {@link IForgeBlock#getBubbleElevatorDirection()}.
+     * Called in {@link BubbleColumnBlock#isValidPosition} to determine, if it is still above a valid Block(State).
+     * Don't forget to also override {@link IForgeBlock#getBubbleElevatorDirection}.
      *
      * NOTE: This doesn't mean, that this block also created the bubble column block.
      * (see methods tick(), tickRate() and onBlockAdded() of {@link SoulSandBlock} as an example.)
+     * ANOTHER NOTE: This should also be overridden, if this block is one which can be a bubble elevator.
+     * It should then return true, if it's in "elevator-state" and false, if it's in "still-water-state".
      */
-    default boolean isValidBubbleColumnOrigin() {
-        return this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
+    default boolean isValidBubbleColumnRelay(BlockState state) {
+        return this.getBlock() == Blocks.BUBBLE_COLUMN || this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
     }
 
     /**
-     * Called in {@link BubbleColumnBlock#getDrag()} to determine, in which direction the bubble column block
+     * Called in {@link BubbleColumnBlock#getDrag} to determine, in which direction the bubble column block
      * above this block should push the player.
      *
      * NOTE: The vanilla BubbleColumnBlock only has two directions right now:
@@ -1060,7 +1052,19 @@ public interface IForgeBlock
      *       false is upward motion). You would have to implement your own bubble column block and override
      *       onEntityCollision, if you want different behavior.
      */
-    default Direction getBubbleElevatorDirection() {
+    default Direction getBubbleElevatorDirection(BlockState state) {
         return (this.getBlock() == Blocks.MAGMA_BLOCK) ? Direction.DOWN : Direction.UP;
+    }
+
+    /**
+     * Used to convert this block into a bubble elevator. This can be done by changing this block to a different state
+     * or by placing another block altogether.
+     *
+     * @param elevatorDirection The direction in which the player gets pushed by this elevator.
+     *                          For vanilla BubbleColumnBlocks there's only up (Direction.UP) and down (else).
+     */
+    default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, Direction elevatorDirection) {
+        boolean drag = elevatorDirection != Direction.UP;
+        if (this.getBlock() == Blocks.WATER) BubbleColumnBlock.placeBubbleColumn(world, pos, drag);
     }
 }

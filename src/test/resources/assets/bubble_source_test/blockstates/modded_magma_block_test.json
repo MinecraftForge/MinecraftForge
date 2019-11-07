@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "minecraft:block/magma_block" }
+  }
+}

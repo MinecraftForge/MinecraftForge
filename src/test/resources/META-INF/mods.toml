@@ -2,6 +2,8 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+	modId="bubble_source_test"
+[[mods]]
 	modId="testobjmodelmod"
 #[[mods]]
 #	modId="forgedebugmodeldata"
