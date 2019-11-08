@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/TripWireBlock.java
++++ b/net/minecraft/block/TripWireBlock.java
+@@ -71,7 +71,7 @@
+    }
+ 
+    public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
+-      if (!p_176208_1_.field_72995_K && !p_176208_4_.func_184614_ca().func_190926_b() && p_176208_4_.func_184614_ca().func_77973_b() == Items.field_151097_aZ) {
++      if (!p_176208_1_.field_72995_K && !p_176208_4_.func_184614_ca().func_190926_b() && p_176208_4_.func_184614_ca().func_77973_b().func_206844_a(net.minecraftforge.common.Tags.Items.SHEARS)) {
+          p_176208_1_.func_180501_a(p_176208_2_, p_176208_3_.func_206870_a(field_176295_N, Boolean.valueOf(true)), 4);
+       }
+ 

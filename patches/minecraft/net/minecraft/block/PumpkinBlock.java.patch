@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/PumpkinBlock.java
++++ b/net/minecraft/block/PumpkinBlock.java
+@@ -19,7 +19,7 @@
+ 
+    public boolean func_220051_a(BlockState p_220051_1_, World p_220051_2_, BlockPos p_220051_3_, PlayerEntity p_220051_4_, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
+       ItemStack itemstack = p_220051_4_.func_184586_b(p_220051_5_);
+-      if (itemstack.func_77973_b() == Items.field_151097_aZ) {
++      if (itemstack.func_77973_b().func_206844_a(net.minecraftforge.common.Tags.Items.SHEARS)) {
+          if (!p_220051_2_.field_72995_K) {
+             Direction direction = p_220051_6_.func_216354_b();
+             Direction direction1 = direction.func_176740_k() == Direction.Axis.Y ? p_220051_4_.func_174811_aO().func_176734_d() : direction;
