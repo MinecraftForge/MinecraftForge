@@ -126,4 +126,28 @@ public interface IForgePacketBuffer
             throw new IllegalArgumentException("Attempted to read an registryValue of the wrong type from the Buffer!");
         return value;
     }
+
+    /**
+     * Writes a FluidStack to the packet buffer, easy enough. If EMPTY, writes a FALSE.
+     * This behavior provides parity with the ItemStack method in PacketBuffer.
+     *
+     * @param stack FluidStack to be written to the packet buffer.
+     */
+    public void writeFluidStack(FluidStack stack)
+    {
+        if (stack.isEmpty()) {
+            writeBoolean(false);
+        } else {
+            writeBoolean(true);
+            stack.writeToPacket(this);
+        }
+    }
+
+    /**
+     * Reads a FluidStack from this buffer.
+     */
+    public FluidStack readFluidStack()
+    {
+        return !readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(this);
+    }
 }
