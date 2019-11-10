@@ -61,7 +61,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
-@@ -211,25 +221,30 @@
+@@ -211,38 +221,52 @@
           if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_73090_b.func_195070_dx()) {
              this.field_73092_a.func_184138_a(p_180237_1_, blockstate, blockstate, 3);
              return false;
@@ -77,8 +77,8 @@
 -            }
 -
              if (this.func_73083_d()) {
-+               removeBlock(p_180237_1_, false);
-                return true;
+-               return true;
++               return removeBlock(p_180237_1_, false);
              } else {
                 ItemStack itemstack = this.field_73090_b.func_184614_ca();
 -               boolean flag1 = this.field_73090_b.func_184823_b(blockstate);
@@ -97,9 +97,10 @@
 +                  blockstate.func_177230_c().func_180637_b(field_73092_a, p_180237_1_, exp);
 +               }
  
-                return true;
+-               return true;
++               return flag;
              }
-@@ -237,12 +252,22 @@
+          }
        }
     }
  
@@ -122,7 +123,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -285,12 +310,19 @@
+@@ -285,12 +309,19 @@
              return ActionResultType.PASS;
           }
        } else {
