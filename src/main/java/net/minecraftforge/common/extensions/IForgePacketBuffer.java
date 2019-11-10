@@ -22,6 +22,7 @@ package net.minecraftforge.common.extensions;
 import com.google.common.base.Preconditions;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -133,7 +134,7 @@ public interface IForgePacketBuffer
      *
      * @param stack FluidStack to be written to the packet buffer.
      */
-    public void writeFluidStack(FluidStack stack)
+    default void writeFluidStack(FluidStack stack)
     {
         if (stack.isEmpty()) {
             writeBoolean(false);
@@ -146,7 +147,7 @@ public interface IForgePacketBuffer
     /**
      * Reads a FluidStack from this buffer.
      */
-    public FluidStack readFluidStack()
+    default FluidStack readFluidStack()
     {
         return !readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(this);
     }
