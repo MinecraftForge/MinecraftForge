@@ -881,26 +881,14 @@ public interface IForgeBlockState
     }
 
     /**
-     * Called in {@link BubbleColumnBlock#isValidPosition} to determine, if it is still above a valid Block(State).
-     * (See {@link IForgeBlock#isValidBubbleColumnRelay})
-     *
-     * NOTE: This doesn't mean, that this block state also created the bubble column block.
-     * (see methods tick(), tickRate() and onBlockAdded() of {@link SoulSandBlock} as an example.)
+     * (See {@link IForgeBlock#isValidBubbleElevatorRelay})
      */
-    default boolean isValidBubbleColumnRelay() {
-        return this.getBlockState().getBlock().isValidBubbleColumnRelay(this.getBlockState());
+    default boolean isValidBubbleElevatorRelay() {
+        return this.getBlockState().getBlock().isValidBubbleElevatorRelay(this.getBlockState());
     }
 
     /**
-     * Called in {@link BubbleColumnBlock#getDrag} to determine, in which direction the bubble column block
-     * above this block should push the player. (See {@link IForgeBlock#getBubbleElevatorDirection})
-     *
-     * NOTE: The vanilla BubbleColumnBlock only has two directions right now:
-     *          up, if Direction.UP is passed; down, if any other Direction is passed.
-     *       Because it is calling {@link Entity#onEnterBubbleColumnWithAirAbove(boolean)} and
-     *       {@link Entity#onEnterBubbleColumn(boolean)}, which only account for a boolean (true is downward motion;
-     *       false is upward motion). You would have to implement your own bubble column block and override
-     *       onEntityCollision, if you want different behavior.
+     * (See {@link IForgeBlock#getBubbleElevatorDirection})
      */
     default Direction getBubbleElevatorDirection() {
         Block block = this.getBlockState().getBlock();
@@ -912,11 +900,7 @@ public interface IForgeBlockState
     }
 
     /**
-     * Used to convert this block state into a bubble elevator. This can be done by changing the state or by
-     * changing the block at the given position altogether. (See {@link IForgeBlock#convertIntoBubbleElevator}
-     *
-     * @param elevatorDirection The direction in which the player gets pushed by this elevator.
-     *                          For vanilla BubbleColumnBlocks there's only up (Direction.UP) and down (else).
+     * See {@link IForgeBlock#convertIntoBubbleElevator}
      */
     default void convertIntoBubbleElevator(IWorld world, BlockPos pos, Direction elevatorDirection) {
         this.getBlockState().getBlock().convertIntoBubbleElevator(this.getBlockState(), world, pos, elevatorDirection);

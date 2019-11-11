@@ -70,7 +70,7 @@ class ModdedSoulSandBlock extends SoulSandBlock {
     }
 
     @Override
-    public boolean isValidBubbleColumnRelay(BlockState state) {
+    public boolean isValidBubbleElevatorRelay(BlockState state) {
         return true;
     }
 
@@ -89,7 +89,7 @@ class ModdedMagmaBlock extends MagmaBlock {
     }
 
     @Override
-    public boolean isValidBubbleColumnRelay(BlockState state) {
+    public boolean isValidBubbleElevatorRelay(BlockState state) {
         return true;
     }
 
@@ -130,7 +130,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
         }
 
         BlockState stateBelow = world.getBlockState(context.getPos().down());
-        if (stateBelow.isValidBubbleColumnRelay()) {
+        if (stateBelow.isValidBubbleElevatorRelay()) {
             blockstate = blockstate.with(BUBBLE_ELEVATOR, true).with(DRAG, stateBelow.getBubbleElevatorDirection() != Direction.UP);
         }
 
@@ -170,7 +170,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     @Override
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
         if (state.get(BUBBLE_ELEVATOR)) {
-            if (worldIn.getBlockState(pos.down()).isValidBubbleColumnRelay()) {
+            if (worldIn.getBlockState(pos.down()).isValidBubbleElevatorRelay()) {
                 worldIn.getBlockState(pos.up()).convertIntoBubbleElevator(worldIn, pos.up(), state.getBubbleElevatorDirection());
             } else {
                 worldIn.setBlockState(pos, state.with(BUBBLE_ELEVATOR, false));
@@ -209,7 +209,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if(stateIn.get(WATERLOGGED)) {
             if (facing == Direction.DOWN) {
-                if (facingState.isValidBubbleColumnRelay()) {
+                if (facingState.isValidBubbleElevatorRelay()) {
                     stateIn = stateIn.with(BUBBLE_ELEVATOR, true).with(DRAG, facingState.getBubbleElevatorDirection() != Direction.UP);
                     worldIn.setBlockState(currentPos, stateIn, 2);
                 } else {
@@ -227,7 +227,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     // ================== Here begins Forge Interface stuff
 
     @Override
-    public boolean isValidBubbleColumnRelay(BlockState state) {
+    public boolean isValidBubbleElevatorRelay(BlockState state) {
         return state.get(BUBBLE_ELEVATOR);
     }
 

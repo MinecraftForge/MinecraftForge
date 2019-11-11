@@ -1032,25 +1032,24 @@ public interface IForgeBlock
      * Called in {@link BubbleColumnBlock#isValidPosition} to determine, if it is still above a valid Block(State).
      * Don't forget to also override {@link IForgeBlock#getBubbleElevatorDirection}.
      *
-     * NOTE: This doesn't mean, that this block also created the bubble column block.
-     * (see methods tick(), tickRate() and onBlockAdded() of {@link SoulSandBlock} as an example.)
-     * ANOTHER NOTE: This should also be overridden, if this block is one which can be a bubble elevator.
-     * It should then return true, if it's in "elevator-state" and false, if it's in "still-water-state".
+     * NOTE: Block(State)s which return true here would usually either be the base of a bubble elevator (SoulSandBlock,
+     * MagmaBlock) or part of the bubble elevator itself. (BubbleColumnBlock)
      */
-    default boolean isValidBubbleColumnRelay(BlockState state) {
+    default boolean isValidBubbleElevatorRelay(BlockState state) {
         return this.getBlock() == Blocks.BUBBLE_COLUMN || this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
     }
 
     /**
-     * Called in {@link BubbleColumnBlock#getDrag} to determine, in which direction the bubble column block
-     * above this block should push the player.
+     * Called in {@link BubbleColumnBlock#getDrag} on the block(state) underneath to find out in which direction itself
+     * should push the player and in which direction the block(state) above should push the player.
+     *
+     * (See {@link IForgeBlockState#getBubbleElevatorDirection()} for BubbleColumnBlock behavior.)
      *
      * NOTE: The vanilla BubbleColumnBlock only has two directions right now:
      *          up, if Direction.UP is passed; down, if any other Direction is passed.
      *       Because it is calling {@link Entity#onEnterBubbleColumnWithAirAbove(boolean)} and
      *       {@link Entity#onEnterBubbleColumn(boolean)}, which only account for a boolean (true is downward motion;
-     *       false is upward motion). You would have to implement your own bubble column block and override
-     *       onEntityCollision, if you want different behavior.
+     *       false is upward motion).
      */
     default Direction getBubbleElevatorDirection(BlockState state) {
         return (this.getBlock() == Blocks.MAGMA_BLOCK) ? Direction.DOWN : Direction.UP;
@@ -1058,13 +1057,16 @@ public interface IForgeBlock
 
     /**
      * Used to convert this block into a bubble elevator. This can be done by changing this block to a different state
-     * or by placing another block altogether.
+     * or by placing a new block altogether. The newly set block needs to override some more methods to truly be part
+     * of a bubble elevator (See the methods onEntityCollision, tick, tickRate and updatePostPlacement in
+     * {@link BubbleColumnBlock}.
+     * Plus it should return true in {@link IForgeBlock#isValidBubbleElevatorRelay} and its current direction in
+     * {@link IForgeBlock#getBubbleElevatorDirection}.
      *
      * @param elevatorDirection The direction in which the player gets pushed by this elevator.
      *                          For vanilla BubbleColumnBlocks there's only up (Direction.UP) and down (else).
      */
     default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, Direction elevatorDirection) {
-        boolean drag = elevatorDirection != Direction.UP;
-        if (this.getBlock() == Blocks.WATER) BubbleColumnBlock.placeBubbleColumn(world, pos, drag);
+        if (this.getBlock() == Blocks.WATER) { BubbleColumnBlock.placeBubbleColumn(world, pos, elevatorDirection != Direction.UP); }
     }
 }

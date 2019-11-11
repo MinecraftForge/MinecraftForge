@@ -20,15 +20,14 @@
        }
     }
  
-@@ -125,8 +126,9 @@
+@@ -125,8 +126,8 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
 -      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return block == Blocks.field_203203_C || block == Blocks.field_196814_hQ || block == Blocks.field_150425_aM;
-+      BlockState blockBelow = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-+      Block block = blockBelow.func_177230_c();
-+      return block == Blocks.field_203203_C || blockBelow.isValidBubbleColumnRelay();
++      BlockState blockStateBelow = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      return blockStateBelow.isValidBubbleElevatorRelay();
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
