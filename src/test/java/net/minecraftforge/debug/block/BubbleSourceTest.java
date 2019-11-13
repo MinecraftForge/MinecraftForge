@@ -29,6 +29,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 @Mod(BubbleSourceTest.MODID)
@@ -163,7 +164,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (state.get(BUBBLE_ELEVATOR)) {
             BlockState stateBelow = worldIn.getBlockState(pos.down());
-            worldIn.getBlockState(pos.up()).convertIntoBubbleElevator(worldIn, pos.up(), stateBelow.getBubbleElevatorDirection());
+            worldIn.getBlockState(pos.up()).convertIntoBubbleElevator(worldIn, pos.up(), null, stateBelow.getBubbleElevatorDirection());
         }
     }
 
@@ -171,7 +172,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
         if (state.get(BUBBLE_ELEVATOR)) {
             if (worldIn.getBlockState(pos.down()).isValidBubbleElevatorRelay()) {
-                worldIn.getBlockState(pos.up()).convertIntoBubbleElevator(worldIn, pos.up(), state.getBubbleElevatorDirection());
+                worldIn.getBlockState(pos.up()).convertIntoBubbleElevator(worldIn, pos.up(), null, state.getBubbleElevatorDirection());
             } else {
                 worldIn.setBlockState(pos, state.with(BUBBLE_ELEVATOR, false));
             }
@@ -237,8 +238,10 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     }
 
     @Override
-    public void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, Direction elevatorDirection) {
-        boolean drag = elevatorDirection != Direction.UP;
-        world.setBlockState(pos, state.with(BUBBLE_ELEVATOR, true).with(DRAG, drag), 2);
+    public void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+        if(state.get(WATERLOGGED)) {
+            boolean drag = elevatorDirection != Direction.UP;
+            world.setBlockState(pos, state.with(BUBBLE_ELEVATOR, true).with(DRAG, drag), 2);
+        }
     }
 }

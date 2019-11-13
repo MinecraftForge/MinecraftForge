@@ -1,0 +1,16 @@
+--- a/net/minecraft/block/MagmaBlock.java
++++ b/net/minecraft/block/MagmaBlock.java
+@@ -41,11 +41,11 @@
+    }
+ 
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+-      BubbleColumnBlock.func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), true);
++      p_196267_2_.func_180495_p(p_196267_3_.func_177984_a()).convertIntoBubbleElevator(p_196267_2_, p_196267_3_.func_177984_a(), null, Direction.DOWN);
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+-      if (p_196271_2_ == Direction.UP && p_196271_3_.func_177230_c() == Blocks.field_150355_j) {
++      if (p_196271_2_ == Direction.UP && !p_196271_3_.func_204520_s().func_206888_e()) {
+          p_196271_4_.func_205220_G_().func_205360_a(p_196271_5_, this, this.func_149738_a(p_196271_4_));
+       }
+ 

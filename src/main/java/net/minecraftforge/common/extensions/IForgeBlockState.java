@@ -902,7 +902,7 @@ public interface IForgeBlockState
     /**
      * See {@link IForgeBlock#convertIntoBubbleElevator}
      */
-    default void convertIntoBubbleElevator(IWorld world, BlockPos pos, Direction elevatorDirection) {
-        this.getBlockState().getBlock().convertIntoBubbleElevator(this.getBlockState(), world, pos, elevatorDirection);
+    default void convertIntoBubbleElevator(IWorld world, BlockPos pos, Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+        this.getBlockState().getBlock().convertIntoBubbleElevator(this.getBlockState(), world, pos, vanillaBubbleColumnReplacement, elevatorDirection);
     }
 }

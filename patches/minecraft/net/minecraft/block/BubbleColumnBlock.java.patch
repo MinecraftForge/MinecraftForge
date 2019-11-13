@@ -5,7 +5,7 @@
        if (func_208072_b(p_203159_0_, p_203159_1_)) {
           p_203159_0_.func_180501_a(p_203159_1_, Blocks.field_203203_C.func_176223_P().func_206870_a(field_203160_a, Boolean.valueOf(p_203159_2_)), 2);
 +      } else {
-+         p_203159_0_.func_180495_p(p_203159_1_).convertIntoBubbleElevator(p_203159_0_, p_203159_1_, p_203159_2_ ? Direction.DOWN : Direction.UP);
++         p_203159_0_.func_180495_p(p_203159_1_).convertIntoBubbleElevator(p_203159_0_, p_203159_1_, null, p_203159_2_ ? Direction.DOWN : Direction.UP);
        }
 -
     }

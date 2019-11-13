@@ -1065,8 +1065,21 @@ public interface IForgeBlock
      *
      * @param elevatorDirection The direction in which the player gets pushed by this elevator.
      *                          For vanilla BubbleColumnBlocks there's only up (Direction.UP) and down (else).
+     * @param vanillaBubbleColumnReplacement If vanilla water blocks shouldn't convert into vanilla bubble column blocks
+     *                                       this parameter can be changed to a non-null Block, which itself has this
+     *                                       method overridden.
+     *                                       It should be noted though that later blocks in the elevator column
+     *                                       (if they for example are from another mod) could call this method with the
+     *                                       parameter being null again converting vanilla water blocks into vanilla
+     *                                       bubble column blocks.
      */
-    default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, Direction elevatorDirection) {
-        if (this.getBlock() == Blocks.WATER) { BubbleColumnBlock.placeBubbleColumn(world, pos, elevatorDirection != Direction.UP); }
+    default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+        if (this.getBlock() == Blocks.WATER) {
+            if (vanillaBubbleColumnReplacement != null && (vanillaBubbleColumnReplacement != this.getBlock())) {
+                vanillaBubbleColumnReplacement.convertIntoBubbleElevator(state, world, pos, vanillaBubbleColumnReplacement, elevatorDirection);
+            } else {
+                BubbleColumnBlock.placeBubbleColumn(world, pos, elevatorDirection != Direction.UP);
+            }
+        }
     }
 }
