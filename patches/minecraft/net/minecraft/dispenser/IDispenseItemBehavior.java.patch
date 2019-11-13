@@ -6,8 +6,8 @@
                 world.func_175656_a(blockpos, blockstate.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)));
 -            } else if (blockstate.func_177230_c() instanceof TNTBlock) {
 -               TNTBlock.func_196534_a(world, blockpos);
-+            } else if (blockstate.isExplosive(blockstate, world, blockpos)) {
-+               blockstate.createExplosion(world, blockpos, null);
++            } else if (blockstate.isFlammable(world, blockpos, p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a).func_176734_d())) {
++               blockstate.catchFire(world, blockpos, p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a).func_176734_d(), null);
                 world.func_217377_a(blockpos, false);
              } else {
                 this.field_218407_b = false;

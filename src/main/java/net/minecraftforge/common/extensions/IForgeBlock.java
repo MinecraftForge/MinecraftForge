@@ -925,6 +925,17 @@ public interface IForgeBlock
     }
 
     /**
+     * If the block is flammable, this is called when it gets lit on fire.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @param igniter The entity that lit the fire
+     */
+    default void catchFire(BlockState state, World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {}
+
+    /**
      * Called when fire is updating on a neighbor block.
      * The higher the number returned, the faster fire will spread around this block.
      *
@@ -1028,34 +1039,6 @@ public interface IForgeBlock
     {
         world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         getBlock().onExplosionDestroy(world, pos, explosion);
-    }
-
-    /**
-     * Determines if the block is explosive and {@link #createExplosion(World, BlockPos, LivingEntity)} should be called.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if the block can explode, false otherwise.
-     */
-    default boolean isExplosive(BlockState state, IBlockReader world, BlockPos pos)
-    {
-        return getBlock() instanceof TNTBlock;
-    }
-
-    /**
-     * If the block is explosive, this is called when it should create an explosion.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @param igniter The entity that caused the explosion to occur
-     */
-    default void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter)
-    {
-        if (getBlock() instanceof TNTBlock)
-        {
-            TNTBlock.explode(world, pos, igniter);
-        }
     }
 
     /**

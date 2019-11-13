@@ -22,6 +22,7 @@ package net.minecraftforge.debug.block;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.TNTBlock;
 import net.minecraft.entity.EntityClassification;
@@ -31,6 +32,7 @@ import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.network.IPacket;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -88,7 +90,7 @@ public class CustomTNTTest {
         }
 
         @Override
-        public void createExplosion(World world, BlockPos pos, @Nullable LivingEntity igniter) {
+        public void catchFire(BlockState state, World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
             if (!world.isRemote) {
                 TNTEntity tnt = new CustomTNTEntity(world, pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F, igniter);
                 world.addEntity(tnt);

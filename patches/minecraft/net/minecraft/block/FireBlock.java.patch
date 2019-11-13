@@ -92,7 +92,7 @@
 -            TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
 -         }
-+         if (blockstate.isExplosive(blockstate, p_176536_1_, p_176536_2_)) blockstate.createExplosion(p_176536_1_, p_176536_2_, null);
++         blockstate.catchFire(p_176536_1_, p_176536_2_, face, null);
        }
  
     }
