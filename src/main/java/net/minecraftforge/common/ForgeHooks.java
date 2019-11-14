@@ -955,6 +955,18 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
+    public static boolean onSpreadableSpreadPre(World worldIn, BlockPos pos, BlockState state)
+    {
+        BlockEvent ev = new BlockEvent.SpreadableSpreadEvent.Pre(worldIn,pos,state);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return !ev.isCanceled();
+    }
+
+    public static void onSpreadableSpreadPost(World worldIn, BlockPos pos, BlockState state)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.SpreadableSpreadEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
     @Nullable
     public static CriticalHitEvent getCriticalHit(PlayerEntity player, Entity target, boolean vanillaCritical, float damageModifier)
     {

@@ -396,6 +396,58 @@ public class BlockEvent extends Event
     }
 
     /**
+     * Fired when a spreadable block spreads.  See subevents.
+     *
+     */
+    public static class SpreadableSpreadEvent extends BlockEvent
+    {
+        public SpreadableSpreadEvent(World world, BlockPos pos, BlockState state)
+        {
+            super(world, pos, state);
+        }
+
+        /**
+         * Fired when any spreadable blocks (for example grass, or mycelium in vanilla)
+         * attempt to spread onto a nearby block that can be spread onto during a random tick.<br>
+         * <br>
+         * This event is {@link Cancelable}
+         * <br>
+         */
+        @HasResult
+        public static class Pre extends SpreadableSpreadEvent
+        {
+            public Pre(World world, BlockPos pos, BlockState state)
+            {
+                super(world, pos, state);
+            }
+        }
+
+        /**
+         * Fired when spreadable blocks (for example grass, or mycelium in vanilla)
+         * have successfully spread. The block's original state is available,
+         * in addition to its new state.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult}<br>
+         */
+        public static class Post extends SpreadableSpreadEvent
+        {
+            private final BlockState originalState;
+            public Post(World world, BlockPos pos, BlockState original, BlockState state)
+            {
+                super(world, pos, state);
+                originalState = original;
+            }
+
+            public BlockState getOriginalState()
+            {
+                return originalState;
+            }
+        }
+    }
+
+    /**
      * Fired when when farmland gets trampled
      * This event is {@link Cancelable}
      */
