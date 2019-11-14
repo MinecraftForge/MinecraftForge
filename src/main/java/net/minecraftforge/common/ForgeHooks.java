@@ -132,6 +132,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
@@ -374,7 +375,18 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(event);
         return event.getLootingLevel();
     }
-
+    
+    public static double getLivingVisibility(LivingEntity living, @Nullable Entity lookingEntity, double visibility)
+    {
+    	LivingVisibilityEvent event = new LivingVisibilityEvent(living, lookingEntity, visibility);
+        MinecraftForge.EVENT_BUS.post(event);
+        double value = event.getVisibility();
+        if(living instanceof PlayerEntity) {
+            value = getPlayerVisibilityDistance((PlayerEntity)living, value, visibility);
+        }
+        return value;
+    }
+    
     public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance)
     {
         PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);

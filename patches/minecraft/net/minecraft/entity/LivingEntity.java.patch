@@ -83,6 +83,15 @@
           this.func_82142_c(this.func_70644_a(Effects.field_76441_p));
        }
  
+@@ -671,7 +683,7 @@
+          }
+       }
+ 
+-      return d0;
++      return net.minecraftforge.common.ForgeHooks.getLivingVisibility(this, p_213340_1_, d0);
+    }
+ 
+    public boolean func_213336_c(LivingEntity p_213336_1_) {
 @@ -705,7 +717,10 @@
  
           boolean flag;
