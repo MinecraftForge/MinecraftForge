@@ -31,6 +31,13 @@ import net.minecraftforge.common.MinecraftForge;
  * This event is fired whenever the visibility is determined in
  * {@link LivingEntity#getVisibilityMultiplier(Entity)}. <br>
  * <br>
+ * The visibility value determined by this event is multiplied with the distance
+ * between {@link #lookingEntity} and the entity of this event. <br>
+ * If the multiplied value exceeds the distance of the lookingEntity's vision range,
+ * the entity is determined to be visible (and can be targeted). <br>
+ * In vanilla Minecraft, the visibility value is a value in the range [0.0, 1.0], but the value can theoretically be in the range [-Infinity, Infinity]. <br>
+ * By default, a player has a visibility of 1. This value is reduced for example by sneaking, being invisible, or wearing a particular mob skull. <br>
+ * <br>
  * This event is fired via the {@link ForgeHooks#getLivingVisibility(LivingEntity, Entity, double)}.<br>
  * <br>
  * {@link #originalVisibility} contains the original visibility value determined by vanilla. <br>
