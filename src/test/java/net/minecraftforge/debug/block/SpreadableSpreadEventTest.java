@@ -77,10 +77,8 @@ public class SpreadableSpreadEventTest {
         {
         	/* MYCELIUM spreads grey wool instead of MYCELIUM */
         	BlockState spreadable = event.getState();
-    		System.out.println("SPREADABLE SPREAD POST");
         	if (spreadable.getBlock() == Blocks.MYCELIUM) 
         	{
-        		System.out.println("IT WAS MYCELIUM");
         		World world = event.getWorld().getWorld();
         		BlockPos pos = event.getPos();
         		world.setBlockState(pos, Blocks.GRAY_WOOL.getDefaultState());
@@ -111,7 +109,7 @@ public class SpreadableSpreadEventTest {
 
         public SpecialGrassBlock()
         {
-        	super(Block.Properties.create(Material.EARTH));
+        	super(Block.Properties.create(Material.EARTH).tickRandomly());
         	setRegistryName(MODID, blockName);
         }
         
