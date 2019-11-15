@@ -35,7 +35,6 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.TNTBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
