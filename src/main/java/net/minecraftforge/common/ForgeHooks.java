@@ -955,16 +955,16 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
-    public static boolean onSpreadableSpreadPre(World worldIn, BlockPos pos, BlockState state)
+    public static boolean onSpreadableSpreadPre(World worldIn, BlockPos pos, BlockState target, BlockState source)
     {
-        BlockEvent ev = new BlockEvent.SpreadableSpreadEvent.Pre(worldIn,pos,state);
+        BlockEvent ev = new BlockEvent.SpreadableSpreadEvent.Pre(worldIn,pos,target,source);
         MinecraftForge.EVENT_BUS.post(ev);
         return !ev.isCanceled();
     }
 
-    public static void onSpreadableSpreadPost(World worldIn, BlockPos pos, BlockState state)
+    public static void onSpreadableSpreadPost(World worldIn, BlockPos pos, BlockState target)
     {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.SpreadableSpreadEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.SpreadableSpreadEvent.Post(worldIn, pos, target, worldIn.getBlockState(pos)));
     }
 
     @Nullable

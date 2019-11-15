@@ -1,20 +1,28 @@
 --- a/net/minecraft/block/SpreadableSnowyDirtBlock.java
 +++ b/net/minecraft/block/SpreadableSnowyDirtBlock.java
-@@ -31,6 +31,7 @@
+@@ -29,18 +29,25 @@
+       return func_220257_b(p_220256_0_, p_220256_1_, p_220256_2_) && !p_220256_1_.func_204610_c(blockpos).func_206884_a(FluidTags.field_206959_a);
+    }
  
++   public Block degeneratesInto () {
++	   return Blocks.field_150346_d;
++   }
++
     public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        if (!p_196267_2_.field_72995_K) {
 +         if (!p_196267_2_.isAreaLoaded(p_196267_3_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
           if (!func_220257_b(p_196267_1_, p_196267_2_, p_196267_3_)) {
-             p_196267_2_.func_175656_a(p_196267_3_, Blocks.field_150346_d.func_176223_P());
+-            p_196267_2_.func_175656_a(p_196267_3_, Blocks.field_150346_d.func_176223_P());
++            p_196267_2_.func_175656_a(p_196267_3_, degeneratesInto().func_176223_P());
           } else {
-@@ -39,8 +40,10 @@
+             if (p_196267_2_.func_201696_r(p_196267_3_.func_177984_a()) >= 9) {
+                BlockState blockstate = this.func_176223_P();
  
                 for(int i = 0; i < 4; ++i) {
                    BlockPos blockpos = p_196267_3_.func_177982_a(p_196267_4_.nextInt(3) - 1, p_196267_4_.nextInt(5) - 3, p_196267_4_.nextInt(3) - 1);
 -                  if (p_196267_2_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150346_d && func_220256_c(blockstate, p_196267_2_, blockpos)) {
 +                  BlockState target = p_196267_2_.func_180495_p(blockpos);
-+                  if (target.func_177230_c() == Blocks.field_150346_d && func_220256_c(blockstate, p_196267_2_, blockpos) && net.minecraftforge.common.ForgeHooks.onSpreadableSpreadPre(p_196267_2_, blockpos, target)) {
++                  if (target.func_177230_c().canSustainSpreadableOfType(this.getBlock()) && func_220256_c(blockstate, p_196267_2_, blockpos) && net.minecraftforge.common.ForgeHooks.onSpreadableSpreadPre(p_196267_2_, blockpos, target, blockstate)) {
                       p_196267_2_.func_175656_a(blockpos, blockstate.func_206870_a(field_196382_a, Boolean.valueOf(p_196267_2_.func_180495_p(blockpos.func_177984_a()).func_177230_c() == Blocks.field_150433_aE)));
 +                     net.minecraftforge.common.ForgeHooks.onSpreadableSpreadPost(p_196267_2_, blockpos, target);
                    }

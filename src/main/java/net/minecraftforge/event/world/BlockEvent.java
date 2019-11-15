@@ -416,9 +416,16 @@ public class BlockEvent extends Event
         @HasResult
         public static class Pre extends SpreadableSpreadEvent
         {
-            public Pre(World world, BlockPos pos, BlockState state)
+            private final BlockState spreadable;
+            public Pre(World world, BlockPos pos, BlockState target, BlockState source)
             {
-                super(world, pos, state);
+                super(world, pos, target);
+                spreadable = source;
+            }
+
+            public BlockState getSpreadable()
+            {
+                return spreadable;
             }
         }
 

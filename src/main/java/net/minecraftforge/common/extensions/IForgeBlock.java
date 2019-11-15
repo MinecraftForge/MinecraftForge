@@ -522,6 +522,25 @@ public interface IForgeBlock
         return false;
     }
 
+    /**
+     * Determines if this block can support the passed in spreadable, allowing it to spread to this block.
+     * 
+     * The only spreadables in vanilla minecraft are Grass and Mycellium, and they can both only
+     * be spread to Dirt.
+     * 
+     * @param spreadable
+     * @return True to allow the spreadable to spread to this block.
+     */
+    default boolean canSustainSpreadableOfType(Block spreadable)
+    {
+    	if (spreadable == Blocks.GRASS_BLOCK || spreadable == Blocks.MYCELIUM)
+    	{
+    		return this == Blocks.DIRT;
+    	}
+    	
+    	return false;
+    }
+
    /**
     * Determines if this block can support the passed in plant, allowing it to be planted and grow.
     * Some examples:
