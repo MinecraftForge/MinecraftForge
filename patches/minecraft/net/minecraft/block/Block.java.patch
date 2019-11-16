@@ -1,10 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -72,12 +72,14 @@
- import net.minecraft.world.storage.loot.LootTables;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+
+@@ -75,9 +75,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -17,7 +13,7 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
-@@ -246,6 +248,10 @@
+@@ -246,6 +247,10 @@
        this.field_149765_K = p_i48440_1_.field_200961_i;
        this.field_208621_p = p_i48440_1_.field_208772_j;
        this.field_220085_g = p_i48440_1_.field_222381_j;
@@ -28,7 +24,7 @@
        this.field_176227_L = builder.func_206893_a(BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
-@@ -291,7 +297,7 @@
+@@ -291,7 +296,7 @@
  
     @Deprecated
     public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -37,7 +33,7 @@
     }
  
     @Deprecated
-@@ -303,8 +309,9 @@
+@@ -303,8 +308,9 @@
        return this.field_149789_z;
     }
  
@@ -48,7 +44,7 @@
     }
  
     @Deprecated
-@@ -315,7 +322,7 @@
+@@ -315,7 +321,7 @@
     @Deprecated
     @OnlyIn(Dist.CLIENT)
     public int func_220058_a(BlockState p_220058_1_, IEnviromentBlockReader p_220058_2_, BlockPos p_220058_3_) {
@@ -57,7 +53,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -460,10 +467,9 @@
+@@ -460,10 +466,9 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
@@ -69,7 +65,7 @@
     }
  
     @Deprecated
-@@ -472,8 +478,8 @@
+@@ -472,8 +477,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -80,7 +76,7 @@
        }
     }
  
-@@ -483,8 +489,7 @@
+@@ -483,8 +488,7 @@
  
     public ResourceLocation func_220068_i() {
        if (this.field_220085_g == null) {
@@ -90,7 +86,7 @@
        }
  
        return this.field_220085_g;
-@@ -553,7 +558,7 @@
+@@ -553,7 +557,7 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -99,7 +95,7 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -565,7 +570,7 @@
+@@ -565,7 +569,7 @@
     }
  
     public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
@@ -108,7 +104,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -575,6 +580,7 @@
+@@ -575,6 +579,7 @@
  
     }
  
@@ -116,7 +112,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -677,6 +683,7 @@
+@@ -677,6 +682,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -124,7 +120,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -690,6 +697,7 @@
+@@ -690,6 +696,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -132,7 +128,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -710,6 +718,7 @@
+@@ -710,6 +717,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -140,7 +136,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -754,6 +763,7 @@
+@@ -754,6 +762,7 @@
        }
     }
  
@@ -148,7 +144,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -763,7 +773,7 @@
+@@ -763,7 +772,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -157,7 +153,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -771,7 +781,7 @@
+@@ -771,7 +780,7 @@
     }
  
     public String toString() {
@@ -166,7 +162,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -779,13 +789,81 @@
+@@ -779,13 +788,81 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -250,7 +246,7 @@
     public static enum OffsetType {
        NONE,
        XZ,
-@@ -804,6 +882,9 @@
+@@ -804,6 +881,9 @@
        private float field_200961_i = 0.6F;
        private ResourceLocation field_222381_j;
        private boolean field_208772_j;
@@ -260,7 +256,7 @@
  
        private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
           this.field_200953_a = p_i48616_1_;
-@@ -834,6 +915,8 @@
+@@ -834,6 +914,8 @@
           block$properties.field_200956_d = p_200950_0_.field_149762_H;
           block$properties.field_200961_i = p_200950_0_.func_208618_m();
           block$properties.field_208772_j = p_200950_0_.field_208621_p;
@@ -269,7 +265,7 @@
           return block$properties;
        }
  
-@@ -882,13 +965,23 @@
+@@ -882,13 +964,23 @@
           return this;
        }
  
