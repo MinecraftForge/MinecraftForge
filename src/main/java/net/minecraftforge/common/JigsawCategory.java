@@ -14,6 +14,7 @@ public class JigsawCategory {
     private final List<Pair<JigsawPiece, Integer>> pieces;
     private final int categoryWeight;
     private final ResourceLocation registryName;
+    private int totalPieceWeight;
 
     public JigsawCategory(List<Pair<JigsawPiece, Integer>> pieces, int categoryWeight, ResourceLocation registryName) {
         this.pieces = pieces;
@@ -31,6 +32,10 @@ public class JigsawCategory {
 
     public int getCategoryWeight(){
         return categoryWeight;
+    }
+
+    public void recalculateWeight(){
+        this.totalPieceWeight = pieces.stream().mapToInt(Pair::getSecond).sum();
     }
 
     public static class PieceItem extends WeightedRandom.Item {
