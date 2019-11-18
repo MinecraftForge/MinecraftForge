@@ -176,12 +176,67 @@ public class JigsawPatternInitEvent extends Event {
             category.getPieces().addAll(entry.getValue());
             category.recalculateWeight();
         }
+        this.printChanges();
         return Lists.newArrayList(this.jigsawPieces.values());
     }
 
     public boolean isPool(String name)
     {
         return this.jigsawPoolRegistryName.toString().equals(name);
+    }
+
+    private void printChanges(){
+        if(this.removeCategories.size() != 0 || this.newCategories.size() != 0 || this.remove.size() != 0 || this.newBuildings.size() != 0)
+        {
+            LOGGER.debug(JIGSAWPDUMP, () -> new AdvancedLogMessageAdapter(stringBuilder ->
+            {
+                stringBuilder.append("JigsawPattern: ").append(this.jigsawPoolRegistryName).append('\n');
+                if (this.removeCategories.size() != 0)
+                {
+                    AtomicInteger i = new AtomicInteger(0);
+                    stringBuilder.append("\tRemoved Categories: ").append('\n');
+                    this.removeCategories.forEach(resourceLocation ->
+                    {
+                        stringBuilder.append("\t\tEntry: ").append(i.getAndIncrement()).append(", ").append(resourceLocation).append('\n');
+                    });
+                }
+                if (this.newCategories.size() != 0)
+                {
+                    AtomicInteger i = new AtomicInteger(0);
+                    stringBuilder.append("\tNew Categories: ").append('\n');
+                    this.newCategories.keySet().forEach(resourceLocation ->
+                    {
+                        stringBuilder.append("\t\tEntry: ").append(i.getAndIncrement()).append(", ").append(resourceLocation).append('\n');
+                    });
+                }
+                if (this.remove.size() != 0)
+                {
+                    stringBuilder.append("\tRemoved JigsawPieces from Category").append('\n');
+                    this.remove.entrySet().forEach((resourceLocationListEntry ->
+                    {
+                        AtomicInteger i = new AtomicInteger(0);
+                        stringBuilder.append("\t\tFrom Category: ").append(resourceLocationListEntry.getKey()).append('\n');
+                        resourceLocationListEntry.getValue().forEach(resourceLocation ->
+                        {
+                            stringBuilder.append("\t\t\tEntry: ").append(i.getAndIncrement()).append(", ").append(resourceLocation).append('\n');
+                        });
+                    }));
+                }
+                if (this.newBuildings.size() != 0)
+                {
+                    stringBuilder.append("\tAdded JigsawPieces to Category").append('\n');
+                    this.newBuildings.entrySet().forEach((resourceLocationListEntry ->
+                    {
+                        AtomicInteger i = new AtomicInteger(0);
+                        stringBuilder.append("\t\tTo Category: ").append(resourceLocationListEntry.getKey()).append('\n');
+                        resourceLocationListEntry.getValue().forEach(pair ->
+                        {
+                            stringBuilder.append("\t\t\tEntry: ").append(i.getAndIncrement()).append(", ").append(pair.getFirst().getRegistryName()).append('\n');
+                        });
+                    }));
+                }
+            }));
+        }
     }
 
     /**
