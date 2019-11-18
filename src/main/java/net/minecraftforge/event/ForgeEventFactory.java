@@ -716,9 +716,9 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<JigsawCategory> onJigsawPatternInit(ResourceLocation patternName, List<JigsawCategory> pool)
+    public static List<JigsawCategory> onJigsawPatternInit(ResourceLocation patternName, List<Pair<JigsawPiece, Integer>> pool)
     {
-        JigsawPatternInitEvent event = new JigsawPatternInitEvent(patternName, pool);
+        JigsawPatternInitEvent event = new JigsawPatternInitEvent(patternName, JigsawCategory.convertToCategories(pool, patternName));
         MinecraftForge.EVENT_BUS.post(event);
         return event.getPool();
     }

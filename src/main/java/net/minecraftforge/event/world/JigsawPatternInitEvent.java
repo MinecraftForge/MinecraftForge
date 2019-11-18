@@ -55,7 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JigsawPatternInitEvent extends Event {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker JIGSAWPDUMP = MarkerManager.getMarker("JIGSAWPIECES");
+    private static final Marker JIGSAWPDUMP = MarkerManager.getMarker("JIGSAWPATTERN");
 
     /** Category registryName to buildings to add */
     private Map<ResourceLocation,List<Pair<JigsawPiece, Integer>>> newBuildings = Maps.newHashMap();
@@ -74,7 +74,7 @@ public class JigsawPatternInitEvent extends Event {
     public JigsawPatternInitEvent(ResourceLocation location, List<JigsawCategory> jigsawPieces)
     {
         this.jigsawPoolRegistryName = location;
-        jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(),category)));
+            jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(),category)));
     }
 
     /**
@@ -116,9 +116,8 @@ public class JigsawPatternInitEvent extends Event {
      * @param piece The structure that should be added
      * @param weight The weight of the structure
      */
-    public void addBuilding(@Nullable ResourceLocation category, @Nonnull JigsawPiece piece, int weight)
+    public void addBuilding(@Nonnull ResourceLocation category, @Nonnull JigsawPiece piece, int weight)
     {
-        if(category == null)category = JigsawCategory.DEFAULTCATEGORY;
         this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(new Pair<>(piece, weight));
     }
 
@@ -127,9 +126,8 @@ public class JigsawPatternInitEvent extends Event {
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param pieces A list of JigsawPieces and weights that should be added to the pool
      */
-    public void addBuildings(@Nullable ResourceLocation category, @Nonnull List<Pair<JigsawPiece, Integer>> pieces)
+    public void addBuildings(@Nonnull ResourceLocation category, @Nonnull List<Pair<JigsawPiece, Integer>> pieces)
     {
-        if(category == null)category = JigsawCategory.DEFAULTCATEGORY;
         this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(pieces);
     }
 
@@ -138,9 +136,8 @@ public class JigsawPatternInitEvent extends Event {
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param building The identifier of the JigsawPiece {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
-    public void removeBuilding(@Nullable ResourceLocation category, @Nonnull ResourceLocation building)
+    public void removeBuilding(@Nonnull ResourceLocation category, @Nonnull ResourceLocation building)
     {
-        if(category == null)category = JigsawCategory.DEFAULTCATEGORY;
         this.remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(building);
     }
 
@@ -149,9 +146,8 @@ public class JigsawPatternInitEvent extends Event {
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
-    public void removeBuildings(@Nullable ResourceLocation category, @Nonnull List<ResourceLocation> buildings)
+    public void removeBuildings(@Nonnull ResourceLocation category, @Nonnull List<ResourceLocation> buildings)
     {
-        if(category == null)category = JigsawCategory.DEFAULTCATEGORY;
         remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
     }
 
@@ -173,8 +169,12 @@ public class JigsawPatternInitEvent extends Event {
         for(Map.Entry<ResourceLocation,List<Pair<JigsawPiece,Integer>>> entry: this.newBuildings.entrySet())
         {
             JigsawCategory category = this.jigsawPieces.get(entry.getKey());
-            category.getPieces().addAll(entry.getValue());
-            category.recalculateWeight();
+            if(category == null){
+                LOGGER.debug("Building cannot be added. JigsawCategory {} doesn't exits or were removed in JigsawPattern {}", entry.getKey(), this.jigsawPoolRegistryName);
+            }else {
+                category.getPieces().addAll(entry.getValue());
+                category.recalculateWeight();
+            }
         }
         this.printChanges();
         return Lists.newArrayList(this.jigsawPieces.values());
@@ -281,4 +281,5 @@ public class JigsawPatternInitEvent extends Event {
             }
         }
     }
+
 }
