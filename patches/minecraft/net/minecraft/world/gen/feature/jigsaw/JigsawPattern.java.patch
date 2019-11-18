@@ -1,22 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
-@@ -3,7 +3,7 @@
- import com.google.common.collect.ImmutableList;
- import com.google.common.collect.Lists;
- import com.mojang.datafixers.util.Pair;
--import it.unimi.dsi.fastutil.objects.ObjectArrays;
-+
- import java.util.Arrays;
- import java.util.List;
- import java.util.Map;
-@@ -16,25 +16,33 @@
- import net.minecraft.world.gen.feature.template.GravityStructureProcessor;
- import net.minecraft.world.gen.feature.template.StructureProcessor;
- import net.minecraft.world.gen.feature.template.TemplateManager;
-+import net.minecraftforge.common.JigsawCategory;
-+import org.apache.logging.log4j.LogManager;
- 
- public class JigsawPattern {
+@@ -21,20 +21,26 @@
     public static final JigsawPattern field_214949_a = new JigsawPattern(new ResourceLocation("empty"), new ResourceLocation("empty"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
     public static final JigsawPattern field_214950_b = new JigsawPattern(new ResourceLocation("invalid"), new ResourceLocation("invalid"), ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
     private final ResourceLocation field_214951_c;
@@ -41,14 +25,14 @@
 -      for(Pair<JigsawPiece, Integer> pair : p_i51397_3_) {
 -         for(Integer integer = 0; integer < pair.getSecond(); integer = integer + 1) {
 -            this.field_214953_e.add(pair.getFirst().func_214845_a(p_i51397_4_));
-+      int totalCategoryWeight = p_i51397_3_.stream().mapToInt(JigsawCategory::getCategoryWeight).sum();
++      int totalCategoryWeight = p_i51397_3_.stream().mapToInt(net.minecraftforge.common.JigsawCategory::getCategoryWeight).sum();
 +      for(net.minecraftforge.common.JigsawCategory category : p_i51397_3_) {
 +         for(Pair<JigsawPiece, Integer> pair : category.getPieces()){
 +            this.field_214953_e.add(new net.minecraftforge.common.JigsawCategory.PieceItem(((float)category.getCategoryWeight() / (float)totalCategoryWeight)*((float)pair.getSecond() / (float)category.getTotalPieceWeight()), pair.getFirst().func_214845_a(p_i51397_4_)));
           }
        }
  
-@@ -45,7 +53,7 @@
+@@ -45,7 +51,7 @@
     public int func_214945_a(TemplateManager p_214945_1_) {
        if (this.field_214956_h == Integer.MIN_VALUE) {
           this.field_214956_h = this.field_214953_e.stream().mapToInt((p_214942_1_) -> {
@@ -57,7 +41,7 @@
           }).max().orElse(0);
        }
  
-@@ -57,11 +65,20 @@
+@@ -57,11 +63,20 @@
     }
  
     public JigsawPiece func_214944_a(Random p_214944_1_) {
@@ -80,7 +64,7 @@
     }
  
     public ResourceLocation func_214947_b() {
-@@ -72,7 +89,7 @@
+@@ -72,7 +87,7 @@
        return this.field_214953_e.size();
     }
  
@@ -89,7 +73,7 @@
        TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityStructureProcessor(Heightmap.Type.WORLD_SURFACE_WG, -1))),
        RIGID("rigid", ImmutableList.of());
  
-@@ -98,5 +115,15 @@
+@@ -98,5 +113,15 @@
        public ImmutableList<StructureProcessor> func_214937_b() {
           return this.field_214941_e;
        }
