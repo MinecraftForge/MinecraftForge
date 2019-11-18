@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.Mod;
 public class VillageJigsawPiecesInitTest
 {
     public static final String MODID = "villagepiecesinittest";
-    public static int test = 4;
+    public static int test = 0;
 
     @SubscribeEvent
     public static void onStructuresFinished(JigsawPatternInitEvent event)
@@ -55,28 +55,37 @@ public class VillageJigsawPiecesInitTest
         switch (test){
             case 1:
                 if(event.isPool("minecraft:village/plains/town_centers")){
-                    event.removeBuildings(Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_1"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_2"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_3"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_1"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_2"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_3")));
-                    event.addBuilding(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),1);
+                    event.removeBuildings(null, Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_1"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_2"),new ResourceLocation("village/plains/town_centers/plains_meeting_point_3"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_1"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_2"),new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_3")));
+                    event.addBuilding(null, new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),1);
                 }
                 break;
             case 2:
-                if(event.jigsawPoolName.equals(new ResourceLocation("village/plains/streets")))
-                event.removeBuildings(Lists.newArrayList(new ResourceLocation("village/plains/streets/corner_01"),new ResourceLocation("village/plains/streets/corner_02"),new ResourceLocation("village/plains/streets/corner_03"),new ResourceLocation("village/plains/streets/straight_01"),new ResourceLocation("village/plains/streets/straight_02"),new ResourceLocation("village/plains/streets/straight_03"),new ResourceLocation("village/plains/streets/straight_04"),new ResourceLocation("village/plains/streets/straight_05"), new ResourceLocation("village/plains/streets/straight_06"),new ResourceLocation("village/plains/streets/crossroad_01"),new ResourceLocation("village/plains/streets/crossroad_02"), new ResourceLocation("village/plains/streets/crossroad_03"),new ResourceLocation("village/plains/streets/crossroad_04"),new ResourceLocation("village/plains/streets/crossroad_05"),new ResourceLocation("village/plains/streets/crossroad_06"),new ResourceLocation("village/plains/streets/turn_01")));
+                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/streets")))
+                event.removeBuildings(null, Lists.newArrayList(new ResourceLocation("village/plains/streets/corner_01"),new ResourceLocation("village/plains/streets/corner_02"),new ResourceLocation("village/plains/streets/corner_03"),new ResourceLocation("village/plains/streets/straight_01"),new ResourceLocation("village/plains/streets/straight_02"),new ResourceLocation("village/plains/streets/straight_03"),new ResourceLocation("village/plains/streets/straight_04"),new ResourceLocation("village/plains/streets/straight_05"), new ResourceLocation("village/plains/streets/straight_06"),new ResourceLocation("village/plains/streets/crossroad_01"),new ResourceLocation("village/plains/streets/crossroad_02"), new ResourceLocation("village/plains/streets/crossroad_03"),new ResourceLocation("village/plains/streets/crossroad_04"),new ResourceLocation("village/plains/streets/crossroad_05"),new ResourceLocation("village/plains/streets/crossroad_06"),new ResourceLocation("village/plains/streets/turn_01")));
                 break;
             case 3:
-                if(event.jigsawPoolName.equals(new ResourceLocation("village/plains/streets")))
-                    event.removeBuildings(Lists.newArrayList(new ResourceLocation("village/plains/streets/corner_01"),new ResourceLocation("village/plains/streets/corner_02"),new ResourceLocation("village/plains/streets/corner_03"),new ResourceLocation("village/plains/streets/straight_01"),new ResourceLocation("village/plains/streets/straight_02"),new ResourceLocation("village/plains/streets/straight_03"),new ResourceLocation("village/plains/streets/straight_04"),new ResourceLocation("village/plains/streets/straight_05"), new ResourceLocation("village/plains/streets/straight_06"),new ResourceLocation("village/plains/streets/crossroad_01"),new ResourceLocation("village/plains/streets/crossroad_02"), new ResourceLocation("village/plains/streets/crossroad_03"),new ResourceLocation("village/plains/streets/crossroad_04"),new ResourceLocation("village/plains/streets/crossroad_05"),new ResourceLocation("village/plains/streets/crossroad_06"),new ResourceLocation("village/plains/streets/turn_01")));
+                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/streets")))
+                    event.removeBuildings(null, Lists.newArrayList(new ResourceLocation("village/plains/streets/corner_01"),new ResourceLocation("village/plains/streets/corner_02"),new ResourceLocation("village/plains/streets/corner_03"),new ResourceLocation("village/plains/streets/straight_01"),new ResourceLocation("village/plains/streets/straight_02"),new ResourceLocation("village/plains/streets/straight_03"),new ResourceLocation("village/plains/streets/straight_04"),new ResourceLocation("village/plains/streets/straight_05"), new ResourceLocation("village/plains/streets/straight_06"),new ResourceLocation("village/plains/streets/crossroad_01"),new ResourceLocation("village/plains/streets/crossroad_02"), new ResourceLocation("village/plains/streets/crossroad_03"),new ResourceLocation("village/plains/streets/crossroad_04"),new ResourceLocation("village/plains/streets/crossroad_05"),new ResourceLocation("village/plains/streets/crossroad_06"),new ResourceLocation("village/plains/streets/turn_01")));
                 if(event.isPool("minecraft:village/plains/town_centers")) {
-                    event.removeBuildings( Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_1"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_2"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_3"), new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_1"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_2"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_3")));
-                    event.addBuilding(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))), 10);
+                    event.removeBuildings(null, Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_1"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_2"), new ResourceLocation("village/plains/town_centers/plains_meeting_point_3"), new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_1"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_2"), new ResourceLocation("village/plains/zombie/town_centers/plains_meeting_point_3")));
+                    event.addBuilding(null, new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))), 10);
                 }
                 break;
             case 4:
-                if(event.jigsawPoolName.equals(new ResourceLocation("village/plains/houses"))){
+                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/houses"))){
                     event.addBuilding(new ResourceLocation("farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_large_farm_1")),10);
                     event.addBuilding(new ResourceLocation("farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10);
                 }
                 break;
+            case 5:
+                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/houses"))){
+                    event.addCategory(new ResourceLocation(MODID,"test"),100, ImmutableList.of(new Pair<>(new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10)));
+                }
+                break;
+            case 6:
+                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/houses"))){
+                    event.removeCategory(new ResourceLocation("farm"));
+                }
             default:
                 break;
         }
