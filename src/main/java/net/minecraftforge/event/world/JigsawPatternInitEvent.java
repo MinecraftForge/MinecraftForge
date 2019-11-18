@@ -29,6 +29,7 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.structure.Structures;
 import net.minecraftforge.common.JigsawCategory;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
 import org.apache.logging.log4j.LogManager;
@@ -62,7 +63,7 @@ public class JigsawPatternInitEvent extends Event {
         jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(),category)));
     }
 
-    public void addCategory(List<Pair<JigsawPiece,Integer>> pieces, int weight, ResourceLocation registryName){
+    public void addCategory(ResourceLocation registryName, int weight, List<Pair<JigsawPiece,Integer>> pieces){
         if(jigsawPieces.containsKey(registryName)){
             LOGGER.warn("the category with the registryname {} already exists", registryName);
             return;
@@ -71,7 +72,7 @@ public class JigsawPatternInitEvent extends Event {
             LOGGER.warn("a category with the registryname {} was already added", registryName);
             return;
         }
-        newCategories.put(registryName,new JigsawCategory(pieces, weight, registryName));
+        newCategories.put(registryName,new JigsawCategory(registryName, weight, pieces));
     }
 
     public void removeCategory(ResourceLocation registryName){
@@ -135,23 +136,30 @@ public class JigsawPatternInitEvent extends Event {
         remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
     }
 
-    public List<JigsawCategory> getPool(){
-        for(ResourceLocation remove:removeCategories){
+    public List<JigsawCategory> getPool()
+    {
+        for(ResourceLocation remove: removeCategories)
+        {
             jigsawPieces.remove(remove);
         }
         jigsawPieces.putAll(this.newCategories);
-        jigsawPieces.values().forEach((category -> {
-            if(remove.containsKey(category.getRegistryName())){
-                category.getPieces().removeIf(pieceItem -> remove.get(category.getRegistryName()).contains(pieceItem.getFirst().getRegistryName()));
+        for (Map.Entry<ResourceLocation,List<ResourceLocation>> remove: remove.entrySet())
+        {
+            if(jigsawPieces.containsKey(remove.getKey())){
+                jigsawPieces.get(remove.getKey()).getPieces().removeIf(jigsawPieceIntegerPair -> remove.getValue().contains(jigsawPieceIntegerPair.getFirst().getRegistryName()));
             }
-        }));
-        for(Map.Entry<ResourceLocation,List<Pair<JigsawPiece,Integer>>> entry:this.newBuildings.entrySet()){
-            jigsawPieces.get(entry.getKey()).getPieces().addAll(entry.getValue());
+        }
+        for(Map.Entry<ResourceLocation,List<Pair<JigsawPiece,Integer>>> entry: this.newBuildings.entrySet())
+        {
+            JigsawCategory category = jigsawPieces.get(entry.getKey());
+            category.getPieces().addAll(entry.getValue());
+            category.recalculateWeight();
         }
         return Lists.newArrayList(jigsawPieces.values());
     }
 
-    public boolean isPool(String name){
+    public boolean isPool(String name)
+    {
         return jigsawPoolName.toString().equals(name);
     }
 
@@ -168,14 +176,13 @@ public class JigsawPatternInitEvent extends Event {
         public abstract ResourceLocation getStructureRegistryName();
 
         public static class Village extends StructureJigsawPoolInitEvent{
-            private static boolean fired;
+            private static boolean fired = false;
 
-            public Village() {
-                fired = true;
-            }
-
-            public static boolean isFired(){
-                return fired;
+            public static void fire(){
+                if(!fired) {
+                    MinecraftForge.EVENT_BUS.post(new Village());
+                    fired = true;
+                }
             }
 
             @Override
