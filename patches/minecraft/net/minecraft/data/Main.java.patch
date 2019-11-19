@@ -7,10 +7,11 @@
  import java.io.IOException;
  import java.nio.file.Path;
  import java.nio.file.Paths;
-@@ -21,8 +22,10 @@
+@@ -21,8 +22,11 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
++      OptionSpec<String> existing = optionparser.accepts("existing", "Existing resource packs that generated resources can reference").withRequiredArg();
 +      OptionSpec<File> gameDir = optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")).required();
 +      OptionSpec<String> mod = optionparser.accepts("mod", "A modid to dump").withRequiredArg().withValuesSeparatedBy(",");
        OptionSet optionset = optionparser.parse(p_main_0_);
@@ -19,7 +20,7 @@
           Path path = Paths.get(optionspec7.value(optionset));
           boolean flag = optionset.has(optionspec6);
           boolean flag1 = flag || optionset.has(optionspec2);
-@@ -30,10 +33,11 @@
+@@ -30,10 +34,12 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
@@ -28,8 +29,9 @@
 -         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5);
 -         datagenerator.func_200392_c();
 +         Collection<Path> inputs = optionset.valuesOf(optionspec8).stream().map(Paths::get).collect(Collectors.toList());
++         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
-+         net.minecraftforge.fml.ModLoader.get().runDataGenerator(mods, path, inputs, flag2, flag1, flag3, flag4, flag5);
++         net.minecraftforge.fml.ModLoader.get().runDataGenerator(mods, path, inputs, existingPacks, flag2, flag1, flag3, flag4, flag5);
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            func_200264_a(mods.isEmpty() ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).func_200392_c();
        } else {

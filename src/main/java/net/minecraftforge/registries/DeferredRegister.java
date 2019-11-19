@@ -24,10 +24,13 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -55,7 +58,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 {
     private final IForgeRegistry<T> type;
     private final String modid;
-    private Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
+    private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
+    private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
     public DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
@@ -92,6 +96,14 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     public void register(IEventBus bus)
     {
         bus.addListener(this::addEntries);
+    }
+
+    /**
+     * @return The unmodifiable view of registered entries. Useful for bulk operations on all values.
+     */
+    public Collection<RegistryObject<T>> getEntries()
+    {
+        return entriesView;
     }
 
     private void addEntries(RegistryEvent.Register<?> event)

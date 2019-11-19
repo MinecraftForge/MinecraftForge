@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/lighting/LevelBasedGraph.java
++++ b/net/minecraft/world/lighting/LevelBasedGraph.java
+@@ -210,4 +210,18 @@
+    protected abstract void func_215476_a(long p_215476_1_, int p_215476_3_);
+ 
+    protected abstract int func_215480_b(long p_215480_1_, long p_215480_3_, int p_215480_5_);
++
++   // FORGE START
++
++   protected int queuedUpdateSize() {
++      return field_215488_c.size();
++   }
++
++   public final void bulkCancel(java.util.function.LongPredicate pred) {
++      ((Long2ByteOpenHashMap)field_215488_c).keySet().forEach((long l) -> {
++          if (pred.test(l)) {
++              func_215479_e(l);
++          }
++      });
++   }
+ }
