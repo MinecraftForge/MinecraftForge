@@ -28,52 +28,52 @@ import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends JsonReloadListener {
-	private static LootModifierManager instance;
-	public static final Logger LOGGER = LogManager.getLogger();
-	private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, new LootFunctionManager.Serializer()).registerTypeHierarchyAdapter(ILootCondition.class, new LootConditionManager.Serializer()).create();
+    private static LootModifierManager instance;
+    public static final Logger LOGGER = LogManager.getLogger();
+    private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, new LootFunctionManager.Serializer()).registerTypeHierarchyAdapter(ILootCondition.class, new LootConditionManager.Serializer()).create();
 
-	private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
+    private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
 
-	public LootModifierManager() {
-		super(GSON_INSTANCE, "loot_modifiers");
-		instance = this;
-	}
+    public LootModifierManager() {
+        super(GSON_INSTANCE, "loot_modifiers");
+        instance = this;
+    }
 
-	public static LootModifierManager getInstance() {
-		return instance;
-	}
+    public static LootModifierManager getInstance() {
+        return instance;
+    }
 
-	@Override
-	protected void apply(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-		Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
-		Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
-		splashList.forEach((location, object) -> {
-			try {
-				IGlobalLootModifier modifier = deserializeModifier(location, object);
-				builder.put(location, modifier);
-				toLocation.put(modifier, location);
-			} catch (Exception exception) {
-				LOGGER.error("Couldn't parse loot modifier {}", location, exception);
-			}
-		});
-		builder.orderEntriesByValue((x,y) -> {
-			return toLocation.get(x).compareTo(toLocation.get(y));
-		});
-		ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();
-		this.registeredLootModifiers = immutablemap;
-	}
+    @Override
+    protected void apply(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+        Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
+        Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
+        splashList.forEach((location, object) -> {
+            try {
+                IGlobalLootModifier modifier = deserializeModifier(location, object);
+                builder.put(location, modifier);
+                toLocation.put(modifier, location);
+            } catch (Exception exception) {
+                LOGGER.error("Couldn't parse loot modifier {}", location, exception);
+            }
+        });
+        builder.orderEntriesByValue((x,y) -> {
+            return toLocation.get(x).compareTo(toLocation.get(y));
+        });
+        ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();
+        this.registeredLootModifiers = immutablemap;
+    }
 
-	private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonObject object) {
-		ILootCondition[] ailootcondition = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
-		return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, ailootcondition);
-	}
+    private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonObject object) {
+        ILootCondition[] ailootcondition = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, ailootcondition);
+    }
 
-	public static IGlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
-		return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
-	}
+    public static IGlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
+    }
 
-	public Collection<IGlobalLootModifier> getAllLootMods() {
-		return registeredLootModifiers.values();
-	}
+    public Collection<IGlobalLootModifier> getAllLootMods() {
+        return registeredLootModifiers.values();
+    }
 
 }
