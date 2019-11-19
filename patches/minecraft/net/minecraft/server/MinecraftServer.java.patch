@@ -183,7 +183,15 @@
           final DedicatedServer dedicatedserver = new DedicatedServer(new File(s), serverpropertiesprovider, DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new, s1);
           dedicatedserver.func_71224_l(optionset.valueOf(optionspec7));
           dedicatedserver.func_71208_b(optionset.valueOf(optionspec10));
-@@ -948,7 +977,7 @@
+@@ -904,6 +933,7 @@
+          Thread thread = new Thread("Server Shutdown Thread") {
+             public void run() {
+                dedicatedserver.func_71263_m(true);
++               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
+             }
+          };
+          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147145_h));
+@@ -948,7 +978,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -192,7 +200,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -987,7 +1016,7 @@
+@@ -987,7 +1017,7 @@
     }
  
     public String getServerModName() {
@@ -201,7 +209,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1529,6 +1558,31 @@
+@@ -1529,6 +1559,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
