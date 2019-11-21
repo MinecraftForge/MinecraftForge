@@ -82,6 +82,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -589,8 +590,7 @@ public interface IForgeBlock
     */
     default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
     {
-        return this.getBlock() == Blocks.EMERALD_BLOCK || this.getBlock() == Blocks.GOLD_BLOCK ||
-                this.getBlock() == Blocks.DIAMOND_BLOCK || this.getBlock() == Blocks.IRON_BLOCK;
+        return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
     }
    /**
     * Gathers how much experience this block drops when broken.
