@@ -772,6 +772,19 @@ public interface IForgeBlockState
     }
 
     /**
+     * If the block is flammable, this is called when it gets lit on fire.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @param igniter The entity that lit the fire
+     */
+    default void catchFire(World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter)
+    {
+        getBlockState().getBlock().catchFire(getBlockState(), world, pos, face, igniter);
+    }
+
+    /**
      * Called when fire is updating on a neighbor block.
      * The higher the number returned, the faster fire will spread around this block.
      *
