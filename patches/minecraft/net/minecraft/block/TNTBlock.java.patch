@@ -1,0 +1,67 @@
+--- a/net/minecraft/block/TNTBlock.java
++++ b/net/minecraft/block/TNTBlock.java
+@@ -28,10 +28,14 @@
+       this.func_180632_j(this.func_176223_P().func_206870_a(field_212569_a, Boolean.valueOf(false)));
+    }
+ 
++   public void catchFire(BlockState state, World world, BlockPos pos, @Nullable net.minecraft.util.Direction face, @Nullable LivingEntity igniter) {
++      func_196535_a(world, pos, igniter);
++   }
++
+    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+       if (p_220082_4_.func_177230_c() != p_220082_1_.func_177230_c()) {
+          if (p_220082_2_.func_175640_z(p_220082_3_)) {
+-            func_196534_a(p_220082_2_, p_220082_3_);
++            catchFire(p_220082_1_, p_220082_2_, p_220082_3_, null, null);
+             p_220082_2_.func_217377_a(p_220082_3_, false);
+          }
+ 
+@@ -40,7 +44,7 @@
+ 
+    public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
+       if (p_220069_2_.func_175640_z(p_220069_3_)) {
+-         func_196534_a(p_220069_2_, p_220069_3_);
++         catchFire(p_220069_1_, p_220069_2_, p_220069_3_, null, null);
+          p_220069_2_.func_217377_a(p_220069_3_, false);
+       }
+ 
+@@ -48,7 +52,7 @@
+ 
+    public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
+       if (!p_176208_1_.func_201670_d() && !p_176208_4_.func_184812_l_() && p_176208_3_.func_177229_b(field_212569_a)) {
+-         func_196534_a(p_176208_1_, p_176208_2_);
++         catchFire(p_176208_3_, p_176208_1_, p_176208_2_, null, null);
+       }
+ 
+       super.func_176208_a(p_176208_1_, p_176208_2_, p_176208_3_, p_176208_4_);
+@@ -62,10 +66,12 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
+    public static void func_196534_a(World p_196534_0_, BlockPos p_196534_1_) {
+       func_196535_a(p_196534_0_, p_196534_1_, (LivingEntity)null);
+    }
+ 
++   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
+    private static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
+       if (!p_196535_0_.field_72995_K) {
+          TNTEntity tntentity = new TNTEntity(p_196535_0_, (double)((float)p_196535_1_.func_177958_n() + 0.5F), (double)p_196535_1_.func_177956_o(), (double)((float)p_196535_1_.func_177952_p() + 0.5F), p_196535_2_);
+@@ -80,7 +86,7 @@
+       if (item != Items.field_151033_d && item != Items.field_151059_bz) {
+          return super.func_220051_a(p_220051_1_, p_220051_2_, p_220051_3_, p_220051_4_, p_220051_5_, p_220051_6_);
+       } else {
+-         func_196535_a(p_220051_2_, p_220051_3_, p_220051_4_);
++         catchFire(p_220051_1_, p_220051_2_, p_220051_3_, p_220051_6_.func_216354_b(), p_220051_4_);
+          p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150350_a.func_176223_P(), 11);
+          if (item == Items.field_151033_d) {
+             itemstack.func_222118_a(1, p_220051_4_, (p_220287_1_) -> {
+@@ -100,7 +106,7 @@
+          Entity entity = abstractarrowentity.func_212360_k();
+          if (abstractarrowentity.func_70027_ad()) {
+             BlockPos blockpos = p_220066_3_.func_216350_a();
+-            func_196535_a(p_220066_1_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
++            catchFire(p_220066_2_, p_220066_1_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+             p_220066_1_.func_217377_a(blockpos, false);
+          }
+       }

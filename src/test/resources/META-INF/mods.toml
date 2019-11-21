@@ -58,4 +58,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgeblockstatesloader"
 [[mods]]
+    modId="custom_tnt_test"
+[[mods]]
     modId="visibility_event_test"
