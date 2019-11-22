@@ -891,18 +891,13 @@ public interface IForgeBlockState
      * (See {@link IForgeBlock#getBubbleElevatorDirection})
      */
     default Direction getBubbleElevatorDirection() {
-        Block block = this.getBlockState().getBlock();
-        if (block == Blocks.BUBBLE_COLUMN) {
-            return this.getBlockState().get(BubbleColumnBlock.DRAG) ? Direction.DOWN : Direction.UP;
-        } else {
-            return block.getBubbleElevatorDirection(this.getBlockState());
-        }
+        return this.getBlockState().getBlock().getBubbleElevatorDirection(this.getBlockState());
     }
 
     /**
      * See {@link IForgeBlock#convertIntoBubbleElevator}
      */
-    default void convertIntoBubbleElevator(IWorld world, BlockPos pos, Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+    default void convertIntoBubbleElevator(IWorld world, BlockPos pos, @Nullable BlockState vanillaBubbleColumnReplacement, Direction elevatorDirection) {
         this.getBlockState().getBlock().convertIntoBubbleElevator(this.getBlockState(), world, pos, vanillaBubbleColumnReplacement, elevatorDirection);
     }
 }

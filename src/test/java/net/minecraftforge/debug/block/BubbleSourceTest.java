@@ -225,7 +225,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
         return stateIn;
     }
 
-    // ================== Here begins Forge Interface stuff
+    // ================== Here begins bubble elevator stuff added to IForgeBlock
 
     @Override
     public boolean isValidBubbleElevatorRelay(BlockState state) {
@@ -238,7 +238,7 @@ class TrapDoorAndBubbleColumnInOne extends TrapDoorBlock {
     }
 
     @Override
-    public void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+    public void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable BlockState vanillaBubbleColumnReplacement, Direction elevatorDirection) {
         if(state.get(WATERLOGGED)) {
             boolean drag = elevatorDirection != Direction.UP;
             world.setBlockState(pos, state.with(BUBBLE_ELEVATOR, true).with(DRAG, drag), 2);

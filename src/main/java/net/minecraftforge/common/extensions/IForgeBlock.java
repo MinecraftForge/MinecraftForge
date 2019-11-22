@@ -1052,7 +1052,11 @@ public interface IForgeBlock
      *       false is upward motion).
      */
     default Direction getBubbleElevatorDirection(BlockState state) {
-        return (this.getBlock() == Blocks.MAGMA_BLOCK) ? Direction.DOWN : Direction.UP;
+        if (this.getBlock() == Blocks.BUBBLE_COLUMN) {
+            return state.get(BubbleColumnBlock.DRAG) ? Direction.DOWN : Direction.UP;
+        } else {
+            return (this.getBlock() == Blocks.MAGMA_BLOCK) ? Direction.DOWN : Direction.UP;
+        }
     }
 
     /**
@@ -1071,12 +1075,12 @@ public interface IForgeBlock
      *                                       It should be noted though that later blocks in the elevator column
      *                                       (if they for example are from another mod) could call this method with the
      *                                       parameter being null again converting vanilla water blocks into vanilla
-     *                                       bubble column blocks.
+     *                                       bubble column blocks again.
      */
-    default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable Block vanillaBubbleColumnReplacement, Direction elevatorDirection) {
+    default void convertIntoBubbleElevator(BlockState state, IWorld world, BlockPos pos, @Nullable BlockState vanillaBubbleColumnReplacement, Direction elevatorDirection) {
         if (this.getBlock() == Blocks.WATER) {
-            if (vanillaBubbleColumnReplacement != null && (vanillaBubbleColumnReplacement != this.getBlock())) {
-                vanillaBubbleColumnReplacement.convertIntoBubbleElevator(state, world, pos, vanillaBubbleColumnReplacement, elevatorDirection);
+            if (vanillaBubbleColumnReplacement != null && (vanillaBubbleColumnReplacement.getBlock() != this.getBlock())) {
+                vanillaBubbleColumnReplacement.convertIntoBubbleElevator(world, pos, vanillaBubbleColumnReplacement, elevatorDirection);
             } else {
                 BubbleColumnBlock.placeBubbleColumn(world, pos, elevatorDirection != Direction.UP);
             }

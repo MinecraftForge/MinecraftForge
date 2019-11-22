@@ -1,33 +1,47 @@
 --- a/net/minecraft/block/BubbleColumnBlock.java
 +++ b/net/minecraft/block/BubbleColumnBlock.java
-@@ -66,8 +66,9 @@
-    public static void func_203159_a(IWorld p_203159_0_, BlockPos p_203159_1_, boolean p_203159_2_) {
-       if (func_208072_b(p_203159_0_, p_203159_1_)) {
-          p_203159_0_.func_180501_a(p_203159_1_, Blocks.field_203203_C.func_176223_P().func_206870_a(field_203160_a, Boolean.valueOf(p_203159_2_)), 2);
-+      } else {
-+         p_203159_0_.func_180495_p(p_203159_1_).convertIntoBubbleElevator(p_203159_0_, p_203159_1_, null, p_203159_2_ ? Direction.DOWN : Direction.UP);
-       }
--
+@@ -52,11 +52,11 @@
     }
  
-    public static boolean func_208072_b(IWorld p_208072_0_, BlockPos p_208072_1_) {
-@@ -81,7 +82,7 @@
-       if (block == Blocks.field_203203_C) {
-          return blockstate.func_177229_b(field_203160_a);
+    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+-      func_203159_a(p_220082_2_, p_220082_3_.func_177984_a(), func_203157_b(p_220082_2_, p_220082_3_.func_177977_b()));
++      p_220082_2_.func_180495_p(p_220082_3_.func_177984_a()).convertIntoBubbleElevator(p_220082_2_, p_220082_3_.func_177984_a(), null, p_220082_2_.func_180495_p(p_220082_3_.func_177977_b()).getBubbleElevatorDirection());
+    }
+ 
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+-      func_203159_a(p_196267_2_, p_196267_3_.func_177984_a(), func_203157_b(p_196267_2_, p_196267_3_));
++      p_196267_2_.func_180495_p(p_196267_3_.func_177984_a()).convertIntoBubbleElevator(p_196267_2_, p_196267_3_.func_177984_a(), null, p_196267_2_.func_180495_p(p_196267_3_).getBubbleElevatorDirection());
+    }
+ 
+    public IFluidState func_204507_t(BlockState p_204507_1_) {
+@@ -75,6 +75,11 @@
+       return p_208072_0_.func_180495_p(p_208072_1_).func_177230_c() == Blocks.field_150355_j && ifluidstate.func_206882_g() >= 8 && ifluidstate.func_206889_d();
+    }
+ 
++   /**
++    * Use {@link net.minecraftforge.common.extensions.IForgeBlockState#getBubbleElevatorDirection} instead.
++    * It returns a Direction, where Direction.UP would have been false in this method and Direction.DOWN true.
++    */
++   @Deprecated
+    private static boolean func_203157_b(IBlockReader p_203157_0_, BlockPos p_203157_1_) {
+       BlockState blockstate = p_203157_0_.func_180495_p(p_203157_1_);
+       Block block = blockstate.func_177230_c();
+@@ -114,7 +119,7 @@
+          return Blocks.field_150355_j.func_176223_P();
        } else {
--         return block != Blocks.field_150425_aM;
-+         return blockstate.getBubbleElevatorDirection() != Direction.UP;
-       }
-    }
- 
-@@ -125,8 +126,8 @@
+          if (p_196271_2_ == Direction.DOWN) {
+-            p_196271_4_.func_180501_a(p_196271_5_, Blocks.field_203203_C.func_176223_P().func_206870_a(field_203160_a, Boolean.valueOf(func_203157_b(p_196271_4_, p_196271_6_))), 2);
++            p_196271_4_.func_180501_a(p_196271_5_, Blocks.field_203203_C.func_176223_P().func_206870_a(field_203160_a, p_196271_4_.func_180495_p(p_196271_6_).getBubbleElevatorDirection() != Direction.UP), 2);
+          } else if (p_196271_2_ == Direction.UP && p_196271_3_.func_177230_c() != Blocks.field_203203_C && func_208072_b(p_196271_4_, p_196271_6_)) {
+             p_196271_4_.func_205220_G_().func_205360_a(p_196271_5_, this, this.func_149738_a(p_196271_4_));
+          }
+@@ -125,8 +130,7 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
 -      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return block == Blocks.field_203203_C || block == Blocks.field_196814_hQ || block == Blocks.field_150425_aM;
-+      BlockState blockStateBelow = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-+      return blockStateBelow.isValidBubbleElevatorRelay();
++      return p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).isValidBubbleElevatorRelay();
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
