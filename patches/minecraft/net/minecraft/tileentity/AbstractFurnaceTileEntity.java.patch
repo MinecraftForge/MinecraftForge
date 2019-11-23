@@ -21,7 +21,7 @@
        this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
        int i = p_145839_1_.func_74765_d("RecipesUsedSize");
  
-@@ -185,9 +186,9 @@
+@@ -185,9 +176,9 @@
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -34,7 +34,7 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
        p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_214022_n.size());
        int i = 0;
-@@ -217,12 +218,14 @@
+@@ -217,12 +208,14 @@
                 this.field_214019_k = this.field_214018_j;
                 if (this.func_214006_r()) {
                    flag1 = true;
@@ -51,7 +51,7 @@
                       }
                    }
                 }
-@@ -266,10 +269,10 @@
+@@ -266,10 +259,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -64,7 +64,7 @@
              }
           }
        } else {
-@@ -285,7 +288,7 @@
+@@ -285,7 +278,7 @@
           if (itemstack2.func_190926_b()) {
              this.field_214012_a.set(2, itemstack1.func_77946_l());
           } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
@@ -73,7 +73,7 @@
           }
  
           if (!this.field_145850_b.field_72995_K) {
-@@ -305,7 +308,7 @@
+@@ -305,7 +298,7 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
@@ -82,7 +82,7 @@
        }
     }
  
-@@ -314,7 +317,7 @@
+@@ -314,7 +307,7 @@
     }
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
@@ -91,7 +91,7 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -462,4 +465,27 @@
+@@ -462,4 +455,27 @@
        }
  
     }
