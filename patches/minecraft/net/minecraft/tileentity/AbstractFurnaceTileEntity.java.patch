@@ -8,7 +8,28 @@
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);
-@@ -169,9 +170,9 @@
+@@ -98,18 +99,8 @@
+       func_213992_a(map, ItemTags.field_202899_i, 150);
+       func_213992_a(map, ItemTags.field_212188_k, 300);
+       func_213992_a(map, ItemTags.field_202900_j, 300);
+-      func_213996_a(map, Blocks.field_180407_aO, 300);
+-      func_213996_a(map, Blocks.field_180404_aQ, 300);
+-      func_213996_a(map, Blocks.field_180408_aP, 300);
+-      func_213996_a(map, Blocks.field_180403_aR, 300);
+-      func_213996_a(map, Blocks.field_180406_aS, 300);
+-      func_213996_a(map, Blocks.field_180405_aT, 300);
+-      func_213996_a(map, Blocks.field_180390_bo, 300);
+-      func_213996_a(map, Blocks.field_180392_bq, 300);
+-      func_213996_a(map, Blocks.field_180391_bp, 300);
+-      func_213996_a(map, Blocks.field_180386_br, 300);
+-      func_213996_a(map, Blocks.field_180385_bs, 300);
+-      func_213996_a(map, Blocks.field_180387_bt, 300);
++      func_213992_a(map, net.minecraftforge.common.Tags.Items.FENCES_WOODEN, 300);
++      func_213992_a(map, net.minecraftforge.common.Tags.Items.FENCE_GATES_WOODEN, 300);
+       func_213996_a(map, Blocks.field_196586_al, 300);
+       func_213996_a(map, Blocks.field_150342_X, 300);
+       func_213996_a(map, Blocks.field_222428_lQ, 300);
+@@ -169,9 +160,9 @@
        super.func_145839_a(p_145839_1_);
        this.field_214012_a = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
        ItemStackHelper.func_191283_b(p_145839_1_, this.field_214012_a);
