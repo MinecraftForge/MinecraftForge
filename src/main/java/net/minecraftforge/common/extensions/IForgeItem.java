@@ -51,6 +51,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.animation.ITimeValue;
 
@@ -615,7 +616,7 @@ public interface IForgeItem
      */
     default boolean isBeaconPayment(ItemStack stack)
     {
-        return this == Items.EMERALD || this == Items.DIAMOND || this == Items.GOLD_INGOT || this == Items.IRON_INGOT;
+        return Tags.Items.BEACON_PAYMENT.contains(stack.getItem());
     }
 
     /**
