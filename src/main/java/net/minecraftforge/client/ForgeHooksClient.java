@@ -687,7 +687,7 @@ public class ForgeHooksClient
         // Clean up render state if necessary
         if (hasLighting)
         {
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE0, GLX.lastBrightnessX, GLX.lastBrightnessY);
+            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, GLX.lastBrightnessX, GLX.lastBrightnessY);
             GlStateManager.enableLighting();
         }
     }
@@ -717,7 +717,7 @@ public class ForgeHooksClient
         if (updateLighting)
         {
             // Force lightmap coords to simulate synthetic lighting
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE0, Math.max(bl, lastBl), Math.max(sl, lastSl));
+            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, Math.max(bl, lastBl), Math.max(sl, lastSl));
         }
 
         ri.renderQuads(bufferbuilder, segment, baseColor, stack);
