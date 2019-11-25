@@ -378,13 +378,13 @@ public class ForgeHooks
     
     public static double getLivingVisibility(LivingEntity living, @Nullable Entity lookingEntity, double visibility)
     {
-    	LivingVisibilityEvent event = new LivingVisibilityEvent(living, lookingEntity, visibility);
-        MinecraftForge.EVENT_BUS.post(event);
-        double value = event.getVisibility();
+        double value = visibility;
         if(living instanceof PlayerEntity) {
-            value = getPlayerVisibilityDistance((PlayerEntity)living, value, visibility);
+            value = getPlayerVisibilityDistance((PlayerEntity)living, visibility, visibility);
         }
-        return value;
+        LivingVisibilityEvent event = new LivingVisibilityEvent(living, lookingEntity, value);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getVisibility();
     }
     
     public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance)
