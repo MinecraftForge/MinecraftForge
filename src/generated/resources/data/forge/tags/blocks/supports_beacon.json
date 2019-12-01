@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:emerald_block",
+    "minecraft:gold_block",
+    "minecraft:diamond_block",
+    "minecraft:iron_block"
+  ]
+}
