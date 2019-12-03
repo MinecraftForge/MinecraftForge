@@ -90,15 +90,18 @@
           worldrenderer.func_215325_a(activerenderinfo, this.field_78531_r.field_71476_x, 0);
           GlStateManager.enableAlphaTest();
        }
-@@ -725,7 +735,7 @@
+@@ -725,9 +735,9 @@
        this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174935_a();
        GlStateManager.disableBlend();
        this.func_180436_i();
 -      this.field_205003_A.func_217618_a(activerenderinfo, 0);
 +      this.field_205003_A.setupFog(activerenderinfo, 0, p_181560_1_);
        this.field_78531_r.func_213239_aq().func_219895_b("particles");
-       particlemanager.func_215233_a(activerenderinfo, p_181560_1_);
+-      particlemanager.func_215233_a(activerenderinfo, p_181560_1_);
++      particlemanager.renderParticles(activerenderinfo, icamera, p_181560_1_);
        this.func_175072_h();
+       GlStateManager.depthMask(false);
+       GlStateManager.enableCull();
 @@ -739,7 +749,7 @@
        GlStateManager.enableCull();
        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);

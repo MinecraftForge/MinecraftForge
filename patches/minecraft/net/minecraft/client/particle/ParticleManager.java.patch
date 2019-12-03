@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/particle/ParticleManager.java
 +++ b/net/minecraft/client/particle/ParticleManager.java
-@@ -63,7 +63,7 @@
+@@ -28,6 +28,7 @@
+ import net.minecraft.client.renderer.ActiveRenderInfo;
+ import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.Tessellator;
++import net.minecraft.client.renderer.culling.ICamera;
+ import net.minecraft.client.renderer.texture.AtlasTexture;
+ import net.minecraft.client.renderer.texture.MissingTextureSprite;
+ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+@@ -63,7 +64,7 @@
     private final Queue<EmitterParticle> field_178933_d = Queues.newArrayDeque();
     private final TextureManager field_78877_c;
     private final Random field_78875_d = new Random();
@@ -9,7 +17,7 @@
     private final Queue<Particle> field_187241_h = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleManager.AnimatedSpriteImpl> field_215242_i = Maps.newHashMap();
     private final AtlasTexture field_215243_j = new AtlasTexture("textures/particle");
-@@ -137,13 +137,13 @@
+@@ -137,13 +138,13 @@
     }
  
     public <T extends IParticleData> void func_199283_a(ParticleType<T> p_199283_1_, IParticleFactory<T> p_199283_2_) {
@@ -25,7 +33,7 @@
     }
  
     public CompletableFuture<Void> func_215226_a(IFutureReloadListener.IStage p_215226_1_, IResourceManager p_215226_2_, IProfiler p_215226_3_, IProfiler p_215226_4_, Executor p_215226_5_, Executor p_215226_6_) {
-@@ -230,11 +230,12 @@
+@@ -230,11 +231,12 @@
  
     @Nullable
     private <T extends IParticleData> Particle func_199927_b(T p_199927_1_, double p_199927_2_, double p_199927_4_, double p_199927_6_, double p_199927_8_, double p_199927_10_, double p_199927_12_) {
@@ -39,7 +47,16 @@
        this.field_187241_h.add(p_78873_1_);
     }
  
-@@ -306,7 +307,8 @@
+@@ -296,7 +298,7 @@
+       }
+    }
+ 
+-   public void func_215233_a(ActiveRenderInfo p_215233_1_, float p_215233_2_) {
++   public void renderParticles(ActiveRenderInfo p_215233_1_, ICamera icamera, float p_215233_2_) {
+       float f = MathHelper.func_76134_b(p_215233_1_.func_216778_f() * ((float)Math.PI / 180F));
+       float f1 = MathHelper.func_76126_a(p_215233_1_.func_216778_f() * ((float)Math.PI / 180F));
+       float f2 = -f1 * MathHelper.func_76126_a(p_215233_1_.func_216777_e() * ((float)Math.PI / 180F));
+@@ -306,7 +308,8 @@
        Particle.field_70554_ao = p_215233_1_.func_216785_c().field_72448_b;
        Particle.field_70555_ap = p_215233_1_.func_216785_c().field_72449_c;
  
@@ -49,7 +66,15 @@
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -342,7 +344,7 @@
+@@ -316,6 +319,7 @@
+ 
+             for(Particle particle : iterable) {
+                try {
++                  if (!icamera.func_78546_a(particle.func_187116_l())) continue; // Forge: Don't render particles outside frustum.
+                   particle.func_180434_a(bufferbuilder, p_215233_1_, p_215233_2_, f, f4, f1, f2, f3);
+                } catch (Throwable throwable) {
+                   CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering Particle");
+@@ -342,7 +346,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
@@ -58,7 +83,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_199284_3_, p_199284_5_, p_199284_7_, p_199284_9_, p_199284_11_, p_199284_13_) -> {
-@@ -414,6 +416,12 @@
+@@ -414,6 +418,12 @@
        return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
     }
  
