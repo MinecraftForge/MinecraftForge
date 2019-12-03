@@ -61,6 +61,16 @@ public interface IEnergyStorage
     * Returns the maximum amount of energy that can be stored.
     */
     int getMaxEnergyStored();
+    
+    /**
+    * Returns the maximum amount of energy that can be extracted.
+    */
+    int getMaxExtract();
+
+     /**
+    * Returns the maximum amount of energy that can be received.
+    */
+    int getMaxReceive();
 
     /**
      * Returns if this storage can have energy extracted.
