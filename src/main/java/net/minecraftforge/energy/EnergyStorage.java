@@ -90,6 +90,18 @@ public class EnergyStorage implements IEnergyStorage
     {
         return capacity;
     }
+    
+    @Override
+    public int getMaxExtract()
+    {
+        return this.maxExtract;
+    }
+
+    @Override
+    public int getMaxReceive()
+    {
+        return this.maxReceive;
+    }
 
     @Override
     public boolean canExtract()
