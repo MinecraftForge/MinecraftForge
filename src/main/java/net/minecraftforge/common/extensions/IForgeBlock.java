@@ -82,6 +82,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -589,8 +590,7 @@ public interface IForgeBlock
     */
     default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
     {
-        return this.getBlock() == Blocks.EMERALD_BLOCK || this.getBlock() == Blocks.GOLD_BLOCK ||
-                this.getBlock() == Blocks.DIAMOND_BLOCK || this.getBlock() == Blocks.IRON_BLOCK;
+        return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
     }
    /**
     * Gathers how much experience this block drops when broken.
@@ -922,6 +922,17 @@ public interface IForgeBlock
     {
         return state.getFlammability(world, pos, face) > 0;
     }
+
+    /**
+     * If the block is flammable, this is called when it gets lit on fire.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @param igniter The entity that lit the fire
+     */
+    default void catchFire(BlockState state, World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {}
 
     /**
      * Called when fire is updating on a neighbor block.
