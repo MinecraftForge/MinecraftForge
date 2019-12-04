@@ -66,7 +66,7 @@
              EffectInstance effectinstance = this.field_70713_bf.get(effect);
              if (!effectinstance.func_76455_a(this)) {
 -               if (!this.field_70170_p.field_72995_K) {
-+               if (!this.field_70170_p.field_72995_K && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent(this, effectinstance))) {
++               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent(this, effectinstance)) && !this.field_70170_p.field_72995_K) {
                    iterator.remove();
                    this.func_70688_c(effectinstance);
                 }
