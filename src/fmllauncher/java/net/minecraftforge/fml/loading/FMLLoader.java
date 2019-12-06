@@ -81,6 +81,7 @@ public class FMLLoader
     private static String forgeGroup;
     private static Predicate<String> classLoaderExclusions;
     private static String launchHandlerName;
+    private static FMLCommonLaunchHandler commonLaunchHandler;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -175,7 +176,7 @@ public class FMLLoader
         launchHandlerName = launchHandler.get().name();
         gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
 
-        FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
+        commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         EarlyProgressVisualization.INSTANCE.accept(dist);
@@ -206,6 +207,7 @@ public class FMLLoader
         modDiscoverer = new ModDiscoverer(arguments);
         final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
         loadingModList = backgroundScanHandler.getLoadingModList();
+        commonLaunchHandler.addLibraries(backgroundScanHandler.getModFiles().getOrDefault(IModFile.Type.LIBRARY, Collections.emptyList()));
         return backgroundScanHandler.getModFiles();
     }
 

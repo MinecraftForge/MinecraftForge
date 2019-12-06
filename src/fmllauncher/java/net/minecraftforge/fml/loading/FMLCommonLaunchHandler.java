@@ -23,6 +23,7 @@ import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public abstract class FMLCommonLaunchHandler
 {
@@ -53,6 +55,8 @@ public abstract class FMLCommonLaunchHandler
             "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
             "net.minecraftforge.eventbus.", "net.minecraftforge.api.", "com.mojang.util.QueueLogAppender"
     );
+
+    private final List<Path> additionalLibraries = new ArrayList<>();
 
     protected Predicate<String> getPackagePredicate() {
         return cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith);
@@ -69,6 +73,7 @@ public abstract class FMLCommonLaunchHandler
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
         builder.addTransformationPath(FMLLoader.getForgePath());
         Arrays.stream(FMLLoader.getMCPaths()).forEach(builder::addTransformationPath);
+        additionalLibraries.forEach(builder::addTransformationPath);
         FMLLoader.getLanguageLoadingProvider().getLibraries().forEach(builder::addTransformationPath);
         builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
@@ -137,4 +142,12 @@ public abstract class FMLCommonLaunchHandler
     }
 
     protected abstract String getNaming();
+
+    void addLibraries(final List<ModFile> libraries) {
+        libraries
+                .stream()
+                .map(ModFile::getFilePath)
+                .peek(p->LOGGER.debug(LOADING, "Adding {} as a library to the transforming classloader", p))
+                .forEach(additionalLibraries::add);
+    }
 }
