@@ -128,6 +128,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
+import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.JigsawPatternInitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -189,7 +190,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnReason.SPAWNER);
         if (result == Result.DEFAULT)
-            return entity.canSpawn(world, SpawnReason.SPAWNER) || !entity.isNotColliding(world); // vanilla logic
+            return entity.canSpawn(world, SpawnReason.SPAWNER) && entity.isNotColliding(world); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
@@ -699,6 +700,13 @@ public class ForgeEventFactory
     public static boolean onPistonMovePost(World world, BlockPos pos, Direction direction, boolean extending)
     {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+    }
+
+    public static long onSleepFinished(ServerWorld world, long newTime, long minTime)
+    {
+        SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewTime();
     }
 
     public static List<JigsawCategory> onJigsawPatternInit(ResourceLocation patternName, List<Pair<JigsawPiece, Integer>> pool)

@@ -92,7 +92,7 @@ public class ModFile implements IModFile {
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
 
-    private static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
+    public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
 
     public ModFile(final Path file, final IModLocator locator) {
         this.locator = locator;
