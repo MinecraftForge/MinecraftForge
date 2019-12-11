@@ -8,8 +8,8 @@
 +   public int getHeight() { return this.height; }
 +   public int getTop() { return this.y0; }
 +   public int getBottom() { return this.y1; }
-+   public int getLeft() { return this.x1; }
-+   public int getRight() { return this.x0; }
++   public int getLeft() { return this.x0; }
++   public int getRight() { return this.x1; }
 +
     @OnlyIn(Dist.CLIENT)
     public abstract static class AbstractListEntry<E extends AbstractList.AbstractListEntry<E>> implements IGuiEventListener {
