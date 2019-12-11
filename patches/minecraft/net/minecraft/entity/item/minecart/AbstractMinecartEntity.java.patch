@@ -39,7 +39,7 @@
 +         if (canUseRail() && blockstate.func_203425_a(BlockTags.field_203437_y)) {
              this.func_180460_a(blockpos, blockstate);
 -            if (blockstate.func_177230_c() == Blocks.field_150408_cc) {
-+            if (blockstate.func_177230_c() instanceof PoweredRailBlock && !((PoweredRailBlock) blockstate.func_177230_c()).isPoweredRail) {
++            if (blockstate.func_177230_c() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.func_177230_c()).isActivator) {
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
              }
           } else {
@@ -106,7 +106,7 @@
        boolean flag1 = false;
        AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.func_177230_c();
 -      if (abstractrailblock == Blocks.field_196552_aC) {
-+      if (abstractrailblock instanceof PoweredRailBlock && ((PoweredRailBlock) abstractrailblock).isPoweredRail) {
++      if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivator) {
           flag = p_180460_2_.func_177229_b(PoweredRailBlock.field_176569_M);
           flag1 = !flag;
        }
