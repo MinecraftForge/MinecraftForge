@@ -103,6 +103,8 @@ project(':clean') {
                 args '--assetsDir', downloadAssets.output
                 args '--assetIndex', '{asset_index}'
                 args '--accessToken', '0'
+
+                ideaModule "${rootProject.name}.${project.name}.main"
             }
 
             clean_server {
@@ -110,6 +112,8 @@ project(':clean') {
 
                 main 'net.minecraft.server.MinecraftServer'
                 workingDirectory project.file('run')
+
+                ideaModule "${rootProject.name}.${project.name}.main"
             }
         }
     }
