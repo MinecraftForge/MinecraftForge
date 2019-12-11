@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/LockableTileEntity.java
 +++ b/net/minecraft/tileentity/LockableTileEntity.java
-@@ -80,4 +80,23 @@
+@@ -80,4 +80,22 @@
     }
  
     protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);
@@ -12,9 +12,8 @@
 +
 +   @javax.annotation.Nullable
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.Direction side) {
-+      if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
++      if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY )
 +         return itemHandler.cast();
-+      }
 +      return super.getCapability(cap, side);
 +   }
 +

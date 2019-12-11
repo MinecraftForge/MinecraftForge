@@ -86,8 +86,9 @@ public class ModFileResourcePack extends DelegatableResourcePack
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
 
+
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> func_225637_a_(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
     {
         try
         {

@@ -20,13 +20,12 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemOverride;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.LivingEntity;
@@ -34,36 +33,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.ModelStateComposition;
-import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.client.model.ModelTransformComposition;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 public final class AnimationItemOverrideList extends ItemOverrideList
 {
     private final ModelBakery bakery;
     private final IUnbakedModel model;
-    private final IModelState state;
-    private final VertexFormat format;
-    private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
+    private final ResourceLocation modelLoc;
+    private final IModelTransform state;
 
-    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
+
+    private final Function<Material, TextureAtlasSprite> bakedTextureGetter;
+
+    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<Material, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
     {
-        this(bakery, model, state, format, bakedTextureGetter, overrides.getOverrides().reverse());
+        this(bakery, model, modelLoc, state, bakedTextureGetter, overrides.getOverrides().reverse());
     }
 
-    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
+    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<Material, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
-        super(bakery, model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides, format);
+        super(bakery, model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides);
         this.bakery = bakery;
         this.model = model;
+        this.modelLoc = modelLoc;
         this.state = state;
-        this.format = format;
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
@@ -86,7 +80,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.bake(bakery, bakedTextureGetter, new ModelStateComposition(state, this.state), format))
+            .map(state -> model.func_225613_a_(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
             .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

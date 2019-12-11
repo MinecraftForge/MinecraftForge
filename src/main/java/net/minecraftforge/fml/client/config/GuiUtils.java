@@ -22,9 +22,10 @@ package net.minecraftforge.fml.client.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +34,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,9 +155,9 @@ public class GuiUtils
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
             int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 
         int fillerWidth = textureWidth - leftBorder - rightBorder;
         int fillerHeight = textureHeight - topBorder - bottomBorder;
@@ -206,10 +208,10 @@ public class GuiUtils
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
-        wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
-        wr.pos(x + width, y         , zLevel).tex((u + width) * uScale, ( v           * vScale)).endVertex();
-        wr.pos(x        , y         , zLevel).tex( u          * uScale, ( v           * vScale)).endVertex();
+        wr.func_225582_a_(x        , y + height, zLevel).func_225583_a_( u          * uScale, ((v + height) * vScale)).endVertex();
+        wr.func_225582_a_(x + width, y + height, zLevel).func_225583_a_((u + width) * uScale, ((v + height) * vScale)).endVertex();
+        wr.func_225582_a_(x + width, y         , zLevel).func_225583_a_((u + width) * uScale, ( v           * vScale)).endVertex();
+        wr.func_225582_a_(x        , y         , zLevel).func_225583_a_( u          * uScale, ( v           * vScale)).endVertex();
         tessellator.draw();
     }
 
@@ -264,9 +266,8 @@ public class GuiUtils
         if (!textLines.isEmpty())
         {
             RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
-            if (MinecraftForge.EVENT_BUS.post(event)) {
+            if (MinecraftForge.EVENT_BUS.post(event))
                 return;
-            }
             mouseX = event.getX();
             mouseY = event.getY();
             screenWidth = event.getScreenWidth();
@@ -274,20 +275,15 @@ public class GuiUtils
             maxTextWidth = event.getMaxWidth();
             font = event.getFontRenderer();
 
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepthTest();
+            RenderSystem.disableRescaleNormal();
+            RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
             for (String textLine : textLines)
             {
                 int textLineWidth = font.getStringWidth(textLine);
-
                 if (textLineWidth > tooltipTextWidth)
-                {
                     tooltipTextWidth = textLineWidth;
-                }
             }
 
             boolean needsWrap = false;
@@ -300,13 +296,9 @@ public class GuiUtils
                 if (tooltipX < 4) // if the tooltip doesn't fit on the screen
                 {
                     if (mouseX > screenWidth / 2)
-                    {
                         tooltipTextWidth = mouseX - 12 - 8;
-                    }
                     else
-                    {
                         tooltipTextWidth = screenWidth - 16 - mouseX;
-                    }
                     needsWrap = true;
                 }
             }
@@ -326,17 +318,13 @@ public class GuiUtils
                     String textLine = textLines.get(i);
                     List<String> wrappedLine = font.listFormattedStringToWidth(textLine, tooltipTextWidth);
                     if (i == 0)
-                    {
                         titleLinesCount = wrappedLine.size();
-                    }
 
                     for (String line : wrappedLine)
                     {
                         int lineWidth = font.getStringWidth(line);
                         if (lineWidth > wrappedTooltipWidth)
-                        {
                             wrappedTooltipWidth = lineWidth;
-                        }
                         wrappedTextLines.add(line);
                     }
                 }
@@ -344,13 +332,9 @@ public class GuiUtils
                 textLines = wrappedTextLines;
 
                 if (mouseX > screenWidth / 2)
-                {
                     tooltipX = mouseX - 16 - tooltipTextWidth;
-                }
                 else
-                {
                     tooltipX = mouseX + 12;
-                }
             }
 
             int tooltipY = mouseY - 12;
@@ -359,19 +343,14 @@ public class GuiUtils
             if (textLines.size() > 1)
             {
                 tooltipHeight += (textLines.size() - 1) * 10;
-                if (textLines.size() > titleLinesCount) {
+                if (textLines.size() > titleLinesCount)
                     tooltipHeight += 2; // gap between title lines and next lines
-                }
             }
 
             if (tooltipY < 4)
-            {
                 tooltipY = 4;
-            }
             else if (tooltipY + tooltipHeight + 4 > screenHeight)
-            {
                 tooltipY = screenHeight - tooltipHeight - 4;
-            }
 
             final int zLevel = 300;
             int backgroundColor = 0xF0100010;
@@ -382,6 +361,7 @@ public class GuiUtils
             backgroundColor = colorEvent.getBackground();
             borderColorStart = colorEvent.getBorderStart();
             borderColorEnd = colorEvent.getBorderEnd();
+
             drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
             drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
             drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
@@ -393,27 +373,32 @@ public class GuiUtils
             drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
+
+            IRenderTypeBuffer.Impl renderType = IRenderTypeBuffer.func_228455_a_(Tessellator.getInstance().getBuffer());
+            MatrixStack textStack = new MatrixStack();
+            textStack.func_227861_a_(0.0D, 0.0D, (double)zLevel);
+            Matrix4f textLocation = textStack.func_227866_c_().func_227870_a_();
+
             int tooltipTop = tooltipY;
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber)
             {
                 String line = textLines.get(lineNumber);
-                font.drawStringWithShadow(line, (float)tooltipX, (float)tooltipY, -1);
+                if (line != null)
+                    font.func_228079_a_(line, (float)tooltipX, (float)tooltipY, -1, true, textLocation, renderType, false, 0, 15728880);
 
                 if (lineNumber + 1 == titleLinesCount)
-                {
                     tooltipY += 2;
-                }
 
                 tooltipY += 10;
             }
 
+            renderType.func_228461_a_();
+
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
 
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepthTest();
-            RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableRescaleNormal();
         }
     }
 
@@ -428,25 +413,25 @@ public class GuiUtils
         float endGreen   = (float)(endColor   >>  8 & 255) / 255.0F;
         float endBlue    = (float)(endColor         & 255) / 255.0F;
 
-        GlStateManager.disableTexture();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlphaTest();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(right,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
-        buffer.pos(right, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.func_225582_a_(right,    top, zLevel).func_227885_a_(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.func_225582_a_( left,    top, zLevel).func_227885_a_(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.func_225582_a_( left, bottom, zLevel).func_227885_a_(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.func_225582_a_(right, bottom, zLevel).func_227885_a_(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
         tessellator.draw();
 
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture();
+        RenderSystem.shadeModel(GL11.GL_FLAT);
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture();
     }
 
     public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)

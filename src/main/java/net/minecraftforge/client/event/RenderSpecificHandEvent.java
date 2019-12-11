@@ -19,12 +19,14 @@
 
 package net.minecraftforge.client.event;
 
+import javax.annotation.Nonnull;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import javax.annotation.Nonnull;
 
 /**
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
@@ -36,6 +38,7 @@ import javax.annotation.Nonnull;
 public class RenderSpecificHandEvent extends Event
 {
     private final Hand hand;
+    private final MatrixStack mat;
     private final float partialTicks;
     private final float interpolatedPitch;
     private final float swingProgress;
@@ -43,9 +46,10 @@ public class RenderSpecificHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+    public RenderSpecificHandEvent(Hand hand, MatrixStack mat, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
+        this.mat = mat;
         this.partialTicks = partialTicks;
         this.interpolatedPitch = interpolatedPitch;
         this.swingProgress = swingProgress;
@@ -56,6 +60,11 @@ public class RenderSpecificHandEvent extends Event
     public Hand getHand()
     {
         return hand;
+    }
+
+    public MatrixStack getMatrixStack()
+    {
+        return mat;
     }
 
     public float getPartialTicks()

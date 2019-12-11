@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -48,7 +49,7 @@ public class UnpackedBakedQuad extends BakedQuad
             packed = true;
             for(int v = 0; v < 4; v++)
             {
-                for(int e = 0; e < format.getElementCount(); e++)
+                for(int e = 0; e < format.func_227894_c_().size(); e++)
                 {
                     LightUtil.pack(unpackedData[v][e], vertexData, format, v, e);
                 }
@@ -57,7 +58,7 @@ public class UnpackedBakedQuad extends BakedQuad
         return vertexData;
     }
 
-    @Override
+    //@Override
     public void pipe(IVertexConsumer consumer)
     {
         int[] eMap = LightUtil.mapFormats(consumer.getVertexFormat(), format);
@@ -71,9 +72,9 @@ public class UnpackedBakedQuad extends BakedQuad
         consumer.setQuadOrientation(getFace());
         for(int v = 0; v < 4; v++)
         {
-            for(int e = 0; e < consumer.getVertexFormat().getElementCount(); e++)
+            for(int e = 0; e < consumer.getVertexFormat().func_227894_c_().size(); e++)
             {
-                if(eMap[e] != format.getElementCount())
+                if(eMap[e] != format.func_227894_c_().size())
                 {
                     consumer.put(e, unpackedData[v][eMap[e]]);
                 }
@@ -102,7 +103,7 @@ public class UnpackedBakedQuad extends BakedQuad
         public Builder(VertexFormat format)
         {
             this.format = format;
-            unpackedData = new float[4][format.getElementCount()][4];
+            unpackedData = new float[4][format.func_227894_c_().size()][4];
         }
 
         @Override
@@ -155,7 +156,7 @@ public class UnpackedBakedQuad extends BakedQuad
                 }
             }
             elements++;
-            if(elements == format.getElementCount())
+            if(elements == format.func_227894_c_().size())
             {
                 vertices++;
                 elements = 0;
@@ -185,16 +186,17 @@ public class UnpackedBakedQuad extends BakedQuad
                 float tS = tX > tY ? tX : tY;
                 float ep = 1f / (tS * 0x100);
                 int uve = 0;
-                while(uve < format.getElementCount())
+                ImmutableList<VertexFormatElement> elements = format.func_227894_c_();
+                while(uve < elements.size())
                 {
-                    VertexFormatElement e = format.getElement(uve);
+                    VertexFormatElement e = elements.get(uve);
                     if(e.getUsage() == VertexFormatElement.Usage.UV && e.getIndex() == 0)
                     {
                         break;
                     }
                     uve++;
                 }
-                if(uve == format.getElementCount())
+                if(uve == elements.size())
                 {
                     throw new IllegalStateException("Can't contract UVs: format doesn't contain UVs");
                 }

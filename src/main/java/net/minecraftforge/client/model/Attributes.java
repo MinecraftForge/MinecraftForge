@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Type;
@@ -29,16 +31,7 @@ public class Attributes
     /*
      * Default format of the data in IBakedModel
      */
-    public static final VertexFormat DEFAULT_BAKED_FORMAT;
-
-    static
-    {
-        DEFAULT_BAKED_FORMAT = new VertexFormat();
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.FLOAT, Usage.POSITION, 3));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.UBYTE, Usage.COLOR,    4));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.FLOAT, Usage.UV,       2));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.BYTE,  Usage.PADDING,  4));
-    }
+    public static final VertexFormat DEFAULT_BAKED_FORMAT = DefaultVertexFormats.BLOCK;
 
     /*
      * Can first format be used where second is expected
@@ -50,13 +43,15 @@ public class Attributes
 
         int padding = 0;
         int j = 0;
-        for(VertexFormatElement firstAttr : first.getElements())
+        ImmutableList<VertexFormatElement> elementsFirst = first.func_227894_c_();
+        ImmutableList<VertexFormatElement> elementsSecond = second.func_227894_c_();
+        for(VertexFormatElement firstAttr : elementsFirst)
         {
-            while(j < second.getElementCount() && second.getElement(j).getUsage() == Usage.PADDING)
+            while(j < elementsSecond.size() && elementsSecond.get(j).getUsage() == Usage.PADDING)
             {
-                padding += second.getElement(j++).getSize();
+                padding += elementsSecond.get(j++).getSize();
             }
-            if(j >= second.getElementCount() && padding == 0)
+            if(j >= elementsSecond.size() && padding == 0)
             {
                 // if no padding is left, but there are still elements in first (we're processing one) - it doesn't fit
                 return false;
@@ -64,7 +59,7 @@ public class Attributes
             if(padding == 0)
             {
                 // no padding - attributes have to match
-                VertexFormatElement secondAttr = second.getElement(j++);
+                VertexFormatElement secondAttr = elementsSecond.get(j++);
                 if(
                     firstAttr.getIndex() != secondAttr.getIndex() ||
                     firstAttr.getElementCount() != secondAttr.getElementCount() ||
@@ -82,7 +77,7 @@ public class Attributes
             }
         }
 
-        if(padding != 0 || j != second.getElementCount()) return false;
+        if(padding != 0 || j != elementsSecond.size()) return false;
         return true;
     }
 }

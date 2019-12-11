@@ -1,101 +1,30 @@
 --- a/net/minecraft/client/renderer/model/FaceBakery.java
 +++ b/net/minecraft/client/renderer/model/FaceBakery.java
-@@ -40,9 +40,15 @@
-    };
- 
-    public BakedQuad func_217648_a(Vector3f p_217648_1_, Vector3f p_217648_2_, BlockPartFace p_217648_3_, TextureAtlasSprite p_217648_4_, Direction p_217648_5_, ISprite p_217648_6_, @Nullable BlockPartRotation p_217648_7_, boolean p_217648_8_) {
-+       return makeBakedQuad(p_217648_1_, p_217648_2_, p_217648_3_, p_217648_4_, p_217648_5_, p_217648_6_, p_217648_7_, p_217648_8_);
-+   }
-+
-+   public BakedQuad makeBakedQuad(Vector3f p_217648_1_, Vector3f p_217648_2_, BlockPartFace p_217648_3_, TextureAtlasSprite p_217648_4_, Direction p_217648_5_, ISprite p_217648_6_, @Nullable BlockPartRotation p_217648_7_, boolean p_217648_8_) {
-       BlockFaceUV blockfaceuv = p_217648_3_.field_178243_e;
-+      net.minecraftforge.common.model.TRSRTransformation transform = p_217648_6_.getState().apply(java.util.Optional.empty())
-+              .orElse(net.minecraftforge.common.model.TRSRTransformation.identity());
-       if (p_217648_6_.func_188049_c()) {
--         blockfaceuv = this.func_188010_a(p_217648_3_.field_178243_e, p_217648_5_, p_217648_6_.func_188048_b());
-+         blockfaceuv = net.minecraftforge.client.ForgeHooksClient.applyUVLock(p_217648_3_.field_178243_e, p_217648_5_, transform);
+@@ -24,7 +24,7 @@
+    public BakedQuad func_228824_a_(Vector3f p_228824_1_, Vector3f p_228824_2_, BlockPartFace p_228824_3_, TextureAtlasSprite p_228824_4_, Direction p_228824_5_, IModelTransform p_228824_6_, @Nullable BlockPartRotation p_228824_7_, boolean p_228824_8_, ResourceLocation p_228824_9_) {
+       BlockFaceUV blockfaceuv = p_228824_3_.field_178243_e;
+       if (p_228824_6_.func_188049_c()) {
+-         blockfaceuv = func_228821_a_(p_228824_3_.field_178243_e, p_228824_5_, p_228824_6_.func_225615_b_(), p_228824_9_);
++         blockfaceuv = net.minecraftforge.client.ForgeHooksClient.applyUVLock(p_228824_3_.field_178243_e, p_228824_5_, p_228824_6_.func_225615_b_(), p_228824_9_);
        }
  
        float[] afloat = new float[blockfaceuv.field_178351_a.length];
-@@ -56,14 +62,15 @@
-       blockfaceuv.field_178351_a[2] = MathHelper.func_219799_g(f2, blockfaceuv.field_178351_a[2], f3);
-       blockfaceuv.field_178351_a[1] = MathHelper.func_219799_g(f2, blockfaceuv.field_178351_a[1], f4);
-       blockfaceuv.field_178351_a[3] = MathHelper.func_219799_g(f2, blockfaceuv.field_178351_a[3], f4);
--      int[] aint = this.func_188012_a(blockfaceuv, p_217648_4_, p_217648_5_, this.func_199337_a(p_217648_1_, p_217648_2_), p_217648_6_.func_188048_b(), p_217648_7_, p_217648_8_);
-+      int[] aint = this.makeQuadVertexData(blockfaceuv, p_217648_4_, p_217648_5_, this.func_199337_a(p_217648_1_, p_217648_2_), transform, p_217648_7_, false); // FORGE: *Must* pass false here, shade value is applied at render time
-       Direction direction = func_178410_a(aint);
-       System.arraycopy(afloat, 0, blockfaceuv.field_178351_a, 0, afloat.length);
-       if (p_217648_7_ == null) {
+@@ -43,7 +43,8 @@
           this.func_178408_a(aint, direction);
        }
  
--      return new BakedQuad(aint, p_217648_3_.field_178245_c, direction, p_217648_4_);
+-      return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_);
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
-+      return new BakedQuad(aint, p_217648_3_.field_178245_c, direction, p_217648_4_, p_217648_8_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++      return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_, p_228824_8_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
     }
  
-    private BlockFaceUV func_188010_a(BlockFaceUV p_188010_1_, Direction p_188010_2_, ModelRotation p_188010_3_) {
-@@ -71,10 +78,14 @@
-    }
- 
-    private int[] func_188012_a(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, Direction p_188012_3_, float[] p_188012_4_, ModelRotation p_188012_5_, @Nullable BlockPartRotation p_188012_6_, boolean p_188012_7_) {
-+      return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.common.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
-+   }
-+
-+   private int[] makeQuadVertexData(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, Direction p_188012_3_, float[] p_188012_4_, net.minecraftforge.common.model.ITransformation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_) {
-       int[] aint = new int[28];
- 
-       for(int i = 0; i < 4; ++i) {
--         this.func_188015_a(aint, i, p_188012_3_, p_188012_1_, p_188012_4_, p_188012_2_, p_188012_5_, p_188012_6_, p_188012_7_);
-+         this.fillVertexData(aint, i, p_188012_3_, p_188012_1_, p_188012_4_, p_188012_2_, p_188012_5_, p_188012_6_, p_188012_7_);
-       }
- 
-       return aint;
-@@ -115,12 +126,16 @@
-    }
- 
-    private void func_188015_a(int[] p_188015_1_, int p_188015_2_, Direction p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, ModelRotation p_188015_7_, @Nullable BlockPartRotation p_188015_8_, boolean p_188015_9_) {
--      Direction direction = p_188015_7_.func_177523_a(p_188015_3_);
-+      fillVertexData(p_188015_1_, p_188015_2_, p_188015_3_, p_188015_4_, p_188015_5_, p_188015_6_, (net.minecraftforge.common.model.ITransformation)p_188015_7_, p_188015_8_, p_188015_9_);
-+   }
-+
-+   private void fillVertexData(int[] p_188015_1_, int p_188015_2_, Direction p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, net.minecraftforge.common.model.ITransformation p_188015_7_, @Nullable BlockPartRotation p_188015_8_, boolean p_188015_9_) {
-+      Direction direction = p_188015_7_.rotateTransform(p_188015_3_);
-       int i = p_188015_9_ ? this.func_178413_a(direction) : -1;
-       FaceDirection.VertexInformation facedirection$vertexinformation = FaceDirection.func_179027_a(p_188015_3_).func_179025_a(p_188015_2_);
-       Vector3f vector3f = new Vector3f(p_188015_5_[facedirection$vertexinformation.field_179184_a], p_188015_5_[facedirection$vertexinformation.field_179182_b], p_188015_5_[facedirection$vertexinformation.field_179183_c]);
-       this.func_199336_a(vector3f, p_188015_8_);
--      int j = this.func_199335_a(vector3f, p_188015_3_, p_188015_2_, p_188015_7_);
-+      int j = this.rotateVertex(vector3f, p_188015_3_, p_188015_2_, p_188015_7_);
-       this.func_199333_a(p_188015_1_, j, p_188015_2_, vector3f, i, p_188015_6_, p_188015_4_);
-    }
- 
-@@ -130,8 +145,8 @@
-       p_199333_1_[i + 1] = Float.floatToRawIntBits(p_199333_4_.func_195900_b());
-       p_199333_1_[i + 2] = Float.floatToRawIntBits(p_199333_4_.func_195902_c());
-       p_199333_1_[i + 3] = p_199333_5_;
--      p_199333_1_[i + 4] = Float.floatToRawIntBits(p_199333_6_.func_94214_a((double)p_199333_7_.func_178348_a(p_199333_3_)));
--      p_199333_1_[i + 4 + 1] = Float.floatToRawIntBits(p_199333_6_.func_94207_b((double)p_199333_7_.func_178346_b(p_199333_3_)));
-+      p_199333_1_[i + 4] = Float.floatToRawIntBits(p_199333_6_.func_94214_a((double)p_199333_7_.func_178348_a(p_199333_3_) * .999 + p_199333_7_.func_178348_a((p_199333_3_ + 2) % 4) * .001));
-+      p_199333_1_[i + 4 + 1] = Float.floatToRawIntBits(p_199333_6_.func_94207_b((double)p_199333_7_.func_178346_b(p_199333_3_) * .999 + p_199333_7_.func_178346_b((p_199333_3_ + 2) % 4) * .001));
+    public static BlockFaceUV func_228821_a_(BlockFaceUV p_228821_0_, Direction p_228821_1_, TransformationMatrix p_228821_2_, ResourceLocation p_228821_3_) {
+@@ -152,6 +153,8 @@
+       p_228826_1_[i + 3] = p_228826_4_;
+       p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)));
+       p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_)));
++      p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)  * .999 + p_228826_6_.func_178348_a((p_228826_2_ + 2) % 4) * .001));
++      p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_) * .999 + p_228826_6_.func_178346_b((p_228826_2_ + 2) % 4) * .001));
     }
  
     private void func_199336_a(Vector3f p_199336_1_, @Nullable BlockPartRotation p_199336_2_) {
-@@ -173,11 +188,15 @@
-    }
- 
-    public int func_199335_a(Vector3f p_199335_1_, Direction p_199335_2_, int p_199335_3_, ModelRotation p_199335_4_) {
-+      return rotateVertex(p_199335_1_, p_199335_2_, p_199335_3_, (net.minecraftforge.common.model.ITransformation)p_199335_4_);
-+   }
-+
-+   public int rotateVertex(Vector3f p_199335_1_, Direction p_199335_2_, int p_199335_3_, net.minecraftforge.common.model.ITransformation p_199335_4_) {
-       if (p_199335_4_ == ModelRotation.X0_Y0) {
-          return p_199335_3_;
-       } else {
--         this.func_199334_a(p_199335_1_, new Vector3f(0.5F, 0.5F, 0.5F), p_199335_4_.func_217650_a(), new Vector3f(1.0F, 1.0F, 1.0F));
--         return p_199335_4_.func_177520_a(p_199335_2_, p_199335_3_);
-+         net.minecraftforge.client.ForgeHooksClient.transform(p_199335_1_, p_199335_4_.getMatrixVec());
-+         return p_199335_4_.rotate(p_199335_2_, p_199335_3_);
-       }
-    }
- 

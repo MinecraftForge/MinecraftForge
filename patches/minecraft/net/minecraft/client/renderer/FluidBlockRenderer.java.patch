@@ -1,77 +1,94 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -58,8 +58,9 @@
+@@ -57,8 +57,9 @@
  
-    public boolean func_217638_a(IEnviromentBlockReader p_217638_1_, BlockPos p_217638_2_, BufferBuilder p_217638_3_, IFluidState p_217638_4_) {
-       boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b);
+    public boolean func_228796_a_(ILightReader p_228796_1_, BlockPos p_228796_2_, IVertexBuilder p_228796_3_, IFluidState p_228796_4_) {
+       boolean flag = p_228796_4_.func_206884_a(FluidTags.field_206960_b);
 -      TextureAtlasSprite[] atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
--      int i = flag ? 16777215 : BiomeColors.func_217612_c(p_217638_1_, p_217638_2_);
-+      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_217638_1_, p_217638_2_, p_217638_4_);
-+      int i = p_217638_4_.func_206886_c().getAttributes().getColor(p_217638_1_, p_217638_2_);
+-      int i = flag ? 16777215 : BiomeColors.func_228363_c_(p_228796_1_, p_228796_2_);
++      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_228796_1_, p_228796_2_, p_228796_4_);
++      int i = p_228796_4_.func_206886_c().getAttributes().getColor(p_228796_1_, p_228796_2_);
 +      float alpha = (float)(i >> 24 & 255) / 255.0F;
        float f = (float)(i >> 16 & 255) / 255.0F;
        float f1 = (float)(i >> 8 & 255) / 255.0F;
        float f2 = (float)(i & 255) / 255.0F;
-@@ -145,15 +146,15 @@
-             float f24 = 1.0F * f;
-             float f25 = 1.0F * f1;
-             float f26 = 1.0F * f2;
--            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
--            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
--            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
--            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
-             if (p_217638_4_.func_205586_a(p_217638_1_, p_217638_2_.func_177984_a())) {
--               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
--               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
--               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
--               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, 1.0F).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
-+               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f7, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f12, (double)f16).func_187314_a(k, l).func_181675_d();
-+               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f10, d2 + 0.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f15, (double)f19).func_187314_a(k, l).func_181675_d();
-+               p_217638_3_.func_181662_b(d0 + 1.0D, d1 + (double)f9, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f14, (double)f18).func_187314_a(k, l).func_181675_d();
-+               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
+@@ -143,15 +144,15 @@
+             float f25 = 1.0F * f;
+             float f26 = 1.0F * f1;
+             float f27 = 1.0F * f2;
+-            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, f13, f17, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, f14, f18, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, f15, f19, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, f16, f20, j);
++            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
++            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
++            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
++            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
+             if (p_228796_4_.func_205586_a(p_228796_1_, p_228796_2_.func_177984_a())) {
+-               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, f13, f17, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, f16, f20, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, f15, f19, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, f14, f18, j);
++               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
++               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
++               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
++               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
              }
           }
  
-@@ -168,10 +169,10 @@
-             float f37 = 0.5F * f;
-             float f38 = 0.5F * f1;
-             float f40 = 0.5F * f2;
--            p_217638_3_.func_181662_b(d0, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f31, (double)f36).func_187314_a(j2, k2).func_181675_d();
--            p_217638_3_.func_181662_b(d0, d1, d2).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f31, (double)f34).func_187314_a(j2, k2).func_181675_d();
--            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f32, (double)f34).func_187314_a(j2, k2).func_181675_d();
--            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, 1.0F).func_187315_a((double)f32, (double)f36).func_187314_a(j2, k2).func_181675_d();
-+            p_217638_3_.func_181662_b(d0, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f31, (double)f36).func_187314_a(j2, k2).func_181675_d();
-+            p_217638_3_.func_181662_b(d0, d1, d2).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f31, (double)f34).func_187314_a(j2, k2).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f32, (double)f34).func_187314_a(j2, k2).func_181675_d();
-+            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f32, (double)f36).func_187314_a(j2, k2).func_181675_d();
+@@ -164,10 +165,10 @@
+             float f40 = 0.5F * f;
+             float f41 = 0.5F * f1;
+             float f42 = 0.5F * f2;
+-            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, f34, f39, i1);
+-            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, f34, f37, i1);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, f35, f37, i1);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, f35, f39, i1);
++            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f34, f39, i1);
++            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, alpha, f34, f37, i1);
++            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, alpha, f35, f37, i1);
++            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f35, f39, i1);
              flag7 = true;
           }
  
-@@ -245,15 +246,15 @@
-                float f28 = 1.0F * f27 * f;
-                float f29 = 1.0F * f27 * f1;
-                float f30 = 1.0F * f27 * f2;
--               p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
--               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
--               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
--               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
+@@ -239,15 +240,15 @@
+                float f31 = 1.0F * f30 * f;
+                float f32 = 1.0F * f30 * f1;
+                float f33 = 1.0F * f30 * f2;
+-               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, f48, f50, k);
+-               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
+-               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
+-               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
++               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
++               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
++               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
++               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
                 if (textureatlassprite2 != this.field_187501_d) {
--                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
--                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
--                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
--                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
-+                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
-+                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
+-                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
+-                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
+-                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
+-                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, f48, f50, k);
++                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
++                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
++                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
++                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
                 }
              }
           }
+@@ -256,10 +257,15 @@
+       }
+    }
+ 
++   @Deprecated
+    private void func_228797_a_(IVertexBuilder p_228797_1_, double p_228797_2_, double p_228797_4_, double p_228797_6_, float p_228797_8_, float p_228797_9_, float p_228797_10_, float p_228797_11_, float p_228797_12_, int p_228797_13_) {
+-      p_228797_1_.func_225582_a_(p_228797_2_, p_228797_4_, p_228797_6_).func_227885_a_(p_228797_8_, p_228797_9_, p_228797_10_, 1.0F).func_225583_a_(p_228797_11_, p_228797_12_).func_227886_a_(p_228797_13_).func_225584_a_(0.0F, 1.0F, 0.0F).func_181675_d();
++      func_228797_a_(p_228797_1_, p_228797_2_, p_228797_4_, p_228797_6_, p_228797_8_, p_228797_9_, p_228797_10_, 1.0F, p_228797_11_, p_228797_12_, p_228797_13_);
+    }
+ 
++   private void func_228797_a_(IVertexBuilder p_228797_1_, double p_228797_2_, double p_228797_4_, double p_228797_6_, float p_228797_8_, float p_228797_9_, float p_228797_10_, float alpha, float p_228797_11_, float p_228797_12_, int p_228797_13_) {
++	  p_228797_1_.func_225582_a_(p_228797_2_, p_228797_4_, p_228797_6_).func_227885_a_(p_228797_8_, p_228797_9_, p_228797_10_, alpha).func_225583_a_(p_228797_11_, p_228797_12_).func_227886_a_(p_228797_13_).func_225584_a_(0.0F, 1.0F, 0.0F).func_181675_d();
++   }
++
+    private int func_228795_a_(ILightReader p_228795_1_, BlockPos p_228795_2_) {
+       int i = WorldRenderer.func_228421_a_(p_228795_1_, p_228795_2_);
+       int j = WorldRenderer.func_228421_a_(p_228795_1_, p_228795_2_.func_177984_a());

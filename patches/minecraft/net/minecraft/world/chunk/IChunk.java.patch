@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/IChunk.java
 +++ b/net/minecraft/world/chunk/IChunk.java
-@@ -175,4 +175,9 @@
+@@ -151,4 +151,9 @@
     boolean func_217310_r();
  
     void func_217305_b(boolean p_217305_1_);

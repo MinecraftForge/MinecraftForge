@@ -42,7 +42,7 @@ public class ModClassVisitor extends ClassVisitor
     private final LinkedList<ModAnnotation> annotations = new LinkedList<>();
     public ModClassVisitor()
     {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
     }
 
 

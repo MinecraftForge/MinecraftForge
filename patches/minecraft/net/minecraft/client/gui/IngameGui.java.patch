@@ -1,40 +1,34 @@
 --- a/net/minecraft/client/gui/IngameGui.java
 +++ b/net/minecraft/client/gui/IngameGui.java
-@@ -408,6 +408,9 @@
+@@ -406,6 +406,9 @@
  
           for(EffectInstance effectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              Effect effect = effectinstance.func_188419_a();
-+            if (!effect.shouldRenderHUD(effectinstance)) continue;
++            if (!effectinstance.shouldRenderHUD()) continue;
 +            // Rebind in case previous renderHUDEffect changed texture
 +            this.field_73839_d.func_110434_K().func_110577_a(ContainerScreen.field_147001_a);
              if (effectinstance.func_205348_f()) {
                 int k = this.field_194811_H;
                 int l = 1;
-@@ -439,11 +442,13 @@
-                float f_f = f;
-                int k_f = k;
-                int l_f = l;
-+
-                TextureAtlasSprite textureatlassprite = potionspriteuploader.func_215288_a(effect);
-                list.add(() -> {
-                   GlStateManager.color4f(1.0F, 1.0F, 1.0F, f_f);
-                   blit(k_f + 3, l_f + 3, this.blitOffset, 18, 18, textureatlassprite);
+@@ -443,6 +446,7 @@
+                   RenderSystem.color4f(1.0F, 1.0F, 1.0F, f1);
+                   blit(j1 + 3, k1 + 3, this.getBlitOffset(), 18, 18, textureatlassprite);
                 });
-+               effect.renderHUDEffect(effectinstance, this, k, l, this.blitOffset, f);
++               effectinstance.renderHUDEffect(this, k, l, this.getBlitOffset(), f);
              }
           }
  
-@@ -572,6 +577,7 @@
+@@ -568,6 +572,7 @@
           }
  
           String s = itextcomponent.func_150254_d();
-+         s = this.field_92016_l.func_77973_b().getHighlightTip(this.field_92016_l, s);
++         s = this.field_92016_l.getHighlightTip(s);
           int i = (this.field_194811_H - this.func_175179_f().func_78256_a(s)) / 2;
           int j = this.field_194812_I - 59;
           if (!this.field_73839_d.field_71442_b.func_78755_b()) {
-@@ -588,7 +594,13 @@
-             GlStateManager.enableBlend();
-             GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+@@ -584,7 +589,13 @@
+             RenderSystem.enableBlend();
+             RenderSystem.defaultBlendFunc();
              fill(i - 2, j - 2, i + this.func_175179_f().func_78256_a(s) + 2, j + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
 +            FontRenderer font = field_92016_l.func_77973_b().getFontRenderer(field_92016_l);
 +            if (font == null) {
@@ -43,6 +37,6 @@
 +                i = (this.field_194811_H - font.func_78256_a(s)) / 2;
 +                font.func_175063_a(s, (float)i, (float)j, 16777215 + (k << 24));
 +            }
-             GlStateManager.disableBlend();
-             GlStateManager.popMatrix();
+             RenderSystem.disableBlend();
+             RenderSystem.popMatrix();
           }

@@ -1,18 +1,11 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -114,6 +114,15 @@
-                      f12 = 0.25F + f9 * 0.75F;
+@@ -123,6 +123,8 @@
+                      }
                    }
  
-+                  float[] colors = {f10, f11, f12};
-+                  world.func_201675_m().getLightmapColors(p_205106_1_, f, f4, f5, colors);
-+                  f10 = colors[0]; f11 = colors[1]; f12 = colors[2];
++                  clientworld.func_201675_m().getLightmapColors(p_205106_1_, f, f4, f5, vector3f1);
 +
-+                  // Forge: fix MC-58177
-+                  f10 = net.minecraft.util.math.MathHelper.func_76131_a(f10, 0f, 1f);
-+                  f11 = net.minecraft.util.math.MathHelper.func_76131_a(f11, 0f, 1f);
-+                  f12 = net.minecraft.util.math.MathHelper.func_76131_a(f12, 0f, 1f);
-+
+                   vector3f1.func_195901_a(0.0F, 1.0F);
                    if (f2 > 0.0F) {
-                      float f17 = 1.0F / f10;
-                      if (f17 > 1.0F / f11) {
+                      float f10 = Math.max(vector3f1.func_195899_a(), Math.max(vector3f1.func_195900_b(), vector3f1.func_195902_c()));

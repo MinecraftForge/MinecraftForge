@@ -1,16 +1,11 @@
 --- a/net/minecraft/world/gen/feature/ShrubFeature.java
 +++ b/net/minecraft/world/gen/feature/ShrubFeature.java
-@@ -18,11 +18,12 @@
-       super(p_i49868_1_, false);
-       this.field_150527_b = p_i49868_2_;
-       this.field_150528_a = p_i49868_3_;
-+      setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196678_w);
-    }
+@@ -16,7 +16,7 @@
  
-    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
-       p_208519_4_ = p_208519_2_.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p_208519_4_).func_177977_b();
--      if (func_214589_h(p_208519_2_, p_208519_4_)) {
-+      if (isSoil(p_208519_2_, p_208519_4_, getSapling())) {
-          p_208519_4_ = p_208519_4_.func_177984_a();
-          this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_, this.field_150527_b, p_208519_5_);
+    public boolean func_225557_a_(IWorldGenerationReader p_225557_1_, Random p_225557_2_, BlockPos p_225557_3_, Set<BlockPos> p_225557_4_, Set<BlockPos> p_225557_5_, MutableBoundingBox p_225557_6_, BaseTreeFeatureConfig p_225557_7_) {
+       p_225557_3_ = p_225557_1_.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p_225557_3_).func_177977_b();
+-      if (func_214589_h(p_225557_1_, p_225557_3_)) {
++      if (isSoil(p_225557_1_, p_225557_3_, p_225557_7_.getSapling())) {
+          p_225557_3_ = p_225557_3_.func_177984_a();
+          this.func_227216_a_(p_225557_1_, p_225557_2_, p_225557_3_, p_225557_4_, p_225557_6_, p_225557_7_);
  

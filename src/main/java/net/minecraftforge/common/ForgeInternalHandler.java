@@ -25,7 +25,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -79,8 +78,8 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void checkSettings(ClientTickEvent event)
     {
-        if (event.phase == Phase.END)
-            CloudRenderer.updateCloudSettings();
+        //if (event.phase == Phase.END)
+        //    CloudRenderer.updateCloudSettings();
     }
 
     @SubscribeEvent

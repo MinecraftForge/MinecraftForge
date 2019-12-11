@@ -1,41 +1,39 @@
 --- a/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
-@@ -44,7 +44,7 @@
-       this.field_76990_c.field_78724_e.func_110577_a(AtlasTexture.field_110575_b);
+@@ -47,23 +47,23 @@
+       p_225623_4_.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180.0F - p_225623_1_.field_70177_z));
        BlockRendererDispatcher blockrendererdispatcher = this.field_147917_g.func_175602_ab();
        ModelManager modelmanager = blockrendererdispatcher.func_175023_a().func_178126_b();
--      ModelResourceLocation modelresourcelocation = p_76986_1_.func_82335_i().func_77973_b() == Items.field_151098_aY ? field_209586_g : field_209585_f;
-+      ModelResourceLocation modelresourcelocation = p_76986_1_.func_82335_i().func_77973_b() instanceof FilledMapItem ? field_209586_g : field_209585_f;
-       GlStateManager.pushMatrix();
-       GlStateManager.translatef(-0.5F, -0.5F, -0.5F);
-       if (this.field_188301_f) {
-@@ -86,17 +86,17 @@
-       ItemStack itemstack = p_82402_1_.func_82335_i();
+-      ModelResourceLocation modelresourcelocation = p_225623_1_.func_82335_i().func_77973_b() == Items.field_151098_aY ? field_209586_g : field_209585_f;
++      ModelResourceLocation modelresourcelocation = p_225623_1_.func_82335_i().func_77973_b() instanceof FilledMapItem ? field_209586_g : field_209585_f;
+       p_225623_4_.func_227860_a_();
+       p_225623_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
+       blockrendererdispatcher.func_175019_b().func_228804_a_(p_225623_4_.func_227866_c_(), p_225623_5_.getBuffer(Atlases.func_228782_g_()), (BlockState)null, modelmanager.func_174953_a(modelresourcelocation), 1.0F, 1.0F, 1.0F, p_225623_6_, OverlayTexture.field_229196_a_);
+       p_225623_4_.func_227865_b_();
+       ItemStack itemstack = p_225623_1_.func_82335_i();
        if (!itemstack.func_190926_b()) {
-          GlStateManager.pushMatrix();
 -         boolean flag = itemstack.func_77973_b() == Items.field_151098_aY;
--         int i = flag ? p_82402_1_.func_82333_j() % 4 * 2 : p_82402_1_.func_82333_j();
-+         MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_82402_1_.field_70170_p);
-+         int i = mapdata != null ? p_82402_1_.func_82333_j() % 4 * 2 : p_82402_1_.func_82333_j();
-          GlStateManager.rotatef((float)i * 360.0F / 8.0F, 0.0F, 0.0F, 1.0F);
++         MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_225623_1_.field_70170_p);
+          p_225623_4_.func_227861_a_(0.0D, 0.0D, 0.4375D);
+-         int i = flag ? p_225623_1_.func_82333_j() % 4 * 2 : p_225623_1_.func_82333_j();
++         int i = mapdata != null ? p_225623_1_.func_82333_j() % 4 * 2 : p_225623_1_.func_82333_j();
+          p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_((float)i * 360.0F / 8.0F));
 -         if (flag) {
-+         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_82402_1_, this))) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_225623_1_, this))) {
 +         if (mapdata != null) {
-             GlStateManager.disableLighting();
-             this.field_76990_c.field_78724_e.func_110577_a(field_110789_a);
-             GlStateManager.rotatef(180.0F, 0.0F, 0.0F, 1.0F);
+             p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_(180.0F));
              float f = 0.0078125F;
-             GlStateManager.scalef(0.0078125F, 0.0078125F, 0.0078125F);
-             GlStateManager.translatef(-64.0F, -64.0F, 0.0F);
--            MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_82402_1_.field_70170_p);
-             GlStateManager.translatef(0.0F, 0.0F, -1.0F);
+             p_225623_4_.func_227862_a_(0.0078125F, 0.0078125F, 0.0078125F);
+             p_225623_4_.func_227861_a_(-64.0D, -64.0D, 0.0D);
+-            MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_225623_1_.field_70170_p);
+             p_225623_4_.func_227861_a_(0.0D, 0.0D, -1.0D);
              if (mapdata != null) {
-                this.field_147917_g.field_71460_t.func_147701_i().func_148250_a(mapdata, true);
-@@ -105,6 +105,7 @@
-             GlStateManager.scalef(0.5F, 0.5F, 0.5F);
-             this.field_177074_h.func_181564_a(itemstack, ItemCameraTransforms.TransformType.FIXED);
+                this.field_147917_g.field_71460_t.func_147701_i().func_228086_a_(p_225623_4_, p_225623_5_, mapdata, true, p_225623_6_);
+@@ -72,6 +72,7 @@
+             p_225623_4_.func_227862_a_(0.5F, 0.5F, 0.5F);
+             this.field_177074_h.func_229110_a_(itemstack, ItemCameraTransforms.TransformType.FIXED, p_225623_6_, OverlayTexture.field_229196_a_, p_225623_4_, p_225623_5_);
           }
 +         }
- 
-          GlStateManager.popMatrix();
        }
+ 
+       p_225623_4_.func_227865_b_();

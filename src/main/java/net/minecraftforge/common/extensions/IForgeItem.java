@@ -660,7 +660,7 @@ public interface IForgeItem
      */
     default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
     {
-        return oldStack.equals(newStack);
+        return ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack);
     }
 
     /**

@@ -1,55 +1,30 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -18,7 +18,7 @@
+@@ -17,7 +17,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
--public class TextureAtlasSprite {
-+public class TextureAtlasSprite implements net.minecraftforge.client.extensions.IForgeTextureAtlasSprite {
-    private final ResourceLocation field_110984_i;
-    protected final int field_130223_c;
-    protected final int field_130224_d;
-@@ -103,7 +103,10 @@
-                anativeimage[k1] = this.field_195670_c[k1];
-             } else {
-                NativeImage nativeimage1 = anativeimage[k1 - 1];
--               NativeImage nativeimage = new NativeImage(nativeimage1.func_195702_a() >> 1, nativeimage1.func_195714_b() >> 1, false);
-+               int width = nativeimage1.func_195702_a() >> 1;
-+               int height = nativeimage1.func_195714_b() >> 1;
-+               if (width > 0 && height > 0) { // FORGE force higher mipmap levels when a texture is not square
-+               NativeImage nativeimage = new NativeImage(width, height, false);
-                int k = nativeimage.func_195702_a();
-                int l = nativeimage.func_195714_b();
- 
-@@ -112,8 +115,11 @@
-                      nativeimage.func_195700_a(i1, j1, func_195661_b(nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 1), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 1), flag));
-                   }
-                }
--
-+               
-                anativeimage[k1] = nativeimage;
-+               } else {
-+                   anativeimage[k1] = nativeimage1;
-+               }
-             }
-          }
- 
-@@ -209,6 +215,7 @@
+-public class TextureAtlasSprite implements AutoCloseable {
++public class TextureAtlasSprite implements AutoCloseable, net.minecraftforge.client.extensions.IForgeTextureAtlasSprite {
+    private final AtlasTexture field_229225_b_;
+    private final TextureAtlasSprite.Info field_229226_c_;
+    private final AnimationMetadataSection field_110982_k;
+@@ -135,6 +135,7 @@
  
     private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
        for(int i = 0; i < this.field_195670_c.length; ++i) {
-+         if ((this.field_130223_c >> i <= 0) || (this.field_130224_d >> i <= 0)) break;
-          p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
++         if ((this.field_229226_c_.field_229245_b_ >> i <= 0) || (this.field_229226_c_.field_229246_c_ >> i <= 0)) break;
+          p_195667_3_[i].func_227788_a_(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_229226_c_.field_229245_b_ >> i, this.field_229226_c_.field_229246_c_ >> i, this.field_195670_c.length > 1, false);
        }
  
-@@ -464,4 +471,10 @@
-    public void func_195663_q() {
-       this.func_195659_d(0);
+@@ -341,4 +342,10 @@
+ 
+       }
     }
 +   
 +   // Forge Start
 +   
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
-+       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.field_130223_c, y + this.field_195672_e[frameIndex] * this.field_130224_d);
++       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * func_94211_a(), y + this.field_195672_e[frameIndex] * func_94216_b());
 +   }
  }

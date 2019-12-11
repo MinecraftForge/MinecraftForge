@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/criterion/ItemPredicate.java
 +++ b/net/minecraft/advancements/criterion/ItemPredicate.java
-@@ -25,6 +25,8 @@
+@@ -26,6 +26,8 @@
  import net.minecraft.util.registry.Registry;
  
  public class ItemPredicate {
@@ -9,7 +9,7 @@
     public static final ItemPredicate field_192495_a = new ItemPredicate();
     @Nullable
     private final Tag<Item> field_200018_b;
-@@ -93,6 +95,11 @@
+@@ -105,6 +107,11 @@
     public static ItemPredicate func_192492_a(@Nullable JsonElement p_192492_0_) {
        if (p_192492_0_ != null && !p_192492_0_.isJsonNull()) {
           JsonObject jsonobject = JSONUtils.func_151210_l(p_192492_0_, "item");
@@ -21,7 +21,7 @@
           MinMaxBounds.IntBound minmaxbounds$intbound = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("count"));
           MinMaxBounds.IntBound minmaxbounds$intbound1 = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("durability"));
           if (jsonobject.has("data")) {
-@@ -181,6 +188,14 @@
+@@ -204,6 +211,14 @@
        }
     }
  
@@ -35,4 +35,4 @@
 +
     public static class Builder {
        private final List<EnchantmentPredicate> field_200312_a = Lists.newArrayList();
-       @Nullable
+       private final List<EnchantmentPredicate> field_226657_b_ = Lists.newArrayList();

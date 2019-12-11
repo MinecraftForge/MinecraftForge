@@ -7,8 +7,8 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-        classpath 'org.ow2.asm:asm:7.1'
-        classpath 'org.ow2.asm:asm-tree:7.1'
+        classpath 'org.ow2.asm:asm:7.2'
+        classpath 'org.ow2.asm:asm-tree:7.2'
     }
 }
 import groovy.json.JsonSlurper
@@ -59,8 +59,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.14.4'
-    MCP_VERSION = '20190829.143755'
+    MC_VERSION = '1.15'
+    MCP_VERSION = '20191212.203412'
 }
 
 project(':mcp') {
@@ -82,7 +82,7 @@ project(':clean') {
     }
     
     dependencies {
-        implementation 'net.minecraftforge:forgespi:1.1.+'
+        implementation 'net.minecraftforge:forgespi:2.0.+'
     }
     patcher {
         parent = project(':mcp')
@@ -185,7 +185,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '28.1' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '29.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -402,21 +402,21 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        installer 'org.ow2.asm:asm:6.2'
-        installer 'org.ow2.asm:asm-commons:6.2'
-        installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:4.1.+'
+        installer 'org.ow2.asm:asm:7.2'
+        installer 'org.ow2.asm:asm-commons:7.2'
+        installer 'org.ow2.asm:asm-tree:7.2'
+        installer 'cpw.mods:modlauncher:5.0.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
-        installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
-        installer 'net.minecraftforge:eventbus:1.0.+:service'
-        installer 'net.minecraftforge:forgespi:1.5.+'
-        installer 'net.minecraftforge:coremods:1.0.+'
+        installer 'net.minecraftforge:accesstransformers:2.0.+:shadowed'
+        installer 'net.minecraftforge:eventbus:2.0.+:service'
+        installer 'net.minecraftforge:forgespi:2.0.+'
+        installer 'net.minecraftforge:coremods:2.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
-        installer 'com.electronwill.night-config:core:3.6.0'
-        installer 'com.electronwill.night-config:toml:3.6.0'
+        installer 'com.electronwill.night-config:core:3.6.2'
+        installer 'com.electronwill.night-config:toml:3.6.2'
         installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
-        installer 'net.jodah:typetools:0.6.0'
+        installer 'net.jodah:typetools:0.6.1'
         installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'

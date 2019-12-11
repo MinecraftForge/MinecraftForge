@@ -19,101 +19,210 @@
 
 package net.minecraftforge.client.model.obj;
 
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import joptsimple.internal.Strings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.IModelLoader;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
-/*
- * Loader for OBJ models.
- * To enable your mod call instance.addDomain(modid).
- * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
- */
-public enum OBJLoader implements ICustomModelLoader {
-    INSTANCE;
+public class OBJLoader implements IModelLoader<OBJModel>
+{
+    public static OBJLoader INSTANCE = new OBJLoader();
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private IResourceManager manager;
-    private final Set<String> enabledDomains = new HashSet<>();
-    private final Map<ResourceLocation, OBJModel> cache = new HashMap<>();
-    private final Map<ResourceLocation, Exception> errors = new HashMap<>();
+    private final Map<ModelSettings, OBJModel> modelCache = Maps.newHashMap();
+    private final Map<ResourceLocation, MaterialLibrary> materialCache = Maps.newHashMap();
 
-    public void addDomain(String domain)
-    {
-        enabledDomains.add(domain.toLowerCase());
-        LOGGER.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
-    }
+    private IResourceManager manager = Minecraft.getInstance().getResourceManager();
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
-        this.manager = resourceManager;
-        cache.clear();
-        errors.clear();
+        modelCache.clear();
+        materialCache.clear();
+        manager = resourceManager;
     }
 
     @Override
-    public boolean accepts(ResourceLocation modelLocation)
+    public OBJModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
     {
-        return enabledDomains.contains(modelLocation.getNamespace()) && modelLocation.getPath().endsWith(".obj");
+        if (!modelContents.has("model"))
+            throw new RuntimeException("OBJ Loader requires a 'model' key that points to a valid .OBJ model.");
+
+        String modelLocation = modelContents.get("model").getAsString();
+
+        boolean detectCullableFaces = JSONUtils.getBoolean(modelContents, "detectCullableFaces", true);
+        boolean diffuseLighting = JSONUtils.getBoolean(modelContents, "diffuseLighting", false);
+        boolean flipV = JSONUtils.getBoolean(modelContents, "flip-v", false);
+        boolean ambientToFullbright = JSONUtils.getBoolean(modelContents, "ambientToFullbright", true);
+
+        return loadModel(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
     }
 
-    @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
+    public OBJModel loadModel(ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright)
     {
-        ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
-        if (!cache.containsKey(file))
-        {
-            IResource resource = null;
+        return modelCache.computeIfAbsent(new ModelSettings(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright), (data) -> {
+            IResource resource;
             try
             {
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    if (modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
-                    else if (modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
-                    else throw e;
-                }
-                OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = null;
-                try
-                {
-                    model = parser.parse();
-                }
-                catch (Exception e)
-                {
-                    errors.put(modelLocation, e);
-                }
-                finally
-                {
-                    cache.put(modelLocation, model);
-                }
+                resource = manager.getResource(modelLocation);
             }
-            finally
+            catch (IOException e)
             {
-                IOUtils.closeQuietly(resource);
+                throw new RuntimeException("Could not find OBJ model", e);
             }
+
+            try(LineReader rdr = new LineReader(resource))
+            {
+                return new OBJModel(modelLocation, rdr, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Could not read OBJ model", e);
+            }
+        });
+    }
+
+    public MaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation)
+    {
+        return materialCache.computeIfAbsent(materialLocation, (location) -> {
+            IResource resource;
+            try
+            {
+                resource = manager.getResource(location);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Could not find OBJ material library", e);
+            }
+
+            try(LineReader rdr = new LineReader(resource))
+            {
+                return new MaterialLibrary(rdr);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Could not read OBJ material library", e);
+            }
+        });
+    }
+
+    public static class LineReader implements AutoCloseable
+    {
+        InputStreamReader lineStream;
+        BufferedReader lineReader;
+
+        public LineReader(IResource resource)
+        {
+            this.lineStream = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
+            this.lineReader = new BufferedReader(lineStream);
         }
-        OBJModel model = cache.get(file);
-        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file, errors.get(modelLocation));
-        return model;
+
+        @Nullable
+        public String[] readAndSplitLine(boolean ignoreEmptyLines) throws IOException
+        {
+            do
+            {
+                String currentLine = lineReader.readLine();
+                if (currentLine == null)
+                    return null;
+
+                List<String> lineParts = new ArrayList<>();
+
+                if (currentLine.startsWith("#"))
+                    currentLine = "";
+
+                if (currentLine.length() > 0)
+                {
+
+                    boolean hasContinuation;
+                    do
+                    {
+                        hasContinuation = currentLine.endsWith("\\");
+                        String tmp = hasContinuation ? currentLine.substring(0, currentLine.length() - 1) : currentLine;
+
+                        Arrays.stream(tmp.split("[\t ]+")).filter(s -> !Strings.isNullOrEmpty(s)).forEach(lineParts::add);
+
+                        if (hasContinuation)
+                        {
+                            currentLine = lineReader.readLine();
+                            if (currentLine == null)
+                                break;
+
+                            if (currentLine.length() == 0 || currentLine.startsWith("#"))
+                                break;
+                        }
+                    } while (hasContinuation);
+                }
+
+                if (lineParts.size() > 0)
+                    return lineParts.toArray(new String[0]);
+            }
+            while (ignoreEmptyLines); // conditional expression is not updated, yes, I know.
+
+            return new String[0];
+        }
+
+        @Override
+        public void close() throws Exception
+        {
+            lineReader.close();
+            lineStream.close();
+        }
+    }
+
+    private class ModelSettings
+    {
+        @Nonnull
+        private final ResourceLocation modelLocation;
+        private final boolean detectCullableFaces;
+        private final boolean diffuseLighting;
+        private final boolean flipV;
+        private final boolean ambientToFullbright;
+
+        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright)
+        {
+            this.modelLocation = modelLocation;
+            this.detectCullableFaces = detectCullableFaces;
+            this.diffuseLighting = diffuseLighting;
+            this.flipV = flipV;
+            this.ambientToFullbright = ambientToFullbright;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ModelSettings that = (ModelSettings) o;
+            return equals(that);
+        }
+
+        public boolean equals(@Nonnull ModelSettings that)
+        {
+            return detectCullableFaces == that.detectCullableFaces &&
+                    diffuseLighting == that.diffuseLighting &&
+                    flipV == that.flipV &&
+                    ambientToFullbright == that.ambientToFullbright &&
+                    modelLocation.equals(that.modelLocation);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
+        }
     }
 }

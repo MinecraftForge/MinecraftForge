@@ -26,24 +26,24 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.ISprite;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.common.model.TransformationHelper;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,18 +53,21 @@ import java.util.Set;
 final class FancyMissingModel implements IUnbakedModel
 {
     private static final ResourceLocation font = new ResourceLocation("minecraft", "textures/font/ascii.png");
-    private static final ResourceLocation font2 = new ResourceLocation("minecraft", "font/ascii");
-    private static final TRSRTransformation smallTransformation = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, null, new Vector3f(.25f, .25f, .25f), null));
+    private static final Material font2 = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("minecraft", "font/ascii"));
+    private static final TransformationMatrix smallTransformation = TransformationHelper.blockCenterToCorner(new TransformationMatrix(null, null, new Vector3f(.25f, .25f, .25f), null));
     private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
     {
         @Override
         public SimpleModelFontRenderer load(VertexFormat format) throws Exception
         {
-            Matrix4f m = new Matrix4f();
-            m.m20 = 1f / 128f;
-            m.m01 = m.m12 = -m.m20;
-            m.m33 = 1;
-            m.setTranslation(new Vector3f(1, 1 + 1f / 0x100, 0));
+            float [] mv = new float[16];
+            mv[2*4+0] = 1f / 128f;
+            mv[0*4+1] =mv[1*4+2] = -mv[2*4+0];
+            mv[3*4+3] = 1;
+            mv[0*4+3] = 1;
+            mv[0*4+3] = 1 + 1f / 0x100;
+            mv[0*4+3] = 0;
+            Matrix4f m = new Matrix4f(mv);
             return new SimpleModelFontRenderer(
                 Minecraft.getInstance().gameSettings,
                 font,
@@ -92,7 +95,7 @@ final class FancyMissingModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
+    public Collection<Material> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
     {
         return ImmutableList.of(font2);
     }
@@ -105,12 +108,12 @@ final class FancyMissingModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
     {
-        IBakedModel bigMissing = missingModel.bake(bakery, spriteGetter, sprite, format);
-        ModelStateComposition smallState = new ModelStateComposition(sprite.getState(), smallTransformation);
-        IBakedModel smallMissing = missingModel.bake(bakery, spriteGetter, smallState, format);
-        return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, spriteGetter.apply(font2));
+        IBakedModel bigMissing = missingModel.func_225613_a_(bakery, spriteGetter, sprite, modelLocation);
+        ModelTransformComposition smallState = new ModelTransformComposition(sprite, new SimpleModelTransform(smallTransformation));
+        IBakedModel smallMissing = missingModel.func_225613_a_(bakery, spriteGetter, smallState, modelLocation);
+        return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(DefaultVertexFormats.BLOCK), message, spriteGetter.apply(font2));
     }
 
     static final class BakedModel implements IBakedModel
@@ -188,9 +191,15 @@ final class FancyMissingModel implements IUnbakedModel
         public ItemOverrideList getOverrides() { return ItemOverrideList.EMPTY; }
 
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
+        public boolean doesHandlePerspectives()
         {
-            TRSRTransformation transform = TRSRTransformation.identity();
+            return true;
+        }
+
+        @Override
+        public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+        {
+            TransformationMatrix transform = TransformationMatrix.func_227983_a_();
             boolean big = true;
             switch (cameraTransformType)
             {
@@ -200,11 +209,11 @@ final class FancyMissingModel implements IUnbakedModel
                 case THIRD_PERSON_RIGHT_HAND:
                     break;
                 case FIRST_PERSON_LEFT_HAND:
-                    transform = new TRSRTransformation(new Vector3f(-0.62f, 0.5f, -.5f), new Quat4f(1, -1, -1, 1), null, null);
+                    transform = new TransformationMatrix(new Vector3f(-0.62f, 0.5f, -.5f), new Quaternion(1, -1, -1, 1), null, null);
                     big = false;
                     break;
                 case FIRST_PERSON_RIGHT_HAND:
-                    transform = new TRSRTransformation(new Vector3f(-0.5f, 0.5f, -.5f), new Quat4f(1, 1, 1, 1), null, null);
+                    transform = new TransformationMatrix(new Vector3f(-0.5f, 0.5f, -.5f), new Quaternion(1, 1, 1, 1), null, null);
                     big = false;
                     break;
                 case HEAD:
@@ -212,26 +221,27 @@ final class FancyMissingModel implements IUnbakedModel
                 case GUI:
                     if (ForgeConfig.CLIENT.zoomInMissingModelTextInGui.get())
                     {
-                        transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), new Vector3f(4, 4, 4), null);
+                        transform = new TransformationMatrix(null, new Quaternion(1, 1, 1, 1), new Vector3f(4, 4, 4), null);
                         big = false;
                     }
                     else
                     {
-                        transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), null, null);
+                        transform = new TransformationMatrix(null, new Quaternion(1, 1, 1, 1), null, null);
                         big = true;
                     }
                     break;
                 case FIXED:
-                    transform = new TRSRTransformation(null, new Quat4f(-1, -1, 1, 1), null, null);
+                    transform = new TransformationMatrix(null, new Quaternion(-1, -1, 1, 1), null, null);
                     break;
                 default:
                     break;
             }
+            mat.func_227866_c_().func_227870_a_().func_226595_a_(transform.func_227988_c_());
             if (big != this.big)
             {
-                return Pair.of(otherModel, transform.getMatrixVec());
+                return otherModel;
             }
-            return Pair.of(this, transform.getMatrixVec());
+            return this;
         }
     }
 }

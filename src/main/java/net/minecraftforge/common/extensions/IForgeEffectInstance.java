@@ -21,16 +21,73 @@ package net.minecraftforge.common.extensions;
 
 import java.util.List;
 
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IForgeEffectInstance {
 
     default EffectInstance getEffectInstance() {
         return (EffectInstance)this;
+    }
+
+    /**
+     * If the Potion effect should be displayed in the players inventory
+     * @return true to display it (default), false to hide it.
+     */
+    default boolean shouldRender() {
+        return getEffectInstance().getPotion().shouldRender(getEffectInstance());
+    }
+
+    /**
+     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
+     * @return true to draw the standard text
+     */
+    default boolean shouldRenderInvText() {
+        return getEffectInstance().getPotion().shouldRenderInvText(getEffectInstance());
+    }
+
+    /**
+     * If the Potion effect should be displayed in the player's ingame HUD
+     * @return true to display it (default), false to hide it.
+     */
+    default boolean shouldRenderHUD() {
+        return getEffectInstance().getPotion().shouldRenderHUD(getEffectInstance());
+    }
+
+    /**
+     * Called to draw the this Potion onto the player's inventory when it's active.
+     * This can be used to e.g. render Potion icons from your own texture.
+     *
+     * @param gui the gui instance
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z level
+     */
+    @OnlyIn(Dist.CLIENT)
+    default void renderInventoryEffect(DisplayEffectsScreen<?> gui, int x, int y, float z) {
+        getEffectInstance().getPotion().renderInventoryEffect(getEffectInstance(), gui, x, y, z);
+    }
+
+    /**
+     * Called to draw the this Potion onto the player's ingame HUD when it's active.
+     * This can be used to e.g. render Potion icons from your own texture.
+     *
+     * @param gui the gui instance
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z level
+     * @param alpha the alpha value, blinks when the potion is about to run out
+     */
+    @OnlyIn(Dist.CLIENT)
+    default void renderHUDEffect(AbstractGui gui, int x, int y, float z, float alpha) {
+        getEffectInstance().getPotion().renderHUDEffect(getEffectInstance(), gui, x, y, z, alpha);
     }
 
     /***

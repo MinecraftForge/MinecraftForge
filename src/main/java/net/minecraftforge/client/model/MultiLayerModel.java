@@ -27,19 +27,13 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -58,14 +52,15 @@ import com.google.gson.JsonParser;
 /**
  * A model that can be rendered in multiple {@link BlockRenderLayer}.
  */
+/* TODO: reimplement
 public final class MultiLayerModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.of());
 
-    private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
+    private final ImmutableMap<Optional<BlockRenderLayer>, ResourceLocation> models;
 
-    public MultiLayerModel(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models)
+    public MultiLayerModel(ImmutableMap<Optional<BlockRenderLayer>, ResourceLocation> models)
     {
         this.models = models;
     }
@@ -75,40 +70,40 @@ public final class MultiLayerModel implements IUnbakedModel
     {
         return ImmutableList.copyOf(models.values());
     }
-    
+
     @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) 
+    public Collection<Material> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
     {
-    	return Collections.emptyList();
+        return Collections.emptyList();
     }
 
-    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, ISprite sprite, VertexFormat format, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
+
+    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ResourceLocation> models, IModelTransform sprite, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ResourceLocation p_225613_4_)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
-        	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
-            builder.put(key, model.bake(bakery, spriteGetter, new ModelStateComposition(sprite.getState(), model.getDefaultState(), sprite.isUvLock()), format));
+        	IUnbakedModel model = ModelLoader.defaultModelGetter().apply(models.get(key));
+            builder.put(key, model.func_225613_a_(bakery, spriteGetter, sprite, p_225613_4_));
         }
         return builder.build();
     }
 
     @Nullable
     @Override
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation p_225613_4_)
     {
-        IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
+        IUnbakedModel missing = ModelLoader.instance().getMissingModel();
         return new MultiLayerBakedModel(
-            buildModels(models, sprite, format, bakery, spriteGetter),
-            missing.bake(bakery, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format),
-            PerspectiveMapWrapper.getTransforms(sprite.getState())
+            buildModels(models, sprite, bakery, spriteGetter, p_225613_4_),
+            missing.func_225613_a_(bakery, spriteGetter, sprite, p_225613_4_),
+            PerspectiveMapWrapper.getTransforms(sprite)
         );
     }
 
-    @Override
     public MultiLayerModel process(ImmutableMap<String, String> customData)
     {
-        ImmutableMap.Builder<Optional<BlockRenderLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Optional<BlockRenderLayer>, ResourceLocation> builder = ImmutableMap.builder();
         for(String key : customData.keySet())
         {
             if("base".equals(key))
@@ -123,12 +118,12 @@ public final class MultiLayerModel implements IUnbakedModel
                 }
             }
         }
-        ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models = builder.build();
+        ImmutableMap<Optional<BlockRenderLayer>, ResourceLocation> models = builder.build();
         if(models.isEmpty()) return INSTANCE;
         return new MultiLayerModel(models);
     }
 
-    private ModelResourceLocation getLocation(String json)
+    private ResourceLocation getLocation(String json)
     {
         JsonElement e = new JsonParser().parse(json);
         if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
@@ -142,11 +137,11 @@ public final class MultiLayerModel implements IUnbakedModel
     private static final class MultiLayerBakedModel implements IBakedModel
     {
         private final ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> models;
-        private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;
+        private final ImmutableMap<TransformType, TransformationMatrix> cameraTransforms;
         private final IBakedModel base;
         private final IBakedModel missing;
 
-        public MultiLayerBakedModel(ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
+        public MultiLayerBakedModel(ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
         {
             this.models = models;
             this.cameraTransforms = cameraTransforms;
@@ -202,6 +197,12 @@ public final class MultiLayerModel implements IUnbakedModel
         }
 
         @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return PerspectiveMapWrapper.handlePerspective(this, cameraTransforms, cameraTransformType);
@@ -213,27 +214,5 @@ public final class MultiLayerModel implements IUnbakedModel
             return ItemOverrideList.EMPTY;
         }
     }
-
-    public static enum Loader implements ICustomModelLoader
-    {
-        INSTANCE;
-
-        @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
-
-        @Override
-        public boolean accepts(ResourceLocation modelLocation)
-        {
-            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getPath().equals("multi-layer") ||
-                modelLocation.getPath().equals("models/block/multi-layer") ||
-                modelLocation.getPath().equals("models/item/multi-layer"));
-        }
-
-        @Override
-        public IUnbakedModel loadModel(ResourceLocation modelLocation)
-        {
-            return MultiLayerModel.INSTANCE;
-        }
-    }
 }
+*/

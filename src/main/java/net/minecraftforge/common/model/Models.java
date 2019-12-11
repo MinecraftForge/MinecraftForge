@@ -28,12 +28,12 @@ public enum Models
 {
     ;
 
-    public static IModelPart getHiddenModelPart(ImmutableList<String> path)
+    public static Object getHiddenModelPart(ImmutableList<String> path)
     {
         return new HiddenModelPart(path);
     }
 
-    public static UnmodifiableIterator<String> getParts(IModelPart part)
+    public static UnmodifiableIterator<String> getParts(Object part)
     {
         if(part instanceof HiddenModelPart)
         {

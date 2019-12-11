@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/dimension/NetherDimension.java
 +++ b/net/minecraft/world/dimension/NetherDimension.java
-@@ -82,8 +82,4 @@
+@@ -74,8 +74,4 @@
           }
        };
     }

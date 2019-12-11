@@ -38,6 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.ClientResourcePackInfo;
@@ -93,7 +94,7 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
+        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.func_228018_at_());
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
@@ -152,8 +153,8 @@ public class ClientModLoader
 
     public static boolean completeModLoading()
     {
-        GlStateManager.disableTexture();
-        GlStateManager.enableTexture();
+        RenderSystem.disableTexture();
+        RenderSystem.enableTexture();
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
@@ -215,7 +216,7 @@ public class ClientModLoader
                 hiddenPacks.add(e.getValue());
             }
         }
-        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources", 
+        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
                 new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 4),
                 hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM);
         packList.put("mod_resources", packInfo);

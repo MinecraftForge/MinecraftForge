@@ -16,7 +16,7 @@
        this.field_193352_x = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
        this.field_196067_y = p_i50049_7_;
     }
-@@ -115,4 +117,25 @@
+@@ -111,4 +113,25 @@
     public String func_176610_l() {
        return this.field_176785_v;
     }

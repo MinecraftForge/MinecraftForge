@@ -46,20 +46,17 @@ import net.minecraft.client.renderer.chunk.ChunkRenderCache;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.data.IModelData;
 
 public class MinecraftForgeClient
 {
+    /* TODO: reimplement
     public static BlockRenderLayer getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();
-    }
+    }*/
 
     /**
      * returns the Locale set by the player in Minecraft.

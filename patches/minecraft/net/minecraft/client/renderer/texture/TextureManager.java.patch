@@ -1,19 +1,10 @@
 --- a/net/minecraft/client/renderer/texture/TextureManager.java
 +++ b/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -49,7 +49,7 @@
-    }
- 
-    public boolean func_110580_a(ResourceLocation p_110580_1_, ITickableTextureObject p_110580_2_) {
--      if (this.func_110579_a(p_110580_1_, p_110580_2_)) {
-+      if (this.func_110579_a(p_110580_1_, (ITextureObject)p_110580_2_)) { //TODO: Move to MCPConfig
-          this.field_110583_b.add(p_110580_2_);
-          return true;
-       } else {
-@@ -125,6 +125,7 @@
+@@ -140,6 +140,7 @@
     public void func_147645_c(ResourceLocation p_147645_1_) {
-       ITextureObject itextureobject = this.func_110581_b(p_147645_1_);
-       if (itextureobject != null) {
+       Texture texture = this.func_229267_b_(p_147645_1_);
+       if (texture != null) {
 +         this.field_110585_a.remove(p_147645_1_); // Forge: fix MC-98707
-          TextureUtil.releaseTextureId(itextureobject.func_110552_b());
+          TextureUtil.func_225679_a_(texture.func_110552_b());
        }
  

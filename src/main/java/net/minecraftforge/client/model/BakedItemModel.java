@@ -27,32 +27,26 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class BakedItemModel implements IBakedModel
 {
     protected final ImmutableList<BakedQuad> quads;
     protected final TextureAtlasSprite particle;
-    protected final ImmutableMap<TransformType, TRSRTransformation> transforms;
+    protected final ImmutableMap<TransformType, TransformationMatrix> transforms;
     protected final ItemOverrideList overrides;
     protected final IBakedModel guiModel;
 
-    /** @deprecated use {@link #BakedItemModel(ImmutableList, TextureAtlasSprite, ImmutableMap, ItemOverrideList, boolean)} */
-    @Deprecated // TODO: remove
-    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides)
-    {
-        this(quads, particle, transforms, overrides, true);
-    }
-
-    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, boolean untransformed)
+    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TransformationMatrix> transforms, ItemOverrideList overrides, boolean untransformed)
     {
         this.quads = quads;
         this.particle = particle;
@@ -61,9 +55,9 @@ public class BakedItemModel implements IBakedModel
         this.guiModel = untransformed && hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
     }
 
-    private static boolean hasGuiIdentity(ImmutableMap<TransformType, TRSRTransformation> transforms)
+    private static boolean hasGuiIdentity(ImmutableMap<TransformType, TransformationMatrix> transforms)
     {
-        TRSRTransformation guiTransform = transforms.get(TransformType.GUI);
+        TransformationMatrix guiTransform = transforms.get(TransformType.GUI);
         return guiTransform == null || guiTransform.isIdentity();
     }
 
@@ -84,13 +78,13 @@ public class BakedItemModel implements IBakedModel
     }
 
     @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
+    public IBakedModel handlePerspective(TransformType type, MatrixStack mat)
     {
         if (type == TransformType.GUI && this.guiModel != null)
         {
-            return this.guiModel.handlePerspective(type);
+            return this.guiModel.handlePerspective(type, mat);
         }
-        return PerspectiveMapWrapper.handlePerspective(this, transforms, type);
+        return PerspectiveMapWrapper.handlePerspective(this, transforms, type, mat);
     }
 
     public static class BakedGuiItemModel<T extends BakedItemModel> extends BakedModelWrapper<T>
@@ -122,13 +116,19 @@ public class BakedItemModel implements IBakedModel
         }
 
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
+        public IBakedModel handlePerspective(TransformType type, MatrixStack mat)
         {
             if (type == TransformType.GUI)
             {
-                return PerspectiveMapWrapper.handlePerspective(this, originalModel.transforms, type);
+                return PerspectiveMapWrapper.handlePerspective(this, originalModel.transforms, type, mat);
             }
-            return this.originalModel.handlePerspective(type);
+            return this.originalModel.handlePerspective(type, mat);
         }
     }
 }

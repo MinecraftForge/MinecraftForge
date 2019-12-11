@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -170,6 +170,8 @@
-             this.func_175069_a(new ResourceLocation("shaders/post/spider.json"));
-          } else if (p_175066_1_ instanceof EndermanEntity) {
-             this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
-+         } else {
-+            net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_, this);
-          }
- 
+@@ -131,6 +131,8 @@
+          this.func_175069_a(new ResourceLocation("shaders/post/spider.json"));
+       } else if (p_175066_1_ instanceof EndermanEntity) {
+          this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
++      } else {
++         net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_, this);
        }
-@@ -351,7 +353,7 @@
+ 
+    }
+@@ -306,7 +308,7 @@
              d0 = d0 * 60.0D / 70.0D;
           }
  
@@ -18,130 +18,43 @@
        }
     }
  
-@@ -437,6 +439,7 @@
+@@ -358,6 +360,7 @@
           }
  
           boolean flag = this.field_78531_r.func_175606_aa() instanceof LivingEntity && ((LivingEntity)this.field_78531_r.func_175606_aa()).func_70608_bn();
-+         if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_215308_2_))
++         if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_228381_1_, p_228381_3_))
           if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && this.field_78531_r.field_71442_b.func_178889_l() != GameType.SPECTATOR) {
-             this.func_180436_i();
-             this.field_78516_c.func_78440_a(p_215308_2_);
-@@ -525,6 +528,10 @@
-             GlStateManager.matrixMode(5888);
-             GlStateManager.loadIdentity();
-             this.field_78531_r.field_195558_d.func_216522_a(Minecraft.field_142025_a);
-+            // Forge: Fix MC-112292
-+            net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147553_e = this.field_78531_r.func_110434_K();
-+            // Forge: also fix rendering text before entering world (not part of MC-112292, but the same reason)
-+            net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147557_n = this.field_78531_r.field_71466_p;
-          }
- 
-          if (this.field_78531_r.field_213279_p != null) {
-@@ -544,7 +551,7 @@
-             GlStateManager.clear(256, Minecraft.field_142025_a);
- 
+             this.field_78513_d.func_205109_c();
+             this.field_78516_c.func_228396_a_(p_228381_3_, p_228381_1_, this.field_228374_i_.func_228487_b_(), this.field_78531_r.field_71439_g, this.field_78531_r.func_175598_ae().func_229085_a_(this.field_78531_r.field_71439_g, p_228381_3_));
+@@ -475,7 +478,7 @@
+             }
+          } else if (this.field_78531_r.field_71462_r != null) {
              try {
 -               this.field_78531_r.field_71462_r.render(i, j, this.field_78531_r.func_193989_ak());
 +               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, i, j, this.field_78531_r.func_193989_ak());
              } catch (Throwable throwable) {
                 CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Screen render details");
-@@ -656,7 +663,7 @@
-       double d2 = activerenderinfo.func_216785_c().field_72449_c;
-       icamera.func_78547_a(d0, d1, d2);
-       if (this.field_78531_r.field_71474_y.field_151451_c >= 4) {
--         this.field_205003_A.func_217618_a(activerenderinfo, -1);
-+         this.field_205003_A.setupFog(activerenderinfo, -1, p_181560_1_);
-          this.field_78531_r.func_213239_aq().func_219895_b("sky");
-          GlStateManager.matrixMode(5889);
-          GlStateManager.loadIdentity();
-@@ -669,14 +676,14 @@
-          GlStateManager.matrixMode(5888);
-       }
- 
--      this.field_205003_A.func_217618_a(activerenderinfo, 0);
-+      this.field_205003_A.setupFog(activerenderinfo, 0, p_181560_1_);
-       GlStateManager.shadeModel(7425);
-       if (activerenderinfo.func_216785_c().field_72448_b < 128.0D) {
-          this.func_215313_a(activerenderinfo, worldrenderer, p_181560_1_, d0, d1, d2);
-       }
- 
-       this.field_78531_r.func_213239_aq().func_219895_b("prepareterrain");
--      this.field_205003_A.func_217618_a(activerenderinfo, 0);
-+      this.field_205003_A.setupFog(activerenderinfo, 0, p_181560_1_);
-       this.field_78531_r.func_110434_K().func_110577_a(AtlasTexture.field_110575_b);
-       RenderHelper.func_74518_a();
-       this.field_78531_r.func_213239_aq().func_219895_b("terrain_setup");
-@@ -690,7 +697,9 @@
-       GlStateManager.disableAlphaTest();
-       worldrenderer.func_215323_a(BlockRenderLayer.SOLID, activerenderinfo);
-       GlStateManager.enableAlphaTest();
-+      this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174936_b(false, this.field_78531_r.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
-       worldrenderer.func_215323_a(BlockRenderLayer.CUTOUT_MIPPED, activerenderinfo);
-+      this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174935_a();
-       this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174936_b(false, false);
-       worldrenderer.func_215323_a(BlockRenderLayer.CUTOUT, activerenderinfo);
-       this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174935_a();
-@@ -709,6 +718,7 @@
-       if (flag && this.field_78531_r.field_71476_x != null) {
-          GlStateManager.disableAlphaTest();
-          this.field_78531_r.func_213239_aq().func_219895_b("outline");
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(worldrenderer, activerenderinfo, field_78531_r.field_71476_x, 0, p_181560_1_))
-          worldrenderer.func_215325_a(activerenderinfo, this.field_78531_r.field_71476_x, 0);
-          GlStateManager.enableAlphaTest();
-       }
-@@ -725,7 +735,7 @@
-       this.field_78531_r.func_110434_K().func_110581_b(AtlasTexture.field_110575_b).func_174935_a();
-       GlStateManager.disableBlend();
-       this.func_180436_i();
--      this.field_205003_A.func_217618_a(activerenderinfo, 0);
-+      this.field_205003_A.setupFog(activerenderinfo, 0, p_181560_1_);
-       this.field_78531_r.func_213239_aq().func_219895_b("particles");
-       particlemanager.func_215233_a(activerenderinfo, p_181560_1_);
-       this.func_175072_h();
-@@ -739,7 +749,7 @@
-       GlStateManager.enableCull();
-       GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-       GlStateManager.alphaFunc(516, 0.1F);
--      this.field_205003_A.func_217618_a(activerenderinfo, 0);
-+      this.field_205003_A.setupFog(activerenderinfo, 0, p_181560_1_);
-       GlStateManager.enableBlend();
-       GlStateManager.depthMask(false);
-       this.field_78531_r.func_110434_K().func_110577_a(AtlasTexture.field_110575_b);
-@@ -756,6 +766,9 @@
-          this.func_215313_a(activerenderinfo, worldrenderer, p_181560_1_, d0, d1, d2);
-       }
- 
-+      this.field_78531_r.func_213239_aq().func_219895_b("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(worldrenderer, p_181560_1_);
+@@ -588,9 +591,16 @@
+       Matrix4f matrix4f = matrixstack.func_227866_c_().func_227870_a_();
+       this.func_228379_a_(matrix4f);
+       activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), this.field_78531_r.field_71474_y.field_74320_O > 0, this.field_78531_r.field_71474_y.field_74320_O == 2, p_228378_1_);
 +
++      net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, activerenderinfo, p_228378_1_);
++      activerenderinfo.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
++      p_228378_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_(cameraSetup.getRoll()));
++
+       p_228378_4_.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(activerenderinfo.func_216777_e()));
+       p_228378_4_.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(activerenderinfo.func_216778_f() + 180.0F));
+       this.field_78531_r.field_71438_f.func_228426_a_(p_228378_4_, p_228378_1_, p_228378_2_, flag, activerenderinfo, this, this.field_78513_d, matrix4f);
++      this.field_78531_r.func_213239_aq().func_219895_b("forge_render_last");
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.field_78531_r.field_71438_f, p_228378_4_, p_228378_2_);
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
-          GlStateManager.clear(256, Minecraft.field_142025_a);
-@@ -772,7 +785,7 @@
-          GlStateManager.multMatrix(Matrix4f.func_195876_a(this.func_215311_a(p_215313_1_, p_215313_3_, true), (float)this.field_78531_r.field_195558_d.func_198109_k() / (float)this.field_78531_r.field_195558_d.func_198091_l(), 0.05F, this.field_78530_s * 4.0F));
-          GlStateManager.matrixMode(5888);
-          GlStateManager.pushMatrix();
--         this.field_205003_A.func_217618_a(p_215313_1_, 0);
-+         this.field_205003_A.setupFog(p_215313_1_, 0, p_215313_3_);
-          p_215313_2_.func_195466_a(p_215313_3_, p_215313_4_, p_215313_6_, p_215313_8_);
-          GlStateManager.disableFog();
-          GlStateManager.popMatrix();
-@@ -858,6 +871,11 @@
-    }
- 
-    protected void func_78474_d(float p_78474_1_) {
-+      net.minecraftforge.client.IRenderHandler renderer = this.field_78531_r.field_71441_e.func_201675_m().getWeatherRenderer();
-+      if (renderer != null) {
-+         renderer.render(this.field_78529_t, p_78474_1_, this.field_78531_r.field_71441_e, this.field_78531_r);
-+         return;
-+      }
-       float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
-       if (!(f <= 0.0F)) {
-          this.func_180436_i();
-@@ -1090,4 +1108,9 @@
-    public ActiveRenderInfo func_215316_n() {
-       return this.field_215317_L;
+          RenderSystem.clear(256, Minecraft.field_142025_a);
+@@ -670,4 +680,9 @@
+    public OverlayTexture func_228385_m_() {
+       return this.field_228375_t_;
     }
 +
 +   @Override

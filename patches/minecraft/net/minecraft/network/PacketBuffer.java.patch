@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class PacketBuffer extends ByteBuf {
-+public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer{
++public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {

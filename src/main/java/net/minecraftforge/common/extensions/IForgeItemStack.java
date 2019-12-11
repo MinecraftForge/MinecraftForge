@@ -351,6 +351,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
+     * Allow the item one last chance to modify its name used for the tool highlight
+     * useful for adding something extra that can't be removed by a user in the
+     * displayed name, such as a mode of operation.
+     *
+     * @param displayName the name that will be displayed unless it is changed in
+     *                    this method.
+     */
+    default String getHighlightTip(String displayName)
+    {
+        return getStack().getItem().getHighlightTip(getStack(), displayName);
+    }
+
+    /**
      * Get the NBT data to be sent to the client. The Item can control what data is kept in the tag.
      *
      * Note that this will sometimes be applied multiple times, the following MUST

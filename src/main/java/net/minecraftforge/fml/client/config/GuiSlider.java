@@ -23,8 +23,6 @@ import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
-
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
@@ -116,7 +114,7 @@ public class GuiSlider extends GuiButtonExt
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.blitOffset);
+            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         }
     }
 

@@ -1,90 +1,94 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -97,7 +97,7 @@
-    private final Set<ResourceLocation> field_217848_D = Sets.newHashSet();
-    private final BlockModelDefinition.ContainerHolder field_209610_F = new BlockModelDefinition.ContainerHolder();
-    private final Map<ResourceLocation, IUnbakedModel> field_217849_F = Maps.newHashMap();
--   private final Map<Triple<ResourceLocation, ModelRotation, Boolean>, IBakedModel> field_217850_G = Maps.newHashMap();
-+   private final Map<Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean>, IBakedModel> field_217850_G = Maps.newHashMap();
-    private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
-    private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
-    private AtlasTexture.SheetData field_217853_J;
-@@ -107,9 +107,17 @@
+@@ -145,9 +145,19 @@
+       p_229336_0_.defaultReturnValue(-1);
     });
  
-    public ModelBakery(IResourceManager p_i51735_1_, AtlasTexture p_i51735_2_, BlockColors p_i51735_3_, IProfiler p_i51735_4_) {
-+      this(p_i51735_1_, p_i51735_2_, p_i51735_3_, true);
-+      processLoading(p_i51735_4_);
+-   public ModelBakery(IResourceManager p_i226056_1_, BlockColors p_i226056_2_, IProfiler p_i226056_3_, int p_i226056_4_) {
++   public ModelBakery(IResourceManager p_i226056_1_, BlockColors p_i226056_2_, IProfiler p_i226056_3_, int p_i226056_4_)
++   {
++      this(p_i226056_1_, p_i226056_2_, true);
++      processLoading(p_i226056_3_, p_i226056_4_);
 +   }
 +
-+   protected ModelBakery(IResourceManager p_i51735_1_, AtlasTexture p_i51735_2_, BlockColors p_i51735_3_, boolean vanillaBakery) {
-       this.field_177598_f = p_i51735_1_;
-       this.field_177609_j = p_i51735_2_;
-       this.field_225365_D = p_i51735_3_;
++   protected ModelBakery(IResourceManager p_i226056_1_, BlockColors p_i226056_2_, boolean vanillaBakery)
++   {
+       this.field_177598_f = p_i226056_1_;
+       this.field_225365_D = p_i226056_2_;
 +   }
 +
-+   protected void processLoading(IProfiler p_i51735_4_) {
-       p_i51735_4_.func_76320_a("missing_model");
++   protected void processLoading(IProfiler p_i226056_3_, int p_i226056_4_) {
+       p_i226056_3_.func_76320_a("missing_model");
  
        try {
-@@ -142,12 +150,19 @@
+@@ -180,12 +190,16 @@
  
-       p_i51735_4_.func_219895_b("special");
+       p_i226056_3_.func_219895_b("special");
        this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
 +      for (ResourceLocation rl : getSpecialModels()) {
-+          // Same as func_217843_a but without restricting to MRL's
-+          IUnbakedModel iunbakedmodel = this.func_209597_a(rl);
-+          this.field_217849_F.put(rl, iunbakedmodel);
-+          this.field_217851_H.put(rl, iunbakedmodel);
++         addModelToCache(rl);
 +      }
-       p_i51735_4_.func_219895_b("textures");
-       Set<String> set = Sets.newLinkedHashSet();
-       Set<ResourceLocation> set1 = this.field_217851_H.values().stream().flatMap((p_217838_2_) -> {
-          return p_217838_2_.func_209559_a(this::func_209597_a, set).stream();
+       p_i226056_3_.func_219895_b("textures");
+       Set<Pair<String, String>> set = Sets.newLinkedHashSet();
+       Set<Material> set1 = this.field_217851_H.values().stream().flatMap((p_229342_2_) -> {
+          return p_229342_2_.func_225614_a_(this::func_209597_a, set).stream();
        }).collect(Collectors.toSet());
        set1.addAll(field_177602_b);
 +      net.minecraftforge.client.ForgeHooksClient.gatherFluidTextures(set1);
-       set.forEach((p_217833_0_) -> {
-          field_177603_c.warn("Unable to resolve texture reference: {}", (Object)p_217833_0_);
-       });
-@@ -288,7 +303,7 @@
-                      {
-                         lvt_13_5_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_217839_1_) -> {
-                            try (InputStream inputstream = p_217839_1_.func_199027_b()) {
--                              Pair<String, BlockModelDefinition> pair2 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.func_209577_a(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8)));
-+                              Pair<String, BlockModelDefinition> pair2 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_, this, this::func_209593_a));
-                               return pair2;
-                            } catch (Exception exception1) {
-                               throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
-@@ -404,7 +419,12 @@
+       set.stream().filter((p_229346_0_) -> {
+          return !p_229346_0_.getSecond().equals(field_229321_r_);
+       }).forEach((p_229330_0_) -> {
+@@ -224,6 +238,7 @@
+          try {
+             ibakedmodel = this.func_217845_a(p_229350_1_, ModelRotation.X0_Y0);
+          } catch (Exception exception) {
++            exception.printStackTrace();
+             field_177603_c.warn("Unable to bake model: '{}': {}", p_229350_1_, exception);
+          }
+ 
+@@ -447,6 +462,13 @@
+       this.field_217848_D.addAll(p_209593_2_.func_187965_e());
+    }
+ 
++   // Same as func_217843_a but without restricting to MRL's
++   private void addModelToCache(ResourceLocation p_217843_1_) {
++      IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
++      this.field_217849_F.put(p_217843_1_, iunbakedmodel);
++      this.field_217851_H.put(p_217843_1_, iunbakedmodel);
++   }
++
+    private void func_217843_a(ModelResourceLocation p_217843_1_) {
+       IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
+       this.field_217849_F.put(p_217843_1_, iunbakedmodel);
+@@ -461,7 +483,13 @@
+    }
  
     @Nullable
-    public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
--      Triple<ResourceLocation, ModelRotation, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_188048_b(), p_217845_2_.func_188049_c());
-+      return getBakedModel(p_217845_1_, p_217845_2_, this.field_177609_j::func_195424_a, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++   @Deprecated
+    public IBakedModel func_217845_a(ResourceLocation p_217845_1_, IModelTransform p_217845_2_) {
++      return getBakedModel(p_217845_1_, p_217845_2_, this.field_229322_z_::func_229151_a_);
 +   }
 +
 +   @Nullable
-+   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, ISprite p_217845_2_, java.util.function.Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, net.minecraft.client.renderer.vertex.VertexFormat format) {
-+      Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.getState(), p_217845_2_.func_188049_c());
++   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, IModelTransform p_217845_2_, java.util.function.Function<Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter) {
+       Triple<ResourceLocation, TransformationMatrix, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_225615_b_(), p_217845_2_.func_188049_c());
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
-       } else {
-@@ -412,11 +432,11 @@
+@@ -472,11 +500,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
--               return field_217854_z.func_209579_a(this.field_177609_j::func_195424_a, blockmodel).func_217644_a(this, blockmodel, this.field_177609_j::func_195424_a, p_217845_2_);
-+               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_217644_a(this, blockmodel, textureGetter, p_217845_2_);
+-               return field_217854_z.func_209579_a(this.field_229322_z_::func_229151_a_, blockmodel).func_228813_a_(this, blockmodel, this.field_229322_z_::func_229151_a_, p_217845_2_, p_217845_1_);
++               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_228813_a_(this, blockmodel, textureGetter, p_217845_2_, p_217845_1_);
              }
           }
  
--         IBakedModel ibakedmodel = iunbakedmodel.func_217641_a(this, this.field_177609_j::func_195424_a, p_217845_2_);
-+         IBakedModel ibakedmodel = iunbakedmodel.bake(this, this.field_177609_j::func_195424_a, p_217845_2_, format);
+-         IBakedModel ibakedmodel = iunbakedmodel.func_225613_a_(this, this.field_229322_z_::func_229151_a_, p_217845_2_, p_217845_1_);
++         IBakedModel ibakedmodel = iunbakedmodel.func_225613_a_(this, textureGetter, p_217845_2_, p_217845_1_);
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -471,6 +491,10 @@
+@@ -530,6 +558,10 @@
        return this.field_225367_M;
     }
  
@@ -95,3 +99,14 @@
     @OnlyIn(Dist.CLIENT)
     static class BlockStateDefinitionException extends RuntimeException {
        public BlockStateDefinitionException(String p_i49526_1_) {
+@@ -537,6 +569,10 @@
+       }
+    }
+ 
++   public SpriteMap getSpriteMap() {
++      return this.field_229322_z_;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    static class ModelListWrapper {
+       private final List<IUnbakedModel> field_225339_a;

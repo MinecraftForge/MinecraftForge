@@ -19,11 +19,12 @@
 
 package net.minecraftforge.client.model.b3d;
 
+import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraftforge.client.model.b3d.B3DLoader.NodeJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.model.animation.IJointClip;
@@ -62,25 +63,25 @@ public enum B3DClip implements IClip
         }
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TransformationMatrix apply(float time)
         {
-            TRSRTransformation ret = TRSRTransformation.identity();
+            TransformationMatrix ret = TransformationMatrix.func_227983_a_();
             if(node.getAnimation() == null)
             {
-                return ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
+                return ret.compose(B3DLoader.fromVecmath(node.getPos(), node.getRot(), node.getScale(), null));
             }
             int start = Math.max(1, (int)Math.round(Math.floor(time)));
             int end = Math.min(start + 1, (int)Math.round(Math.ceil(time)));
             float progress = time - (float)Math.floor(time);
             Key keyStart = node.getAnimation().getKeys().get(start, node);
             Key keyEnd = node.getAnimation().getKeys().get(end, node);
-            TRSRTransformation startTr = keyStart == null ? null : new TRSRTransformation(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
-            TRSRTransformation endTr = keyEnd == null ? null : new TRSRTransformation(keyEnd.getPos(), keyEnd.getRot(),keyEnd.getScale(), null);
+            TransformationMatrix startTr = keyStart == null ? null : B3DLoader.fromVecmath(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
+            TransformationMatrix endTr = keyEnd == null ? null : B3DLoader.fromVecmath(keyEnd.getPos(), keyEnd.getRot(),keyEnd.getScale(), null);
             if(keyStart == null)
             {
                 if(keyEnd == null)
                 {
-                    ret = ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
+                    ret = ret.compose(B3DLoader.fromVecmath(node.getPos(), node.getRot(), node.getScale(), null));
                 }
                 // TODO animated TRSRTransformation for speed?
                 else
@@ -94,7 +95,7 @@ public enum B3DClip implements IClip
             }
             else
             {
-                ret = ret.compose(startTr.slerp(endTr, progress));
+                ret = ret.compose(TransformationHelper.slerp(startTr, endTr, progress));
             }
             return ret;
         }

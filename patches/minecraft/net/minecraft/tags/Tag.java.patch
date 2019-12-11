@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -21,6 +21,7 @@
+@@ -22,6 +22,7 @@
     private final ResourceLocation field_199888_a;
     private final Set<T> field_199889_b;
     private final Collection<Tag.ITagEntry<T>> field_200150_c;
@@ -8,7 +8,7 @@
  
     public Tag(ResourceLocation p_i48236_1_) {
        this.field_199888_a = p_i48236_1_;
-@@ -29,6 +30,9 @@
+@@ -30,6 +31,9 @@
     }
  
     public Tag(ResourceLocation p_i48224_1_, Collection<Tag.ITagEntry<T>> p_i48224_2_, boolean p_i48224_3_) {
@@ -18,7 +18,7 @@
        this.field_199888_a = p_i48224_1_;
        this.field_199889_b = (Set<T>)(p_i48224_3_ ? Sets.newLinkedHashSet() : Sets.newHashSet());
        this.field_200150_c = p_i48224_2_;
-@@ -47,7 +51,7 @@
+@@ -48,7 +52,7 @@
           itagentry.func_200576_a(jsonarray, p_200571_1_);
        }
  
@@ -27,7 +27,7 @@
        jsonobject.add("values", jsonarray);
        return jsonobject;
     }
-@@ -76,6 +80,7 @@
+@@ -77,6 +81,7 @@
     public static class Builder<T> {
        private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.newLinkedHashSet();
        private boolean field_200053_b;
@@ -35,7 +35,7 @@
  
        public static <T> Tag.Builder<T> func_200047_a() {
           return new Tag.Builder<>();
-@@ -102,6 +107,22 @@
+@@ -103,6 +108,22 @@
           return this;
        }
  
@@ -58,7 +58,7 @@
        public Tag.Builder<T> func_200045_a(boolean p_200045_1_) {
           this.field_200053_b = p_200045_1_;
           return this;
-@@ -118,7 +139,7 @@
+@@ -119,7 +140,7 @@
        }
  
        public Tag<T> func_200051_a(ResourceLocation p_200051_1_) {
@@ -67,7 +67,7 @@
        }
  
        public Tag.Builder<T> func_219783_a(Function<ResourceLocation, Optional<T>> p_219783_1_, JsonObject p_219783_2_) {
-@@ -142,8 +163,10 @@
+@@ -143,8 +164,10 @@
           }
  
           this.field_200052_a.addAll(list);
@@ -78,7 +78,7 @@
     }
  
     public interface ITagEntry<T> {
-@@ -182,6 +205,8 @@
+@@ -183,6 +206,8 @@
        public Collection<T> func_200578_a() {
           return this.field_200165_a;
        }
@@ -87,7 +87,7 @@
     }
  
     public static class TagEntry<T> implements Tag.ITagEntry<T> {
-@@ -228,5 +253,7 @@
+@@ -229,5 +254,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }

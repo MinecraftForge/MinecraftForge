@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/Structures.java
 +++ b/net/minecraft/world/gen/feature/structure/Structures.java
-@@ -35,6 +35,7 @@
+@@ -32,6 +32,7 @@
     public static final Structure<?> field_215157_o = func_215141_a("Village", Feature.field_214550_p);
  
     private static Structure<?> func_215141_a(String p_215141_0_, Structure<?> p_215141_1_) {

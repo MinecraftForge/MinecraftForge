@@ -1,0 +1,46 @@
+--- a/net/minecraft/world/gen/feature/HugeTreeFeatureConfig.java
++++ b/net/minecraft/world/gen/feature/HugeTreeFeatureConfig.java
+@@ -23,11 +23,27 @@
+       return dynamic.merge(super.func_214634_a(p_214634_1_));
+    }
+ 
++   @Override
++   protected HugeTreeFeatureConfig setSapling(net.minecraftforge.common.IPlantable value) {
++      super.setSapling(value);
++      return this;
++   }
++
+    public static <T> HugeTreeFeatureConfig func_227277_a_(Dynamic<T> p_227277_0_) {
+       BaseTreeFeatureConfig basetreefeatureconfig = BaseTreeFeatureConfig.func_227376_b_(p_227277_0_);
+       return new HugeTreeFeatureConfig(basetreefeatureconfig.field_227368_m_, basetreefeatureconfig.field_227369_n_, basetreefeatureconfig.field_227370_o_, basetreefeatureconfig.field_227371_p_, p_227277_0_.get("height_interval").asInt(0), p_227277_0_.get("crown_height").asInt(0));
+    }
+ 
++   public static <T> HugeTreeFeatureConfig deserializeDarkOak(Dynamic<T> data) {
++      return func_227277_a_(data).setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196680_y);
++   }
++   public static <T> HugeTreeFeatureConfig deserializeSpruce(Dynamic<T> data) {
++      return func_227277_a_(data).setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196675_u);
++   }
++   public static <T> HugeTreeFeatureConfig deserializeJungle(Dynamic<T> data) {
++      return func_227277_a_(data).setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196678_w);
++   }
++
+    public static class Builder extends BaseTreeFeatureConfig.Builder {
+       private List<TreeDecorator> field_227278_c_ = ImmutableList.of();
+       private int field_227279_d_;
+@@ -58,8 +74,14 @@
+          return this;
+       }
+ 
++      @Override
++      public HugeTreeFeatureConfig.Builder setSapling(net.minecraftforge.common.IPlantable value) {
++         super.setSapling(value);
++         return this;
++      }
++
+       public HugeTreeFeatureConfig func_225568_b_() {
+-         return new HugeTreeFeatureConfig(this.field_227377_a_, this.field_227378_b_, this.field_227278_c_, this.field_227279_d_, this.field_227280_e_, this.field_227281_f_);
++         return new HugeTreeFeatureConfig(this.field_227377_a_, this.field_227378_b_, this.field_227278_c_, this.field_227279_d_, this.field_227280_e_, this.field_227281_f_).setSapling(this.sapling);
+       }
+    }
+ }

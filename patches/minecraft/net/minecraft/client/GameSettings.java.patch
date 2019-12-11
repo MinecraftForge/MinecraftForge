@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -143,7 +143,7 @@
-    public final KeyBinding[] field_151456_ac = new KeyBinding[]{new KeyBinding("key.hotbar.1", 49, "key.categories.inventory"), new KeyBinding("key.hotbar.2", 50, "key.categories.inventory"), new KeyBinding("key.hotbar.3", 51, "key.categories.inventory"), new KeyBinding("key.hotbar.4", 52, "key.categories.inventory"), new KeyBinding("key.hotbar.5", 53, "key.categories.inventory"), new KeyBinding("key.hotbar.6", 54, "key.categories.inventory"), new KeyBinding("key.hotbar.7", 55, "key.categories.inventory"), new KeyBinding("key.hotbar.8", 56, "key.categories.inventory"), new KeyBinding("key.hotbar.9", 57, "key.categories.inventory")};
-    public final KeyBinding field_193629_ap = new KeyBinding("key.saveToolbarActivator", 67, "key.categories.creative");
-    public final KeyBinding field_193630_aq = new KeyBinding("key.loadToolbarActivator", 88, "key.categories.creative");
--   public final KeyBinding[] field_74324_K = ArrayUtils.addAll(new KeyBinding[]{this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
-+   public KeyBinding[] field_74324_K = ArrayUtils.addAll(new KeyBinding[]{this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
-    protected Minecraft field_74317_L;
-    private final File field_74354_ai;
-    public Difficulty field_74318_M = Difficulty.NORMAL;
-@@ -162,6 +162,7 @@
+@@ -170,6 +170,7 @@
     public String field_74363_ab = "en_us";
  
     public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_) {
@@ -17,20 +8,20 @@
        this.field_74317_L = p_i46326_1_;
        this.field_74354_ai = new File(p_i46326_2_, "options.txt");
        if (p_i46326_1_.func_147111_S() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
-@@ -467,7 +468,11 @@
+@@ -485,7 +486,11 @@
  
                 for(KeyBinding keybinding : this.field_74324_K) {
-                   if (s1.equals("key_" + keybinding.func_151464_g())) {
--                     keybinding.func_197979_b(InputMappings.func_197955_a(s2));
-+                     if (s2.indexOf(':') != -1) {
-+                        String[] pts = s2.split(":");
+                   if (s.equals("key_" + keybinding.func_151464_g())) {
+-                     keybinding.func_197979_b(InputMappings.func_197955_a(s1));
++                     if (s.indexOf(':') != -1) {
++                        String[] pts = s.split(":");
 +                        keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputMappings.func_197955_a(pts[0]));
 +                     } else
-+                         keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputMappings.func_197955_a(s2));
++                        keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputMappings.func_197955_a(s));
                    }
                 }
  
-@@ -515,6 +520,7 @@
+@@ -533,6 +538,7 @@
     }
  
     public void func_74303_b() {
@@ -38,7 +29,7 @@
        try (PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.field_74354_ai), StandardCharsets.UTF_8))) {
           printwriter.println("version:" + SharedConstants.func_215069_a().getWorldVersion());
           printwriter.println("autoJump:" + AbstractOption.field_216719_z.func_216741_b(this));
-@@ -589,7 +595,7 @@
+@@ -609,7 +615,7 @@
           printwriter.println("glDebugVerbosity:" + this.field_209231_W);
  
           for(KeyBinding keybinding : this.field_74324_K) {
@@ -47,7 +38,7 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -686,6 +692,25 @@
+@@ -706,6 +712,25 @@
           }
        }
  
@@ -62,7 +53,7 @@
 +      field_74368_y.setKeyConflictContext(inGame);
 +      field_74366_z.setKeyConflictContext(inGame);
 +      field_74314_A.setKeyConflictContext(inGame);
-+      field_74311_E.setKeyConflictContext(inGame);
++      field_228046_af_.setKeyConflictContext(inGame);
 +      field_151444_V.setKeyConflictContext(inGame);
 +      field_74312_F.setKeyConflictContext(inGame);
 +      field_74310_D.setKeyConflictContext(inGame);

@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/ViewFrustum.java
++++ b/net/minecraft/client/renderer/ViewFrustum.java
+@@ -7,7 +7,9 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher.ChunkRender;
+ 
++
+ @OnlyIn(Dist.CLIENT)
+ public class ViewFrustum {
+    protected final WorldRenderer field_178169_a;

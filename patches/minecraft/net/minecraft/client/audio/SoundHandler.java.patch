@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/audio/SoundHandler.java
 +++ b/net/minecraft/client/audio/SoundHandler.java
-@@ -210,6 +210,11 @@
+@@ -214,6 +214,11 @@
        this.field_147694_f.func_195855_a(p_195478_1_, p_195478_2_);
     }
  

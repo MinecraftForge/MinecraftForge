@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -92,7 +92,6 @@
+@@ -93,7 +93,6 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -8,7 +8,7 @@
        IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
        if (p_70624_1_ == null) {
           this.field_184721_by = 0;
-@@ -106,6 +105,7 @@
+@@ -108,6 +107,7 @@
           }
        }
  
@@ -16,18 +16,18 @@
     }
  
     protected void func_70088_a() {
-@@ -226,7 +226,9 @@
-       if (!this.field_70170_p.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76230_c()) {
-          return false;
-       } else {
--         boolean flag = this.func_213373_a(p_70825_1_, p_70825_3_, p_70825_5_, true);
+@@ -234,7 +234,9 @@
+       boolean flag = blockstate.func_185904_a().func_76230_c();
+       boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
+       if (flag && !flag1) {
+-         boolean flag2 = this.func_213373_a(p_70825_1_, p_70825_3_, p_70825_5_, true);
 +         net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, p_70825_1_, p_70825_3_, p_70825_5_, 0);
 +         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
-+         boolean flag = this.func_213373_a(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
-          if (flag) {
++         boolean flag2 = this.func_213373_a(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
+          if (flag2) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -371,7 +373,7 @@
+@@ -390,7 +392,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -36,7 +36,7 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -389,7 +391,7 @@
+@@ -408,7 +410,7 @@
           BlockPos blockpos1 = blockpos.func_177977_b();
           BlockState blockstate1 = iworld.func_180495_p(blockpos1);
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
@@ -45,7 +45,7 @@
              iworld.func_180501_a(blockpos, blockstate2, 3);
              this.field_179475_a.func_195406_b((BlockState)null);
           }
-@@ -397,7 +399,7 @@
+@@ -416,7 +418,7 @@
        }
  
        private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
@@ -54,7 +54,7 @@
        }
     }
  
-@@ -434,7 +436,7 @@
+@@ -458,7 +460,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;

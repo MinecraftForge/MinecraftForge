@@ -19,7 +19,7 @@
 +   /**
 +    * For mod use, eliminates the need to extend this class, and prevents modded
 +    * flower pots from altering vanilla behavior.
-+    * 
++    *
 +    * @param emptyPot    The empty pot for this pot, or null for self.
 +    * @param p_i48395_1_ The flower block.
 +    * @param p_i48395_2_
@@ -41,8 +41,8 @@
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
 @@ -40,7 +67,7 @@
-    public boolean func_220051_a(BlockState p_220051_1_, World p_220051_2_, BlockPos p_220051_3_, PlayerEntity p_220051_4_, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
-       ItemStack itemstack = p_220051_4_.func_184586_b(p_220051_5_);
+    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+       ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
        Item item = itemstack.func_77973_b();
 -      Block block = item instanceof BlockItem ? field_196451_b.getOrDefault(((BlockItem)item).func_179223_d(), Blocks.field_150350_a) : Blocks.field_150350_a;
 +      Block block = item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).func_179223_d().getRegistryName(), Blocks.field_150350_a.delegate).get() : Blocks.field_150350_a;
@@ -50,26 +50,26 @@
        boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
        if (flag != flag1) {
 @@ -58,7 +85,7 @@
-                p_220051_4_.func_71019_a(itemstack1, false);
+                p_225533_4_.func_71019_a(itemstack1, false);
              }
  
--            p_220051_2_.func_180501_a(p_220051_3_, Blocks.field_150457_bL.func_176223_P(), 3);
-+            p_220051_2_.func_180501_a(p_220051_3_, getEmptyPot().func_176223_P(), 3);
+-            p_225533_2_.func_180501_a(p_225533_3_, Blocks.field_150457_bL.func_176223_P(), 3);
++            p_225533_2_.func_180501_a(p_225533_3_, getEmptyPot().func_176223_P(), 3);
           }
-       }
  
-@@ -78,6 +105,17 @@
+          return ActionResultType.SUCCESS;
+@@ -76,6 +103,17 @@
     }
  
     public Block func_220276_d() {
 -      return this.field_196452_c;
 +      return flowerDelegate.get();
     }
-+   
++
 +   public FlowerPotBlock getEmptyPot() {
 +      return emptyPot == null ? this : emptyPot.get();
 +   }
-+   
++
 +   public void addPlant(net.minecraft.util.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
 +      if (getEmptyPot() != this) {
 +          throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);

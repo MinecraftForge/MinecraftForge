@@ -19,19 +19,23 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.ForgeHooksClient;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class LightUtil
 {
@@ -100,8 +104,8 @@ public class LightUtil
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
         VertexFormat formatTo = quad.getFormat();
-        int countFrom = formatFrom.getElementCount();
-        int countTo = formatTo.getElementCount();
+        int countFrom = formatFrom.func_227894_c_().size();
+        int countTo = formatTo.func_227894_c_().size();
         int[] eMap = mapFormats(formatFrom, formatTo);
         for(int v = 0; v < 4; v++)
         {
@@ -120,8 +124,9 @@ public class LightUtil
         }
     }
 
+    // TODO: probably useless now, remove?
     private static final VertexFormat DEFAULT_FROM = VertexLighterFlat.withNormal(DefaultVertexFormats.BLOCK);
-    private static final VertexFormat DEFAULT_TO = DefaultVertexFormats.ITEM;
+    private static final VertexFormat DEFAULT_TO = DefaultVertexFormats.BLOCK;
     private static final int[] DEFAULT_MAPPING = generateMapping(DEFAULT_FROM, DEFAULT_TO);
     public static int[] mapFormats(VertexFormat from, VertexFormat to)
     {
@@ -133,17 +138,17 @@ public class LightUtil
 
     private static int[] generateMapping(VertexFormat from, VertexFormat to)
     {
-        int fromCount = from.getElementCount();
-        int toCount = to.getElementCount();
+        int fromCount = from.func_227894_c_().size();
+        int toCount = to.func_227894_c_().size();
         int[] eMap = new int[fromCount];
 
         for(int e = 0; e < fromCount; e++)
         {
-            VertexFormatElement expected = from.getElement(e);
+            VertexFormatElement expected = from.func_227894_c_().get(e);
             int e2;
             for(e2 = 0; e2 < toCount; e2++)
             {
-                VertexFormatElement current = to.getElement(e2);
+                VertexFormatElement current = to.func_227894_c_().get(e2);
                 if(expected.getUsage() == current.getUsage() && expected.getIndex() == current.getIndex())
                 {
                     break;
@@ -157,7 +162,7 @@ public class LightUtil
     public static void unpack(int[] from, float[] to, VertexFormat formatFrom, int v, int e)
     {
         int length = 4 < to.length ? 4 : to.length;
-        VertexFormatElement element = formatFrom.getElement(e);
+        VertexFormatElement element = formatFrom.func_227894_c_().get(e);
         int vertexStart = v * formatFrom.getSize() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.Type type = element.getType();
@@ -211,7 +216,7 @@ public class LightUtil
 
     public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e)
     {
-        VertexFormatElement element = formatTo.getElement(e);
+        VertexFormatElement element = formatTo.func_227894_c_().get(e);
         int vertexStart = v * formatTo.getSize() + formatTo.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.Type type = element.getType();
@@ -288,36 +293,27 @@ public class LightUtil
     private static final ThreadLocal<ItemPipeline> itemPipeline = ThreadLocal.withInitial(ItemPipeline::new);
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(BufferBuilder buffer, BakedQuad quad, int auxColor)
+    /*public static void renderQuadColorSlow(IVertexBuilder buffer, BakedQuad quad, float r, float g, float b, float a)
     {
         ItemPipeline pipeline = itemPipeline.get();
         pipeline.bufferConsumer.setBuffer(buffer);
         ItemConsumer cons = pipeline.itemConsumer;
 
-        float b = (float)( auxColor         & 0xFF) / 0xFF;
-        float g = (float)((auxColor >>>  8) & 0xFF) / 0xFF;
-        float r = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
-        float a = (float)((auxColor >>> 24) & 0xFF) / 0xFF;
-
         cons.setAuxColor(r, g, b, a);
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(BufferBuilder buffer, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(IVertexBuilder builder, MatrixStack.Entry entry, BakedQuad quad, float r, float g, float b, float a, int light, int overlaylight)
     {
-        if (quad.getFormat().equals(buffer.getVertexFormat()))
+        if (quad.getFormat().equals(DefaultVertexFormats.BLOCK))
         {
-            buffer.addVertexData(quad.getVertexData());
-            if (buffer.getVertexFormat().hasColor())
-            {
-                ForgeHooksClient.putQuadColor(buffer, quad, auxColor);
-            }
+            builder.addVertexData(entry, quad, r, g, b, a, light, overlaylight);
         }
         else
         {
-            renderQuadColorSlow(buffer, quad, auxColor);
+            renderQuadColorSlow(builder, quad, r, g, b, a);
         }
-    }
+    }*/
 
     public static class ItemConsumer extends VertexTransformer
     {
@@ -339,7 +335,7 @@ public class LightUtil
         @Override
         public void put(int element, float... data)
         {
-            if(getVertexFormat().getElement(element).getUsage() == Usage.COLOR)
+            if(getVertexFormat().func_227894_c_().get(element).getUsage() == Usage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
                 int n = Math.min(4, data.length);
@@ -353,7 +349,7 @@ public class LightUtil
             {
                 super.put(element, data);
             }
-            if(element == getVertexFormat().getElementCount() - 1)
+            if(element == getVertexFormat().func_227894_c_().size() - 1)
             {
                 vertices++;
                 if(vertices == 4)

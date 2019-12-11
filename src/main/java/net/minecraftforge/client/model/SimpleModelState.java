@@ -19,50 +19,39 @@
 
 package net.minecraftforge.client.model;
 
-import net.minecraft.client.renderer.texture.ISprite;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.model.IModelTransform;
 
-import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * Simple implementation of IModelState via a map and a default value.
  */
-public final class SimpleModelState implements IModelState, ISprite
+public final class SimpleModelState implements IModelTransform
 {
-    private final ImmutableMap<? extends IModelPart, TRSRTransformation> map;
-    private final Optional<TRSRTransformation> def;
+    private final ImmutableMap<? extends Object, TransformationMatrix> map;
+    private final TransformationMatrix def;
 
-    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map)
+    public SimpleModelState(ImmutableMap<? extends Object, TransformationMatrix> map)
     {
-        this(map, Optional.empty());
+        this(map, TransformationMatrix.func_227983_a_());
     }
 
-    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map, Optional<TRSRTransformation> def)
+    public SimpleModelState(ImmutableMap<? extends Object, TransformationMatrix> map, TransformationMatrix def)
     {
         this.map = map;
         this.def = def;
     }
 
     @Override
-    public IModelState getState()
+    public TransformationMatrix func_225615_b_()
     {
-        return this;
+        return def;
     }
 
     @Override
-    public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+    public TransformationMatrix getPartTransformation(Object part)
     {
-        if(!part.isPresent())
-        {
-            return def;
-        }
-        if(!map.containsKey(part.get()))
-        {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(map.get(part.get()));
+        return map.getOrDefault(part, TransformationMatrix.func_227983_a_());
     }
 }

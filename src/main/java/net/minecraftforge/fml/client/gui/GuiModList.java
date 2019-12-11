@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -191,8 +191,8 @@ public class GuiModList extends Screen
         {
             if (logoPath != null) {
                 Minecraft.getInstance().getTextureManager().bindTexture(logoPath);
-                GlStateManager.enableBlend();
-                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.enableBlend();
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
                 GuiUtils.drawInscribedRect(left, relativeY, width - 5, headerHeight, logoDims.width, logoDims.height, false, true);
@@ -203,10 +203,10 @@ public class GuiModList extends Screen
             {
                 if (line != null)
                 {
-                    GlStateManager.enableBlend();
+                    RenderSystem.enableBlend();
                     GuiModList.this.font.drawStringWithShadow(line.getFormattedText(), left + 4, relativeY, 0xFFFFFF);
-                    GlStateManager.disableAlphaTest();
-                    GlStateManager.disableBlend();
+                    RenderSystem.disableAlphaTest();
+                    RenderSystem.disableBlend();
                 }
                 relativeY += font.FONT_HEIGHT;
             }

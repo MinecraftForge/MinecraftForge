@@ -8,7 +8,7 @@
  
     protected ChestTileEntity(TileEntityType<?> p_i48287_1_) {
        super(p_i48287_1_);
-@@ -212,7 +213,7 @@
+@@ -202,7 +203,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        BlockState blockstate = p_195481_0_.func_180495_p(p_195481_1_);
@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -231,4 +232,57 @@
+@@ -221,4 +222,56 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }
@@ -34,9 +34,8 @@
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
 +       if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-+          if (this.chestHandler == null) {
++          if (this.chestHandler == null)
 +             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
-+          }
 +          return this.chestHandler.cast();
 +       }
 +       return super.getCapability(cap, side);

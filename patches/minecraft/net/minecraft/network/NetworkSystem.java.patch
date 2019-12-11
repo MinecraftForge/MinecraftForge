@@ -1,16 +1,15 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -41,12 +41,13 @@
- import org.apache.logging.log4j.Logger;
+@@ -42,11 +42,12 @@
  
  public class NetworkSystem {
-+   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
     private static final Logger field_151275_b = LogManager.getLogger();
-    public static final LazyLoadBase<NioEventLoopGroup> field_151276_c = new LazyLoadBase<>(() -> {
++   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
+    public static final LazyValue<NioEventLoopGroup> field_151276_c = new LazyValue<>(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
 +      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
     });
-    public static final LazyLoadBase<EpollEventLoopGroup> field_181141_b = new LazyLoadBase<>(() -> {
+    public static final LazyValue<EpollEventLoopGroup> field_181141_b = new LazyValue<>(() -> {
 -      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
 +      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
     });
@@ -23,7 +22,7 @@
 +      if (p_151265_1_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
-          LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
+          LazyValue<? extends EventLoopGroup> lazyvalue;
 @@ -80,7 +82,7 @@
                    ;
                 }

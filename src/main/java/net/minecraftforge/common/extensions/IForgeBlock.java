@@ -61,7 +61,6 @@ import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -71,7 +70,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.IWorldWriter;
@@ -118,7 +117,7 @@ public interface IForgeBlock
      * @param pos
      * @return The light value
      */
-    default int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos)
+    default int getLightValue(BlockState state, ILightReader world, BlockPos pos)
     {
         return state.getLightValue();
     }
@@ -152,7 +151,7 @@ public interface IForgeBlock
      * @deprecated This is no longer used for rendering logic.
      */
     @Deprecated
-    default boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face)
+    default boolean doesSideBlockRendering(BlockState state, ILightReader world, BlockPos pos, Direction face)
     {
        return state.isOpaqueCube(world, pos);
     }
@@ -383,7 +382,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLogs(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || Block.isDirt(getBlock())
+        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.isIn(net.minecraftforge.common.Tags.Blocks.DIRT)
             || getBlock().isIn(BlockTags.LOGS) || getBlock().isIn(BlockTags.SAPLINGS) || this == Blocks.VINE;
     }
 
@@ -559,7 +558,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (Block.isDirt(getBlock()))
+        if (state.isIn(net.minecraftforge.common.Tags.Blocks.DIRT))
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -752,15 +751,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Queries if this block should render in a given layer.
-     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
-     */
-    default boolean canRenderInLayer(BlockState state, BlockRenderLayer layer)
-    {
-        return this.getBlock().getRenderLayer() == layer;
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param state The state
      * @param world The world
@@ -881,7 +871,16 @@ public interface IForgeBlock
     @Nullable
     default PathNodeType getAiPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
-        return state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
+        return state.isBurning(world, pos) ? PathNodeType.DANGER_FIRE : null;
+    }
+
+    /**
+     * @param state The state
+     * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
+     */
+    default boolean isSlimeBlock(BlockState state)
+    {
+        return state.getBlock() == Blocks.SLIME_BLOCK;
     }
 
     /**
@@ -890,7 +889,20 @@ public interface IForgeBlock
      */
     default boolean isStickyBlock(BlockState state)
     {
-        return state.getBlock() == Blocks.SLIME_BLOCK;
+        return state.getBlock() == Blocks.SLIME_BLOCK || state.getBlock() == Blocks.field_226907_mc_;
+    }
+
+    /**
+     * Determines if this block can stick to another block when pushed by a piston.
+     * @param state My state
+     * @param other Other block
+     * @return True to link blocks
+     */
+    default boolean canStickTo(BlockState state, BlockState other)
+    {
+        if (state.getBlock() == Blocks.field_226907_mc_ && other.getBlock() == Blocks.SLIME_BLOCK) return false;
+        if (state.getBlock() == Blocks.SLIME_BLOCK && other.getBlock() == Blocks.field_226907_mc_) return false;
+        return state.isStickyBlock() || other.isStickyBlock();
     }
 
     /**

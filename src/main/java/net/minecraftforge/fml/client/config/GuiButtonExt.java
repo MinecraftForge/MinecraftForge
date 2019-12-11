@@ -20,10 +20,7 @@
 package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
-
-import net.minecraft.client.gui.widget.button.Button.IPressable;
 
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
@@ -53,7 +50,7 @@ public class GuiButtonExt extends Button
             Minecraft mc = Minecraft.getInstance();
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int k = this.getYImage(this.isHovered);
-            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.blitOffset);
+            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
             this.renderBg(mc, mouseX, mouseY);
             int color = 14737632;
 

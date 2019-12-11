@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
 +++ b/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
-@@ -63,6 +63,8 @@
+@@ -65,6 +65,8 @@
     private boolean field_195377_F;
     private boolean field_199506_G;
     private final Map<ResourceLocation, Tag<Item>> field_214085_w = Maps.newTreeMap();
@@ -9,7 +9,7 @@
  
     public CreativeScreen(PlayerEntity p_i1088_1_) {
        super(new CreativeScreen.CreativeContainer(p_i1088_1_), p_i1088_1_.field_71071_by, new StringTextComponent(""));
-@@ -231,6 +233,12 @@
+@@ -233,6 +235,12 @@
        if (this.minecraft.field_71442_b.func_78758_h()) {
           super.init();
           this.minecraft.field_195559_v.func_197967_a(true);
@@ -22,7 +22,7 @@
           this.field_147062_A = new TextFieldWidget(this.font, this.field_147003_i + 82, this.field_147009_r + 6, 80, 9, I18n.func_135052_a("itemGroup.search"));
           this.field_147062_A.func_146203_f(50);
           this.field_147062_A.func_146185_a(false);
-@@ -271,7 +279,7 @@
+@@ -273,7 +281,7 @@
     public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
        if (this.field_195377_F) {
           return false;
@@ -31,7 +31,7 @@
           return false;
        } else {
           String s = this.field_147062_A.func_146179_b();
-@@ -289,7 +297,7 @@
+@@ -291,7 +299,7 @@
  
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
        this.field_195377_F = false;
@@ -40,7 +40,7 @@
           if (this.minecraft.field_71474_y.field_74310_D.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
              this.field_195377_F = true;
              this.func_147050_b(ItemGroup.field_78027_g);
-@@ -325,6 +333,32 @@
+@@ -327,6 +335,32 @@
     private void func_147053_i() {
        (this.field_147002_h).field_148330_a.clear();
        this.field_214085_w.clear();
@@ -73,19 +73,19 @@
        String s = this.field_147062_A.func_146179_b();
        if (s.isEmpty()) {
           for(Item item : Registry.field_212630_s) {
-@@ -370,9 +404,9 @@
+@@ -372,9 +406,9 @@
  
     protected void func_146979_b(int p_146979_1_, int p_146979_2_) {
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
 -      if (itemgroup.func_78019_g()) {
 +      if (itemgroup != null && itemgroup.func_78019_g()) {
-          GlStateManager.disableBlend();
+          RenderSystem.disableBlend();
 -         this.font.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
 +         this.font.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, itemgroup.getLabelColor());
        }
  
     }
-@@ -383,7 +417,7 @@
+@@ -385,7 +419,7 @@
           double d1 = p_mouseClicked_3_ - (double)this.field_147009_r;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -94,7 +94,7 @@
                 return true;
              }
           }
-@@ -404,7 +438,7 @@
+@@ -406,7 +440,7 @@
           this.field_147066_y = false;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -103,7 +103,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -415,12 +449,15 @@
+@@ -417,12 +451,15 @@
     }
  
     private boolean func_147055_p() {
@@ -119,7 +119,7 @@
        this.field_147008_s.clear();
        (this.field_147002_h).field_148330_a.clear();
        if (p_147050_1_ == ItemGroup.field_192395_m) {
-@@ -494,13 +531,15 @@
+@@ -499,13 +536,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -136,7 +136,7 @@
  
              this.func_147053_i();
           } else {
-@@ -560,16 +599,35 @@
+@@ -565,16 +604,35 @@
        this.renderBackground();
        super.render(p_render_1_, p_render_2_, p_render_3_);
  
@@ -163,23 +163,22 @@
  
 +      if (maxPages != 0) {
 +         String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
-+         GlStateManager.disableLighting();
-+         this.blitOffset = 300;
++         RenderSystem.disableLighting();
++         this.setBlitOffset(300);
 +         this.itemRenderer.field_77023_b = 300.0F;
 +         font.func_211126_b(page, field_147003_i + (field_146999_f / 2) - (font.func_78256_a(page) / 2), field_147009_r - 44, -1);
-+         this.blitOffset = 0;
++         this.setBlitOffset(0);
 +         this.itemRenderer.field_77023_b = 0.0F;
 +      }
 +
-       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-       GlStateManager.disableLighting();
+       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        this.func_191948_b(p_render_1_, p_render_2_);
-@@ -618,7 +676,11 @@
+    }
+@@ -622,7 +680,10 @@
              }
           }
  
 -         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_);
-+
 +         net.minecraft.client.gui.FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
 +         net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
 +         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
@@ -187,8 +186,8 @@
        } else {
           super.renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_);
        }
-@@ -630,25 +692,44 @@
-       RenderHelper.func_74520_c();
+@@ -633,25 +694,44 @@
+       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
  
 -      for(ItemGroup itemgroup1 : ItemGroup.field_78032_a) {
@@ -221,7 +220,7 @@
 +      this.minecraft.func_110434_K().func_110577_a(itemgroup.getBackgroundImage());
        this.blit(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
        this.field_147062_A.render(p_146976_2_, p_146976_3_, p_146976_1_);
-       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        int i = this.field_147003_i + 175;
        int j = this.field_147009_r + 18;
        int k = j + 112;
@@ -236,8 +235,8 @@
 +
        this.func_147051_a(itemgroup);
        if (itemgroup == ItemGroup.field_78036_m) {
-          InventoryScreen.func_147046_a(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_146976_2_), (float)(this.field_147009_r + 45 - 30 - p_146976_3_), this.minecraft.field_71439_g);
-@@ -657,6 +738,7 @@
+          InventoryScreen.func_228187_a_(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_146976_2_), (float)(this.field_147009_r + 45 - 30 - p_146976_3_), this.minecraft.field_71439_g);
+@@ -660,6 +740,7 @@
     }
  
     protected boolean func_195375_a(ItemGroup p_195375_1_, double p_195375_2_, double p_195375_4_) {
@@ -245,43 +244,34 @@
        int i = p_195375_1_.func_78020_k();
        int j = 28 * i;
        int k = 0;
-@@ -726,6 +808,8 @@
+@@ -728,6 +809,8 @@
+          i1 = i1 + (this.field_147000_g - 4);
        }
  
-       GlStateManager.disableLighting();
-+      GlStateManager.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-+      GlStateManager.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
++      RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
++      RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
        this.blit(l, i1, j, k, 28, 32);
-       this.blitOffset = 100;
+       this.setBlitOffset(100);
        this.itemRenderer.field_77023_b = 100.0F;
-@@ -897,6 +981,31 @@
+@@ -896,6 +979,22 @@
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }
 +
-+      public ResourceLocation getBackgroundLocation() {
-+          return this.field_148332_b.getBackgroundLocation();
-+      }
-+
-+      public void setBackgroundLocation(ResourceLocation texture) {
-+          this.field_148332_b.setBackgroundLocation(texture);
-+      }
-+
-+      public void setBackgroundName(@Nullable String name) {
-+          this.field_148332_b.setBackgroundName(name);
-+      }
-+
-+      @Nullable
-+      public net.minecraft.client.renderer.texture.TextureAtlasSprite getBackgroundSprite() {
-+          return this.field_148332_b.getBackgroundSprite();
-+      }
-+
++      @Override
 +      public int getSlotIndex() {
 +         return this.field_148332_b.getSlotIndex();
 +      }
 +
++      @Override
 +      public boolean isSameInventory(Slot other) {
 +         return this.field_148332_b.isSameInventory(other);
++      }
++
++      @Override
++      public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
++         this.field_148332_b.setBackground(atlas, sprite);
++         return this;
 +      }
     }
  

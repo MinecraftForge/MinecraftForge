@@ -43,8 +43,9 @@ import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
+import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -681,12 +682,12 @@ public class B3DModel
                 else t.setIdentity();
             }
 
-            TRSRTransformation trsr = new TRSRTransformation(t);
+            TransformationMatrix trsr = new TransformationMatrix(TransformationHelper.toMojang(t));
 
             // pos
             Vector4f pos = new Vector4f(this.pos);
             pos.w = 1;
-            trsr.transformPosition(pos);
+            trsr.transformPosition(TransformationHelper.toMojang(pos));
             Vector3f rPos = new Vector3f(pos.x / pos.w, pos.y / pos.w, pos.z / pos.w);
 
             // normal

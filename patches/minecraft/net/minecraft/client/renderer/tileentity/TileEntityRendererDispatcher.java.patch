@@ -1,84 +1,12 @@
 --- a/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -89,7 +89,7 @@
- 
-    @Nullable
-    public <T extends TileEntity> TileEntityRenderer<T> func_147547_b(@Nullable TileEntity p_147547_1_) {
--      return p_147547_1_ == null ? null : this.func_147546_a(p_147547_1_.getClass());
-+      return p_147547_1_ == null || p_147547_1_.func_145837_r() ? null : this.func_147546_a(p_147547_1_.getClass());
-    }
- 
-    public void func_217665_a(World p_217665_1_, TextureManager p_217665_2_, FontRenderer p_217665_3_, ActiveRenderInfo p_217665_4_, RayTraceResult p_217665_5_) {
-@@ -105,12 +105,14 @@
- 
-    public void func_180546_a(TileEntity p_180546_1_, float p_180546_2_, int p_180546_3_) {
-       if (p_180546_1_.func_145835_a(this.field_217666_g.func_216785_c().field_72450_a, this.field_217666_g.func_216785_c().field_72448_b, this.field_217666_g.func_216785_c().field_72449_c) < p_180546_1_.func_145833_n()) {
-+         if(!drawingBatch || !p_180546_1_.hasFastRenderer()) {
-          RenderHelper.func_74519_b();
-          int i = this.field_147550_f.func_217338_b(p_180546_1_.func_174877_v(), 0);
-          int j = i % 65536;
-          int k = i / 65536;
-          GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float)j, (float)k);
-          GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-+         }
-          BlockPos blockpos = p_180546_1_.func_174877_v();
-          this.func_203602_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_, false);
-       }
-@@ -130,6 +132,10 @@
-       if (tileentityrenderer != null) {
-          try {
-             if (p_203602_10_ || p_203602_1_.func_145830_o() && p_203602_1_.func_200662_C().func_223045_a(p_203602_1_.func_195044_w().func_177230_c())) {
-+
-+               if(drawingBatch && p_203602_1_.hasFastRenderer())
-+                  tileentityrenderer.renderTileEntityFast(p_203602_1_, p_203602_2_, p_203602_4_, p_203602_6_, p_203602_8_, p_203602_9_, batchBuffer.func_178180_c());
-+               else
-                tileentityrenderer.func_199341_a(p_203602_1_, p_203602_2_, p_203602_4_, p_203602_6_, p_203602_8_, p_203602_9_);
-             }
-          } catch (Throwable throwable) {
-@@ -153,4 +159,46 @@
+@@ -141,4 +141,9 @@
     public FontRenderer func_147548_a() {
        return this.field_147557_n;
     }
 +
-+   /**
-+    * Buffer used for batched TESRs
-+    */
-+   private net.minecraft.client.renderer.Tessellator batchBuffer = new net.minecraft.client.renderer.Tessellator(0x200000);
-+   private boolean drawingBatch = false;
-+
-+   /**
-+    * Prepare for a batched TESR rendering.
-+    * You probably shouldn't call this manually.
-+    */
-+   public void preDrawBatch() {
-+       batchBuffer.func_178180_c().func_181668_a(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
-+       drawingBatch = true;
-+   }
-+
-+   /**
-+    * Render all TESRs batched so far.
-+    * You probably shouldn't call this manually.
-+    */
-+   public void drawBatch() {
-+      field_147553_e.func_110577_a(net.minecraft.client.renderer.texture.AtlasTexture.field_110575_b);
-+      net.minecraft.client.renderer.RenderHelper.func_74518_a();
-+      GlStateManager.blendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
-+      GlStateManager.enableBlend();
-+      GlStateManager.disableCull();
-+
-+      if (net.minecraft.client.Minecraft.func_71379_u())
-+         GlStateManager.shadeModel(org.lwjgl.opengl.GL11.GL_SMOOTH);
-+      else
-+         GlStateManager.shadeModel(org.lwjgl.opengl.GL11.GL_FLAT);
-+
-+      batchBuffer.func_78381_a();
-+
-+      net.minecraft.client.renderer.RenderHelper.func_74519_b();
-+      drawingBatch = false;
-+   }
-+
 +   //Internal, Do not call Use ClientRegistry.
-+   public synchronized <T extends TileEntity> void setSpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer) {
-+      this.field_147559_m.put(tileEntityClass, specialRenderer);
++   public synchronized <T extends TileEntity> void setSpecialRendererInternal(TileEntityType<T> tileEntityType, TileEntityRenderer<? super T> specialRenderer) {
++      this.field_147559_m.put(tileEntityType, specialRenderer);
 +   }
  }

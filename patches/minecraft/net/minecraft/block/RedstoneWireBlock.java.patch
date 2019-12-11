@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RedstoneWireBlock.java
 +++ b/net/minecraft/block/RedstoneWireBlock.java
-@@ -124,7 +124,7 @@
+@@ -123,7 +123,7 @@
        BlockState blockstate1 = p_208074_1_.func_180495_p(blockpos1);
        if (!blockstate1.func_215686_e(p_208074_1_, blockpos1)) {
           boolean flag = blockstate.func_224755_d(p_208074_1_, blockpos, Direction.UP) || blockstate.func_177230_c() == Blocks.field_150438_bZ;
@@ -9,7 +9,7 @@
              if (blockstate.func_224756_o(p_208074_1_, blockpos)) {
                 return RedstoneSide.UP;
              }
-@@ -133,7 +133,7 @@
+@@ -132,7 +132,7 @@
           }
        }
  
@@ -18,7 +18,7 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -318,26 +318,18 @@
+@@ -315,26 +315,18 @@
        boolean flag = blockstate.func_215686_e(p_176339_1_, blockpos);
        BlockPos blockpos1 = p_176339_2_.func_177984_a();
        boolean flag1 = p_176339_1_.func_180495_p(blockpos1).func_215686_e(p_176339_1_, blockpos1);
@@ -49,7 +49,7 @@
        Block block = p_176343_0_.func_177230_c();
        if (block == Blocks.field_150488_af) {
           return true;
-@@ -347,7 +339,7 @@
+@@ -344,7 +336,7 @@
        } else if (Blocks.field_190976_dk == p_176343_0_.func_177230_c()) {
           return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
        } else {

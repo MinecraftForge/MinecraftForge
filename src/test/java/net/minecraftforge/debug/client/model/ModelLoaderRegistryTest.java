@@ -67,7 +67,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.Object;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -370,10 +370,10 @@ public class ModelLoaderRegistryTest
         private final List<String> hidden = new ArrayList<String>();
         private final IModelState state = new IModelState()
         {
-            private final Optional<TRSRTransformation> value = Optional.of(TRSRTransformation.identity());
+            private final Optional<TRSRTransformation> value = Optional.of(TransformationMatrix.func_227983_a_());
 
             @Override
-            public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+            public Optional<TRSRTransformation> apply(Optional<? extends Object> part)
             {
                 if (part.isPresent())
                 {
@@ -796,7 +796,7 @@ public class ModelLoaderRegistryTest
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJDynamicEyeTileEntity)
             {
                 OBJDynamicEyeTileEntity te = (OBJDynamicEyeTileEntity) world.getTileEntity(pos);
-                if (te.transform != TRSRTransformation.identity())
+                if (te.transform != TransformationMatrix.func_227983_a_())
                 {
                     return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.transform);
                 }
@@ -813,7 +813,7 @@ public class ModelLoaderRegistryTest
             super(null); // TODO
         }
 
-        private TRSRTransformation transform = TRSRTransformation.identity();
+        private TRSRTransformation transform = TransformationMatrix.func_227983_a_();
 
         @Override
         public void tick()

@@ -1,12 +1,12 @@
 --- a/net/minecraft/util/registry/Registry.java
 +++ b/net/minecraft/util/registry/Registry.java
-@@ -66,76 +66,78 @@
+@@ -70,47 +70,51 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +/*
 + * Attention Modders: This SHOULD NOT be used, you should use ForgeRegistries instead. As it has a cleaner modder facing API.
-+ * We will be wrapping all of these in our API as nessasary for syncing and management.
++ * We will be wrapping all of these in our API as necessary for syncing and management.
 + */
  public abstract class Registry<T> implements IObjectIntIterable<T> {
     protected static final Logger field_212616_e = LogManager.getLogger();
@@ -64,6 +64,11 @@
 +   @Deprecated public static final Registry<Biome> field_212624_m = forge("biome", Biome.class, () -> {
        return Biomes.field_180279_ad;
     });
+    public static final Registry<BlockStateProviderType<?>> field_229387_t_ = func_222935_a("block_state_provider_type", () -> {
+@@ -125,33 +129,31 @@
+    public static final Registry<TreeDecoratorType<?>> field_229390_w_ = func_222935_a("tree_decorator_type", () -> {
+       return TreeDecoratorType.field_227426_b_;
+    });
 -   public static final Registry<ParticleType<? extends IParticleData>> field_212632_u = func_222935_a("particle_type", () -> {
 +   @Deprecated public static final Registry<ParticleType<? extends IParticleData>> field_212632_u = forge("particle_type", ParticleType.class, () -> {
        return ParticleTypes.field_197611_d;
@@ -102,7 +107,7 @@
     public static final Registry<IStructurePieceType> field_218362_C = func_222935_a("structure_piece", () -> {
        return IStructurePieceType.field_214782_c;
     });
-@@ -148,37 +150,37 @@
+@@ -164,37 +166,37 @@
     public static final Registry<IJigsawDeserializer> field_218365_F = func_222935_a("structure_pool_element", () -> {
        return IJigsawDeserializer.field_214931_e;
     });
@@ -149,7 +154,7 @@
        return Activity.field_221366_b;
     });
  
-@@ -230,6 +232,14 @@
+@@ -246,6 +248,14 @@
        return ((MutableRegistry<T>)p_218343_0_).func_218382_a(p_218343_1_, new ResourceLocation(p_218343_2_), p_218343_3_);
     }
  
@@ -162,5 +167,5 @@
 +   }
 +
     static {
-       field_218376_a.entrySet().forEach((p_218326_0_) -> {
-          if (p_218326_0_.getValue().get() == null) {
+       field_218376_a.entrySet().forEach((p_229397_0_) -> {
+          if (p_229397_0_.getValue().get() == null) {

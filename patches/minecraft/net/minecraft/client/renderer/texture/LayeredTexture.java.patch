@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/texture/LayeredTexture.java
++++ b/net/minecraft/client/renderer/texture/LayeredTexture.java
+@@ -30,7 +30,7 @@
+       String s = iterator.next();
+ 
+       try (IResource iresource = p_195413_1_.func_199002_a(new ResourceLocation(s))) {
+-         NativeImage nativeimage = NativeImage.func_195713_a(iresource.func_199027_b());
++         NativeImage nativeimage = net.minecraftforge.client.MinecraftForgeClient.getImageLayer(new ResourceLocation(s), p_195413_1_);
+ 
+          while(iterator.hasNext()) {
+             String s1 = iterator.next();

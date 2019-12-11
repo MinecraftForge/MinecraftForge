@@ -21,6 +21,7 @@ package net.minecraftforge.fml.client.registry;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -41,10 +42,9 @@ public class ClientRegistry
      * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
      * This method is safe to call during parallel mod loading.
      */
-    public static synchronized <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer)
+    public static synchronized <T extends TileEntity> void bindTileEntityRenderer(TileEntityType<T> tileEntityType, TileEntityRenderer<? super T> specialRenderer)
     {
-        TileEntityRendererDispatcher.instance.setSpecialRenderer(tileEntityClass, specialRenderer);
-        specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);
+        TileEntityRendererDispatcher.instance.setSpecialRendererInternal(tileEntityType, specialRenderer);
     }
 
     /**

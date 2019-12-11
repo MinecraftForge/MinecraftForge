@@ -29,7 +29,7 @@ import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 {
@@ -92,10 +92,10 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
             {
                 //TODO: Consider adding more icons for visualization
                 Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
-                GlStateManager.color4f(1, 1, 1, 1);
-                GlStateManager.pushMatrix();
+                RenderSystem.color4f(1, 1, 1, 1);
+                RenderSystem.pushMatrix();
                 AbstractGui.blit(getRight() - (height / 2 + 4), GuiSlotModList.this.getTop() + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
-                GlStateManager.popMatrix();
+                RenderSystem.popMatrix();
             }
         }
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/Item.java
 +++ b/net/minecraft/item/Item.java
-@@ -38,8 +38,8 @@
+@@ -40,8 +40,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -11,7 +11,7 @@
     private static final IItemPropertyGetter field_185046_b = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
        return p_210306_0_.func_77951_h() ? 1.0F : 0.0F;
     };
-@@ -96,6 +96,10 @@
+@@ -98,6 +98,10 @@
           this.func_185043_a(new ResourceLocation("damaged"), field_185046_b);
           this.func_185043_a(new ResourceLocation("damage"), field_185047_c);
        }
@@ -22,7 +22,7 @@
  
     }
  
-@@ -155,10 +159,12 @@
+@@ -157,10 +161,12 @@
        return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
  
@@ -35,7 +35,7 @@
     public final int func_77612_l() {
        return this.field_77699_b;
     }
-@@ -213,10 +219,12 @@
+@@ -215,10 +221,12 @@
     }
  
     @Nullable
@@ -48,7 +48,7 @@
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
-@@ -277,7 +285,7 @@
+@@ -278,7 +286,7 @@
     }
  
     public boolean func_77616_k(ItemStack p_77616_1_) {
@@ -57,7 +57,7 @@
     }
  
     protected static RayTraceResult func_219968_a(World p_219968_0_, PlayerEntity p_219968_1_, RayTraceContext.FluidMode p_219968_2_) {
-@@ -290,8 +298,8 @@
+@@ -291,8 +299,8 @@
        float f5 = MathHelper.func_76126_a(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -68,7 +68,7 @@
        return p_219968_0_.func_217299_a(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.OUTLINE, p_219968_2_, p_219968_1_));
     }
  
-@@ -307,6 +315,7 @@
+@@ -308,6 +316,7 @@
     }
  
     protected boolean func_194125_a(ItemGroup p_194125_1_) {
@@ -76,7 +76,7 @@
        ItemGroup itemgroup = this.func_77640_w();
        return itemgroup != null && (p_194125_1_ == ItemGroup.field_78027_g || p_194125_1_ == itemgroup);
     }
-@@ -320,10 +329,44 @@
+@@ -321,10 +330,44 @@
        return false;
     }
  
@@ -121,7 +121,7 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -353,6 +396,9 @@
+@@ -362,6 +405,9 @@
        private ItemGroup field_200923_d;
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
@@ -131,7 +131,7 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -392,5 +438,20 @@
+@@ -401,5 +447,20 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }

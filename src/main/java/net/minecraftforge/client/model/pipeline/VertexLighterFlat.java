@@ -21,6 +21,8 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -30,9 +32,10 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.IWorldReader;
 
+import java.util.List;
 import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
@@ -64,9 +67,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     private void updateIndices()
     {
-        for(int i = 0; i < getVertexFormat().getElementCount(); i++)
+        for(int i = 0; i < getVertexFormat().func_227894_c_().size(); i++)
         {
-            switch(getVertexFormat().getElement(i).getUsage())
+            switch(getVertexFormat().func_227894_c_().get(i).getUsage())
             {
                 case POSITION:
                     posIndex = i;
@@ -78,7 +81,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                     colorIndex = i;
                     break;
                 case UV:
-                    if(getVertexFormat().getElement(i).getIndex() == 1)
+                    if(getVertexFormat().func_227894_c_().get(i).getIndex() == 2)
                     {
                         lightmapIndex = i;
                     }
@@ -109,19 +112,21 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         updateIndices();
     }
 
-    private static final VertexFormat BLOCK_WITH_NORMAL = withNormalUncached(DefaultVertexFormats.BLOCK);
     static VertexFormat withNormal(VertexFormat format)
     {
         //This is the case in 99.99%. Cache the value, so we don't have to redo it every time, and the speed up the equals check in LightUtil
         if (format == DefaultVertexFormats.BLOCK)
-            return BLOCK_WITH_NORMAL;
+            return DefaultVertexFormats.BLOCK;
         return withNormalUncached(format);
     }
 
     private static VertexFormat withNormalUncached(VertexFormat format)
     {
-        if (format == null || format.hasNormal()) return format;
-        return new VertexFormat(format).addElement(NORMAL_4F);
+        if (format == null || format.hasNormal())
+            return format;
+        List<VertexFormatElement> l = Lists.newArrayList(format.func_227894_c_());
+        l.add(NORMAL_4F);
+        return new VertexFormat(ImmutableList.copyOf(l));
     }
 
     @Override
@@ -166,7 +171,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
 
         VertexFormat format = parent.getVertexFormat();
-        int count = format.getElementCount();
+        int count = format.func_227894_c_().size();
 
         for(int v = 0; v < 4; v++)
         {
@@ -205,7 +210,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             // no need for remapping cause all we could've done is add 1 element to the end
             for(int e = 0; e < count; e++)
             {
-                VertexFormatElement element = format.getElement(e);
+                VertexFormatElement element = format.func_227894_c_().get(e);
                 switch(element.getUsage())
                 {
                     case POSITION:
@@ -286,7 +291,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(IEnviromentBlockReader world)
+    public void setWorld(ILightReader world)
     {
         blockInfo.setWorld(world);
     }

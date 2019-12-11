@@ -855,7 +855,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             data.putIntArray("blocked", blocked);
 
             ListNBT dummied = new ListNBT();
-            this.dummied.stream().sorted().forEach(e -> dummied.add(new StringNBT(e.toString())));
+            this.dummied.stream().sorted().forEach(e -> dummied.add(StringNBT.func_229705_a_(e.toString())));
             data.put("dummied", dummied);
 
             return data;

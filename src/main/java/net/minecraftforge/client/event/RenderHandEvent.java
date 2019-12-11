@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.renderer.WorldRenderer;
 
 /**
@@ -34,16 +34,23 @@ import net.minecraft.client.renderer.WorldRenderer;
 public class RenderHandEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final WorldRenderer context;
+    private final MatrixStack mat;
     private final float partialTicks;
-    public RenderHandEvent(WorldRenderer context, float partialTicks)
+    public RenderHandEvent(WorldRenderer context, MatrixStack mat, float partialTicks)
     {
         this.context = context;
+        this.mat = mat;
         this.partialTicks = partialTicks;
     }
 
     public WorldRenderer getContext()
     {
         return context;
+    }
+
+    public MatrixStack getMatrixStack()
+    {
+        return mat;
     }
 
     public float getPartialTicks()

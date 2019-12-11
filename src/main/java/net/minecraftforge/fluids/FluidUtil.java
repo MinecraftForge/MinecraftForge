@@ -143,7 +143,7 @@ public class FluidUtil
                             if (player != null)
                             {
                                 SoundEvent soundevent = simulatedTransfer.getFluid().getAttributes().getFillSound(simulatedTransfer);
-                                player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                                player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                             }
                         }
                         else
@@ -187,7 +187,7 @@ public class FluidUtil
                     if (doDrain && player != null)
                     {
                         SoundEvent soundevent = transfer.getFluid().getAttributes().getEmptySound(transfer);
-                        player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     }
 
                     ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -497,7 +497,7 @@ public class FluidUtil
      *
      * @param player    Player who places the fluid. May be null for blocks like dispensers.
      * @param world     World to place the fluid in
-     * @param hand 
+     * @param hand
      * @param pos       The position in the world to place the fluid block
      * @param container The fluid container holding the fluidStack to place
      * @param resource  The fluidStack to place
@@ -524,7 +524,7 @@ public class FluidUtil
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
      * @param world       World to place the fluid in
-     * @param hand 
+     * @param hand
      * @param pos         The position in the world to place the fluid block
      * @param fluidSource The fluid source holding the fluidStack to place
      * @param resource    The fluidStack to place.

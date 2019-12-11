@@ -11,8 +11,8 @@
  
     public static BlockColors func_186723_a() {
 @@ -72,11 +73,12 @@
-       blockcolors.func_186722_a((p_210228_0_, p_210228_1_, p_210228_2_, p_210228_3_) -> {
-          return p_210228_1_ != null && p_210228_2_ != null ? 2129968 : 7455580;
+       blockcolors.func_186722_a((p_228055_0_, p_228055_1_, p_228055_2_, p_228055_3_) -> {
+          return p_228055_1_ != null && p_228055_2_ != null ? 2129968 : 7455580;
        }, Blocks.field_196651_dG);
 +      net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
        return blockcolors;
@@ -22,15 +22,15 @@
 -      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_189991_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_189991_1_.func_177230_c().delegate);
        if (iblockcolor != null) {
-          return iblockcolor.getColor(p_189991_1_, (IEnviromentBlockReader)null, (BlockPos)null, 0);
+          return iblockcolor.getColor(p_189991_1_, (ILightReader)null, (BlockPos)null, 0);
        } else {
 @@ -86,13 +88,13 @@
     }
  
-    public int func_216860_a(BlockState p_216860_1_, @Nullable IEnviromentBlockReader p_216860_2_, @Nullable BlockPos p_216860_3_, int p_216860_4_) {
--      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_216860_1_.func_177230_c()));
-+      IBlockColor iblockcolor = this.field_186725_a.get(p_216860_1_.func_177230_c().delegate);
-       return iblockcolor == null ? -1 : iblockcolor.getColor(p_216860_1_, p_216860_2_, p_216860_3_, p_216860_4_);
+    public int func_228054_a_(BlockState p_228054_1_, @Nullable ILightReader p_228054_2_, @Nullable BlockPos p_228054_3_, int p_228054_4_) {
+-      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_228054_1_.func_177230_c()));
++      IBlockColor iblockcolor = this.field_186725_a.get(p_228054_1_.func_177230_c().delegate);
+       return iblockcolor == null ? -1 : iblockcolor.getColor(p_228054_1_, p_228054_2_, p_228054_3_, p_228054_4_);
     }
  
     public void func_186722_a(IBlockColor p_186722_1_, Block... p_186722_2_) {

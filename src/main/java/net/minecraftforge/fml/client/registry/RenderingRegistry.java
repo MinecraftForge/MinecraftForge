@@ -25,12 +25,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 
 public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private final Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = new ConcurrentHashMap<>();
+    private final Map<EntityType<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = new ConcurrentHashMap<>();
 
     /**
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
@@ -38,7 +39,7 @@ public class RenderingRegistry
      * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
      * This method is safe to call during parallel mod loading.
      */
-    public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory)
+    public static <T extends Entity> void registerEntityRenderingHandler(EntityType<T> entityClass, IRenderFactory<? super T> renderFactory)
     {
         INSTANCE.entityRenderers.put(entityClass, renderFactory);
     }
@@ -49,8 +50,8 @@ public class RenderingRegistry
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Entity> void register(EntityRendererManager manager, Class<T> entityClass, IRenderFactory<?> renderFactory)
+    private static <T extends Entity> void register(EntityRendererManager manager, EntityType<T> entityType, IRenderFactory<?> renderFactory)
     {
-        manager.register(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
+        manager.func_229087_a_(entityType, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
     }
 }

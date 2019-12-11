@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/renderer/Vector4f.java
++++ b/net/minecraft/client/renderer/Vector4f.java
+@@ -129,4 +129,21 @@
+    public String toString() {
+       return "[" + this.field_229368_a_ + ", " + this.field_229369_b_ + ", " + this.field_229370_c_ + ", " + this.field_229371_d_ + "]";
+    }
++
++   // Forge start
++   public Vector4f(float[] values) {
++      set(values);
++   }
++   public void set(float[] values) {
++      this.field_229368_a_ = values[0];
++      this.field_229369_b_ = values[1];
++      this.field_229370_c_ = values[2];
++      this.field_229371_d_ = values[3];
++   }
++   public void write(float[] values) {
++       values[0] = this.field_229368_a_;
++       values[1] = this.field_229369_b_;
++       values[2] = this.field_229370_c_;
++       values[3] = this.field_229371_d_;
++   }
+ }

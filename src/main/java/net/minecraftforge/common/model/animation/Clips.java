@@ -21,21 +21,20 @@ package net.minecraftforge.common.model.animation;
 
 import java.io.IOException;
 
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.api.distmarker.Dist;
 
+import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -95,7 +94,7 @@ public final class Clips
     @OnlyIn(Dist.CLIENT)
     public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
     {
-        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+        IUnbakedModel model = ModelLoader.defaultModelGetter().apply(modelLocation);
         Optional<? extends IClip> clip = model.getClip(clipName);
         if (clip.isPresent())
         {
@@ -175,7 +174,7 @@ public final class Clips
             {
                 private final IJointClip parent = childClip.apply(joint);
                 @Override
-                public TRSRTransformation apply(float time)
+                public TransformationMatrix apply(float time)
                 {
                     return parent.apply(TimeClip.this.time.apply(time));
                 }
@@ -292,10 +291,10 @@ public final class Clips
         return new IJointClip()
         {
             @Override
-            public TRSRTransformation apply(float time)
+            public TransformationMatrix apply(float time)
             {
                 float clipTime = input.apply(time);
-                return fromClip.apply(clipTime).slerp(toClip.apply(clipTime), MathHelper.clamp(progress.apply(time), 0, 1));
+                return TransformationHelper.slerp(fromClip.apply(clipTime), toClip.apply(clipTime), MathHelper.clamp(progress.apply(time), 0, 1));
             }
         };
     }
@@ -303,28 +302,34 @@ public final class Clips
     /**
      * IModelState wrapper for a Clip, sampled at specified time.
      */
-    public static Pair<IModelState, Iterable<Event>> apply(final IClip clip, final float lastPollTime, final float time)
+    public static Pair<IModelTransform, Iterable<Event>> apply(final IClip clip, final float lastPollTime, final float time)
     {
-        return Pair.<IModelState, Iterable<Event>>of(new IModelState()
+        return Pair.of(new IModelTransform()
         {
             @Override
-            public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+            public TransformationMatrix func_225615_b_()
             {
-                if(!part.isPresent() || !(part.get() instanceof IJoint))
+                return TransformationMatrix.func_227983_a_();
+            }
+
+            @Override
+            public TransformationMatrix getPartTransformation(Object part)
+            {
+                if(!(part instanceof IJoint))
                 {
-                    return Optional.empty();
+                    return TransformationMatrix.func_227983_a_();
                 }
-                IJoint joint = (IJoint)part.get();
+                IJoint joint = (IJoint)part;
                 // TODO: Cache clip application?
-                TRSRTransformation jointTransform = clip.apply(joint).apply(time).compose(joint.getInvBindPose());
+                TransformationMatrix jointTransform = clip.apply(joint).apply(time).compose(joint.getInvBindPose());
                 Optional<? extends IJoint> parent = joint.getParent();
                 while(parent.isPresent())
                 {
-                    TRSRTransformation parentTransform = clip.apply(parent.get()).apply(time);
+                    TransformationMatrix parentTransform = clip.apply(parent.get()).apply(time);
                     jointTransform = parentTransform.compose(jointTransform);
                     parent = parent.get().getParent();
                 }
-                return Optional.of(jointTransform);
+                return jointTransform;
             }
         }, clip.pastEvents(lastPollTime, time));
     }

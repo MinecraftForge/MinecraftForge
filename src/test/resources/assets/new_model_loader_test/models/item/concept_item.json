@@ -1,0 +1,14 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:composite",
+  "models": [
+    {
+      "loader": "...",
+      "transform": {}
+    },
+    {
+      "loader": "...",
+      "transform": {}
+    }
+  ]
+}

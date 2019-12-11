@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/audio/SoundEngine.java
 +++ b/net/minecraft/client/audio/SoundEngine.java
-@@ -53,6 +53,7 @@
+@@ -55,6 +55,7 @@
        this.field_148622_c = p_i50892_1_;
        this.field_148619_d = p_i50892_2_;
        this.field_217939_i = new AudioStreamManager(p_i50892_3_);
@@ -8,7 +8,7 @@
     }
  
     public void func_148596_a() {
-@@ -68,6 +69,7 @@
+@@ -70,6 +71,7 @@
  
        this.func_148613_b();
        this.func_148608_i();
@@ -16,7 +16,7 @@
     }
  
     private synchronized void func_148608_i() {
-@@ -246,6 +248,8 @@
+@@ -251,6 +253,8 @@
  
     public void func_148611_c(ISound p_148611_1_) {
        if (this.field_148617_f) {
@@ -25,7 +25,7 @@
           SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
           ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
           if (soundeventaccessor == null) {
-@@ -300,11 +304,13 @@
+@@ -305,11 +309,13 @@
                          p_217930_7_.func_216420_a(vec3d);
                          p_217930_7_.func_216432_b(flag);
                       });
@@ -39,7 +39,7 @@
                             });
                          });
                       } else {
-@@ -312,6 +318,7 @@
+@@ -317,6 +323,7 @@
                             channelmanager$entry.func_217888_a((p_217935_1_) -> {
                                p_217935_1_.func_216433_a(p_217928_1_);
                                p_217935_1_.func_216438_c();

@@ -37,7 +37,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
              railshape = RailShape.ASCENDING_EAST;
           }
-@@ -298,7 +300,7 @@
+@@ -304,7 +306,7 @@
           }
        }
  
@@ -46,7 +46,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
-@@ -308,7 +310,7 @@
+@@ -314,7 +316,7 @@
           }
        }
  

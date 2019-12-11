@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.event;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,35 +32,29 @@ public abstract class RenderPlayerEvent extends PlayerEvent
 {
     private final PlayerRenderer renderer;
     private final float partialRenderTick;
-    private final double x;
-    private final double y;
-    private final double z;
+    private final MatrixStack stack;
 
-    public RenderPlayerEvent(PlayerEntity player, PlayerRenderer renderer, float partialRenderTick, double x, double y, double z)
+    public RenderPlayerEvent(PlayerEntity player, PlayerRenderer renderer, float partialRenderTick, MatrixStack stack)
     {
         super(player);
         this.renderer = renderer;
         this.partialRenderTick = partialRenderTick;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.stack = stack;
     }
 
     public PlayerRenderer getRenderer() { return renderer; }
     public float getPartialRenderTick() { return partialRenderTick; }
-    public double getX() { return x; }
-    public double getY() { return y; }
-    public double getZ() { return z; }
+    public MatrixStack getMatrixStack() { return stack; }
 
     @net.minecraftforge.eventbus.api.Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(PlayerEntity player, PlayerRenderer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
+        public Pre(PlayerEntity player, PlayerRenderer renderer, float tick, MatrixStack stack){ super(player, renderer, tick, stack); }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(PlayerEntity player, PlayerRenderer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
+        public Post(PlayerEntity player, PlayerRenderer renderer, float tick, MatrixStack stack){ super(player, renderer, tick, stack); }
     }
     
 }

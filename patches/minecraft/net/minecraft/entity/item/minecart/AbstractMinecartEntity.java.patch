@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
-@@ -35,7 +35,7 @@
+@@ -40,7 +40,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187193_c);
-@@ -56,6 +56,7 @@
+@@ -80,6 +80,7 @@
     private double field_70507_ar;
     @OnlyIn(Dist.CLIENT)
     private double field_70506_as;
@@ -17,7 +17,7 @@
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -102,11 +103,12 @@
+@@ -126,11 +127,12 @@
  
     @Nullable
     public AxisAlignedBB func_70114_g(Entity p_70114_1_) {
@@ -31,7 +31,7 @@
     }
  
     public double func_70042_X() {
-@@ -214,7 +216,7 @@
+@@ -239,7 +241,7 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -40,7 +40,7 @@
              this.func_180460_a(blockpos, blockstate);
              if (blockstate.func_177230_c() == Blocks.field_150408_cc) {
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
-@@ -241,8 +243,11 @@
+@@ -266,8 +268,11 @@
           }
  
           this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -54,7 +54,7 @@
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
-@@ -254,7 +259,7 @@
+@@ -279,7 +284,7 @@
                 }
              }
           } else {
@@ -63,7 +63,7 @@
                 if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof AbstractMinecartEntity) {
                    entity.func_70108_f(this);
                 }
-@@ -262,6 +267,7 @@
+@@ -287,6 +292,7 @@
           }
  
           this.func_70072_I();
@@ -71,7 +71,7 @@
        }
     }
  
-@@ -273,16 +279,24 @@
+@@ -298,16 +304,24 @@
     }
  
     protected void func_180459_n() {
@@ -80,7 +80,7 @@
        Vec3d vec3d = this.func_213322_ci();
        this.func_213293_j(MathHelper.func_151237_a(vec3d.field_72450_a, -d0, d0), vec3d.field_72448_b, MathHelper.func_151237_a(vec3d.field_72449_c, -d0, d0));
 +
-+      if(getMaxSpeedAirVertical() > 0 && func_213322_ci().field_72448_b > getMaxSpeedAirVertical()) {
++      if (getMaxSpeedAirVertical() > 0 && func_213322_ci().field_72448_b > getMaxSpeedAirVertical()) {
 +          if(Math.abs(func_213322_ci().field_72450_a) < 0.3f && Math.abs(func_213322_ci().field_72449_c) < 0.3f)
 +              func_213317_d(new Vec3d(func_213322_ci().field_72450_a, 0.15f, func_213322_ci().field_72449_c));
 +          else
@@ -98,60 +98,59 @@
        }
  
     }
-@@ -299,24 +313,24 @@
+@@ -327,24 +341,23 @@
           flag1 = !flag;
        }
  
--      double d0 = 0.0078125D;
-+      double d0 = getSlopeAdjustment();
+-      double d3 = 0.0078125D;
        Vec3d vec3d1 = this.func_213322_ci();
 -      RailShape railshape = p_180460_2_.func_177229_b(abstractrailblock.func_176560_l());
 +      RailShape railshape = ((AbstractRailBlock)p_180460_2_.func_177230_c()).getRailDirection(p_180460_2_, this.field_70170_p, p_180460_1_, this);
        switch(railshape) {
        case ASCENDING_EAST:
 -         this.func_213317_d(vec3d1.func_72441_c(-0.0078125D, 0.0D, 0.0D));
-+         this.func_213317_d(vec3d1.func_72441_c(-1*d0, 0.0D, 0.0D));
-          ++this.field_70163_u;
++         this.func_213317_d(vec3d1.func_72441_c(-1*getSlopeAdjustment(), 0.0D, 0.0D));
+          ++d1;
           break;
        case ASCENDING_WEST:
 -         this.func_213317_d(vec3d1.func_72441_c(0.0078125D, 0.0D, 0.0D));
-+         this.func_213317_d(vec3d1.func_72441_c(d0, 0.0D, 0.0D));
-          ++this.field_70163_u;
++         this.func_213317_d(vec3d1.func_72441_c(getSlopeAdjustment(), 0.0D, 0.0D));
+          ++d1;
           break;
        case ASCENDING_NORTH:
 -         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, 0.0078125D));
-+         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, d0));
-          ++this.field_70163_u;
++         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, getSlopeAdjustment()));
+          ++d1;
           break;
        case ASCENDING_SOUTH:
 -         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, -0.0078125D));
-+         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, -1*d0));
-          ++this.field_70163_u;
++         this.func_213317_d(vec3d1.func_72441_c(0.0D, 0.0D, -1*getSlopeAdjustment()));
+          ++d1;
        }
  
-@@ -345,7 +359,7 @@
+@@ -375,7 +388,7 @@
           }
        }
  
 -      if (flag1) {
 +      if (flag1 && shouldDoRailFunctions()) {
-          double d19 = Math.sqrt(func_213296_b(this.func_213322_ci()));
-          if (d19 < 0.03D) {
+          double d22 = Math.sqrt(func_213296_b(this.func_213322_ci()));
+          if (d22 < 0.03D) {
              this.func_213317_d(Vec3d.field_186680_a);
-@@ -376,10 +390,7 @@
-       this.field_70165_t = d20 + d1 * d11;
-       this.field_70161_v = d7 + d2 * d11;
-       this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
--      double d21 = this.func_184207_aI() ? 0.75D : 1.0D;
--      double d22 = this.func_174898_m();
+@@ -404,10 +417,7 @@
+       d0 = d23 + d4 * d14;
+       d2 = d10 + d5 * d14;
+       this.func_70107_b(d0, d1, d2);
+-      double d24 = this.func_184207_aI() ? 0.75D : 1.0D;
+-      double d25 = this.func_174898_m();
 -      vec3d1 = this.func_213322_ci();
--      this.func_213315_a(MoverType.SELF, new Vec3d(MathHelper.func_151237_a(d21 * vec3d1.field_72450_a, -d22, d22), 0.0D, MathHelper.func_151237_a(d21 * vec3d1.field_72449_c, -d22, d22)));
+-      this.func_213315_a(MoverType.SELF, new Vec3d(MathHelper.func_151237_a(d24 * vec3d1.field_72450_a, -d25, d25), 0.0D, MathHelper.func_151237_a(d24 * vec3d1.field_72449_c, -d25, d25)));
 +      this.moveMinecartOnRail(p_180460_1_);
-       if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2]) {
-          this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
-       } else if (aint[1][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[1][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[1][2]) {
-@@ -407,7 +418,10 @@
-          this.func_213293_j(d23 * (double)(j - p_180460_1_.func_177958_n()), vec3d5.field_72448_b, d23 * (double)(i - p_180460_1_.func_177952_p()));
+       if (vec3i.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vec3i.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vec3i.func_177952_p()) {
+          this.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)vec3i.func_177956_o(), this.func_226281_cx_());
+       } else if (vec3i1.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vec3i1.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vec3i1.func_177952_p()) {
+@@ -435,7 +445,10 @@
+          this.func_213293_j(d26 * (double)(j - p_180460_1_.func_177958_n()), vec3d5.field_72448_b, d26 * (double)(i - p_180460_1_.func_177952_p()));
        }
  
 -      if (flag) {
@@ -160,9 +159,9 @@
 +
 +      if (flag && shouldDoRailFunctions()) {
           Vec3d vec3d6 = this.func_213322_ci();
-          double d24 = Math.sqrt(func_213296_b(vec3d6));
-          if (d24 > 0.01D) {
-@@ -462,7 +476,7 @@
+          double d27 = Math.sqrt(func_213296_b(vec3d6));
+          if (d27 > 0.01D) {
+@@ -490,7 +503,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
@@ -171,16 +170,16 @@
           p_70495_3_ = (double)j;
           if (railshape.func_208092_c()) {
              p_70495_3_ = (double)(j + 1);
-@@ -499,7 +513,7 @@
+@@ -529,7 +542,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
 -         RailShape railshape = blockstate.func_177229_b(((AbstractRailBlock)blockstate.func_177230_c()).func_176560_l());
 +         RailShape railshape = ((AbstractRailBlock)blockstate.func_177230_c()).getRailDirection(blockstate, this.field_70170_p, new BlockPos(i, j, k), this);
-          int[][] aint = field_70500_g[railshape.func_208091_a()];
-          double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
-          double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
-@@ -562,6 +576,11 @@
+          Pair<Vec3i, Vec3i> pair = func_226573_a_(railshape);
+          Vec3i vec3i = pair.getFirst();
+          Vec3i vec3i1 = pair.getSecond();
+@@ -592,6 +605,11 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
@@ -192,7 +191,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (!p_70108_1_.field_70145_X && !this.field_70145_X) {
              if (!this.func_184196_w(p_70108_1_)) {
-@@ -597,11 +616,11 @@
+@@ -627,11 +645,11 @@
  
                       Vec3d vec3d2 = this.func_213322_ci();
                       Vec3d vec3d3 = p_70108_1_.func_213322_ci();
@@ -206,7 +205,7 @@
                          p_70108_1_.func_213317_d(vec3d3.func_216372_d(0.2D, 1.0D, 0.2D));
                          p_70108_1_.func_70024_g(vec3d2.field_72450_a + d0, 0.0D, vec3d2.field_72449_c + d1);
                          this.func_213317_d(vec3d2.func_216372_d(0.95D, 1.0D, 0.95D));
-@@ -707,6 +726,40 @@
+@@ -737,6 +755,40 @@
        return new SSpawnObjectPacket(this);
     }
  
@@ -238,10 +237,10 @@
 +   @Override
 +   public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
 +      AbstractMinecartEntity mc = getMinecart();
-+      double d21 = mc.func_184207_aI() ? 0.75D : 1.0D;
-+      double d22 = mc.func_174898_m();
++      double d24 = mc.func_184207_aI() ? 0.75D : 1.0D;
++      double d25 = mc.func_174898_m();
 +      Vec3d vec3d1 = mc.func_213322_ci();
-+      mc.func_213315_a(MoverType.SELF, new Vec3d(MathHelper.func_151237_a(d21 * vec3d1.field_72450_a, -d22, d22), 0.0D, MathHelper.func_151237_a(d21 * vec3d1.field_72449_c, -d22, d22)));
++      mc.func_213315_a(MoverType.SELF, new Vec3d(MathHelper.func_151237_a(d24 * vec3d1.field_72450_a, -d25, d25), 0.0D, MathHelper.func_151237_a(d24 * vec3d1.field_72449_c, -d25, d25)));
 +   }
 +
     public static enum Type {

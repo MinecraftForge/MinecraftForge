@@ -22,12 +22,14 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
@@ -114,7 +116,7 @@ public interface IForgeDimension
      *
      * @see net.minecraft.client.renderer.GameRenderer#updateLightmap(float)
      */
-    default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
+    default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f colors) {}
 
     void resetRainAndThunder();
 
@@ -149,7 +151,7 @@ public interface IForgeDimension
      */
     default SleepResult canSleepAt(net.minecraft.entity.player.PlayerEntity player, BlockPos pos)
     {
-        return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != net.minecraft.world.biome.Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
+        return (getDimension().canRespawnHere() && getWorld().func_226691_t_(pos) != Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
     }
 
     enum SleepResult
@@ -159,39 +161,9 @@ public interface IForgeDimension
         BED_EXPLODES;
     }
 
-    default Biome getBiome(BlockPos pos)
-    {
-       return getWorld().getBiomeBody(pos);
-    }
-
     default boolean isDaytime()
     {
-        return getWorld().getSkylightSubtracted() < 4;
-    }
-
-    /**
-     * The current sun brightness factor for this dimension.
-     * 0.0f means no light at all, and 1.0f means maximum sunlight.
-     * This will be used for the "calculateSkylightSubtracted"
-     * which is for Sky light value calculation.
-     *
-     * @return The current brightness factor
-     **/
-    default float getSunBrightness(float partialTicks)
-    {
-        return getWorld().getSunBrightnessBody(partialTicks);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    default Vec3d getSkyColor(BlockPos cameraPos, float partialTicks)
-    {
-        return getWorld().getSkyColorBody(cameraPos, partialTicks);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    default Vec3d getCloudColor(float partialTicks)
-    {
-        return getWorld().getCloudColorBody(partialTicks);
+        return getDimension().getType() == DimensionType.OVERWORLD && getWorld().getSkylightSubtracted() < 4;
     }
 
     /**
@@ -202,15 +174,6 @@ public interface IForgeDimension
     default float getCurrentMoonPhaseFactor(long time)
     {
         return Dimension.MOON_PHASE_FACTORS[this.getDimension().getMoonPhase(time)];
-    }
-
-    /**
-     * Gets the Star Brightness for rendering sky.
-     * */
-    @OnlyIn(Dist.CLIENT)
-    default float getStarBrightness(float partialTicks)
-    {
-        return getWorld().getStarBrightnessBody(partialTicks);
     }
 
     default void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful) { }
@@ -258,7 +221,7 @@ public interface IForgeDimension
 
     default boolean isHighHumidity(BlockPos pos)
     {
-        return getWorld().getBiome(pos).isHighHumidity();
+        return getWorld().func_226691_t_(pos).isHighHumidity();
     }
 
     default int getHeight()
@@ -271,11 +234,6 @@ public interface IForgeDimension
         return getDimension().isNether() ? 128 : 256;
     }
 
-    default double getHorizon()
-    {
-        return getWorld().getWorldInfo().getGenerator().getHorizon(getWorld());
-    }
-    
     default int getSeaLevel()
     {
         return 63;

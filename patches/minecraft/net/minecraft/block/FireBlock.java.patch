@@ -18,46 +18,46 @@
  
 @@ -91,12 +91,14 @@
  
-    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
-       if (p_196267_2_.func_82736_K().func_223586_b(GameRules.field_223598_a)) {
-+         if (!p_196267_2_.isAreaLoaded(p_196267_3_, 2)) return; // Forge: prevent loading unloaded chunks when spreading fire
-          if (!p_196267_1_.func_196955_c(p_196267_2_, p_196267_3_)) {
-             p_196267_2_.func_217377_a(p_196267_3_, false);
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+       if (p_225534_2_.func_82736_K().func_223586_b(GameRules.field_223598_a)) {
++         if (!p_225534_2_.isAreaLoaded(p_225534_3_, 2)) return; // Forge: prevent loading unloaded chunks when spreading fire
+          if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
+             p_225534_2_.func_217377_a(p_225534_3_, false);
           }
  
-          Block block = p_196267_2_.func_180495_p(p_196267_3_.func_177977_b()).func_177230_c();
--         boolean flag = p_196267_2_.field_73011_w instanceof EndDimension && block == Blocks.field_150357_h || block == Blocks.field_150424_aL || block == Blocks.field_196814_hQ;
-+         BlockState other = p_196267_2_.func_180495_p(p_196267_3_.func_177977_b());
-+         boolean flag = other.isFireSource(p_196267_2_, p_196267_3_.func_177977_b(), Direction.UP);
-          int i = p_196267_1_.func_177229_b(field_176543_a);
-          if (!flag && p_196267_2_.func_72896_J() && this.func_176537_d(p_196267_2_, p_196267_3_) && p_196267_4_.nextFloat() < 0.2F + (float)i * 0.03F) {
-             p_196267_2_.func_217377_a(p_196267_3_, false);
+          Block block = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b()).func_177230_c();
+-         boolean flag = p_225534_2_.field_73011_w instanceof EndDimension && block == Blocks.field_150357_h || block == Blocks.field_150424_aL || block == Blocks.field_196814_hQ;
++         BlockState other = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b());
++         boolean flag = other.isFireSource(p_225534_2_, p_225534_3_.func_177977_b(), Direction.UP);
+          int i = p_225534_1_.func_177229_b(field_176543_a);
+          if (!flag && p_225534_2_.func_72896_J() && this.func_176537_d(p_225534_2_, p_225534_3_) && p_225534_4_.nextFloat() < 0.2F + (float)i * 0.03F) {
+             p_225534_2_.func_217377_a(p_225534_3_, false);
 @@ -118,7 +120,7 @@
                    return;
                 }
  
--               if (i == 15 && p_196267_4_.nextInt(4) == 0 && !this.func_196446_i(p_196267_2_.func_180495_p(p_196267_3_.func_177977_b()))) {
-+               if (i == 15 && p_196267_4_.nextInt(4) == 0 && !this.canCatchFire(p_196267_2_, p_196267_3_.func_177977_b(), Direction.UP)) {
-                   p_196267_2_.func_217377_a(p_196267_3_, false);
+-               if (i == 15 && p_225534_4_.nextInt(4) == 0 && !this.func_196446_i(p_225534_2_.func_180495_p(p_225534_3_.func_177977_b()))) {
++               if (i == 15 && p_225534_4_.nextInt(4) == 0 && !this.canCatchFire(p_225534_2_, p_225534_3_.func_177977_b(), Direction.UP)) {
+                   p_225534_2_.func_217377_a(p_225534_3_, false);
                    return;
                 }
 @@ -126,12 +128,12 @@
  
-             boolean flag1 = p_196267_2_.func_180502_D(p_196267_3_);
+             boolean flag1 = p_225534_2_.func_180502_D(p_225534_3_);
              int k = flag1 ? -50 : 0;
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177974_f(), 300 + k, p_196267_4_, i);
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177976_e(), 300 + k, p_196267_4_, i);
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177977_b(), 250 + k, p_196267_4_, i);
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177984_a(), 250 + k, p_196267_4_, i);
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177978_c(), 300 + k, p_196267_4_, i);
--            this.func_176536_a(p_196267_2_, p_196267_3_.func_177968_d(), 300 + k, p_196267_4_, i);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177974_f(), 300 + k, p_196267_4_, i, Direction.WEST);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177976_e(), 300 + k, p_196267_4_, i, Direction.EAST);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177977_b(), 250 + k, p_196267_4_, i, Direction.UP);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177984_a(), 250 + k, p_196267_4_, i, Direction.DOWN);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177978_c(), 300 + k, p_196267_4_, i, Direction.SOUTH);
-+            this.tryCatchFire(p_196267_2_, p_196267_3_.func_177968_d(), 300 + k, p_196267_4_, i, Direction.NORTH);
-             BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177974_f(), 300 + k, p_225534_4_, i);
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177976_e(), 300 + k, p_225534_4_, i);
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177977_b(), 250 + k, p_225534_4_, i);
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177984_a(), 250 + k, p_225534_4_, i);
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177978_c(), 300 + k, p_225534_4_, i);
+-            this.func_176536_a(p_225534_2_, p_225534_3_.func_177968_d(), 300 + k, p_225534_4_, i);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177974_f(), 300 + k, p_225534_4_, i, Direction.WEST);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177976_e(), 300 + k, p_225534_4_, i, Direction.EAST);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177977_b(), 250 + k, p_225534_4_, i, Direction.UP);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177984_a(), 250 + k, p_225534_4_, i, Direction.DOWN);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177978_c(), 300 + k, p_225534_4_, i, Direction.SOUTH);
++            this.tryCatchFire(p_225534_2_, p_225534_3_.func_177968_d(), 300 + k, p_225534_4_, i, Direction.NORTH);
+             BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
 @@ -169,16 +171,18 @@
@@ -167,7 +167,7 @@
              for(int j1 = 0; j1 < 2; ++j1) {
                 double d7 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d12 = (double)(p_180655_3_.func_177956_o() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
-@@ -311,10 +312,23 @@
+@@ -307,10 +308,23 @@
     }
  
     public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {

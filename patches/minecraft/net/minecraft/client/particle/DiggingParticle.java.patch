@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/DiggingParticle.java
 +++ b/net/minecraft/client/particle/DiggingParticle.java
-@@ -36,6 +36,7 @@
+@@ -37,6 +37,7 @@
     }
  
     public DiggingParticle func_174846_a(BlockPos p_174846_1_) {
@@ -8,7 +8,7 @@
        this.field_181019_az = p_174846_1_;
        if (this.field_174847_a.func_177230_c() == Blocks.field_196658_i) {
           return this;
-@@ -93,7 +94,13 @@
+@@ -94,7 +95,13 @@
     public static class Factory implements IParticleFactory<BlockParticleData> {
        public Particle func_199234_a(BlockParticleData p_199234_1_, World p_199234_2_, double p_199234_3_, double p_199234_5_, double p_199234_7_, double p_199234_9_, double p_199234_11_, double p_199234_13_) {
           BlockState blockstate = p_199234_1_.func_197584_c();

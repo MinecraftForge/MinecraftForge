@@ -46,6 +46,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.fluid.*;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
@@ -744,7 +746,7 @@ public class ForgeHooks
 
     public static ActionResultType onInteractEntityAt(PlayerEntity player, Entity entity, RayTraceResult ray, Hand hand)
     {
-        Vec3d vec3d = new Vec3d(ray.getHitVec().x - entity.posX, ray.getHitVec().y - entity.posY, ray.getHitVec().z - entity.posZ);
+        Vec3d vec3d = ray.getHitVec().subtract(entity.getPositionVec());
         return onInteractEntityAt(player, entity, vec3d, hand);
     }
 
@@ -844,15 +846,15 @@ public class ForgeHooks
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                    new net.minecraft.util.ResourceLocation("block/water_still"),
-                    new net.minecraft.util.ResourceLocation("block/water_flow"))
-                    .overlay(new net.minecraft.util.ResourceLocation("block/water_overlay"))
+                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_still")),
+                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_flow")))
+                    .overlay(new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_overlay")))
                     .translationKey("block.minecraft.water")
                     .color(0xFF3F76E4).build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new net.minecraft.util.ResourceLocation("block/lava_still"),
-                    new net.minecraft.util.ResourceLocation("block/lava_flow"))
+                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/lava_still")),
+                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/lava_flow")))
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");

@@ -4,7 +4,7 @@
        }
  
        if (p_189539_4_ == 0) {
-+         if(net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, direction, true)) return false;
++         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, direction, true)) return false;
           if (!this.func_176319_a(p_189539_2_, p_189539_3_, direction, true)) {
              return false;
           }
@@ -12,7 +12,7 @@
           p_189539_2_.func_180501_a(p_189539_3_, p_189539_1_.func_206870_a(field_176320_b, Boolean.valueOf(true)), 67);
           p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, SoundEvents.field_187715_dR, SoundCategory.BLOCKS, 0.5F, p_189539_2_.field_73012_v.nextFloat() * 0.25F + 0.6F);
        } else if (p_189539_4_ == 1 || p_189539_4_ == 2) {
-+          if(net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, direction, false)) return false;
++         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, direction, false)) return false;
           TileEntity tileentity1 = p_189539_2_.func_175625_s(p_189539_3_.func_177972_a(direction));
           if (tileentity1 instanceof PistonTileEntity) {
              ((PistonTileEntity)tileentity1).func_145866_f();
@@ -42,16 +42,16 @@
           } else {
              return false;
           }
-@@ -274,7 +277,7 @@
+@@ -276,7 +279,7 @@
           for(int j = list2.size() - 1; j >= 0; --j) {
              BlockPos blockpos2 = list2.get(j);
-             BlockState blockstate = p_176319_1_.func_180495_p(blockpos2);
--            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? p_176319_1_.func_175625_s(blockpos2) : null;
-+            TileEntity tileentity = blockstate.hasTileEntity() ? p_176319_1_.func_175625_s(blockpos2) : null;
-             func_220059_a(blockstate, p_176319_1_, blockpos2, tileentity);
+             BlockState blockstate1 = p_176319_1_.func_180495_p(blockpos2);
+-            TileEntity tileentity = blockstate1.func_177230_c().func_149716_u() ? p_176319_1_.func_175625_s(blockpos2) : null;
++            TileEntity tileentity = blockstate1.hasTileEntity() ? p_176319_1_.func_175625_s(blockpos2) : null;
+             func_220059_a(blockstate1, p_176319_1_, blockpos2, tileentity);
              p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
              --k;
-@@ -328,6 +331,10 @@
+@@ -340,6 +343,10 @@
        return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
     }
  

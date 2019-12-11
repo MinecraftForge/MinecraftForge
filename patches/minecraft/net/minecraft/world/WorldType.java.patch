@@ -28,15 +28,14 @@
        this.field_77133_f = p_i49778_2_;
        this.field_211890_l = p_i49778_3_;
        this.field_77134_g = p_i49778_4_;
-@@ -40,6 +45,17 @@
+@@ -40,6 +45,16 @@
        field_77139_a[p_i49778_1_] = this;
     }
  
 +   private static int getNextID() {
 +      for (int x = 0; x < field_77139_a.length; x++) {
-+         if (field_77139_a[x] == null) {
++         if (field_77139_a[x] == null)
 +            return x;
-+         }
 +      }
 +      int old = field_77139_a.length;
 +      field_77139_a = java.util.Arrays.copyOf(field_77139_a, old + 16);

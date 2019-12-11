@@ -1,0 +1,97 @@
+--- a/net/minecraft/client/renderer/RenderTypeLookup.java
++++ b/net/minecraft/client/renderer/RenderTypeLookup.java
+@@ -18,6 +18,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class RenderTypeLookup {
++   @Deprecated
+    private static final Map<Block, RenderType> field_228386_a_ = Util.func_200696_a(Maps.newHashMap(), (p_228395_0_) -> {
+       RenderType rendertype = RenderType.func_228641_d_();
+       p_228395_0_.put(Blocks.field_196658_i, rendertype);
+@@ -238,6 +239,7 @@
+       p_228395_0_.put(Blocks.field_185778_de, rendertype2);
+       p_228395_0_.put(Blocks.field_203203_C, rendertype2);
+    });
++   @Deprecated
+    private static final Map<Fluid, RenderType> field_228387_b_ = Util.func_200696_a(Maps.newHashMap(), (p_228392_0_) -> {
+       RenderType rendertype = RenderType.func_228645_f_();
+       p_228392_0_.put(Fluids.field_207212_b, rendertype);
+@@ -245,6 +247,7 @@
+    });
+    private static boolean field_228388_c_;
+ 
++   @Deprecated
+    public static RenderType func_228390_a_(BlockState p_228390_0_) {
+       Block block = p_228390_0_.func_177230_c();
+       if (block instanceof LeavesBlock) {
+@@ -256,8 +259,7 @@
+    }
+ 
+    public static RenderType func_228394_b_(BlockState p_228394_0_) {
+-      RenderType rendertype = func_228390_a_(p_228394_0_);
+-      return rendertype == RenderType.func_228645_f_() ? Atlases.func_228784_i_() : Atlases.func_228783_h_();
++      return canRenderInLayer(p_228394_0_, RenderType.func_228645_f_()) ? Atlases.func_228784_i_() : Atlases.func_228783_h_();
+    }
+ 
+    public static RenderType func_228389_a_(ItemStack p_228389_0_) {
+@@ -270,11 +272,60 @@
+       }
+    }
+ 
++   @Deprecated
+    public static RenderType func_228391_a_(IFluidState p_228391_0_) {
+       RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
+       return rendertype != null ? rendertype : RenderType.func_228639_c_();
+    }
+ 
++   // FORGE START
++
++   private static final Map<Block, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
++   private static final Map<Fluid, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
++   static {
++      field_228386_a_.forEach(RenderTypeLookup::setRenderLayer);
++      field_228387_b_.forEach(RenderTypeLookup::setRenderLayer);
++   }
++
++   public static boolean canRenderInLayer(BlockState state, RenderType type) {
++      Block block = state.func_177230_c();
++      if (block instanceof LeavesBlock) {
++         return field_228388_c_ ? type == RenderType.func_228641_d_() : type == RenderType.func_228639_c_();
++      } else {
++         java.util.function.Predicate<RenderType> rendertype;
++         synchronized (RenderTypeLookup.class) {
++             rendertype = blockRenderChecks.get(block);
++         }
++         return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
++      }
++   }
++
++   public static boolean canRenderInLayer(IFluidState fluid, RenderType type) {
++      java.util.function.Predicate<RenderType> rendertype;
++      synchronized (RenderTypeLookup.class) {
++          rendertype = fluidRenderChecks.get(fluid.func_206886_c());
++      }
++      return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
++   }
++
++   public static void setRenderLayer(Block block, RenderType type) {
++       java.util.Objects.requireNonNull(type);
++       setRenderLayer(block, type::equals);
++   }
++
++   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++       blockRenderChecks.put(block, predicate);
++   }
++
++   public static void setRenderLayer(Fluid fluid, RenderType type) {
++       java.util.Objects.requireNonNull(type);
++       setRenderLayer(fluid, type::equals);
++   }
++
++   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++       fluidRenderChecks.put(fluid, predicate);
++   }
++
+    public static void func_228393_a_(boolean p_228393_0_) {
+       field_228388_c_ = p_228393_0_;
+    }

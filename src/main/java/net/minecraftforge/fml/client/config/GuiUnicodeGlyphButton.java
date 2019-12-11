@@ -19,12 +19,10 @@
 
 package net.minecraftforge.fml.client.config;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
-
-import net.minecraft.client.gui.widget.button.Button.IPressable;
 
 /**
  * This class provides a button that shows a string glyph at the beginning. The glyph can be scaled using the glyphScale parameter.
@@ -51,7 +49,7 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
             Minecraft mc = Minecraft.getInstance();
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int k = this.getYImage(this.isHovered);
-            GuiUtils.drawContinuousTexturedBox(Button.WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.blitOffset);
+            GuiUtils.drawContinuousTexturedBox(Button.WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
             this.renderBg(mc, mouseX, mouseY);
 
             String buttonText = this.getMessage();
@@ -66,12 +64,12 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
             strWidth = mc.fontRenderer.getStringWidth(buttonText);
             totalWidth = glyphWidth + strWidth;
 
-            GlStateManager.pushMatrix();
-            GlStateManager.scalef(glyphScale, glyphScale, 1.0F);
+            RenderSystem.pushMatrix();
+            RenderSystem.scalef(glyphScale, glyphScale, 1.0F);
             this.drawCenteredString(mc.fontRenderer, glyph,
                     (int) (((this.x + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
                     (int) (((this.y + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), getFGColor());
-            GlStateManager.popMatrix();
+            RenderSystem.popMatrix();
 
             this.drawCenteredString(mc.fontRenderer, buttonText, (int) (this.x + (this.width / 2) + (glyphWidth / glyphScale)),
                     this.y + (this.height - 8) / 2, getFGColor());

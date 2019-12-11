@@ -33,10 +33,12 @@ import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.IModelTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,8 +51,7 @@ import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.I
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Type;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Variable;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.model.animation.IJointClip;
@@ -327,7 +328,7 @@ public class ModelBlockAnimation
             }
 
             @Override
-            public TRSRTransformation apply(float time)
+            public TransformationMatrix apply(float time)
             {
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
@@ -365,13 +366,13 @@ public class ModelBlockAnimation
                     switch(var.variable)
                     {
                         case X:
-                            translation.x = value;
+                            translation.setX(value);
                             break;
                         case Y:
-                            translation.y = value;
+                            translation.setY(value);
                             break;
                         case Z:
-                            translation.z = value;
+                            translation.setZ(value);
                             break;
                         case XROT:
                             rotation.x = value;
@@ -386,35 +387,34 @@ public class ModelBlockAnimation
                             rotation.angle = (float)Math.toRadians(value);
                             break;
                         case SCALE:
-                            scale.x = scale.y = scale.z = value;
+                            scale.set(value, value, value);
                             break;
                         case XS:
-                            scale.x = value;
+                            scale.setX(value);
                             break;
                         case YS:
-                            scale.y = value;
+                            scale.setY(value);
                             break;
                         case ZS:
-                            scale.z = value;
+                            scale.setX(value);
                             break;
                         case XORIGIN:
-                            origin.x = value - 0.5F;
+                            origin.setX(value - 0.5F);
                             break;
                         case YORIGIN:
-                            origin.y = value - 0.5F;
+                            origin.setY(value - 0.5F);
                             break;
                         case ZORIGIN:
-                            origin.z = value - 0.5F;
+                            origin.setX(value - 0.5F);
                             break;
                     }
                 }
-                Quat4f rot = new Quat4f();
-                rot.set(rotation);
-                TRSRTransformation base = new TRSRTransformation(translation, rot, scale, null);
-                Vector3f negOrigin = new Vector3f(origin);
-                negOrigin.negate();
-                base = new TRSRTransformation(origin, null, null, null).compose(base).compose(new TRSRTransformation(negOrigin, null, null, null));
-                return TRSRTransformation.blockCenterToCorner(base);
+                Quaternion rot = new Quaternion(new Vector3f(rotation.x, rotation.y, rotation.z), rotation.angle, false);
+                TransformationMatrix base = new TransformationMatrix(translation, rot, scale, null);
+                Vector3f negOrigin = origin.func_229195_e_();
+                negOrigin.func_229192_b_(-1,-1,-1);
+                base = new TransformationMatrix(origin, null, null, null).compose(base).compose(new TransformationMatrix(negOrigin, null, null, null));
+                return TransformationHelper.blockCenterToCorner(base);
             }
         }
     }
@@ -429,9 +429,9 @@ public class ModelBlockAnimation
         }
 
         @Override
-        public TRSRTransformation getInvBindPose()
+        public TransformationMatrix getInvBindPose()
         {
-            return TRSRTransformation.identity();
+            return TransformationMatrix.func_227983_a_();
         }
 
         @Override
@@ -518,7 +518,13 @@ public class ModelBlockAnimation
     }
 
     @Nullable
-    public TRSRTransformation getPartTransform(IModelState state, BlockPart part, int i)
+    public TransformationMatrix getPartTransform(IModelTransform state, BlockPart part, int i)
+    {
+        return getPartTransform(state, i);
+    }
+
+    @Nullable
+    public TransformationMatrix getPartTransform(IModelTransform state, int i)
     {
         ImmutableCollection<MBJointWeight> infos = getJoint(i);
         if(!infos.isEmpty())
@@ -530,12 +536,12 @@ public class ModelBlockAnimation
                 if(info.getWeights().containsKey(i))
                 {
                     ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
-                    Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
-                    if(trOp.isPresent() && !trOp.get().isIdentity())
+                    TransformationMatrix trOp = state.getPartTransformation(joint);
+                    if(!trOp.isIdentity())
                     {
                         float w = info.getWeights().get(i)[0];
-                        tmp = trOp.get().getMatrixVec();
-                        tmp.mul(w);
+                        tmp = trOp.func_227988_c_();
+                        tmp.func_226592_a_(w);
                         m.add(tmp);
                         weight += w;
                     }
@@ -543,8 +549,8 @@ public class ModelBlockAnimation
             }
             if(weight > 1e-5)
             {
-                m.mul(1f / weight);
-                return new TRSRTransformation(m);
+                m.func_226592_a_(1f / weight);
+                return new TransformationMatrix(m);
             }
         }
         return null;

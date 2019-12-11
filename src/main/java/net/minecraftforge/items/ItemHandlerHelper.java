@@ -25,7 +25,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
@@ -184,14 +183,14 @@ public class ItemHandlerHelper
         // play sound if something got picked up
         if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
-            world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
+            world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(),
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
         if (!remainder.isEmpty() && !world.isRemote)
         {
-            ItemEntity entityitem = new ItemEntity(world, player.posX, player.posY + 0.5, player.posZ, remainder);
+            ItemEntity entityitem = new ItemEntity(world, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), remainder);
             entityitem.setPickupDelay(40);
             entityitem.setMotion(entityitem.getMotion().mul(0, 1, 0));
 

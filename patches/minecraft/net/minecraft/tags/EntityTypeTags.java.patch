@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/EntityTypeTags.java
 +++ b/net/minecraft/tags/EntityTypeTags.java
-@@ -22,6 +22,10 @@
+@@ -24,6 +24,10 @@
        return field_219766_c;
     }
  
