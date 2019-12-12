@@ -37,6 +37,15 @@
                 }
  
              }, "keyPressed event handler", inestedguieventhandler.getClass().getCanonicalName());
+@@ -302,7 +310,7 @@
+             }
+          }
+ 
+-         if (this.field_197972_a.field_71462_r == null || this.field_197972_a.field_71462_r.passEvents) {
++         if (this.field_197972_a.field_71441_e != null && (this.field_197972_a.field_71462_r == null || this.field_197972_a.field_71462_r.passEvents)) {
+             InputMappings.Input inputmappings$input = InputMappings.func_197954_a(p_197961_3_, p_197961_4_);
+             if (p_197961_5_ == 0) {
+                KeyBinding.func_197980_a(inputmappings$input, false);
 @@ -354,7 +362,7 @@
                 }
              }
