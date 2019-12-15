@@ -94,7 +94,9 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
                 Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
                 GlStateManager.color4f(1, 1, 1, 1);
                 GlStateManager.pushMatrix();
-                AbstractGui.blit(getRight() - (height / 2 + 4), GuiSlotModList.this.getTop() + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                int iconPosX = left + entryWidth - 12;
+                int iconPosY = top + entryHeight / 2 - 4;
+                AbstractGui.blit(iconPosX, iconPosY, vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 GlStateManager.popMatrix();
             }
         }
