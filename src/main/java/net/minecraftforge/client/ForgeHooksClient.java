@@ -811,11 +811,9 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static IBakedModel handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type, MatrixStack stack)
     {
-        if (!model.getItemCameraTransforms().getTransform(type).equals(ItemTransformVec3f.DEFAULT))
-        {
-            // Push to the matrix to make it not empty and indicate that we want to transform things
-            stack.func_227860_a_();
-            model.getItemCameraTransforms().getTransform(type).func_228830_a_(false, stack);
+        TransformationMatrix tr = TransformationHelper.toTransformation(model.getItemCameraTransforms().getTransform(type));
+        if(!tr.isIdentity()) {
+            tr.push(stack);
         }
         return model;
     }

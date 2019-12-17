@@ -112,38 +112,6 @@ public final class TransformationHelper
         );
     }
 
-    private static final EnumMap<Direction, TransformationMatrix> vanillaUvTransformLocalToGlobal = Maps.newEnumMap(Direction.class);
-    private static final EnumMap<Direction, TransformationMatrix> vanillaUvTransformGlobalToLocal = Maps.newEnumMap(Direction.class);
-
-    static
-    {
-        vanillaUvTransformLocalToGlobal.put(Direction.SOUTH, TransformationMatrix.func_227983_a_());
-        vanillaUvTransformLocalToGlobal.put(Direction.EAST,  new TransformationMatrix(null,
-                new Quaternion(Vector3f.field_229181_d_, 90,true), null, null));
-        vanillaUvTransformLocalToGlobal.put(Direction.WEST,  new TransformationMatrix(null,
-                new Quaternion(Vector3f.field_229181_d_, -90,true), null, null));
-        vanillaUvTransformLocalToGlobal.put(Direction.NORTH, new TransformationMatrix(null,
-                new Quaternion(Vector3f.field_229181_d_, 180,true), null, null));
-        vanillaUvTransformLocalToGlobal.put(Direction.UP,    new TransformationMatrix(null,
-                new Quaternion(Vector3f.field_229179_b_, -90,true), null, null));
-        vanillaUvTransformLocalToGlobal.put(Direction.DOWN,  new TransformationMatrix(null,
-                new Quaternion(Vector3f.field_229179_b_, 90,true), null, null));
-
-        for(Direction side : Direction.values())
-        {
-            vanillaUvTransformGlobalToLocal.put(side, vanillaUvTransformLocalToGlobal.get(side).inverse());
-        }
-    }
-
-    public static TransformationMatrix getUVLockTransform(TransformationMatrix matrix, Direction originalSide)
-    {
-        Direction newSide = matrix.rotateTransform(originalSide);
-        return vanillaUvTransformGlobalToLocal.get(originalSide)
-                .compose(matrix.inverse().blockCornerToCenter())
-                .compose(vanillaUvTransformLocalToGlobal.get(newSide))
-                .blockCenterToCorner();
-    }
-
     public static boolean epsilonEquals(Vector4f v1, Vector4f v2, float epsilon)
     {
         return MathHelper.abs(v1.getX()-v2.getX()) < epsilon &&

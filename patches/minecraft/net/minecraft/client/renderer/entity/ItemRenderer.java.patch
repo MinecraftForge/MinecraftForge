@@ -23,7 +23,7 @@
           p_225623_4_.func_227861_a_((double)f7, (double)f8, (double)f9);
        }
  
-@@ -75,18 +72,19 @@
+@@ -75,18 +72,18 @@
                 float f11 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
                 float f13 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
                 float f10 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
@@ -37,9 +37,7 @@
              }
           }
  
--         this.field_177080_a.func_229111_a_(itemstack, ItemCameraTransforms.TransformType.GROUND, false, p_225623_4_, p_225623_5_, p_225623_6_, OverlayTexture.field_229196_a_, ibakedmodel);
-+         IBakedModel transformedModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_225623_4_, ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
-+         this.field_177080_a.func_229111_a_(itemstack, ItemCameraTransforms.TransformType.GROUND, false, p_225623_4_, p_225623_5_, p_225623_6_, OverlayTexture.field_229196_a_, transformedModel);
+          this.field_177080_a.func_229111_a_(itemstack, ItemCameraTransforms.TransformType.GROUND, false, p_225623_4_, p_225623_5_, p_225623_6_, OverlayTexture.field_229196_a_, ibakedmodel);
           p_225623_4_.func_227865_b_();
           if (!flag) {
 -            p_225623_4_.func_227861_a_((double)(0.0F * f4), (double)(0.0F * f5), (double)(0.09375F * f6));
@@ -47,7 +45,7 @@
           }
        }
  
-@@ -97,4 +95,21 @@
+@@ -97,4 +94,21 @@
     public ResourceLocation func_110775_a(ItemEntity p_110775_1_) {
        return AtlasTexture.field_110575_b;
     }
