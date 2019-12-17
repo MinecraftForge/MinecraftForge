@@ -21,7 +21,6 @@ package net.minecraftforge.client.model;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import java.util.List;
 import java.util.Random;
 
@@ -35,9 +34,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.IModelData;
-import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class BakedModelWrapper<T extends IBakedModel> implements IBakedModel
 {

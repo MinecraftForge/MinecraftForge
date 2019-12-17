@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.TransformationMatrix;
@@ -35,7 +34,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

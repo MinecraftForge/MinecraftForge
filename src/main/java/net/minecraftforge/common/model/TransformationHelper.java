@@ -23,22 +23,16 @@ import java.lang.reflect.Type;
 import java.util.EnumMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import com.google.gson.*;
 import net.minecraft.client.renderer.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import net.minecraft.util.math.MathHelper;
 
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeHooksClient;
 
 public final class TransformationHelper
 {
@@ -51,130 +45,9 @@ public final class TransformationHelper
         return new TransformationMatrix(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
     }
 
-    public static void transform(Matrix4f matrix, Vector4f vector)
-    {
-        javax.vecmath.Vector4f copy = toVecmath(vector);
-        toVecmath(matrix).transform(copy);
-        vector.set(copy.x, copy.y, copy.z, copy.w);
-    }
-
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees)
     {
         return new Quaternion(xyz.getX(), xyz.getY(), xyz.getZ(), degrees);
-    }
-
-    public static Direction rotate(Matrix4f matrix, Direction facing)
-    {
-        Vec3i dir = facing.getDirectionVec();
-        javax.vecmath.Vector4f vec = new javax.vecmath.Vector4f(dir.getX(), dir.getY(), dir.getZ(), 0);
-        toVecmath(matrix).transform(vec);
-        return Direction.getFacingFromVector(vec.x, vec.y, vec.z);
-    }
-
-    /**
-     * convert transformation from assuming center-block system to corner-block system
-     */
-    public static TransformationMatrix blockCenterToCorner(TransformationMatrix transform)
-    {
-        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
-
-        javax.vecmath.Matrix4f ret = toVecmath(transform.func_227988_c_()), tmp = new javax.vecmath.Matrix4f();
-        tmp.setIdentity();
-        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
-        ret.mul(tmp, ret);
-        tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
-        ret.mul(tmp);
-        return new TransformationMatrix(toMojang(ret));
-    }
-
-    /**
-     * convert transformation from assuming corner-block system to center-block system
-     */
-    public static TransformationMatrix blockCornerToCenter(TransformationMatrix transform)
-    {
-        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
-
-        javax.vecmath.Matrix4f ret = toVecmath(transform.func_227988_c_()), tmp = new javax.vecmath.Matrix4f();
-        tmp.setIdentity();
-        tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
-        ret.mul(tmp, ret);
-        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
-        ret.mul(tmp);
-        return new TransformationMatrix(toMojang(ret));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static javax.vecmath.Vector3f toVecmath(Vector3f vec)
-    {
-        return new javax.vecmath.Vector3f(vec.getX(), vec.getY(), vec.getZ());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static javax.vecmath.Vector4f toVecmath(Vector4f vec)
-    {
-        return new javax.vecmath.Vector4f(vec.getX(), vec.getY(), vec.getZ(), vec.getW());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static javax.vecmath.Matrix4f toVecmath(Matrix4f m)
-    {
-        float[] all = new float[16];
-        m.write(all);
-        return new javax.vecmath.Matrix4f(all);
-    }
-
-    public static javax.vecmath.Quat4f toVecmath(Quaternion q)
-    {
-        return new javax.vecmath.Quat4f(q.getX(), q.getY(), q.getZ(), q.getW());
-    }
-    
-    public static Quaternion toMojang(javax.vecmath.Quat4f q)
-    {
-        return new Quaternion(q.getX(), q.getY(), q.getZ(), q.getW());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Vector3f toMojang(javax.vecmath.Vector3f vec)
-    {
-        return new Vector3f(vec.x, vec.y, vec.z);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Vector4f toMojang(javax.vecmath.Vector4f vec)
-    {
-        return new Vector4f(vec.x, vec.y, vec.z, vec.w);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Matrix4f toMojang(javax.vecmath.Matrix4f m)
-    {
-        Matrix4f r = new Matrix4f();
-        float[] row = new float[4];
-        float[] all = new float[16];
-        for (int x = 0; x < 4; x++)
-        {
-            m.getRow(x, row);
-            for (int y = 0; y < 4; y++)
-            {
-                all[y*4+x] = row[y];
-            }
-        }
-        r.set(all);
-        return r;
-    }
-
-    public static javax.vecmath.Vector3f lerp(javax.vecmath.Tuple3f from, javax.vecmath.Tuple3f to, float progress)
-    {
-        javax.vecmath.Vector3f res = new javax.vecmath.Vector3f(from);
-        res.interpolate(from, to, progress);
-        return res;
-    }
-
-    public static javax.vecmath.Vector4f lerp(javax.vecmath.Tuple4f from, javax.vecmath.Tuple4f to, float progress)
-    {
-        javax.vecmath.Vector4f res = new javax.vecmath.Vector4f(from);
-        res.interpolate(from, to, progress);
-        return res;
     }
 
     public static Vector3f lerp(Vector3f from, Vector3f to, float progress)
@@ -184,11 +57,49 @@ public final class TransformationHelper
         return res;
     }
 
-    public static Quaternion slerp(Quaternion from, Quaternion to, float progress)
+    private static final double THRESHOLD = 0.9995;
+    private static Quaternion slerp(Quaternion v0, Quaternion v1, float t)
     {
-        javax.vecmath.Quat4f res = new javax.vecmath.Quat4f();
-        res.interpolate(toVecmath(from), toVecmath(to), progress);
-        return toMojang(res);
+        // From https://en.wikipedia.org/w/index.php?title=Slerp&oldid=928959428
+        // License: CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
+
+        // Compute the cosine of the angle between the two vectors.
+        // If the dot product is negative, slerp won't take
+        // the shorter path. Note that v1 and -v1 are equivalent when
+        // the negation is applied to all four components. Fix by
+        // reversing one quaternion.
+        float dot = v0.getX() * v1.getX() + v0.getY() * v1.getY() + v0.getZ() * v1.getZ() + v0.getW() * v1.getW();
+        if (dot < 0.0f) {
+            v1 = new Quaternion(-v1.getX(), -v1.getY(), -v1.getZ(), -v1.getW());
+            dot = -dot;
+        }
+
+        // If the inputs are too close for comfort, linearly interpolate
+        // and normalize the result.
+        if (dot > THRESHOLD) {
+            float x = MathHelper.lerp(t, v0.getX(), v1.getX());
+            float y = MathHelper.lerp(t, v0.getY(), v1.getY());
+            float z = MathHelper.lerp(t, v0.getZ(), v1.getZ());
+            float w = MathHelper.lerp(t, v0.getW(), v1.getW());
+            return new Quaternion(x,y,z,w);
+        }
+
+        // Since dot is in range [0, DOT_THRESHOLD], acos is safe
+        float angle01 = (float)Math.acos(dot);
+        float angle0t = angle01*t;
+        float sin0t = MathHelper.sin(angle0t);
+        float sin01 = MathHelper.sin(angle01);
+        float sin1t = MathHelper.sin(angle01 - angle0t);
+
+        float s1 = sin0t / sin01;
+        float s0 = sin1t / sin01;
+
+        return new Quaternion(
+                s0 * v0.getX() + s1 * v1.getX(),
+                s0 * v0.getY() + s1 * v1.getY(),
+                s0 * v0.getZ() + s1 * v1.getZ(),
+                s0 * v0.getW() + s1 * v1.getW()
+        );
     }
 
     public static TransformationMatrix slerp(TransformationMatrix one, TransformationMatrix that, float progress)
@@ -207,17 +118,16 @@ public final class TransformationHelper
     static
     {
         vanillaUvTransformLocalToGlobal.put(Direction.SOUTH, TransformationMatrix.func_227983_a_());
-        javax.vecmath.Quat4f tmp = new javax.vecmath.Quat4f();
-        tmp.set(new javax.vecmath.AxisAngle4f(0, 1, 0, (float)Math.toRadians(90)));
-        vanillaUvTransformLocalToGlobal.put(Direction.EAST,  new TransformationMatrix(null, toMojang(tmp), null, null));
-        tmp.set(new javax.vecmath.AxisAngle4f(0, 1, 0, (float)Math.toRadians(-90)));
-        vanillaUvTransformLocalToGlobal.put(Direction.WEST,  new TransformationMatrix(null, toMojang(tmp), null, null));
-        tmp.set(new javax.vecmath.AxisAngle4f(0, 1, 0, (float)Math.toRadians(180)));
-        vanillaUvTransformLocalToGlobal.put(Direction.NORTH, new TransformationMatrix(null, toMojang(tmp), null, null));
-        tmp.set(new javax.vecmath.AxisAngle4f(1, 0, 0, (float)Math.toRadians(-90)));
-        vanillaUvTransformLocalToGlobal.put(Direction.UP,    new TransformationMatrix(null, toMojang(tmp), null, null));
-        tmp.set(new javax.vecmath.AxisAngle4f(1, 0, 0, (float)Math.toRadians(90)));
-        vanillaUvTransformLocalToGlobal.put(Direction.DOWN,  new TransformationMatrix(null, toMojang(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.EAST,  new TransformationMatrix(null,
+                new Quaternion(Vector3f.field_229181_d_, 90,true), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.WEST,  new TransformationMatrix(null,
+                new Quaternion(Vector3f.field_229181_d_, -90,true), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.NORTH, new TransformationMatrix(null,
+                new Quaternion(Vector3f.field_229181_d_, 180,true), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.UP,    new TransformationMatrix(null,
+                new Quaternion(Vector3f.field_229179_b_, -90,true), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.DOWN,  new TransformationMatrix(null,
+                new Quaternion(Vector3f.field_229179_b_, 90,true), null, null));
 
         for(Direction side : Direction.values())
         {
@@ -225,27 +135,26 @@ public final class TransformationHelper
         }
     }
 
-    public static TransformationMatrix getVanillaUvTransformLocalToGlobal(Direction side)
-    {
-        return vanillaUvTransformLocalToGlobal.get(side);
-    }
-
-    public static TransformationMatrix getVanillaUvTransformGlobalToLocal(Direction side)
-    {
-        return vanillaUvTransformGlobalToLocal.get(side);
-    }
-
     public static TransformationMatrix getUVLockTransform(TransformationMatrix matrix, Direction originalSide)
     {
         Direction newSide = matrix.rotateTransform(originalSide);
-        try
-        {
-            return blockCenterToCorner(vanillaUvTransformGlobalToLocal.get(originalSide).compose(blockCornerToCenter(matrix.inverse())).compose(vanillaUvTransformLocalToGlobal.get(newSide)));
-        }
-        catch(javax.vecmath.SingularMatrixException e)
-        {
-            return new TransformationMatrix(null, null, new Vector3f(0, 0, 0), null);
-        }
+        return vanillaUvTransformGlobalToLocal.get(originalSide)
+                .compose(matrix.inverse().blockCornerToCenter())
+                .compose(vanillaUvTransformLocalToGlobal.get(newSide))
+                .blockCenterToCorner();
+    }
+
+    public static boolean epsilonEquals(Vector4f v1, Vector4f v2, float epsilon)
+    {
+        return MathHelper.abs(v1.getX()-v2.getX()) < epsilon &&
+               MathHelper.abs(v1.getY()-v2.getY()) < epsilon &&
+               MathHelper.abs(v1.getZ()-v2.getZ()) < epsilon &&
+               MathHelper.abs(v1.getW()-v2.getW()) < epsilon;
+    }
+
+    public static Quaternion makeQuaternion(float[] values)
+    {
+        return new Quaternion(values[0], values[1], values[2], values[3]);
     }
 
     public static class Deserializer implements JsonDeserializer<TransformationMatrix>
@@ -332,7 +241,7 @@ public final class TransformationHelper
             if (!e.isJsonArray()) throw new JsonParseException("Matrix: expected an array, got: " + e);
             JsonArray m = e.getAsJsonArray();
             if (m.size() != 3) throw new JsonParseException("Matrix: expected an array of length 3, got: " + m.size());
-            javax.vecmath.Matrix4f ret = new javax.vecmath.Matrix4f();
+            float[] values = new float[16];
             for (int i = 0; i < 3; i++)
             {
                 if (!m.get(i).isJsonArray()) throw new JsonParseException("Matrix row: expected an array, got: " + m.get(i));
@@ -342,7 +251,7 @@ public final class TransformationHelper
                 {
                     try
                     {
-                        ret.setElement(i, j, r.get(j).getAsNumber().floatValue());
+                        values[j*4+i] = r.get(j).getAsNumber().floatValue();
                     }
                     catch (ClassCastException ex)
                     {
@@ -350,7 +259,7 @@ public final class TransformationHelper
                     }
                 }
             }
-            return toMojang(ret);
+            return new Matrix4f(values);
         }
 
         public static float[] parseFloatArray(JsonElement e, int length, String prefix)
@@ -422,7 +331,7 @@ public final class TransformationHelper
                     if (array.size() == 3) //Vanilla rotation
                         return quatFromXYZ(new Vector3f(parseFloatArray(e, 3, "Rotation")), true);
                     else // quaternion
-                        return new Quaternion(parseFloatArray(e, 4, "Rotation"));
+                        return makeQuaternion(parseFloatArray(e, 4, "Rotation"));
                 }
                 else throw new JsonParseException("Rotation: expected array or object, got: " + e);
             }

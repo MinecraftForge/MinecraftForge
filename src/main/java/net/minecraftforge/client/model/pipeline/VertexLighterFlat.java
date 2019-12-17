@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -153,13 +152,13 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             v1.sub(t);
             t.set(position[0]);
             v2.sub(t);
-            v1.cross(v2, v1);
-            v1.normalize();
+            v2.cross(v1);
+            v2.func_229194_d_();
             for(int v = 0; v < 4; v++)
             {
-                normal[v][0] = v1.x;
-                normal[v][1] = v1.y;
-                normal[v][2] = v1.z;
+                normal[v][0] = v2.getX();
+                normal[v][1] = v2.getY();
+                normal[v][2] = v2.getZ();
                 normal[v][3] = 0;
             }
         }

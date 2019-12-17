@@ -21,12 +21,12 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
-import javax.vecmath.Vector3f;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

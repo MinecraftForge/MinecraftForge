@@ -159,10 +159,10 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
 
         TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
 
-        // if the fluid is lighter than air, will manipulate the initial state to be rotated 180° to turn it upside down
+        // if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
         if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
         {
-            sprite = new ModelTransformComposition(state, new SimpleModelTransform(TransformationHelper.blockCenterToCorner(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null))));
+            sprite = new ModelTransformComposition(state, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null).blockCenterToCorner()));
             state = sprite;
         }
 

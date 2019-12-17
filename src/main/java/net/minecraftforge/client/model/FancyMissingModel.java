@@ -54,7 +54,8 @@ final class FancyMissingModel implements IUnbakedModel
 {
     private static final ResourceLocation font = new ResourceLocation("minecraft", "textures/font/ascii.png");
     private static final Material font2 = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("minecraft", "font/ascii"));
-    private static final TransformationMatrix smallTransformation = TransformationHelper.blockCenterToCorner(new TransformationMatrix(null, null, new Vector3f(.25f, .25f, .25f), null));
+    private static final TransformationMatrix smallTransformation = new TransformationMatrix(null, null, new Vector3f(.25f, .25f, .25f), null)
+            .blockCenterToCorner();
     private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
     {
         @Override

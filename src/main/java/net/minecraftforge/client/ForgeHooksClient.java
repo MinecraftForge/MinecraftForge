@@ -40,7 +40,6 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,17 +49,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
-import javax.vecmath.Matrix3f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 
+import net.minecraft.client.renderer.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
 import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
 
 import com.google.common.collect.ImmutableList;
@@ -79,14 +74,7 @@ import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.FogRenderer.FogType;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -97,7 +85,6 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -403,39 +390,10 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
-    {
-        Matrix4f m = new Matrix4f(), t = new Matrix4f();
-        m.setIdentity();
-        m.setTranslation(TransformationHelper.toVecmath(transform.translation));
-        t.setIdentity();
-        t.rotY(transform.rotation.getY());
-        m.mul(t);
-        t.setIdentity();
-        t.rotX(transform.rotation.getX());
-        m.mul(t);
-        t.setIdentity();
-        t.rotZ(transform.rotation.getZ());
-        m.mul(t);
-        t.setIdentity();
-        t.m00 = transform.scale.getX();
-        t.m11 = transform.scale.getY();
-        t.m22 = transform.scale.getZ();
-        m.mul(t);
-        return m;
-    }
-
     private static final net.minecraft.client.renderer.Matrix4f flipX;
     private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
     static {
-
-        flipX = new net.minecraft.client.renderer.Matrix4f(new float[]{
-                -1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        });
+        flipX = Matrix4f.func_226593_a_(-1,1,1);
         flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
     }
 
@@ -533,26 +491,6 @@ public class ForgeHooksClient
             default:
                 LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
-    }
-
-    public static void transform(net.minecraft.client.renderer.Vector3f vec, Matrix4f m)
-    {
-        Vector4f tmp = new Vector4f(vec.getX(), vec.getY(), vec.getZ(), 1f);
-        m.transform(tmp);
-        if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
-        vec.set(tmp.x, tmp.y, tmp.z);
-    }
-
-    public static Matrix4f getMatrix(ModelRotation modelRotation)
-    {
-        Matrix4f ret = TransformationHelper.toVecmath(modelRotation.func_225615_b_().func_227988_c_()), tmp = new Matrix4f();
-        tmp.setIdentity();
-        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
-        ret.mul(tmp, ret);
-        tmp.invert();
-        //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
-        ret.mul(tmp);
-        return ret;
     }
 
     public static int getColorIndex(VertexFormat fmt)
@@ -787,17 +725,17 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, Direction facing)
     {
         Vector3f v1 = getVertexPos(faceData, 3);
-        Vector3f t  = getVertexPos(faceData, 1);
+        Vector3f t1 = getVertexPos(faceData, 1);
         Vector3f v2 = getVertexPos(faceData, 2);
-        v1.sub(t);
-        t.set(getVertexPos(faceData, 0));
-        v2.sub(t);
-        v1.cross(v2, v1);
-        v1.normalize();
+        Vector3f t2 = getVertexPos(faceData, 0);
+        v1.sub(t1);
+        v2.sub(t2);
+        v2.cross(v1);
+        v2.func_229194_d_();
 
-        int x = ((byte) Math.round(v1.x * 127)) & 0xFF;
-        int y = ((byte) Math.round(v1.y * 127)) & 0xFF;
-        int z = ((byte) Math.round(v1.z * 127)) & 0xFF;
+        int x = ((byte) Math.round(v2.getX() * 127)) & 0xFF;
+        int y = ((byte) Math.round(v2.getY() * 127)) & 0xFF;
+        int z = ((byte) Math.round(v2.getZ() * 127)) & 0xFF;
 
         int normal = x | (y << 0x08) | (z << 0x10);
 
@@ -852,24 +790,19 @@ public class ForgeHooksClient
     public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, Direction originalSide, TransformationMatrix rotation, ResourceLocation p_228824_9_)
     {
         TransformationMatrix global = new TransformationMatrix(rotation.func_227988_c_());
-        Matrix4f uv = TransformationHelper.toVecmath(TransformationHelper.getUVLockTransform(global, originalSide).func_227988_c_());
-        Vector4f vec = new Vector4f(0, 0, 0, 1);
+        Matrix4f uv = TransformationHelper.getUVLockTransform(global, originalSide).func_227988_c_();
         float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
         float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
-        vec.x = u0 / 16;
-        vec.y = v0 / 16;
-        uv.transform(vec);
-        float uMin = 16 * vec.x; // / vec.w;
-        float vMin = 16 * vec.y; // / vec.w;
+        Vector4f vec = new Vector4f(u0 / 16, v0 / 16, 0, 1);
+        vec.func_229372_a_(uv);
+        float uMin = 16 * vec.getX(); // / vec.w;
+        float vMin = 16 * vec.getY(); // / vec.w;
         float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
         float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
-        vec.x = u1 / 16;
-        vec.y = v1 / 16;
-        vec.z = 0;
-        vec.w = 1;
-        uv.transform(vec);
-        float uMax = 16 * vec.x; // / vec.w;
-        float vMax = 16 * vec.y; // / vec.w;
+        vec.set(u1 / 16,v1 / 16,0,1);
+        vec.func_229372_a_(uv);
+        float uMax = 16 * vec.getX(); // / vec.w;
+        float vMax = 16 * vec.getY(); // / vec.w;
         if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
         {
             float t = uMin;
@@ -884,10 +817,9 @@ public class ForgeHooksClient
         }
         float a = (float)Math.toRadians(blockFaceUV.rotation);
         Vector3f rv = new Vector3f(MathHelper.cos(a), MathHelper.sin(a), 0);
-        Matrix3f rot = new Matrix3f();
-        uv.getRotationScale(rot);
-        rot.transform(rv);
-        int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.y, rv.x)) / 90) * 90, 360);
+        Matrix3f rot = new Matrix3f(uv);
+        rv.func_229188_a_(rot);
+        int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.getY(), rv.getX())) / 90) * 90, 360);
         return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 

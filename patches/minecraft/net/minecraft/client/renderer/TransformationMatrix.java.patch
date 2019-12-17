@@ -9,7 +9,7 @@
     private final Matrix4f field_227976_a_;
     private boolean field_227977_b_;
     @Nullable
-@@ -133,4 +133,33 @@
+@@ -133,4 +133,32 @@
     public int hashCode() {
        return Objects.hash(this.field_227976_a_);
     }
@@ -29,17 +29,16 @@
 +      return field_227981_f_.func_227068_g_();
 +   }
 +
-+   private javax.vecmath.Matrix3f normalTransform = null;
-+   public javax.vecmath.Matrix3f getNormalMatrix() {
++   private Matrix3f normalTransform = null;
++   public Matrix3f getNormalMatrix() {
 +      checkNormalTransform();
 +      return normalTransform;
 +   }
 +   private void checkNormalTransform() {
 +      if (normalTransform == null) {
-+         normalTransform = new javax.vecmath.Matrix3f();
-+         net.minecraftforge.common.model.TransformationHelper.toVecmath(field_227976_a_).getRotationScale(normalTransform);
-+         normalTransform.invert();
-+         normalTransform.transpose();
++         normalTransform = new Matrix3f(field_227976_a_);
++         normalTransform.func_226123_f_();
++         normalTransform.func_226110_a_();
 +      }
 +   }
  }

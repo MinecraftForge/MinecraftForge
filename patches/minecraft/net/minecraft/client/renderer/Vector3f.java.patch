@@ -1,12 +1,15 @@
 --- a/net/minecraft/client/renderer/Vector3f.java
 +++ b/net/minecraft/client/renderer/Vector3f.java
-@@ -198,4 +198,14 @@
+@@ -198,4 +198,17 @@
     public String toString() {
        return "[" + this.field_229184_g_ + ", " + this.field_229185_h_ + ", " + this.field_229186_i_ + "]";
     }
 +
 +   // Forge start
 +   public Vector3f(float[] values) {
++      set(values);
++   }
++   public void set(float[] values) {
 +      this.field_229184_g_ = values[0];
 +      this.field_229185_h_ = values[1];
 +      this.field_229186_i_ = values[2];

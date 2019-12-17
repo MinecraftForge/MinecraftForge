@@ -157,7 +157,7 @@ public class ModelLoaderRegistry
             try
             {
                 TransformationMatrix base = context.deserialize(transformData, TransformationMatrix.class);
-                return Optional.of(new SimpleModelTransform(ImmutableMap.of(), TransformationHelper.blockCenterToCorner(base)));
+                return Optional.of(new SimpleModelTransform(ImmutableMap.of(), base.blockCenterToCorner()));
             }
             catch (JsonParseException e)
             {
@@ -196,7 +196,7 @@ public class ModelLoaderRegistry
             if(!transform.entrySet().isEmpty())
             {
                 base = context.deserialize(transform, TransformationMatrix.class);
-                base = TransformationHelper.blockCenterToCorner(base);
+                base = base.blockCenterToCorner();
             }
             IModelTransform state = new SimpleModelTransform(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
@@ -208,7 +208,7 @@ public class ModelLoaderRegistry
         if(transform.has(name))
         {
             TransformationMatrix t = context.deserialize(transform.remove(name), TransformationMatrix.class);
-            transforms.put(itemCameraTransform, TransformationHelper.blockCenterToCorner(t));
+            transforms.put(itemCameraTransform, t.blockCenterToCorner());
         }
     }
 
