@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
@@ -71,6 +72,9 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
@@ -97,6 +101,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(this);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
+        MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         modEventBus.register(ForgeConfig.class);
@@ -174,6 +179,25 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             gen.addProvider(new ForgeBlockTagsProvider(gen));
             gen.addProvider(new ForgeItemTagsProvider(gen));
             gen.addProvider(new ForgeRecipeProvider(gen));
+        }
+    }
+
+    public void missingSoundMapping(RegistryEvent.MissingMappings<SoundEvent> event)
+    {
+        //Removed in 1.15, see https://minecraft.gamepedia.com/Parrot#History
+        List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
+        for (RegistryEvent.MissingMappings.Mapping<SoundEvent> mapping : event.getAllMappings())
+        {
+            ResourceLocation regName = mapping.key;
+            if (regName != null && regName.getNamespace().equals("minecraft"))
+            {
+                String path = regName.getPath();
+                if (removedSounds.stream().anyMatch(s -> s.equals(path)))
+                {
+                    LOGGER.info("Ignoring removed minecraft sound {}", regName);
+                    mapping.ignore();
+                }
+            }
         }
     }
 
