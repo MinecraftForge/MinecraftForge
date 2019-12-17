@@ -132,7 +132,7 @@ public class GuiModList extends Screen
 
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn)
         {
-            super(mcIn, widthIn, heightIn, topIn, modList.getLeft() + 10);
+            super(mcIn, widthIn, heightIn, topIn, modList.getRight() + 10);
         }
 
         void setInfo(List<String> lines, ResourceLocation logoPath, Size2i logoDims)
@@ -375,8 +375,7 @@ public class GuiModList extends Screen
             this.modInfo.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
-        int x = ((modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
-        getFontRenderer().drawString(text, x, modList.getBottom() + 5, 0xFFFFFF);
+        getFontRenderer().drawString(text, getFontRenderer().getStringWidth(text), modList.getBottom() + 5, 0xFFFFFF);
         this.search.render(mouseX, mouseY, partialTicks);
         super.render(mouseX, mouseY, partialTicks);
     }
