@@ -40,7 +40,6 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
 import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
 
 import com.google.common.collect.ImmutableList;
@@ -80,7 +78,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -129,7 +126,7 @@ import net.minecraft.world.ILightReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -177,12 +174,12 @@ public class ForgeHooksClient
         switch (target.getType()) {
             case BLOCK:
                 if (!(target instanceof BlockRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
             case ENTITY:
                 if (!(target instanceof EntityRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
         }
-        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, subID, partialTicks));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
