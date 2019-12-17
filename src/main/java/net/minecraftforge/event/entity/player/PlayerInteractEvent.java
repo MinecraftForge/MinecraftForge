@@ -38,7 +38,6 @@ import javax.annotation.Nullable;
 import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
 import static net.minecraftforge.eventbus.api.Event.Result.DENY;
 
-import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -317,7 +316,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Nonnull
     public ItemStack getItemStack()
     {
-        return getEntityPlayer().getHeldItem(hand);
+        return getPlayer().getHeldItem(hand);
     }
 
     /**
@@ -347,7 +346,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public World getWorld()
     {
-        return getEntityPlayer().getEntityWorld();
+        return getPlayer().getEntityWorld();
     }
 
     /**

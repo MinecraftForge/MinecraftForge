@@ -102,25 +102,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().isLadder(getBlockState(), world, pos, entity);
     }
 
-    //TODO: remove in 1.15
-    /**
-     * Check if the face of a block should block rendering.
-     *
-     * Faces which are fully opaque should return true, faces with transparency
-     * or faces which do not span the full size of the block should return false.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @param face The side to check
-     * @return True if the block is opaque on the specified side.
-     * @deprecated This is no longer used for rendering logic.
-     */
-    @Deprecated
-    default boolean doesSideBlockRendering(ILightReader world, BlockPos pos, Direction face)
-    {
-        return getBlockState().getBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
-    }
-
     /**
      * Called throughout the code as a replacement for block instanceof BlockContainer
      * Moving this to the Block base class allows for mods that wish to extend vanilla

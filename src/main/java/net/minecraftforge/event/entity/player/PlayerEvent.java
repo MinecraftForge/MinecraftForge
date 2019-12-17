@@ -54,17 +54,6 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * Use {@link #getPlayer()}
-     *
-     * @return Player
-     */
-    @Deprecated
-    public PlayerEntity getEntityPlayer()
-    {
-        return entityPlayer;
-    }
-
-    /**
      * @return Player
      */
     public PlayerEntity getPlayer() { return entityPlayer; }

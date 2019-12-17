@@ -970,15 +970,6 @@ public class GameData
     }
 
     /**
-     * @deprecated Use {@link #checkPrefix(String, boolean)}.
-     */
-    @Deprecated
-    public static ResourceLocation checkPrefix(String name)
-    {
-        return checkPrefix(name, true);
-    }
-
-    /**
      * Check a name for a domain prefix, and if not present infer it from the
      * current active mod container.
      *

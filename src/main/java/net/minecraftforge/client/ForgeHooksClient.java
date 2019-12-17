@@ -463,22 +463,6 @@ public class ForgeHooksClient
         return model;
     }
 
-    private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
-
-    @Deprecated
-    public static void multiplyCurrentGlMatrix(Matrix4f matrix)
-    {
-        matrixBuf.clear();
-        float[] t = new float[4];
-        for(int i = 0; i < 4; i++)
-        {
-            matrix.getColumn(i, t);
-            matrixBuf.put(t);
-        }
-        matrixBuf.flip();
-        glMultMatrixf(matrixBuf);
-    }
-
     // moved and expanded from WorldVertexBufferUploader.draw
 
     public static void preDraw(Usage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)

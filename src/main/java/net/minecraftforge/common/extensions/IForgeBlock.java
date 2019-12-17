@@ -136,26 +136,6 @@ public interface IForgeBlock
         return false;
     }
 
-    //TODO: remove in 1.15
-    /**
-     * Check if the face of a block should block rendering.
-     *
-     * Faces which are fully opaque should return true, faces with transparency
-     * or faces which do not span the full size of the block should return false.
-     *
-     * @param state The current block state
-     * @param world The current world
-     * @param pos Block position in world
-     * @param face The side to check
-     * @return True if the block is opaque on the specified side.
-     * @deprecated This is no longer used for rendering logic.
-     */
-    @Deprecated
-    default boolean doesSideBlockRendering(BlockState state, ILightReader world, BlockPos pos, Direction face)
-    {
-       return state.isOpaqueCube(world, pos);
-    }
-
     /**
      * Determines if this block should set fire and deal fire damage
      * to entities coming into contact with it.

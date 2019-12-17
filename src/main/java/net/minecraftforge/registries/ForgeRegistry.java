@@ -395,12 +395,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
-    @Deprecated //Public for ByteByfUtils only!
-    public V getRaw(int id)
-    {
-        return this.ids.get(id);
-    }
-
     void addAlias(ResourceLocation from, ResourceLocation to)
     {
         if (this.isLocked())

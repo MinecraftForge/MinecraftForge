@@ -37,7 +37,6 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
@@ -143,12 +142,6 @@ public class ClientModLoader
     public static VersionChecker.Status checkForUpdates()
     {
         return VersionChecker.Status.UP_TO_DATE;
-    }
-
-    @Deprecated // TODO: remove in 1.15
-    public static void complete()
-    {
-        completeModLoading();
     }
 
     public static boolean completeModLoading()

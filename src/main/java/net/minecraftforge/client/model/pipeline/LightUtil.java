@@ -254,30 +254,6 @@ public class LightUtil
         }
     }
 
-    private static IVertexConsumer tessellator = null;
-    @Deprecated // TODO: remove
-    public static IVertexConsumer getTessellator()
-    {
-        if(tessellator == null)
-        {
-            Tessellator tes = Tessellator.getInstance();
-            BufferBuilder wr = tes.getBuffer();
-            tessellator = new VertexBufferConsumer(wr);
-        }
-        return tessellator;
-    }
-
-    private static ItemConsumer itemConsumer = null;
-    @Deprecated // TODO: remove
-    public static ItemConsumer getItemConsumer()
-    {
-        if(itemConsumer == null)
-        {
-            itemConsumer = new ItemConsumer(getTessellator());
-        }
-        return itemConsumer;
-    }
-
     private static final class ItemPipeline
     {
         final VertexBufferConsumer bufferConsumer;

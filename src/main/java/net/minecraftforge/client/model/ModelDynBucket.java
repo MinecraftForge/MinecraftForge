@@ -72,21 +72,12 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
     private static final float NORTH_Z_FLUID = 7.498f / 16f;
     private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-    @Deprecated
-    public static final ModelDynBucket MODEL = new ModelDynBucket();
-
     @Nonnull
     private final Fluid fluid;
 
     private final boolean flipGas;
     private final boolean tint;
     private final boolean coverIsMask;
-
-    @Deprecated
-    public ModelDynBucket()
-    {
-        this(Fluids.EMPTY, false, true, false);
-    }
 
     public ModelDynBucket(Fluid fluid, boolean flipGas, boolean tint, boolean coverIsMask)
     {
@@ -97,24 +88,12 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
     }
 
     /**
-     * Sets the fluid in the model.
-     * "fluid" - Name of the fluid in the fluid registry.
-     * "flipGas" - If "true" the model will be flipped upside down if the fluid is lighter than air. If "false" it won't.
-     * "applyTint" - If "true" the model will tint the fluid quads according to the fluid's base color.
-     * <p/>
-     * If the fluid can't be found, water is used.
+     * Returns a new ModelDynBucket representing the given fluid, but with the same
+     * other properties (flipGas, tint, coverIsMask).
      */
-    @Deprecated
-    public ModelDynBucket withFluid(String newFluid)
+    public ModelDynBucket withFluid(Fluid newFluid)
     {
-        ResourceLocation fluidName = new ResourceLocation(newFluid);
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
-
-        if (fluid == null)
-            fluid = this.fluid;
-
-        // create new model with correct liquid
-        return new ModelDynBucket(fluid, flipGas, tint, coverIsMask);
+        return new ModelDynBucket(newFluid, flipGas, tint, coverIsMask);
     }
 
     @Nullable
@@ -438,7 +417,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
 
                         if (!model.cache.containsKey(name))
                         {
-                            ModelDynBucket parent = model.parent.withFluid(name);
+                            ModelDynBucket parent = model.parent.withFluid(fluid);
                             IBakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), new SimpleModelTransform(model.transforms), model.getOverrides(), new ResourceLocation("forge:bucket_override"));
                             model.cache.put(name, bakedModel);
                             return bakedModel;
