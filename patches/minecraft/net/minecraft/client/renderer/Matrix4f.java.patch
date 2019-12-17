@@ -1,12 +1,30 @@
 --- a/net/minecraft/client/renderer/Matrix4f.java
 +++ b/net/minecraft/client/renderer/Matrix4f.java
-@@ -373,4 +373,88 @@
+@@ -373,4 +373,78 @@
        matrix4f.field_226586_l_ = p_226599_2_;
        return matrix4f;
     }
 +
 +   // Forge start
-+   public Matrix4f(float[] values) { set(values); }
++   public Matrix4f(float[] values) {
++      field_226575_a_ = values[0];
++      field_226576_b_ = values[1];
++      field_226577_c_ = values[2];
++      field_226578_d_ = values[3];
++      field_226579_e_ = values[4];
++      field_226580_f_ = values[5];
++      field_226581_g_ = values[6];
++      field_226582_h_ = values[7];
++      field_226583_i_ = values[8];
++      field_226584_j_ = values[9];
++      field_226585_k_ = values[10];
++      field_226586_l_ = values[11];
++      field_226587_m_ = values[12];
++      field_226588_n_ = values[13];
++      field_226589_o_ = values[14];
++      field_226590_p_ = values[15];
++   }
++
 +   public void set(Matrix4f mat) {
 +      this.field_226575_a_ = mat.field_226575_a_;
 +      this.field_226576_b_ = mat.field_226576_b_;
@@ -45,47 +63,19 @@
 +      field_226590_p_ += other.field_226590_p_;
 +   }
 +
-+   public void set(float[] others) {
-+      field_226575_a_ = others[0];
-+      field_226576_b_ = others[1];
-+      field_226577_c_ = others[2];
-+      field_226578_d_ = others[3];
-+      field_226579_e_ = others[4];
-+      field_226580_f_ = others[5];
-+      field_226581_g_ = others[6];
-+      field_226582_h_ = others[7];
-+      field_226583_i_ = others[8];
-+      field_226584_j_ = others[9];
-+      field_226585_k_ = others[10];
-+      field_226586_l_ = others[11];
-+      field_226587_m_ = others[12];
-+      field_226588_n_ = others[13];
-+      field_226589_o_ = others[14];
-+      field_226590_p_ = others[15];
-+   }
-+
-+   public void write(float[] dest) {
-+      dest[0] = field_226575_a_;
-+      dest[1] = field_226576_b_;
-+      dest[2] = field_226577_c_;
-+      dest[3] = field_226578_d_;
-+      dest[4] = field_226579_e_;
-+      dest[5] = field_226580_f_;
-+      dest[6] = field_226581_g_;
-+      dest[7] = field_226582_h_;
-+      dest[8] = field_226583_i_;
-+      dest[9] = field_226584_j_;
-+      dest[10] = field_226585_k_;
-+      dest[11] = field_226586_l_;
-+      dest[12] = field_226587_m_;
-+      dest[13] = field_226588_n_;
-+      dest[14] = field_226589_o_;
-+      dest[15] = field_226590_p_;
-+   }
-+
 +   public void multiplyBackward(Matrix4f other) {
 +      Matrix4f copy = other.func_226601_d_();
 +      copy.func_226595_a_(this);
 +      this.set(copy);
++   }
++
++   public void setTranslation(float x, float y, float z) {
++      this.field_226575_a_ = 1.0F;
++      this.field_226580_f_ = 1.0F;
++      this.field_226585_k_ = 1.0F;
++      this.field_226590_p_ = 1.0F;
++      this.field_226578_d_ = x;
++      this.field_226582_h_ = y;
++      this.field_226586_l_ = z;
 +   }
  }

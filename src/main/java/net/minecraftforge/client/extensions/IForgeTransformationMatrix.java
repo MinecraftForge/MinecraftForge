@@ -20,12 +20,8 @@
 package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
+import net.minecraft.client.renderer.*;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.model.TransformationHelper;
 
 /*
  * Replacement interface for ModelRotation to allow custom transformations of vanilla models.
@@ -66,32 +62,59 @@ public interface IForgeTransformationMatrix
     default TransformationMatrix inverse()
     {
         if (isIdentity()) return getTransformaion();
-        javax.vecmath.Matrix4f m = TransformationHelper.toVecmath(getTransformaion().func_227988_c_());
-        m.invert();
-        return new TransformationMatrix(TransformationHelper.toMojang(m));
+        Matrix4f m = getTransformaion().func_227988_c_().func_226601_d_();
+        m.func_226600_c_();
+        return new TransformationMatrix(m);
     }
 
     default void transformPosition(Vector4f position)
     {
-        TransformationHelper.transform(getTransformaion().func_227988_c_(), position);
+        position.func_229372_a_(getTransformaion().func_227988_c_());
     }
 
     default void transformNormal(Vector3f normal)
     {
-        javax.vecmath.Vector3f copy = TransformationHelper.toVecmath(normal);
-        transformNormal(copy);
-        normal.set(copy.x, copy.y, copy.z);
-    }
-
-    default void transformNormal(javax.vecmath.Vector3f normal)
-    {
-        getTransformaion().getNormalMatrix().transform(normal);
-        normal.normalize();
+        normal.func_229188_a_(getTransformaion().getNormalMatrix());
+        normal.func_229194_d_();
     }
 
     default Direction rotateTransform(Direction facing)
     {
         return Direction.func_229385_a_(getTransformaion().func_227988_c_(), facing);
+    }
+
+    /**
+     * convert transformation from assuming center-block system to corner-block system
+     */
+    default TransformationMatrix blockCenterToCorner()
+    {
+        TransformationMatrix transform = getTransformaion();
+        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
+
+        Matrix4f ret = transform.func_227988_c_();
+        Matrix4f tmp = Matrix4f.func_226599_b_(.5f, .5f, .5f);
+        ret.multiplyBackward(tmp);
+        tmp.func_226591_a_();
+        tmp.setTranslation(-.5f, -.5f, -.5f);
+        ret.func_226595_a_(tmp);
+        return new TransformationMatrix(ret);
+    }
+
+    /**
+     * convert transformation from assuming corner-block system to center-block system
+     */
+    default TransformationMatrix blockCornerToCenter()
+    {
+        TransformationMatrix transform = getTransformaion();
+        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
+
+        Matrix4f ret = transform.func_227988_c_();
+        Matrix4f tmp = Matrix4f.func_226599_b_(-.5f, -.5f, -.5f);
+        ret.multiplyBackward(tmp);
+        tmp.func_226591_a_();
+        tmp.setTranslation(.5f, .5f, .5f);
+        ret.func_226595_a_(tmp);
+        return new TransformationMatrix(ret);
     }
 
 }

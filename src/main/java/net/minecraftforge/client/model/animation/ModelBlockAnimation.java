@@ -32,12 +32,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 import javax.annotation.Nullable;
-import javax.vecmath.AxisAngle4f;
 
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Quaternion;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.IModelTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -334,7 +330,8 @@ public class ModelBlockAnimation
                 Vector3f translation = new Vector3f(0, 0, 0);
                 Vector3f scale = new Vector3f(1, 1, 1);
                 Vector3f origin = new Vector3f(0, 0, 0);
-                AxisAngle4f rotation = new AxisAngle4f(0, 0, 0, 0);
+                Vector3f rotation_axis = new Vector3f(0, 0, 0);
+                float rotation_angle = 0;
                 for(MBVariableClip var : variables)
                 {
                     int length = loop ? var.samples.length : (var.samples.length - 1);
@@ -375,16 +372,16 @@ public class ModelBlockAnimation
                             translation.setZ(value);
                             break;
                         case XROT:
-                            rotation.x = value;
+                            rotation_axis.setX(value);
                             break;
                         case YROT:
-                            rotation.y = value;
+                            rotation_axis.setY(value);
                             break;
                         case ZROT:
-                            rotation.z = value;
+                            rotation_axis.setZ(value);
                             break;
                         case ANGLE:
-                            rotation.angle = (float)Math.toRadians(value);
+                            rotation_angle = (float)Math.toRadians(value);
                             break;
                         case SCALE:
                             scale.set(value, value, value);
@@ -409,12 +406,12 @@ public class ModelBlockAnimation
                             break;
                     }
                 }
-                Quaternion rot = new Quaternion(new Vector3f(rotation.x, rotation.y, rotation.z), rotation.angle, false);
+                Quaternion rot = new Quaternion(rotation_axis, rotation_angle, false);
                 TransformationMatrix base = new TransformationMatrix(translation, rot, scale, null);
                 Vector3f negOrigin = origin.func_229195_e_();
                 negOrigin.func_229192_b_(-1,-1,-1);
                 base = new TransformationMatrix(origin, null, null, null).compose(base).compose(new TransformationMatrix(negOrigin, null, null, null));
-                return TransformationHelper.blockCenterToCorner(base);
+                return base.blockCenterToCorner();
             }
         }
     }

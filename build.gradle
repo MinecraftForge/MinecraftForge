@@ -417,7 +417,6 @@ project(':forge') {
         installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.1'
-        installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'

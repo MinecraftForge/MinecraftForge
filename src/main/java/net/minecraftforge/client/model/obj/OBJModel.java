@@ -25,6 +25,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -33,6 +35,7 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
@@ -42,9 +45,6 @@ import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
@@ -52,17 +52,17 @@ import java.util.stream.Collectors;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
-    private static Vector2f[] DEFAULT_COORDS = {
-            new Vector2f(0, 0),
-            new Vector2f(0, 1),
-            new Vector2f(1, 1),
-            new Vector2f(1, 0),
+    private static Vec2f[] DEFAULT_COORDS = {
+            new Vec2f(0, 0),
+            new Vec2f(0, 1),
+            new Vec2f(1, 1),
+            new Vec2f(1, 0),
     };
 
     private final Map<String, ModelGroup> parts = Maps.newHashMap();
 
     private final List<Vector3f> positions = Lists.newArrayList();
-    private final List<Vector2f> texCoords = Lists.newArrayList();
+    private final List<Vec2f> texCoords = Lists.newArrayList();
     private final List<Vector3f> normals = Lists.newArrayList();
     private final List<Vector4f> colors = Lists.newArrayList();
 
@@ -307,12 +307,12 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
-    public static Vector2f parseVector2(String[] line)
+    public static Vec2f parseVector2(String[] line)
     {
         switch (line.length) {
-            case 1: return new Vector2f(0,0);
-            case 2: return new Vector2f(Float.parseFloat(line[1]), 0);
-            default: return new Vector2f(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
+            case 1: return new Vec2f(0,0);
+            case 2: return new Vec2f(Float.parseFloat(line[1]), 0);
+            default: return new Vec2f(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
         }
     }
 
@@ -401,12 +401,12 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             Vector3f a = positions.get(indices[0][0]);
             Vector3f ab = positions.get(indices[1][0]);
             Vector3f ac = positions.get(indices[2][0]);
-            Vector3f abs = new Vector3f(ab);
+            Vector3f abs = ab.func_229195_e_();
             abs.sub(a);
-            Vector3f acs = new Vector3f(ac);
+            Vector3f acs = ac.func_229195_e_();
             acs.sub(a);
-            abs.cross(abs,acs);
-            abs.normalize();
+            abs.cross(acs);
+            abs.func_229194_d_();
             faceNormal = abs;
         }
 
@@ -419,8 +419,8 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         builder.setTexture(texture);
         builder.setApplyDiffuseLighting(!isFullbright);
 
-        int fakeLight = (int)((ambientColor.x + ambientColor.y + ambientColor.z) * 15 / 3.0f);
-        Vector2f uv2 = new Vector2f(((float) fakeLight * 0x20) / 0xFFFF, ((float) fakeLight * 0x20) / 0xFFFF);
+        int fakeLight = (int)((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
+        Vec2f uv2 = new Vec2f(((float) fakeLight * 0x20) / 0xFFFF, ((float) fakeLight * 0x20) / 0xFFFF);
 
         boolean hasTransform = !transform.isIdentity();
         TransformationMatrix transformation = hasTransform ? transform : null;
@@ -429,15 +429,15 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         {
             int[] index = indices[Math.min(i,indices.length-1)];
             Vector3f pos0 = positions.get(index[0]);
-            Vector4f position = new Vector4f(pos0.x, pos0.y, pos0.z, 1);
-            Vector2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
+            Vector4f position = new Vector4f(pos0.getX(), pos0.getY(), pos0.getZ(), 1);
+            Vec2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
             Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
             Vector3f normal = norm0;
             Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : new Vector4f(1, 1, 1, 1);
             if (hasTransform)
             {
-                normal = new Vector3f(norm0);
-                transformation.transformPosition(TransformationHelper.toMojang(position));
+                normal = norm0.func_229195_e_();
+                transformation.transformPosition(position);
                 transformation.transformNormal(normal);
             };
             Vector4f tintedColor = new Vector4f(
@@ -450,7 +450,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             norm[i] = normal;
         }
 
-        builder.setQuadOrientation(Direction.getFacingFromVector(norm[0].x, norm[0].y,norm[0].z));
+        builder.setQuadOrientation(Direction.getFacingFromVector(norm[0].getX(), norm[0].getY(),norm[0].getZ()));
 
         Direction cull = null;
         if (detectCullableFaces)
@@ -508,7 +508,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Pair.of(builder.build(), cull);
     }
 
-    private void putVertexData(IVertexConsumer consumer, VertexFormat format, Vector4f position0, Vector2f texCoord0, Vector3f normal0, Vector4f color0, Vector2f uv2, TextureAtlasSprite texture)
+    private void putVertexData(IVertexConsumer consumer, VertexFormat format, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
     {
         ImmutableList<VertexFormatElement> elements = format.func_227894_c_();
         for(int j=0;j<elements.size();j++)
@@ -527,8 +527,8 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     {
                         case 0:
                             consumer.put(j,
-                                    texture.getInterpolatedU(texCoord0.getX() * 16),
-                                    texture.getInterpolatedV((flipV ? (1 - texCoord0.getY()) : texCoord0.getY()) * 16)
+                                    texture.getInterpolatedU(texCoord0.x * 16),
+                                    texture.getInterpolatedV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
                             );
                             break;
                         case 1:
@@ -675,7 +675,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
         public boolean isFullbright()
         {
-            return mat != null && mat.ambientColor.epsilonEquals(new Vector4f(1,1,1,1), 1/256f);
+            return mat != null && TransformationHelper.epsilonEquals(mat.ambientColor, new Vector4f(1,1,1,1), 1/256f);
         }
     }
 

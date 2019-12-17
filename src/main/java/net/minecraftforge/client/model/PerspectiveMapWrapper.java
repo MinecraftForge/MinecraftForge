@@ -77,7 +77,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         {
             if (transforms.hasCustomTransform(type))
             {
-                map.put(type, TransformationHelper.blockCenterToCorner(TransformationHelper.toTransformation(transforms.getTransform(type))));
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)).blockCenterToCorner());
             }
         }
         return ImmutableMap.copyOf(map);
@@ -96,7 +96,7 @@ public class PerspectiveMapWrapper implements IBakedModel
             }
             else if (transforms.hasCustomTransform(type))
             {
-                map.put(type, TransformationHelper.blockCenterToCorner(TransformationHelper.toTransformation(transforms.getTransform(type))));
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)).blockCenterToCorner());
             }
         }
         return ImmutableMap.copyOf(map);
@@ -109,7 +109,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         {
             // Push to the matrix to make it not empty and indicate that we want to transform things
             mat.func_227860_a_();
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(TransformationHelper.blockCornerToCenter(tr).func_227988_c_());
+            mat.func_227866_c_().func_227870_a_().func_226595_a_(tr.blockCornerToCenter().func_227988_c_());
         }
         return model;
     }
@@ -121,7 +121,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         {
             // Push to the matrix to make it not empty and indicate that we want to transform things
             mat.func_227860_a_();
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(TransformationHelper.blockCornerToCenter(tr).func_227988_c_());
+            mat.func_227866_c_().func_227870_a_().func_226595_a_(tr.blockCornerToCenter().func_227988_c_());
         }
         return model;
     }

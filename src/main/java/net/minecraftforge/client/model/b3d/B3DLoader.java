@@ -36,11 +36,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
@@ -154,12 +154,6 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             return new ModelWrapper(modelLocation, model, ImmutableSet.of(), true, true, 1);
         }
         return new ModelWrapper(modelLocation, model, ImmutableSet.of(model.getRoot().getName()), true, true, 1);
-    }
-
-    @Deprecated // TODO: Does a lot of unnecessary work converting things, should use the TransformationMatrix constructor directly with mojang vector classes instead.
-    public static TransformationMatrix fromVecmath(javax.vecmath.Vector3f pos, javax.vecmath.Quat4f rot, javax.vecmath.Vector3f scale, javax.vecmath.Quat4f rot2)
-    {
-        return new TransformationMatrix(TransformationHelper.toMojang(pos), TransformationHelper.toMojang(rot), TransformationHelper.toMojang(scale), TransformationHelper.toMojang(rot2));
     }
 
     public static final class B3DState implements IModelTransform
@@ -310,10 +304,10 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     TransformationMatrix pm = cache.getUnchecked(Triple.of(animation, node.getParent(), frame));
                     ret = ret.compose(pm);
                     // joint offset in the parent coords
-                    ret = ret.compose(fromVecmath(parent.getPos(), parent.getRot(), parent.getScale(), null));
+                    ret = ret.compose(new TransformationMatrix(parent.getPos(), parent.getRot(), parent.getScale(), null));
                 }
                 // current node local pose
-                ret = ret.compose(fromVecmath(key.getPos(), key.getRot(), key.getScale(), null));
+                ret = ret.compose(new TransformationMatrix(key.getPos(), key.getRot(), key.getScale(), null));
                 // this part moved inside the model
                 // inverse bind of the current node
                 /*Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
@@ -339,9 +333,9 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     TransformationMatrix pm = cache.getUnchecked(Triple.of(animation, node.getParent(), frame));
                     ret = ret.compose(pm);
                     // joint offset in the parent coords
-                    ret = ret.compose(fromVecmath(parent.getPos(), parent.getRot(), parent.getScale(), null));
+                    ret = ret.compose(new TransformationMatrix(parent.getPos(), parent.getRot(), parent.getScale(), null));
                 }
-                ret = ret.compose(fromVecmath(node.getPos(), node.getRot(), node.getScale(), null));
+                ret = ret.compose(new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null));
                 // TODO cache
                 TransformationMatrix invBind = new NodeJoint(node).getInvBindPose();
                 ret = ret.compose(invBind);
@@ -362,9 +356,9 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         @Override
         public TransformationMatrix getInvBindPose()
         {
-            Matrix4f m = TransformationHelper.toVecmath(fromVecmath(node.getPos(), node.getRot(), node.getScale(), null).func_227988_c_());
-            m.invert();
-            TransformationMatrix pose = new TransformationMatrix(TransformationHelper.toMojang(m));
+            Matrix4f m = new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null).func_227988_c_();
+            m.func_226600_c_();
+            TransformationMatrix pose = new TransformationMatrix(m);
 
             if(node.getParent() != null)
             {
@@ -714,14 +708,14 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     @Override
                     public Matrix4f apply(Node<?> node)
                     {
-                        return TransformationHelper.toVecmath(global.compose(localCache.getUnchecked(node)).func_227988_c_());
+                        return global.compose(localCache.getUnchecked(node)).func_227988_c_();
                     }
                 });
                 for(Face f : faces)
                 {
                     UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
                     quadBuilder.setContractUVs(true);
-                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     List<Texture> textures = null;
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
@@ -747,12 +741,12 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 switch(vertexFormatElements.get(e).getUsage())
                 {
                 case POSITION:
-                    builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
+                    builder.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
                     {
-                        builder.put(e, v.getColor().x, v.getColor().y, v.getColor().z, v.getColor().w);
+                        builder.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
                     }
                     else
                     {
@@ -764,8 +758,8 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     if(vertexFormatElements.get(e).getIndex() < v.getTexCoords().length)
                     {
                         builder.put(e,
-                            sprite.getInterpolatedU(v.getTexCoords()[0].x * 16),
-                            sprite.getInterpolatedV(v.getTexCoords()[0].y * 16),
+                            sprite.getInterpolatedU(v.getTexCoords()[0].getX() * 16),
+                            sprite.getInterpolatedV(v.getTexCoords()[0].getY() * 16),
                             0,
                             1
                         );
@@ -778,11 +772,11 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 case NORMAL:
                     if(v.getNormal() != null)
                     {
-                        builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 0);
+                        builder.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
                     }
                     else
                     {
-                        builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 0);
+                        builder.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
                     }
                     break;
                 default:
