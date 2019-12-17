@@ -198,6 +198,7 @@ public class ModList
                     map(ModInfo::getOwningFile).
                     filter(Objects::nonNull).
                     map(ModFileInfo::getFile).
+                    distinct().
                     map(ModFile::getScanResult).
                     collect(Collectors.toList());
         }
