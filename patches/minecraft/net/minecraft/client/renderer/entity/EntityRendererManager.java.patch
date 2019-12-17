@@ -1,17 +1,26 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -183,9 +183,8 @@
+@@ -183,15 +183,17 @@
        this.field_178637_m = new PlayerRenderer(this);
        this.field_178636_l.put("default", this.field_178637_m);
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
--
++   }
+ 
++   //FORGE: Validate the existence of a renderer for each entity type after modded entity renderers have been added
++   public void validateRendererExistence() {
        for(EntityType<?> entitytype : Registry.field_212629_r) {
--         if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {
-+         if (entitytype.getRegistryName().func_110624_b().equals("minecraft") && entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) { //FORGE: Skip check for modded entities as they have not had the chance to add their renderers
+          if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {
              throw new IllegalStateException("No renderer registered for " + Registry.field_212629_r.func_177774_c(entitytype));
           }
        }
-@@ -445,4 +444,8 @@
+-
+    }
+-
++   
+    public <T extends Entity> EntityRenderer<? super T> func_78713_a(T p_78713_1_) {
+       if (p_78713_1_ instanceof AbstractClientPlayerEntity) {
+          String s = ((AbstractClientPlayerEntity)p_78713_1_).func_175154_l();
+@@ -445,4 +447,8 @@
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
     }
