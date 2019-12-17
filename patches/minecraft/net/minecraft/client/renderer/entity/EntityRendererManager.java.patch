@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
+@@ -183,7 +183,7 @@
+       this.field_178637_m = new PlayerRenderer(this);
+       this.field_178636_l.put("default", this.field_178637_m);
+       this.field_178636_l.put("slim", new PlayerRenderer(this, true));
+-
++      if(false) //FORGE: Disallow game from crashing, modded renderers haven't been added yet
+       for(EntityType<?> entitytype : Registry.field_212629_r) {
+          if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {
+             throw new IllegalStateException("No renderer registered for " + Registry.field_212629_r.func_177774_c(entitytype));
 @@ -445,4 +445,8 @@
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
