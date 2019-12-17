@@ -427,6 +427,7 @@ public class ForgeHooksClient
     }
 
     private static final net.minecraft.client.renderer.Matrix4f flipX;
+    private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
     static {
 
         flipX = new net.minecraft.client.renderer.Matrix4f(new float[]{
@@ -435,6 +436,7 @@ public class ForgeHooksClient
                 0, 0, 1, 0,
                 0, 0, 0, 1
         });
+        flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
     }
 
     public static IBakedModel handleCameraTransforms(MatrixStack matrixStack, IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
@@ -445,14 +447,18 @@ public class ForgeHooksClient
         // If the stack is not empty, the code has added a matrix for us to use.
         if (!stack.func_227867_d_())
         {
-            // TODO normal matrix?
+            // Apply the transformation to the real matrix stack, flipping for left hand
             net.minecraft.client.renderer.Matrix4f tMat = stack.func_227866_c_().func_227870_a_();
+            net.minecraft.client.renderer.Matrix3f nMat = stack.func_227866_c_().func_227872_b_();
             if (leftHandHackery)
             {
                 tMat.multiplyBackward(flipX);
                 tMat.func_226595_a_(flipX);
+                nMat.multiplyBackward(flipXNormal);
+                nMat.func_226118_b_(flipXNormal);
             }
             matrixStack.func_227866_c_().func_227870_a_().func_226595_a_(tMat);
+            matrixStack.func_227866_c_().func_227872_b_().func_226118_b_(nMat);
         }
         return model;
     }
