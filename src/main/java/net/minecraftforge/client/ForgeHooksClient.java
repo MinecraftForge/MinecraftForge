@@ -722,6 +722,7 @@ public class ForgeHooksClient
     /**
      * internal, relies on fixed format of FaceBakery
      */
+    // TODO Do we need this?
     public static void fillNormal(int[] faceData, Direction facing)
     {
         Vector3f v1 = getVertexPos(faceData, 3);
@@ -785,42 +786,6 @@ public class ForgeHooksClient
             slotMainHand = slot;
         }
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
-    }
-
-    public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, Direction originalSide, TransformationMatrix rotation, ResourceLocation p_228824_9_)
-    {
-        TransformationMatrix global = new TransformationMatrix(rotation.func_227988_c_());
-        Matrix4f uv = TransformationHelper.getUVLockTransform(global, originalSide).func_227988_c_();
-        float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
-        float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
-        Vector4f vec = new Vector4f(u0 / 16, v0 / 16, 0, 1);
-        vec.func_229372_a_(uv);
-        float uMin = 16 * vec.getX(); // / vec.w;
-        float vMin = 16 * vec.getY(); // / vec.w;
-        float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
-        float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
-        vec.set(u1 / 16,v1 / 16,0,1);
-        vec.func_229372_a_(uv);
-        float uMax = 16 * vec.getX(); // / vec.w;
-        float vMax = 16 * vec.getY(); // / vec.w;
-        if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
-        {
-            float t = uMin;
-            uMin = uMax;
-            uMax = t;
-        }
-        if (vMin > vMax && v0 < v1 || vMin < vMax && v0 > v1)
-        {
-            float t = vMin;
-            vMin = vMax;
-            vMax = t;
-        }
-        float a = (float)Math.toRadians(blockFaceUV.rotation);
-        Vector3f rv = new Vector3f(MathHelper.cos(a), MathHelper.sin(a), 0);
-        Matrix3f rot = new Matrix3f(uv);
-        rv.func_229188_a_(rot);
-        int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.getY(), rv.getX())) / 90) * 90, 360);
-        return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 
     public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)

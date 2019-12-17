@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/renderer/model/FaceBakery.java
 +++ b/net/minecraft/client/renderer/model/FaceBakery.java
-@@ -24,7 +24,7 @@
-    public BakedQuad func_228824_a_(Vector3f p_228824_1_, Vector3f p_228824_2_, BlockPartFace p_228824_3_, TextureAtlasSprite p_228824_4_, Direction p_228824_5_, IModelTransform p_228824_6_, @Nullable BlockPartRotation p_228824_7_, boolean p_228824_8_, ResourceLocation p_228824_9_) {
-       BlockFaceUV blockfaceuv = p_228824_3_.field_178243_e;
-       if (p_228824_6_.func_188049_c()) {
--         blockfaceuv = func_228821_a_(p_228824_3_.field_178243_e, p_228824_5_, p_228824_6_.func_225615_b_(), p_228824_9_);
-+         blockfaceuv = net.minecraftforge.client.ForgeHooksClient.applyUVLock(p_228824_3_.field_178243_e, p_228824_5_, p_228824_6_.func_225615_b_(), p_228824_9_);
-       }
- 
-       float[] afloat = new float[blockfaceuv.field_178351_a.length];
 @@ -43,7 +43,8 @@
           this.func_178408_a(aint, direction);
        }
