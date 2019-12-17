@@ -22,7 +22,6 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
@@ -63,11 +62,11 @@ public class FluidAttributes
 
     private String translationKey;
 
-    private final Material stillTexture;
-    private final Material flowingTexture;
+    private final ResourceLocation stillTexture;
+    private final ResourceLocation flowingTexture;
 
     @Nullable
-    private final Material overlayTexture;
+    private final ResourceLocation overlayTexture;
 
     private final SoundEvent fillSound;
     private final SoundEvent emptySound;
@@ -275,18 +274,18 @@ public class FluidAttributes
         return color;
     }
 
-    public Material getStillMaterial()
+    public ResourceLocation getStillTexture()
     {
         return stillTexture;
     }
 
-    public Material getFlowingMaterial()
+    public ResourceLocation getFlowingTexture()
     {
         return flowingTexture;
     }
 
     @Nullable
-    public Material getOverlayMaterial()
+    public ResourceLocation getOverlayTexture()
     {
         return overlayTexture;
     }
@@ -309,8 +308,8 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public Material getStillMaterial(FluidStack stack) { return getStillMaterial(); }
-    public Material getFlowingMaterial(FluidStack stack) { return getFlowingMaterial(); }
+    public ResourceLocation getStillTexture(FluidStack stack) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(FluidStack stack) { return getFlowingTexture(); }
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
@@ -322,16 +321,16 @@ public class FluidAttributes
     public boolean isGaseous(ILightReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(ILightReader world, BlockPos pos){ return getRarity(); }
     public int getColor(ILightReader world, BlockPos pos){ return getColor(); }
-    public Material getStillMaterial(ILightReader world, BlockPos pos) { return getStillMaterial(); }
-    public Material getFlowingMaterial(ILightReader world, BlockPos pos) { return getFlowingMaterial(); }
+    public ResourceLocation getStillTexture(ILightReader world, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(ILightReader world, BlockPos pos) { return getFlowingTexture(); }
     public SoundEvent getFillSound(ILightReader world, BlockPos pos) { return getFillSound(); }
     public SoundEvent getEmptySound(ILightReader world, BlockPos pos) { return getEmptySound(); }
 
-    public static Builder builder(Material stillTexture, Material flowingTexture) {
+    public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
     }
 
-    public Stream<Material> getTextures()
+    public Stream<ResourceLocation> getTextures()
     {
         if (overlayTexture != null)
             return Stream.of(stillTexture, flowingTexture, overlayTexture);
@@ -340,9 +339,9 @@ public class FluidAttributes
 
     public static class Builder
     {
-        private final Material stillTexture;
-        private final Material flowingTexture;
-        private Material overlayTexture;
+        private final ResourceLocation stillTexture;
+        private final ResourceLocation flowingTexture;
+        private ResourceLocation overlayTexture;
         private int color = 0xFFFFFFFF;
         private String translationKey;
         private SoundEvent fillSound;
@@ -355,7 +354,7 @@ public class FluidAttributes
         private Rarity rarity = Rarity.COMMON;
         private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
-        protected Builder(Material stillTexture, Material flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
+        protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
             this.factory = factory;
             this.stillTexture = stillTexture;
             this.flowingTexture = flowingTexture;
@@ -373,7 +372,7 @@ public class FluidAttributes
             return this;
         }
 
-        public final Builder overlay(Material texture)
+        public final Builder overlay(ResourceLocation texture)
         {
             overlayTexture = texture;
             return this;
@@ -447,7 +446,7 @@ public class FluidAttributes
             return BiomeColors.func_228363_c_(world, pos) | 0xFF000000;
         }
 
-        public static Builder builder(Material stillTexture, Material flowingTexture) {
+        public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
             return new Builder(stillTexture, flowingTexture, Water::new);
         }
     }

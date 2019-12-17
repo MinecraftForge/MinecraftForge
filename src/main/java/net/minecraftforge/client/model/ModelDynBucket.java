@@ -46,6 +46,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.IResourceType;
@@ -188,8 +189,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
 
         TransformationMatrix transform = state.func_225615_b_();
 
-        Material fluidLocation = fluid != Fluids.EMPTY ? fluid.getAttributes().getStillMaterial() : null;
-        TextureAtlasSprite fluidSprite = fluidLocation != null ? spriteGetter.apply(fluidLocation) : null;
+        TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(fluid.getAttributes().getStillTexture())) : null;
 
         if (particleSprite == null) particleSprite = fluidSprite;
 

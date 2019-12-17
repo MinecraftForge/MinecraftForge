@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
@@ -79,6 +80,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -108,6 +110,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -596,20 +599,33 @@ public class ForgeHooksClient
         }
     }*/
 
+    @SuppressWarnings("deprecation")
     public static TextureAtlasSprite[] getFluidSprites(ILightReader world, BlockPos pos, IFluidState fluidStateIn)
     {
         return new TextureAtlasSprite[] {
-                fluidStateIn.getFluid().getAttributes().getStillMaterial(world, pos).func_229314_c_(),
-                fluidStateIn.getFluid().getAttributes().getFlowingMaterial(world, pos).func_229314_c_(),
+                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getStillTexture(world, pos)),
+                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getFlowingTexture(world, pos)),
         };
     }
 
     public static void gatherFluidTextures(Set<Material> textures)
     {
         ForgeRegistries.FLUIDS.getValues().stream()
-                .flatMap(f -> f.getAttributes().getTextures())
-                .filter(Objects::nonNull)
+                .flatMap(ForgeHooksClient::getFluidMaterials)
                 .forEach(textures::add);
+    }
+
+    public static Stream<Material> getFluidMaterials(Fluid fluid)
+    {
+        return fluid.getAttributes().getTextures()
+                .filter(Objects::nonNull)
+                .map(ForgeHooksClient::getBlockMaterial);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Material getBlockMaterial(ResourceLocation loc)
+    {
+        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
     private static class LightGatheringTransformer extends QuadGatheringTransformer {

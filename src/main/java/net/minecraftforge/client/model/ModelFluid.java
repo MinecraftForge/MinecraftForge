@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -43,6 +44,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
@@ -74,10 +76,7 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
     @Override
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
     {
-        FluidAttributes attrs = fluid.getAttributes();
-        return attrs.getOverlayMaterial() != null
-                ? ImmutableSet.of(attrs.getStillMaterial(), attrs.getFlowingMaterial(), attrs.getOverlayMaterial())
-                : ImmutableSet.of(attrs.getStillMaterial(), attrs.getFlowingMaterial());
+        return ForgeHooksClient.getFluidMaterials(fluid).collect(Collectors.toList());
     }
 
     @Override
@@ -89,9 +88,9 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
                 PerspectiveMapWrapper.getTransforms(sprite),
                 modelLocation,
                 attrs.getColor(),
-                spriteGetter.apply(attrs.getStillMaterial()),
-                spriteGetter.apply(attrs.getFlowingMaterial()),
-                Optional.ofNullable(attrs.getOverlayMaterial()).map(spriteGetter),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getStillTexture())),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getFlowingTexture())),
+                Optional.ofNullable(attrs.getOverlayTexture()).map(ForgeHooksClient::getBlockMaterial).map(spriteGetter),
                 attrs.isLighterThanAir(),
                 null
         );

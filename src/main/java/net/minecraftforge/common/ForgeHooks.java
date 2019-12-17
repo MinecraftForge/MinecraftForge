@@ -846,15 +846,15 @@ public class ForgeHooks
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_still")),
-                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_flow")))
-                    .overlay(new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/water_overlay")))
+                    new ResourceLocation("block/water_still"),
+                    new ResourceLocation("block/water_flow"))
+                    .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
                     .color(0xFF3F76E4).build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/lava_still")),
-                    new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/lava_flow")))
+                    new ResourceLocation("block/lava_still"),
+                    new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
