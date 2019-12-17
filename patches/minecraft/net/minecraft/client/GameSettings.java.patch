@@ -13,11 +13,11 @@
                 for(KeyBinding keybinding : this.field_74324_K) {
                    if (s.equals("key_" + keybinding.func_151464_g())) {
 -                     keybinding.func_197979_b(InputMappings.func_197955_a(s1));
-+                     if (s.indexOf(':') != -1) {
-+                        String[] pts = s.split(":");
++                     if (s1.indexOf(':') != -1) {
++                        String[] pts = s1.split(":");
 +                        keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputMappings.func_197955_a(pts[0]));
 +                     } else
-+                        keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputMappings.func_197955_a(s));
++                        keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputMappings.func_197955_a(s1));
                    }
                 }
  
