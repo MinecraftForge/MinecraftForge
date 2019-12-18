@@ -162,20 +162,40 @@
        }
  
        this.field_71424_I.func_219897_b();
-@@ -1121,10 +1138,10 @@
+@@ -1121,11 +1138,21 @@
           if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.func_216346_c() == RayTraceResult.Type.BLOCK) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
              BlockPos blockpos = blockraytraceresult.func_216350_a();
 -            if (!this.field_71441_e.func_180495_p(blockpos).func_196958_f()) {
 +            if (!this.field_71441_e.func_175623_d(blockpos)) {
++               net.minecraftforge.client.event.InputEvent.ClickInputEvent inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(0, this.field_71474_y.field_74312_F, Hand.MAIN_HAND);
++               if (inputEvent.isCanceled()) {
++                  if (inputEvent.shouldSwingHand()) {
++                     this.field_71452_i.addBlockHitEffects(blockpos, blockraytraceresult);
++                     this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
++                  }
++                  return;
++               }
                 Direction direction = blockraytraceresult.func_216354_b();
                 if (this.field_71442_b.func_180512_c(blockpos, direction)) {
 -                  this.field_71452_i.func_180532_a(blockpos, direction);
++                  if (inputEvent.shouldSwingHand()) {
 +                  this.field_71452_i.addBlockHitEffects(blockpos, blockraytraceresult);
                    this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
++                  }
                 }
              }
-@@ -1151,7 +1168,7 @@
+ 
+@@ -1144,6 +1171,8 @@
+             }
+ 
+          } else if (!this.field_71439_g.func_184838_M()) {
++            net.minecraftforge.client.event.InputEvent.ClickInputEvent inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(0, this.field_71474_y.field_74312_F, Hand.MAIN_HAND);
++            if (!inputEvent.isCanceled())
+             switch(this.field_71476_x.func_216346_c()) {
+             case ENTITY:
+                this.field_71442_b.func_78764_a(this.field_71439_g, ((EntityRayTraceResult)this.field_71476_x).func_216348_a());
+@@ -1151,7 +1180,7 @@
              case BLOCK:
                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
                 BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -184,15 +204,46 @@
                    this.field_71442_b.func_180511_b(blockpos, blockraytraceresult.func_216354_b());
                    break;
                 }
-@@ -1161,6 +1178,7 @@
+@@ -1161,8 +1190,10 @@
                 }
  
                 this.field_71439_g.func_184821_cY();
 +               net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.field_71439_g);
              }
  
++            if (inputEvent.shouldSwingHand())
              this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
-@@ -1217,6 +1235,9 @@
+          }
+       }
+@@ -1177,6 +1208,11 @@
+             }
+ 
+             for(Hand hand : Hand.values()) {
++               net.minecraftforge.client.event.InputEvent.ClickInputEvent inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(1, this.field_71474_y.field_74313_G, hand);
++               if (inputEvent.isCanceled()) {
++                  if (inputEvent.shouldSwingHand()) this.field_71439_g.func_184609_a(hand);
++                  return;
++               }
+                ItemStack itemstack = this.field_71439_g.func_184586_b(hand);
+                if (this.field_71476_x != null) {
+                   switch(this.field_71476_x.func_216346_c()) {
+@@ -1190,6 +1226,7 @@
+ 
+                      if (actionresulttype.func_226246_a_()) {
+                         if (actionresulttype.func_226247_b_()) {
++                           if (inputEvent.shouldSwingHand())
+                            this.field_71439_g.func_184609_a(hand);
+                         }
+ 
+@@ -1202,6 +1239,7 @@
+                      ActionResultType actionresulttype1 = this.field_71442_b.func_217292_a(this.field_71439_g, this.field_71441_e, hand, blockraytraceresult);
+                      if (actionresulttype1.func_226246_a_()) {
+                         if (actionresulttype1.func_226247_b_()) {
++                           if (inputEvent.shouldSwingHand())
+                            this.field_71439_g.func_184609_a(hand);
+                            if (!itemstack.func_190926_b() && (itemstack.func_190916_E() != i || this.field_71442_b.func_78758_h())) {
+                               this.field_71460_t.field_78516_c.func_187460_a(hand);
+@@ -1217,6 +1255,9 @@
                    }
                 }
  
@@ -202,7 +253,7 @@
                 if (!itemstack.func_190926_b()) {
                    ActionResultType actionresulttype2 = this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, hand);
                    if (actionresulttype2.func_226246_a_()) {
-@@ -1243,6 +1264,8 @@
+@@ -1243,6 +1284,8 @@
           --this.field_71467_ac;
        }
  
@@ -211,7 +262,7 @@
        this.field_71424_I.func_76320_a("gui");
        if (!this.field_71445_n) {
           this.field_71456_v.func_73831_a();
-@@ -1360,6 +1383,8 @@
+@@ -1360,6 +1403,8 @@
        this.field_71424_I.func_219895_b("keyboard");
        this.field_195559_v.func_204870_b();
        this.field_71424_I.func_76319_b();
@@ -220,7 +271,7 @@
     }
  
     private void func_184117_aA() {
-@@ -1514,6 +1539,12 @@
+@@ -1514,6 +1559,12 @@
        this.func_147108_a(worldloadprogressscreen);
  
        while(!this.field_71437_Z.func_71200_ad()) {
@@ -233,7 +284,7 @@
           worldloadprogressscreen.tick();
           this.func_195542_b(false);
  
-@@ -1534,11 +1565,17 @@
+@@ -1534,11 +1585,17 @@
        networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
        }));
        networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -252,7 +303,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1570,10 +1607,12 @@
+@@ -1570,10 +1627,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -265,7 +316,7 @@
           if (integratedserver != null) {
              while(!integratedserver.func_213201_w()) {
                 this.func_195542_b(false);
-@@ -1605,6 +1644,7 @@
+@@ -1605,6 +1664,7 @@
        this.field_71438_f.func_72732_a(p_213257_1_);
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
@@ -273,7 +324,7 @@
     }
  
     public final boolean func_71355_q() {
-@@ -1630,112 +1670,8 @@
+@@ -1630,112 +1690,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -383,12 +434,13 @@
 -            }
 -
 -         }
++         if (!net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.field_71474_y.field_74322_I, Hand.MAIN_HAND).isCanceled())
 +         net.minecraftforge.common.ForgeHooks.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e);
 +         // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
        }
     }
  
-@@ -1817,6 +1753,7 @@
+@@ -1817,6 +1774,7 @@
        return field_71432_P;
     }
  
@@ -396,7 +448,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -1944,6 +1881,8 @@
+@@ -1944,6 +1902,8 @@
     }
  
     public MusicTicker.MusicType func_147109_W() {
@@ -405,7 +457,7 @@
        if (this.field_71462_r instanceof WinGameScreen) {
           return MusicTicker.MusicType.CREDITS;
        } else if (this.field_71439_g == null) {
-@@ -2120,7 +2059,7 @@
+@@ -2120,7 +2080,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -414,7 +466,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2138,4 +2077,12 @@
+@@ -2138,4 +2098,12 @@
     public void func_228020_b_(int p_228020_1_) {
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
