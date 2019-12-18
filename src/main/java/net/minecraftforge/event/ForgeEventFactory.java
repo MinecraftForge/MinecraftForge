@@ -35,6 +35,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
@@ -709,5 +710,15 @@ public class ForgeEventFactory
         SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
+    }
+
+    @Nullable
+    public static Pose getForcedPlayerPose(PlayerEntity player)
+    {
+        PlayerEvent.PoseEvent event = new PlayerEvent.PoseEvent(player);
+        if(MinecraftForge.EVENT_BUS.post(event)){
+            return event.getForcedPose();
+        }
+        return null;
     }
 }

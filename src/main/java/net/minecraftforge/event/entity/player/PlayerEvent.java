@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -505,6 +507,27 @@ public class PlayerEvent extends LivingEvent
         public DimensionType getTo()
         {
             return this.toDim;
+        }
+    }
+
+    @Cancelable
+    public static class PoseEvent extends PlayerEvent {
+        private Pose pose;
+
+        public PoseEvent(PlayerEntity player)
+        {
+            super(player);
+        }
+
+        public void setForcedPose(Pose pose)
+        {
+            this.pose = pose;
+        }
+
+        @Nullable
+        public Pose getForcedPose()
+        {
+            return this.pose;
         }
     }
 }
