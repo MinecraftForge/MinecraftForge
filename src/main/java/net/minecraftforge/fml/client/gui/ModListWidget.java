@@ -31,17 +31,17 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
+public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
 {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
-    private GuiModList parent;
+    private ModListScreen parent;
 
-    public GuiSlotModList(GuiModList parent, int listWidth)
+    public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 91 + 4, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
         this.listWidth = listWidth;
         this.refreshList();
@@ -72,9 +72,9 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 
     class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
         private final ModInfo modInfo;
-        private final GuiModList parent;
+        private final ModListScreen parent;
 
-        ModEntry(ModInfo info, GuiModList parent) {
+        ModEntry(ModInfo info, ModListScreen parent) {
             this.modInfo = info;
             this.parent = parent;
         }
@@ -103,7 +103,7 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
             parent.setSelected(this);
-            GuiSlotModList.this.setSelected(this);
+            ModListWidget.this.setSelected(this);
             return false;
         }
 

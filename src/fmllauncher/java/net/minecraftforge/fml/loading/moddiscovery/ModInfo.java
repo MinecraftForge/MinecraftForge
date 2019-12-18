@@ -51,6 +51,7 @@ public class ModInfo implements IModInfo
     private final String displayName;
     private final String description;
     private final Optional<String> logoFile;
+    private final boolean logoBlur;
     private final URL updateJSONURL;
     private final List<IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
@@ -81,6 +82,10 @@ public class ModInfo implements IModInfo
             tmp = this.owningFile.getConfig().getOptional("logoFile");
         }
         this.logoFile = tmp;
+        this.logoBlur = modConfig.<Boolean>getOptional("logoBlur").
+                orElseGet(() -> Optional.ofNullable(this.owningFile).
+                        flatMap(f -> f.getConfig().<Boolean>getOptional("logoBlur")).
+                        orElse(true));
 
         this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         if (owningFile != null) {
@@ -149,6 +154,11 @@ public class ModInfo implements IModInfo
     public Optional<String> getLogoFile()
     {
         return this.logoFile;
+    }
+
+    public boolean getLogoBlur()
+    {
+        return this.logoBlur;
     }
 
     /**
