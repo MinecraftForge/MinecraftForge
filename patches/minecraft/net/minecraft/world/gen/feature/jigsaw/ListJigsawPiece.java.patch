@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/ListJigsawPiece.java
-@@ -17,6 +17,7 @@
+@@ -18,6 +18,7 @@
  
  public class ListJigsawPiece extends JigsawPiece {
     private final List<JigsawPiece> field_214867_a;
@@ -8,7 +8,7 @@
  
     @Deprecated
     public ListJigsawPiece(List<JigsawPiece> p_i51404_1_) {
-@@ -30,6 +31,7 @@
+@@ -31,6 +32,7 @@
        } else {
           this.field_214867_a = p_i51405_1_;
           this.func_214864_b(p_i51405_2_);
@@ -16,7 +16,7 @@
        }
     }
  
-@@ -42,6 +44,7 @@
+@@ -43,6 +45,7 @@
           throw new IllegalArgumentException("Elements are empty");
        } else {
           this.field_214867_a = list;
@@ -24,7 +24,7 @@
        }
     }
  
-@@ -96,4 +99,8 @@
+@@ -97,4 +100,8 @@
           p_214863_1_.func_214845_a(p_214864_1_);
        });
     }

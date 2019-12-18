@@ -2,12 +2,12 @@
 +++ b/net/minecraft/world/gen/feature/jigsaw/FeatureJigsawPiece.java
 @@ -23,6 +23,7 @@
  public class FeatureJigsawPiece extends JigsawPiece {
-    private final ConfiguredFeature<?> field_214870_a;
+    private final ConfiguredFeature<?, ?> field_214870_a;
     private final CompoundNBT field_214871_b;
 +   private final net.minecraft.util.ResourceLocation registryName;
  
     @Deprecated
-    public FeatureJigsawPiece(ConfiguredFeature<?> p_i51409_1_) {
+    public FeatureJigsawPiece(ConfiguredFeature<?, ?> p_i51409_1_) {
 @@ -33,12 +34,14 @@
        super(p_i51410_2_);
        this.field_214870_a = p_i51410_1_;
@@ -23,7 +23,7 @@
     }
  
     public CompoundNBT func_214869_b() {
-@@ -80,4 +83,8 @@
+@@ -79,4 +82,8 @@
     public String toString() {
        return "Feature[" + Registry.field_218379_q.func_177774_c(this.field_214870_a.field_222737_a) + "]";
     }

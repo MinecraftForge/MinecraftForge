@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/JigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPiece.java
-@@ -16,6 +16,7 @@
+@@ -17,6 +17,7 @@
  public abstract class JigsawPiece {
     @Nullable
     private volatile JigsawPattern.PlacementBehaviour field_214855_a;
@@ -8,7 +8,7 @@
  
     protected JigsawPiece(JigsawPattern.PlacementBehaviour p_i51398_1_) {
        this.field_214855_a = p_i51398_1_;
-@@ -61,4 +62,9 @@
+@@ -62,4 +63,9 @@
     public int func_214850_d() {
        return 1;
     }
