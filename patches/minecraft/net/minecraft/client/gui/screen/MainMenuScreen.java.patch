@@ -18,7 +18,7 @@
        } else {
           this.func_73969_a(j, 24);
 +         modbutton = this.addButton(new Button(this.width / 2 - 100, j + 24 * 2, 98, 20, I18n.func_135052_a("fml.menu.mods"), button -> {
-+            this.minecraft.func_147108_a(new net.minecraftforge.fml.client.gui.GuiModList(this));
++            this.minecraft.func_147108_a(new net.minecraftforge.fml.client.gui.ModListScreen(this));
 +         }));
        }
  
