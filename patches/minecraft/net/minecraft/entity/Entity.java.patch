@@ -38,7 +38,7 @@
 -      this.field_213326_aJ = this.func_213316_a(Pose.STANDING, this.field_213325_aI);
 +      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent= getSizeForge(Pose.STANDING, this.field_213325_aI);
 +      this.field_213325_aI = sizeEvent.getNewSize();
-+      this.field_213326_aJ = sizeEvent.getNewHeight();
++      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +      this.gatherCapabilities();
     }
@@ -283,7 +283,7 @@
 +      EntitySize entitysize1 = sizeEvent.getNewSize();
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
-+      this.field_213326_aJ = sizeEvent.getNewHeight();
++      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));

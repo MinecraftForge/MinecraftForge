@@ -141,6 +141,7 @@ public class EntityEvent extends Event
     /**
      * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
      * CAREFUL: This is also fired in the Entity constructor. Therefor the entity(subclass) might not be fully initialized.
+     * If you change the players size, you probably want to set the eye height accordingly.
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -153,25 +154,25 @@ public class EntityEvent extends Event
         private final Pose pose;
         private final EntitySize oldSize;
         private EntitySize newSize;
-        private final float oldHeight;
-        private float newHeight;
+        private final float oldEyeHeight;
+        private float newEyeHeight;
 
-        public Size(Entity entity, Pose pose, EntitySize size, float defaultHeight)
+        public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
         {
             super(entity);
             this.pose = pose;
             this.oldSize = size;
             this.newSize = size;
-            this.oldHeight = defaultHeight;
-            this.newHeight = defaultHeight;
+            this.oldEyeHeight = defaultEyeHeight;
+            this.newEyeHeight = defaultEyeHeight;
         }
 
         public Pose getPose() { return pose; }
         public EntitySize getOldSize() { return oldSize; }
         public EntitySize getNewSize() { return newSize; }
         public void setNewSize(EntitySize size) { this.newSize = size; }
-        public float getOldHeight() { return oldHeight; }
-        public float getNewHeight() { return newHeight; }
-        public void setNewHeight(float newSize) { this.newHeight = newSize; }
+        public float getOldEyeHeight() { return oldEyeHeight; }
+        public float getNewEyeHeight() { return newEyeHeight; }
+        public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
     }
 }
