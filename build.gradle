@@ -59,8 +59,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.15'
-    MCP_VERSION = '20191212.203412'
+    MC_VERSION = '1.15.1'
+    MCP_VERSION = '20191217.105819'
 }
 
 project(':mcp') {
@@ -185,7 +185,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '29.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '30.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.

@@ -9,7 +9,7 @@
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return super.func_184645_a(p_184645_1_, p_184645_2_);
-@@ -604,7 +604,8 @@
+@@ -607,7 +607,8 @@
     }
  
     protected ITextComponent func_225513_by_() {
