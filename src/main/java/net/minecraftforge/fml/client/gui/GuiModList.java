@@ -375,7 +375,7 @@ public class GuiModList extends Screen
             this.modInfo.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
-        int x = ((modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
+        int x = ((modList.getRight()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
         getFontRenderer().drawString(text, x, modList.getBottom() + 5, 0xFFFFFF);
         this.search.render(mouseX, mouseY, partialTicks);
         super.render(mouseX, mouseY, partialTicks);
