@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -964,5 +965,12 @@ public class ForgeHooksClient
     public static boolean onRawMouseClicked(int button, int action, int mods)
     {
         return MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods));
+    }
+
+    public static InputEvent.ClickInputEvent onClickInput(int button, KeyBinding keyBinding, Hand hand)
+    {
+        InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }
