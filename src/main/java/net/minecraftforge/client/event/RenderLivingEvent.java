@@ -51,6 +51,10 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     {
         public Pre(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack){ super(entity, renderer, partialRenderTick, matrixStack); }
     }
+    public static class RenderModel<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    {
+        public RenderModel(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack) { super(entity, renderer, partialRenderTick, matrixStack);}
+    }
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         public Post(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack){ super(entity, renderer, partialRenderTick, matrixStack); }

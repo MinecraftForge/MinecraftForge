@@ -30,6 +30,7 @@
           f5 = p_225623_1_.field_184619_aG - p_225623_1_.field_70721_aZ * (1.0F - p_225623_3_);
           if (p_225623_1_.func_70631_g_()) {
 @@ -132,6 +135,7 @@
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.RenderModel<T, M>(p_225623_1_, this, p_225623_3_, p_225623_4_));
  
        p_225623_4_.func_227865_b_();
        super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
