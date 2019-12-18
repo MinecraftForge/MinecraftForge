@@ -29,8 +29,15 @@
           f8 = MathHelper.func_219799_g(p_225623_3_, p_225623_1_.field_184618_aE, p_225623_1_.field_70721_aZ);
           f5 = p_225623_1_.field_184619_aG - p_225623_1_.field_70721_aZ * (1.0F - p_225623_3_);
           if (p_225623_1_.func_70631_g_()) {
-@@ -132,6 +135,7 @@
+@@ -119,6 +122,7 @@
+       }
+ 
+       if (flag1 || flag2 || flag) {
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.RenderModel<T, M>(p_225623_1_, this, p_225623_3_, p_225623_4_));
+          IVertexBuilder ivertexbuilder = p_225623_5_.getBuffer(rendertype);
+          int i = func_229117_c_(p_225623_1_, this.func_225625_b_(p_225623_1_, p_225623_3_));
+          this.field_77045_g.func_225598_a_(p_225623_4_, ivertexbuilder, p_225623_6_, i, 1.0F, 1.0F, 1.0F, flag2 ? 0.15F : 1.0F);
+@@ -132,6 +136,7 @@
  
        p_225623_4_.func_227865_b_();
        super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
