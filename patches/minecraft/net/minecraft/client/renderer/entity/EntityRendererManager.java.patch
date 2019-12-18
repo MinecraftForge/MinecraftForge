@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -183,15 +183,17 @@
+@@ -183,13 +183,15 @@
        this.field_178637_m = new PlayerRenderer(this);
        this.field_178636_l.put("default", this.field_178637_m);
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
@@ -15,11 +15,8 @@
        }
 -
     }
--
-+   
+ 
     public <T extends Entity> EntityRenderer<? super T> func_78713_a(T p_78713_1_) {
-       if (p_78713_1_ instanceof AbstractClientPlayerEntity) {
-          String s = ((AbstractClientPlayerEntity)p_78713_1_).func_175154_l();
 @@ -445,4 +447,8 @@
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
