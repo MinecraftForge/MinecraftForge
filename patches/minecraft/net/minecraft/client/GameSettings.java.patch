@@ -38,11 +38,8 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -706,6 +712,25 @@
-          }
-       }
+@@ -708,4 +714,22 @@
  
-+      if (net.minecraftforge.fml.client.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
        p_198017_1_.func_198985_a(set);
     }
 +

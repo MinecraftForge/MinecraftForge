@@ -24,7 +24,7 @@
        Util.field_211180_a = RenderSystem.initBackendSystem();
        this.field_195557_T = new VirtualScreen(this);
        this.field_195558_d = this.field_195557_T.func_217626_a(screensize, this.field_71474_y.field_198019_u, "Minecraft " + SharedConstants.func_215069_a().getName());
-@@ -382,7 +383,6 @@
+@@ -382,13 +383,13 @@
  
        this.field_195558_d.func_216526_a(this.field_71474_y.field_74350_i);
        this.field_71417_B = new MouseHelper(this);
@@ -32,14 +32,13 @@
        this.field_195559_v = new KeyboardListener(this);
        this.field_195559_v.func_197968_a(this.field_195558_d.func_198092_i());
        RenderSystem.initRenderer(this.field_71474_y.field_209231_W, false);
-@@ -390,6 +390,7 @@
+       this.field_147124_at = new Framebuffer(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), true, field_142025_a);
        this.field_147124_at.func_147604_a(0.0F, 0.0F, 0.0F, 0.0F);
        this.field_110451_am = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES, this.field_152352_aC);
-       this.field_71474_y.func_198017_a(this.field_110448_aq);
 +      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
+       this.field_71474_y.func_198017_a(this.field_110448_aq);
        this.field_110448_aq.func_198983_a();
        this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
-       this.field_110451_am.func_219534_a(this.field_135017_as);
 @@ -433,12 +434,14 @@
           this.func_193986_ar();
           this.field_110451_am.func_219534_a(this.field_193995_ae);
