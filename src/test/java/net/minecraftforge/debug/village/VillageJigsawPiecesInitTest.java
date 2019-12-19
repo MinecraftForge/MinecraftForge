@@ -95,7 +95,7 @@ public class VillageJigsawPiecesInitTest
     @SubscribeEvent
     public static void onJigsawPool(JigsawPatternInitEvent.StructureJigsawPoolInitEvent.Village event){
         if (test == 3){
-            event.register(new JigsawPattern(new ResourceLocation(MODID,"village/plains/test"),new ResourceLocation("empty"),ImmutableList.of(new Pair<>(new SingleJigsawPiece("villagepiecesinittest:village/plains/houses/plains_small_house", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.1F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))), 2)),JigsawPattern.PlacementBehaviour.RIGID));
+            event.register(new JigsawPattern(new ResourceLocation(MODID,"village/plains/test"),new ResourceLocation("empty"),ImmutableList.of(new Pair<>(new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_house"), ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.1F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState())))), JigsawPattern.PlacementBehaviour.RIGID), 2)),JigsawPattern.PlacementBehaviour.RIGID));
         }
     }
 }
