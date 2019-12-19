@@ -30,11 +30,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 
-//TODO: 1.15 Rename to NBTIngredient to match naming.
-public class IngredientNBT extends Ingredient
+public class NBTIngredient extends Ingredient
 {
     private final ItemStack stack;
-    protected IngredientNBT(ItemStack stack)
+    protected NBTIngredient(ItemStack stack)
     {
         super(Stream.of(new Ingredient.SingleItemList(stack)));
         this.stack = stack;
@@ -73,22 +72,22 @@ public class IngredientNBT extends Ingredient
         return json;
     }
 
-    public static class Serializer implements IIngredientSerializer<IngredientNBT>
+    public static class Serializer implements IIngredientSerializer<NBTIngredient>
     {
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public IngredientNBT parse(PacketBuffer buffer) {
-            return new IngredientNBT(buffer.readItemStack());
+        public NBTIngredient parse(PacketBuffer buffer) {
+            return new NBTIngredient(buffer.readItemStack());
         }
 
         @Override
-        public IngredientNBT parse(JsonObject json) {
-            return new IngredientNBT(CraftingHelper.getItemStack(json, true));
+        public NBTIngredient parse(JsonObject json) {
+            return new NBTIngredient(CraftingHelper.getItemStack(json, true));
         }
 
         @Override
-        public void write(PacketBuffer buffer, IngredientNBT ingredient) {
+        public void write(PacketBuffer buffer, NBTIngredient ingredient) {
             buffer.writeItemStack(ingredient.stack);
         }
     }

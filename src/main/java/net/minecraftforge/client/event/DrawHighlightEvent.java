@@ -31,9 +31,8 @@ import net.minecraft.client.renderer.WorldRenderer;
  * An event called whenever the selection highlight around blocks is about to be rendered.
  * Canceling this event stops the selection highlight from being rendered.
  */
-//TODO: in 1.15 rename to DrawHighlightEvent
 @Cancelable
-public class DrawBlockHighlightEvent extends Event
+public class DrawHighlightEvent extends Event
 {
     private final WorldRenderer context;
     private final ActiveRenderInfo info;
@@ -41,7 +40,7 @@ public class DrawBlockHighlightEvent extends Event
     private final int subID;
     private final float partialTicks;
 
-    public DrawBlockHighlightEvent(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+    public DrawHighlightEvent(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
     {
         this.context = context;
         this.info = info;
@@ -60,7 +59,7 @@ public class DrawBlockHighlightEvent extends Event
      * A variant of the DrawBlockHighlightEvent only called when a block is highlighted.
      */
     @Cancelable
-    public static class HighlightBlock extends DrawBlockHighlightEvent
+    public static class HighlightBlock extends DrawHighlightEvent
     {
         public HighlightBlock(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
         {
@@ -79,7 +78,7 @@ public class DrawBlockHighlightEvent extends Event
      * Canceling this event has no effect.
      */
     @Cancelable
-    public static class HighlightEntity extends DrawBlockHighlightEvent
+    public static class HighlightEntity extends DrawHighlightEvent
     {
         public HighlightEntity(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
         {
