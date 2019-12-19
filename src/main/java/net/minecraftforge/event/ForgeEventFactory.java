@@ -48,6 +48,8 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -118,6 +120,7 @@ import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.furnace.FurnaceSmeltEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
@@ -211,6 +214,14 @@ public class ForgeEventFactory
         FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getBurnTime();
+    }
+
+    public static boolean onFurnaceAttemptSmelt(AbstractFurnaceTileEntity furnace, IRecipe<?> recipe) {
+        return MinecraftForge.EVENT_BUS.post(new FurnaceSmeltEvent.Pre(furnace, recipe));
+    }
+
+    public static void onFurnaceSmelt(AbstractFurnaceTileEntity furnace, IRecipe<?> recipe) {
+        MinecraftForge.EVENT_BUS.post(new FurnaceSmeltEvent.Post(furnace, recipe));
     }
 
     public static int getExperienceDrop(LivingEntity entity, PlayerEntity attackingPlayer, int originalExperience)

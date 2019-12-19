@@ -85,7 +85,14 @@
              }
           }
        } else {
-@@ -285,7 +278,7 @@
+@@ -279,13 +272,14 @@
+ 
+    private void func_214007_c(@Nullable IRecipe<?> p_214007_1_) {
+       if (p_214007_1_ != null && this.func_214008_b(p_214007_1_)) {
++         if(net.minecraftforge.event.ForgeEventFactory.onFurnaceAttemptSmelt(this, p_214007_1_)) return;
+          ItemStack itemstack = this.field_214012_a.get(0);
+          ItemStack itemstack1 = p_214007_1_.func_77571_b();
+          ItemStack itemstack2 = this.field_214012_a.get(2);
           if (itemstack2.func_190926_b()) {
              this.field_214012_a.set(2, itemstack1.func_77946_l());
           } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
@@ -94,7 +101,15 @@
           }
  
           if (!this.field_145850_b.field_72995_K) {
-@@ -305,7 +298,7 @@
+@@ -297,6 +291,7 @@
+          }
+ 
+          itemstack.func_190918_g(1);
++         net.minecraftforge.event.ForgeEventFactory.onFurnaceSmelt(this, p_214007_1_);
+       }
+    }
+ 
+@@ -305,7 +300,7 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
@@ -103,7 +118,7 @@
        }
     }
  
-@@ -314,7 +307,7 @@
+@@ -314,7 +309,7 @@
     }
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
@@ -112,7 +127,7 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -462,4 +455,27 @@
+@@ -462,4 +457,27 @@
        }
  
     }
