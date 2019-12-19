@@ -375,7 +375,7 @@ public class PlayerEvent extends LivingEvent
      * @deprecated
      * Use {link: LivingVisibilityEvent} instead.
      */
-    @Deprecated
+    @Deprecated // Deprecated; Removed in 1.15
     public static class Visibility extends PlayerEvent
     {
 
