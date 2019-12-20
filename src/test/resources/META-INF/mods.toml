@@ -47,7 +47,7 @@ loaderVersion="[28,)"
     modId="flower_pot_test"
 [[mods]]
     modId="player_xp_event_test"
-[[mods]]
-    modId="custom_tnt_test"
+##[[mods]]
+##    modId="custom_tnt_test"
 [[mods]]
     modId="new_model_loader_test"

@@ -121,26 +121,14 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     if (!Objects.equals(newMat, currentMat))
                     {
                         currentMat = newMat;
-                        if (currentMesh != null && currentMesh.mat == null)
+                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0)
                         {
                             currentMesh.mat = currentMat;
                         }
                         else
                         {
-                            currentMesh = new ModelMesh(currentMat, currentSmoothingGroup);
-                            if (currentObject != null)
-                            {
-                                currentObject.meshes.add(currentMesh);
-                            }
-                            else
-                            {
-                                if (currentGroup == null)
-                                {
-                                    currentGroup = new ModelGroup("");
-                                    parts.put("", currentGroup);
-                                }
-                                currentGroup.meshes.add(currentMesh);
-                            }
+                            // Start new mesh
+                            currentMesh = null;
                         }
                     }
                     break;
@@ -216,26 +204,14 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     if (!Objects.equals(currentSmoothingGroup, smoothingGroup))
                     {
                         currentSmoothingGroup = smoothingGroup;
-                        if (currentMesh != null && currentMesh.smoothingGroup == null)
+                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0)
                         {
                             currentMesh.smoothingGroup = currentSmoothingGroup;
                         }
                         else
                         {
-                            currentMesh = new ModelMesh(currentMat, currentSmoothingGroup);
-                            if (currentObject != null)
-                            {
-                                currentObject.meshes.add(currentMesh);
-                            }
-                            else
-                            {
-                                if (currentGroup == null)
-                                {
-                                    currentGroup = new ModelGroup("");
-                                    parts.put("", currentGroup);
-                                }
-                                currentGroup.meshes.add(currentMesh);
-                            }
+                            // Start new mesh
+                            currentMesh = null;
                         }
                     }
                     break;
@@ -246,19 +222,17 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     String name = line[1];
                     if (objAboveGroup)
                     {
-                        currentObject = new ModelObject(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentObject.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
                     }
                     else
                     {
                         currentGroup = new ModelGroup(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentGroup.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
                         parts.put(name, currentGroup);
                         currentObject = null;
                     }
+                    // Start new mesh
+                    currentMesh = null;
                     break;
                 }
 
@@ -270,18 +244,16 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                         objAboveGroup = true;
 
                         currentGroup = new ModelGroup(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentGroup.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
                         parts.put(name, currentGroup);
                         currentObject = null;
                     }
                     else
                     {
-                        currentObject = new ModelObject(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentObject.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
                     }
+                    // Start new mesh
+                    currentMesh = null;
                     break;
                 }
             }
