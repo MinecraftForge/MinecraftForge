@@ -1,6 +1,15 @@
 --- a/net/minecraft/client/renderer/model/FaceBakery.java
 +++ b/net/minecraft/client/renderer/model/FaceBakery.java
-@@ -43,7 +43,8 @@
+@@ -36,14 +36,16 @@
+       blockfaceuv.field_178351_a[2] = MathHelper.func_219799_g(f, blockfaceuv.field_178351_a[2], f1);
+       blockfaceuv.field_178351_a[1] = MathHelper.func_219799_g(f, blockfaceuv.field_178351_a[1], f2);
+       blockfaceuv.field_178351_a[3] = MathHelper.func_219799_g(f, blockfaceuv.field_178351_a[3], f2);
+-      int[] aint = this.func_228820_a_(blockfaceuv, p_228824_4_, p_228824_5_, this.func_199337_a(p_228824_1_, p_228824_2_), p_228824_6_.func_225615_b_(), p_228824_7_, p_228824_8_);
++      // FORGE: Apply diffuse lighting at render-time instead of baking it in
++      int[] aint = this.func_228820_a_(blockfaceuv, p_228824_4_, p_228824_5_, this.func_199337_a(p_228824_1_, p_228824_2_), p_228824_6_.func_225615_b_(), p_228824_7_, false);
+       Direction direction = func_178410_a(aint);
+       System.arraycopy(afloat, 0, blockfaceuv.field_178351_a, 0, afloat.length);
+       if (p_228824_7_ == null) {
           this.func_178408_a(aint, direction);
        }
  
@@ -10,7 +19,7 @@
     }
  
     public static BlockFaceUV func_228821_a_(BlockFaceUV p_228821_0_, Direction p_228821_1_, TransformationMatrix p_228821_2_, ResourceLocation p_228821_3_) {
-@@ -152,6 +153,8 @@
+@@ -152,6 +154,8 @@
        p_228826_1_[i + 3] = p_228826_4_;
        p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)));
        p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_)));

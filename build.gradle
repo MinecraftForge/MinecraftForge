@@ -795,16 +795,16 @@ project(':forge') {
                         server: '/data/server.lzma'
                     ],
                     MC_SLIM: [
-                        client: "[net.minecraft:client:${MC_VERSION}:slim${MC_VERSION == '1.14.4' ? '-stable' : ''}]",
-                        server: "[net.minecraft:server:${MC_VERSION}:slim${MC_VERSION == '1.14.4' ? '-stable' : ''}]"
+                        client: "[net.minecraft:client:${MC_VERSION}:slim]",
+                        server: "[net.minecraft:server:${MC_VERSION}:slim]"
                     ],
                     MC_SLIM_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
                         server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
                     ],
                     MC_EXTRA: [
-                        client: "[net.minecraft:client:${MC_VERSION}:extra${MC_VERSION == '1.14.4' ? '-stable' : ''}]",
-                        server: "[net.minecraft:server:${MC_VERSION}:extra${MC_VERSION == '1.14.4' ? '-stable' : ''}]"
+                        client: "[net.minecraft:client:${MC_VERSION}:extra]",
+                        server: "[net.minecraft:server:${MC_VERSION}:extra]"
                     ],
                     MC_EXTRA_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientExtra').output)}'",
@@ -892,7 +892,7 @@ project(':forge') {
         ['slim', 'extra'].each { type -> 
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
-                artifact = "net.minecraft:${side}:${MC_VERSION}${MC_VERSION == '1.14.4' ? '-stable' : ''}:${type}"
+                artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
             }
             installerJson.dependsOn(name)
             installerJson.inputs.file(tasks.getByName(name).output)
@@ -945,7 +945,7 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra${MC_VERSION == '1.14.4' ? '-stable' : ''}.jar"
+            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
             
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {

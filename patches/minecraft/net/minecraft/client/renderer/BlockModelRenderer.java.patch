@@ -79,7 +79,22 @@
        if (!list1.isEmpty()) {
           this.func_228798_a_(p_228806_1_, p_228806_3_, p_228806_4_, -1, p_228806_11_, true, p_228806_5_, p_228806_6_, list1, bitset);
           flag = true;
-@@ -208,7 +222,11 @@
+@@ -125,6 +139,14 @@
+          f1 = 1.0F;
+          f2 = 1.0F;
+       }
++      // FORGE: Apply diffuse lighting at render-time instead of baking it in
++      if (p_228800_6_.shouldApplyDiffuseLighting()) {
++         // TODO this should be handled by the forge lighting pipeline
++         float l = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(p_228800_6_.func_178210_d());
++         f *= l;
++         f1 *= l;
++         f2 *= l;
++      }
+ 
+       p_228800_4_.func_227890_a_(p_228800_5_, p_228800_6_, new float[]{p_228800_7_, p_228800_8_, p_228800_9_, p_228800_10_}, f, f1, f2, new int[]{p_228800_11_, p_228800_12_, p_228800_13_, p_228800_14_}, p_228800_15_, true);
+    }
+@@ -208,7 +230,11 @@
  
     }
  

@@ -75,7 +75,7 @@ public class MaterialLibrary
                     break;
 
                 case "Ns":
-                    currentMaterial.specularHighlight = Integer.parseInt(line[1]);
+                    currentMaterial.specularHighlight = Float.parseFloat(line[1]);
                     break;
 
                 case "map_Ks":
