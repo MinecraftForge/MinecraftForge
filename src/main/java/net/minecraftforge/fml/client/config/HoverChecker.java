@@ -19,18 +19,19 @@
 
 package net.minecraftforge.fml.client.config;
 
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.Widget;
 
 /**
- * This class implements an easy way to check if the mouse has hovered within a certain region of the screen for a given
- * period of time. The region can be defined manually or by supplying a GuiButton object.
+ * This class implements an easy way to check if the mouse has hovered
+ * within a certain region of the screen for a given period of time.
+ * The region can be defined manually or by supplying a Widget object.
  *
  * @author bspkrs
  */
 public class HoverChecker
 {
     private int       top, bottom, left, right, threshold;
-    private Button button;
+    private Widget    widget;
     private long      hoverStart;
 
     public HoverChecker(int top, int bottom, int left, int right, int threshold)
@@ -43,15 +44,15 @@ public class HoverChecker
         this.hoverStart = -1;
     }
 
-    public HoverChecker(Button button, int threshold)
+    public HoverChecker(Widget widget, int threshold)
     {
-        this.button = button;
+        this.widget = widget;
         this.threshold = threshold;
     }
 
     /**
      * Call this method if the intended region has changed such as if the region must follow a scrolling list.
-     * It is not necessary to call this method if a GuiButton defines the hover region.
+     * It is not necessary to call this method if a GuiWidget defines the hover region.
      */
     public void updateBounds(int top, int bottom, int left, int right)
     {
@@ -76,13 +77,13 @@ public class HoverChecker
      */
     public boolean checkHover(int mouseX, int mouseY, boolean canHover)
     {
-        if (this.button != null)
+        if (this.widget != null)
         {
-            this.top = button.y;
-            this.bottom = button.y + button.getHeight();
-            this.left = button.x;
-            this.right = button.x + button.getWidth();
-            canHover = canHover && button.visible;
+            this.top = widget.y;
+            this.bottom = widget.y + widget.getHeight();
+            this.left = widget.x;
+            this.right = widget.x + widget.getWidth();
+            canHover = canHover && widget.visible;
         }
 
         if (canHover && hoverStart == -1 && mouseY >= top && mouseY <= bottom && mouseX >= left && mouseX <= right)
