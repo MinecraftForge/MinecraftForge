@@ -77,7 +77,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         {
             if (transforms.hasCustomTransform(type))
             {
-                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)).blockCenterToCorner());
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
             }
         }
         return ImmutableMap.copyOf(map);
@@ -96,7 +96,7 @@ public class PerspectiveMapWrapper implements IBakedModel
             }
             else if (transforms.hasCustomTransform(type))
             {
-                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)).blockCenterToCorner());
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
             }
         }
         return ImmutableMap.copyOf(map);
@@ -107,9 +107,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         TransformationMatrix tr = transforms.getOrDefault(cameraTransformType, TransformationMatrix.func_227983_a_());
         if (!tr.isIdentity())
         {
-            // Push to the matrix to make it not empty and indicate that we want to transform things
-            mat.func_227860_a_();
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(tr.blockCornerToCenter().func_227988_c_());
+            tr.push(mat);
         }
         return model;
     }
@@ -119,9 +117,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         TransformationMatrix tr = state.getPartTransformation(cameraTransformType);
         if (!tr.isIdentity())
         {
-            // Push to the matrix to make it not empty and indicate that we want to transform things
-            mat.func_227860_a_();
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(tr.blockCornerToCenter().func_227988_c_());
+            tr.push(mat);
         }
         return model;
     }

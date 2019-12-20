@@ -49,7 +49,7 @@ public class QuadTransformer
     private void processVertices(int[] inData, int[] outData)
     {
         // TODO: Extract rotation matrix and fix NORMALs if present.
-        int stride = format.getSize() / 4;
+        int stride = format.getIntegerSize();
         for (int i=0;i<4;i++)
         {
             int offset = positionOffset + i * stride;

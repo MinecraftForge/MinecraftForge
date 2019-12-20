@@ -19,13 +19,10 @@
 
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
@@ -34,7 +31,9 @@ import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.*;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.texture.PngSizeInfo;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.LivingEntity;
@@ -48,18 +47,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.TransformationHelper;
-import net.minecraftforge.fluids.FluidUtil;
-
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
 {
@@ -123,7 +126,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         Material particleLocation = owner.resolveTexture("particle");
         if (MissingTextureSprite.getLocation().toString().equals(particleLocation))
@@ -152,35 +155,30 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
 
         IModelTransform transformsFromModel = owner.getCombinedTransform();
 
-        IModelTransform state = sprite;
         ImmutableMap<TransformType, TransformationMatrix> transformMap = transformsFromModel != null ?
-                        PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(transformsFromModel, state)) :
-                        PerspectiveMapWrapper.getTransforms(state);
+                        PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(transformsFromModel, modelTransform)) :
+                        PerspectiveMapWrapper.getTransforms(modelTransform);
 
         TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
 
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
         if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
         {
-            sprite = new ModelTransformComposition(state, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null).blockCenterToCorner()));
-            state = sprite;
+            modelTransform = new ModelTransformComposition(modelTransform, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)));
         }
 
-        TransformationMatrix transform = state.func_225615_b_();
+        TransformationMatrix transform = modelTransform.func_225615_b_();
 
         TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(fluid.getAttributes().getStillTexture())) : null;
 
         if (particleSprite == null) particleSprite = fluidSprite;
 
-        Random random = new Random();
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
         if (baseLocation != null)
         {
             // build base (insidest)
-            IBakedModel model = new ItemLayerModel(ImmutableList.of(baseLocation)).bake(owner, bakery, spriteGetter, sprite, ItemOverrideList.EMPTY, modelLocation);
-            random.setSeed(42);
-            builder.addAll(model.getQuads(null, null, random));
+            builder.addAll(ItemLayerModel.getQuadsForSprites(ImmutableList.of(baseLocation), DefaultVertexFormats.BLOCK, transform, spriteGetter));
         }
 
         if (fluidMaskLocation != null && fluidSprite != null)
@@ -218,7 +216,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
             }
         }
 
-        return new BakedDynBucket(bakery, owner, this, builder.build(), particleSprite, DefaultVertexFormats.BLOCK, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
+        return new BakedDynBucket(bakery, owner, this, builder.build(), particleSprite, DefaultVertexFormats.BLOCK, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform);
     }
 
     @Override
@@ -418,7 +416,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
                         if (!model.cache.containsKey(name))
                         {
                             ModelDynBucket parent = model.parent.withFluid(fluid);
-                            IBakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), new SimpleModelTransform(model.transforms), model.getOverrides(), new ResourceLocation("forge:bucket_override"));
+                            IBakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), model.originalTransform, model.getOverrides(), new ResourceLocation("forge:bucket_override"));
                             model.cache.put(name, bakedModel);
                             return bakedModel;
                         }
@@ -437,6 +435,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
         private final ModelDynBucket parent;
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
         private final VertexFormat format;
+        private final IModelTransform originalTransform;
 
         BakedDynBucket(ModelBakery bakery,
                        IModelConfiguration owner, ModelDynBucket parent,
@@ -445,13 +444,15 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
                        VertexFormat format,
                        ImmutableMap<TransformType, TransformationMatrix> transforms,
                        Map<String, IBakedModel> cache,
-                       boolean untransformed)
+                       boolean untransformed,
+                       IModelTransform originalTransform)
         {
             super(quads, particle, transforms, new BakedDynBucketOverrideHandler(bakery), untransformed);
             this.owner = owner;
             this.format = format;
             this.parent = parent;
             this.cache = cache;
+            this.originalTransform = originalTransform;
         }
     }
 
