@@ -880,7 +880,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             list.forEach(e ->
             {
                 CompoundNBT comp = (CompoundNBT)e;
-                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
+                ret.aliases.put(new ResourceLocation(comp.getString("K")), new ResourceLocation(comp.getString("V")));
             });
 
             list = nbt.getList("overrides", 10);

@@ -24,31 +24,42 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SimpleChannel
 {
     private final NetworkInstance instance;
     private final IndexedMessageCodec indexedCodec;
+    private final Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeConsumer;
     private List<Function<Boolean, ? extends List<? extends Pair<String,?>>>> loginPackets;
 
-    public SimpleChannel(NetworkInstance instance)
-    {
+    public SimpleChannel(NetworkInstance instance) {
+        this(instance, Optional.empty());
+    }
+
+    private SimpleChannel(NetworkInstance instance, Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeNotify) {
         this.instance = instance;
-        this.indexedCodec = new IndexedMessageCodec();
+        this.indexedCodec = new IndexedMessageCodec(instance);
         this.loginPackets = new ArrayList<>();
         instance.addListener(this::networkEventListener);
         instance.addGatherListener(this::networkLoginGather);
+        this.registryChangeConsumer = registryChangeNotify;
+    }
+
+    public SimpleChannel(NetworkInstance instance, Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeNotify) {
+        this(instance, Optional.of(registryChangeNotify));
     }
 
     private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
@@ -62,7 +73,11 @@ public class SimpleChannel
     }
     private void networkEventListener(final NetworkEvent networkEvent)
     {
-        this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
+        if (networkEvent instanceof NetworkEvent.ChannelRegistrationChangeEvent) {
+            this.registryChangeConsumer.ifPresent(l->l.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent)));
+        } else {
+            this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
+        }
     }
 
     public <MSG> int encodeMessage(MSG message, final PacketBuffer target) {

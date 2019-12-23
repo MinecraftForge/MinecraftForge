@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "data_gen_test:block/wall_torch",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "data_gen_test:block/wall_torch",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "data_gen_test:block/wall_torch",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "data_gen_test:block/wall_torch",
+      "y": 360
+    }
+  }
+}

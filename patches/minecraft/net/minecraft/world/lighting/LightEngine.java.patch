@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/lighting/LightEngine.java
++++ b/net/minecraft/world/lighting/LightEngine.java
+@@ -216,4 +216,8 @@
+       long i = SectionPos.func_218169_f(SectionPos.func_218166_b(p_223129_1_.field_77276_a, 0, p_223129_1_.field_77275_b));
+       this.field_215627_c.func_223113_c(i, p_223129_2_);
+    }
++
++   // FORGE START
++
++   public abstract int queuedUpdateSize();
+ }

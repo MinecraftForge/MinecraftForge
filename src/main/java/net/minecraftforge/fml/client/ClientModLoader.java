@@ -86,6 +86,8 @@ public class ClientModLoader
 
     public static void begin(final Minecraft minecraft, final ResourcePackList<ClientResourcePackInfo> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
+        // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
         loading = true;
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
@@ -142,7 +144,13 @@ public class ClientModLoader
         return VersionChecker.Status.UP_TO_DATE;
     }
 
+    @Deprecated // TODO: remove in 1.15
     public static void complete()
+    {
+        completeModLoading();
+    }
+
+    public static boolean completeModLoading()
     {
         GlStateManager.disableTexture();
         GlStateManager.enableTexture();
@@ -161,14 +169,16 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
-        if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
-        } else {
-            ClientHooks.logMissingTextureErrors();
-        }
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
+        }
+        if (error != null || !warnings.isEmpty()) {
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
+            return true;
+        } else {
+            ClientHooks.logMissingTextureErrors();
+            return false;
         }
     }
 

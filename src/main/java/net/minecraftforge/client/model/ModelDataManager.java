@@ -53,6 +53,8 @@ public class ModelDataManager
 
     private static void cleanCaches(World world)
     {
+        Preconditions.checkNotNull(world, "World must not be null");
+        Preconditions.checkArgument(world == Minecraft.getInstance().world, "Cannot use model data for a world other than the current client world");
         if (world != currentWorld.get())
         {
             currentWorld = new WeakReference<>(world);
@@ -63,9 +65,8 @@ public class ModelDataManager
     
     public static void requestModelDataRefresh(TileEntity te)
     {
+        Preconditions.checkNotNull(te, "Tile entity must not be null");
         World world = te.getWorld();
-        Preconditions.checkNotNull(world, "Tile entity world must not be null");
-        Preconditions.checkArgument(world == Minecraft.getInstance().world, "Cannot request a model data refresh for a world other than the current client world");
 
         cleanCaches(world);
         needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
@@ -83,9 +84,13 @@ public class ModelDataManager
             for (BlockPos pos : needUpdate)
             {
                 TileEntity toUpdate = world.getTileEntity(pos);
-                if (toUpdate != null)
+                if (toUpdate != null && !toUpdate.isRemoved())
                 {
                     data.put(pos, toUpdate.getModelData());
+                }
+                else
+                {
+                    data.remove(pos);
                 }
             }
         }
@@ -108,7 +113,7 @@ public class ModelDataManager
     
     public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
     {
-        Preconditions.checkArgument(world.isRemote, "Asked ModelDataManager from server world!");
+        Preconditions.checkArgument(world.isRemote, "Cannot request model data for server world");
         refreshModelData(world, pos);
         return modelDataCache.getOrDefault(pos, Collections.emptyMap());
     }

@@ -13,6 +13,8 @@ buildscript {
 }
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
+
+import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.LinkedHashMap
@@ -157,7 +159,10 @@ project(':forge') {
                 ]
             }
             resources {
-                srcDirs = ["$rootDir/src/test/resources"]
+                srcDirs = [
+                    "$rootDir/src/test/resources",
+                    "$rootDir/src/generated_test/resources"
+                ]
             }
         }
         userdev {
@@ -306,7 +311,8 @@ project(':forge') {
                 source sourceSets.main
                 source sourceSets.userdev
                 
-                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
 
             forge_test_data {
@@ -319,7 +325,8 @@ project(':forge') {
                     tests { sources  sourceSets.test }
                 }
                 
-                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/'), '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }
@@ -398,11 +405,11 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:4.0.+'
+        installer 'cpw.mods:modlauncher:4.1.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
         installer 'net.minecraftforge:eventbus:1.0.+:service'
-        installer 'net.minecraftforge:forgespi:1.4.+'
+        installer 'net.minecraftforge:forgespi:1.5.+'
         installer 'net.minecraftforge:coremods:1.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
@@ -773,6 +780,7 @@ project(':forge') {
                 spec: 0,
                 profile: project.name,
                 version: launcherJson.id,
+                icon: "data:image/png;base64," + new String(Base64.getEncoder().encode(Files.readAllBytes(rootProject.file("icon.ico").toPath()))),
                 json: '/version.json',
                 path: "${project.group}:${project.name}:${project.version}",
                 logo: '/big_logo.png',

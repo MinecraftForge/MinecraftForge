@@ -1,0 +1,49 @@
+--- a/net/minecraft/data/loot/EntityLootTables.java
++++ b/net/minecraft/data/loot/EntityLootTables.java
+@@ -51,7 +51,7 @@
+       return LootTable.func_216119_b().func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(p_218583_0_))).func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(TableLootEntry.func_216171_a(EntityType.field_200737_ac.func_220348_g())));
+    }
+ 
+-   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_accept_1_) {
++   protected void addTables() {
+       this.func_218582_a(EntityType.field_200789_c, LootTable.func_216119_b());
+       this.func_218582_a(EntityType.field_200791_e, LootTable.func_216119_b());
+       this.func_218582_a(EntityType.field_200792_f, LootTable.func_216119_b().func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151072_bj).func_212841_b_(SetCount.func_215932_a(RandomValueRange.func_215837_a(0.0F, 1.0F))).func_212841_b_(LootingEnchantBonus.func_215915_a(RandomValueRange.func_215837_a(0.0F, 1.0F)))).func_212840_b_(KilledByPlayer.func_215994_b())));
+@@ -136,8 +136,12 @@
+       this.func_218582_a(EntityType.field_200726_aE, LootTable.func_216119_b().func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151078_bh).func_212841_b_(SetCount.func_215932_a(RandomValueRange.func_215837_a(0.0F, 2.0F))).func_212841_b_(LootingEnchantBonus.func_215915_a(RandomValueRange.func_215837_a(0.0F, 1.0F))))));
+       this.func_218582_a(EntityType.field_200785_Y, LootTable.func_216119_b().func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151078_bh).func_212841_b_(SetCount.func_215932_a(RandomValueRange.func_215837_a(0.0F, 1.0F))).func_212841_b_(LootingEnchantBonus.func_215915_a(RandomValueRange.func_215837_a(0.0F, 1.0F))))).func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151074_bl).func_212841_b_(SetCount.func_215932_a(RandomValueRange.func_215837_a(0.0F, 1.0F))).func_212841_b_(LootingEnchantBonus.func_215915_a(RandomValueRange.func_215837_a(0.0F, 1.0F))))).func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151043_k)).func_212840_b_(KilledByPlayer.func_215994_b()).func_212840_b_(RandomChanceWithLooting.func_216003_a(0.025F, 0.01F))));
+       this.func_218582_a(EntityType.field_200727_aF, LootTable.func_216119_b().func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151078_bh).func_212841_b_(SetCount.func_215932_a(RandomValueRange.func_215837_a(0.0F, 2.0F))).func_212841_b_(LootingEnchantBonus.func_215915_a(RandomValueRange.func_215837_a(0.0F, 1.0F))))).func_216040_a(LootPool.func_216096_a().func_216046_a(ConstantRange.func_215835_a(1)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151042_j)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151172_bF)).func_216045_a(ItemLootEntry.func_216168_a(Items.field_151174_bG)).func_212840_b_(KilledByPlayer.func_215994_b()).func_212840_b_(RandomChanceWithLooting.func_216003_a(0.025F, 0.01F))));
++   }
++
++   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_accept_1_) {
++      this.addTables();
+       Set<ResourceLocation> set = Sets.newHashSet();
+-      Iterator iterator = Registry.field_212629_r.iterator();
++      Iterator iterator = getKnownEntities().iterator();
+ 
+       EntityType<?> entitytype;
+       ResourceLocation resourcelocation;
+@@ -149,7 +153,7 @@
+ 
+          entitytype = (EntityType)iterator.next();
+          resourcelocation = entitytype.func_220348_g();
+-         if (!field_222944_b.contains(entitytype) && entitytype.func_220339_d() == EntityClassification.MISC) {
++         if (isNonLiving(entitytype)) {
+             if (resourcelocation != LootTables.field_186419_a && this.field_218587_b.remove(resourcelocation) != null) {
+                break;
+             }
+@@ -166,6 +170,14 @@
+       throw new IllegalStateException(String.format("Weird loottable '%s' for '%s', not a LivingEntity so should not have loot", resourcelocation, Registry.field_212629_r.func_177774_c(entitytype)));
+    }
+ 
++   protected Iterable<EntityType<?>> getKnownEntities() {
++      return Registry.field_212629_r;
++   }
++
++   protected boolean isNonLiving(EntityType<?> entitytype) {
++      return !field_222944_b.contains(entitytype) && entitytype.func_220339_d() == EntityClassification.MISC; 
++   }
++
+    protected void func_218582_a(EntityType<?> p_218582_1_, LootTable.Builder p_218582_2_) {
+       this.func_218585_a(p_218582_1_.func_220348_g(), p_218582_2_);
+    }

@@ -5,7 +5,7 @@
           return !p_213879_1_.func_175149_v() && p_213879_1_ != this.field_190539_a;
        }, RayTraceContext.BlockMode.OUTLINE, true);
 -      if (raytraceresult != null) {
-+      if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
++      if (raytraceresult != null && raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
           this.func_190536_a(raytraceresult);
        }
  

@@ -102,6 +102,7 @@ public interface IForgeBlockState
         return getBlockState().getBlock().isLadder(getBlockState(), world, pos, entity);
     }
 
+    //TODO: remove in 1.15
     /**
      * Check if the face of a block should block rendering.
      *
@@ -112,7 +113,9 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @param face The side to check
      * @return True if the block is opaque on the specified side.
+     * @deprecated This is no longer used for rendering logic.
      */
+    @Deprecated
     default boolean doesSideBlockRendering(IEnviromentBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
@@ -766,6 +769,19 @@ public interface IForgeBlockState
     default boolean isFlammable(IBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().isFlammable(getBlockState(), world, pos, face);
+    }
+
+    /**
+     * If the block is flammable, this is called when it gets lit on fire.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @param igniter The entity that lit the fire
+     */
+    default void catchFire(World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter)
+    {
+        getBlockState().getBlock().catchFire(getBlockState(), world, pos, face, igniter);
     }
 
     /**

@@ -1,6 +1,18 @@
 --- a/net/minecraft/dispenser/IDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/IDispenseItemBehavior.java
-@@ -370,15 +370,23 @@
+@@ -270,8 +270,9 @@
+                world.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
+             } else if (FlintAndSteelItem.func_219997_a(blockstate)) {
+                world.func_175656_a(blockpos, blockstate.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)));
+-            } else if (blockstate.func_177230_c() instanceof TNTBlock) {
+-               TNTBlock.func_196534_a(world, blockpos);
++            } else if (blockstate.isFlammable(world, blockpos, p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a).func_176734_d())) {
++               blockstate.catchFire(world, blockpos, p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a).func_176734_d(), null);
++               if (blockstate.func_177230_c() instanceof TNTBlock)
+                world.func_217377_a(blockpos, false);
+             } else {
+                this.field_218407_b = false;
+@@ -370,15 +371,23 @@
        }
  
        DispenserBlock.func_199774_a(Items.field_151097_aZ.func_199767_j(), new OptionalDispenseBehavior() {

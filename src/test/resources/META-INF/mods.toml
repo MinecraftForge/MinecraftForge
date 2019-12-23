@@ -56,4 +56,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="possible_spread_event_test"
 [[mods]]
+    modId="player_xp_event_test"
+[[mods]]
     modId="forgeblockstatesloader"
+[[mods]]
+    modId="custom_tnt_test"
