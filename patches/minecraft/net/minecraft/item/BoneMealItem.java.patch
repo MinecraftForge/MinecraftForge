@@ -27,7 +27,18 @@
        if (blockstate.func_177230_c() instanceof IGrowable) {
           IGrowable igrowable = (IGrowable)blockstate.func_177230_c();
           if (igrowable.func_176473_a(p_195966_1_, p_195966_2_, blockstate, p_195966_1_.field_72995_K)) {
-@@ -124,7 +133,7 @@
+@@ -84,7 +93,9 @@
+                   }
+                }
+ 
+-               if (biome == Biomes.field_203614_T || biome == Biomes.field_203617_W) {
++               // FORGE: Use BiomeDictionary here to allow modded warm ocean biomes to spawn coral from bonemeal
++               if (net.minecraftforge.common.BiomeDictionary.hasType(biome, net.minecraftforge.common.BiomeDictionary.Type.OCEAN)
++                       && net.minecraftforge.common.BiomeDictionary.hasType(biome, net.minecraftforge.common.BiomeDictionary.Type.HOT)) {
+                   if (i == 0 && p_203173_3_ != null && p_203173_3_.func_176740_k().func_176722_c()) {
+                      blockstate = BlockTags.field_211922_B.func_205596_a(p_203173_1_.field_73012_v).func_176223_P().func_206870_a(DeadCoralWallFanBlock.field_211884_b, p_203173_3_);
+                   } else if (field_77697_d.nextInt(4) == 0) {
+@@ -124,7 +135,7 @@
        }
  
        BlockState blockstate = p_195965_0_.func_180495_p(p_195965_1_);

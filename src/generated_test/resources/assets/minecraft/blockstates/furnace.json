@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "data_gen_test:block/furnace"
+    },
+    "facing=south,lit=false": {
+      "model": "data_gen_test:block/furnace",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "data_gen_test:block/furnace",
+      "y": 270
+    },
+    "facing=east,lit=false": {
+      "model": "data_gen_test:block/furnace",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "data_gen_test:block/furnace_on"
+    },
+    "facing=south,lit=true": {
+      "model": "data_gen_test:block/furnace_on",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "data_gen_test:block/furnace_on",
+      "y": 270
+    },
+    "facing=east,lit=true": {
+      "model": "data_gen_test:block/furnace_on",
+      "y": 90
+    }
+  }
+}

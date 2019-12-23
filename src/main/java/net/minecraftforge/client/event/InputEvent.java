@@ -30,6 +30,7 @@ public class InputEvent extends Event
     /**
      * A cancellable mouse event fired before key bindings are updated
      */
+    @Cancelable
     public static class RawMouseEvent extends InputEvent
     {
         private final int button;

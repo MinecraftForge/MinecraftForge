@@ -1,0 +1,47 @@
+--- a/net/minecraft/data/LootTableProvider.java
++++ b/net/minecraft/data/LootTableProvider.java
+@@ -42,7 +42,7 @@
+    public void func_200398_a(DirectoryCache p_200398_1_) {
+       Path path = this.field_218443_d.func_200391_b();
+       Map<ResourceLocation, LootTable> map = Maps.newHashMap();
+-      this.field_218444_e.forEach((p_218438_1_) -> {
++      this.getTables().forEach((p_218438_1_) -> {
+          p_218438_1_.getFirst().get().accept((p_218437_2_, p_218437_3_) -> {
+             if (map.put(p_218437_2_, p_218437_3_.func_216039_a(p_218438_1_.getSecond()).func_216038_b()) != null) {
+                throw new IllegalStateException("Duplicate loot table " + p_218437_2_);
+@@ -51,13 +51,8 @@
+       });
+       ValidationResults validationresults = new ValidationResults();
+ 
+-      for(ResourceLocation resourcelocation : Sets.difference(LootTables.func_215796_a(), map.keySet())) {
+-         validationresults.func_216105_a("Missing built-in table: " + resourcelocation);
+-      }
++      validate(map, validationresults);
+ 
+-      map.forEach((p_218436_2_, p_218436_3_) -> {
+-         LootTableManager.func_215302_a(validationresults, p_218436_2_, p_218436_3_, map::get);
+-      });
+       Multimap<String, String> multimap = validationresults.func_216106_a();
+       if (!multimap.isEmpty()) {
+          multimap.forEach((p_218435_0_, p_218435_1_) -> {
+@@ -78,6 +73,20 @@
+       }
+    }
+ 
++   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
++       return field_218444_e;
++   }
++
++   protected void validate(Map<ResourceLocation, LootTable> map, ValidationResults validationresults) {
++      for(ResourceLocation resourcelocation : Sets.difference(LootTables.func_215796_a(), map.keySet())) {
++          validationresults.func_216105_a("Missing built-in table: " + resourcelocation);
++      }
++
++      map.forEach((p_218436_2_, p_218436_3_) -> {
++         LootTableManager.func_215302_a(validationresults, p_218436_2_, p_218436_3_, map::get);
++      });
++   }
++
+    private static Path func_218439_a(Path p_218439_0_, ResourceLocation p_218439_1_) {
+       return p_218439_0_.resolve("data/" + p_218439_1_.func_110624_b() + "/loot_tables/" + p_218439_1_.func_110623_a() + ".json");
+    }

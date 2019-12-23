@@ -51,7 +51,7 @@ public class SimpleChannel
 
     private SimpleChannel(NetworkInstance instance, Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeNotify) {
         this.instance = instance;
-        this.indexedCodec = new IndexedMessageCodec();
+        this.indexedCodec = new IndexedMessageCodec(instance);
         this.loginPackets = new ArrayList<>();
         instance.addListener(this::networkEventListener);
         instance.addGatherListener(this::networkLoginGather);

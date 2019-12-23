@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading.progress;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -52,8 +53,14 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
 
+        long glfwInitBegin = System.nanoTime();
         if (!glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
+        }
+        long glfwInitEnd = System.nanoTime();
+
+        if (glfwInitEnd - glfwInitBegin > 1e9) {
+            LogManager.getLogger().fatal("WARNING : glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
         }
 
         glfwDefaultWindowHints();
@@ -237,8 +244,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     }
 
     private void run() {
-        initWindow();
         running = true;
+        initWindow();
         while (running) {
             renderProgress();
             try {
@@ -251,10 +258,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 
     @Override
     public void join() {
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//        }
         running = false;
         try {
             thread.join();

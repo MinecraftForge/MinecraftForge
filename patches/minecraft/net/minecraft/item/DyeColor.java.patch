@@ -12,7 +12,7 @@
        int j = (p_i50049_5_ & '\uff00') >> 8;
        int k = (p_i50049_5_ & 255) >> 0;
        this.field_196066_w = k << 16 | j << 8 | i << 0;
-+      this.tag = new net.minecraft.tags.ItemTags.Wrapper(new net.minecraft.util.ResourceLocation("minecraft", "dyes_" + p_i50049_4_));
++      this.tag = new net.minecraft.tags.ItemTags.Wrapper(new net.minecraft.util.ResourceLocation("forge", "dyes/" + p_i50049_4_));
        this.field_193352_x = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
        this.field_196067_y = p_i50049_7_;
     }

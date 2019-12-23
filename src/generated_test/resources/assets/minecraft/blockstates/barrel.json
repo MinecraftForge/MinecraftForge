@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "facing=down,open=false": {
+      "model": "data_gen_test:block/barrel",
+      "x": 180
+    },
+    "facing=up,open=false": {
+      "model": "data_gen_test:block/barrel"
+    },
+    "facing=north,open=false": {
+      "model": "data_gen_test:block/barrel",
+      "x": 90
+    },
+    "facing=south,open=false": {
+      "model": "data_gen_test:block/barrel",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,open=false": {
+      "model": "data_gen_test:block/barrel",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,open=false": {
+      "model": "data_gen_test:block/barrel",
+      "x": 90,
+      "y": 90
+    },
+    "facing=down,open=true": {
+      "model": "data_gen_test:block/barrel_open",
+      "x": 180
+    },
+    "facing=up,open=true": {
+      "model": "data_gen_test:block/barrel_open"
+    },
+    "facing=north,open=true": {
+      "model": "data_gen_test:block/barrel_open",
+      "x": 90
+    },
+    "facing=south,open=true": {
+      "model": "data_gen_test:block/barrel_open",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,open=true": {
+      "model": "data_gen_test:block/barrel_open",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,open=true": {
+      "model": "data_gen_test:block/barrel_open",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

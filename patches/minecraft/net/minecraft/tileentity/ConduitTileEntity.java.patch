@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/ConduitTileEntity.java
++++ b/net/minecraft/tileentity/ConduitTileEntity.java
+@@ -131,7 +131,7 @@
+                   BlockPos blockpos1 = this.field_174879_c.func_177982_a(j1, k1, l1);
+                   BlockState blockstate = this.field_145850_b.func_180495_p(blockpos1);
+ 
+-                  for(Block block : field_205042_e) {
++                  for(Block block : net.minecraftforge.common.Tags.Blocks.SUPPORTS_CONDUIT.func_199885_a()) {
+                      if (blockstate.func_177230_c() == block) {
+                         this.field_205046_i.add(blockpos1);
+                      }
