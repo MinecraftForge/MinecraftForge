@@ -571,6 +571,19 @@ public interface IForgeBlock
     {
         return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
     }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    {
+        return state.getBlock() == Blocks.OBSIDIAN;
+    }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
