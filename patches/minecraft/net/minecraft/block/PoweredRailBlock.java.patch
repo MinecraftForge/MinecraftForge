@@ -35,13 +35,12 @@
                    return p_208071_1_.func_175640_z(p_208071_2_) ? true : this.func_176566_a(p_208071_1_, p_208071_2_, blockstate, p_208071_3_, p_208071_4_ + 1);
                 } else {
                    return false;
-@@ -255,4 +261,9 @@
+@@ -255,4 +261,8 @@
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_176568_b, field_176569_M);
     }
 +
-+   public boolean isActivatorRail()
-+   {
++   public boolean isActivatorRail() {
 +      return isActivator;
 +   }
  }
