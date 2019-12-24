@@ -10,5 +10,5 @@
 +   public boolean hasPosition() { return field_177355_b.stream().anyMatch(e -> e.func_177374_g()); }
 +   public boolean hasNormal() { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.NORMAL); }
 +   public boolean hasColor() { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.COLOR); }
-+   public boolean hasUV(int which) { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.COLOR && e.func_177369_e() == which); }
++   public boolean hasUV(int which) { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.UV && e.func_177369_e() == which); }
  }

@@ -27,7 +27,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -84,7 +83,7 @@ public class CompositeModel implements IBakedModel
         {
             quads.addAll(part.getQuads(state, side, rand, EmptyModelData.INSTANCE));
         }
-        return null;
+        return quads;
     }
 
     @Override
@@ -228,7 +227,7 @@ public class CompositeModel implements IBakedModel
             Set<Material> textures = new HashSet<>();
             for(Submodel part : parts.values())
             {
-                part.getTextureDependencies(owner, modelGetter, missingTextureErrors);
+                textures.addAll(part.getTextureDependencies(owner, modelGetter, missingTextureErrors));
             }
             return textures;
         }
