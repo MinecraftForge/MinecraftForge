@@ -20,15 +20,25 @@
 package net.minecraftforge.client.model;
 
 import net.minecraft.client.renderer.model.IModelTransform;
+import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
+
+import javax.annotation.Nullable;
 
 /*
  * Interface that provides generic access to the data within BlockModel,
  * while allowing non-blockmodel usage of models
  */
 public interface IModelConfiguration {
+
+    /**
+     * If available, gets the owning model (usually BlockModel) of this configuration
+     */
+    @Nullable
+    IUnbakedModel getOwnerModel();
+
     /**
      * @return The name of the model being baked, for logging and cache purposes.
      */

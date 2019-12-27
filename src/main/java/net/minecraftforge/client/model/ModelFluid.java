@@ -80,12 +80,12 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         FluidAttributes attrs = fluid.getAttributes();
         return new CachingBakedFluid(
-                sprite.func_225615_b_(),
-                PerspectiveMapWrapper.getTransforms(sprite),
+                modelTransform.func_225615_b_(),
+                PerspectiveMapWrapper.getTransforms(modelTransform),
                 modelLocation,
                 attrs.getColor(),
                 spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getStillTexture())),

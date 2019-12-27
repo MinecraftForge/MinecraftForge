@@ -33,18 +33,18 @@ import java.util.function.Function;
 public interface ISimpleModelGeometry<T extends ISimpleModelGeometry<T>> extends IModelGeometry<T>
 {
     @Override
-    default IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    default IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         TextureAtlasSprite particle = spriteGetter.apply(owner.resolveTexture("particle"));
 
         IModelBuilder<?> builder = IModelBuilder.of(owner, overrides, particle);
 
-        addQuads(owner, builder, bakery, spriteGetter, sprite, modelLocation);
+        addQuads(owner, builder, bakery, spriteGetter, modelTransform, modelLocation);
 
         return builder.build();
     }
 
-    void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation);
+    void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation);
 
     @Override
     Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors);

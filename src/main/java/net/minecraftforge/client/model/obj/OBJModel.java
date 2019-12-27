@@ -395,7 +395,8 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         Vec2f uv2 = new Vec2f(((float) fakeLight * 0x20) / 0xFFFF, ((float) fakeLight * 0x20) / 0xFFFF);
 
         boolean hasTransform = !transform.isIdentity();
-        TransformationMatrix transformation = hasTransform ? transform : null;
+        // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
+        TransformationMatrix transformation = hasTransform ? transform.blockCenterToCorner() : transform;
 
         for(int i=0;i<4;i++)
         {
@@ -556,7 +557,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(ModelMesh mesh : meshes)
             {
@@ -570,7 +571,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
                 for (int[][] face : mesh.faces)
                 {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, DefaultVertexFormats.BLOCK, sprite.func_225615_b_());
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, DefaultVertexFormats.BLOCK, modelTransform.func_225615_b_());
                     if (quad.getRight() == null)
                         modelBuilder.addGeneralQuad(quad.getLeft());
                     else
@@ -580,7 +581,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public Collection<Material> getTextureDependencies(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
         }
@@ -606,21 +607,21 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            super.addQuads(owner, modelBuilder, bakery, spriteGetter, sprite, modelLocation);
+            super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
 
             getParts().stream().filter(part -> owner.getPartVisibility(part))
-                    .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, sprite, modelLocation));
+                    .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
         }
 
         @Override
-        public Collection<Material> getTextureDependencies(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             Set<Material> combined = Sets.newHashSet();
-            combined.addAll(super.getTextureDependencies(owner, modelGetter, missingTextureErrors));
+            combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
             for (IModelGeometryPart part : getParts())
-                combined.addAll(part.getTextureDependencies(owner, modelGetter, missingTextureErrors));
+                combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
             return combined;
         }
 

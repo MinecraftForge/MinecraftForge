@@ -51,3 +51,5 @@ loaderVersion="[28,)"
 ##    modId="custom_tnt_test"
 [[mods]]
     modId="new_model_loader_test"
+[[mods]]
+    modId="forgedebugmultilayermodel"

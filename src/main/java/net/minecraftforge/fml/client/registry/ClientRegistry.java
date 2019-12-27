@@ -32,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class ClientRegistry
 {
@@ -42,9 +43,9 @@ public class ClientRegistry
      * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
      * This method is safe to call during parallel mod loading.
      */
-    public static synchronized <T extends TileEntity> void bindTileEntityRenderer(TileEntityType<T> tileEntityType, TileEntityRenderer<? super T> specialRenderer)
+    public static synchronized <T extends TileEntity> void bindTileEntityRenderer(TileEntityType<T> tileEntityType, Function<TileEntityRendererDispatcher, TileEntityRenderer<? super T>> rendererFactory)
     {
-        TileEntityRendererDispatcher.instance.setSpecialRendererInternal(tileEntityType, specialRenderer);
+        TileEntityRendererDispatcher.instance.setSpecialRendererInternal(tileEntityType, rendererFactory.apply(TileEntityRendererDispatcher.instance));
     }
 
     /**

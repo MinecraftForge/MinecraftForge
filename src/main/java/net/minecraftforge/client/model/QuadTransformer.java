@@ -48,22 +48,22 @@ public class QuadTransformer
 
     private void processVertices(int[] inData, int[] outData)
     {
-        int stride = format.getIntegerSize();
-        int count = inData.length / stride;
+        int stride = format.getSize();
+        int count = (inData.length * 4) / stride;
         for (int i=0;i<count;i++)
         {
             int offset = positionOffset + i * stride;
-            float x = Float.intBitsToFloat(inData[offset ]);
-            float y = Float.intBitsToFloat(inData[offset + 1]);
-            float z = Float.intBitsToFloat(inData[offset + 2]);
+            float x = Float.intBitsToFloat(getAtByteOffset(inData, offset ));
+            float y = Float.intBitsToFloat(getAtByteOffset(inData, offset + 4));
+            float z = Float.intBitsToFloat(getAtByteOffset(inData, offset + 8));
 
             Vector4f pos = new Vector4f(x, y, z, 1);
             transform.transformPosition(pos);
-            pos.func_229374_e_();
+            pos.func_229375_f_();
 
-            outData[offset] = Float.floatToRawIntBits(pos.getX());
-            outData[offset + 1] = Float.floatToRawIntBits(pos.getY());
-            outData[offset + 2] = Float.floatToRawIntBits(pos.getZ());
+            putAtByteOffset(outData, offset, Float.floatToRawIntBits(pos.getX()));
+            putAtByteOffset(outData,offset + 4, Float.floatToRawIntBits(pos.getY()));
+            putAtByteOffset(outData,offset + 8, Float.floatToRawIntBits(pos.getZ()));
         }
 
         if (normalOffset >= 0)
@@ -71,23 +71,55 @@ public class QuadTransformer
             for (int i=0;i<count;i++)
             {
                 int offset = normalOffset + i * stride;
-                int normalIn = inData[offset];
-                float x = (((normalIn)>>24)&0xFF)/255.0f;
-                float y = (((normalIn<<8)>>24)&0xFF)/255.0f;
-                float z = (((normalIn<<16)>>24)&0xFF)/255.0f;
+                int normalIn = getAtByteOffset(inData,offset);
+                if (normalIn != 0)
+                {
+                    float x = (((normalIn) >> 24) & 0xFF) / 255.0f;
+                    float y = (((normalIn << 8) >> 24) & 0xFF) / 255.0f;
+                    float z = (((normalIn << 16) >> 24) & 0xFF) / 255.0f;
 
-                Vector3f pos = new Vector3f(x, y, z);
-                transform.transformNormal(pos);
+                    Vector3f pos = new Vector3f(x, y, z);
+                    transform.transformNormal(pos);
+                    pos.func_229194_d_();
 
-                int normalOut =
-                        (((int)(x/255.0)&0xFF)<<24) |
-                        (((int)(y/255.0)&0xFF)<<16) |
-                        (((int)(z/255.0)&0xFF)<<8) |
-                        (normalIn&0xFF);
+                    int normalOut = (((int) (x / 255.0) & 0xFF) << 24) |
+                                    (((int) (y / 255.0) & 0xFF) << 16) |
+                                    (((int) (z / 255.0) & 0xFF) << 8) |
+                                    (normalIn & 0xFF);
 
-                outData[offset] = normalOut;
+                    putAtByteOffset(outData, offset, normalOut);
+                }
             }
         }
+    }
+
+    private static int getAtByteOffset(int[] inData, int offset)
+    {
+        int index = offset / 4;
+        int lsb = inData[index];
+
+        int shift = (offset % 4) * 8;
+        if (shift == 0)
+            return inData[index];
+
+        int msb = inData[index+1];
+
+        return (lsb >>> shift) | (msb << (32-shift));
+    }
+
+    private static void putAtByteOffset(int[] outData, int offset, int value)
+    {
+        int index = offset / 4;
+        int shift = (offset % 4) * 8;
+
+        if (shift == 0)
+            outData[index] = value;
+
+        int lsbMask = 0xFFFFFFFF >>> (32-shift);
+        int msbMask = 0xFFFFFFFF << shift;
+
+        outData[index] = (outData[index] & lsbMask) | (value << shift);
+        outData[index+1] = (outData[index+1] & msbMask) | (value >>> (32-shift));
     }
 
     private static int findPositionOffset(VertexFormat fmt)

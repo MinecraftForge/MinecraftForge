@@ -23,12 +23,17 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FourWayBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -45,6 +50,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
+
 @Mod(NewModelLoaderTest.MODID)
 public class NewModelLoaderTest
 {
@@ -52,8 +59,27 @@ public class NewModelLoaderTest
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
 
+    public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
+            new Block(Block.Properties.create(Material.WOOD)) {
+                @Override
+                protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+                {
+                    builder.add(BlockStateProperties.HORIZONTAL_FACING);
+                }
+
+                @Nullable
+                @Override
+                public BlockState getStateForPlacement(BlockItemUseContext context)
+                {
+                    return getDefaultState().with(
+                            BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing()
+                    );
+                }
+            }
+    );
+
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_item", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC)) {
+            new BlockItem(obj_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
                 {
