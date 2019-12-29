@@ -53,3 +53,5 @@ loaderVersion="[28,)"
     modId="new_model_loader_test"
 [[mods]]
     modId="forgedebugmultilayermodel"
+[[mods]]
+    modId="trsr_transformer_test"
