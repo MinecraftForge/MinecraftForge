@@ -30,6 +30,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -48,6 +49,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -86,6 +88,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
+import net.minecraftforge.event.enchanting.EnchantEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -657,6 +660,10 @@ public class ForgeEventFactory
         net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, enchantRow, power, itemStack, level);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
+    }
+
+    public static boolean onEnchant(ItemStack stack, Enchantment enchantment, int level) {
+        return MinecraftForge.EVENT_BUS.post(new EnchantEvent(stack, enchantment, level));
     }
 
     public static boolean onEntityDestroyBlock(LivingEntity entity, BlockPos pos, BlockState state)

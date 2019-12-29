@@ -198,7 +198,15 @@
        return list;
     }
  
-@@ -772,7 +796,7 @@
+@@ -723,6 +747,7 @@
+       compoundnbt.func_74778_a("id", String.valueOf((Object)Registry.field_212628_q.func_177774_c(p_77966_1_)));
+       compoundnbt.func_74777_a("lvl", (short)((byte)p_77966_2_));
+       listnbt.add(compoundnbt);
++      net.minecraftforge.event.ForgeEventFactory.onEnchant(this, p_77966_1_, p_77966_2_);
+    }
+ 
+    public boolean func_77948_v() {
+@@ -772,7 +797,7 @@
              }
           }
        } else {
@@ -207,7 +215,7 @@
        }
  
        multimap.values().forEach((p_226631_0_) -> {
-@@ -915,6 +939,35 @@
+@@ -915,6 +940,35 @@
        return this.func_77973_b().func_219971_r();
     }
  
