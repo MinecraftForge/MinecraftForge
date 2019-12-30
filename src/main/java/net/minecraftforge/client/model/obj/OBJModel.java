@@ -504,7 +504,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                                     texture.getInterpolatedV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
                             );
                             break;
-                        case 1:
+                        case 2:
                             consumer.put(j, uv2.x, uv2.y);
                             break;
                         default:

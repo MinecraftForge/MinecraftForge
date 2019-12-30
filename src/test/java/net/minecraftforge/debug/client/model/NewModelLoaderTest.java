@@ -19,9 +19,6 @@
 
 package net.minecraftforge.debug.client.model;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FourWayBlock;
@@ -43,7 +40,6 @@ import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -78,7 +74,7 @@ public class NewModelLoaderTest
             }
     );
 
-    public static RegistryObject<Item> obj_item = ITEMS.register("obj_item", () ->
+    public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
             new BlockItem(obj_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)

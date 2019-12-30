@@ -9,3 +9,12 @@
     Logger field_227884_f_ = LogManager.getLogger();
  
     IVertexBuilder func_225582_a_(double p_225582_1_, double p_225582_3_, double p_225582_5_);
+@@ -95,7 +95,7 @@
+                f5 = p_227890_3_[k] * p_227890_6_;
+             }
+ 
+-            int l = p_227890_7_[k];
++            int l = applyBakedLighting(p_227890_7_[k], bytebuffer);
+             float f9 = bytebuffer.getFloat(16);
+             float f10 = bytebuffer.getFloat(20);
+             Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
