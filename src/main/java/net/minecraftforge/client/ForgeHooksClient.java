@@ -742,7 +742,7 @@ public class ForgeHooksClient
 
         for(int i = 0; i < 4; i++)
         {
-            faceData[i * 8 + 6] = normal;
+            faceData[i * 8 + 7] = normal;
         }
     }
 

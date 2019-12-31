@@ -43,10 +43,10 @@ public interface IMultipartModelGeometry<T extends IMultipartModelGeometry<T>> e
     Optional<? extends IModelGeometryPart> getPart(String name);
 
     @Override
-    default void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+    default void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
     {
         getParts().stream().filter(part -> owner.getPartVisibility(part))
-                .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, sprite, modelLocation));
+                .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
     }
 
     @Override
@@ -54,7 +54,7 @@ public interface IMultipartModelGeometry<T extends IMultipartModelGeometry<T>> e
     {
         Set<Material> combined = Sets.newHashSet();
         for (IModelGeometryPart part : getParts())
-            combined.addAll(part.getTextureDependencies(owner, modelGetter, missingTextureErrors));
+            combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
         return combined;
     }
 }

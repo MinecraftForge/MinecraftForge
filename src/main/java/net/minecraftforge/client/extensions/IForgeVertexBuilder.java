@@ -91,7 +91,7 @@ public interface IForgeVertexBuilder
                     ca = alpha;
                 }
 
-                int lightmapCoord = lightmapCoords[v];
+                int lightmapCoord = applyBakedLighting(lightmapCoords[v], bytebuffer);
                 float f9 = bytebuffer.getFloat(16);
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
@@ -99,6 +99,13 @@ public interface IForgeVertexBuilder
                 ((IVertexBuilder)this).func_225588_a_(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
             }
         }
-
+    }
+    
+    default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
+        int sl = (lightmapCoord >> 16) & 0xFFFF;
+        int bl = lightmapCoord & 0xFFFF;
+        sl = Math.max(sl, Short.toUnsignedInt(data.getShort(24)));
+        bl = Math.max(bl, Short.toUnsignedInt(data.getShort(26)));
+        return (sl << 16) | bl;
     }
 }

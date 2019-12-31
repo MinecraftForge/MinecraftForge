@@ -33,6 +33,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.model.TransformationHelper;
 
 import javax.annotation.Nullable;
@@ -130,7 +131,10 @@ public class PerspectiveMapWrapper implements IBakedModel
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
     @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) { return parent.getQuads(state, side, rand); }
-
+    @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
+    {
+        return parent.getQuads(state, side, rand, extraData);
+    }
 
     @Override
     public ItemOverrideList getOverrides()

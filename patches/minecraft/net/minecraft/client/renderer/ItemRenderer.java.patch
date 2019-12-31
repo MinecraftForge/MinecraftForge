@@ -25,7 +25,7 @@
           }
  
 -         p_229111_8_.func_177552_f().func_181688_b(p_229111_2_).func_228830_a_(p_229111_3_, p_229111_4_);
-+         net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_229111_4_, p_229111_8_, p_229111_2_, p_229111_3_);
++         p_229111_8_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_229111_4_, p_229111_8_, p_229111_2_, p_229111_3_);
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag1)) {
              RenderType rendertype = RenderTypeLookup.func_228389_a_(p_229111_1_);

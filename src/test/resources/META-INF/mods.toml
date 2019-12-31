@@ -52,4 +52,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="new_model_loader_test"
 [[mods]]
+    modId="forgedebugmultilayermodel"
+[[mods]]
+    modId="trsr_transformer_test"
+[[mods]]
     modId="villagepiecesinittest"

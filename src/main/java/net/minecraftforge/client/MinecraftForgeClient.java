@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.renderer.RenderType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.Cache;
@@ -52,11 +53,10 @@ import net.minecraft.world.World;
 
 public class MinecraftForgeClient
 {
-    /* TODO: reimplement
-    public static BlockRenderLayer getRenderLayer()
+    public static RenderType getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();
-    }*/
+    }
 
     /**
      * returns the Locale set by the player in Minecraft.
