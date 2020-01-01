@@ -47,6 +47,7 @@ public class RenderingRegistry
     public static void loadEntityRenderers(EntityRendererManager manager)
     {
         INSTANCE.entityRenderers.forEach((key, value) -> register(manager, key, value));
+        manager.validateRendererExistence();
     }
 
     @SuppressWarnings("unchecked")

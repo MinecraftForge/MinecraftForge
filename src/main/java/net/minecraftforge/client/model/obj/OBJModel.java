@@ -121,26 +121,14 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     if (!Objects.equals(newMat, currentMat))
                     {
                         currentMat = newMat;
-                        if (currentMesh != null && currentMesh.mat == null)
+                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0)
                         {
                             currentMesh.mat = currentMat;
                         }
                         else
                         {
-                            currentMesh = new ModelMesh(currentMat, currentSmoothingGroup);
-                            if (currentObject != null)
-                            {
-                                currentObject.meshes.add(currentMesh);
-                            }
-                            else
-                            {
-                                if (currentGroup == null)
-                                {
-                                    currentGroup = new ModelGroup("");
-                                    parts.put("", currentGroup);
-                                }
-                                currentGroup.meshes.add(currentMesh);
-                            }
+                            // Start new mesh
+                            currentMesh = null;
                         }
                     }
                     break;
@@ -216,26 +204,14 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     if (!Objects.equals(currentSmoothingGroup, smoothingGroup))
                     {
                         currentSmoothingGroup = smoothingGroup;
-                        if (currentMesh != null && currentMesh.smoothingGroup == null)
+                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0)
                         {
                             currentMesh.smoothingGroup = currentSmoothingGroup;
                         }
                         else
                         {
-                            currentMesh = new ModelMesh(currentMat, currentSmoothingGroup);
-                            if (currentObject != null)
-                            {
-                                currentObject.meshes.add(currentMesh);
-                            }
-                            else
-                            {
-                                if (currentGroup == null)
-                                {
-                                    currentGroup = new ModelGroup("");
-                                    parts.put("", currentGroup);
-                                }
-                                currentGroup.meshes.add(currentMesh);
-                            }
+                            // Start new mesh
+                            currentMesh = null;
                         }
                     }
                     break;
@@ -246,19 +222,17 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     String name = line[1];
                     if (objAboveGroup)
                     {
-                        currentObject = new ModelObject(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentObject.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
                     }
                     else
                     {
                         currentGroup = new ModelGroup(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentGroup.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
                         parts.put(name, currentGroup);
                         currentObject = null;
                     }
+                    // Start new mesh
+                    currentMesh = null;
                     break;
                 }
 
@@ -270,18 +244,16 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                         objAboveGroup = true;
 
                         currentGroup = new ModelGroup(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentGroup.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
                         parts.put(name, currentGroup);
                         currentObject = null;
                     }
                     else
                     {
-                        currentObject = new ModelObject(name);
-                        if (currentMat != null || currentSmoothingGroup != null )
-                            currentObject.meshes.add(new ModelMesh(currentMat, currentSmoothingGroup));
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
                     }
+                    // Start new mesh
+                    currentMesh = null;
                     break;
                 }
             }
@@ -423,7 +395,8 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         Vec2f uv2 = new Vec2f(((float) fakeLight * 0x20) / 0xFFFF, ((float) fakeLight * 0x20) / 0xFFFF);
 
         boolean hasTransform = !transform.isIdentity();
-        TransformationMatrix transformation = hasTransform ? transform : null;
+        // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
+        TransformationMatrix transformation = hasTransform ? transform.blockCenterToCorner() : transform;
 
         for(int i=0;i<4;i++)
         {
@@ -531,7 +504,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                                     texture.getInterpolatedV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
                             );
                             break;
-                        case 1:
+                        case 2:
                             consumer.put(j, uv2.x, uv2.y);
                             break;
                         default:
@@ -584,7 +557,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(ModelMesh mesh : meshes)
             {
@@ -598,7 +571,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
                 for (int[][] face : mesh.faces)
                 {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, DefaultVertexFormats.BLOCK, sprite.func_225615_b_());
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, DefaultVertexFormats.BLOCK, modelTransform.func_225615_b_());
                     if (quad.getRight() == null)
                         modelBuilder.addGeneralQuad(quad.getLeft());
                     else
@@ -608,7 +581,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public Collection<Material> getTextureDependencies(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
         }
@@ -634,21 +607,21 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            super.addQuads(owner, modelBuilder, bakery, spriteGetter, sprite, modelLocation);
+            super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
 
             getParts().stream().filter(part -> owner.getPartVisibility(part))
-                    .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, sprite, modelLocation));
+                    .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
         }
 
         @Override
-        public Collection<Material> getTextureDependencies(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             Set<Material> combined = Sets.newHashSet();
-            combined.addAll(super.getTextureDependencies(owner, modelGetter, missingTextureErrors));
+            combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
             for (IModelGeometryPart part : getParts())
-                combined.addAll(part.getTextureDependencies(owner, modelGetter, missingTextureErrors));
+                combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
             return combined;
         }
 

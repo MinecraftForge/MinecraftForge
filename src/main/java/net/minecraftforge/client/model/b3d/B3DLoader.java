@@ -460,7 +460,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
         @Nullable
         @Override
-        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             TextureAtlasSprite missing = spriteGetter.apply(new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, MissingTextureSprite.getLocation()));
@@ -477,7 +477,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(model.getRoot(), sprite, smooth, gui3d, DefaultVertexFormats.BLOCK, meshes, builder.build());
+            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, DefaultVertexFormats.BLOCK, meshes, builder.build());
         }
 
         public ModelWrapper retexture(ImmutableMap<String, String> textures)

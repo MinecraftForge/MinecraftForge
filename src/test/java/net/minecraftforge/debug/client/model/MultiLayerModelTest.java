@@ -17,28 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/*
-
-
 package net.minecraftforge.debug.client.model;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ObjectHolder;
 
-//@Mod(modid = MultiLayerModelTest.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelTest.VERSION, acceptableRemoteVersions = "*")
+@Mod(MultiLayerModelTest.MODID)
 public class MultiLayerModelTest
 {
     private static final boolean ENABLED = true;
@@ -50,7 +44,7 @@ public class MultiLayerModelTest
     @ObjectHolder(blockName)
     public static final Block TEST_BLOCK = null;
 
-    //@Mod.EventBusSubscriber(modid = MODID)
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -59,48 +53,28 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             event.getRegistry().register(
-                new Block(Material.WOOD)
+                new Block(Block.Properties.create(Material.WOOD))
                 {
-                    {
-                        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-                        setUnlocalizedName(MODID + "." + blockName);
-                        setRegistryName(blockId);
-                    }
-
-                    @Override
-                    public boolean isOpaqueCube(IBlockState state)
-                    {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean isFullCube(IBlockState state)
-                    {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
-                    {
-                        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
-                    }
-                }
+                }.setRegistryName(blockId)
             );
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
+            if (!ENABLED)
+                return;
+            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
 
-        @SubscribeEvent
-        public static void registerModels(ModelRegistryEvent event)
+        @net.minecraftforge.eventbus.api.SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event)
         {
             if (!ENABLED)
                 return;
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TEST_BLOCK), 0, new ModelResourceLocation(blockId, "inventory"));
+            RenderTypeLookup.setRenderLayer(TEST_BLOCK, (layer) -> {
+                return layer == RenderType.func_228639_c_() || layer == RenderType.func_228645_f_();
+            });
         }
     }
 }
-*/

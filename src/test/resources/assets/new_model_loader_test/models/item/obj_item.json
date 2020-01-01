@@ -1,8 +1,16 @@
 {
   "parent": "forge:item/default",
-  "loader": "forge:obj",
-  "model": "new_model_loader_test:models/item/sugar_glider.obj",
-  "ambientToFullbright": true,
+  "loader": "forge:composite",
+  "parts": {
+    "part1": {
+      "loader": "forge:obj",
+      "model": "new_model_loader_test:models/item/sugar_glider.obj",
+      "ambientToFullbright": true,
+      "textures": {
+        "qr": "new_model_loader_test:item/qr"
+      }
+    }
+  },
   "textures": {
     "particle": "block/oak_planks"
   },
@@ -13,7 +21,7 @@
       "scale": [ 1, 1, 1 ]
     },
     "fixed": {
-      "rotation": [ 0, 180, 0 ],
+      "rotation": [ 22, 180, 0 ],
       "translation": [ 0, 4, 0],
       "scale":[ 1, 1, 1 ]
     },

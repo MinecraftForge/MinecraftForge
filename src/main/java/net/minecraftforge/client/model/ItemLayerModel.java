@@ -19,17 +19,18 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
-
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -38,11 +39,9 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,
@@ -83,22 +82,27 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         //TODO: Verify
-        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        TransformationMatrix transform = sprite.func_225615_b_();
-        boolean identity = transform.isIdentity();
-        for(int i = 0; i < textures.size(); i++)
-        {
-            TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
-            builder.addAll(getQuadsForSprite(i, tas, DefaultVertexFormats.BLOCK, transform));
-        }
+        TransformationMatrix transform = modelTransform.func_225615_b_();
+        ImmutableList<BakedQuad> quads = getQuadsForSprites(textures, DefaultVertexFormats.BLOCK, transform, spriteGetter);
         TextureAtlasSprite particle = spriteGetter.apply(
                 owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : textures.get(0)
         );
-        ImmutableMap<TransformType, TransformationMatrix> map = PerspectiveMapWrapper.getTransforms(sprite);
-        return new BakedItemModel(builder.build(), particle, map, overrides, identity);
+        ImmutableMap<TransformType, TransformationMatrix> map = PerspectiveMapWrapper.getTransforms(modelTransform);
+        return new BakedItemModel(quads, particle, map, overrides, transform.isIdentity());
+    }
+
+    public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, VertexFormat format, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter)
+    {
+        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+        for(int i = 0; i < textures.size(); i++)
+        {
+            TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
+            builder.addAll(getQuadsForSprite(i, tas, format, transform));
+        }
+        return builder.build();
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, TransformationMatrix transform)

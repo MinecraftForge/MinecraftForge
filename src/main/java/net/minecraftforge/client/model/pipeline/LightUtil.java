@@ -24,18 +24,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.util.Direction;
-import net.minecraftforge.client.ForgeHooksClient;
 
 public class LightUtil
 {
@@ -166,6 +159,7 @@ public class LightUtil
         int vertexStart = v * formatFrom.getSize() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.Type type = element.getType();
+        VertexFormatElement.Usage usage = element.getUsage();
         int size = type.getSize();
         int mask = (256 << (8 * (size - 1))) - 1;
         for(int i = 0; i < length; i++)
@@ -209,7 +203,7 @@ public class LightUtil
             }
             else
             {
-                to[i] = 0;
+                to[i] = (i == 3 && usage == VertexFormatElement.Usage.POSITION) ? 1 : 0;
             }
         }
     }
@@ -311,7 +305,7 @@ public class LightUtil
         @Override
         public void put(int element, float... data)
         {
-            if(getVertexFormat().func_227894_c_().get(element).getUsage() == Usage.COLOR)
+            if(getVertexFormat().func_227894_c_().get(element).getUsage() == VertexFormatElement.Usage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
                 int n = Math.min(4, data.length);

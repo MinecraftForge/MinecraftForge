@@ -6,7 +6,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd block/birch_planks
+map_Kd #qr
 
 newmtl New material 001
 Ka 0.0000 0.0000 0.0000
@@ -15,7 +15,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd block/birch_planks
+map_Kd #qr
 
 newmtl Default
 Ka 0.0000 0.0000 0.0000
@@ -24,7 +24,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd block/birch_planks
+map_Kd #qr
 
 newmtl New material 002
 Ka 0.0000 0.0000 0.0000
@@ -33,7 +33,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd block/birch_planks
+map_Kd #qr
 
 newmtl New material 003
 Ka 0.0000 0.0000 0.0000
@@ -42,5 +42,5 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd block/birch_planks
+map_Kd #qr
 
