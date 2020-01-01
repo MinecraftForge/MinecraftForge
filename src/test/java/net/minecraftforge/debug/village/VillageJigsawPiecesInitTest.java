@@ -69,7 +69,7 @@ public class VillageJigsawPiecesInitTest
                     event.addBuildings(new ResourceLocation("fountain"),Lists.newArrayList(Pair.of(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),2)));
                 }
             case 2:
-                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/streets"))){
+                if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/streets"))){
                     event.removeCategory(new ResourceLocation("straight"));
                     event.removeCategory(new ResourceLocation("corner"));
                     event.removeCategory(new ResourceLocation("crossroad"));
@@ -77,13 +77,13 @@ public class VillageJigsawPiecesInitTest
                 }
                 break;
             case 4:
-                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/houses"))){
+                if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/houses"))){
                     event.addBuilding(new ResourceLocation("large_farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_large_farm_1")),10);
                     event.addBuilding(new ResourceLocation("small_farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10);
                 }
                 break;
             case 5:
-                if(event.jigsawPoolRegistryName.equals(new ResourceLocation("village/plains/houses"))){
+                if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/houses"))){
                     event.addCategory(new ResourceLocation(MODID,"test"),100, ImmutableList.of(new Pair<>(new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10)));
                 }
                 break;

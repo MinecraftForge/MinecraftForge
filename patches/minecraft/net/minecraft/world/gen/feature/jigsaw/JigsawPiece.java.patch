@@ -8,11 +8,14 @@
  
     protected JigsawPiece(JigsawPattern.PlacementBehaviour p_i51398_1_) {
        this.field_214855_a = p_i51398_1_;
-@@ -62,4 +63,9 @@
+@@ -62,4 +63,12 @@
     public int func_214850_d() {
        return 1;
     }
 +
++   /**
++    * @return RegistryName of the JigsawPiece
++    */
 +   public net.minecraft.util.ResourceLocation getRegistryName(){
 +      return REGISTRYNAME;
 +   }

@@ -39,7 +39,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,31 +49,32 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Use {@link #addBuilding(ResourceLocation, JigsawPiece, int)} to add custom JigsawPiece to structure pools
  * <br>
  * Use {@link #removeBuilding(ResourceLocation, ResourceLocation)} to remove a JigsawPiece from structure pools.
- * <b>Be careful to not to remove all JigsawPieces from the startPool ("village/plains/town_centers" for Village and "pillager_outpost/base_plates" for PillageOutpost)</b>
+ * <br>
+ * <b> Be careful to not to remove all JigsawPieces from the startPool ("village/plains/town_centers" for Village and "pillager_outpost/base_plates" for PillageOutpost) </b>
  *
  */
 public class JigsawPatternInitEvent extends Event {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker JIGSAWPDUMP = MarkerManager.getMarker("JIGSAWPATTERN");
 
-    /** Category registryName to buildings to add */
-    private Map<ResourceLocation,List<Pair<JigsawPiece, Integer>>> newBuildings = Maps.newHashMap();
-    /** Category registryName to JigsawPiece registryNames to remove */
-    private Map<ResourceLocation,List<ResourceLocation>> remove = Maps.newHashMap();
-    /** Category registryName to its Category */
-    private Map<ResourceLocation,JigsawCategory> newCategories = Maps.newHashMap();
-    /** Category registryNames to remove */
-    private List<ResourceLocation> removeCategories = Lists.newArrayList();
+    /** Maps from {@link JigsawCategory} registryNames to weighed {@link JigsawPiece}s which should be added to the category */
+    private final Map<ResourceLocation, List<Pair<JigsawPiece, Integer>>> newBuildings = Maps.newHashMap();
+    /** Maps from {@link JigsawCategory} registryNames to {@link JigsawPiece} registryNames which should be removed from this category */
+    private final Map<ResourceLocation, List<ResourceLocation>> removeBuildings = Maps.newHashMap();
+    /** Maps from category registryName to new {@link JigsawCategory} */
+    private final Map<ResourceLocation, JigsawCategory> newCategories = Maps.newHashMap();
+    /** {@link JigsawCategory} registryNames to remove from the {@link JigsawPattern}*/
+    private final List<ResourceLocation> removeCategories = Lists.newArrayList();
 
-    /** JigsawPool RegistryName */
-    public final ResourceLocation jigsawPoolRegistryName;
-    /** Category registryName to Category */
+    /** {@link JigsawPattern} registryName */
+    public final ResourceLocation jigsawPatternRegistryName;
+    /** Maps from category registryName to existing {@link JigsawCategory} */
     private final Map<ResourceLocation, JigsawCategory> jigsawPieces = Maps.newHashMap();
 
     public JigsawPatternInitEvent(ResourceLocation location, List<JigsawCategory> jigsawPieces)
     {
-        this.jigsawPoolRegistryName = location;
-            jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(),category)));
+        this.jigsawPatternRegistryName = location;
+        jigsawPieces.forEach((category -> this.jigsawPieces.put(category.getRegistryName(), category)));
     }
 
     /**
@@ -94,8 +94,7 @@ public class JigsawPatternInitEvent extends Event {
         {
             LOGGER.debug("a category with the registryName {} was already added. Adding pieces to category", registryName);
             JigsawCategory category = this.newCategories.get(registryName);
-            category.getPieces().addAll(pieces);
-            category.recalculateWeight();
+            category.addJigsawPieces(pieces);
         }
         else
             this.newCategories.put(registryName, new JigsawCategory(registryName, weight, pieces));
@@ -103,7 +102,7 @@ public class JigsawPatternInitEvent extends Event {
 
     /**
      * Simply deletes to corresponding {@link JigsawCategory} if existent
-     * @param registryName
+     * @param registryName RegistryName of the {@link JigsawCategory} to be removed
      */
     public void removeCategory(@Nonnull ResourceLocation registryName)
     {
@@ -111,18 +110,20 @@ public class JigsawPatternInitEvent extends Event {
     }
 
     /**
-     * add single JigsawPiece with weight to a pool
+     * Add single JigsawPiece with weight to a pool
+     *
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param piece The structure that should be added
      * @param weight The weight of the structure
      */
     public void addBuilding(@Nonnull ResourceLocation category, @Nonnull JigsawPiece piece, int weight)
     {
-        this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(new Pair<>(piece, weight));
+        this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(Pair.of(piece, weight));
     }
 
     /**
      * Add multiple JigsawPieces with weight to a pool at the same time
+     *
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param pieces A list of JigsawPieces and weights that should be added to the pool
      */
@@ -132,48 +133,57 @@ public class JigsawPatternInitEvent extends Event {
     }
 
     /**
-     * removes single JigsawPiece from a JigsawPattern
+     * Removes single JigsawPiece from a JigsawPattern
+     *
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param building The identifier of the JigsawPiece {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
     public void removeBuilding(@Nonnull ResourceLocation category, @Nonnull ResourceLocation building)
     {
-        this.remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(building);
+        this.removeBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(building);
     }
 
     /**
-     * removes multiple JigsawPieces from a JigsawPattern
+     * Removes multiple JigsawPieces from a JigsawPattern
+     *
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
     public void removeBuildings(@Nonnull ResourceLocation category, @Nonnull List<ResourceLocation> buildings)
     {
-        remove.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
+        removeBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
     }
 
+    /**
+     * Applies the changes requested by {@link #newBuildings}, {@link #removeBuildings}, {@link #newCategories}
+     * and {@link #removeCategories} to the given {@link JigsawCategory}s.
+     * <br>
+     * At the end prints all changes to console in debug mode
+     *
+     * @return computed {@link JigsawCategory}s for a {@link JigsawPattern}
+     */
     public List<JigsawCategory> getPool()
     {
         for(ResourceLocation remove: this.removeCategories)
         {
             if(this.jigsawPieces.remove(remove) == null){
-                LOGGER.debug("Tried to remove nonexistent JigsawCategory {} from JigsawPattern {}", remove, this.jigsawPoolRegistryName);
+                LOGGER.debug("Tried to remove nonexistent JigsawCategory {} from JigsawPattern {}", remove, this.jigsawPatternRegistryName);
             }
         }
         this.jigsawPieces.putAll(this.newCategories);
-        for (Map.Entry<ResourceLocation,List<ResourceLocation>> remove: this.remove.entrySet())
+        for (Map.Entry<ResourceLocation,List<ResourceLocation>> remove: this.removeBuildings.entrySet())
         {
             if(this.jigsawPieces.containsKey(remove.getKey())){
-                this.jigsawPieces.get(remove.getKey()).getPieces().removeIf(jigsawPieceIntegerPair -> remove.getValue().contains(jigsawPieceIntegerPair.getFirst().getRegistryName()));
+                this.jigsawPieces.get(remove.getKey()).removeJigsawPieces(remove.getValue());
             }
         }
         for(Map.Entry<ResourceLocation,List<Pair<JigsawPiece,Integer>>> entry: this.newBuildings.entrySet())
         {
             JigsawCategory category = this.jigsawPieces.get(entry.getKey());
             if(category == null){
-                LOGGER.debug("Building cannot be added. JigsawCategory {} doesn't exits or were removed in JigsawPattern {}", entry.getKey(), this.jigsawPoolRegistryName);
+                LOGGER.debug("Building cannot be added. JigsawCategory {} doesn't exits or were removed in JigsawPattern {}", entry.getKey(), this.jigsawPatternRegistryName);
             }else {
-                category.getPieces().addAll(entry.getValue());
-                category.recalculateWeight();
+                category.addJigsawPieces(entry.getValue());
             }
         }
         this.printChanges();
@@ -182,15 +192,15 @@ public class JigsawPatternInitEvent extends Event {
 
     public boolean isPool(String name)
     {
-        return this.jigsawPoolRegistryName.toString().equals(name);
+        return this.jigsawPatternRegistryName.toString().equals(name);
     }
 
     private void printChanges(){
-        if(this.removeCategories.size() != 0 || this.newCategories.size() != 0 || this.remove.size() != 0 || this.newBuildings.size() != 0)
+        if(this.removeCategories.size() != 0 || this.newCategories.size() != 0 || this.removeBuildings.size() != 0 || this.newBuildings.size() != 0)
         {
             LOGGER.debug(JIGSAWPDUMP, () -> new AdvancedLogMessageAdapter(stringBuilder ->
             {
-                stringBuilder.append("JigsawPattern: ").append(this.jigsawPoolRegistryName).append('\n');
+                stringBuilder.append("JigsawPattern: ").append(this.jigsawPatternRegistryName).append('\n');
                 if (this.removeCategories.size() != 0)
                 {
                     AtomicInteger i = new AtomicInteger(0);
@@ -209,10 +219,10 @@ public class JigsawPatternInitEvent extends Event {
                         stringBuilder.append("\t\tEntry: ").append(i.getAndIncrement()).append(", ").append(resourceLocation).append('\n');
                     });
                 }
-                if (this.remove.size() != 0)
+                if (this.removeBuildings.size() != 0)
                 {
                     stringBuilder.append("\tRemoved JigsawPieces from Category").append('\n');
-                    this.remove.entrySet().forEach((resourceLocationListEntry ->
+                    this.removeBuildings.entrySet().forEach((resourceLocationListEntry ->
                     {
                         AtomicInteger i = new AtomicInteger(0);
                         stringBuilder.append("\t\tFrom Category: ").append(resourceLocationListEntry.getKey()).append('\n');
