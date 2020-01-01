@@ -26,10 +26,16 @@ import net.minecraft.client.renderer.Vector4f;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class MaterialLibrary
 {
+    public static final MaterialLibrary EMPTY = new MaterialLibrary();
     final Map<String, Material> materials = Maps.newHashMap();
+
+    private MaterialLibrary()
+    {
+    }
 
     public MaterialLibrary(OBJLoader.LineReader reader) throws IOException
     {
@@ -97,10 +103,12 @@ public class MaterialLibrary
 
     public Material getMaterial(String mat)
     {
+        if (!materials.containsKey(mat))
+            throw new NoSuchElementException("The material was not found in the library: " + mat);
         return materials.get(mat);
     }
 
-    public class Material
+    public static class Material
     {
         public final String name;
         public Vector4f ambientColor = new Vector4f(0,0,0,1);

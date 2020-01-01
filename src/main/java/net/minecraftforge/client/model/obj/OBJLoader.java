@@ -67,17 +67,19 @@ public class OBJLoader implements IModelLoader<OBJModel>
         boolean diffuseLighting = JSONUtils.getBoolean(modelContents, "diffuseLighting", false);
         boolean flipV = JSONUtils.getBoolean(modelContents, "flip-v", false);
         boolean ambientToFullbright = JSONUtils.getBoolean(modelContents, "ambientToFullbright", true);
+        @Nullable
+        String materialLibraryOverrideLocation = modelContents.has("materialLibraryOverride") ? JSONUtils.getString(modelContents, "materialLibraryOverride") : null;
 
-        return loadModel(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
+        return loadModel(new ModelSettings(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation));
     }
 
-    public OBJModel loadModel(ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright)
+    public OBJModel loadModel(ModelSettings settings)
     {
-        return modelCache.computeIfAbsent(new ModelSettings(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright), (data) -> {
+        return modelCache.computeIfAbsent(settings, (data) -> {
             IResource resource;
             try
             {
-                resource = manager.getResource(modelLocation);
+                resource = manager.getResource(settings.modelLocation);
             }
             catch (IOException e)
             {
@@ -86,7 +88,7 @@ public class OBJLoader implements IModelLoader<OBJModel>
 
             try(LineReader rdr = new LineReader(resource))
             {
-                return new OBJModel(modelLocation, rdr, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
+                return new OBJModel(rdr, settings);
             }
             catch (Exception e)
             {
@@ -133,6 +135,7 @@ public class OBJLoader implements IModelLoader<OBJModel>
         @Nullable
         public String[] readAndSplitLine(boolean ignoreEmptyLines) throws IOException
         {
+            //noinspection LoopConditionNotUpdatedInsideLoop
             do
             {
                 String currentLine = lineReader.readLine();
@@ -170,7 +173,7 @@ public class OBJLoader implements IModelLoader<OBJModel>
                 if (lineParts.size() > 0)
                     return lineParts.toArray(new String[0]);
             }
-            while (ignoreEmptyLines); // conditional expression is not updated, yes, I know.
+            while (ignoreEmptyLines);
 
             return new String[0];
         }
@@ -183,22 +186,26 @@ public class OBJLoader implements IModelLoader<OBJModel>
         }
     }
 
-    private class ModelSettings
+    public static class ModelSettings
     {
         @Nonnull
-        private final ResourceLocation modelLocation;
-        private final boolean detectCullableFaces;
-        private final boolean diffuseLighting;
-        private final boolean flipV;
-        private final boolean ambientToFullbright;
+        public final ResourceLocation modelLocation;
+        public final boolean detectCullableFaces;
+        public final boolean diffuseLighting;
+        public final boolean flipV;
+        public final boolean ambientToFullbright;
+        @Nullable
+        public final String materialLibraryOverrideLocation;
 
-        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright)
+        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright,
+                             @Nullable String materialLibraryOverrideLocation)
         {
             this.modelLocation = modelLocation;
             this.detectCullableFaces = detectCullableFaces;
             this.diffuseLighting = diffuseLighting;
             this.flipV = flipV;
             this.ambientToFullbright = ambientToFullbright;
+            this.materialLibraryOverrideLocation = materialLibraryOverrideLocation;
         }
 
         @Override
@@ -216,13 +223,14 @@ public class OBJLoader implements IModelLoader<OBJModel>
                     diffuseLighting == that.diffuseLighting &&
                     flipV == that.flipV &&
                     ambientToFullbright == that.ambientToFullbright &&
-                    modelLocation.equals(that.modelLocation);
+                    modelLocation.equals(that.modelLocation) &&
+                    Objects.equals(materialLibraryOverrideLocation, that.materialLibraryOverrideLocation);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright);
+            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation);
         }
     }
 }

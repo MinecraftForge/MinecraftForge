@@ -73,13 +73,18 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
     public final ResourceLocation modelLocation;
 
-    OBJModel(ResourceLocation modelLocation, OBJLoader.LineReader reader, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright) throws IOException
+    @Nullable
+    public final String materialLibraryOverrideLocation;
+
+
+    OBJModel(OBJLoader.LineReader reader, OBJLoader.ModelSettings settings) throws IOException
     {
-        this.modelLocation = modelLocation;
-        this.detectCullableFaces = detectCullableFaces;
-        this.diffuseLighting = diffuseLighting;
-        this.flipV = flipV;
-        this.ambientToFullbright = ambientToFullbright;
+        this.modelLocation = settings.modelLocation;
+        this.detectCullableFaces = settings.detectCullableFaces;
+        this.diffuseLighting = settings.diffuseLighting;
+        this.flipV = settings.flipV;
+        this.ambientToFullbright = settings.ambientToFullbright;
+        this.materialLibraryOverrideLocation = settings.materialLibraryOverrideLocation;
 
         // for relative references to material libraries
         String modelDomain = modelLocation.getNamespace();
@@ -90,7 +95,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         else
             modelPath = "";
 
-        MaterialLibrary mtllib = null;
+        MaterialLibrary mtllib = MaterialLibrary.EMPTY;
         MaterialLibrary.Material currentMat = null;
         String currentSmoothingGroup = null;
         ModelGroup currentGroup = null;
@@ -99,6 +104,15 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
         boolean objAboveGroup = false;
 
+        if (materialLibraryOverrideLocation != null)
+        {
+            String lib = materialLibraryOverrideLocation;
+            if (lib.contains(":"))
+                mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+            else
+                mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+        }
+
         String[] line;
         while((line = reader.readAndSplitLine(true)) != null)
         {
@@ -106,6 +120,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             {
                 case "mtllib": // Loads material library
                 {
+                    if (materialLibraryOverrideLocation != null)
+                        break;
+
                     String lib = line[1];
                     if (lib.contains(":"))
                         mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
