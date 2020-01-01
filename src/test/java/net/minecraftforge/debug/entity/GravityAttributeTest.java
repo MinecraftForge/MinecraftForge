@@ -53,7 +53,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
 {
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
     private static Logger logger = LogManager.getLogger();
     private int ticks;
     private static final UUID REDUCED_GRAVITY_ID = UUID.fromString("DEB06000-7979-4242-8888-00000DEB0600");

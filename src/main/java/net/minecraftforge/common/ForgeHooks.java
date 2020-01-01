@@ -1210,4 +1210,12 @@ public class ForgeHooks
         FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
     }
 
+    public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
+        LootModifierManager man = LootModifierManager.getInstance();
+        for(IGlobalLootModifier mod : man.getAllLootMods()) {
+            list = mod.apply(list, context);
+        }
+        return list;
+    }
+
 }
