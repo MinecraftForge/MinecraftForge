@@ -23,6 +23,8 @@ import net.minecraft.enchantment.DamageEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.enchanting.EnchantEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -61,5 +63,8 @@ public class EnchantEventTest {
             String enchantmentName = enchantment.getDisplayName(event.getLevel()).getFormattedText();
             LOGGER.info("{} was enchanted with {} {}", itemName, enchantmentName, event.getLevel());
         }
+
+        if (event.getEnchantment() == Enchantments.SHARPNESS)
+            event.getPlayer().addPotionEffect(new EffectInstance(Effects.STRENGTH, 600 * 20, 2, false, false));
     }
 }

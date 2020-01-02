@@ -96,7 +96,7 @@
  
                 for(int j = 0; j < list.size(); ++j) {
                    EnchantmentData enchantmentdata = list.get(j);
-+                  List<Object> eventOutput = net.minecraftforge.event.ForgeEventFactory.onEnchant(itemstack2, enchantmentdata.field_76302_b, enchantmentdata.field_76303_c);
++                  List<Object> eventOutput = net.minecraftforge.event.ForgeEventFactory.onEnchant(p_75140_1_, itemstack2, enchantmentdata.field_76302_b, enchantmentdata.field_76303_c);
 +                  if ((boolean) eventOutput.get(0)) continue;
 +                  enchantmentdata.field_76302_b = (Enchantment) eventOutput.get(1);
 +                  enchantmentdata.field_76303_c = (int) eventOutput.get(2);

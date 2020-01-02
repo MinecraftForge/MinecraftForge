@@ -40,14 +40,25 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class EnchantEvent extends Event {
 
+    private final PlayerEntity player;
     private final ItemStack stack;
     private Enchantment enchantment;
     private int level;
 
-    public EnchantEvent(ItemStack stack, Enchantment enchantment, int level) {
+    public EnchantEvent(PlayerEntity player, ItemStack stack, Enchantment enchantment, int level) {
+        this.player = player;
         this.stack = stack;
         this.enchantment = enchantment;
         this.level = level;
+    }
+
+    /**
+     * Get the enchanting player
+     *
+     * @return the enchanting player
+     */
+    public PlayerEntity getPlayer() {
+        return player;
     }
 
     /**

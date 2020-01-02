@@ -661,8 +661,8 @@ public class ForgeEventFactory
         return e.getLevel();
     }
 
-    public static List<Object> onEnchant(ItemStack stack, Enchantment enchantment, int level) {
-        EnchantEvent e = new EnchantEvent(stack, enchantment, level);
+    public static List<Object> onEnchant(PlayerEntity player, ItemStack stack, Enchantment enchantment, int level) {
+        EnchantEvent e = new EnchantEvent(player, stack, enchantment, level);
         MinecraftForge.EVENT_BUS.post(e);
         enchantment = e.getEnchantment();
         level = e.getLevel();
