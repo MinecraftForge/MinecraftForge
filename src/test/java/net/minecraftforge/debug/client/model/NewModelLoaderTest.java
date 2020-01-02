@@ -98,37 +98,5 @@ public class NewModelLoaderTest
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
-
-        /*DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            MinecraftForge.EVENT_BUS.addListener(this::renderGuiOverlay);
-        });*/
     }
-
-    /*
-    private NonNullLazy<IRenderable.Configured<?>> modelRenderer = NonNullLazy.of(() -> {
-        OBJModel model = OBJLoader.INSTANCE.loadModel(new ResourceLocation("new_model_loader_test", "models/item/sugar_glider.obj"), false, false, true, false);
-        return IRenderable.withParameter(model.bakeRenderable(ModelLoader.defaultTextureGetter()), null);
-    });
-
-    private NonNullLazy<BakedModelRenderable> modelRenderer2 = NonNullLazy.of(() -> {
-        return BakedModelRenderable.of(new ItemStack(Items.COAL));
-    });
-
-    public void renderGuiOverlay(RenderGameOverlayEvent.Post event)
-    {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
-        {
-            Minecraft mc = Minecraft.getInstance();
-            mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(event.getWindow().getScaledWidth() / 2.0f, event.getWindow().getScaledHeight() / 2.0f, 200);
-            RenderSystem.scalef(16,16,16);
-            //mc.getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(Items.COAL),0,0);
-            modelRenderer.get().render();
-            RenderSystem.translatef(1,1,1);
-            modelRenderer2.get().render(new BakedModelRenderable.Context().withPerspective(ItemCameraTransforms.TransformType.GUI).withStack(new ItemStack(Items.COAL)));
-            RenderSystem.popMatrix();
-        }
-    }
-     */
 }

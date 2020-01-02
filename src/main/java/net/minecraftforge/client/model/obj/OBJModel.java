@@ -338,46 +338,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Optional.ofNullable(parts.get(name));
     }
 
-    public VertexFormat calculateBestVertexFormat(@Nullable VertexFormat base)
-    {
-        List<VertexFormatElement> elements = Lists.newArrayList(base.func_227894_c_());
-
-        addElementIfNotPresent(elements, DefaultVertexFormats.POSITION_3F);
-
-        if (texCoords.size() > 0)
-        {
-             addElementIfNotPresent(elements, DefaultVertexFormats.TEX_2F);
-        }
-
-        if (normals.size() > 0)
-        {
-            addElementIfNotPresent(elements, DefaultVertexFormats.NORMAL_3B);
-            addElementIfNotPresent(elements, DefaultVertexFormats.PADDING_1B);
-        }
-
-        if (colors.size() > 0)
-        {
-            addElementIfNotPresent(elements, DefaultVertexFormats.COLOR_4UB);
-        }
-
-        if (ambientToFullbright && parts.values().stream().anyMatch(ModelGroup::hasAnyFullBright))
-        {
-            addElementIfNotPresent(elements, DefaultVertexFormats.TEX_2S);
-        }
-
-        return new VertexFormat(ImmutableList.copyOf(elements));
-    }
-
-    private static void addElementIfNotPresent(List<VertexFormatElement> fmt, VertexFormatElement element)
-    {
-        for(VertexFormatElement e : fmt)
-        {
-            if (e.getUsage() == element.getUsage() && e.getIndex() == element.getIndex())
-                return;
-        }
-        fmt.add(element);
-    }
-
     private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, boolean isFullbright, TextureAtlasSprite texture, VertexFormat format, TransformationMatrix transform)
     {
         boolean needsNormalRecalculation = false;
@@ -539,23 +499,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
-    /*
-    public BakedGeometryRenderable<Void> bakeRenderable()
-    {
-        return bakeRenderable(DummyAtlasSprite.GETTER);
-    }
-
-    public BakedGeometryRenderable<Void> bakeRenderable(Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
-    {
-        return BakedGeometryRenderable.of(GL11.GL_QUADS, calculateBestVertexFormat(null), ((bufferBuilder, fmt) -> {
-            this.addQuads(
-                    new StandaloneModelConfiguration("", true, diffuseLighting),
-                    new VertexBufferModelBuilder(bufferBuilder),
-                    null, spriteGetter, SimpleModelTransform.IDENTITY, fmt);
-        }));
-    }
-     */
-
     public class ModelObject implements IModelGeometryPart
     {
         public final String name;
@@ -668,86 +611,4 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             return mat != null && TransformationHelper.epsilonEquals(mat.ambientColor, new Vector4f(1,1,1,1), 1/256f);
         }
     }
-
-    /*
-    private static class VertexBufferModelBuilder implements IModelBuilder<VertexBufferModelBuilder>
-    {
-        private final BufferBuilder bufferBuilder;
-
-        public VertexBufferModelBuilder(BufferBuilder bufferBuilder)
-        {
-            this.bufferBuilder = bufferBuilder;
-        }
-
-        @Override
-        public VertexBufferModelBuilder addFaceQuad(Direction facing, BakedQuad quad)
-        {
-            LightUtil.renderQuadColor(bufferBuilder, quad, -1);
-            return this;
-        }
-
-        @Override
-        public VertexBufferModelBuilder addGeneralQuad(BakedQuad quad)
-        {
-            LightUtil.renderQuadColor(bufferBuilder, quad, -1);
-            return this;
-        }
-
-        @Override
-        public IBakedModel build()
-        {
-            return null;
-        }
-    }
-
-    private static class StandaloneModelConfiguration implements IModelConfiguration
-    {
-        private final String modelName;
-        private final boolean diffuseLighting;
-        private final boolean directionalLighting;
-
-        private StandaloneModelConfiguration(String modelName, boolean directionalLighting, boolean diffuseLighting)
-        {
-            this.modelName = modelName;
-            this.directionalLighting = directionalLighting;
-            this.diffuseLighting = diffuseLighting;
-        }
-
-        @Override
-        public String getModelName()
-        {
-            return modelName;
-        }
-
-        @Override
-        public Material resolveTexture(String name)
-        {
-            return "";
-        }
-
-        @Override
-        public boolean isShadedInGui()
-        {
-            return directionalLighting;
-        }
-
-        @Override
-        public boolean useSmoothLighting()
-        {
-            return diffuseLighting;
-        }
-
-        @Override
-        public ItemCameraTransforms getCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
-        @Override
-        public IModelTransform getCombinedTransform()
-        {
-            return SimpleModelTransform.IDENTITY;
-        }
-    }
-     */
 }

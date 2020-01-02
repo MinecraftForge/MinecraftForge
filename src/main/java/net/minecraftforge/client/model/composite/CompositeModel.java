@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
@@ -51,14 +52,16 @@ public class CompositeModel implements IBakedModel
     private final boolean isGui3d;
     private final TextureAtlasSprite particle;
     private final ItemOverrideList overrides;
+    private final IModelTransform transforms;
 
-    public CompositeModel(boolean isGui3d, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, ItemOverrideList overrides)
+    public CompositeModel(boolean isGui3d, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, IModelTransform combinedTransform, ItemOverrideList overrides)
     {
         this.bakedParts = bakedParts;
         this.isAmbientOcclusion = isAmbientOcclusion;
         this.isGui3d = isGui3d;
         this.particle = particle;
         this.overrides = overrides;
+        this.transforms = combinedTransform;
     }
 
     @Nonnull
@@ -114,6 +117,18 @@ public class CompositeModel implements IBakedModel
     public ItemOverrideList getOverrides()
     {
         return overrides;
+    }
+
+    @Override
+    public boolean doesHandlePerspectives()
+    {
+        return true;
+    }
+
+    @Override
+    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    {
+        return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType, mat);
     }
 
     @Nullable
@@ -218,7 +233,7 @@ public class CompositeModel implements IBakedModel
                     continue;
                 bakedParts.put(part.getKey(), submodel.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation));
             }
-            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), overrides);
+            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }
 
         @Override
