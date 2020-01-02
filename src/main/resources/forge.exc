@@ -35,7 +35,10 @@ net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;Z
 net/minecraft/client/gui/ScreenManager.getScreenFactory(Lnet/minecraft/inventory/container/ContainerType;Lnet/minecraft/client/Minecraft;ILnet/minecraft/util/text/ITextComponent;)Ljava/util/Optional;=|p_216909_0_,p_216909_1_,p_216909_2_,p_216909_3_
 net/minecraft/entity/EntityClassification.create(Ljava/lang/String;Ljava/lang/String;IZZ)Lnet/minecraft/entity/EntityClassification;=|name,p_i50381_3_,p_i50381_4_,p_i50381_5_,p_i50381_6_
 
+net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
+net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
 
 net/minecraft/item/Rarity.create(Ljava/lang/String;Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/item/EnumRarity;=|name,p_i48837_3_
 
