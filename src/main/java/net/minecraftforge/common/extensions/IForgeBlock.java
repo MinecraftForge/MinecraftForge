@@ -575,6 +575,7 @@ public interface IForgeBlock
     /**
      * Determines if this block can be used as part of a frame of a nether portal.
      *
+     * @param state The current state
      * @param world The current world
      * @param pos Block position in world
      * @return True, to support being part of a nether portal frame, false otherwise.
