@@ -68,7 +68,6 @@ import com.google.gson.JsonParser;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
@@ -83,7 +82,8 @@ import net.minecraftforge.client.model.b3d.B3DModel.Texture;
 import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.property.Properties;
@@ -477,7 +477,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, DefaultVertexFormats.BLOCK, meshes, builder.build());
+            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, meshes, builder.build());
         }
 
         public ModelWrapper retexture(ImmutableMap<String, String> textures)
@@ -597,16 +597,15 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final IModelTransform state;
         private final boolean smooth;
         private final boolean gui3d;
-        private final VertexFormat format;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
         private final LoadingCache<Integer, B3DState> cache;
 
         private ImmutableList<BakedQuad> quads;
 
-        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
+        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this(node, state, smooth, gui3d, format, meshes, textures, CacheBuilder.newBuilder()
+            this(node, state, smooth, gui3d, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
                 .build(new CacheLoader<Integer, B3DState>()
@@ -626,13 +625,12 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }));
         }
 
-        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
+        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
         {
             this.node = node;
             this.state = state;
             this.smooth = smooth;
             this.gui3d = gui3d;
-            this.format = format;
             this.meshes = meshes;
             this.textures = textures;
             this.cache = cache;
@@ -713,7 +711,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 });
                 for(Face f : faces)
                 {
-                    UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+                    BakedQuadBuilder quadBuilder = new BakedQuadBuilder();
                     quadBuilder.setContractUVs(true);
                     quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     List<Texture> textures = null;
@@ -732,32 +730,32 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             }
         }
 
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
+        private final void putVertexData(IVertexConsumer consumer, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
-            ImmutableList<VertexFormatElement> vertexFormatElements = format.func_227894_c_();
+            ImmutableList<VertexFormatElement> vertexFormatElements = consumer.getVertexFormat().func_227894_c_();
             for(int e = 0; e < vertexFormatElements.size(); e++)
             {
                 switch(vertexFormatElements.get(e).getUsage())
                 {
                 case POSITION:
-                    builder.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
+                    consumer.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
                     {
-                        builder.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
+                        consumer.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
                     }
                     else
                     {
-                        builder.put(e, 1, 1, 1, 1);
+                        consumer.put(e, 1, 1, 1, 1);
                     }
                     break;
                 case UV:
                     // TODO handle more brushes
                     if(vertexFormatElements.get(e).getIndex() < v.getTexCoords().length)
                     {
-                        builder.put(e,
+                        consumer.put(e,
                             sprite.getInterpolatedU(v.getTexCoords()[0].getX() * 16),
                             sprite.getInterpolatedV(v.getTexCoords()[0].getY() * 16),
                             0,
@@ -766,21 +764,21 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     }
                     else
                     {
-                        builder.put(e, 0, 0, 0, 1);
+                        consumer.put(e, 0, 0, 0, 1);
                     }
                     break;
                 case NORMAL:
                     if(v.getNormal() != null)
                     {
-                        builder.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
+                        consumer.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
                     }
                     else
                     {
-                        builder.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
+                        consumer.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
                     }
                     break;
                 default:
-                    builder.put(e);
+                    consumer.put(e);
                 }
             }
         }

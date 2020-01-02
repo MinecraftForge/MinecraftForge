@@ -29,8 +29,6 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -39,8 +37,8 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -339,7 +337,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Optional.ofNullable(parts.get(name));
     }
 
-    private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, boolean isFullbright, TextureAtlasSprite texture, VertexFormat format, TransformationMatrix transform)
+    private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, boolean isFullbright, TextureAtlasSprite texture, TransformationMatrix transform)
     {
         boolean needsNormalRecalculation = false;
         for (int[] ints : indices)
@@ -363,7 +361,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         Vector4f[] pos = new Vector4f[4];
         Vector3f[] norm = new Vector3f[4];
 
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+        BakedQuadBuilder builder = new BakedQuadBuilder();
 
         builder.setQuadTint(tintIndex);
         builder.setTexture(texture);
@@ -396,7 +394,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     color.getY() * colorTint.getY(),
                     color.getZ() * colorTint.getZ(),
                     color.getW() * colorTint.getW());
-            putVertexData(builder, format, position, texCoord, normal, tintedColor, uv2, texture);
+            putVertexData(builder, position, texCoord, normal, tintedColor, uv2, texture);
             pos[i] = position;
             norm[i] = normal;
         }
@@ -459,9 +457,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Pair.of(builder.build(), cull);
     }
 
-    private void putVertexData(IVertexConsumer consumer, VertexFormat format, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
+    private void putVertexData(IVertexConsumer consumer, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
     {
-        ImmutableList<VertexFormatElement> elements = format.func_227894_c_();
+        ImmutableList<VertexFormatElement> elements = consumer.getVertexFormat().func_227894_c_();
         for(int j=0;j<elements.size();j++)
         {
             VertexFormatElement e = elements.get(j);
@@ -532,7 +530,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
                 for (int[][] face : mesh.faces)
                 {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, DefaultVertexFormats.BLOCK, modelTransform.func_225615_b_());
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, modelTransform.func_225615_b_());
                     if (quad.getRight() == null)
                         modelBuilder.addGeneralQuad(quad.getLeft());
                     else

@@ -643,14 +643,11 @@ public class ForgeHooksClient
             int bl = 0;
             int sl = 0;
 
-            if (q.getFormat().hasUV(1))
+            LightUtil.putBakedQuad(lightGatherer, q);
+            if (lightGatherer.hasLighting())
             {
-                LightUtil.putBakedQuad(lightGatherer, q);
-                if (lightGatherer.hasLighting())
-                {
-                    bl = lightGatherer.blockLight;
-                    sl = lightGatherer.skyLight;
-                }
+                bl = lightGatherer.blockLight;
+                sl = lightGatherer.skyLight;
             }
 
             boolean shade = q.shouldApplyDiffuseLighting();

@@ -147,7 +147,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         if (baseLocation != null)
         {
             // build base (insidest)
-            builder.addAll(ItemLayerModel.getQuadsForSprites(ImmutableList.of(baseLocation), DefaultVertexFormats.BLOCK, transform, spriteGetter));
+            builder.addAll(ItemLayerModel.getQuadsForSprites(ImmutableList.of(baseLocation), transform, spriteGetter));
         }
 
         if (fluidMaskLocation != null && fluidSprite != null)
@@ -156,8 +156,8 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             if (templateSprite != null)
             {
                 // build liquid layer (inside)
-                builder.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.BLOCK, transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
-                builder.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.BLOCK, transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
+                builder.addAll(ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
+                builder.addAll(ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF, 1));
             }
         }
 
@@ -170,13 +170,13 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
                 if (coverIsMask)
                 {
                     TextureAtlasSprite baseSprite = spriteGetter.apply(baseLocation);
-                    builder.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.BLOCK, transform, coverSprite, baseSprite, NORTH_Z_COVER, Direction.NORTH, 0xFFFFFFFF, 1));
-                    builder.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.BLOCK, transform, coverSprite, baseSprite, SOUTH_Z_COVER, Direction.SOUTH, 0xFFFFFFFF, 1));
+                    builder.addAll(ItemTextureQuadConverter.convertTexture(transform, coverSprite, baseSprite, NORTH_Z_COVER, Direction.NORTH, 0xFFFFFFFF, 1));
+                    builder.addAll(ItemTextureQuadConverter.convertTexture(transform, coverSprite, baseSprite, SOUTH_Z_COVER, Direction.SOUTH, 0xFFFFFFFF, 1));
                 }
                 else
                 {
-                    builder.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.BLOCK, transform, 0, 0, 16, 16, NORTH_Z_COVER, coverSprite, Direction.NORTH, 0xFFFFFFFF, 2));
-                    builder.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.BLOCK, transform, 0, 0, 16, 16, SOUTH_Z_COVER, coverSprite, Direction.SOUTH, 0xFFFFFFFF, 2));
+                    builder.add(ItemTextureQuadConverter.genQuad(transform, 0, 0, 16, 16, NORTH_Z_COVER, coverSprite, Direction.NORTH, 0xFFFFFFFF, 2));
+                    builder.add(ItemTextureQuadConverter.genQuad(transform, 0, 0, 16, 16, SOUTH_Z_COVER, coverSprite, Direction.SOUTH, 0xFFFFFFFF, 2));
                     if (particleSprite == null)
                     {
                         particleSprite = coverSprite;

@@ -96,7 +96,7 @@ public class LightUtil
         consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
-        VertexFormat formatTo = quad.getFormat();
+        VertexFormat formatTo = DefaultVertexFormats.BLOCK;
         int countFrom = formatFrom.func_227894_c_().size();
         int countTo = formatTo.func_227894_c_().size();
         int[] eMap = mapFormats(formatFrom, formatTo);

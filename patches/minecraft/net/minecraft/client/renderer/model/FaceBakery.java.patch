@@ -15,14 +15,16 @@
  
 -      return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_);
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
-+      return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_, p_228824_8_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++      return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_, p_228824_8_);
     }
  
     public static BlockFaceUV func_228821_a_(BlockFaceUV p_228821_0_, Direction p_228821_1_, TransformationMatrix p_228821_2_, ResourceLocation p_228821_3_) {
-@@ -152,6 +154,8 @@
+@@ -150,8 +152,8 @@
+       p_228826_1_[i + 1] = Float.floatToRawIntBits(p_228826_3_.func_195900_b());
+       p_228826_1_[i + 2] = Float.floatToRawIntBits(p_228826_3_.func_195902_c());
        p_228826_1_[i + 3] = p_228826_4_;
-       p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)));
-       p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_)));
+-      p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)));
+-      p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_)));
 +      p_228826_1_[i + 4] = Float.floatToRawIntBits(p_228826_5_.func_94214_a((double)p_228826_6_.func_178348_a(p_228826_2_)  * .999 + p_228826_6_.func_178348_a((p_228826_2_ + 2) % 4) * .001));
 +      p_228826_1_[i + 4 + 1] = Float.floatToRawIntBits(p_228826_5_.func_94207_b((double)p_228826_6_.func_178346_b(p_228826_2_) * .999 + p_228826_6_.func_178346_b((p_228826_2_ + 2) % 4) * .001));
     }
