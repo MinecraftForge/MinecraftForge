@@ -1,0 +1,30 @@
+--- a/net/minecraft/entity/CreatureEntity.java
++++ b/net/minecraft/entity/CreatureEntity.java
+@@ -36,7 +36,7 @@
+          this.func_213390_a(new BlockPos(entity), 5);
+          float f = this.func_70032_d(entity);
+          if (this instanceof TameableEntity && ((TameableEntity)this).func_70906_o()) {
+-            if (f > 10.0F) {
++            if (f > (float)func_110148_a(MAX_LEASH_DISTANCE).func_111126_e()) {
+                this.func_110160_i(true, true);
+             }
+ 
+@@ -44,7 +44,7 @@
+          }
+ 
+          this.func_142017_o(f);
+-         if (f > 10.0F) {
++         if (f > (float)func_110148_a(MAX_LEASH_DISTANCE).func_111126_e()) {
+             this.func_110160_i(true, true);
+             this.field_70714_bg.func_220880_a(Goal.Flag.MOVE);
+          } else if (f > 6.0F) {
+@@ -68,4 +68,9 @@
+ 
+    protected void func_142017_o(float p_142017_1_) {
+    }
++   
++   // Forge start
++   /** Forge: make the distance between entities at which a leash breaks an attribute instead of hard-coded */
++   public static final net.minecraft.entity.ai.attributes.IAttribute MAX_LEASH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "forge.maxLeashDistance", 10.0D, 0.0D, 1024.0D).func_111112_a(true);
++   @Override protected void func_110147_ax() { super.func_110147_ax(); func_110140_aT().func_111150_b(MAX_LEASH_DISTANCE); }
+ }

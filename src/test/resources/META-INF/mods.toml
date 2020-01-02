@@ -2,6 +2,8 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+    modId="max_leash_distance_attribute_test"
+[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
