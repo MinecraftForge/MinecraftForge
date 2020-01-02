@@ -222,15 +222,27 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2046,6 +2073,7 @@
+@@ -2046,6 +2073,11 @@
  
     @Nullable
     public Entity func_212321_a(DimensionType p_212321_1_) {
++      return this.changeDimension(p_212321_1_, func_184102_h().func_71218_a(p_212321_1_).func_85176_s());
++   }
++   @Nullable
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.func_217381_Z().func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();
-@@ -2063,16 +2091,9 @@
+@@ -2055,6 +2087,7 @@
+          this.field_71093_bK = p_212321_1_;
+          this.func_213319_R();
+          this.field_70170_p.func_217381_Z().func_76320_a("reposition");
++         Entity transportedEntity = teleporter.placeEntity(this, serverworld, serverworld1, this.field_70177_z, spawnPortal -> {
+          Vec3d vec3d = this.func_213322_ci();
+          float f = 0.0F;
+          BlockPos blockpos;
+@@ -2063,16 +2096,9 @@
           } else if (p_212321_1_ == DimensionType.field_223229_c_) {
              blockpos = serverworld1.func_180504_m();
           } else {
@@ -250,16 +262,41 @@
  
              double d3 = Math.min(-2.9999872E7D, serverworld1.func_175723_af().func_177726_b() + 16.0D);
              double d4 = Math.min(-2.9999872E7D, serverworld1.func_175723_af().func_177736_c() + 16.0D);
-@@ -2101,7 +2122,7 @@
+@@ -2082,6 +2108,7 @@
+             d1 = MathHelper.func_151237_a(d1, d4, d6);
+             Vec3d vec3d1 = this.func_181014_aG();
+             blockpos = new BlockPos(d0, this.func_226278_cu_(), d1);
++            if (spawnPortal) {
+             BlockPattern.PortalInfo blockpattern$portalinfo = serverworld1.func_85176_s().func_222272_a(blockpos, vec3d, this.func_181012_aH(), vec3d1.field_72450_a, vec3d1.field_72448_b, this instanceof PlayerEntity);
+             if (blockpattern$portalinfo == null) {
+                return null;
+@@ -2090,6 +2117,7 @@
+             blockpos = new BlockPos(blockpattern$portalinfo.field_222505_a);
+             vec3d = blockpattern$portalinfo.field_222506_b;
+             f = (float)blockpattern$portalinfo.field_222507_c;
++            }
+          }
+ 
+          this.field_70170_p.func_217381_Z().func_219895_b("reloading");
+@@ -2100,13 +2128,15 @@
+             entity.func_213317_d(vec3d);
              serverworld1.func_217460_e(entity);
           }
++            return entity;
++         });
  
 -         this.field_70128_L = true;
 +         this.remove(false);
           this.field_70170_p.func_217381_Z().func_76319_b();
           serverworld.func_82742_i();
           serverworld1.func_82742_i();
-@@ -2129,10 +2150,12 @@
+          this.field_70170_p.func_217381_Z().func_76319_b();
+-         return entity;
++         return transportedEntity;
+       } else {
+          return null;
+       }
+@@ -2129,10 +2159,12 @@
     }
  
     public Vec3d func_181014_aG() {
@@ -272,7 +309,7 @@
        return this.field_181018_ap;
     }
  
-@@ -2261,7 +2284,7 @@
+@@ -2261,7 +2293,7 @@
        Pose pose = this.func_213283_Z();
        EntitySize entitysize1 = this.func_213305_a(pose);
        this.field_213325_aI = entitysize1;
@@ -281,7 +318,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2713,6 +2736,7 @@
+@@ -2713,6 +2745,7 @@
        this.field_70165_t = p_226288_1_;
        this.field_70163_u = p_226288_3_;
        this.field_70161_v = p_226288_5_;
@@ -289,7 +326,7 @@
     }
  
     public void func_70623_bb() {
-@@ -2726,4 +2750,69 @@
+@@ -2726,4 +2759,69 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
