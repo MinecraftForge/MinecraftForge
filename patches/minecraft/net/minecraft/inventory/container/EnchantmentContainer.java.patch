@@ -1,6 +1,14 @@
 --- a/net/minecraft/inventory/container/EnchantmentContainer.java
 +++ b/net/minecraft/inventory/container/EnchantmentContainer.java
-@@ -55,7 +55,7 @@
+@@ -4,6 +4,7 @@
+ import java.util.Random;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Blocks;
++import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.enchantment.EnchantmentData;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.PlayerEntity;
+@@ -55,7 +56,7 @@
        });
        this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,7 +17,7 @@
           }
        });
  
-@@ -81,40 +81,28 @@
+@@ -81,40 +82,28 @@
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 2));
     }
  
@@ -61,7 +69,7 @@
                          }
                       }
                    }
-@@ -123,12 +111,13 @@
+@@ -123,12 +112,13 @@
                 this.field_75169_l.setSeed((long)this.field_178149_f.func_221495_b());
  
                 for(int i1 = 0; i1 < 3; ++i1) {
@@ -76,7 +84,35 @@
                 }
  
                 for(int j1 = 0; j1 < 3; ++j1) {
-@@ -262,9 +251,8 @@
+@@ -168,7 +158,6 @@
+             ItemStack itemstack2 = itemstack;
+             List<EnchantmentData> list = this.func_178148_a(itemstack, p_75140_2_, this.field_75167_g[p_75140_2_]);
+             if (!list.isEmpty()) {
+-               p_75140_1_.func_192024_a(itemstack, i);
+                boolean flag = itemstack.func_77973_b() == Items.field_151122_aG;
+                if (flag) {
+                   itemstack2 = new ItemStack(Items.field_151134_bR);
+@@ -177,12 +166,19 @@
+ 
+                for(int j = 0; j < list.size(); ++j) {
+                   EnchantmentData enchantmentdata = list.get(j);
++                  List<Object> eventOutput = net.minecraftforge.event.ForgeEventFactory.onEnchant(itemstack2, enchantmentdata.field_76302_b, enchantmentdata.field_76303_c);
++                  if ((boolean) eventOutput.get(0)) continue;
++                  enchantmentdata.field_76302_b = (Enchantment) eventOutput.get(1);
++                  enchantmentdata.field_76303_c = (int) eventOutput.get(2);
++
++                  if (!enchantmentdata.field_76302_b.func_92089_a(itemstack2)) return;
+                   if (flag) {
+                      EnchantedBookItem.func_92115_a(itemstack2, enchantmentdata);
+                   } else {
+                      itemstack2.func_77966_a(enchantmentdata.field_76302_b, enchantmentdata.field_76303_c);
+                   }
+                }
++               p_75140_1_.func_192024_a(itemstack, i);
+ 
+                if (!p_75140_1_.field_71075_bZ.field_75098_d) {
+                   itemstack1.func_190918_g(i);
+@@ -262,9 +258,8 @@
                 return ItemStack.field_190927_a;
              }
  

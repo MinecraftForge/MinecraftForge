@@ -49,7 +49,6 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -662,8 +661,13 @@ public class ForgeEventFactory
         return e.getLevel();
     }
 
-    public static boolean onEnchant(ItemStack stack, Enchantment enchantment, int level) {
-        return MinecraftForge.EVENT_BUS.post(new EnchantEvent(stack, enchantment, level));
+    public static List<Object> onEnchant(ItemStack stack, Enchantment enchantment, int level) {
+        EnchantEvent e = new EnchantEvent(stack, enchantment, level);
+        MinecraftForge.EVENT_BUS.post(e);
+        enchantment = e.getEnchantment();
+        level = e.getLevel();
+        boolean canceled = e.isCanceled();
+        return Arrays.asList(canceled, enchantment, level);
     }
 
     public static boolean onEntityDestroyBlock(LivingEntity entity, BlockPos pos, BlockState state)

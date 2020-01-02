@@ -1,0 +1,13 @@
+--- a/net/minecraft/enchantment/EnchantmentData.java
++++ b/net/minecraft/enchantment/EnchantmentData.java
+@@ -3,8 +3,8 @@
+ import net.minecraft.util.WeightedRandom;
+ 
+ public class EnchantmentData extends WeightedRandom.Item {
+-   public final Enchantment field_76302_b;
+-   public final int field_76303_c;
++   public Enchantment field_76302_b;
++   public int field_76303_c;
+ 
+    public EnchantmentData(Enchantment p_i1930_1_, int p_i1930_2_) {
+       super(p_i1930_1_.func_77324_c().func_185270_a());

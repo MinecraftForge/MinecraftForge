@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,23 +20,29 @@
 package net.minecraftforge.event.enchanting;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * EnchantEvent is fired whenever you add an enchantment to an item (no anvil)<br>
+ * EnchantEvent is fired whenever an item will be enchanted in enchantment table.<br>
  * <br>
- * The event is fired during the {@link ItemStack#addEnchantment(Enchantment, int)} method invocation.<br>
+ * The event is fired during the {@link net.minecraft.inventory.container.EnchantmentContainer#enchantItem(PlayerEntity, int)} method invocation.<br>
  * <br>
+ * This event is {@link Cancelable}.<br>
+ * If this event is canceled, the enchantment is not being added.<br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  */
+
+@Cancelable
 public class EnchantEvent extends Event {
 
     private final ItemStack stack;
-    private final Enchantment enchantment;
-    private final int level;
+    private Enchantment enchantment;
+    private int level;
 
     public EnchantEvent(ItemStack stack, Enchantment enchantment, int level) {
         this.stack = stack;
@@ -63,6 +69,26 @@ public class EnchantEvent extends Event {
     }
 
     /**
+     * Set the enchantment
+     *
+     * @param enchantment the enchantment which replaces another one
+     */
+    public void setEnchantment(Enchantment enchantment) {
+        this.enchantment = enchantment;
+    }
+
+    /**
+     * Set the enchantment
+     *
+     * @param enchantment the enchantment which replaces another one
+     * @param level       the level of the enchantment
+     */
+    public void setEnchantment(Enchantment enchantment, int level) {
+        this.enchantment = enchantment;
+        setLevel(level);
+    }
+
+    /**
      * Get the level of the enchantment
      *
      * @return the level of the enchantment
@@ -70,4 +96,15 @@ public class EnchantEvent extends Event {
     public int getLevel() {
         return level;
     }
+
+    /**
+     * Set the enchantment
+     *
+     * @param level the level of the enchantment
+     */
+    public void setLevel(int level) {
+        this.level = level;
+        if (level > getEnchantment().getMaxLevel()) this.level = getEnchantment().getMaxLevel();
+    }
+
 }
