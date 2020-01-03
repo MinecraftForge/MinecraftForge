@@ -73,15 +73,17 @@
        }
  
        if (this.func_72912_H().func_76093_s() && this.func_175659_aa() != Difficulty.HARD) {
-@@ -280,7 +291,7 @@
+@@ -280,8 +291,8 @@
        })) {
           this.field_73068_P = false;
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
+-            this.func_72877_b(l - l % 24000L);
 +            long l = this.func_72820_D() + 24000L;
-             this.func_72877_b(l - l % 24000L);
++            this.func_72877_b(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, l - l % 24000L, this.func_72820_D()));
           }
  
+          this.field_217491_A.stream().filter(LivingEntity::func_70608_bn).forEach((p_217444_0_) -> {
 @@ -304,6 +315,7 @@
  
        iprofiler.func_219895_b("portalForcer");

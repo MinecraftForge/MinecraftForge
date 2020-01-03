@@ -17,7 +17,7 @@
                 BlockPos blockpos = new BlockPos(this.field_70165_t, this.field_70163_u, this.field_70161_v);
                 BlockState blockstate = Blocks.field_222388_bz.func_176223_P();
                 if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-@@ -568,8 +569,10 @@
+@@ -568,13 +569,15 @@
        return this.field_71133_b.func_71219_W();
     }
  
@@ -28,6 +28,12 @@
        this.field_184851_cj = true;
        DimensionType dimensiontype = this.field_71093_bK;
        if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
+          this.func_213319_R();
+-         this.func_71121_q().func_217434_e(this);
++         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
+          if (!this.field_71136_j) {
+             this.field_71136_j = true;
+             this.field_71135_a.func_147359_a(new SChangeGameStatePacket(4, this.field_192040_cp ? 0.0F : 1.0F));
 @@ -587,12 +590,13 @@
           this.field_71093_bK = p_212321_1_;
           ServerWorld serverworld1 = this.field_71133_b.func_71218_a(p_212321_1_);

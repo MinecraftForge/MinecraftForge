@@ -52,6 +52,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey().getId()).collect(Collectors.toSet());
 
         getBuilder(Tags.Items.ARROWS).add(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
+        getBuilder(Tags.Items.BEACON_PAYMENT).add(Items.EMERALD, Items.DIAMOND, Items.GOLD_INGOT, Items.IRON_INGOT);
         getBuilder(Tags.Items.BONES).add(Items.BONE);
         getBuilder(Tags.Items.BOOKSHELVES).add(Items.BOOKSHELF);
         copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
