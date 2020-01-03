@@ -73,7 +73,7 @@
           serverworld1.func_217447_b(this);
           this.func_213846_b(serverworld);
           this.field_71135_a.func_147364_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), f1, f);
-+            return this;
++         return this;//forge: this is part of the ITeleporter patch
 +         });
           this.field_71134_c.func_73080_a(serverworld1);
           this.field_71135_a.func_147359_a(new SPlayerAbilitiesPacket(this.field_71075_bZ));

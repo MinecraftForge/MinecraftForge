@@ -57,10 +57,4 @@ public interface ITeleporter {
     default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
        return repositionEntity.apply(true);
     }
-
-    // used internally to handle vanilla hardcoding
-    default boolean isVanilla()
-    {
-        return this instanceof Teleporter;
-    }
 }
