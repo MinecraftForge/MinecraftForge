@@ -31,15 +31,18 @@
     }
  
     public double func_70042_X() {
-@@ -214,7 +216,7 @@
+@@ -214,9 +216,9 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
 -         if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
 +         if (canUseRail() && blockstate.func_203425_a(BlockTags.field_203437_y)) {
              this.func_180460_a(blockpos, blockstate);
-             if (blockstate.func_177230_c() == Blocks.field_150408_cc) {
+-            if (blockstate.func_177230_c() == Blocks.field_150408_cc) {
++            if (blockstate.func_177230_c() instanceof PoweredRailBlock && ((PoweredRailBlock)blockstate.func_177230_c()).isActivatorRail()) {
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
+             }
+          } else {
 @@ -241,8 +243,11 @@
           }
  
@@ -98,7 +101,13 @@
        }
  
     }
-@@ -299,24 +313,24 @@
+@@ -294,29 +308,29 @@
+       boolean flag = false;
+       boolean flag1 = false;
+       AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.func_177230_c();
+-      if (abstractrailblock == Blocks.field_196552_aC) {
++      if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock)abstractrailblock).isActivatorRail()) {
+          flag = p_180460_2_.func_177229_b(PoweredRailBlock.field_176569_M);
           flag1 = !flag;
        }
  
@@ -239,7 +248,7 @@
 +   public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
 +      AbstractMinecartEntity mc = getMinecart();
 +      double d21 = mc.func_184207_aI() ? 0.75D : 1.0D;
-+      double d22 = mc.func_174898_m();
++      double d22 = mc.getMaxSpeedWithRail();
 +      Vec3d vec3d1 = mc.func_213322_ci();
 +      mc.func_213315_a(MoverType.SELF, new Vec3d(MathHelper.func_151237_a(d21 * vec3d1.field_72450_a, -d22, d22), 0.0D, MathHelper.func_151237_a(d21 * vec3d1.field_72449_c, -d22, d22)));
 +   }

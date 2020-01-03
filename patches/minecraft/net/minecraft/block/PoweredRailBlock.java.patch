@@ -4,17 +4,17 @@
  public class PoweredRailBlock extends AbstractRailBlock {
     public static final EnumProperty<RailShape> field_176568_b = BlockStateProperties.field_208166_S;
     public static final BooleanProperty field_176569_M = BlockStateProperties.field_208194_u;
-+   private final boolean isActivator;
++   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
     protected PoweredRailBlock(Block.Properties p_i48349_1_) {
 -      super(true, p_i48349_1_);
 +      this(p_i48349_1_, false);
 +   }
 +
-+   protected PoweredRailBlock(Block.Properties builder, boolean isActivator) {
++   protected PoweredRailBlock(Block.Properties builder, boolean isPoweredRail) {
 +      super(true, builder);
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176568_b, RailShape.NORTH_SOUTH).func_206870_a(field_176569_M, Boolean.valueOf(false)));
-+      this.isActivator = isActivator;
++      this.isActivator = !isPoweredRail;
     }
  
     protected boolean func_176566_a(World p_176566_1_, BlockPos p_176566_2_, BlockState p_176566_3_, boolean p_176566_4_, int p_176566_5_) {
@@ -35,3 +35,12 @@
                    return p_208071_1_.func_175640_z(p_208071_2_) ? true : this.func_176566_a(p_208071_1_, p_208071_2_, blockstate, p_208071_3_, p_208071_4_ + 1);
                 } else {
                    return false;
+@@ -255,4 +261,8 @@
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+       p_206840_1_.func_206894_a(field_176568_b, field_176569_M);
+    }
++
++   public boolean isActivatorRail() {
++      return isActivator;
++   }
+ }

@@ -24,6 +24,8 @@ import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.net.URL;
@@ -31,8 +33,11 @@ import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+
 public class ModFileInfo implements IModFileInfo
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final UnmodifiableConfig config;
     private final ModFile modFile;
     private final URL issueURL;
@@ -64,6 +69,10 @@ public class ModFileInfo implements IModFileInfo
         }
         this.mods = modConfigs.stream().map(mi-> new ModInfo(this, mi)).collect(Collectors.toList());
         this.issueURL = config.<String>getOptional("issueTrackerURL").map(StringUtils::toURL).orElse(null);
+        LOGGER.debug(LOADING, "Found valid mod file {} with {} mods - versions {}",
+                this.modFile::getFileName,
+                () -> mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
+                () -> mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
     }
 
     @Override
