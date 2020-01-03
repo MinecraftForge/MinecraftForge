@@ -25,24 +25,29 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Predicates;
 
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String MODS_TOML = "META-INF/mods.toml";
-    private List<Path> modCoords;
+    private static final String MANIFEST = "META-INF/MANIFEST.MF";
+    private Set<Path> modCoords;
 
     @Override
     public List<IModFile> scanMods() {
@@ -60,20 +65,27 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     @Override
     public void initArguments(Map<String, ?> arguments) {
         try {
-            modCoords = new ArrayList<>();
-            final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(MODS_TOML);
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                Path path = LibraryFinder.findJarPathFor(MODS_TOML, "classpath_mod", url);
-                if (Files.isDirectory(path))
-                    continue;
-
-                LOGGER.debug(CORE, "Found classpath mod: {}", path);
-                this.modCoords.add(path);
-            }
+            modCoords = new LinkedHashSet<>();
+            locateMods(MODS_TOML, "classpath_mod", Predicates.alwaysTrue());
+            locateMods(MANIFEST, "manifest_jar", path -> findManifest(path).map(m -> m.getMainAttributes().getValue(ModFile.TYPE)).isPresent());
         } catch (IOException e) {
             LOGGER.fatal(CORE,"Error trying to find resources", e);
             throw new RuntimeException("wha?", e);
+        }
+    }
+    
+    private void locateMods(String resource, String name, Predicate<Path> filter) throws IOException {
+        final Enumeration<URL> modsTomls = ClassLoader.getSystemClassLoader().getResources(resource);
+        while (modsTomls.hasMoreElements()) {
+            URL url = modsTomls.nextElement();
+            Path path = LibraryFinder.findJarPathFor(resource, name, url);
+            if (Files.isDirectory(path))
+                continue;
+
+            if (filter.test(path)) {
+                LOGGER.debug(CORE, "Found classpath mod: {}", path);
+                this.modCoords.add(path);
+            }
         }
     }
 }

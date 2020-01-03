@@ -124,6 +124,7 @@ public class Tags
     public static class Items
     {
         public static final Tag<Item> ARROWS = tag("arrows");
+        public static final Tag<Item> BEACON_PAYMENT = tag("beacon_payment");
         public static final Tag<Item> BONES = tag("bones");
         public static final Tag<Item> BOOKSHELVES = tag("bookshelves");
         public static final Tag<Item> CHESTS = tag("chests");

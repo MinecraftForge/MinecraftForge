@@ -14,7 +14,7 @@
              }
  
 -            if (raytraceresult != null && !flag) {
-+         if (raytraceresult != null && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
++         if (raytraceresult != null && raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
                 this.func_184549_a(raytraceresult);
                 this.field_70160_al = true;
              }

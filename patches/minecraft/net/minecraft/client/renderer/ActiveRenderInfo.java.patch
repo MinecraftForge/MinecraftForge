@@ -1,6 +1,17 @@
 --- a/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ b/net/minecraft/client/renderer/ActiveRenderInfo.java
-@@ -172,4 +172,11 @@
+@@ -53,6 +53,10 @@
+          this.func_216776_a(direction != null ? direction.func_185119_l() - 180.0F : 0.0F, 0.0F);
+          this.func_216782_a(0.0D, 0.3D, 0.0D);
+       }
++      net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(net.minecraft.client.Minecraft.func_71410_x().field_71460_t, this, p_216772_5_, this.field_216798_j, this.field_216797_i, 0f);
++      this.field_216797_i = cameraSetup.getPitch();
++      this.field_216798_j = cameraSetup.getYaw();
++      GlStateManager.rotatef(cameraSetup.getRoll(), 0, 0, 1);
+ 
+       GlStateManager.rotatef(this.field_216797_i, 1.0F, 0.0F, 0.0F);
+       GlStateManager.rotatef(this.field_216798_j + 180.0F, 0.0F, 1.0F, 0.0F);
+@@ -172,4 +176,11 @@
        this.field_216791_c = null;
        this.field_216789_a = false;
     }
