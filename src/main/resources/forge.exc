@@ -36,6 +36,10 @@ net/minecraft/client/gui/ScreenManager.getScreenFactory(Lnet/minecraft/inventory
 net/minecraft/entity/EntityClassification.create(Ljava/lang/String;Ljava/lang/String;IZZ)Lnet/minecraft/entity/EntityClassification;=|name,p_i50381_3_,p_i50381_4_,p_i50381_5_,p_i50381_6_
 
 net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/item/EnderPearlEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/item/ItemEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/item/minecart/ContainerMinecartEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/merchant/villager/AbstractVillagerEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
 
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
 net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
