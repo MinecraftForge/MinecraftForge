@@ -37,7 +37,7 @@ public class MaterialLibrary
     {
     }
 
-    public MaterialLibrary(OBJLoader.LineReader reader) throws IOException
+    public MaterialLibrary(LineReader reader) throws IOException
     {
         Material currentMaterial = null;
 

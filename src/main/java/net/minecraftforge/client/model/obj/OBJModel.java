@@ -44,6 +44,7 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
@@ -77,7 +78,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
     public final String materialLibraryOverrideLocation;
 
 
-    OBJModel(OBJLoader.LineReader reader, OBJLoader.ModelSettings settings) throws IOException
+    OBJModel(LineReader reader, ModelSettings settings) throws IOException
     {
         this.modelLocation = settings.modelLocation;
         this.detectCullableFaces = settings.detectCullableFaces;
@@ -609,6 +610,54 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         public boolean isFullbright()
         {
             return mat != null && TransformationHelper.epsilonEquals(mat.ambientColor, new Vector4f(1,1,1,1), 1/256f);
+        }
+    }
+
+    public static class ModelSettings
+    {
+        @Nonnull
+        public final ResourceLocation modelLocation;
+        public final boolean detectCullableFaces;
+        public final boolean diffuseLighting;
+        public final boolean flipV;
+        public final boolean ambientToFullbright;
+        @Nullable
+        public final String materialLibraryOverrideLocation;
+
+        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright,
+                             @Nullable String materialLibraryOverrideLocation)
+        {
+            this.modelLocation = modelLocation;
+            this.detectCullableFaces = detectCullableFaces;
+            this.diffuseLighting = diffuseLighting;
+            this.flipV = flipV;
+            this.ambientToFullbright = ambientToFullbright;
+            this.materialLibraryOverrideLocation = materialLibraryOverrideLocation;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ModelSettings that = (ModelSettings) o;
+            return equals(that);
+        }
+
+        public boolean equals(@Nonnull ModelSettings that)
+        {
+            return detectCullableFaces == that.detectCullableFaces &&
+                    diffuseLighting == that.diffuseLighting &&
+                    flipV == that.flipV &&
+                    ambientToFullbright == that.ambientToFullbright &&
+                    modelLocation.equals(that.modelLocation) &&
+                    Objects.equals(materialLibraryOverrideLocation, that.materialLibraryOverrideLocation);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation);
         }
     }
 }

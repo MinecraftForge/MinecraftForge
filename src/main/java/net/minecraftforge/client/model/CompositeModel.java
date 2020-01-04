@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.model.composite;
+package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
@@ -31,8 +31,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-public class CompositeModel implements IBakedModel
+public class CompositeModel implements IDynamicBakedModel
 {
     public static final ModelProperty<SubmodelModelData> SUBMODEL_DATA = new ModelProperty<>();
 
@@ -73,18 +73,6 @@ public class CompositeModel implements IBakedModel
         {
             // TODO: Some way to provide submodel data?
             quads.addAll(entry.getValue().getQuads(state, side, rand, getSubmodelData(extraData, entry.getKey())));
-        }
-        return quads;
-    }
-
-    @Deprecated
-    @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
-    {
-        List<BakedQuad> quads = new ArrayList<>();
-        for(IBakedModel part : bakedParts.values())
-        {
-            quads.addAll(part.getQuads(state, side, rand, EmptyModelData.INSTANCE));
         }
         return quads;
     }

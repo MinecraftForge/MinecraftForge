@@ -36,7 +36,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.composite.CompositeModel;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -60,7 +59,7 @@ public class ModelLoaderRegistry
     public static void init()
     {
         registerLoader(new ResourceLocation("forge:obj"), OBJLoader.INSTANCE);
-        registerLoader(new ResourceLocation("forge:bucket"), ModelDynBucket.LoaderDynBucket2.INSTANCE);
+        registerLoader(new ResourceLocation("forge:bucket"), DynamicBucketModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge:composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("minecraft:elements"), VanillaProxy.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge:multi-layer"), MultiLayerModel.Loader.INSTANCE);

@@ -26,21 +26,17 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -57,14 +53,13 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
+public final class DynamicBucketModel implements IModelGeometry<DynamicBucketModel>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbucket"), "inventory");
@@ -82,7 +77,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
     private final boolean tint;
     private final boolean coverIsMask;
 
-    public ModelDynBucket(Fluid fluid, boolean flipGas, boolean tint, boolean coverIsMask)
+    public DynamicBucketModel(Fluid fluid, boolean flipGas, boolean tint, boolean coverIsMask)
     {
         this.fluid = fluid;
         this.flipGas = flipGas;
@@ -94,35 +89,9 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
      * Returns a new ModelDynBucket representing the given fluid, but with the same
      * other properties (flipGas, tint, coverIsMask).
      */
-    public ModelDynBucket withFluid(Fluid newFluid)
+    public DynamicBucketModel withFluid(Fluid newFluid)
     {
-        return new ModelDynBucket(newFluid, flipGas, tint, coverIsMask);
-    }
-
-    @Nullable
-    protected static IResource getResource(ResourceLocation resourceLocation)
-    {
-        try
-        {
-            return Minecraft.getInstance().getResourceManager().getResource(resourceLocation);
-        }
-        catch (IOException ignored)
-        {
-            return null;
-        }
-    }
-    
-    @Nullable
-    protected static PngSizeInfo getSizeInfo(IResource resource)
-    {
-        try
-        {
-            return new PngSizeInfo(resource.toString(), resource.getInputStream());
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        return new DynamicBucketModel(newFluid, flipGas, tint, coverIsMask);
     }
 
     @Override
@@ -216,7 +185,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
             }
         }
 
-        return new BakedDynBucket(bakery, owner, this, builder.build(), particleSprite, DefaultVertexFormats.BLOCK, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform);
+        return new BakedModel(bakery, owner, this, builder.build(), particleSprite, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform);
     }
 
     @Override
@@ -232,7 +201,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
         return texs;
     }
 
-    public enum LoaderDynBucket2 implements IModelLoader<ModelDynBucket>
+    public enum Loader implements IModelLoader<DynamicBucketModel>
     {
         INSTANCE;
 
@@ -255,7 +224,7 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
         }
 
         @Override
-        public ModelDynBucket read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
+        public DynamicBucketModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
         {
             if (!modelContents.has("fluid"))
                 throw new RuntimeException("Bucket model requires 'fluid' value.");
@@ -283,122 +252,15 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
             }
 
             // create new model with correct liquid
-            return new ModelDynBucket(fluid, flip, tint, coverIsMask);
+            return new DynamicBucketModel(fluid, flip, tint, coverIsMask);
         }
     }
 
-        /* TODO Custom TAS
-    private static final class BucketBaseSprite extends TextureAtlasSprite
-    {
-        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
-        private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket);
-
-        private BucketBaseSprite(ResourceLocation res)
-        {
-            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
-        }
-
-        @Override
-        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-        {
-            return true;
-        }
-
-        @Override
-        public Collection<ResourceLocation> getDependencies()
-        {
-            return dependencies;
-        }
-
-        @Override
-        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
-        {
-            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-            // TODO custom sprites are gonna be a PITA, these are final
-            width = sprite.getIconWidth();
-            height = sprite.getIconHeight();
-            // TODO No easy way to dump pixels of one sprite into another without n^2 for loop, investigate patch?
-            final int[][] pixels = sprite.getFrameTextureData(0);
-            this.clearFramesTextureData();
-            this.framesTextureData.add(pixels);
-            return false;
-        }
-    }*/
-
-    /**
-     * Creates a bucket cover sprite from the vanilla resource.
-     */
-        /* TODO Custom TAS
-    private static final class BucketCoverSprite extends TextureAtlasSprite
-    {
-        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
-        private final ResourceLocation bucketCoverMask = new ResourceLocation(ForgeVersion.MOD_ID, "item/vanilla_bucket_cover_mask");
-        private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket, bucketCoverMask);
-
-        private BucketCoverSprite(ResourceLocation res)
-        {
-            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
-        }
-
-        @Override
-        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-        {
-            return true;
-        }
-
-        @Override
-        public Collection<ResourceLocation> getDependencies()
-        {
-            return dependencies;
-        }
-
-        @Override
-        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
-        {
-            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-            final TextureAtlasSprite alphaMask = textureGetter.apply(bucketCoverMask);
-            width = sprite.getIconWidth();
-            height = sprite.getIconHeight();
-            final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
-            pixels[0] = new int[width * height];
-
-            try (
-                 IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
-                 IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
-            ) {
-                // use the alpha mask if it fits, otherwise leave the cover texture blank
-                if (empty != null && mask != null && Objects.equals(empty.getPackName(), mask.getPackName()) &&
-                        alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
-                {
-                    final int[][] oldPixels = sprite.getFrameTextureData(0);
-                    final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
-
-                    for (int p = 0; p < width * height; p++)
-                    {
-                        final int alphaMultiplier = alphaPixels[0][p] >>> 24;
-                        final int oldPixel = oldPixels[0][p];
-                        final int oldPixelAlpha = oldPixel >>> 24;
-                        final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
-                        pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                LOGGER.error("Failed to close resource", e);
-            }
-
-            this.clearFramesTextureData();
-            this.framesTextureData.add(pixels);
-            return false;
-        }
-    }*/
-
-    private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
+    private static final class ContainedFluidOverrideHandler extends ItemOverrideList
     {
         private final ModelBakery bakery;
         
-        private BakedDynBucketOverrideHandler(ModelBakery bakery)
+        private ContainedFluidOverrideHandler(ModelBakery bakery)
         {
             this.bakery = bakery;
         }
@@ -408,14 +270,14 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
         {
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
-                        BakedDynBucket model = (BakedDynBucket)originalModel;
+                        BakedModel model = (BakedModel)originalModel;
 
                         Fluid fluid = fluidStack.getFluid();
                         String name = fluid.getRegistryName().toString();
 
                         if (!model.cache.containsKey(name))
                         {
-                            ModelDynBucket parent = model.parent.withFluid(fluid);
+                            DynamicBucketModel parent = model.parent.withFluid(fluid);
                             IBakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), model.originalTransform, model.getOverrides(), new ResourceLocation("forge:bucket_override"));
                             model.cache.put(name, bakedModel);
                             return bakedModel;
@@ -429,27 +291,24 @@ public final class ModelDynBucket implements IModelGeometry<ModelDynBucket>
     }
 
     // the dynamic bucket is based on the empty bucket
-    private static final class BakedDynBucket extends BakedItemModel
+    private static final class BakedModel extends BakedItemModel
     {
         private final IModelConfiguration owner;
-        private final ModelDynBucket parent;
+        private final DynamicBucketModel parent;
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
-        private final VertexFormat format;
         private final IModelTransform originalTransform;
 
-        BakedDynBucket(ModelBakery bakery,
-                       IModelConfiguration owner, ModelDynBucket parent,
-                       ImmutableList<BakedQuad> quads,
-                       TextureAtlasSprite particle,
-                       VertexFormat format,
-                       ImmutableMap<TransformType, TransformationMatrix> transforms,
-                       Map<String, IBakedModel> cache,
-                       boolean untransformed,
-                       IModelTransform originalTransform)
+        BakedModel(ModelBakery bakery,
+                   IModelConfiguration owner, DynamicBucketModel parent,
+                   ImmutableList<BakedQuad> quads,
+                   TextureAtlasSprite particle,
+                   ImmutableMap<TransformType, TransformationMatrix> transforms,
+                   Map<String, IBakedModel> cache,
+                   boolean untransformed,
+                   IModelTransform originalTransform)
         {
-            super(quads, particle, transforms, new BakedDynBucketOverrideHandler(bakery), untransformed);
+            super(quads, particle, transforms, new ContainedFluidOverrideHandler(bakery), untransformed);
             this.owner = owner;
-            this.format = format;
             this.parent = parent;
             this.cache = cache;
             this.originalTransform = originalTransform;

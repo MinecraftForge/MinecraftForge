@@ -33,13 +33,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.model.TransformationHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class PerspectiveMapWrapper implements IBakedModel
+public class PerspectiveMapWrapper implements IDynamicBakedModel
 {
     private final IBakedModel parent;
     private final ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms;
@@ -130,7 +131,6 @@ public class PerspectiveMapWrapper implements IBakedModel
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) { return parent.getQuads(state, side, rand); }
     @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
     {
         return parent.getQuads(state, side, rand, extraData);
