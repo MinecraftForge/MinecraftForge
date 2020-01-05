@@ -98,25 +98,25 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         Material particleLocation = owner.resolveTexture("particle");
-        if (MissingTextureSprite.getLocation().toString().equals(particleLocation))
+        if (MissingTextureSprite.getLocation().equals(particleLocation.func_229313_b_()))
         {
             particleLocation = null;
         }
 
         Material baseLocation = owner.resolveTexture("base");
-        if (MissingTextureSprite.getLocation().toString().equals(baseLocation))
+        if (MissingTextureSprite.getLocation().equals(baseLocation.func_229313_b_()))
         {
             baseLocation = null;
         }
 
         Material fluidMaskLocation = owner.resolveTexture("fluid");
-        if (MissingTextureSprite.getLocation().toString().equals(fluidMaskLocation))
+        if (MissingTextureSprite.getLocation().equals(fluidMaskLocation.func_229313_b_()))
         {
             fluidMaskLocation = null;
         }
 
         Material coverLocation = owner.resolveTexture("cover");
-        if (!MissingTextureSprite.getLocation().toString().equals(coverLocation))
+        if (!MissingTextureSprite.getLocation().equals(coverLocation.func_229313_b_()))
         {
             // cover (the actual item around the other two)
             coverLocation = null;
