@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BushBlock.java
 +++ b/net/minecraft/block/BushBlock.java
-@@ -7,7 +7,7 @@
+@@ -7,14 +7,14 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  
@@ -9,6 +9,14 @@
     protected BushBlock(Block.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
+ 
+    protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+       Block block = p_200014_1_.func_177230_c();
+-      return block == Blocks.field_196658_i || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_150458_ak;
++      return block == Blocks.field_196658_i || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block instanceof FarmlandBlock;
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
 @@ -23,6 +23,8 @@
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
