@@ -11,6 +11,15 @@
     private static final IItemPropertyGetter field_185046_b = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
        return p_210306_0_.func_77951_h() ? 1.0F : 0.0F;
     };
+@@ -65,7 +65,7 @@
+    private final Rarity field_208075_l;
+    private final int field_77777_bU;
+    private final int field_77699_b;
+-   private final Item field_77700_c;
++   private final ResourceLocation field_77700_c;
+    @Nullable
+    private String field_77774_bZ;
+    @Nullable
 @@ -98,6 +98,10 @@
           this.func_185043_a(new ResourceLocation("damaged"), field_185046_b);
           this.func_185043_a(new ResourceLocation("damage"), field_185047_c);
@@ -41,7 +50,8 @@
     @Nullable
 +   @Deprecated // Use ItemStack sensitive version.
     public final Item func_77668_q() {
-       return this.field_77700_c;
+-      return this.field_77700_c;
++      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(this.field_77700_c);
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
@@ -121,7 +131,12 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -362,6 +405,9 @@
+@@ -358,10 +401,13 @@
+    public static class Properties {
+       private int field_200920_a = 64;
+       private int field_200921_b;
+-      private Item field_200922_c;
++      private ResourceLocation field_200922_c;
        private ItemGroup field_200923_d;
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
@@ -131,7 +146,23 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -401,5 +447,20 @@
+@@ -386,9 +432,14 @@
+          this.field_200920_a = 1;
+          return this;
+       }
++      
++      public Item.Properties containerItem(ResourceLocation containerItemIn) {
++          this.field_200922_c = containerItemIn;
++          return this;
++       }
+ 
+       public Item.Properties func_200919_a(Item p_200919_1_) {
+-         this.field_200922_c = p_200919_1_;
++         this.field_200922_c = p_200919_1_.getRegistryName();
+          return this;
+       }
+ 
+@@ -401,5 +452,20 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }
