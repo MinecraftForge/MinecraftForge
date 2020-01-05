@@ -1,0 +1,49 @@
+--- a/net/minecraft/item/Food.java
++++ b/net/minecraft/item/Food.java
+@@ -11,9 +11,9 @@
+    private final boolean field_221472_c;
+    private final boolean field_221473_d;
+    private final boolean field_221474_e;
+-   private final List<Pair<EffectInstance, Float>> field_221475_f;
++   private final List<Pair<java.util.function.Supplier<EffectInstance>, Float>> field_221475_f;
+ 
+-   private Food(int p_i50106_1_, float p_i50106_2_, boolean p_i50106_3_, boolean p_i50106_4_, boolean p_i50106_5_, List<Pair<EffectInstance, Float>> p_i50106_6_) {
++   private Food(int p_i50106_1_, float p_i50106_2_, boolean p_i50106_3_, boolean p_i50106_4_, boolean p_i50106_5_, List<Pair<java.util.function.Supplier<EffectInstance>, Float>> p_i50106_6_) {
+       this.field_221470_a = p_i50106_1_;
+       this.field_221471_b = p_i50106_2_;
+       this.field_221472_c = p_i50106_3_;
+@@ -42,7 +42,7 @@
+       return this.field_221474_e;
+    }
+ 
+-   public List<Pair<EffectInstance, Float>> func_221464_f() {
++   public List<Pair<java.util.function.Supplier<EffectInstance>, Float>> func_221464_f() {
+       return this.field_221475_f;
+    }
+ 
+@@ -52,7 +52,7 @@
+       private boolean field_221460_c;
+       private boolean field_221461_d;
+       private boolean field_221462_e;
+-      private final List<Pair<EffectInstance, Float>> field_221463_f = Lists.newArrayList();
++      private final List<Pair<java.util.function.Supplier<EffectInstance>, Float>> field_221463_f = Lists.newArrayList();
+ 
+       public Food.Builder func_221456_a(int p_221456_1_) {
+          this.field_221458_a = p_221456_1_;
+@@ -78,9 +78,14 @@
+          this.field_221462_e = true;
+          return this;
+       }
+-
++      
+       public Food.Builder func_221452_a(EffectInstance p_221452_1_, float p_221452_2_) {
+-         this.field_221463_f.add(Pair.of(p_221452_1_, p_221452_2_));
++          this.field_221463_f.add(Pair.of(() -> p_221452_1_, p_221452_2_));
++          return this;
++      }
++
++      public Food.Builder effect(java.util.function.Supplier<EffectInstance> effectIn, float probability) {
++         this.field_221463_f.add(Pair.of(effectIn, probability));
+          return this;
+       }
+ 

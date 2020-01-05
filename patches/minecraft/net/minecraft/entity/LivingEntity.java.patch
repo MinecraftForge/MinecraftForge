@@ -459,6 +459,18 @@
     }
  
     public boolean func_70094_T() {
+@@ -2829,9 +2894,9 @@
+    private void func_213349_a(ItemStack p_213349_1_, World p_213349_2_, LivingEntity p_213349_3_) {
+       Item item = p_213349_1_.func_77973_b();
+       if (item.func_219971_r()) {
+-         for(Pair<EffectInstance, Float> pair : item.func_219967_s().func_221464_f()) {
++         for(Pair<java.util.function.Supplier<EffectInstance>, Float> pair : item.func_219967_s().func_221464_f()) {
+             if (!p_213349_2_.field_72995_K && pair.getLeft() != null && p_213349_2_.field_73012_v.nextFloat() < pair.getRight()) {
+-               p_213349_3_.func_195064_c(new EffectInstance(pair.getLeft()));
++               p_213349_3_.func_195064_c(new EffectInstance(pair.getLeft().get()));
+             }
+          }
+       }
 @@ -2864,4 +2929,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
