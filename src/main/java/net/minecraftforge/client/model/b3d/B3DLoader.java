@@ -711,16 +711,15 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 });
                 for(Face f : faces)
                 {
-                    BakedQuadBuilder quadBuilder = new BakedQuadBuilder();
-                    quadBuilder.setContractUVs(true);
-                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     List<Texture> textures = null;
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
                     else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance();
                     else sprite = this.textures.get(textures.get(0).getPath());
-                    quadBuilder.setTexture(sprite);
+                    BakedQuadBuilder quadBuilder = new BakedQuadBuilder(sprite);
+                    quadBuilder.setContractUVs(true);
+                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);

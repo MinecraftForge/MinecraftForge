@@ -364,10 +364,9 @@ public final class FluidModel implements IModelGeometry<FluidModel>
 
         private BakedQuad buildQuad(Direction side, TextureAtlasSprite texture, boolean flip, boolean offset, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
         {
-            BakedQuadBuilder builder = new BakedQuadBuilder();
+            BakedQuadBuilder builder = new BakedQuadBuilder(texture);
 
             builder.setQuadOrientation(side);
-            builder.setTexture(texture);
             builder.setQuadTint(0);
 
             boolean hasTransform = !transformation.isIdentity();

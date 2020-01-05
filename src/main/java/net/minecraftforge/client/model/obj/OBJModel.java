@@ -361,10 +361,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         Vector4f[] pos = new Vector4f[4];
         Vector3f[] norm = new Vector3f[4];
 
-        BakedQuadBuilder builder = new BakedQuadBuilder();
+        BakedQuadBuilder builder = new BakedQuadBuilder(texture);
 
         builder.setQuadTint(tintIndex);
-        builder.setTexture(texture);
         builder.setApplyDiffuseLighting(!isFullbright);
 
         int fakeLight = (int)((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);

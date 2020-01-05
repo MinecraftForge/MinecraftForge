@@ -378,11 +378,10 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         float x2, float y2, float z2, float u2, float v2,
         float x3, float y3, float z3, float u3, float v3)
     {
-        BakedQuadBuilder builder = new BakedQuadBuilder();
+        BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
 
         builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
-        builder.setTexture(sprite);
 
         boolean hasTransform = !transform.isIdentity();
         IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;

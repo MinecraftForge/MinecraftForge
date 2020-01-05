@@ -28,13 +28,15 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 
-// advantages: non-fixed-length vertex format, no overhead of packing and unpacking attributes to transform the model
-// disadvantages: (possibly) larger memory footprint, overhead on packing the attributes at the final rendering stage
+/**
+ * Allows easier building of BakedQuad objects. During building, data is stored
+ * unpacked as floats, but is packed into the typical int array format on build.
+ */
 public class BakedQuadBuilder implements IVertexConsumer
 {
     private static final int SIZE = DefaultVertexFormats.BLOCK.func_227894_c_().size();
     
-    private final float[][][] unpackedData;
+    private final float[][][] unpackedData = new float[4][SIZE][4];
     private int tint = -1;
     private Direction orientation;
     private TextureAtlasSprite texture;
@@ -45,9 +47,11 @@ public class BakedQuadBuilder implements IVertexConsumer
     private boolean full = false;
     private boolean contractUVs = false;
 
-    public BakedQuadBuilder()
+    public BakedQuadBuilder() {}
+    
+    public BakedQuadBuilder(TextureAtlasSprite texture)
     {
-        unpackedData = new float[4][SIZE][4];
+        this.texture = texture;
     }
 
     public void setContractUVs(boolean value)
@@ -73,7 +77,6 @@ public class BakedQuadBuilder implements IVertexConsumer
         this.orientation = orientation;
     }
 
-    // FIXME: move (or at least add) into constructor
     @Override
     public void setTexture(TextureAtlasSprite texture)
     {
@@ -179,7 +182,7 @@ public class BakedQuadBuilder implements IVertexConsumer
                 }
             }
         }
-        int[] packed = new int[SIZE * 4];
+        int[] packed = new int[DefaultVertexFormats.BLOCK.getIntegerSize() * 4];
         for (int v = 0; v < 4; v++)
         {
             for (int e = 0; e < SIZE; e++)

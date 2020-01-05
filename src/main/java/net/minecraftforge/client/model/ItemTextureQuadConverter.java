@@ -234,11 +234,10 @@ public final class ItemTextureQuadConverter
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2)
     {
-        BakedQuadBuilder builder = new BakedQuadBuilder();
+        BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
 
         builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
-        builder.setTexture(sprite);
 
         // only apply the transform if it's not identity
         boolean hasTransform = !transform.isIdentity();
