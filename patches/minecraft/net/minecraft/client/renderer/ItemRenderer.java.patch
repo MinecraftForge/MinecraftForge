@@ -25,7 +25,7 @@
           }
  
 -         p_229111_8_.func_177552_f().func_181688_b(p_229111_2_).func_228830_a_(p_229111_3_, p_229111_4_);
-+         net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_229111_4_, p_229111_8_, p_229111_2_, p_229111_3_);
++         p_229111_8_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_229111_4_, p_229111_8_, p_229111_2_, p_229111_3_);
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag1)) {
              RenderType rendertype = RenderTypeLookup.func_228389_a_(p_229111_1_);
@@ -38,6 +38,15 @@
           }
  
           p_229111_4_.func_227865_b_();
+@@ -129,7 +133,7 @@
+          float f = (float)(i >> 16 & 255) / 255.0F;
+          float f1 = (float)(i >> 8 & 255) / 255.0F;
+          float f2 = (float)(i & 255) / 255.0F;
+-         p_229112_2_.func_227889_a_(matrixstack$entry, bakedquad, f, f1, f2, p_229112_5_, p_229112_6_);
++         p_229112_2_.addVertexData(matrixstack$entry, bakedquad, f, f1, f2, p_229112_5_, p_229112_6_, true);
+       }
+ 
+    }
 @@ -216,6 +220,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());

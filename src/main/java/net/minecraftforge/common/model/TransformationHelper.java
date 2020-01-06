@@ -50,6 +50,16 @@ public final class TransformationHelper
         return new Quaternion(xyz.getX(), xyz.getY(), xyz.getZ(), degrees);
     }
 
+    public static Quaternion quatFromXYZ(float[] xyz, boolean degrees)
+    {
+        return new Quaternion(xyz[0], xyz[1], xyz[2], degrees);
+    }
+
+    public static Quaternion makeQuaternion(float[] values)
+    {
+        return new Quaternion(values[0], values[1], values[2], values[3]);
+    }
+
     public static Vector3f lerp(Vector3f from, Vector3f to, float progress)
     {
         Vector3f res = from.func_229195_e_();
@@ -118,11 +128,6 @@ public final class TransformationHelper
                MathHelper.abs(v1.getY()-v2.getY()) < epsilon &&
                MathHelper.abs(v1.getZ()-v2.getZ()) < epsilon &&
                MathHelper.abs(v1.getW()-v2.getW()) < epsilon;
-    }
-
-    public static Quaternion makeQuaternion(float[] values)
-    {
-        return new Quaternion(values[0], values[1], values[2], values[3]);
     }
 
     public static class Deserializer implements JsonDeserializer<TransformationMatrix>
@@ -261,15 +266,15 @@ public final class TransformationHelper
             {
                 if (entry.getKey().equals("x"))
                 {
-                    ret = new Quaternion(new Vector3f(1, 0, 0), entry.getValue().getAsNumber().floatValue(), true);
+                    ret = Vector3f.field_229179_b_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
                 }
                 else if (entry.getKey().equals("y"))
                 {
-                    ret = new Quaternion(new Vector3f(0, 1, 0), entry.getValue().getAsNumber().floatValue(), true);
+                    ret = Vector3f.field_229181_d_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
                 }
                 else if (entry.getKey().equals("z"))
                 {
-                    ret = new Quaternion(new Vector3f(0, 0, 1), entry.getValue().getAsNumber().floatValue(), true);
+                    ret = Vector3f.field_229183_f_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
                 }
                 else throw new JsonParseException("Axis rotation: expected single axis key, got: " + entry.getKey());
             }
@@ -286,7 +291,7 @@ public final class TransformationHelper
             {
                 if (e.getAsJsonArray().get(0).isJsonObject())
                 {
-                    Quaternion ret = new Quaternion(0, 0, 0, 1);
+                    Quaternion ret = Quaternion.field_227060_a_.func_227068_g_();
                     for (JsonElement a : e.getAsJsonArray())
                     {
                         ret.multiply(parseAxisRotation(a));
@@ -297,7 +302,7 @@ public final class TransformationHelper
                 {
                     JsonArray array = e.getAsJsonArray();
                     if (array.size() == 3) //Vanilla rotation
-                        return quatFromXYZ(new Vector3f(parseFloatArray(e, 3, "Rotation")), true);
+                        return quatFromXYZ(parseFloatArray(e, 3, "Rotation"), true);
                     else // quaternion
                         return makeQuaternion(parseFloatArray(e, 4, "Rotation"));
                 }

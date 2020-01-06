@@ -27,12 +27,3 @@
           int i = (p_211675_1_ + p_211675_2_ * this.field_195719_a) * this.field_211680_b.func_211651_a() + this.field_211680_b.func_211647_v() / 8;
           return MemoryUtil.memGetByte(this.field_195722_d + (long)i);
        } else {
-@@ -336,7 +336,7 @@
-    }
- 
-    public void func_211676_a(STBTTFontinfo p_211676_1_, int p_211676_2_, int p_211676_3_, int p_211676_4_, float p_211676_5_, float p_211676_6_, float p_211676_7_, float p_211676_8_, int p_211676_9_, int p_211676_10_) {
--      if (p_211676_9_ >= 0 && p_211676_9_ + p_211676_3_ <= this.func_195702_a() && p_211676_10_ >= 0 && p_211676_10_ + p_211676_4_ <= this.func_195714_b()) {
-+      if (p_211676_9_ >= 0 && p_211676_9_ + p_211676_3_ < this.func_195702_a() && p_211676_10_ >= 0 && p_211676_10_ + p_211676_4_ < this.func_195714_b()) { //Fix MC-162953 bounds checks in `NativeImage`
-          if (this.field_211680_b.func_211651_a() != 1) {
-             throw new IllegalArgumentException("Can only write fonts into 1-component images.");
-          } else {

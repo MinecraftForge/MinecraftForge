@@ -19,30 +19,29 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
-
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,
@@ -83,25 +82,30 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         //TODO: Verify
-        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        TransformationMatrix transform = sprite.func_225615_b_();
-        boolean identity = transform.isIdentity();
-        for(int i = 0; i < textures.size(); i++)
-        {
-            TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
-            builder.addAll(getQuadsForSprite(i, tas, DefaultVertexFormats.BLOCK, transform));
-        }
+        TransformationMatrix transform = modelTransform.func_225615_b_();
+        ImmutableList<BakedQuad> quads = getQuadsForSprites(textures, transform, spriteGetter);
         TextureAtlasSprite particle = spriteGetter.apply(
                 owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : textures.get(0)
         );
-        ImmutableMap<TransformType, TransformationMatrix> map = PerspectiveMapWrapper.getTransforms(sprite);
-        return new BakedItemModel(builder.build(), particle, map, overrides, identity);
+        ImmutableMap<TransformType, TransformationMatrix> map = PerspectiveMapWrapper.getTransforms(modelTransform);
+        return new BakedItemModel(quads, particle, map, overrides, transform.isIdentity());
     }
 
-    public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, TransformationMatrix transform)
+    public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter)
+    {
+        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+        for(int i = 0; i < textures.size(); i++)
+        {
+            TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
+            builder.addAll(getQuadsForSprite(i, tas, transform));
+        }
+        return builder.build();
+    }
+
+    public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, TransformationMatrix transform)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -192,7 +196,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                         {
                             // make quad [uStart, u]
                             int off = facing == Direction.DOWN ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
+                            builder.add(buildSideQuad(transform, facing, tint, sprite, uStart, v+off, u-uStart));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -206,7 +210,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                 {
                     // make quad [uStart, uEnd]
                     int off = facing == Direction.DOWN ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart));
+                    builder.add(buildSideQuad(transform, facing, tint, sprite, uStart, v+off, uEnd-uStart));
                 }
             }
         }
@@ -239,7 +243,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                         {
                             // make quad [vStart, v]
                             int off = facing == Direction.EAST ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
+                            builder.add(buildSideQuad(transform, facing, tint, sprite, u+off, vStart, v-vStart));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -253,20 +257,20 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                 {
                     // make quad [vStart, vEnd]
                     int off = facing == Direction.EAST ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart));
+                    builder.add(buildSideQuad(transform, facing, tint, sprite, u+off, vStart, vEnd-vStart));
                 }
             }
         }
 
         // front
-        builder.add(buildQuad(format, transform, Direction.NORTH, sprite, tint,
+        builder.add(buildQuad(transform, Direction.NORTH, sprite, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
             1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
             1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
         ));
         // back
-        builder.add(buildQuad(format, transform, Direction.SOUTH, sprite, tint,
+        builder.add(buildQuad(transform, Direction.SOUTH, sprite, tint,
             0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
             1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
@@ -315,7 +319,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         }
     }
 
-    private static BakedQuad buildSideQuad(VertexFormat format, TransformationMatrix transform, Direction side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
+    private static BakedQuad buildSideQuad(TransformationMatrix transform, Direction side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
         final float eps = 1e-2f;
 
@@ -354,7 +358,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         float v1 = 16f * (1f - y1 - dy);
 
         return buildQuad(
-            format, transform, remap(side), sprite, tint,
+            transform, remap(side), sprite, tint,
             x0, y0, z0, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
             x1, y1, z0, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
@@ -368,32 +372,31 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         return side.getAxis() == Direction.Axis.Y ? side.getOpposite() : side;
     }
 
-    private static BakedQuad buildQuad(
-        VertexFormat format, TransformationMatrix transform, Direction side, TextureAtlasSprite sprite, int tint,
+    private static BakedQuad buildQuad(TransformationMatrix transform, Direction side, TextureAtlasSprite sprite, int tint,
         float x0, float y0, float z0, float u0, float v0,
         float x1, float y1, float z1, float u1, float v1,
         float x2, float y2, float z2, float u2, float v2,
         float x3, float y3, float z3, float u3, float v3)
     {
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+        BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
 
         builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
-        builder.setTexture(sprite);
 
         boolean hasTransform = !transform.isIdentity();
         IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
-        putVertex(consumer, format, side, x0, y0, z0, u0, v0);
-        putVertex(consumer, format, side, x1, y1, z1, u1, v1);
-        putVertex(consumer, format, side, x2, y2, z2, u2, v2);
-        putVertex(consumer, format, side, x3, y3, z3, u3, v3);
+        putVertex(consumer, side, x0, y0, z0, u0, v0);
+        putVertex(consumer, side, x1, y1, z1, u1, v1);
+        putVertex(consumer, side, x2, y2, z2, u2, v2);
+        putVertex(consumer, side, x3, y3, z3, u3, v3);
 
         return builder.build();
     }
 
-    private static void putVertex(IVertexConsumer consumer, VertexFormat format, Direction side, float x, float y, float z, float u, float v)
+    private static void putVertex(IVertexConsumer consumer, Direction side, float x, float y, float z, float u, float v)
     {
+        VertexFormat format = consumer.getVertexFormat();
         for(int e = 0; e < format.func_227894_c_().size(); e++)
         {
             switch(format.func_227894_c_().get(e).getUsage())

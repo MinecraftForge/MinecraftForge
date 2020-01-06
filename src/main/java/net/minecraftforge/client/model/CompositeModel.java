@@ -17,22 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.model.composite;
+package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-public class CompositeModel implements IBakedModel
+public class CompositeModel implements IDynamicBakedModel
 {
     public static final ModelProperty<SubmodelModelData> SUBMODEL_DATA = new ModelProperty<>();
 
@@ -52,14 +52,16 @@ public class CompositeModel implements IBakedModel
     private final boolean isGui3d;
     private final TextureAtlasSprite particle;
     private final ItemOverrideList overrides;
+    private final IModelTransform transforms;
 
-    public CompositeModel(boolean isGui3d, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, ItemOverrideList overrides)
+    public CompositeModel(boolean isGui3d, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, IModelTransform combinedTransform, ItemOverrideList overrides)
     {
         this.bakedParts = bakedParts;
         this.isAmbientOcclusion = isAmbientOcclusion;
         this.isGui3d = isGui3d;
         this.particle = particle;
         this.overrides = overrides;
+        this.transforms = combinedTransform;
     }
 
     @Nonnull
@@ -73,18 +75,6 @@ public class CompositeModel implements IBakedModel
             quads.addAll(entry.getValue().getQuads(state, side, rand, getSubmodelData(extraData, entry.getKey())));
         }
         return quads;
-    }
-
-    @Deprecated
-    @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
-    {
-        List<BakedQuad> quads = new ArrayList<>();
-        for(IBakedModel part : bakedParts.values())
-        {
-            quads.addAll(part.getQuads(state, side, rand, EmptyModelData.INSTANCE));
-        }
-        return null;
     }
 
     @Override
@@ -115,6 +105,18 @@ public class CompositeModel implements IBakedModel
     public ItemOverrideList getOverrides()
     {
         return overrides;
+    }
+
+    @Override
+    public boolean doesHandlePerspectives()
+    {
+        return true;
+    }
+
+    @Override
+    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    {
+        return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType, mat);
     }
 
     @Nullable
@@ -150,13 +152,13 @@ public class CompositeModel implements IBakedModel
     {
         private final String name;
         private final BlockModel model;
-        private final IModelTransform sprite;
+        private final IModelTransform modelTransform;
 
-        private Submodel(String name, BlockModel model, IModelTransform sprite)
+        private Submodel(String name, BlockModel model, IModelTransform modelTransform)
         {
             this.name = name;
             this.model = model;
-            this.sprite = sprite;
+            this.modelTransform = modelTransform;
         }
 
         @Override
@@ -166,19 +168,19 @@ public class CompositeModel implements IBakedModel
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             throw new UnsupportedOperationException("Attempted to call adQuads on a Submodel instance. Please don't.");
         }
 
-        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            return model.func_225613_a_(bakery, spriteGetter, new ModelTransformComposition(this.sprite, sprite,
-                    this.sprite.isUvLock() || sprite.isUvLock()), modelLocation);
+            return model.func_225613_a_(bakery, spriteGetter, new ModelTransformComposition(this.modelTransform, modelTransform,
+                    this.modelTransform.isUvLock() || modelTransform.isUvLock()), modelLocation);
         }
 
         @Override
-        public Collection<Material> getTextureDependencies(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return model.func_225614_a_(modelGetter, missingTextureErrors);
         }
@@ -206,7 +208,7 @@ public class CompositeModel implements IBakedModel
         }
 
         @Override
-        public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+        public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
         {
             Material particleLocation = owner.resolveTexture("particle");
             TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
@@ -217,9 +219,9 @@ public class CompositeModel implements IBakedModel
                 Submodel submodel = part.getValue();
                 if (!owner.getPartVisibility(submodel))
                     continue;
-                bakedParts.put(part.getKey(), submodel.func_225613_a_(bakery, spriteGetter, sprite, modelLocation));
+                bakedParts.put(part.getKey(), submodel.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation));
             }
-            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), overrides);
+            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }
 
         @Override
@@ -228,7 +230,7 @@ public class CompositeModel implements IBakedModel
             Set<Material> textures = new HashSet<>();
             for(Submodel part : parts.values())
             {
-                part.getTextureDependencies(owner, modelGetter, missingTextureErrors);
+                textures.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
             }
             return textures;
         }
@@ -255,11 +257,11 @@ public class CompositeModel implements IBakedModel
             for(Map.Entry<String, JsonElement> part : modelContents.get("parts").getAsJsonObject().entrySet())
             {
                 // TODO: Allow customizing state? If so, how?
-                IModelTransform sprite = SimpleModelTransform.IDENTITY;
+                IModelTransform modelTransform = SimpleModelTransform.IDENTITY;
                 parts.put(part.getKey(), new Submodel(
                         part.getKey(),
-                        ModelLoaderRegistry.ExpandedBlockModelDeserializer.INSTANCE.fromJson(part.getValue(), BlockModel.class),
-                        sprite));
+                        deserializationContext.deserialize(part.getValue(), BlockModel.class),
+                        modelTransform));
             }
             return new Geometry(parts.build());
         }

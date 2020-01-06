@@ -21,6 +21,8 @@ package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.Vector4f;
@@ -34,13 +36,25 @@ import java.nio.IntBuffer;
 
 public interface IForgeVertexBuilder
 {
+    default IVertexBuilder getVertexBuilder() { return (IVertexBuilder)this; }
+
+    // Copy of func_227889_a_, but enables tinting
+    default void addVertexData(MatrixStack.Entry matrixStack, BakedQuad bakedQuad, float red, float green, float blue, int lightmapCoord, int overlayColor, boolean readExistingColor) {
+        getVertexBuilder().func_227890_a_(matrixStack, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
+    }
+
     // Copy of func_227889_a_ with alpha support
-    default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColkor) {
-        addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColkor, false);
+    default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor) {
+        addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, false);
+    }
+
+    // Copy of func_227889_a_ with alpha support
+    default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor, boolean readExistingColor) {
+        addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
     }
 
     // Copy of func_227890_a_ with alpha support
-    default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean p_227890_9_) {
+    default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean readExistingColor) {
         int[] aint = bakedQuad.getVertexData();
         Vec3i faceNormal = bakedQuad.getFace().getDirectionVec();
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
@@ -63,7 +77,7 @@ public interface IForgeVertexBuilder
                 float cg;
                 float cb;
                 float ca;
-                if (p_227890_9_) {
+                if (readExistingColor) {
                     float r = (float)(bytebuffer.get(12) & 255) / 255.0F;
                     float g = (float)(bytebuffer.get(13) & 255) / 255.0F;
                     float b = (float)(bytebuffer.get(14) & 255) / 255.0F;
@@ -79,14 +93,31 @@ public interface IForgeVertexBuilder
                     ca = alpha;
                 }
 
-                int lightmapCoord = lightmapCoords[v];
+                int lightmapCoord = applyBakedLighting(lightmapCoords[v], bytebuffer);
                 float f9 = bytebuffer.getFloat(16);
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
                 pos.func_229372_a_(matrix4f);
+                applyBakedNormals(normal, bytebuffer);
                 ((IVertexBuilder)this).func_225588_a_(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
             }
         }
-
+    }
+    
+    default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
+        int bl = LightTexture.func_228450_a_(lightmapCoord);
+        int sl = LightTexture.func_228454_b_(lightmapCoord);
+        bl = Math.max(bl, Short.toUnsignedInt(data.getShort(26)));
+        sl = Math.max(sl, Short.toUnsignedInt(data.getShort(24)));
+        return LightTexture.func_228451_a_(bl, sl);
+    }
+    
+    default void applyBakedNormals(Vector3f generated, ByteBuffer data) {
+        byte nx = data.get(28);
+        byte ny = data.get(29);
+        byte nz = data.get(30);
+        if (nx != 0 || ny != 0 || nz != 0) {
+            generated.set(nx / 127f, ny / 127f, nz / 127f);
+        }
     }
 }

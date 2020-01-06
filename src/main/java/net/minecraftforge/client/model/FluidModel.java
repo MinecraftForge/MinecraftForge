@@ -47,9 +47,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.FluidAttributes;
 
 import com.google.common.cache.CacheBuilder;
@@ -57,18 +57,17 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public final class ModelFluid implements IModelGeometry<ModelFluid>
+public final class FluidModel implements IModelGeometry<FluidModel>
 {
-    public static final ModelFluid WATER = new ModelFluid(Fluids.WATER);
-    public static final ModelFluid LAVA = new ModelFluid(Fluids.LAVA);
+    public static final FluidModel WATER = new FluidModel(Fluids.WATER);
+    public static final FluidModel LAVA = new FluidModel(Fluids.LAVA);
 
     private final Fluid fluid;
 
-    public ModelFluid(Fluid fluid)
+    public FluidModel(Fluid fluid)
     {
         this.fluid = fluid;
     }
@@ -80,12 +79,12 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         FluidAttributes attrs = fluid.getAttributes();
         return new CachingBakedFluid(
-                sprite.func_225615_b_(),
-                PerspectiveMapWrapper.getTransforms(sprite),
+                modelTransform.func_225615_b_(),
+                PerspectiveMapWrapper.getTransforms(modelTransform),
                 modelLocation,
                 attrs.getColor(),
                 spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getStillTexture())),
@@ -365,10 +364,9 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
 
         private BakedQuad buildQuad(Direction side, TextureAtlasSprite texture, boolean flip, boolean offset, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
         {
-            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.BLOCK);
+            BakedQuadBuilder builder = new BakedQuadBuilder(texture);
 
             builder.setQuadOrientation(side);
-            builder.setTexture(texture);
             builder.setQuadTint(0);
 
             boolean hasTransform = !transformation.isIdentity();
@@ -476,21 +474,5 @@ public final class ModelFluid implements IModelGeometry<ModelFluid>
         {
             return PerspectiveMapWrapper.handlePerspective(this, transforms, type, mat);
         }
-    }
-
-    public ModelFluid process(ImmutableMap<String, String> customData)
-    {
-        if(!customData.containsKey("fluid")) return this;
-
-        String fluidStr = customData.get("fluid");
-        JsonElement e = new JsonParser().parse(fluidStr);
-        String fluid = e.getAsString();/* TODO fluids
-        if(!FluidRegistry.isFluidRegistered(fluid))
-        {
-            LOGGER.fatal("fluid '{}' not found", fluid);
-            return WATER;
-        }
-        return new ModelFluid(FluidRegistry.getFluid(fluid));*/
-        return this;
     }
 }

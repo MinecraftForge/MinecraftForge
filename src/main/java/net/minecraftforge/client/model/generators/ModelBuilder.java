@@ -370,7 +370,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return faces.computeIfAbsent(dir, FaceBuilder::new);
         }
 
-        public RotationBuilder rotation(BlockPartRotation rotation) {
+        public RotationBuilder rotation() {
             if (this.rotation == null) {
                 this.rotation = new RotationBuilder();
             }

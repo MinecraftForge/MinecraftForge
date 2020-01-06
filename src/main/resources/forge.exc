@@ -14,7 +14,7 @@ net/minecraft/client/renderer/FluidBlockRenderer.func_228797_a_(Lcom/mojang/blaz
 
 net/minecraft/client/renderer/FogRenderer.setupFog(Lnet/minecraft/client/renderer/ActiveRenderInfo;Lnet/minecraft/client/renderer/FogRenderer$FogType;FZF)V=|p_228372_0_,p_228372_1_,p_228372_2_,p_228372_3_,partialTicks
 
-net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
+net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Z)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting
 
 net/minecraft/client/renderer/model/ModelBakery.getBakedModel(Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/texture/IModelTransform;Ljava/util/function/Function;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217845_1_,p_217845_2_,textureGetter,format
 

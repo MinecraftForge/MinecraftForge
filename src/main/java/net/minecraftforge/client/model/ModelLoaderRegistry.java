@@ -36,7 +36,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.composite.CompositeModel;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -60,14 +59,14 @@ public class ModelLoaderRegistry
     public static void init()
     {
         registerLoader(new ResourceLocation("forge:obj"), OBJLoader.INSTANCE);
-        registerLoader(new ResourceLocation("forge:bucket"), ModelDynBucket.LoaderDynBucket2.INSTANCE);
+        registerLoader(new ResourceLocation("forge:bucket"), DynamicBucketModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge:composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("minecraft:elements"), VanillaProxy.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge:multi-layer"), MultiLayerModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
-        //registerLoader(new ResourceLocation("forge:multi-layer"), new ModelLoaderAdapter(MultiLayerModel.Loader.INSTANCE));
     }
 
     /**
@@ -212,22 +211,22 @@ public class ModelLoaderRegistry
         }
     }
 
-    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
     {
         IBakedModel model;
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
         {
-            sprite = new ModelTransformComposition(customModelState, sprite, sprite.isUvLock());
+            modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
         }
         if (customModel != null)
         {
-            model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, sprite, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
+            model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
         }
         else
         {
-            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, sprite, modelLocation);
+            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation);
         }
 
         if (customModelState != null && !model.doesHandlePerspectives())
@@ -248,18 +247,18 @@ public class ModelLoaderRegistry
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform sprite, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(BlockPart blockpart : elements) {
                 for(Direction direction : blockpart.mapFaces.keySet()) {
                     BlockPartFace blockpartface = blockpart.mapFaces.get(direction);
                     TextureAtlasSprite textureatlassprite1 = spriteGetter.apply(owner.resolveTexture(blockpartface.texture));
                     if (blockpartface.cullFace == null) {
-                        modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, sprite, modelLocation));
+                        modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     } else {
                         modelBuilder.addFaceQuad(
-                                sprite.func_225615_b_().rotateTransform(blockpartface.cullFace),
-                                BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, sprite, modelLocation));
+                                modelTransform.func_225615_b_().rotateTransform(blockpartface.cullFace),
+                                BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     }
                 }
             }

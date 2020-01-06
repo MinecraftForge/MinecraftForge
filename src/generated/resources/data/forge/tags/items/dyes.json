@@ -1,21 +1,21 @@
 {
   "replace": false,
   "values": [
-    "minecraft:white_dye",
-    "minecraft:orange_dye",
-    "minecraft:magenta_dye",
-    "minecraft:light_blue_dye",
-    "minecraft:yellow_dye",
-    "minecraft:lime_dye",
-    "minecraft:pink_dye",
-    "minecraft:gray_dye",
-    "minecraft:light_gray_dye",
-    "minecraft:cyan_dye",
-    "minecraft:purple_dye",
-    "minecraft:blue_dye",
-    "minecraft:brown_dye",
-    "minecraft:green_dye",
-    "minecraft:red_dye",
-    "minecraft:black_dye"
+    "#forge:dyes/white",
+    "#forge:dyes/orange",
+    "#forge:dyes/magenta",
+    "#forge:dyes/light_blue",
+    "#forge:dyes/yellow",
+    "#forge:dyes/lime",
+    "#forge:dyes/pink",
+    "#forge:dyes/gray",
+    "#forge:dyes/light_gray",
+    "#forge:dyes/cyan",
+    "#forge:dyes/purple",
+    "#forge:dyes/blue",
+    "#forge:dyes/brown",
+    "#forge:dyes/green",
+    "#forge:dyes/red",
+    "#forge:dyes/black"
   ]
 }
