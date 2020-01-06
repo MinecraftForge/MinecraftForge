@@ -28,6 +28,7 @@ import net.minecraft.entity.LivingEntity;
 
 public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
+
     private final LivingEntity entity;
     private final LivingRenderer<T, M> renderer;
     private final float partialRenderTick;
@@ -51,24 +52,10 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     {
         public Pre(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack){ super(entity, renderer, partialRenderTick, matrixStack); }
     }
+
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         public Post(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack){ super(entity, renderer, partialRenderTick, matrixStack); }
     }
 
-    // TODO: 1.15 moved all name rendering to EntityRenderer, such that there's not a Living-specific feature anymore
-    public abstract static class Specials<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
-    {
-        public Specials(LivingEntity entity, LivingRenderer<T, M> renderer, MatrixStack matrixStack){ super(entity, renderer, 0, matrixStack); }
-
-        @Cancelable
-        public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends Specials<T, M>
-        {
-            public Pre(LivingEntity entity, LivingRenderer<T, M> renderer, MatrixStack matrixStack){ super(entity, renderer, matrixStack); }
-        }
-        public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends Specials<T, M>
-        {
-            public Post(LivingEntity entity, LivingRenderer<T, M> renderer, MatrixStack matrixStack){ super(entity, renderer,  matrixStack); }
-        }
-    }
 }

@@ -1,23 +1,23 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
 @@ -15,6 +15,7 @@
- import net.minecraft.world.LightType;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.eventbus.api.Event;
  
  @OnlyIn(Dist.CLIENT)
  public abstract class EntityRenderer<T extends Entity> {
-@@ -54,8 +55,10 @@
+@@ -54,9 +55,14 @@
     }
  
     public void func_225623_a_(T p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
 -      if (this.func_177070_b(p_225623_1_)) {
 -         this.func_225629_a_(p_225623_1_, p_225623_1_.func_145748_c_().func_150254_d(), p_225623_4_, p_225623_5_, p_225623_6_);
++
 +      net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(p_225623_1_,p_225623_1_.func_145748_c_().func_150254_d());
-+      if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent)) return;
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
++
 +      if (!renderNameplateEvent.getResult().equals(Event.Result.DENY) && (renderNameplateEvent.getResult().equals(Event.Result.ALLOW) || this.func_177070_b(p_225623_1_))) {
 +         this.func_225629_a_(p_225623_1_, renderNameplateEvent.getContent(), p_225623_4_, p_225623_5_, p_225623_6_);
        }
++
     }
  
+    protected boolean func_177070_b(T p_177070_1_) {
