@@ -19,7 +19,8 @@ public class NameplateRenderingEventTest
     public static void onNameplateRender(RenderNameplateEvent event)
     {
 
-        if(!ENABLED){
+        if(!ENABLED)
+        {
             return;
         }
 
