@@ -10,26 +10,28 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod("nameplate_render_test")
 @Mod.EventBusSubscriber
-public class NameplateRenderingEventTest {
+public class NameplateRenderingEventTest
+{
 
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onNameplateRender(RenderNameplateEvent event) {
+    public static void onNameplateRender(RenderNameplateEvent event)
+    {
 
         if(!ENABLED){
             return;
         }
 
-        if(event.getEntity() instanceof CowEntity) {
+        if(event.getEntity() instanceof CowEntity)
+        {
             event.setContent(TextFormatting.RED + "Evil Cow");
             event.setResult(Event.Result.ALLOW);
         }
 
-        if(event.getEntity() instanceof PlayerEntity){
+        if(event.getEntity() instanceof PlayerEntity)
+        {
             event.setContent(TextFormatting.GOLD + "" + (event.getEntity()).getDisplayName().getString());
         }
-
     }
-
 }

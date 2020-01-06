@@ -64,5 +64,4 @@ public class RenderNameplateEvent extends Event
     {
         return this.originalContent;
     }
-
 }
