@@ -13,7 +13,8 @@ import net.minecraftforge.eventbus.api.Event;
  * {@link #originalContent} contains the original content being rendered on the name plate/tag. This cannot be changed by mods.<br>
  * <br>
  * This event {@link HasResult}. <br>
- * This event has a result. ALLOW will force-render name plate/tag, & DENY will prevent name plate/tag from rendering<br>
+ * This event has a result. ALLOW will force-render name plate/tag, DEFAULT will ignore the hook and continue using the vanilla check
+ * & DENY will prevent name plate/tag from rendering<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
@@ -61,7 +62,7 @@ public class RenderNameplateEvent extends Event
      */
     public String getOriginalContent()
     {
-        return this.nameplateContent;
+        return this.originalContent;
     }
 
 }
