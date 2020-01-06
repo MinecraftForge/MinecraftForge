@@ -29,8 +29,8 @@ public class RenderNameplateEvent extends Event
     public RenderNameplateEvent(Entity entity, String content)
     {
         this.entity = entity;
-        this.setContent(content);
-        this.originalContent = Strings.nullToEmpty(content);
+        this.originalContent = content;
+        this.setContent(this.originalContent);
     }
 
     /**
