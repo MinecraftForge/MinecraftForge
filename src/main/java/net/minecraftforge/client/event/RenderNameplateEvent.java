@@ -46,7 +46,7 @@ public class RenderNameplateEvent extends Event
      */
     public void setContent(String contents)
     {
-        this.nameplateContent = Strings.nullToEmpty(contents);
+        this.nameplateContent = contents;
     }
 
     /**
