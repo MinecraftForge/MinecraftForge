@@ -1,0 +1,12 @@
+--- a/net/minecraft/item/FlintAndSteelItem.java
++++ b/net/minecraft/item/FlintAndSteelItem.java
+@@ -65,7 +65,8 @@
+       boolean flag = false;
+ 
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         if (p_219996_1_.func_180495_p(p_219996_2_.func_177972_a(direction)).func_177230_c() == Blocks.field_150343_Z && ((NetherPortalBlock)Blocks.field_150427_aO).func_201816_b(p_219996_1_, p_219996_2_) != null) {
++         BlockPos framePos = p_219996_2_.func_177972_a(direction);
++         if (p_219996_1_.func_180495_p(framePos).isPortalFrame(p_219996_1_, framePos) && ((NetherPortalBlock)Blocks.field_150427_aO).func_201816_b(p_219996_1_, p_219996_2_) != null) {
+             flag = true;
+          }
+       }
