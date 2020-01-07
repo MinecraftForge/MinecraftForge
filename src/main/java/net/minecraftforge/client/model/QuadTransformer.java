@@ -70,17 +70,18 @@ public class QuadTransformer
             int normalIn = getAtByteOffset(inData,offset);
             if (normalIn != 0)
             {
-                float x = (((normalIn) >> 24) & 0xFF) / 255.0f;
-                float y = (((normalIn << 8) >> 24) & 0xFF) / 255.0f;
-                float z = (((normalIn << 16) >> 24) & 0xFF) / 255.0f;
+
+                float x = ((byte)((normalIn) >> 24)) / 127.0f;
+                float y = ((byte)((normalIn << 8) >> 24)) / 127.0f;
+                float z = ((byte)((normalIn << 16) >> 24)) / 127.0f;
 
                 Vector3f pos = new Vector3f(x, y, z);
                 transform.transformNormal(pos);
                 pos.func_229194_d_();
 
-                int normalOut = (((int) (x / 255.0) & 0xFF) << 24) |
-                                (((int) (y / 255.0) & 0xFF) << 16) |
-                                (((int) (z / 255.0) & 0xFF) << 8) |
+                int normalOut = ((((byte)(x / 127.0f)) & 0xFF) << 24) |
+                                ((((byte)(y / 127.0f)) & 0xFF) << 16) |
+                                ((((byte)(z / 127.0f)) & 0xFF) << 8) |
                                 (normalIn & 0xFF);
 
                 putAtByteOffset(outData, offset, normalOut);
@@ -108,7 +109,10 @@ public class QuadTransformer
         int shift = (offset % 4) * 8;
 
         if (shift == 0)
+        {
             outData[index] = value;
+            return;
+        }
 
         int lsbMask = 0xFFFFFFFF >>> (32-shift);
         int msbMask = 0xFFFFFFFF << shift;
