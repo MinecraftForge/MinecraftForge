@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,9 +47,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * This event is called every time a {@link JigsawPattern} is created. Use this event to modify the pools of the JigsawPattern
  * <br>
- * Use {@link #addBuilding(ResourceLocation, JigsawPiece, int)} to add custom JigsawPiece to structure pools
+ * Use {@link #addBuildings(ResourceLocation, Pair[])} to add custom JigsawPiece to structure pools
  * <br>
- * Use {@link #removeBuilding(ResourceLocation, ResourceLocation)} to remove a JigsawPiece from structure pools.
+ * Use {@link #removeBuildings(ResourceLocation, ResourceLocation...)} to remove a JigsawPiece from structure pools.
  * <br>
  * <b> Be careful to not to remove all JigsawPieces from the startPool ("village/plains/town_centers" for Village and "pillager_outpost/base_plates" for PillageOutpost) </b>
  *
@@ -84,7 +85,8 @@ public class JigsawPatternInitEvent extends Event {
      * @param weight {@link JigsawPattern}s internal weight between categories
      * @param pieces List of JigsawPieces with {@link JigsawCategory}s internal weight between jigsawpieces
      */
-    public void addCategory(@Nonnull ResourceLocation registryName, int weight, @Nonnull List<Pair<JigsawPiece,Integer>> pieces)
+    @SafeVarargs
+    public final void addCategory(@Nonnull ResourceLocation registryName, int weight, @Nonnull Pair<JigsawPiece, Integer>... pieces)
     {
         if(this.jigsawPieces.containsKey(registryName))
         {
@@ -94,10 +96,10 @@ public class JigsawPatternInitEvent extends Event {
         {
             LOGGER.debug("a category with the registryName {} was already added. Adding pieces to category", registryName);
             JigsawCategory category = this.newCategories.get(registryName);
-            category.addJigsawPieces(pieces);
+            category.addJigsawPieces(Arrays.asList(pieces));
         }
         else
-            this.newCategories.put(registryName, new JigsawCategory(registryName, weight, pieces));
+            this.newCategories.put(registryName, new JigsawCategory(registryName, weight, Arrays.asList(pieces)));
     }
 
     /**
@@ -110,37 +112,15 @@ public class JigsawPatternInitEvent extends Event {
     }
 
     /**
-     * Add single JigsawPiece with weight to a pool
-     *
-     * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
-     * @param piece The structure that should be added
-     * @param weight The weight of the structure
-     */
-    public void addBuilding(@Nonnull ResourceLocation category, @Nonnull JigsawPiece piece, int weight)
-    {
-        this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(Pair.of(piece, weight));
-    }
-
-    /**
      * Add multiple JigsawPieces with weight to a pool at the same time
      *
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param pieces A list of JigsawPieces and weights that should be added to the pool
      */
-    public void addBuildings(@Nonnull ResourceLocation category, @Nonnull List<Pair<JigsawPiece, Integer>> pieces)
+    @SafeVarargs
+    public final void addBuildings(@Nonnull ResourceLocation category, @Nonnull Pair<JigsawPiece, Integer>... pieces)
     {
-        this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(pieces);
-    }
-
-    /**
-     * Removes single JigsawPiece from a JigsawPattern
-     *
-     * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
-     * @param building The identifier of the JigsawPiece {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
-     */
-    public void removeBuilding(@Nonnull ResourceLocation category, @Nonnull ResourceLocation building)
-    {
-        this.removeBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).add(building);
+        this.newBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(Arrays.asList(pieces));
     }
 
     /**
@@ -149,9 +129,9 @@ public class JigsawPatternInitEvent extends Event {
      * @param category The category the building should be added. If null the default one will be selected. Some {@link JigsawPattern} may not contains the default category.
      * @param buildings The identifiers of the JigsawPieces {@link JigsawPiece#getRegistryName()} (see e.g. {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools}
      */
-    public void removeBuildings(@Nonnull ResourceLocation category, @Nonnull List<ResourceLocation> buildings)
+    public void removeBuildings(@Nonnull ResourceLocation category, @Nonnull ResourceLocation... buildings)
     {
-        removeBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(buildings);
+        removeBuildings.computeIfAbsent(category, categoryName -> Lists.newArrayList()).addAll(Arrays.asList(buildings));
     }
 
     /**
@@ -248,48 +228,4 @@ public class JigsawPatternInitEvent extends Event {
             }));
         }
     }
-
-    /**
-     * This event should be fired whenever a Jigsaw bases structure initializes its pools.
-     * Use this event to register custom JigsawPattern before the corresponding structure is constructed.
-     */
-    public static abstract class StructureJigsawPoolInitEvent extends Event
-    {
-
-        public void register(JigsawPattern jigsawPattern)
-        {
-            JigsawManager.field_214891_a.register(jigsawPattern);
-        }
-
-        public abstract ResourceLocation getStructureRegistryName();
-
-        public static class Village extends StructureJigsawPoolInitEvent{
-            private static boolean fired = false;
-
-            public static void fire()
-            {
-                if(!fired)
-                {
-                    MinecraftForge.EVENT_BUS.post(new Village());
-                    fired = true;
-                }
-            }
-
-            @Override
-            public ResourceLocation getStructureRegistryName()
-            {
-                return Structures.VILLAGE.getRegistryName();
-            }
-        }
-
-        public static class PillageOutpost extends StructureJigsawPoolInitEvent
-        {
-            @Override
-            public ResourceLocation getStructureRegistryName()
-            {
-                return Structures.PILLAGER_OUTPOST.getRegistryName();
-            }
-        }
-    }
-
 }

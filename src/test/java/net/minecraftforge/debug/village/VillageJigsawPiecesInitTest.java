@@ -29,6 +29,7 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.SingleJigsawPiece;
 import net.minecraft.world.gen.feature.template.*;
 import net.minecraftforge.event.world.JigsawPatternInitEvent;
+import net.minecraftforge.event.world.StructureJigsawPoolInitEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -49,7 +50,7 @@ import net.minecraftforge.fml.common.Mod;
 public class VillageJigsawPiecesInitTest
 {
     public static final String MODID = "villagepiecesinittest";
-    public static int test = 0;
+    public static int test = 4;
 
     @SubscribeEvent
     public static void onStructuresFinished(JigsawPatternInitEvent event)
@@ -58,15 +59,15 @@ public class VillageJigsawPiecesInitTest
             case 1:
                 if(event.isPool("minecraft:village/plains/town_centers")){
                     event.removeCategory(new ResourceLocation("meeting_point"));
-                    event.removeBuildings(new ResourceLocation("fountain"),Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01")));
-                    event.addBuildings(new ResourceLocation("fountain"),Lists.newArrayList(Pair.of(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),2)));
+                    event.removeBuildings(new ResourceLocation("fountain"),new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"));
+                    event.addBuildings(new ResourceLocation("fountain"),Pair.of(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),2));
                 }
                 break;
             case 3:
                 if(event.isPool("minecraft:village/plains/town_centers")) {
                     event.removeCategory(new ResourceLocation("meeting_point"));
-                    event.removeBuildings(new ResourceLocation("fountain"),Lists.newArrayList(new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01")));
-                    event.addBuildings(new ResourceLocation("fountain"),Lists.newArrayList(Pair.of(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),2)));
+                    event.removeBuildings(new ResourceLocation("fountain"),new ResourceLocation("village/plains/town_centers/plains_fountain_01"),new ResourceLocation("village/plains/zombie/town_centers/plains_fountain_01"));
+                    event.addBuildings(new ResourceLocation("fountain"),Pair.of(new SingleJigsawPiece("villagepiecesinittest:village/plains/town_centers/plains_lava_01", ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.2F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState()))))),2));
                 }
             case 2:
                 if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/streets"))){
@@ -78,13 +79,13 @@ public class VillageJigsawPiecesInitTest
                 break;
             case 4:
                 if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/houses"))){
-                    event.addBuilding(new ResourceLocation("large_farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_large_farm_1")),10);
-                    event.addBuilding(new ResourceLocation("small_farm"), new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10);
+                    event.addBuildings(new ResourceLocation("large_farm"), Pair.of(new SingleJigsawPiece(MODID+"village/plains/houses/plains_large_farm_1"),10));
+                    event.addBuildings(new ResourceLocation("small_farm"), Pair.of(new SingleJigsawPiece(MODID+"village/plains/houses/plains_small_farm_1"),10));
                 }
                 break;
             case 5:
                 if(event.jigsawPatternRegistryName.equals(new ResourceLocation("village/plains/houses"))){
-                    event.addCategory(new ResourceLocation(MODID,"test"),100, ImmutableList.of(new Pair<>(new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_farm_1")),10)));
+                    event.addCategory(new ResourceLocation(MODID,"test"),100, new Pair<>(new SingleJigsawPiece(MODID+"village/plains/houses/plains_small_farm_1"),10));
                 }
                 break;
             default:
@@ -93,7 +94,7 @@ public class VillageJigsawPiecesInitTest
     }
 
     @SubscribeEvent
-    public static void onJigsawPool(JigsawPatternInitEvent.StructureJigsawPoolInitEvent.Village event){
+    public static void onJigsawPool(StructureJigsawPoolInitEvent.Village event){
         if (test == 3){
             event.register(new JigsawPattern(new ResourceLocation(MODID,"village/plains/test"),new ResourceLocation("empty"),ImmutableList.of(new Pair<>(new SingleJigsawPiece(new ResourceLocation(MODID,"village/plains/houses/plains_small_house"), ImmutableList.of(new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new RandomBlockMatchRuleTest(Blocks.COBBLESTONE, 0.1F), AlwaysTrueRuleTest.INSTANCE, Blocks.MOSSY_COBBLESTONE.getDefaultState())))), JigsawPattern.PlacementBehaviour.RIGID), 2)),JigsawPattern.PlacementBehaviour.RIGID));
         }
