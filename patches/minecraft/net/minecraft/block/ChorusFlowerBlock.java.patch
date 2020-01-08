@@ -8,7 +8,7 @@
 +         if (p_225534_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < p_225534_2_.func_201675_m().getHeight()) {
              int i = p_225534_1_.func_177229_b(field_185607_a);
 -            if (i < 5) {
-+            if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, blockpos, p_225534_1_, true)) {
++            if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, true)) {
                 boolean flag = false;
                 boolean flag1 = false;
                 BlockState blockstate = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b());
