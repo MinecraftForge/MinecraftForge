@@ -100,13 +100,13 @@ public class ForgeConfig
                     .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
             clumpingThreshold = builder
-                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
+                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024.")
                     .translation("forge.configgui.clumpingThreshold")
                     .worldRestart()
                     .defineInRange("clumpingThreshold", 64, 64, 1024);
 
             treatEmptyTagsAsAir = builder
-                    .comment("Vanilla will treat crafting recipess using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
+                    .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
 
@@ -154,14 +154,14 @@ public class ForgeConfig
                 .define("disableStairSlabCulling", false);
 
             alwaysSetupTerrainOffThread = builder
-                .comment("Enable forge to queue all chunk updates to the Chunk Update thread.",
+                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
                         "May increase FPS significantly, but may also cause weird rendering lag.",
                         "Not recommended for computers without a significant number of cores available.")
                 .translation("forge.configgui.alwaysSetupTerrainOffThread")
                 .define("alwaysSetupTerrainOffThread", false);
 
             forgeLightPipelineEnabled = builder
-                .comment("Enable the forge block rendering pipeline - fixes the lighting of custom models.")
+                .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
                 .define("forgeLightPipelineEnabled", true);
 
@@ -171,8 +171,8 @@ public class ForgeConfig
                 .define("selectiveResourceReloadEnabled", true);
 
             showLoadWarnings = builder
-                .comment("When enabled, forge will show any warnings that occurred during loading")
-                .translation("forge.configgui.showloadwarnings")
+                .comment("When enabled, Forge will show any warnings that occurred during loading.")
+                .translation("forge.configgui.showLoadWarnings")
                 .define("showLoadWarnings", true);
 
             allowEmissiveItems = builder
