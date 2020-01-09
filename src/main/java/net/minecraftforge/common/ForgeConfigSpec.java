@@ -60,9 +60,9 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
 
-/*
- * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
- * and other things Forge configs would find useful.
+/**
+ * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended
+ * to accept comments, language keys, and other things Forge configs would find useful.
  */
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> //TODO: Remove extends and pipe everything through getSpec/getValues?
 {
@@ -244,6 +244,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(split(path), defaultValue);
         }
         public <T> ConfigValue<T> define(List<String> path, T defaultValue) {
+            // Arrays.asList returns a private implementation of List (java.util.Arrays$ArrayList) that does not extend ArrayList (java.util.ArrayList).
+            // By default TOML parses all Lists into ArrayLists (java.util.ArrayList).
+            // Since the list TOML returns is not assignable from Arrays.asList's impl,
+            // `defaultValue.getClass().isAssignableFrom(o.getClass())` will always be false, and the element will
+            // always be incorrect and it will be reset whenever #correct() is called.
+            // This is undesirable so an instanceof List check is performed on the value instead which results in correct behaviour.
+            if (defaultValue.getClass().getName().equals("java.util.Arrays$ArrayList"))
+                return define(path, defaultValue, o -> o != null && o instanceof List);
             return define(path, defaultValue, o -> o != null && defaultValue.getClass().isAssignableFrom(o.getClass()));
         }
         public <T> ConfigValue<T> define(String path, T defaultValue, Predicate<Object> validator) {
@@ -274,6 +282,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context = new BuilderContext();
             return new ConfigValue<>(this, path, defaultSupplier);
         }
+
+        //Object > Comparable (Range)
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultValue, min, max, clazz);
         }
@@ -289,20 +299,82 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
-            return define(path, defaultSupplier, range);
+            return define(path, defaultSupplier, range, clazz);
         }
-        public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> acceptableValues) {
-            return defineInList(split(path), defaultValue, acceptableValues);
+
+        //Object > Limited Value Object
+        public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(String path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
-            return defineInList(split(path), defaultSupplier, acceptableValues);
+        public <T> ConfigValue<T> defineInList(String path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues) {
+            return defineInList(split(path), defaultSupplier, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(List<String> path, T defaultValue, Collection<? extends T> acceptableValues) {
-            return defineInList(path, () -> defaultValue, acceptableValues);
+        public <T> ConfigValue<T> defineInList(List<String> path, T defaultValue, Collection<? extends T> allowedValues) {
+            return defineInList(path, () -> defaultValue, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
-            return define(path, defaultSupplier, acceptableValues::contains);
+        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues) {
+            return defineInList(path, defaultSupplier, allowedValues, Object.class);
         }
+        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues, Class<?> clazz) {
+            if (allowedValues.isEmpty())
+                throw new IllegalArgumentException("Must have allowed values.");
+            if (!allowedValues.contains(defaultSupplier.get()))
+                throw new IllegalArgumentException("Allowed values must contain the default value.");
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues.stream().map(t -> t instanceof Enum<?>? ((Enum<?>) t).name() : t.toString()).collect(Collectors.joining(", "))));
+            if (defaultSupplier.get() instanceof Number)
+                return define(path, defaultSupplier, obj -> {
+                    if (!(obj instanceof Number))
+                        return false;
+                    return allowedValues.stream().anyMatch(n -> ((Number) n).doubleValue() == ((Number) obj).doubleValue());
+                }, clazz);
+            return define(path, defaultSupplier, allowedValues::contains, clazz);
+        }
+        //Object > Limited Value Object (Byte)
+        // Byte needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public ByteValue defineInList(String path, byte defaultValue, Collection<Byte> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public ByteValue defineInList(List<String> path, byte defaultValue, Collection<Byte> allowedValues) {
+            final Supplier<Byte> defaultSupplier = () -> defaultValue;
+            return new ByteValue(this, defineInList(path, defaultSupplier, allowedValues, Byte.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Short)
+        // Short needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public ShortValue defineInList(String path, short defaultValue, Collection<Short> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public ShortValue defineInList(List<String> path, short defaultValue, Collection<Short> allowedValues) {
+            final Supplier<Short> defaultSupplier = () -> defaultValue;
+            return new ShortValue(this, defineInList(path, defaultSupplier, allowedValues, Short.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Float)
+        // Float needs special handling otherwise it gets read as an Double and a class cast exception can occur.
+        public FloatValue defineInList(String path, float defaultValue, Collection<Float> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public FloatValue defineInList(List<String> path, float defaultValue, Collection<Float> allowedValues) {
+            final Supplier<Float> defaultSupplier = () -> defaultValue;
+            return new FloatValue(this, defineInList(path, defaultSupplier, allowedValues, Float.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Long)
+        // Long needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public LongValue defineInList(String path, long defaultValue, Collection<Long> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public LongValue defineInList(List<String> path, long defaultValue, Collection<Long> allowedValues) {
+            final Supplier<Long> defaultSupplier = () -> defaultValue;
+            return new LongValue(this, defineInList(path, defaultSupplier, allowedValues, Long.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Enum)
+        // Enum needs special handling otherwise it gets read as a String and a class cast exception can occur.
+        public <V extends Enum<V>> EnumValue<V> defineInList(String path, V defaultValue, Collection<V> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public <V extends Enum<V>> EnumValue<V> defineInList(List<String> path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(path, defaultValue, allowedValues);
+        }
+
+        //Object > List
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
@@ -343,38 +415,38 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(split(path), defaultValue, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(split(path), defaultValue, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(split(path), defaultValue, converter, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(split(path), defaultValue, converter, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(acceptableValues));
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(allowedValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(path, defaultValue, converter, Arrays.asList(allowedValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
-            return defineEnum(split(path), defaultValue, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(split(path), defaultValue, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
-            return defineEnum(split(path), defaultValue, converter, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> allowedValues) {
+            return defineEnum(split(path), defaultValue, converter, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
-            return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, allowedValues);
         }
         @SuppressWarnings("unchecked")
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> allowedValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
                 if (obj instanceof Enum) {
-                    return acceptableValues.contains(obj);
+                    return allowedValues.contains(obj);
                 }
                 if (obj == null) {
                     return false;
                 }
                 try {
-                    return acceptableValues.contains(converter.get(obj, defaultValue.getClass()));
+                    return allowedValues.contains(converter.get(obj, defaultValue.getClass()));
                 } catch (IllegalArgumentException | ClassCastException e) {
                     return false;
                 }
@@ -404,11 +476,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
-            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).map(Enum::name).collect(Collectors.joining(", "))));
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
             return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
-        //boolean
+        //Boolean
         public BooleanValue define(String path, boolean defaultValue) {
             return define(split(path), defaultValue);
         }
@@ -425,6 +497,48 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }, Boolean.class).getPath(), defaultSupplier);
         }
 
+        //Byte
+        public ByteValue defineInRange(String path, byte defaultValue, byte min, byte max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public ByteValue defineInRange(List<String> path, byte defaultValue, byte min, byte max) {
+            return defineInRange(path, (Supplier<Byte>)() -> defaultValue, min, max);
+        }
+        public ByteValue defineInRange(String path, Supplier<Byte> defaultSupplier, byte min, byte max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public ByteValue defineInRange(List<String> path, Supplier<Byte> defaultSupplier, byte min, byte max) {
+            return new ByteValue(this, defineInRange(path, defaultSupplier, min, max, Byte.class).getPath(), defaultSupplier);
+        }
+
+        //Short
+        public ShortValue defineInRange(String path, short defaultValue, short min, short max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, short defaultValue, short min, short max) {
+            return defineInRange(path, (Supplier<Short>)() -> defaultValue, min, max);
+        }
+        public ShortValue defineInRange(String path, Supplier<Short> defaultSupplier, short min, short max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, Supplier<Short> defaultSupplier, short min, short max) {
+            return new ShortValue(this, defineInRange(path, defaultSupplier, min, max, Short.class).getPath(), defaultSupplier);
+        }
+
+        //Float
+        public FloatValue defineInRange(String path, float defaultValue, float min, float max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, float defaultValue, float min, float max) {
+            return defineInRange(path, (Supplier<Float>)() -> defaultValue, min, max);
+        }
+        public FloatValue defineInRange(String path, Supplier<Float> defaultSupplier, float min, float max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, Supplier<Float> defaultSupplier, float min, float max) {
+            return new FloatValue(this, defineInRange(path, defaultSupplier, min, max, Float.class).getPath(), defaultSupplier);
+        }
+
         //Double
         public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
             return defineInRange(split(path), defaultValue, min, max);
@@ -439,7 +553,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
 
-        //Ints
+        //Int
         public IntValue defineInRange(String path, int defaultValue, int min, int max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -453,7 +567,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
         }
 
-        //Longs
+        //Long
         public LongValue defineInRange(String path, long defaultValue, long min, long max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -569,7 +683,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             validate(hasComment(), "Non-empty comment when empty expected");
             validate(langKey, "Non-null translation key when null expected");
             validate(range, "Non-null range when null expected");
-            validate(worldRestart, "Dangeling world restart value set to true");
+            validate(worldRestart, "Dangling world restart value set to true");
         }
 
         private void validate(Object value, String message)
@@ -585,7 +699,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     @SuppressWarnings("unused")
-    private static class Range<V extends Comparable<? super V>> implements Predicate<Object>
+    public static class Range<V extends Comparable<? super V>> implements Predicate<Object>
     {
         private final Class<? extends V> clazz;
         private final V min;
@@ -750,6 +864,54 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    public static class ByteValue extends ConfigValue<Byte>
+    {
+        ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Byte getRaw(Config config, List<String> path, Supplier<Byte> defaultSupplier)
+        {
+            return config.getByteOrElse(path, defaultSupplier.get());
+        }
+    }
+
+    public static class ShortValue extends ConfigValue<Short>
+    {
+        ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Short getRaw(Config config, List<String> path, Supplier<Short> defaultSupplier)
+        {
+            return config.getShortOrElse(path, defaultSupplier.get());
+        }
+    }
+
+    public static class FloatValue extends ConfigValue<Float>
+    {
+        FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        public Float get() {
+            return super.get();
+        }
+
+        @Override
+        protected Float getRaw(Config config, List<String> path, Supplier<Float> defaultSupplier)
+        {
+            Number n = config.<Number>get(path);
+            return n == null ? defaultSupplier.get() : n.floatValue();
+        }
+    }
+
     public static class IntValue extends ConfigValue<Integer>
     {
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
@@ -812,11 +974,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
-    private static final Joiner LINE_JOINER = Joiner.on("\n");
-    private static final Joiner DOT_JOINER = Joiner.on(".");
-    private static final Splitter DOT_SPLITTER = Splitter.on(".");
-    private static List<String> split(String path)
+    public static final Joiner LINE_JOINER = Joiner.on("\n");
+    public static final Joiner DOT_JOINER = Joiner.on(".");
+    public static final Splitter DOT_SPLITTER = Splitter.on(".");
+    public static List<String> split(String path)
     {
         return Lists.newArrayList(DOT_SPLITTER.split(path));
     }
+
 }
