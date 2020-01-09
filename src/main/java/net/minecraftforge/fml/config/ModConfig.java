@@ -85,7 +85,7 @@ public class ModConfig
         this.spec.setConfig(this.configData);
     }
 
-    void fireEvent(final ModConfigEvent configEvent) {
+    public void fireEvent(final ModConfigEvent configEvent) {
         this.container.dispatchConfigEvent(configEvent);
     }
 
@@ -152,7 +152,7 @@ public class ModConfig
     }
 
     public static class ConfigReloading extends ModConfigEvent {
-        ConfigReloading(final ModConfig config) {
+        public ConfigReloading(final ModConfig config) {
             super(config);
         }
     }
