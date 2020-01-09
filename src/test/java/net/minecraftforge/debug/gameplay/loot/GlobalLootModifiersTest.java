@@ -25,7 +25,6 @@ import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.event.RegistryEvent;
@@ -57,7 +56,7 @@ public class GlobalLootModifiersTest {
         public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<IGlobalLootModifierSerializer<?>> event) {
             if (ENABLE) {
                 event.getRegistry().register(
-                		new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
+                	    new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
                 );
                 event.getRegistry().register(new SmeltingEnchantmentModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"smelting")));
                 event.getRegistry().register(new SilkTouchTestModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"silk_touch_bamboo")));
@@ -73,7 +72,6 @@ public class GlobalLootModifiersTest {
 
     /**
      * The smelting enchantment causes this modifier to be invoked, via the smelting loot_modifier json
-     * @author Draco18s
      *
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
@@ -107,7 +105,6 @@ public class GlobalLootModifiersTest {
 
     /**
      * When harvesting blocks with bamboo, this modifier is invoked, via the silk_touch_bamboo loot_modifier json
-     * @author Draco18s
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
@@ -118,18 +115,12 @@ public class GlobalLootModifiersTest {
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.get(LootParameters.TOOL);
+            //return early if silk-touch is already applied (otherwise we'll get stuck in an infinite loop).
+            if(EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
             ItemStack fakeTool = ctxTool.copy();
             fakeTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-            if(ItemStack.areItemsEqual(ctxTool, fakeTool) && EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
-            LootContext.Builder builder = new LootContext.Builder(context.getWorld())
-                    .withParameter(LootParameters.BLOCK_STATE, context.get(LootParameters.BLOCK_STATE))
-                    .withRandom(context.getWorld().rand)
-                    .withParameter(LootParameters.POSITION, context.get(LootParameters.POSITION))
-                    .withParameter(LootParameters.TOOL, fakeTool)
-                    .withNullableParameter(LootParameters.BLOCK_ENTITY, context.get(LootParameters.BLOCK_ENTITY));
-            if(context.has(LootParameters.THIS_ENTITY)) {
-                builder.withParameter(LootParameters.THIS_ENTITY, context.get(LootParameters.THIS_ENTITY));
-            }
+            LootContext.Builder builder = new LootContext.Builder(context);
+            builder.withParameter(LootParameters.TOOL, fakeTool);
             LootContext ctx = builder.build(LootParameterSets.BLOCK);
             LootTable loottable = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(context.get(LootParameters.BLOCK_STATE).getBlock().getLootTable());
             return loottable.generate(ctx);
@@ -144,8 +135,8 @@ public class GlobalLootModifiersTest {
     }
 
     /**
-     * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json 
-     * @author Draco18s
+     * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
+     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)  
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
@@ -162,7 +153,8 @@ public class GlobalLootModifiersTest {
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             //
-            // Additional conditions can be checked, though as much logic as possible should be parameterized via JSON data.
+            // Additional conditions can be checked, though as much as possible should be parameterized via JSON data.
+            // It is better to write a new ILootCondition implementation than to do things here.
             //
             int numSeeds = 0;
             for(ItemStack stack : generatedLoot) {
@@ -172,7 +164,7 @@ public class GlobalLootModifiersTest {
             if(numSeeds >= numSeedsToConvert) {
                 generatedLoot.removeIf(x -> x.getItem() == itemToCheck);
                 generatedLoot.add(new ItemStack(itemReward, (numSeeds/numSeedsToConvert)));
-                numSeeds -= (numSeeds/numSeedsToConvert)*numSeedsToConvert;
+                numSeeds = numSeeds%numSeedsToConvert;
                 if(numSeeds > 0)
                     generatedLoot.add(new ItemStack(itemToCheck, numSeeds));
             }
