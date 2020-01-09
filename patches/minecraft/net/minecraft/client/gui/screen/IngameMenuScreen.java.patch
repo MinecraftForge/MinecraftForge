@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/screen/IngameMenuScreen.java
++++ b/net/minecraft/client/gui/screen/IngameMenuScreen.java
+@@ -90,6 +90,10 @@
+          button1.setMessage(I18n.func_135052_a("menu.disconnect"));
+       }
+ 
++      this.addButton(new net.minecraftforge.fml.client.config.GuiButtonExt(this.width / 2 - 102, this.height / 4 + 120 + -16 + 24, 204, 20, I18n.func_135052_a("fml.menu.mods"), modsButton -> {
++         this.minecraft.func_147108_a(new net.minecraftforge.fml.client.gui.ModListScreen(this));
++      }));
++
+    }
+ 
+    public void tick() {
