@@ -17,15 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+/**
+ * Contains widgets that are backed by, and set, a real value.
+ */
 
-public enum ConfigGuiType
-{
-    STRING,
-    INTEGER,
-    BOOLEAN,
-    DOUBLE,
-    COLOR,
-    MOD_ID,
-    CONFIG_CATEGORY;
-}
+package net.minecraftforge.fml.client.config.entry.widget;

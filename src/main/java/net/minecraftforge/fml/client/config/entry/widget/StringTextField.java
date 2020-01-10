@@ -17,19 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.config.entry.widget;
 
-public interface IArrayEntry
-{
-    void keyTyped(char eventChar, int eventKey);
+import net.minecraft.client.gui.widget.TextFieldWidget;
 
-    void updateCursorCounter();
+/**
+ * {@link TextFieldWidget} for a {@link String}
+ *
+ * @author Cadiboo
+ */
+public class StringTextField extends ObjectTextField<String> {
 
-    void mouseClicked(int x, int y, int mouseEvent);
+	public StringTextField(final Callback<String> callback) {
+		this("String", callback);
+	}
 
-    void drawToolTip(int mouseX, int mouseY);
+	public StringTextField(final String message, final Callback<String> callback) {
+		super(message, callback);
+	}
 
-    boolean isValueSavable();
+	@Override
+	public String toText(final String value) {
+		return value;
+	}
 
-    Object getValue();
+	@Override
+	public String fromText(final String text) {
+		return text;
+	}
+
 }
