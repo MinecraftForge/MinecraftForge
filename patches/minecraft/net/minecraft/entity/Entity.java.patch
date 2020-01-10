@@ -238,7 +238,7 @@
           this.field_71093_bK = p_212321_1_;
           this.func_213319_R();
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
-+         Entity transportedEntity = teleporter.placeEntity(this, serverworld, serverworld1, this.field_70177_z, spawnPortal -> {
++         Entity transportedEntity = teleporter.placeEntity(this, serverworld, serverworld1, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
           Vec3d vec3d = this.func_213322_ci();
           float f = 0.0F;
           BlockPos blockpos;
@@ -283,7 +283,7 @@
              serverworld1.func_217460_e(entity);
           }
 +            return entity;
-+         });
++         });//Forge: End vanilla logic
  
 -         this.field_70128_L = true;
 +         this.remove(false);
