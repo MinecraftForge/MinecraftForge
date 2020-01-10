@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.ITeleporter;
 
 public class PortallessTeleporter implements ITeleporter 
 {
+    public static final PortallessTeleporter INSTANCE = new PortallessTeleporter();
 
     @Override
     public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) 
