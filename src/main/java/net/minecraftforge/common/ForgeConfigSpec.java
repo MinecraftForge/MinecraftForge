@@ -705,7 +705,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final V min;
         private final V max;
 
-        private Range(Class<V> clazz, V min, V max)
+        public Range(Class<V> clazz, V min, V max)
         {
             this.clazz = clazz;
             this.min = min;
