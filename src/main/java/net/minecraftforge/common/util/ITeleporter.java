@@ -22,7 +22,8 @@ package net.minecraftforge.common.util;
 import java.util.function.Function;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.Teleporter;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.server.ServerWorld;
 
@@ -53,6 +54,7 @@ public interface ITeleporter {
      * @param destWorld        the entity's destination
      * @param yaw              the suggested yaw value to apply
      * @param repositionEntity a function to reposition the entity, which returns the new entity in the new dimension. This is the vanilla implementation of the dimension travel logic. If the supplied boolean is true, it is attempted to spawn a new portal.
+     * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.dimension.DimensionType, ITeleporter)}
      */
     default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
        return repositionEntity.apply(true);
