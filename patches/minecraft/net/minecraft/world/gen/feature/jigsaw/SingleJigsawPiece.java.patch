@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
-@@ -41,6 +41,16 @@
+@@ -41,6 +41,12 @@
        this.field_214862_b = ImmutableList.copyOf(p_i51401_2_);
     }
  
@@ -10,14 +10,10 @@
 +      this.field_214862_b = ImmutableList.copyOf(processors);
 +   }
 +
-+   public SingleJigsawPiece(ResourceLocation location){
-+      this(location, ImmutableList.of(), JigsawPattern.PlacementBehaviour.RIGID);
-+   }
-+
     @Deprecated
     public SingleJigsawPiece(String p_i51402_1_) {
        this(p_i51402_1_, ImmutableList.of());
-@@ -89,7 +99,7 @@
+@@ -89,7 +95,7 @@
        if (!template.func_189962_a(p_225575_2_, p_225575_4_, placementsettings, 18)) {
           return false;
        } else {
@@ -26,7 +22,7 @@
              this.func_214846_a(p_225575_2_, template$blockinfo, p_225575_4_, p_225575_5_, p_225575_7_, p_225575_6_);
           }
  
-@@ -123,4 +133,9 @@
+@@ -123,4 +129,9 @@
     public String toString() {
        return "Single[" + this.field_214861_a + "]";
     }
