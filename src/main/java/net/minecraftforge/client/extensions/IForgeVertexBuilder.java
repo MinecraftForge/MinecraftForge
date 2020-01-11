@@ -107,8 +107,10 @@ public interface IForgeVertexBuilder
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
         int bl = LightTexture.func_228450_a_(lightmapCoord);
         int sl = LightTexture.func_228454_b_(lightmapCoord);
-        bl = Math.max(bl, Short.toUnsignedInt(data.getShort(26)));
-        sl = Math.max(sl, Short.toUnsignedInt(data.getShort(24)));
+        int blBaked = Short.toUnsignedInt(data.getShort(24)) >> 4;
+        int slBaked = Short.toUnsignedInt(data.getShort(26)) >> 4;
+        bl = Math.max(bl, blBaked);
+        sl = Math.max(sl, slBaked);
         return LightTexture.func_228451_a_(bl, sl);
     }
     

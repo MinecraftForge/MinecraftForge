@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
+    private static Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
     private static Vec2f[] DEFAULT_COORDS = {
             new Vec2f(0, 0),
             new Vec2f(0, 1),
@@ -337,7 +338,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Optional.ofNullable(parts.get(name));
     }
 
-    private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, boolean isFullbright, TextureAtlasSprite texture, TransformationMatrix transform)
+    private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, TransformationMatrix transform)
     {
         boolean needsNormalRecalculation = false;
         for (int[] ints : indices)
@@ -364,10 +365,18 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         BakedQuadBuilder builder = new BakedQuadBuilder(texture);
 
         builder.setQuadTint(tintIndex);
-        builder.setApplyDiffuseLighting(!isFullbright);
 
-        int fakeLight = (int)((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
-        Vec2f uv2 = new Vec2f(((float) fakeLight * 0x20) / 0xFFFF, ((float) fakeLight * 0x20) / 0xFFFF);
+        boolean diffuse = true;
+
+        Vec2f uv2 = new Vec2f(0,0);
+        if (ambientToFullbright)
+        {
+            int fakeLight = (int) ((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
+            uv2 = new Vec2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
+            //uv2 = new Vec2f(0, (fakeLight << 4) / 32767.0f);
+            //uv2 = new Vec2f((fakeLight << 4) / 32767.0f, 0);
+            builder.setApplyDiffuseLighting(diffuse = (fakeLight > 0));
+        }
 
         boolean hasTransform = !transform.isIdentity();
         // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
@@ -377,11 +386,11 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         {
             int[] index = indices[Math.min(i,indices.length-1)];
             Vector3f pos0 = positions.get(index[0]);
-            Vector4f position = new Vector4f(pos0.getX(), pos0.getY(), pos0.getZ(), 1);
+            Vector4f position = new Vector4f(pos0);
             Vec2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
             Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
             Vector3f normal = norm0;
-            Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : new Vector4f(1, 1, 1, 1);
+            Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
             if (hasTransform)
             {
                 normal = norm0.func_229195_e_();
@@ -393,6 +402,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     color.getY() * colorTint.getY(),
                     color.getZ() * colorTint.getZ(),
                     color.getW() * colorTint.getW());
+            if (!diffuse) normal = new Vector3f(0,0,0);
             putVertexData(builder, position, texCoord, normal, tintedColor, uv2, texture);
             pos[i] = position;
             norm[i] = normal;
@@ -525,11 +535,10 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                 TextureAtlasSprite texture = spriteGetter.apply(ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, owner));
                 int tintIndex = mat.diffuseTintIndex;
                 Vector4f colorTint = mat.diffuseColor;
-                boolean isFullbright = ambientToFullbright && mesh.isFullbright();
 
                 for (int[][] face : mesh.faces)
                 {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, isFullbright, texture, modelTransform.func_225615_b_());
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.func_225615_b_());
                     if (quad.getRight() == null)
                         modelBuilder.addGeneralQuad(quad.getLeft());
                     else
@@ -542,11 +551,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
-        }
-
-        public boolean hasAnyFullBright()
-        {
-            return meshes.stream().anyMatch(ModelMesh::isFullbright);
         }
     }
 
@@ -582,12 +586,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                 combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
             return combined;
         }
-
-        @Override
-        public boolean hasAnyFullBright()
-        {
-            return super.hasAnyFullBright() || parts.values().stream().anyMatch(ModelObject::hasAnyFullBright);
-        }
     }
 
     private class ModelMesh
@@ -602,11 +600,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         {
             this.mat = currentMat;
             this.smoothingGroup = currentSmoothingGroup;
-        }
-
-        public boolean isFullbright()
-        {
-            return mat != null && TransformationHelper.epsilonEquals(mat.ambientColor, new Vector4f(1,1,1,1), 1/256f);
         }
     }
 

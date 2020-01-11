@@ -1,16 +1,5 @@
 {
-  "parent": "forge:item/default",
-  "loader": "forge:composite",
-  "parts": {
-    "part1": {
-      "loader": "forge:obj",
-      "model": "new_model_loader_test:models/item/sugar_glider.obj",
-      "ambientToFullbright": true,
-      "textures": {
-        "qr": "new_model_loader_test:item/qr"
-      }
-    }
-  },
+  "parent": "new_model_loader_test:block/obj_block",
   "textures": {
     "particle": "block/oak_planks"
   },
