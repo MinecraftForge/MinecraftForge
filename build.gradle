@@ -252,8 +252,6 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
                 mods {
                     TestMods { sources sourceSets.test }
                 }
@@ -283,8 +281,6 @@ project(':forge') {
             forge_test_server {
                 parent runs.forge_server
                 taskName 'forge_test_server'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
                 mods {
                     TestMods { sources sourceSets.test }
@@ -318,8 +314,6 @@ project(':forge') {
             forge_test_data {
                 parent runs.forge_data
                 taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
                 mods {
                     tests { sources  sourceSets.test }
