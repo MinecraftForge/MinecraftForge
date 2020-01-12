@@ -69,10 +69,14 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
-    {
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType) {
+        throw new RuntimeException("Legacy modLauncher method called!");
+    }
+
+    @Override
+    public ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason) {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
-            return false;
+            return ComputeLevel.NO_REWRITE;
 
         Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -80,7 +84,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
         
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return false;
+            return ComputeLevel.NO_REWRITE;
         }
         
         //Static methods named "create" with first argument as a string
@@ -223,7 +227,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.areturn(classType);
             }
         });
-        return true;
+        return ComputeLevel.COMPUTE_FRAMES;
     }
 
 }

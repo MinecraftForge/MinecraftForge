@@ -52,13 +52,19 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
         return isEmpty ? NAY : YAY;
     }
 
+    @Override
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    {
+        throw new RuntimeException("Legacy modLauncher method called!");
+    }
+
     private boolean hasHolder(List<AnnotationNode> lst)
     {
         return lst != null && lst.stream().anyMatch(n -> n.desc.equals(CAP_INJECT));
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public ILaunchPluginService.ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
     {
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
         AtomicBoolean changed = new AtomicBoolean();
@@ -70,7 +76,7 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
             changed.compareAndSet(false, prev != f.access);
         });
 
-        return changed.get();
+        return changed.get() ? ComputeLevel.SIMPLE_REWRITE : ComputeLevel.NO_REWRITE;
     }
 
 }

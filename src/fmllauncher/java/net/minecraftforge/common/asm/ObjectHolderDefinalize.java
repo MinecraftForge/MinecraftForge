@@ -75,6 +75,12 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
     @Override
     public boolean processClass(Phase phase, ClassNode classNode, Type classType)
     {
+        throw new RuntimeException("Legacy modLauncher method called!");
+    }
+
+    @Override
+    public ILaunchPluginService.ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
+    {
         AtomicBoolean changes = new AtomicBoolean();
         //Must be public static finals, and non-array objects
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
@@ -107,7 +113,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
                 changes.compareAndSet(false, prev != f.access);
             });
         }
-        return changes.get();
+        return changes.get() ? ComputeLevel.SIMPLE_REWRITE : ComputeLevel.NO_REWRITE;
     }
 
 }
