@@ -9,18 +9,31 @@ import net.minecraft.util.math.ChunkPos;
 public class ForcedChunkManager 
 {
     private Long2ShortMap forcedChunksMap = new Long2ShortRBTreeMap();
+    private ServerWorld world;
     
     private void forceChunk(long pos)
     {
-        
+        short forceAmound = forcedChunkMap.get(pos);
+        forceAmound++;
+        if (forceAmound == 1)
+        {
+            world.forceChunk(ChunkPos.fromLong(pos), true);
+        }
+        forcedChunkMap.put(pos, forceAmound);
     }
     
     private void unforceChunk(long pos)
     {
-        
+        short forceAmound = forcedChunkMap.get(pos);
+        forceAmound--;
+        if (forceAmound == 0)
+        {
+            world.forceChunk(ChunkPos.fromLong(pos), true);
+        }
+        forcedChunkMap.put(pos, forceAmound);
     }
     
-    public abstract class Ticket<T>
+    public class Ticket<T>
     {
         private LongSet forcedChunksSet = new LongRBTreeSet();
         public final T owner;
