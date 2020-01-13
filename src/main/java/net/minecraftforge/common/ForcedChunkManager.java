@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,6 @@ import it.unimi.dsi.fastutil.longs.Long2ShortMap;
 import it.unimi.dsi.fastutil.longs.Long2ShortRBTreeMap;
 import it.unimi.dsi.fastutil.longs.LongRBTreeSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.client.renderer.FaceDirection.Constants;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -225,6 +225,11 @@ public class ForcedChunkManager extends WorldSavedData
     public Ticket<String> ofCause(ModContainer mod, String t)
     {
         return new StringTicket(mod, t);
+    }
+    
+    public Stream<Ticket<?>> getAllTicketsFrom(ModContainer mod)
+    {
+        return this.tickets.stream().filter(t -> t.owner == mod);
     }
     
     public static ForcedChunkManager getManager(ServerWorld w)
