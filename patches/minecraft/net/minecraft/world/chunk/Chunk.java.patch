@@ -182,7 +182,7 @@
     public Stream<BlockPos> func_217304_m() {
        return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
 -         return this.func_180495_p(p_217312_1_).func_185906_d() != 0;
-+         return this.func_180495_p(p_217312_1_).getLightValue(func_177412_p(), p_217312_1_) != 0;
++         return this.func_180495_p(p_217312_1_).getLightValue((net.minecraft.world.IBlockReader) func_177412_p(), p_217312_1_) != 0;
        });
     }
  

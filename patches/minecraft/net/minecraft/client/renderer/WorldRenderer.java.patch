@@ -96,6 +96,15 @@
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
  
+@@ -2432,7 +2447,7 @@
+       } else {
+          int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
+          int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
+-         int k = p_228420_1_.func_185906_d();
++         int k = p_228420_1_.getLightValue((IBlockReader) p_228420_0_, p_228420_2_);
+          if (j < k) {
+             j = k;
+          }
 @@ -2445,6 +2460,11 @@
        return this.field_175015_z;
     }
