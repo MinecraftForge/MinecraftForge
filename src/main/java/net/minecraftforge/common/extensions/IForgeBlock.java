@@ -70,7 +70,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.ILightReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.IWorldWriter;
@@ -112,12 +111,12 @@ public interface IForgeBlock
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      *
-     * @param state
-     * @param world
-     * @param pos
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
      * @return The light value
      */
-    default int getLightValue(BlockState state, ILightReader world, BlockPos pos)
+    default int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getLightValue();
     }

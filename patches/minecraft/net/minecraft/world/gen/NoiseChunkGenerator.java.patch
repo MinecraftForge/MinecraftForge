@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/NoiseChunkGenerator.java
++++ b/net/minecraft/world/gen/NoiseChunkGenerator.java
+@@ -378,7 +378,7 @@
+                         }
+ 
+                         if (blockstate != field_222562_i) {
+-                           if (blockstate.func_185906_d() != 0) {
++                           if (blockstate.getLightValue(p_222537_1_, new BlockPos(j3, j2, i4)) != 0) {
+                               blockpos$mutable.func_181079_c(j3, j2, i4);
+                               chunkprimer.func_201637_h(blockpos$mutable);
+                            }
