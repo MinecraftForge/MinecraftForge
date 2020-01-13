@@ -366,16 +366,12 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
         builder.setQuadTint(tintIndex);
 
-        boolean diffuse = true;
-
-        Vec2f uv2 = new Vec2f(0,0);
+        Vec2f uv2 = new Vec2f(0, 0);
         if (ambientToFullbright)
         {
             int fakeLight = (int) ((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
             uv2 = new Vec2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
-            //uv2 = new Vec2f(0, (fakeLight << 4) / 32767.0f);
-            //uv2 = new Vec2f((fakeLight << 4) / 32767.0f, 0);
-            builder.setApplyDiffuseLighting(diffuse = (fakeLight > 0));
+            builder.setApplyDiffuseLighting(fakeLight == 0);
         }
 
         boolean hasTransform = !transform.isIdentity();
@@ -402,7 +398,6 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     color.getY() * colorTint.getY(),
                     color.getZ() * colorTint.getZ(),
                     color.getW() * colorTint.getW());
-            if (!diffuse) normal = new Vector3f(0,0,0);
             putVertexData(builder, position, texCoord, normal, tintedColor, uv2, texture);
             pos[i] = position;
             norm[i] = normal;
