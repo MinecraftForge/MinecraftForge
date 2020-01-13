@@ -60,12 +60,9 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ImmutableMap<RenderType, IUnbakedModel> models;
-    @Nullable
-    private final IUnbakedModel base;
 
-    public MultiLayerModel(@Nullable IUnbakedModel base, ImmutableMap<RenderType, IUnbakedModel> models)
+    public MultiLayerModel(ImmutableMap<RenderType, IUnbakedModel> models)
     {
-        this.base = base;
         this.models = models;
     }
 
@@ -73,11 +70,9 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> materials = Sets.newHashSet();
-        if (base != null)
-            materials.addAll(base.func_225614_a_(modelGetter, missingTextureErrors));
         for (IUnbakedModel m : models.values())
             materials.addAll(m.func_225614_a_(modelGetter, missingTextureErrors));
-        return Collections.emptyList();
+        return materials;
     }
 
     private static ImmutableMap<RenderType, IBakedModel> buildModels(ImmutableMap<RenderType, IUnbakedModel> models, IModelTransform modelTransform, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ResourceLocation modelLocation)
@@ -94,27 +89,36 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         IUnbakedModel missing = ModelLoader.instance().getMissingModel();
+
         return new MultiLayerBakedModel(
-            base != null ? base.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation) : null,
-            buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
-            missing.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation),
-            PerspectiveMapWrapper.getTransforms(modelTransform)
-        );
+                owner.useSmoothLighting(), owner.isShadedInGui(),
+                spriteGetter.apply(owner.resolveTexture("particle")), overrides,
+                buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
+                missing.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation),
+                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform)));
     }
 
     private static final class MultiLayerBakedModel implements IBakedModel
     {
         private final ImmutableMap<RenderType, IBakedModel> models;
         private final ImmutableMap<TransformType, TransformationMatrix> cameraTransforms;
-        private final IBakedModel base;
+        protected final boolean ambientOcclusion;
+        protected final boolean gui3d;
+        protected final TextureAtlasSprite particle;
+        protected final ItemOverrideList overrides;
         private final IBakedModel missing;
 
-        public MultiLayerBakedModel(@Nullable IBakedModel base, ImmutableMap<RenderType, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
+        public MultiLayerBakedModel(
+                boolean ambientOcclusion, boolean isGui3d, TextureAtlasSprite particle, ItemOverrideList overrides,
+                ImmutableMap<RenderType, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
         {
             this.models = models;
             this.cameraTransforms = cameraTransforms;
             this.missing = missing;
-            this.base = base != null ? base : missing;
+            this.ambientOcclusion = ambientOcclusion;
+            this.gui3d = isGui3d;
+            this.particle = particle;
+            this.overrides = overrides;
         }
 
         @Override
@@ -138,38 +142,37 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 return builder.build();
             }
             // assumes that child model will handle this state properly. FIXME?
-            List<BakedQuad> quads = models.getOrDefault(layer, missing).getQuads(state, side, rand, extraData);
-            return quads;
+            return models.getOrDefault(layer, missing).getQuads(state, side, rand, extraData);
         }
 
         @Override
         public boolean isAmbientOcclusion()
         {
-            return base.isAmbientOcclusion();
+            return ambientOcclusion;
         }
 
         @Override
         public boolean isAmbientOcclusion(BlockState state)
         {
-            return base.isAmbientOcclusion(state);
+            return ambientOcclusion;
         }
 
         @Override
         public boolean isGui3d()
         {
-            return base.isGui3d();
+            return gui3d;
         }
 
         @Override
         public boolean isBuiltInRenderer()
         {
-            return base.isBuiltInRenderer();
+            return false;
         }
 
         @Override
         public TextureAtlasSprite getParticleTexture()
         {
-            return base.getParticleTexture();
+            return particle;
         }
 
         @Override
@@ -208,11 +211,6 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         {
             ImmutableMap.Builder<RenderType, IUnbakedModel> builder = ImmutableMap.builder();
             JsonObject layersObject = JSONUtils.getJsonObject(modelContents, "layers");
-            BlockModel base = null;
-            if(layersObject.has("base"))
-            {
-                base = deserializationContext.deserialize(JSONUtils.getJsonObject(layersObject, "base"), BlockModel.class);
-            }
             for(RenderType layer : RenderType.func_228661_n_()) // block layers
             {
                 String layerName = layer.toString(); // mc overrides toString to return the ID for the layer
@@ -222,7 +220,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 }
             }
             ImmutableMap<RenderType, IUnbakedModel> models = builder.build();
-            return new MultiLayerModel(base, models);
+            return new MultiLayerModel(models);
         }
     }
 }
