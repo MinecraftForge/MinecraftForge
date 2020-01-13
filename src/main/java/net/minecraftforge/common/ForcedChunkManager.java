@@ -79,32 +79,32 @@ public class ForcedChunkManager extends WorldSavedData
         try
         {
             int size = din.readInt();
-            for(int i=0;i<size;i++)
+            for (int i=0;i<size;i++)
             {
                 forcedChunksMap.put(din.readLong(), din.readShort());
             }
             din.close();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
         ListNBT list = nbt.getList("String", nbt.getId());
-        for(int i=0;i<list.size();i++)
+        for (int i=0;i<list.size();i++)
         {
             CompoundNBT ticketNBT = list.getCompound(i);
             try
             {
                 Ticket<?>  ticket = readTicket(ticketNBT);
-                if(ticket!=null && tickets.get(tickets.size()-1)!=ticket)
+                if (ticket!=null && tickets.get(tickets.size()-1)!=ticket)
                 {
-                    if(!tickets.contains(ticket))
+                    if (!tickets.contains(ticket))
                     {
                         tickets.add(ticket);
                     }
                 }
             }
-            catch(RuntimeException e)
+            catch (RuntimeException e)
             {
                 LOGGER.error("Unable to load Ticket with NBT {}", ticketNBT.toString());
                 LOGGER.catching(Level.ERROR, e);
@@ -134,7 +134,7 @@ public class ForcedChunkManager extends WorldSavedData
         }
         
         ListNBT list = new ListNBT();
-        for(Ticket<?> t : tickets)
+        for (Ticket<?> t : tickets)
         {
             list.add(writeTicket(t));
         }
@@ -149,15 +149,15 @@ public class ForcedChunkManager extends WorldSavedData
         
         int id;
         Class<? extends Ticket> cls = t.getClass();
-        if(cls == EntityTicket.class)
+        if (cls == EntityTicket.class)
         {
             id = 0;
         }
-        else if(cls == BlockTicket.class)
+        else if (cls == BlockTicket.class)
         {
             id = 1;
         }
-        else if(cls == StringTicket.class)
+        else if (cls == StringTicket.class)
         {
             id = 2;
         }
@@ -190,8 +190,7 @@ public class ForcedChunkManager extends WorldSavedData
                 
                 return create.newInstance(this, nbt);
             }
-            catch(ClassNotFoundException e)
-            {
+            catch (ClassNotFoundException e) {
                 LOGGER.warn(e);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
@@ -264,7 +263,7 @@ public class ForcedChunkManager extends WorldSavedData
         @Override
         public void deserializeNBT(CompoundNBT nbt) 
         {
-            for(long l : nbt.getLongArray("chunks"))
+            for (long l : nbt.getLongArray("chunks"))
                 forcedChunksSet.add(l);
             
             this.place = readFromNBT(nbt);
@@ -290,7 +289,7 @@ public class ForcedChunkManager extends WorldSavedData
          */
         public boolean forceChunk(ChunkPos pos)
         {
-            if(isChunkForced(pos))
+            if (isChunkForced(pos))
                 return false;
             else
             {
@@ -307,7 +306,7 @@ public class ForcedChunkManager extends WorldSavedData
          */
         public boolean unforceChunk(ChunkPos pos)
         {
-            if(isChunkForced(pos))
+            if (isChunkForced(pos))
             {
                 ForcedChunkManager.this.unforceChunk(pos.asLong());
                 forcedChunksSet.remove(pos.asLong());
@@ -324,7 +323,7 @@ public class ForcedChunkManager extends WorldSavedData
          */
         public void unforceAll()
         {
-            for(long l : forcedChunksSet)
+            for (long l : forcedChunksSet)
             {
                 ForcedChunkManager.this.unforceChunk(l);
             }
