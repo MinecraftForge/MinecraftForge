@@ -37,9 +37,9 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
@@ -54,7 +54,6 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.IProperty;
@@ -79,10 +78,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.*;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.network.ConnectionType;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -569,7 +568,63 @@ public interface IForgeBlock
     */
     default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
     {
-        return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
+        return DistExecutor.runForDist(()->()->{
+            //Client
+            if (Minecraft.getInstance().player != null)
+            {
+                return
+                    //Forge Connection
+                    (NetworkHooks.getConnectionType(()->Minecraft.getInstance().player.connection.getNetworkManager()) == ConnectionType.MODDED &&
+                    Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock())) ||
+
+                    //Vanilla Connection
+                    (NetworkHooks.getConnectionType(()->Minecraft.getInstance().player.connection.getNetworkManager()) == ConnectionType.VANILLA &&
+                        (
+                            state.getBlock() == Blocks.IRON_BLOCK ||
+                            state.getBlock() == Blocks.GOLD_BLOCK ||
+                            state.getBlock() == Blocks.DIAMOND_BLOCK ||
+                            state.getBlock() == Blocks.EMERALD_BLOCK
+                        )
+                    );
+            }
+            else
+            {
+                return false;
+            }
+        }, ()->()->Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock())); //Server
+    }
+
+    /**
+     * Determines if this block can be used as the frame of a conduit.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param conduit Conduit position in world
+     * @return True, to support the conduit, and make it active with this block.
+     */
+    default boolean isConduitFrame(BlockState state, IWorldReader world, BlockPos pos, BlockPos conduit)
+    {
+        return DistExecutor.runForDist(()->()->{
+            //Client
+            if (Minecraft.getInstance().player != null)
+            {
+                return
+                    //Forge Connection
+                    (NetworkHooks.getConnectionType(()->Minecraft.getInstance().player.connection.getNetworkManager()) == ConnectionType.MODDED &&
+                    Tags.Blocks.SUPPORTS_CONDUIT.contains(state.getBlock())) ||
+
+                    //Vanilla Connection
+                    (NetworkHooks.getConnectionType(()->Minecraft.getInstance().player.connection.getNetworkManager()) == ConnectionType.VANILLA &&
+                        (
+                            state.getBlock() == Blocks.PRISMARINE ||
+                            state.getBlock() == Blocks.PRISMARINE_BRICKS ||
+                            state.getBlock() == Blocks.SEA_LANTERN ||
+                            state.getBlock() == Blocks.DARK_PRISMARINE
+                        )
+                    );
+            }
+            return false;
+        }, ()->()->Tags.Blocks.SUPPORTS_CONDUIT.contains(state.getBlock())); //Server
     }
 
     /**
@@ -846,7 +901,6 @@ public interface IForgeBlock
 
     /**
      * Determines if another block can connect to this block
-     *
      * @param world The current world
      * @param pos The position of this block
      * @param facing The side the connecting block is on
