@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 
 /**
  * This class implements an easy way to check if the mouse has hovered within a certain region of the screen for a given
