@@ -84,15 +84,6 @@ public interface IForgeBlockState
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      */
-    @Deprecated // use IBlockReader version
-    default int getLightValue(ILightReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);
-    }
-
-    /**
-     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
-     */
     default int getLightValue(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);

@@ -101,7 +101,7 @@
           int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
           int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
 -         int k = p_228420_1_.func_185906_d();
-+         int k = p_228420_1_.getLightValue((IBlockReader) p_228420_0_, p_228420_2_);
++         int k = p_228420_1_.getLightValue(p_228420_0_, p_228420_2_);
           if (j < k) {
              j = k;
           }
