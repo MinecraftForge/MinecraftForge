@@ -94,7 +94,7 @@
  
        p_228800_4_.func_227890_a_(p_228800_5_, p_228800_6_, new float[]{p_228800_7_, p_228800_8_, p_228800_9_, p_228800_10_}, f, f1, f2, new int[]{p_228800_11_, p_228800_12_, p_228800_13_, p_228800_14_}, p_228800_15_, true);
     }
-@@ -208,7 +230,11 @@
+@@ -208,17 +230,21 @@
  
     }
  
@@ -106,3 +106,15 @@
        Random random = new Random();
        long i = 42L;
  
+       for(Direction direction : Direction.values()) {
+          random.setSeed(42L);
+-         func_228803_a_(p_228804_1_, p_228804_2_, p_228804_5_, p_228804_6_, p_228804_7_, p_228804_4_.func_200117_a(p_228804_3_, direction, random), p_228804_8_, p_228804_9_);
++         func_228803_a_(p_228804_1_, p_228804_2_, p_228804_5_, p_228804_6_, p_228804_7_, p_228804_4_.getQuads(p_228804_3_, direction, random, modelData), p_228804_8_, p_228804_9_);
+       }
+ 
+       random.setSeed(42L);
+-      func_228803_a_(p_228804_1_, p_228804_2_, p_228804_5_, p_228804_6_, p_228804_7_, p_228804_4_.func_200117_a(p_228804_3_, (Direction)null, random), p_228804_8_, p_228804_9_);
++      func_228803_a_(p_228804_1_, p_228804_2_, p_228804_5_, p_228804_6_, p_228804_7_, p_228804_4_.getQuads(p_228804_3_, (Direction)null, random, modelData), p_228804_8_, p_228804_9_);
+    }
+ 
+    private static void func_228803_a_(MatrixStack.Entry p_228803_0_, IVertexBuilder p_228803_1_, float p_228803_2_, float p_228803_3_, float p_228803_4_, List<BakedQuad> p_228803_5_, int p_228803_6_, int p_228803_7_) {
