@@ -110,7 +110,7 @@ public interface IForgeBlock
     float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity);
 
     /**
-     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15.
+     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      *
      * @param state
      * @param world
