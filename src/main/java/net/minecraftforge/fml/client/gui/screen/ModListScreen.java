@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.fml.client.gui.widget.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,10 +61,9 @@ import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -99,9 +99,9 @@ public class ModListScreen extends Screen
 
     private Screen mainMenu;
 
-    private ModListWidget modList;
+    private ModList modList;
     private InfoPanel modInfo;
-    private ModListWidget.ModEntry selected = null;
+    private ModList.ModEntry selected = null;
     private int listWidth;
     private List<ModInfo> mods;
     private final List<ModInfo> unsortedMods;
@@ -123,7 +123,7 @@ public class ModListScreen extends Screen
     {
         super(new TranslationTextComponent("fml.menu.mods.title"));
         this.mainMenu = mainMenu;
-        this.mods = Collections.unmodifiableList(ModList.get().getMods());
+        this.mods = Collections.unmodifiableList(net.minecraftforge.fml.ModList.get().getMods());
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
 
@@ -290,7 +290,7 @@ public class ModListScreen extends Screen
         search = new TextFieldWidget(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, I18n.format("fml.menu.mods.search"));
 
         int fullButtonHeight = PADDING + 20 + PADDING;
-        this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.modList = new ModList(this, listWidth, fullButtonHeight, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
         this.modList.setLeftPos(6);
 
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
@@ -389,17 +389,17 @@ public class ModListScreen extends Screen
         super.render(mouseX, mouseY, partialTicks);
     }
 
-    Minecraft getMinecraftInstance()
+    public Minecraft getMinecraftInstance()
     {
         return minecraft;
     }
 
-    FontRenderer getFontRenderer()
+    public FontRenderer getFontRenderer()
     {
         return font;
     }
 
-    public void setSelected(ModListWidget.ModEntry entry)
+    public void setSelected(ModList.ModEntry entry)
     {
         this.selected = entry == this.selected ? null : entry;
         updateCache();
@@ -450,7 +450,7 @@ public class ModListScreen extends Screen
 
         lines.add(selectedMod.getDisplayName());
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", MavenVersionStringHelper.artifactVersionToString(selectedMod.getVersion())));
-        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
+        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), net.minecraftforge.fml.ModList.get().getModContainerById(selectedMod.getModId()).
                 map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE")));
 
         selectedMod.getModConfig().getOptional("credits").ifPresent(credits->
@@ -490,7 +490,7 @@ public class ModListScreen extends Screen
     {
         String s = this.search.getText();
         SortType sort = this.sortType;
-        ModListWidget.ModEntry selected = this.selected;
+        ModList.ModEntry selected = this.selected;
         this.init(mc, width, height);
         this.search.setText(s);
         this.selected = selected;

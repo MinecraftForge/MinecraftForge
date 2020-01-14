@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
@@ -31,7 +32,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
+public class ModList extends ExtendedList<ModList.ModEntry>
 {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
@@ -39,7 +40,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
 
     private ModListScreen parent;
 
-    public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
+    public ModList(ModListScreen parent, int listWidth, int top, int bottom)
     {
         super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
@@ -59,7 +60,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         return this.listWidth;
     }
 
-    void refreshList() {
+    public void refreshList() {
         this.clearEntries();
         parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
@@ -70,7 +71,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         this.parent.renderBackground();
     }
 
-    class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
+    public class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
         private final ModInfo modInfo;
         private final ModListScreen parent;
 
@@ -103,7 +104,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
             parent.setSelected(this);
-            ModListWidget.this.setSelected(this);
+            ModList.this.setSelected(this);
             return false;
         }
 

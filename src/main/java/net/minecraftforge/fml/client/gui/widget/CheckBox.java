@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
@@ -25,12 +25,12 @@ import net.minecraft.client.gui.widget.button.Button;
 /**
  * This class provides a checkbox style control.
  */
-public class GuiCheckBox extends Button
+public class CheckBox extends Button
 {
     private boolean isChecked;
     private int     boxWidth;
 
-    public GuiCheckBox(int xPos, int yPos, String displayString, boolean isChecked)
+    public CheckBox(int xPos, int yPos, String displayString, boolean isChecked)
     {
         super(xPos, yPos, Minecraft.getInstance().fontRenderer.getStringWidth(displayString) + 2 + 11, 11, displayString, b -> {});
         this.isChecked = isChecked;
