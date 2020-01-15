@@ -32,7 +32,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-public class ModList extends ExtendedList<ModList.ModEntry>
+public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
 {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
@@ -40,7 +40,7 @@ public class ModList extends ExtendedList<ModList.ModEntry>
 
     private ModListScreen parent;
 
-    public ModList(ModListScreen parent, int listWidth, int top, int bottom)
+    public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
     {
         super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
@@ -104,7 +104,7 @@ public class ModList extends ExtendedList<ModList.ModEntry>
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
             parent.setSelected(this);
-            ModList.this.setSelected(this);
+            ModListWidget.this.setSelected(this);
             return false;
         }
 
