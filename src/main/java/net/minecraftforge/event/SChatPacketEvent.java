@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * {@link #player} Contains the server player entity for the player which the packet will be sent to.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
- * If this event is canceled, the chat message is never distributed to all clients.<br>
+ * If this event is canceled, the chat packet is never sent to the client.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
