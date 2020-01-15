@@ -49,6 +49,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.fluid.*;
+import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -122,6 +123,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.SChatPacketEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -972,6 +974,18 @@ public class ForgeHooks
     public static void onAdvancement(ServerPlayerEntity player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    @Nullable
+    public static SChatPacket onSChatPacket(SChatPacket packet, ServerPlayerEntity player)
+    {
+        SChatPacketEvent packetEvent = new SChatPacketEvent(packet, player);
+        MinecraftForge.EVENT_BUS.post(packetEvent);
+        if(packetEvent.isCanceled())
+        {
+            return null;
+        }
+        return packetEvent.getModifiedPacket();
     }
 
     /**

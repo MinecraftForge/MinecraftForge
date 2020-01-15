@@ -23,7 +23,29 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (actionresulttype.func_226247_b_()) {
                 this.field_147369_b.func_226292_a_(hand, true);
-@@ -968,7 +972,9 @@
+@@ -925,6 +929,10 @@
+          if (chatvisibility == ChatVisibility.SYSTEM && !schatpacket.func_148916_d()) {
+             return;
+          }
++         p_211148_1_ = net.minecraftforge.common.ForgeHooks.onSChatPacket(schatpacket, field_147369_b);
++         if (p_211148_1_ == null) {
++            return;
++         }
+       }
+ 
+       try {
+@@ -932,8 +940,9 @@
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.func_85055_a(throwable, "Sending packet");
+          CrashReportCategory crashreportcategory = crashreport.func_85058_a("Packet being sent");
++         IPacket<?> finalPacketIn = p_211148_1_;
+          crashreportcategory.func_189529_a("Packet class", () -> {
+-            return p_211148_1_.getClass().getCanonicalName();
++            return finalPacketIn.getClass().getCanonicalName();
+          });
+          throw new ReportedException(crashreport);
+       }
+@@ -968,7 +977,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
@@ -34,7 +56,7 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -1061,6 +1067,7 @@
+@@ -1061,6 +1072,7 @@
                 this.field_147369_b.func_190775_a(entity, hand);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
                 Hand hand1 = p_147340_1_.func_186994_b();
@@ -42,7 +64,7 @@
                 ActionResultType actionresulttype = entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
                 if (actionresulttype.func_226247_b_()) {
                    this.field_147369_b.func_226292_a_(hand1, true);
-@@ -1094,7 +1101,7 @@
+@@ -1094,7 +1106,7 @@
                 return;
              }
  
@@ -51,7 +73,7 @@
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
-@@ -1268,6 +1275,8 @@
+@@ -1268,6 +1280,8 @@
     }
  
     public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
