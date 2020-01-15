@@ -65,7 +65,7 @@ public class GlobalLootModifiersTest {
     }
 
     private static class SmelterEnchantment extends Enchantment {
-        protected SmelterEnchantment(Rarity rarityIn, EnchantmentType typeIn, EquipmentSlotType[] slots) {
+        protected SmelterEnchantment(Rarity rarityIn, EnchantmentType typeIn, EquipmentSlotType... slots) {
             super(rarityIn, typeIn, slots);
         }
     }

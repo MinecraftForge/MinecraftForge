@@ -1,9 +1,18 @@
 package net.minecraftforge.common.loot;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,11 +20,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.conditions.LootConditionManager;
@@ -28,16 +41,18 @@ public class LootModifierManager extends JsonReloadListener {
     private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, new LootFunctionManager.Serializer()).registerTypeHierarchyAdapter(ILootCondition.class, new LootConditionManager.Serializer()).create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
-
+    private static final String folder = "loot_modifiers";
+    
     public LootModifierManager() {
-        super(GSON_INSTANCE, "loot_modifiers");
+        super(GSON_INSTANCE, folder);
     }
 
     @Override
     protected void apply(Map<ResourceLocation, JsonObject> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
         Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
-        resourceList.forEach((location, object) -> {
+        //Old way for reference
+        /*resourceList.forEach((location, object) -> {
             try {
                 IGlobalLootModifier modifier = deserializeModifier(location, object);
                 builder.put(location, modifier);
@@ -48,6 +63,60 @@ public class LootModifierManager extends JsonReloadListener {
         });
         builder.orderEntriesByValue((x,y) -> {
             return toLocation.get(x).compareTo(toLocation.get(y));
+        });*/
+        //new way, based on how tags are loaded
+        ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
+        for(ResourceLocation resourcelocation : resourceManagerIn.getAllResourceLocations(folder, (p_199916_0_) -> {
+            return p_199916_0_.equals("all.json");
+        })) {
+
+            try {
+                for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
+                    try (   InputStream inputstream = iresource.getInputStream();
+                            Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
+                            ) {
+                        JsonObject jsonobject = JSONUtils.fromJson(GSON_INSTANCE, reader, JsonObject.class);
+                        boolean replace = jsonobject.get("replace").getAsBoolean();
+                        if(replace) finalLocations.clear();
+                        JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
+                        for(JsonElement entry : entryList) {
+                            String loc = entry.getAsString();
+                            ResourceLocation res = new ResourceLocation(loc);
+                            if(finalLocations.contains(res)) finalLocations.remove(res);
+                            finalLocations.add(res);
+                        }
+                    }
+
+                    catch (RuntimeException | IOException ioexception) {
+                        LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getPackName(), ioexception);
+                    } finally {
+                        IOUtils.closeQuietly((Closeable)iresource);
+                    }
+                }
+            } catch (IOException ioexception1) {
+                LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
+            }
+        }
+        finalLocations.forEach(location -> {
+            try {
+                IResource iresource = resourceManagerIn.getResource(location);
+                try (   InputStream inputstream = iresource.getInputStream();
+                        Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
+                        ) {
+                    JsonObject jsonobject = JSONUtils.fromJson(GSON_INSTANCE, reader, JsonObject.class);
+
+                    IGlobalLootModifier modifier = deserializeModifier(location, jsonobject);
+                    builder.put(location, modifier);
+                    toLocation.put(modifier, location);
+                }
+                catch (RuntimeException | IOException ioexception) {
+                    LOGGER.error("Couldn't read global loot modifier {} in data pack {}", location, iresource.getPackName(), ioexception);
+                } finally {
+                    IOUtils.closeQuietly((Closeable)iresource);
+                }
+            } catch (Exception exception) {
+                LOGGER.error("Couldn't parse loot modifier {}", location, exception);
+            }
         });
         ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();
         this.registeredLootModifiers = immutablemap;
