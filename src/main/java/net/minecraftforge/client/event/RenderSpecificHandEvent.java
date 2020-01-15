@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -32,13 +33,14 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * whenever a hand is rendered in first person.
  * Canceling the event causes the hand to not render.
- * TODO This may get merged in 11 with RenderHandEvent to make a generic hand rendering
  */
 @Cancelable
 public class RenderSpecificHandEvent extends Event
 {
     private final Hand hand;
     private final MatrixStack mat;
+    private final IRenderTypeBuffer buffers;
+    private final int light;
     private final float partialTicks;
     private final float interpolatedPitch;
     private final float swingProgress;
@@ -46,10 +48,14 @@ public class RenderSpecificHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(Hand hand, MatrixStack mat, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+    public RenderSpecificHandEvent(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light,
+                                   float partialTicks, float interpolatedPitch,
+                                   float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
         this.mat = mat;
+        this.buffers = buffers;
+        this.light = light;
         this.partialTicks = partialTicks;
         this.interpolatedPitch = interpolatedPitch;
         this.swingProgress = swingProgress;
@@ -65,6 +71,14 @@ public class RenderSpecificHandEvent extends Event
     public MatrixStack getMatrixStack()
     {
         return mat;
+    }
+
+    public IRenderTypeBuffer getBuffers() {
+        return buffers;
+    }
+
+    public int getLight() {
+        return light;
     }
 
     public float getPartialTicks()
@@ -97,7 +111,7 @@ public class RenderSpecificHandEvent extends Event
     }
 
     /**
-     * @return The ItemStack to be rendered, or null.
+     * @return The ItemStack to be rendered
      */
     @Nonnull
     public ItemStack getItemStack()
