@@ -64,7 +64,7 @@ public class CommandSetDimension
         //    throw INVALID_DIMENSION.create(dim);
 
         entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getFormattedText(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, PortallessTeleporter.INSTANCE));
+        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, (entity,now,destination,yaw,repos) -> repos.apply(false)));
 
         return 0;
     }
