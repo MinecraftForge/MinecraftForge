@@ -63,7 +63,7 @@ public class NewModelLoaderTest
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
-            new Block(Block.Properties.create(Material.WOOD)) {
+            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
                 @Override
                 protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
                 {

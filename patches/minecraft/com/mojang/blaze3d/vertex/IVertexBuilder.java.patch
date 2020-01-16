@@ -19,7 +19,7 @@
              float f10 = bytebuffer.getFloat(20);
              Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
              vector4f.func_229372_a_(matrix4f);
-+            applyBakedNormals(vector3f, bytebuffer);
++            applyBakedNormals(vector3f, bytebuffer, p_227890_1_.func_227872_b_());
              this.func_225588_a_(vector4f.func_195910_a(), vector4f.func_195913_b(), vector4f.func_195914_c(), f3, f4, f5, 1.0F, f9, f10, p_227890_8_, l, vector3f.func_195899_a(), vector3f.func_195900_b(), vector3f.func_195902_c());
           }
        }
