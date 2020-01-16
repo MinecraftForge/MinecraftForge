@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.conditions.LootConditionManager;
+import net.minecraftforge.registries.GameData;
 
 /**
  * A base implementation of a Global Loot Modifier for modders to extend.
@@ -42,36 +43,42 @@ public abstract class LootModifier implements IGlobalLootModifier {
     
     /**
      * Abstract base deserializer for LootModifiers.
-     * @param <T>
+     * @param <T> the final Type
      */
     public abstract static class Serializer<T extends LootModifier> implements IGlobalLootModifierSerializer<T> {
         private ResourceLocation registryName = null;
         
-        @Override
-        public IGlobalLootModifierSerializer<?> setRegistryName(ResourceLocation name) {
+        public final IGlobalLootModifierSerializer<T> setRegistryName(String name) {
             if (getRegistryName() != null)
                 throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-            registryName = name;
+
+            this.registryName = GameData.checkPrefix(name, true);
             return this;
         }
+        
+        //Helpers
+        @Override
+        public final IGlobalLootModifierSerializer<T> setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
+
+        public final IGlobalLootModifierSerializer<T> setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
 
         @Override
-        public ResourceLocation getRegistryName() {
+        public final ResourceLocation getRegistryName() {
             return registryName;
         }
 
         /**
          * Implement deserialization logic here. Most mods will likely not need more than:<br/>
-         * <code>return new MyModifier(name, conditionsIn)</code>
-         * @param name The resource location
-         * @param json The full json object
+         * <code>return new MyModifier(conditionsIn)</code>
+         * @param name The resource location (if needed)
+         * @param json The full json object, including ILootConditions information
          * @param conditionsIn An already deserialized list of ILootConditions.
          */
         @Override
         public abstract T read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn);
         
         /**
-         * Used by Forge's registry system.
+         * Used by Forge's registry system. Modders should not need to touch this.
          */
         @Override
         public Class<IGlobalLootModifierSerializer<?>> getRegistryType() {

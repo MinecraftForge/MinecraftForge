@@ -67,6 +67,7 @@ public class LootModifierManager extends JsonReloadListener {
         ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         try {
+        	//read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
             for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
@@ -92,6 +93,7 @@ public class LootModifierManager extends JsonReloadListener {
         } catch (IOException ioexception1) {
             LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
         }
+        //use layered config to fetch modifier data files (modifiers missing from config are disabled)
         finalLocations.forEach(location -> {
             try {
                 IGlobalLootModifier modifier = deserializeModifier(location, resourceList.get(location));

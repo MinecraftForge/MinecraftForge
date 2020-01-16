@@ -8,7 +8,7 @@ import net.minecraft.world.storage.loot.LootContext;
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
  * {@link LootModifier} Supplies base functionality; most modders should only need to extend it.<br/>
- * Requires an {@link IGlobalLootModifierSerializer} to be registered.
+ * Requires an {@link IGlobalLootModifierSerializer} to be registered via json (see forge:loot_modifiers/global_loot_modifiers).
  */
 public interface IGlobalLootModifier {
     /**
