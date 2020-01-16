@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -50,9 +49,9 @@ public class LootModifierManager extends JsonReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonObject> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
-        Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
-        //Old way for reference
-        /*resourceList.forEach((location, object) -> {
+        //old way (for reference)
+        /*Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
+        resourceList.forEach((location, object) -> {
             try {
                 IGlobalLootModifier modifier = deserializeModifier(location, object);
                 builder.put(location, modifier);
@@ -64,56 +63,39 @@ public class LootModifierManager extends JsonReloadListener {
         builder.orderEntriesByValue((x,y) -> {
             return toLocation.get(x).compareTo(toLocation.get(y));
         });*/
-        //new way, based on how tags are loaded
+        //new way
         ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
-        for(ResourceLocation resourcelocation : resourceManagerIn.getAllResourceLocations(folder, (p_199916_0_) -> {
-            return p_199916_0_.equals("all.json");
-        })) {
-
-            try {
-                for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
-                    try (   InputStream inputstream = iresource.getInputStream();
-                            Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
-                            ) {
-                        JsonObject jsonobject = JSONUtils.fromJson(GSON_INSTANCE, reader, JsonObject.class);
-                        boolean replace = jsonobject.get("replace").getAsBoolean();
-                        if(replace) finalLocations.clear();
-                        JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
-                        for(JsonElement entry : entryList) {
-                            String loc = entry.getAsString();
-                            ResourceLocation res = new ResourceLocation(loc);
-                            if(finalLocations.contains(res)) finalLocations.remove(res);
-                            finalLocations.add(res);
-                        }
-                    }
-
-                    catch (RuntimeException | IOException ioexception) {
-                        LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getPackName(), ioexception);
-                    } finally {
-                        IOUtils.closeQuietly((Closeable)iresource);
-                    }
-                }
-            } catch (IOException ioexception1) {
-                LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
-            }
-        }
-        finalLocations.forEach(location -> {
-            try {
-                IResource iresource = resourceManagerIn.getResource(location);
+        ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
+        try {
+            for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
                         ) {
                     JsonObject jsonobject = JSONUtils.fromJson(GSON_INSTANCE, reader, JsonObject.class);
-
-                    IGlobalLootModifier modifier = deserializeModifier(location, jsonobject);
-                    builder.put(location, modifier);
-                    toLocation.put(modifier, location);
+                    boolean replace = jsonobject.get("replace").getAsBoolean();
+                    if(replace) finalLocations.clear();
+                    JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
+                    for(JsonElement entry : entryList) {
+                        String loc = entry.getAsString();
+                        ResourceLocation res = new ResourceLocation(loc);
+                        if(finalLocations.contains(res)) finalLocations.remove(res);
+                        finalLocations.add(res);
+                    }
                 }
+
                 catch (RuntimeException | IOException ioexception) {
-                    LOGGER.error("Couldn't read global loot modifier {} in data pack {}", location, iresource.getPackName(), ioexception);
+                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getPackName(), ioexception);
                 } finally {
                     IOUtils.closeQuietly((Closeable)iresource);
                 }
+            }
+        } catch (IOException ioexception1) {
+            LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
+        }
+        finalLocations.forEach(location -> {
+            try {
+                IGlobalLootModifier modifier = deserializeModifier(location, resourceList.get(location));
+                builder.put(location, modifier);
             } catch (Exception exception) {
                 LOGGER.error("Couldn't parse loot modifier {}", location, exception);
             }

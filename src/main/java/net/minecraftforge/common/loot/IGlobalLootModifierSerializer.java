@@ -12,7 +12,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  * @param <T> the Type to deserialize
  */
 public interface IGlobalLootModifierSerializer<T extends IGlobalLootModifier> extends IForgeRegistryEntry<IGlobalLootModifierSerializer<?>> {
-	/**
+    /**
      * Most mods will likely not need more than<br/>
      * <code>return new MyModifier(name, conditionsIn)</code><br/>
      * but deserializing any additional properties that are needed is done here.
@@ -20,9 +20,9 @@ public interface IGlobalLootModifierSerializer<T extends IGlobalLootModifier> ex
      * @param json The full json object
      * @param conditionsIn An already deserialized list of ILootConditions.
      */
-	public abstract T read(ResourceLocation location, JsonObject object, ILootCondition[] ailootcondition);
+    public abstract T read(ResourceLocation location, JsonObject object, ILootCondition[] ailootcondition);
 
-	/**
+    /**
      * Used by Forge's registry system.
      */
     @Override

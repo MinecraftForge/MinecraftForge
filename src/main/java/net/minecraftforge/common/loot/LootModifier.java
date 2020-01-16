@@ -49,6 +49,8 @@ public abstract class LootModifier implements IGlobalLootModifier {
         
         @Override
         public IGlobalLootModifierSerializer<?> setRegistryName(ResourceLocation name) {
+            if (getRegistryName() != null)
+                throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
             registryName = name;
             return this;
         }
