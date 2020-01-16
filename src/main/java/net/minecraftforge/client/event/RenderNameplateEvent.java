@@ -81,5 +81,4 @@ public class RenderNameplateEvent extends EntityEvent
     {
         return this.renderTypeBuffer;
     }
-
 }
