@@ -6,7 +6,7 @@
  
 -                  for(Block block : field_205042_e) {
 -                     if (blockstate.func_177230_c() == block) {
-+                  if (blockstate.isConduitFrame(this.field_145850_b, blockpos1, func_174877_v())) {
++                      if (blockstate.isConduitFrame(this.field_145850_b, blockpos1, func_174877_v())) {
                          this.field_205046_i.add(blockpos1);
 -                     }
                    }
