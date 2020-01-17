@@ -79,7 +79,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public ILaunchPluginService.ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
+    public int processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
     {
         AtomicBoolean changes = new AtomicBoolean();
         //Must be public static finals, and non-array objects
@@ -113,7 +113,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
                 changes.compareAndSet(false, prev != f.access);
             });
         }
-        return changes.get() ? ComputeLevel.SIMPLE_REWRITE : ComputeLevel.NO_REWRITE;
+        return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
 }

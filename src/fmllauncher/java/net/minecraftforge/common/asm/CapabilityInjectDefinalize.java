@@ -64,7 +64,7 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public ILaunchPluginService.ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
+    public int processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
     {
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
         AtomicBoolean changed = new AtomicBoolean();
@@ -76,7 +76,7 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
             changed.compareAndSet(false, prev != f.access);
         });
 
-        return changed.get() ? ComputeLevel.SIMPLE_REWRITE : ComputeLevel.NO_REWRITE;
+        return changed.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
 }

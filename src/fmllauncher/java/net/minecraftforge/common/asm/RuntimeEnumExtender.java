@@ -74,9 +74,9 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     }
 
     @Override
-    public ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason) {
+    public int processClassNew(Phase phase, ClassNode classNode, Type classType, String reason) {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
-            return ComputeLevel.NO_REWRITE;
+            return ComputeFlags.NO_REWRITE;
 
         Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -84,7 +84,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
         
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return ComputeLevel.NO_REWRITE;
+            return ComputeFlags.NO_REWRITE;
         }
         
         //Static methods named "create" with first argument as a string
@@ -227,7 +227,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.areturn(classType);
             }
         });
-        return ComputeLevel.COMPUTE_FRAMES;
+        return ComputeFlags.COMPUTE_FRAMES;
     }
 
 }

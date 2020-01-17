@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -69,9 +70,9 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     }
 
     @Override
-    public ILaunchPluginService.ComputeLevel processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
+    public int processClassNew(Phase phase, ClassNode classNode, Type classType, String reason)
     {
-        AtomicReference<ILaunchPluginService.ComputeLevel> computeLevel = new AtomicReference<>(ComputeLevel.NO_REWRITE);
+        AtomicInteger computeLevel = new AtomicInteger(0);
         if (remove(classNode.visibleAnnotations, DIST))
         {
             LOGGER.fatal(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
@@ -88,7 +89,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 .forEach(intf -> {
                     if (classNode.interfaces.remove(intf)) {
                         LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
-                        computeLevel.getAndUpdate(level -> level.mergeWith(ComputeLevel.SIMPLE_REWRITE));
+                        computeLevel.getAndUpdate(level -> level |= ComputeFlags.SIMPLE_REWRITE);
                     }
                 });
 
@@ -100,7 +101,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                     if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS)) {
                         LOGGER.debug(DISTXFORM,"Removing Class Annotation: {} @{}", classNode.name, ann.desc);
                         itr.remove();
-                        computeLevel.getAndUpdate(level -> level.mergeWith(ComputeLevel.SIMPLE_REWRITE));
+                        computeLevel.getAndUpdate(level -> level |= ComputeFlags.SIMPLE_REWRITE);
                     }
                 }
             }
@@ -114,7 +115,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             {
                 LOGGER.debug(DISTXFORM,"Removing field: {}.{}", classNode.name, field.name);
                 fields.remove();
-                computeLevel.getAndUpdate(level -> level.mergeWith(ComputeLevel.SIMPLE_REWRITE));
+                computeLevel.getAndUpdate(level -> level |= ComputeFlags.SIMPLE_REWRITE);
             }
         }
 
@@ -128,7 +129,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 LOGGER.debug(DISTXFORM,"Removing method: {}.{}{}", classNode.name, method.name, method.desc);
                 methods.remove();
                 lambdaGatherer.accept(method);
-                computeLevel.getAndUpdate(level -> level.mergeWith(ComputeLevel.SIMPLE_REWRITE));
+                computeLevel.getAndUpdate(level -> level |= ComputeFlags.SIMPLE_REWRITE);
             }
         }
 
@@ -149,7 +150,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                         LOGGER.debug(DISTXFORM,"Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
                         methods.remove();
                         lambdaGatherer.accept(method);
-                        computeLevel.getAndUpdate(level -> level.mergeWith(ComputeLevel.SIMPLE_REWRITE));
+                        computeLevel.getAndUpdate(level -> level |= ComputeFlags.SIMPLE_REWRITE);
                     }
                 }
             }
