@@ -686,11 +686,11 @@ public class ForgeEventFactory
         return event.getResult() != Result.DENY;
     }
 
-    public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
+    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
     {
-        if (watch)
+        if (!wasLoaded && load)
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
-        else
+        else if (wasLoaded && !load)
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
     }
 
