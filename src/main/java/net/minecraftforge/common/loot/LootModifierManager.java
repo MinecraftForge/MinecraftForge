@@ -67,7 +67,7 @@ public class LootModifierManager extends JsonReloadListener {
         ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         try {
-        	//read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
+            //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
             for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
@@ -115,6 +115,10 @@ public class LootModifierManager extends JsonReloadListener {
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
     }
 
+    /**
+     * An immutable collection of the registered loot modifiers in layered order.
+     * @return
+     */
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();
     }

@@ -75,11 +75,11 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
-        public SmeltingEnchantmentModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
+        public SmeltingEnchantmentModifier(ILootCondition[] conditionsIn) {
             super(conditionsIn);
-
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
@@ -98,7 +98,7 @@ public class GlobalLootModifiersTest {
         private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
             @Override
             public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
-                return new SmeltingEnchantmentModifier(name, conditionsIn);
+                return new SmeltingEnchantmentModifier(conditionsIn);
             }
         }
     }
@@ -108,10 +108,11 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
-        public SilkTouchTestModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
+        public SilkTouchTestModifier(ILootCondition[] conditionsIn) {
             super(conditionsIn);
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.get(LootParameters.TOOL);
@@ -129,7 +130,7 @@ public class GlobalLootModifiersTest {
         private static class Serializer extends LootModifier.Serializer<SilkTouchTestModifier> {
             @Override
             public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
-                return new SilkTouchTestModifier(name, conditionsIn);
+                return new SilkTouchTestModifier(conditionsIn);
             }
         }
     }
@@ -150,6 +151,7 @@ public class GlobalLootModifiersTest {
             itemReward = reward;
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             //

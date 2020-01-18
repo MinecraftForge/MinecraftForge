@@ -1213,6 +1213,13 @@ public class ForgeHooks
         FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
     }
 
+    /**
+     * All loot table drops should be passed to this function so that mod added effects
+     * (e.g. smelting enchantments) can be processed.
+     * @param list The loot generated
+     * @param context The loot context that generated that loot
+     * @return The modified list
+     */
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
         LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
         for(IGlobalLootModifier mod : man.getAllLootMods()) {
