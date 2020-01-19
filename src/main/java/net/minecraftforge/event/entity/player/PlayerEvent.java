@@ -509,25 +509,4 @@ public class PlayerEvent extends LivingEvent
             return this.toDim;
         }
     }
-
-    @Cancelable
-    public static class PoseEvent extends PlayerEvent {
-        private Pose pose;
-
-        public PoseEvent(PlayerEntity player)
-        {
-            super(player);
-        }
-
-        public void setForcedPose(Pose pose)
-        {
-            this.pose = pose;
-        }
-
-        @Nullable
-        public Pose getForcedPose()
-        {
-            return this.pose;
-        }
-    }
 }

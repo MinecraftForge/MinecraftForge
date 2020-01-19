@@ -711,14 +711,4 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
     }
-
-    @Nullable
-    public static Pose getForcedPlayerPose(PlayerEntity player)
-    {
-        PlayerEvent.PoseEvent event = new PlayerEvent.PoseEvent(player);
-        if(MinecraftForge.EVENT_BUS.post(event)){
-            return event.getForcedPose();
-        }
-        return null;
-    }
 }
