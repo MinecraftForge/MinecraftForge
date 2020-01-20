@@ -106,7 +106,7 @@ public class ConfigTracker {
         if (!Minecraft.getInstance().isIntegratedServerRunning()) {
             Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
                 mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
-                mc.fireEvent(new ModConfig.ConfigReloading(mc));
+                mc.fireEvent(new ModConfig.Reloading(mc));
             });
         }
     }
