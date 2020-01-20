@@ -24,6 +24,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;
@@ -99,32 +100,45 @@ public class ModConfig
 
     public enum Type {
         /**
-         * Common mod config for configuration that needs to be loaded on both environments.
-         * Loaded on both servers and clients.
+         * Common config is for configuration that needs to be loaded on both environments.
+         * Loaded on both server and client environments during startup (after registry events and before setup events).
          * Stored in the global config directory.
          * Not synced.
          * Suffix is "-common" by default.
+         * Examples of config entries that would use this:
+         * - Whether to enable an update checker (FML has this)
+         * - What paths to load extra mod assets from (plugin/addon files)
          */
         COMMON,
         /**
          * Client config is for configuration affecting the ONLY client state such as graphical options.
-         * Only loaded on the client side.
+         * Loaded on the client environment during startup (after registry events and before setup events).
          * Stored in the global config directory.
          * Not synced.
          * Suffix is "-client" by default.
+         * Examples of config entries that would use this:
+         * - If certain info should be rendered in a GUI/HUD
+         * - The color of something that will be rendered in a GUI/HUD
+         * - Options that change how you interact with things
+         * - Controls/Accessibility options (For changing the effects of keybinds/mouse clicks/mouse movement)
          */
         CLIENT,
 //        /**
 //         * Player type config is configuration that is associated with a player.
 //         * Preferences around machine states, for example.
+//         * Not Implemented (yet).
 //         */
 //        PLAYER,
         /**
-         * Server type config is configuration that is associated with a server instance.
-         * Only loaded during server startup.
+         * Server config is for configuration that is associated with a logical server instance.
+         * Loaded during server startup (right before the {@link FMLServerAboutToStartEvent} is fired).
          * Stored in a server/save specific "serverconfig" directory.
          * Synced to clients during connection.
          * Suffix is "-server" by default.
+         * Examples of config entries that would use this:
+         * - The amount of energy a machine uses/produces
+         * - World/Ore gen configuration
+         * - Entity spawning configuration
          */
         SERVER;
 
