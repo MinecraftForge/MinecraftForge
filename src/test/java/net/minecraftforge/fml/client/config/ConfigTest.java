@@ -37,6 +37,7 @@ import net.minecraftforge.common.ForgeConfigSpec.LongValue;
 import net.minecraftforge.common.ForgeConfigSpec.ShortValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.config.entry.widget.IDisplayColorableEnum;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -73,6 +75,603 @@ public class ConfigTest {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, TestConfig.Client.SPEC);
 //		ModLoadingContext.get().registerConfig(ModConfig.Type.PLAYER, TestConfig.Player.SPEC);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, TestConfig.Server.SPEC);
+	}
+
+	/**
+	 * For testing colored enums in the GUI
+	 */
+	enum HSBColor implements IDisplayColorableEnum {
+		H_0("0", 0xff0000),
+		H_15("15", 0xff4000),
+		H_30("30", 0xff8000),
+		H_45("45", 0xffbf00),
+		H_60("60", 0xffff00),
+		H_75("75", 0xbfff00),
+		H_90("90", 0x80ff00),
+		H_105("105", 0x40ff00),
+		H_120("120", 0x00ff00),
+		H_135("135", 0x00ff40),
+		H_150("150", 0x00ff80),
+		H_165("165", 0x00ffbf),
+		H_180("180", 0x00ffff),
+		H_195("195", 0x00bfff),
+		H_210("210", 0x0080ff),
+		H_225("225", 0x0040ff),
+		H_240("240", 0x0000ff),
+		H_255("255", 0x4000ff),
+		H_270("270", 0x8000ff),
+		H_285("285", 0xbf00ff),
+		H_300("300", 0xff00ff),
+		H_315("315", 0xff00bf),
+		H_330("330", 0xff0080),
+		H_345("345", 0xff0040),
+
+		;
+
+		private final String name;
+		private final int color;
+
+		HSBColor(final String hue, final int color) {
+			this.name = hue;
+			this.color = color;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return color;
+		}
+	}
+
+	/**
+	 * For testing colored enums in the GUI
+	 */
+	enum HtmlColorAlphabetical implements IDisplayColorableEnum {
+		ALICE_BLUE("Alice Blue", 0xF0F8FF, "0xF0F8FF"),
+		ANTIQUE_WHITE("Antique White", 0xFAEBD7, "0xFAEBD7"),
+		AQUA("Aqua", 0x00FFFF, "0x00FFFF"),
+		AQUAMARINE("Aquamarine", 0x7FFFD4, "0x7FFFD4"),
+		AZURE("Azure", 0xF0FFFF, "0xF0FFFF"),
+		BEIGE("Beige", 0xF5F5DC, "0xF5F5DC"),
+		BISQUE("Bisque", 0xFFE4C4, "0xFFE4C4"),
+		BLACK("Black", 0x000000, "0x000000"),
+		BLANCHED_ALMOND("Blanched Almond", 0xFFEBCD, "0xFFEBCD"),
+		BLUE("Blue", 0x0000FF, "0x0000FF"),
+		BLUE_VIOLET("Blue Violet", 0x8A2BE2, "0x8A2BE2"),
+		BROWN("Brown", 0xA52A2A, "0xA52A2A"),
+		BURLY_WOOD("Burly Wood", 0xDEB887, "0xDEB887"),
+		CADET_BLUE("Cadet Blue", 0x5F9EA0, "0x5F9EA0"),
+		CHARTREUSE("Chartreuse", 0x7FFF00, "0x7FFF00"),
+		CHOCOLATE("Chocolate", 0xD2691E, "0xD2691E"),
+		CORAL("Coral", 0xFF7F50, "0xFF7F50"),
+		CORNFLOWER_BLUE("Cornflower Blue", 0x6495ED, "0x6495ED"),
+		CORNSILK("Cornsilk", 0xFFF8DC, "0xFFF8DC"),
+		CRIMSON("Crimson", 0xDC143C, "0xDC143C"),
+		CYAN("Cyan", 0x00FFFF, "0x00FFFF"),
+		DARK_BLUE("Dark Blue", 0x00008B, "0x00008B"),
+		DARK_CYAN("Dark Cyan", 0x008B8B, "0x008B8B"),
+		DARK_GOLDEN_ROD("Dark Golden Rod", 0xB8860B, "0xB8860B"),
+		DARK_GRAY("Dark Gray", 0xA9A9A9, "0xA9A9A9"),
+		DARK_GREY("Dark Grey", 0xA9A9A9, "0xA9A9A9"),
+		DARK_GREEN("Dark Green", 0x006400, "0x006400"),
+		DARK_KHAKI("Dark Khaki", 0xBDB76B, "0xBDB76B"),
+		DARK_MAGENTA("Dark Magenta", 0x8B008B, "0x8B008B"),
+		DARK_OLIVE_GREEN("Dark Olive Green", 0x556B2F, "0x556B2F"),
+		DARK_ORANGE("Dark Orange", 0xFF8C00, "0xFF8C00"),
+		DARK_ORCHID("Dark Orchid", 0x9932CC, "0x9932CC"),
+		DARK_RED("Dark Red", 0x8B0000, "0x8B0000"),
+		DARK_SALMON("Dark Salmon", 0xE9967A, "0xE9967A"),
+		DARK_SEA_GREEN("Dark Sea Green", 0x8FBC8F, "0x8FBC8F"),
+		DARK_SLATE_BLUE("Dark Slate Blue", 0x483D8B, "0x483D8B"),
+		DARK_SLATE_GRAY("Dark Slate Gray", 0x2F4F4F, "0x2F4F4F"),
+		DARK_SLATE_GREY("Dark Slate Grey", 0x2F4F4F, "0x2F4F4F"),
+		DARK_TURQUOISE("Dark Turquoise", 0x00CED1, "0x00CED1"),
+		DARK_VIOLET("Dark Violet", 0x9400D3, "0x9400D3"),
+		DEEP_PINK("Deep Pink", 0xFF1493, "0xFF1493"),
+		DEEP_SKY_BLUE("Deep Sky Blue", 0x00BFFF, "0x00BFFF"),
+		DIM_GRAY("Dim Gray", 0x696969, "0x696969"),
+		DIM_GREY("Dim Grey", 0x696969, "0x696969"),
+		DODGER_BLUE("Dodger Blue", 0x1E90FF, "0x1E90FF"),
+		FIRE_BRICK("Fire Brick", 0xB22222, "0xB22222"),
+		FLORAL_WHITE("Floral White", 0xFFFAF0, "0xFFFAF0"),
+		FOREST_GREEN("Forest Green", 0x228B22, "0x228B22"),
+		FUCHSIA("Fuchsia", 0xFF00FF, "0xFF00FF"),
+		GAINSBORO("Gainsboro", 0xDCDCDC, "0xDCDCDC"),
+		GHOST_WHITE("Ghost White", 0xF8F8FF, "0xF8F8FF"),
+		GOLD("Gold", 0xFFD700, "0xFFD700"),
+		GOLDEN_ROD("Golden Rod", 0xDAA520, "0xDAA520"),
+		GRAY("Gray", 0x808080, "0x808080"),
+		GREY("Grey", 0x808080, "0x808080"),
+		GREEN("Green", 0x008000, "0x008000"),
+		GREEN_YELLOW("Green Yellow", 0xADFF2F, "0xADFF2F"),
+		HONEY_DEW("Honey Dew", 0xF0FFF0, "0xF0FFF0"),
+		HOT_PINK("Hot Pink", 0xFF69B4, "0xFF69B4"),
+		INDIAN_RED("Indian Red", 0xCD5C5C, "0xCD5C5C"),
+		INDIGO("Indigo", 0x4B0082, "0x4B0082"),
+		IVORY("Ivory", 0xFFFFF0, "0xFFFFF0"),
+		KHAKI("Khaki", 0xF0E68C, "0xF0E68C"),
+		LAVENDER("Lavender", 0xE6E6FA, "0xE6E6FA"),
+		LAVENDER_BLUSH("Lavender Blush", 0xFFF0F5, "0xFFF0F5"),
+		LAWN_GREEN("Lawn Green", 0x7CFC00, "0x7CFC00"),
+		LEMON_CHIFFON("Lemon Chiffon", 0xFFFACD, "0xFFFACD"),
+		LIGHT_BLUE("Light Blue", 0xADD8E6, "0xADD8E6"),
+		LIGHT_CORAL("Light Coral", 0xF08080, "0xF08080"),
+		LIGHT_CYAN("Light Cyan", 0xE0FFFF, "0xE0FFFF"),
+		LIGHT_GOLDEN_ROD_YELLOW("Light Golden Rod Yellow", 0xFAFAD2, "0xFAFAD2"),
+		LIGHT_GRAY("Light Gray", 0xD3D3D3, "0xD3D3D3"),
+		LIGHT_GREY("Light Grey", 0xD3D3D3, "0xD3D3D3"),
+		LIGHT_GREEN("Light Green", 0x90EE90, "0x90EE90"),
+		LIGHT_PINK("Light Pink", 0xFFB6C1, "0xFFB6C1"),
+		LIGHT_SALMON("Light Salmon", 0xFFA07A, "0xFFA07A"),
+		LIGHT_SEA_GREEN("Light Sea Green", 0x20B2AA, "0x20B2AA"),
+		LIGHT_SKY_BLUE("Light Sky Blue", 0x87CEFA, "0x87CEFA"),
+		LIGHT_SLATE_GRAY("Light Slate Gray", 0x778899, "0x778899"),
+		LIGHT_SLATE_GREY("Light Slate Grey", 0x778899, "0x778899"),
+		LIGHT_STEEL_BLUE("Light Steel Blue", 0xB0C4DE, "0xB0C4DE"),
+		LIGHT_YELLOW("Light Yellow", 0xFFFFE0, "0xFFFFE0"),
+		LIME("Lime", 0x00FF00, "0x00FF00"),
+		LIME_GREEN("Lime Green", 0x32CD32, "0x32CD32"),
+		LINEN("Linen", 0xFAF0E6, "0xFAF0E6"),
+		MAGENTA("Magenta", 0xFF00FF, "0xFF00FF"),
+		MAROON("Maroon", 0x800000, "0x800000"),
+		MEDIUM_AQUA_MARINE("Medium Aqua Marine", 0x66CDAA, "0x66CDAA"),
+		MEDIUM_BLUE("Medium Blue", 0x0000CD, "0x0000CD"),
+		MEDIUM_ORCHID("Medium Orchid", 0xBA55D3, "0xBA55D3"),
+		MEDIUM_PURPLE("Medium Purple", 0x9370DB, "0x9370DB"),
+		MEDIUM_SEA_GREEN("Medium Sea Green", 0x3CB371, "0x3CB371"),
+		MEDIUM_SLATE_BLUE("Medium Slate Blue", 0x7B68EE, "0x7B68EE"),
+		MEDIUM_SPRING_GREEN("Medium Spring Green", 0x00FA9A, "0x00FA9A"),
+		MEDIUM_TURQUOISE("Medium Turquoise", 0x48D1CC, "0x48D1CC"),
+		MEDIUM_VIOLET_RED("Medium Violet Red", 0xC71585, "0xC71585"),
+		MIDNIGHT_BLUE("Midnight Blue", 0x191970, "0x191970"),
+		MINT_CREAM("Mint Cream", 0xF5FFFA, "0xF5FFFA"),
+		MISTY_ROSE("Misty Rose", 0xFFE4E1, "0xFFE4E1"),
+		MOCCASIN("Moccasin", 0xFFE4B5, "0xFFE4B5"),
+		NAVAJO_WHITE("Navajo White", 0xFFDEAD, "0xFFDEAD"),
+		NAVY("Navy", 0x000080, "0x000080"),
+		OLD_LACE("Old Lace", 0xFDF5E6, "0xFDF5E6"),
+		OLIVE("Olive", 0x808000, "0x808000"),
+		OLIVE_DRAB("Olive Drab", 0x6B8E23, "0x6B8E23"),
+		ORANGE("Orange", 0xFFA500, "0xFFA500"),
+		ORANGE_RED("Orange Red", 0xFF4500, "0xFF4500"),
+		ORCHID("Orchid", 0xDA70D6, "0xDA70D6"),
+		PALE_GOLDEN_ROD("Pale Golden Rod", 0xEEE8AA, "0xEEE8AA"),
+		PALE_GREEN("Pale Green", 0x98FB98, "0x98FB98"),
+		PALE_TURQUOISE("Pale Turquoise", 0xAFEEEE, "0xAFEEEE"),
+		PALE_VIOLET_RED("Pale Violet Red", 0xDB7093, "0xDB7093"),
+		PAPAYA_WHIP("Papaya Whip", 0xFFEFD5, "0xFFEFD5"),
+		PEACH_PUFF("Peach Puff", 0xFFDAB9, "0xFFDAB9"),
+		PERU("Peru", 0xCD853F, "0xCD853F"),
+		PINK("Pink", 0xFFC0CB, "0xFFC0CB"),
+		PLUM("Plum", 0xDDA0DD, "0xDDA0DD"),
+		POWDER_BLUE("Powder Blue", 0xB0E0E6, "0xB0E0E6"),
+		PURPLE("Purple", 0x800080, "0x800080"),
+		REBECCA_PURPLE("Rebecca Purple", 0x663399, "0x663399"),
+		RED("Red", 0xFF0000, "0xFF0000"),
+		ROSY_BROWN("Rosy Brown", 0xBC8F8F, "0xBC8F8F"),
+		ROYAL_BLUE("Royal Blue", 0x4169E1, "0x4169E1"),
+		SADDLE_BROWN("Saddle Brown", 0x8B4513, "0x8B4513"),
+		SALMON("Salmon", 0xFA8072, "0xFA8072"),
+		SANDY_BROWN("Sandy Brown", 0xF4A460, "0xF4A460"),
+		SEA_GREEN("Sea Green", 0x2E8B57, "0x2E8B57"),
+		SEA_SHELL("Sea Shell", 0xFFF5EE, "0xFFF5EE"),
+		SIENNA("Sienna", 0xA0522D, "0xA0522D"),
+		SILVER("Silver", 0xC0C0C0, "0xC0C0C0"),
+		SKY_BLUE("Sky Blue", 0x87CEEB, "0x87CEEB"),
+		SLATE_BLUE("Slate Blue", 0x6A5ACD, "0x6A5ACD"),
+		SLATE_GRAY("Slate Gray", 0x708090, "0x708090"),
+		SLATE_GREY("Slate Grey", 0x708090, "0x708090"),
+		SNOW("Snow", 0xFFFAFA, "0xFFFAFA"),
+		SPRING_GREEN("Spring Green", 0x00FF7F, "0x00FF7F"),
+		STEEL_BLUE("Steel Blue", 0x4682B4, "0x4682B4"),
+		TAN("Tan", 0xD2B48C, "0xD2B48C"),
+		TEAL("Teal", 0x008080, "0x008080"),
+		THISTLE("Thistle", 0xD8BFD8, "0xD8BFD8"),
+		TOMATO("Tomato", 0xFF6347, "0xFF6347"),
+		TURQUOISE("Turquoise", 0x40E0D0, "0x40E0D0"),
+		VIOLET("Violet", 0xEE82EE, "0xEE82EE"),
+		WHEAT("Wheat", 0xF5DEB3, "0xF5DEB3"),
+		WHITE("White", 0xFFFFFF, "0xFFFFFF"),
+		WHITE_SMOKE("White Smoke", 0xF5F5F5, "0xF5F5F5"),
+		YELLOW("Yellow", 0xFFFF00, "0xFFFF00"),
+		YELLOW_GREEN("Yellow Green", 0x9ACD32, "0x9ACD32"),
+
+		;
+
+		private final int color;
+		private final String asString;
+
+		HtmlColorAlphabetical(final String name, final int color, final String hexColorCode) {
+			this.color = color;
+			this.asString = name + " ("+hexColorCode+")";
+		}
+
+		@Override
+		public String toString() {
+			return asString;
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return color;
+		}
+	}
+
+	/**
+	 * For testing colored enums in the GUI
+	 */
+	enum HtmlColorLightestFirst implements IDisplayColorableEnum {
+		WHITE("White", 0xFFFFFF, "0xFFFFFF"),
+		IVORY("Ivory", 0xFFFFF0, "0xFFFFF0"),
+		LIGHT_YELLOW("Light Yellow", 0xFFFFE0, "0xFFFFE0"),
+		YELLOW("Yellow", 0xFFFF00, "0xFFFF00"),
+		SNOW("Snow", 0xFFFAFA, "0xFFFAFA"),
+		FLORAL_WHITE("Floral White", 0xFFFAF0, "0xFFFAF0"),
+		LEMON_CHIFFON("Lemon Chiffon", 0xFFFACD, "0xFFFACD"),
+		CORNSILK("Cornsilk", 0xFFF8DC, "0xFFF8DC"),
+		SEA_SHELL("Sea Shell", 0xFFF5EE, "0xFFF5EE"),
+		LAVENDER_BLUSH("Lavender Blush", 0xFFF0F5, "0xFFF0F5"),
+		PAPAYA_WHIP("Papaya Whip", 0xFFEFD5, "0xFFEFD5"),
+		BLANCHED_ALMOND("Blanched Almond", 0xFFEBCD, "0xFFEBCD"),
+		MISTY_ROSE("Misty Rose", 0xFFE4E1, "0xFFE4E1"),
+		BISQUE("Bisque", 0xFFE4C4, "0xFFE4C4"),
+		MOCCASIN("Moccasin", 0xFFE4B5, "0xFFE4B5"),
+		NAVAJO_WHITE("Navajo White", 0xFFDEAD, "0xFFDEAD"),
+		PEACH_PUFF("Peach Puff", 0xFFDAB9, "0xFFDAB9"),
+		GOLD("Gold", 0xFFD700, "0xFFD700"),
+		PINK("Pink", 0xFFC0CB, "0xFFC0CB"),
+		LIGHT_PINK("Light Pink", 0xFFB6C1, "0xFFB6C1"),
+		ORANGE("Orange", 0xFFA500, "0xFFA500"),
+		LIGHT_SALMON("Light Salmon", 0xFFA07A, "0xFFA07A"),
+		DARK_ORANGE("Dark Orange", 0xFF8C00, "0xFF8C00"),
+		CORAL("Coral", 0xFF7F50, "0xFF7F50"),
+		HOT_PINK("Hot Pink", 0xFF69B4, "0xFF69B4"),
+		TOMATO("Tomato", 0xFF6347, "0xFF6347"),
+		ORANGE_RED("Orange Red", 0xFF4500, "0xFF4500"),
+		DEEP_PINK("Deep Pink", 0xFF1493, "0xFF1493"),
+		MAGENTA("Magenta", 0xFF00FF, "0xFF00FF"),
+		FUCHSIA("Fuchsia", 0xFF00FF, "0xFF00FF"),
+		RED("Red", 0xFF0000, "0xFF0000"),
+		OLD_LACE("Old Lace", 0xFDF5E6, "0xFDF5E6"),
+		LIGHT_GOLDEN_ROD_YELLOW("Light Golden Rod Yellow", 0xFAFAD2, "0xFAFAD2"),
+		LINEN("Linen", 0xFAF0E6, "0xFAF0E6"),
+		ANTIQUE_WHITE("Antique White", 0xFAEBD7, "0xFAEBD7"),
+		SALMON("Salmon", 0xFA8072, "0xFA8072"),
+		GHOST_WHITE("Ghost White", 0xF8F8FF, "0xF8F8FF"),
+		MINT_CREAM("Mint Cream", 0xF5FFFA, "0xF5FFFA"),
+		WHITE_SMOKE("White Smoke", 0xF5F5F5, "0xF5F5F5"),
+		BEIGE("Beige", 0xF5F5DC, "0xF5F5DC"),
+		WHEAT("Wheat", 0xF5DEB3, "0xF5DEB3"),
+		SANDY_BROWN("Sandy Brown", 0xF4A460, "0xF4A460"),
+		AZURE("Azure", 0xF0FFFF, "0xF0FFFF"),
+		HONEY_DEW("Honey Dew", 0xF0FFF0, "0xF0FFF0"),
+		ALICE_BLUE("Alice Blue", 0xF0F8FF, "0xF0F8FF"),
+		KHAKI("Khaki", 0xF0E68C, "0xF0E68C"),
+		LIGHT_CORAL("Light Coral", 0xF08080, "0xF08080"),
+		PALE_GOLDEN_ROD("Pale Golden Rod", 0xEEE8AA, "0xEEE8AA"),
+		VIOLET("Violet", 0xEE82EE, "0xEE82EE"),
+		DARK_SALMON("Dark Salmon", 0xE9967A, "0xE9967A"),
+		LAVENDER("Lavender", 0xE6E6FA, "0xE6E6FA"),
+		LIGHT_CYAN("Light Cyan", 0xE0FFFF, "0xE0FFFF"),
+		BURLY_WOOD("Burly Wood", 0xDEB887, "0xDEB887"),
+		PLUM("Plum", 0xDDA0DD, "0xDDA0DD"),
+		GAINSBORO("Gainsboro", 0xDCDCDC, "0xDCDCDC"),
+		CRIMSON("Crimson", 0xDC143C, "0xDC143C"),
+		PALE_VIOLET_RED("Pale Violet Red", 0xDB7093, "0xDB7093"),
+		GOLDEN_ROD("Golden Rod", 0xDAA520, "0xDAA520"),
+		ORCHID("Orchid", 0xDA70D6, "0xDA70D6"),
+		THISTLE("Thistle", 0xD8BFD8, "0xD8BFD8"),
+		LIGHT_GREY("Light Grey", 0xD3D3D3, "0xD3D3D3"),
+		LIGHT_GRAY("Light Gray", 0xD3D3D3, "0xD3D3D3"),
+		TAN("Tan", 0xD2B48C, "0xD2B48C"),
+		CHOCOLATE("Chocolate", 0xD2691E, "0xD2691E"),
+		PERU("Peru", 0xCD853F, "0xCD853F"),
+		INDIAN_RED("Indian Red", 0xCD5C5C, "0xCD5C5C"),
+		MEDIUM_VIOLET_RED("Medium Violet Red", 0xC71585, "0xC71585"),
+		SILVER("Silver", 0xC0C0C0, "0xC0C0C0"),
+		DARK_KHAKI("Dark Khaki", 0xBDB76B, "0xBDB76B"),
+		ROSY_BROWN("Rosy Brown", 0xBC8F8F, "0xBC8F8F"),
+		MEDIUM_ORCHID("Medium Orchid", 0xBA55D3, "0xBA55D3"),
+		DARK_GOLDEN_ROD("Dark Golden Rod", 0xB8860B, "0xB8860B"),
+		FIRE_BRICK("Fire Brick", 0xB22222, "0xB22222"),
+		POWDER_BLUE("Powder Blue", 0xB0E0E6, "0xB0E0E6"),
+		LIGHT_STEEL_BLUE("Light Steel Blue", 0xB0C4DE, "0xB0C4DE"),
+		PALE_TURQUOISE("Pale Turquoise", 0xAFEEEE, "0xAFEEEE"),
+		GREEN_YELLOW("Green Yellow", 0xADFF2F, "0xADFF2F"),
+		LIGHT_BLUE("Light Blue", 0xADD8E6, "0xADD8E6"),
+		DARK_GREY("Dark Grey", 0xA9A9A9, "0xA9A9A9"),
+		DARK_GRAY("Dark Gray", 0xA9A9A9, "0xA9A9A9"),
+		BROWN("Brown", 0xA52A2A, "0xA52A2A"),
+		SIENNA("Sienna", 0xA0522D, "0xA0522D"),
+		YELLOW_GREEN("Yellow Green", 0x9ACD32, "0x9ACD32"),
+		DARK_ORCHID("Dark Orchid", 0x9932CC, "0x9932CC"),
+		PALE_GREEN("Pale Green", 0x98FB98, "0x98FB98"),
+		DARK_VIOLET("Dark Violet", 0x9400D3, "0x9400D3"),
+		MEDIUM_PURPLE("Medium Purple", 0x9370DB, "0x9370DB"),
+		LIGHT_GREEN("Light Green", 0x90EE90, "0x90EE90"),
+		DARK_SEA_GREEN("Dark Sea Green", 0x8FBC8F, "0x8FBC8F"),
+		SADDLE_BROWN("Saddle Brown", 0x8B4513, "0x8B4513"),
+		DARK_MAGENTA("Dark Magenta", 0x8B008B, "0x8B008B"),
+		DARK_RED("Dark Red", 0x8B0000, "0x8B0000"),
+		BLUE_VIOLET("Blue Violet", 0x8A2BE2, "0x8A2BE2"),
+		LIGHT_SKY_BLUE("Light Sky Blue", 0x87CEFA, "0x87CEFA"),
+		SKY_BLUE("Sky Blue", 0x87CEEB, "0x87CEEB"),
+		GREY("Grey", 0x808080, "0x808080"),
+		GRAY("Gray", 0x808080, "0x808080"),
+		OLIVE("Olive", 0x808000, "0x808000"),
+		PURPLE("Purple", 0x800080, "0x800080"),
+		MAROON("Maroon", 0x800000, "0x800000"),
+		AQUAMARINE("Aquamarine", 0x7FFFD4, "0x7FFFD4"),
+		CHARTREUSE("Chartreuse", 0x7FFF00, "0x7FFF00"),
+		LAWN_GREEN("Lawn Green", 0x7CFC00, "0x7CFC00"),
+		MEDIUM_SLATE_BLUE("Medium Slate Blue", 0x7B68EE, "0x7B68EE"),
+		LIGHT_SLATE_GREY("Light Slate Grey", 0x778899, "0x778899"),
+		LIGHT_SLATE_GRAY("Light Slate Gray", 0x778899, "0x778899"),
+		SLATE_GREY("Slate Grey", 0x708090, "0x708090"),
+		SLATE_GRAY("Slate Gray", 0x708090, "0x708090"),
+		OLIVE_DRAB("Olive Drab", 0x6B8E23, "0x6B8E23"),
+		SLATE_BLUE("Slate Blue", 0x6A5ACD, "0x6A5ACD"),
+		DIM_GREY("Dim Grey", 0x696969, "0x696969"),
+		DIM_GRAY("Dim Gray", 0x696969, "0x696969"),
+		MEDIUM_AQUA_MARINE("Medium Aqua Marine", 0x66CDAA, "0x66CDAA"),
+		REBECCA_PURPLE("Rebecca Purple", 0x663399, "0x663399"),
+		CORNFLOWER_BLUE("Cornflower Blue", 0x6495ED, "0x6495ED"),
+		CADET_BLUE("Cadet Blue", 0x5F9EA0, "0x5F9EA0"),
+		DARK_OLIVE_GREEN("Dark Olive Green", 0x556B2F, "0x556B2F"),
+		INDIGO("Indigo", 0x4B0082, "0x4B0082"),
+		MEDIUM_TURQUOISE("Medium Turquoise", 0x48D1CC, "0x48D1CC"),
+		DARK_SLATE_BLUE("Dark Slate Blue", 0x483D8B, "0x483D8B"),
+		STEEL_BLUE("Steel Blue", 0x4682B4, "0x4682B4"),
+		ROYAL_BLUE("Royal Blue", 0x4169E1, "0x4169E1"),
+		TURQUOISE("Turquoise", 0x40E0D0, "0x40E0D0"),
+		MEDIUM_SEA_GREEN("Medium Sea Green", 0x3CB371, "0x3CB371"),
+		LIME_GREEN("Lime Green", 0x32CD32, "0x32CD32"),
+		DARK_SLATE_GREY("Dark Slate Grey", 0x2F4F4F, "0x2F4F4F"),
+		DARK_SLATE_GRAY("Dark Slate Gray", 0x2F4F4F, "0x2F4F4F"),
+		SEA_GREEN("Sea Green", 0x2E8B57, "0x2E8B57"),
+		FOREST_GREEN("Forest Green", 0x228B22, "0x228B22"),
+		LIGHT_SEA_GREEN("Light Sea Green", 0x20B2AA, "0x20B2AA"),
+		DODGER_BLUE("Dodger Blue", 0x1E90FF, "0x1E90FF"),
+		MIDNIGHT_BLUE("Midnight Blue", 0x191970, "0x191970"),
+		CYAN("Cyan", 0x00FFFF, "0x00FFFF"),
+		AQUA("Aqua", 0x00FFFF, "0x00FFFF"),
+		SPRING_GREEN("Spring Green", 0x00FF7F, "0x00FF7F"),
+		LIME("Lime", 0x00FF00, "0x00FF00"),
+		MEDIUM_SPRING_GREEN("Medium Spring Green", 0x00FA9A, "0x00FA9A"),
+		DARK_TURQUOISE("Dark Turquoise", 0x00CED1, "0x00CED1"),
+		DEEP_SKY_BLUE("Deep Sky Blue", 0x00BFFF, "0x00BFFF"),
+		DARK_CYAN("Dark Cyan", 0x008B8B, "0x008B8B"),
+		TEAL("Teal", 0x008080, "0x008080"),
+		GREEN("Green", 0x008000, "0x008000"),
+		DARK_GREEN("Dark Green", 0x006400, "0x006400"),
+		BLUE("Blue", 0x0000FF, "0x0000FF"),
+		MEDIUM_BLUE("Medium Blue", 0x0000CD, "0x0000CD"),
+		DARK_BLUE("Dark Blue", 0x00008B, "0x00008B"),
+		NAVY("Navy", 0x000080, "0x000080"),
+		BLACK("Black", 0x000000, "0x000000"),
+		;
+
+		private final int color;
+		private final String asString;
+
+		HtmlColorLightestFirst(final String name, final int color, final String hexColorCode) {
+			this.color = color;
+			this.asString = name + " ("+hexColorCode+")";
+		}
+
+		@Override
+		public String toString() {
+			return asString;
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return color;
+		}
+	}
+
+	/**
+	 * For testing colored enums in the GUI
+	 */
+	enum HtmlColorDarkestFirst implements IDisplayColorableEnum {
+		BLACK("Black", 0x000000, "0x000000"),
+		NAVY("Navy", 0x000080, "0x000080"),
+		DARK_BLUE("Dark Blue", 0x00008B, "0x00008B"),
+		MEDIUM_BLUE("Medium Blue", 0x0000CD, "0x0000CD"),
+		BLUE("Blue", 0x0000FF, "0x0000FF"),
+		DARK_GREEN("Dark Green", 0x006400, "0x006400"),
+		GREEN("Green", 0x008000, "0x008000"),
+		TEAL("Teal", 0x008080, "0x008080"),
+		DARK_CYAN("Dark Cyan", 0x008B8B, "0x008B8B"),
+		DEEP_SKY_BLUE("Deep Sky Blue", 0x00BFFF, "0x00BFFF"),
+		DARK_TURQUOISE("Dark Turquoise", 0x00CED1, "0x00CED1"),
+		MEDIUM_SPRING_GREEN("Medium Spring Green", 0x00FA9A, "0x00FA9A"),
+		LIME("Lime", 0x00FF00, "0x00FF00"),
+		SPRING_GREEN("Spring Green", 0x00FF7F, "0x00FF7F"),
+		AQUA("Aqua", 0x00FFFF, "0x00FFFF"),
+		CYAN("Cyan", 0x00FFFF, "0x00FFFF"),
+		MIDNIGHT_BLUE("Midnight Blue", 0x191970, "0x191970"),
+		DODGER_BLUE("Dodger Blue", 0x1E90FF, "0x1E90FF"),
+		LIGHT_SEA_GREEN("Light Sea Green", 0x20B2AA, "0x20B2AA"),
+		FOREST_GREEN("Forest Green", 0x228B22, "0x228B22"),
+		SEA_GREEN("Sea Green", 0x2E8B57, "0x2E8B57"),
+		DARK_SLATE_GRAY("Dark Slate Gray", 0x2F4F4F, "0x2F4F4F"),
+		DARK_SLATE_GREY("Dark Slate Grey", 0x2F4F4F, "0x2F4F4F"),
+		LIME_GREEN("Lime Green", 0x32CD32, "0x32CD32"),
+		MEDIUM_SEA_GREEN("Medium Sea Green", 0x3CB371, "0x3CB371"),
+		TURQUOISE("Turquoise", 0x40E0D0, "0x40E0D0"),
+		ROYAL_BLUE("Royal Blue", 0x4169E1, "0x4169E1"),
+		STEEL_BLUE("Steel Blue", 0x4682B4, "0x4682B4"),
+		DARK_SLATE_BLUE("Dark Slate Blue", 0x483D8B, "0x483D8B"),
+		MEDIUM_TURQUOISE("Medium Turquoise", 0x48D1CC, "0x48D1CC"),
+		INDIGO("Indigo", 0x4B0082, "0x4B0082"),
+		DARK_OLIVE_GREEN("Dark Olive Green", 0x556B2F, "0x556B2F"),
+		CADET_BLUE("Cadet Blue", 0x5F9EA0, "0x5F9EA0"),
+		CORNFLOWER_BLUE("Cornflower Blue", 0x6495ED, "0x6495ED"),
+		REBECCA_PURPLE("Rebecca Purple", 0x663399, "0x663399"),
+		MEDIUM_AQUA_MARINE("Medium Aqua Marine", 0x66CDAA, "0x66CDAA"),
+		DIM_GRAY("Dim Gray", 0x696969, "0x696969"),
+		DIM_GREY("Dim Grey", 0x696969, "0x696969"),
+		SLATE_BLUE("Slate Blue", 0x6A5ACD, "0x6A5ACD"),
+		OLIVE_DRAB("Olive Drab", 0x6B8E23, "0x6B8E23"),
+		SLATE_GRAY("Slate Gray", 0x708090, "0x708090"),
+		SLATE_GREY("Slate Grey", 0x708090, "0x708090"),
+		LIGHT_SLATE_GRAY("Light Slate Gray", 0x778899, "0x778899"),
+		LIGHT_SLATE_GREY("Light Slate Grey", 0x778899, "0x778899"),
+		MEDIUM_SLATE_BLUE("Medium Slate Blue", 0x7B68EE, "0x7B68EE"),
+		LAWN_GREEN("Lawn Green", 0x7CFC00, "0x7CFC00"),
+		CHARTREUSE("Chartreuse", 0x7FFF00, "0x7FFF00"),
+		AQUAMARINE("Aquamarine", 0x7FFFD4, "0x7FFFD4"),
+		MAROON("Maroon", 0x800000, "0x800000"),
+		PURPLE("Purple", 0x800080, "0x800080"),
+		OLIVE("Olive", 0x808000, "0x808000"),
+		GRAY("Gray", 0x808080, "0x808080"),
+		GREY("Grey", 0x808080, "0x808080"),
+		SKY_BLUE("Sky Blue", 0x87CEEB, "0x87CEEB"),
+		LIGHT_SKY_BLUE("Light Sky Blue", 0x87CEFA, "0x87CEFA"),
+		BLUE_VIOLET("Blue Violet", 0x8A2BE2, "0x8A2BE2"),
+		DARK_RED("Dark Red", 0x8B0000, "0x8B0000"),
+		DARK_MAGENTA("Dark Magenta", 0x8B008B, "0x8B008B"),
+		SADDLE_BROWN("Saddle Brown", 0x8B4513, "0x8B4513"),
+		DARK_SEA_GREEN("Dark Sea Green", 0x8FBC8F, "0x8FBC8F"),
+		LIGHT_GREEN("Light Green", 0x90EE90, "0x90EE90"),
+		MEDIUM_PURPLE("Medium Purple", 0x9370DB, "0x9370DB"),
+		DARK_VIOLET("Dark Violet", 0x9400D3, "0x9400D3"),
+		PALE_GREEN("Pale Green", 0x98FB98, "0x98FB98"),
+		DARK_ORCHID("Dark Orchid", 0x9932CC, "0x9932CC"),
+		YELLOW_GREEN("Yellow Green", 0x9ACD32, "0x9ACD32"),
+		SIENNA("Sienna", 0xA0522D, "0xA0522D"),
+		BROWN("Brown", 0xA52A2A, "0xA52A2A"),
+		DARK_GRAY("Dark Gray", 0xA9A9A9, "0xA9A9A9"),
+		DARK_GREY("Dark Grey", 0xA9A9A9, "0xA9A9A9"),
+		LIGHT_BLUE("Light Blue", 0xADD8E6, "0xADD8E6"),
+		GREEN_YELLOW("Green Yellow", 0xADFF2F, "0xADFF2F"),
+		PALE_TURQUOISE("Pale Turquoise", 0xAFEEEE, "0xAFEEEE"),
+		LIGHT_STEEL_BLUE("Light Steel Blue", 0xB0C4DE, "0xB0C4DE"),
+		POWDER_BLUE("Powder Blue", 0xB0E0E6, "0xB0E0E6"),
+		FIRE_BRICK("Fire Brick", 0xB22222, "0xB22222"),
+		DARK_GOLDEN_ROD("Dark Golden Rod", 0xB8860B, "0xB8860B"),
+		MEDIUM_ORCHID("Medium Orchid", 0xBA55D3, "0xBA55D3"),
+		ROSY_BROWN("Rosy Brown", 0xBC8F8F, "0xBC8F8F"),
+		DARK_KHAKI("Dark Khaki", 0xBDB76B, "0xBDB76B"),
+		SILVER("Silver", 0xC0C0C0, "0xC0C0C0"),
+		MEDIUM_VIOLET_RED("Medium Violet Red", 0xC71585, "0xC71585"),
+		INDIAN_RED("Indian Red", 0xCD5C5C, "0xCD5C5C"),
+		PERU("Peru", 0xCD853F, "0xCD853F"),
+		CHOCOLATE("Chocolate", 0xD2691E, "0xD2691E"),
+		TAN("Tan", 0xD2B48C, "0xD2B48C"),
+		LIGHT_GRAY("Light Gray", 0xD3D3D3, "0xD3D3D3"),
+		LIGHT_GREY("Light Grey", 0xD3D3D3, "0xD3D3D3"),
+		THISTLE("Thistle", 0xD8BFD8, "0xD8BFD8"),
+		ORCHID("Orchid", 0xDA70D6, "0xDA70D6"),
+		GOLDEN_ROD("Golden Rod", 0xDAA520, "0xDAA520"),
+		PALE_VIOLET_RED("Pale Violet Red", 0xDB7093, "0xDB7093"),
+		CRIMSON("Crimson", 0xDC143C, "0xDC143C"),
+		GAINSBORO("Gainsboro", 0xDCDCDC, "0xDCDCDC"),
+		PLUM("Plum", 0xDDA0DD, "0xDDA0DD"),
+		BURLY_WOOD("Burly Wood", 0xDEB887, "0xDEB887"),
+		LIGHT_CYAN("Light Cyan", 0xE0FFFF, "0xE0FFFF"),
+		LAVENDER("Lavender", 0xE6E6FA, "0xE6E6FA"),
+		DARK_SALMON("Dark Salmon", 0xE9967A, "0xE9967A"),
+		VIOLET("Violet", 0xEE82EE, "0xEE82EE"),
+		PALE_GOLDEN_ROD("Pale Golden Rod", 0xEEE8AA, "0xEEE8AA"),
+		LIGHT_CORAL("Light Coral", 0xF08080, "0xF08080"),
+		KHAKI("Khaki", 0xF0E68C, "0xF0E68C"),
+		ALICE_BLUE("Alice Blue", 0xF0F8FF, "0xF0F8FF"),
+		HONEY_DEW("Honey Dew", 0xF0FFF0, "0xF0FFF0"),
+		AZURE("Azure", 0xF0FFFF, "0xF0FFFF"),
+		SANDY_BROWN("Sandy Brown", 0xF4A460, "0xF4A460"),
+		WHEAT("Wheat", 0xF5DEB3, "0xF5DEB3"),
+		BEIGE("Beige", 0xF5F5DC, "0xF5F5DC"),
+		WHITE_SMOKE("White Smoke", 0xF5F5F5, "0xF5F5F5"),
+		MINT_CREAM("Mint Cream", 0xF5FFFA, "0xF5FFFA"),
+		GHOST_WHITE("Ghost White", 0xF8F8FF, "0xF8F8FF"),
+		SALMON("Salmon", 0xFA8072, "0xFA8072"),
+		ANTIQUE_WHITE("Antique White", 0xFAEBD7, "0xFAEBD7"),
+		LINEN("Linen", 0xFAF0E6, "0xFAF0E6"),
+		LIGHT_GOLDEN_ROD_YELLOW("Light Golden Rod Yellow", 0xFAFAD2, "0xFAFAD2"),
+		OLD_LACE("Old Lace", 0xFDF5E6, "0xFDF5E6"),
+		RED("Red", 0xFF0000, "0xFF0000"),
+		FUCHSIA("Fuchsia", 0xFF00FF, "0xFF00FF"),
+		MAGENTA("Magenta", 0xFF00FF, "0xFF00FF"),
+		DEEP_PINK("Deep Pink", 0xFF1493, "0xFF1493"),
+		ORANGE_RED("Orange Red", 0xFF4500, "0xFF4500"),
+		TOMATO("Tomato", 0xFF6347, "0xFF6347"),
+		HOT_PINK("Hot Pink", 0xFF69B4, "0xFF69B4"),
+		CORAL("Coral", 0xFF7F50, "0xFF7F50"),
+		DARK_ORANGE("Dark Orange", 0xFF8C00, "0xFF8C00"),
+		LIGHT_SALMON("Light Salmon", 0xFFA07A, "0xFFA07A"),
+		ORANGE("Orange", 0xFFA500, "0xFFA500"),
+		LIGHT_PINK("Light Pink", 0xFFB6C1, "0xFFB6C1"),
+		PINK("Pink", 0xFFC0CB, "0xFFC0CB"),
+		GOLD("Gold", 0xFFD700, "0xFFD700"),
+		PEACH_PUFF("Peach Puff", 0xFFDAB9, "0xFFDAB9"),
+		NAVAJO_WHITE("Navajo White", 0xFFDEAD, "0xFFDEAD"),
+		MOCCASIN("Moccasin", 0xFFE4B5, "0xFFE4B5"),
+		BISQUE("Bisque", 0xFFE4C4, "0xFFE4C4"),
+		MISTY_ROSE("Misty Rose", 0xFFE4E1, "0xFFE4E1"),
+		BLANCHED_ALMOND("Blanched Almond", 0xFFEBCD, "0xFFEBCD"),
+		PAPAYA_WHIP("Papaya Whip", 0xFFEFD5, "0xFFEFD5"),
+		LAVENDER_BLUSH("Lavender Blush", 0xFFF0F5, "0xFFF0F5"),
+		SEA_SHELL("Sea Shell", 0xFFF5EE, "0xFFF5EE"),
+		CORNSILK("Cornsilk", 0xFFF8DC, "0xFFF8DC"),
+		LEMON_CHIFFON("Lemon Chiffon", 0xFFFACD, "0xFFFACD"),
+		FLORAL_WHITE("Floral White", 0xFFFAF0, "0xFFFAF0"),
+		SNOW("Snow", 0xFFFAFA, "0xFFFAFA"),
+		YELLOW("Yellow", 0xFFFF00, "0xFFFF00"),
+		LIGHT_YELLOW("Light Yellow", 0xFFFFE0, "0xFFFFE0"),
+		IVORY("Ivory", 0xFFFFF0, "0xFFFFF0"),
+		WHITE("White", 0xFFFFFF, "0xFFFFFF"),
+		;
+
+		private final int color;
+		private final String asString;
+
+		HtmlColorDarkestFirst(final String name, final int color, final String hexColorCode) {
+			this.color = color;
+			this.asString = name + " ("+hexColorCode+")";
+		}
+
+		@Override
+		public String toString() {
+			return asString;
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return color;
+		}
+	}
+
+	/**
+	 * For testing colored enums in the GUI
+	 */
+	enum RandomColor implements IDisplayColorableEnum {
+		FIRST,
+		SECOND,
+		THIRD,
+		FOURTH,
+		FIFTH,
+		SIXTH,
+		SEVENTH,
+		EIGHTH,
+		NINTH,
+		TENTH,
+		;
+
+		@Override
+		public String toString() {
+			return name() + " " + Math.random();
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return Color.HSBtoRGB((float) Math.random(), 1.0F, 1.0F);
+		}
 	}
 
 	@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -213,6 +812,11 @@ public class ConfigTest {
 			// 10x config
 			private static Config aVeryNestedStringConfig;
 			private static String aPathDefinedString;
+			private static HSBColor aHSBColor;
+			private static HtmlColorAlphabetical aHtmlColorAlphabetical;
+			private static HtmlColorLightestFirst aHtmlColorLightestFirst;
+			private static HtmlColorDarkestFirst aHtmlColorDarkestFirst;
+			private static RandomColor aRandomColor;
 
 			private static boolean category0_aBoolean;
 			private static int category0_anInt;
@@ -311,6 +915,11 @@ public class ConfigTest {
 				bakeAndDebug(() -> aVeryNestedStringList, CONFIG.aVeryNestedStringList, $ -> aVeryNestedStringList = $, LOGGER);
 				bakeAndDebug(() -> aVeryNestedStringConfig, CONFIG.aVeryNestedStringConfig, $ -> aVeryNestedStringConfig = $, LOGGER);
 				bakeAndDebug(() -> aPathDefinedString, CONFIG.aPathDefinedString, $ -> aPathDefinedString = $, LOGGER);
+				bakeAndDebug(() -> aHSBColor, CONFIG.aHSBColor, $ -> aHSBColor = $, LOGGER);
+				bakeAndDebug(() -> aHtmlColorAlphabetical, CONFIG.aHtmlColorAlphabetical, $ -> aHtmlColorAlphabetical = $, LOGGER);
+				bakeAndDebug(() -> aHtmlColorLightestFirst, CONFIG.aHtmlColorLightestFirst, $ -> aHtmlColorLightestFirst = $, LOGGER);
+				bakeAndDebug(() -> aHtmlColorDarkestFirst, CONFIG.aHtmlColorDarkestFirst, $ -> aHtmlColorDarkestFirst = $, LOGGER);
+				bakeAndDebug(() -> aRandomColor, CONFIG.aRandomColor, $ -> aRandomColor = $, LOGGER);
 
 				bakeAndDebug(() -> category0_aBoolean, CONFIG.category0_aBoolean, $ -> category0_aBoolean = $, LOGGER);
 				bakeAndDebug(() -> category0_anInt, CONFIG.category0_anInt, $ -> category0_anInt = $, LOGGER);
@@ -407,6 +1016,11 @@ public class ConfigTest {
 				// 10x Config
 				private final ConfigValue<Config> aVeryNestedStringConfig;
 				private final ConfigValue<String> aPathDefinedString;
+				private final EnumValue<HSBColor> aHSBColor;
+				private final EnumValue<HtmlColorAlphabetical> aHtmlColorAlphabetical;
+				private final EnumValue<HtmlColorLightestFirst> aHtmlColorLightestFirst;
+				private final EnumValue<HtmlColorDarkestFirst> aHtmlColorDarkestFirst;
+				private final EnumValue<RandomColor> aRandomColor;
 
 				private final BooleanValue category0_aBoolean;
 				private final IntValue category0_anInt;
@@ -836,6 +1450,33 @@ public class ConfigTest {
 							.comment("a pathDefinedString")
 							.translation("aPathDefinedString")
 							.define("aPathDefinedString0.aPathDefinedString1.aPathDefinedString2", "Did this work?");
+
+					aHSBColor = builder
+							.comment("a HSBColor")
+							.translation("aHSBColor")
+							.defineEnum("aHSBColor", HSBColor.H_0);
+
+					aHtmlColorAlphabetical = builder
+							.comment("a HtmlColorAlphabetical")
+							.translation("aHtmlColorAlphabetical")
+							.defineEnum("aHtmlColorAlphabetical", HtmlColorAlphabetical.ALICE_BLUE);
+
+					aHtmlColorLightestFirst = builder
+							.comment("a HtmlColorLightestFirst")
+							.translation("aHtmlColorLightestFirst")
+							.defineEnum("aHtmlColorLightestFirst", HtmlColorLightestFirst.WHITE);
+
+					aHtmlColorDarkestFirst = builder
+							.comment("a HtmlColorDarkestFirst")
+							.translation("aHtmlColorDarkestFirst")
+							.defineEnum("aHtmlColorDarkestFirst", HtmlColorDarkestFirst.BLACK);
+
+					aRandomColor = builder
+							.comment("a RandomColor")
+							.translation("aRandomColor")
+							.defineEnum("aRandomColor", RandomColor.FIRST);
+
+					// Category tests
 
 					builder.comment("Category0 configuration settings")
 							.push("category0");
