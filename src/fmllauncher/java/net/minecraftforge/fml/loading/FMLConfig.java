@@ -33,6 +33,13 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
+/**
+ * Modders: Do not base your config off this, use Forge's config system and base your config off Forge's Config.
+ *
+ * @see net.minecraftforge.common.ForgeConfig
+ * @see net.minecraftforge.common.ForgeConfigSpec
+ * @see net.minecraftforge.fml.config.ModConfig
+ */
 public class FMLConfig
 {
     private static final Logger LOGGER = LogManager.getLogger();
