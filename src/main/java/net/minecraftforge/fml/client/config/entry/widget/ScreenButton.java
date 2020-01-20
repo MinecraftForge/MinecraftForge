@@ -50,7 +50,7 @@ public class ScreenButton<T> extends GuiButtonExt implements IConfigListEntryWid
 	@Override
 	public void tick() {
 		if (isValid())
-			this.setFGColor(0);
+			this.setFGColor(0); // TODO: Change to clearFGColor() if MinecraftForge/pull/6460 is accepted.
 		else
 			this.setFGColor(BooleanButton.getColor(false));
 	}
