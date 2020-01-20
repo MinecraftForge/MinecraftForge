@@ -175,6 +175,12 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
+        userdev_test {
+            compileClasspath += sourceSets.userdev.runtimeClasspath
+            runtimeClasspath += sourceSets.userdev.runtimeClasspath
+            compileClasspath += sourceSets.test.runtimeClasspath
+            runtimeClasspath += sourceSets.test.runtimeClasspath
+        }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
@@ -252,6 +258,8 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
+
                 mods {
                     TestMods { sources sourceSets.test }
                 }
@@ -281,6 +289,8 @@ project(':forge') {
             forge_test_server {
                 parent runs.forge_server
                 taskName 'forge_test_server'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     TestMods { sources sourceSets.test }
@@ -314,6 +324,8 @@ project(':forge') {
             forge_test_data {
                 parent runs.forge_data
                 taskName 'forge_test_data'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     tests { sources  sourceSets.test }
