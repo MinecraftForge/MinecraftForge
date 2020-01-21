@@ -133,8 +133,6 @@ public class ForgeConfig
 
         public final BooleanValue showLoadWarnings;
 
-        public final BooleanValue allowEmissiveItems;
-
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -175,11 +173,6 @@ public class ForgeConfig
                 .comment("When enabled, forge will show any warnings that occurred during loading")
                 .translation("forge.configgui.showloadwarnings")
                 .define("showLoadWarnings", true);
-
-            allowEmissiveItems = builder
-                .comment("Allow item rendering to detect emissive quads and draw them properly. This allows glowing blocks to look the same in item form, but incurs a very slight performance hit.")
-                .translation("forge.configgui.allowEmissiveItems")
-                .define("allowEmissiveItems", true);
 
             builder.pop();
         }

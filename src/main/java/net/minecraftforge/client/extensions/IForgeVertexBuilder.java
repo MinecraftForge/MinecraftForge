@@ -30,6 +30,8 @@ import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -108,8 +110,9 @@ public interface IForgeVertexBuilder
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
         int bl = LightTexture.func_228450_a_(lightmapCoord);
         int sl = LightTexture.func_228454_b_(lightmapCoord);
-        int blBaked = Short.toUnsignedInt(data.getShort(24)) >> 4;
-        int slBaked = Short.toUnsignedInt(data.getShort(26)) >> 4;
+        int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
+        int blBaked = Short.toUnsignedInt(data.getShort(offset)) >> 4;
+        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2)) >> 4;
         bl = Math.max(bl, blBaked);
         sl = Math.max(sl, slBaked);
         return LightTexture.func_228451_a_(bl, sl);

@@ -247,6 +247,20 @@ public class LightUtil
             }
         }
     }
+    
+    public static int getLightOffset(int v)
+    {
+        return (v * 8) + 6;
+    }
+
+    public static void setLightData(BakedQuad q, int light)
+    {
+        int[] data = q.getVertexData();
+        for (int i = 0; i < 4; i++)
+        {
+            data[getLightOffset(i)] = light;
+        }
+    }
 
     private static final class ItemPipeline
     {
