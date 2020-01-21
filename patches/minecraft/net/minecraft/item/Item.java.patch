@@ -17,8 +17,8 @@
        }
 +      this.canRepair = p_i48487_1_.canRepair;
 +      this.toolClasses.putAll(p_i48487_1_.toolClasses);
-+      Object tmp = p_i48487_1_.teisr == null ? null : net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.teisr);
-+      this.teisr = tmp == null ? null : () -> (net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer) tmp;
++      Object tmp = p_i48487_1_.ister == null ? null : net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.ister);
++      this.ister = tmp == null ? null : () -> (net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer) tmp;
  
     }
  
@@ -86,7 +86,7 @@
     }
  
 +   @Nullable
-+   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer> teisr;
++   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer> ister;
 +   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<Item> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.ItemTags::getGeneration, net.minecraft.tags.ItemTags::func_199903_a);
 +   protected final boolean canRepair;
@@ -109,7 +109,7 @@
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
 +   public final net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getItemStackTileEntityRenderer() {
-+     net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer renderer = teisr != null ? teisr.get() : null;
++     net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer renderer = ister != null ? ister.get() : null;
 +     return renderer != null ? renderer : net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer.field_147719_a;
 +   }
 +
@@ -127,7 +127,7 @@
        private Food field_221541_f;
 +      private boolean canRepair = true;
 +      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
-+      private java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> teisr;
++      private java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister;
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
@@ -147,7 +147,7 @@
 +      }
 +
 +      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> teisr) {
-+         this.teisr = teisr;
++         this.ister = ister;
 +         return this;
 +      }
     }
