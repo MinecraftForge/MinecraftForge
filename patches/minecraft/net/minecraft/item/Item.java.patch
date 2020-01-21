@@ -108,7 +108,7 @@
 +
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public final net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getTileEntityItemStackRenderer() {
++   public final net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getItemStackTileEntityRenderer() {
 +     net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer renderer = teisr != null ? teisr.get() : null;
 +     return renderer != null ? renderer : net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer.field_147719_a;
 +   }
@@ -146,7 +146,7 @@
 +         return this;
 +      }
 +
-+      public Item.Properties setTEISR(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> teisr) {
++      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> teisr) {
 +         this.teisr = teisr;
 +         return this;
 +      }
