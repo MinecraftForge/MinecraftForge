@@ -29,7 +29,7 @@ package net.minecraftforge.common;
  * require the method:
  * 
  * <pre>
- * public static MyEnum create(String name, Object foo)
+ * public static MyEnum create(String enumName, Object foo)
  * {
  *     throw new IllegalStateException("Enum not extended");
  * }
