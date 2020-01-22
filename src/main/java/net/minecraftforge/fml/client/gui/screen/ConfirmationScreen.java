@@ -17,14 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.StartupQuery;
 
-public class GuiConfirmation extends GuiNotification
+public class ConfirmationScreen extends NotificationScreen
 {
-    public GuiConfirmation(StartupQuery query)
+    public ConfirmationScreen(StartupQuery query)
     {
         super(query);
     }
@@ -34,14 +34,14 @@ public class GuiConfirmation extends GuiNotification
     {
         this.addButton(new Button(this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"), b ->
             {
-                GuiConfirmation.this.minecraft.currentScreen = null;
+                ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(true);
                 query.finish();
             }
         ));
         this.addButton(new Button(this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), b ->
             {
-                GuiConfirmation.this.minecraft.currentScreen = null;
+                ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(false);
                 query.finish();
             }

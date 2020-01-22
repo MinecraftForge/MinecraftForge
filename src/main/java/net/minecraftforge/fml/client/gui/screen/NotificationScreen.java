@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
@@ -25,9 +25,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.StartupQuery;
 
-public class GuiNotification extends Screen
+public class NotificationScreen extends Screen
 {
-    public GuiNotification(StartupQuery query)
+    public NotificationScreen(StartupQuery query)
     {
         super(new TranslationTextComponent("fml.menu.notification.title"));
         this.query = query;
@@ -37,7 +37,7 @@ public class GuiNotification extends Screen
     public void init()
     {
         this.buttons.add(new Button(this.width / 2 - 100, this.height - 38, 200, 20, I18n.format("gui.done"), b -> {
-            GuiNotification.this.minecraft.displayGuiScreen(null);
+            NotificationScreen.this.minecraft.displayGuiScreen(null);
             query.finish();
         }));
     }

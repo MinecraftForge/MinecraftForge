@@ -304,24 +304,23 @@
              this.func_226560_a_(p_213819_1_, false, true);
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
           }
-@@ -1274,6 +1341,8 @@
-    private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
-       if (Math.abs(this.func_226277_ct_() - (double)p_190774_1_.func_177958_n()) <= 3.0D && Math.abs(this.func_226278_cu_() - (double)p_190774_1_.func_177956_o()) <= 2.0D && Math.abs(this.func_226281_cx_() - (double)p_190774_1_.func_177952_p()) <= 3.0D) {
-          return true;
-+      } else if (p_190774_2_ == null) {
-+         return false;
-       } else {
-          BlockPos blockpos = p_190774_1_.func_177972_a(p_190774_2_.func_176734_d());
-          return Math.abs(this.func_226277_ct_() - (double)blockpos.func_177958_n()) <= 3.0D && Math.abs(this.func_226278_cu_() - (double)blockpos.func_177956_o()) <= 2.0D && Math.abs(this.func_226281_cx_() - (double)blockpos.func_177952_p()) <= 3.0D;
-@@ -1286,6 +1355,7 @@
+@@ -1273,6 +1340,7 @@
     }
  
+    private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
++      if (p_190774_2_ == null) return false;
+       return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
+    }
+ 
+@@ -1289,6 +1357,7 @@
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
-+      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_225652_1_, p_225652_2_);
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
++      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_225652_1_, p_225652_2_);
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1299,17 +1369,17 @@
+       }
+ 
+@@ -1300,17 +1369,17 @@
     }
  
     public static Optional<Vec3d> func_213822_a(IWorldReader p_213822_0_, BlockPos p_213822_1_, boolean p_213822_2_) {
@@ -343,7 +342,7 @@
        }
     }
  
-@@ -1324,15 +1394,62 @@
+@@ -1325,15 +1394,62 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -408,7 +407,7 @@
        if (p_226560_1_ != null) {
           if (p_226560_3_ && !p_226560_1_.equals(this.field_71077_c)) {
              this.func_145747_a(new TranslationTextComponent("block.minecraft.bed.set_spawn"));
-@@ -1505,6 +1622,7 @@
+@@ -1506,6 +1622,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -416,7 +415,7 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1559,6 +1677,10 @@
+@@ -1560,6 +1677,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -427,7 +426,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1598,6 +1720,10 @@
+@@ -1599,6 +1720,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -438,7 +437,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1788,7 +1914,10 @@
+@@ -1789,7 +1914,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -450,7 +449,7 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -2028,4 +2157,45 @@
+@@ -2029,4 +2157,45 @@
           return this.field_221260_g;
        }
     }

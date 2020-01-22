@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +63,8 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.fml.client.gui.widget.ModListWidget;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -389,12 +390,12 @@ public class ModListScreen extends Screen
         super.render(mouseX, mouseY, partialTicks);
     }
 
-    Minecraft getMinecraftInstance()
+    public Minecraft getMinecraftInstance()
     {
         return minecraft;
     }
 
-    FontRenderer getFontRenderer()
+    public FontRenderer getFontRenderer()
     {
         return font;
     }

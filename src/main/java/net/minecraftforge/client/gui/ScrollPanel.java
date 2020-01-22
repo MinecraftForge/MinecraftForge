@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
@@ -35,7 +34,7 @@ import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public abstract class ScrollPanel extends FocusableGui implements IRenderable
 {

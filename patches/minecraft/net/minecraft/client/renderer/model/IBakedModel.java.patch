@@ -11,7 +11,7 @@
     List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_);
  
     boolean func_177555_b();
-@@ -19,9 +21,12 @@
+@@ -21,9 +23,12 @@
  
     boolean func_188618_c();
  

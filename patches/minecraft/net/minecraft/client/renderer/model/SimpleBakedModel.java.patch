@@ -1,13 +1,13 @@
 --- a/net/minecraft/client/renderer/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/renderer/model/SimpleBakedModel.java
-@@ -74,6 +74,10 @@
-          this(p_i46988_1_.func_178309_b(), p_i46988_1_.func_178311_c(), p_i46988_1_.func_181682_g(), p_i46988_2_);
-       }
+@@ -77,6 +77,10 @@
+       private final boolean field_177653_e;
+       private final ItemCameraTransforms field_177651_f;
  
 +      public Builder(net.minecraftforge.client.model.IModelConfiguration model, ItemOverrideList overrides) {
-+         this(model.useSmoothLighting(), model.isShadedInGui(), model.getCameraTransforms(), overrides);
++         this(model.useSmoothLighting(), model.isShadedInGui(), true/*TODO: Forge*/, model.getCameraTransforms(), overrides);
 +      }
 +
-       private Builder(boolean p_i46990_1_, boolean p_i46990_2_, ItemCameraTransforms p_i46990_3_, ItemOverrideList p_i46990_4_) {
-          for(Direction direction : Direction.values()) {
-             this.field_177654_b.put(direction, Lists.newArrayList());
+       public Builder(BlockModel p_i230060_1_, ItemOverrideList p_i230060_2_, boolean p_i230060_3_) {
+          this(p_i230060_1_.func_178309_b(), p_i230060_1_.func_230176_c_().func_230178_a_(), p_i230060_3_, p_i230060_1_.func_181682_g(), p_i230060_2_);
+       }

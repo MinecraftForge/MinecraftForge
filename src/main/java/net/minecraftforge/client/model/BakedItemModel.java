@@ -61,6 +61,7 @@ public class BakedItemModel implements IBakedModel
 
     @Override public boolean isAmbientOcclusion() { return true; }
     @Override public boolean isGui3d() { return false; }
+    @Override public boolean func_230044_c_() { return false; }
     @Override public boolean isBuiltInRenderer() { return false; }
     @Override public TextureAtlasSprite getParticleTexture() { return particle; }
     @Override public ItemOverrideList getOverrides() { return overrides; }

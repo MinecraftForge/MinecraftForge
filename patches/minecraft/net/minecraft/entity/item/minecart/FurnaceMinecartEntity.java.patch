@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
-@@ -114,6 +114,7 @@
+@@ -110,6 +110,7 @@
     }
  
     public boolean func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {

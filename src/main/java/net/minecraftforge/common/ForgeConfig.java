@@ -200,7 +200,7 @@ public class ForgeConfig
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+    public static void onFileChange(final ModConfig.Reloading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Forge config just got changed on the file system!");
     }
 
