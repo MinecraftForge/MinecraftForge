@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/BarrelTileEntity.java
++++ b/net/minecraft/tileentity/BarrelTileEntity.java
+@@ -100,7 +100,7 @@
+          this.func_213964_r();
+       } else {
+          BlockState blockstate = this.func_195044_w();
+-         if (blockstate.func_177230_c() != Blocks.field_222422_lK) {
++         if (!(blockstate.func_177230_c() instanceof BarrelBlock)) {
+             this.func_145843_s();
+             return;
+          }
