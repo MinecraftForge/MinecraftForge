@@ -23,7 +23,7 @@
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
           } else {
 -            ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
-+            p_229111_1_.func_77973_b().getTileEntityItemStackRenderer().func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
++            p_229111_1_.func_77973_b().getItemStackTileEntityRenderer().func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
           }
  
           p_229111_4_.func_227865_b_();

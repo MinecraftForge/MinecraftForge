@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
@@ -53,20 +54,10 @@ public class ExtendedButton extends Button
             int k = this.getYImage(this.isHovered);
             GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
             this.renderBg(mc, mouseX, mouseY);
-            int color = 14737632;
+            int color = getFGColor();
 
-            if (packedFGColor != 0)
-            {
-                color = packedFGColor;
-            }
-            else if (!this.active)
-            {
-                color = 10526880;
-            }
-            else if (this.isHovered)
-            {
-                color = 16777120;
-            }
+            if (this.isHovered && this.packedFGColor == Widget.UNSET_FG_COLOR)
+                color = 0xFFFFA0; // Slightly Yellow
 
             String buttonText = this.getMessage();
             int strWidth = mc.fontRenderer.getStringWidth(buttonText);

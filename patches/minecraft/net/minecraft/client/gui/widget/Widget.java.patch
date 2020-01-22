@@ -29,12 +29,16 @@
        this.focused = p_setFocused_1_;
     }
 +
-+   protected int packedFGColor = 0;
++   public static final int UNSET_FG_COLOR = -1;
++   protected int packedFGColor = UNSET_FG_COLOR;
 +   public int getFGColor() {
-+      if (packedFGColor != 0) return packedFGColor;
-+      return this.active ? 16777215 : 10526880;
++      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
++      return this.active ? 16777215 : 10526880; // White : Light Grey
 +   }
 +   public void setFGColor(int color) {
 +      this.packedFGColor = color;
++   }
++   public void clearFGColor() {
++      this.packedFGColor = UNSET_FG_COLOR;
 +   }
  }
