@@ -339,6 +339,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             final Supplier<Long> defaultSupplier = () -> defaultValue;
             return new LongValue(this, defineInList(path, defaultSupplier, allowedValues, Long.class).getPath(), defaultSupplier);
         }
+        //Object > Limited Value Object (Enum)
+        // Enum needs special handling otherwise it gets read as a String and a class cast exception can occur.
+        public <V extends Enum<V>> EnumValue<V> defineInList(String path, V defaultValue, Collection<V> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public <V extends Enum<V>> EnumValue<V> defineInList(List<String> path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(path, defaultValue, allowedValues);
         }
 
         //Object > List
