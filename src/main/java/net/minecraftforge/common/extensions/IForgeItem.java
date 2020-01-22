@@ -763,7 +763,7 @@ public interface IForgeItem
      *         one.
      */
     @OnlyIn(Dist.CLIENT)
-    ItemStackTileEntityRenderer getTileEntityItemStackRenderer();
+    ItemStackTileEntityRenderer getItemStackTileEntityRenderer();
 
     /**
      * Retrieves a list of tags names this is known to be associated with.
