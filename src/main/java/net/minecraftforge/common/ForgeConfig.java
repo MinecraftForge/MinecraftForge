@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -202,7 +201,7 @@ public class ForgeConfig
 
     @SubscribeEvent
     public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
-        LogManager.getLogger().fatal(CORE, "Forge config just got changed on the file system!");
+        LogManager.getLogger().debug(FORGEMOD, "Forge config just got changed on the file system!");
     }
 
     //General
