@@ -17,11 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
@@ -33,9 +34,9 @@ import net.minecraft.client.gui.widget.button.Button;
  *
  * @author bspkrs
  */
-public class GuiButtonExt extends Button
+public class ExtendedButton extends Button
 {
-    public GuiButtonExt(int xPos, int yPos, int width, int height, String displayString, IPressable handler)
+    public ExtendedButton(int xPos, int yPos, int width, int height, String displayString, IPressable handler)
     {
         super(xPos, yPos, width, height, displayString, handler);
     }

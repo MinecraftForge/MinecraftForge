@@ -17,9 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +29,7 @@ import javax.annotation.Nullable;
  *
  * @author iChun
  */
-public class GuiSlider extends GuiButtonExt
+public class Slider extends ExtendedButton
 {
     /** The value of this slider control. */
     public double sliderValue = 1.0F;
@@ -50,12 +51,12 @@ public class GuiSlider extends GuiButtonExt
 
     public boolean drawString = true;
 
-    public GuiSlider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler)
+    public Slider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler)
     {
         this(xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, handler, null);
     }
 
-    public GuiSlider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler, @Nullable ISlider par)
+    public Slider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler, @Nullable ISlider par)
     {
         super(xPos, yPos, width, height, prefix, handler);
         minValue = minVal;
@@ -85,7 +86,7 @@ public class GuiSlider extends GuiButtonExt
             setMessage("");
     }
 
-    public GuiSlider(int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, IPressable handler, ISlider par)
+    public Slider(int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, IPressable handler, ISlider par)
     {
         this(xPos, yPos, 150, 20, displayStr, "", minVal, maxVal, currentVal, true, true, handler, par);
     }
@@ -207,6 +208,6 @@ public class GuiSlider extends GuiButtonExt
 
     public static interface ISlider
     {
-        void onChangeSliderValue(GuiSlider slider);
+        void onChangeSliderValue(Slider slider);
     }
 }

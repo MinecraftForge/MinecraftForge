@@ -201,7 +201,7 @@ public class ForgeConfig
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+    public static void onFileChange(final ModConfig.Reloading configEvent) {
         LogManager.getLogger().fatal(CORE, "Forge config just got changed on the file system!");
     }
 
