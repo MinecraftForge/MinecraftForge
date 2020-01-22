@@ -3,7 +3,11 @@ buildscript {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
@@ -59,8 +63,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.15.1'
-    MCP_VERSION = '20191217.105819'
+    MC_VERSION = '1.15.2'
+    MCP_VERSION = '20200122.131323'
 }
 
 project(':mcp') {
@@ -78,7 +82,11 @@ project(':clean') {
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     
     repositories {
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     
     dependencies {
@@ -181,7 +189,11 @@ project(':forge') {
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
 
     ext {
@@ -978,7 +990,7 @@ project(':forge') {
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
         from(extraTxts)
-        from(rootProject.file('/src/main/resources/forge_logo.png')) {
+        from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
         }
         from(rootProject.file('/src/main/resources/url.png'))

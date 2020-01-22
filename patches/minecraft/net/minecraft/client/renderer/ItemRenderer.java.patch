@@ -36,7 +36,7 @@
        }
  
     }
-@@ -216,6 +216,7 @@
+@@ -215,6 +215,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -44,7 +44,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -247,18 +248,16 @@
+@@ -246,18 +247,16 @@
              irendertypebuffer$impl.func_228461_a_();
           }
  
@@ -67,7 +67,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.enableBlend();
-@@ -296,4 +295,9 @@
+@@ -295,4 +294,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

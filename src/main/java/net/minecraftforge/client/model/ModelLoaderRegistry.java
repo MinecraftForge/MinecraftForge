@@ -211,28 +211,21 @@ public class ModelLoaderRegistry
         }
     }
 
-    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
     {
         IBakedModel model;
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
-        {
             modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
-        }
+
         if (customModel != null)
-        {
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
-        }
         else
-        {
-            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation);
-        }
+            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
 
         if (customModelState != null && !model.doesHandlePerspectives())
-        {
             model = new PerspectiveMapWrapper(model, customModelState);
-        }
 
         return model;
     }
