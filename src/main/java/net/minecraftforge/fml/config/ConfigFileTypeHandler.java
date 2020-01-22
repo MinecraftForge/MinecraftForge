@@ -92,7 +92,7 @@ public class ConfigFileTypeHandler {
             if (!this.modConfig.getSpec().isCorrecting()) {
                 this.commentedFileConfig.load();
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
-                this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
+                this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
             }
         }
     }
