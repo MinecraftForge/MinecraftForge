@@ -109,10 +109,6 @@
   "forge.update.newversion": "New Forge version available: %s",
   "forge.menu.updatescreen.title": "Mod Update",
 
-  "forge.configgui.clumpingThreshold.tooltip": "Controls the number threshold at which Packet51 is preferred over Packet52.",
-  "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
-  "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
-  "forge.configgui.disableVersionCheck": "Disable Forge Version Check",
   "forge.configgui.removeErroringEntities.tooltip": "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.",
   "forge.configgui.removeErroringEntities": "Remove Erroring Entities",
   "forge.configgui.removeErroringTileEntities.tooltip": "Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.",
@@ -129,6 +125,11 @@
   "forge.configgui.fixVanillaCascading": "Fix Vanilla Cascading",
   "forge.configgui.dimensionUnloadQueueDelay.tooltip": "The time in ticks the server will wait until unloading a dimension. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.",
   "forge.configgui.dimensionUnloadQueueDelay": "Delay when unloading dimension",
+  "forge.configgui.clumpingThreshold.tooltip": "Controls the number threshold at which Packet51 is preferred over Packet52.",
+  "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
+  "forge.configgui.treatEmptyTagsAsAir.tooltip": "Vanilla will treat crafting recipess using empty tags as air, and allow you to craft with nothing in that slot. If false, this changes empty tags to use BARRIER as the item. To prevent crafting with air.",
+  "forge.configgui.treatEmptyTagsAsAir": "Treat empty tags as air",
+
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",
   "forge.configgui.forgeCloudsEnabled.tooltip": "Enable uploading cloud geometry to the GPU for faster rendering.",
   "forge.configgui.forgeCloudsEnabled": "Use Forge cloud renderer",
@@ -139,8 +140,9 @@
   "forge.configgui.forgeLightPipelineEnabled": "Forge Light Pipeline Enabled",
   "forge.configgui.selectiveResourceReloadEnabled.tooltip": "When enabled, makes specific reload tasks such as language changing quicker to run.",
   "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
-  "forge.configgui.treatEmptyTagsAsAir.tooltip": "Vanilla will treat crafting recipess using empty tags as air, and allow you to craft with nothing in that slot. If false, this changes empty tags to use BARRIER as the item. To prevent crafting with air.",
-  "forge.configgui.treatEmptyTagsAsAir": "Treat empty tags as air",
+
+  "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
+  "forge.configgui.disableVersionCheck": "Disable Forge Version Check",
 
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
