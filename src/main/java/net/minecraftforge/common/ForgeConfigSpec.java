@@ -313,7 +313,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInList(path, () -> defaultValue, allowedValues);
         }
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues) {
-            return define(path, defaultSupplier, allowedValues::contains);
+            return defineInList(path, defaultSupplier, allowedValues, Object.class);
+        }
+        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues, Class<?> clazz) {
+            if (allowedValues.isEmpty())
+                throw new IllegalArgumentException("Must have allowed values.");
+            if (!allowedValues.contains(defaultSupplier.get()))
+                throw new IllegalArgumentException("Allowed values must contain the default value.");
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues.stream().map(t -> t instanceof Enum<?>? ((Enum<?>) t).name() : t.toString()).collect(Collectors.joining(", "))));
+            return define(path, defaultSupplier, allowedValues::contains, clazz);
+        }
         }
         }
 
