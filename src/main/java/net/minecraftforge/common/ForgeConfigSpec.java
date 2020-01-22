@@ -303,17 +303,18 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         //Object > Limited Value Object
-        public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> acceptableValues) {
-            return defineInList(split(path), defaultValue, acceptableValues);
+        public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(String path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
-            return defineInList(split(path), defaultSupplier, acceptableValues);
+        public <T> ConfigValue<T> defineInList(String path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues) {
+            return defineInList(split(path), defaultSupplier, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(List<String> path, T defaultValue, Collection<? extends T> acceptableValues) {
-            return defineInList(path, () -> defaultValue, acceptableValues);
+        public <T> ConfigValue<T> defineInList(List<String> path, T defaultValue, Collection<? extends T> allowedValues) {
+            return defineInList(path, () -> defaultValue, allowedValues);
         }
-        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
-            return define(path, defaultSupplier, acceptableValues::contains);
+        public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> allowedValues) {
+            return define(path, defaultSupplier, allowedValues::contains);
+        }
         }
 
         //Object > List
@@ -357,38 +358,38 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(split(path), defaultValue, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(split(path), defaultValue, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(split(path), defaultValue, converter, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(split(path), defaultValue, converter, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(acceptableValues));
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(allowedValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
-            return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... allowedValues) {
+            return defineEnum(path, defaultValue, converter, Arrays.asList(allowedValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
-            return defineEnum(split(path), defaultValue, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(split(path), defaultValue, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
-            return defineEnum(split(path), defaultValue, converter, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> allowedValues) {
+            return defineEnum(split(path), defaultValue, converter, allowedValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
-            return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> allowedValues) {
+            return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, allowedValues);
         }
         @SuppressWarnings("unchecked")
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> allowedValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
                 if (obj instanceof Enum) {
-                    return acceptableValues.contains(obj);
+                    return allowedValues.contains(obj);
                 }
                 if (obj == null) {
                     return false;
                 }
                 try {
-                    return acceptableValues.contains(converter.get(obj, defaultValue.getClass()));
+                    return allowedValues.contains(converter.get(obj, defaultValue.getClass()));
                 } catch (IllegalArgumentException | ClassCastException e) {
                     return false;
                 }
