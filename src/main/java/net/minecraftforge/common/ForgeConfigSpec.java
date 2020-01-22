@@ -244,6 +244,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(split(path), defaultValue);
         }
         public <T> ConfigValue<T> define(List<String> path, T defaultValue) {
+            // Arrays.asList returns a private implementation of List (java.util.Arrays$ArrayList) that does not extend ArrayList (java.util.ArrayList).
+            // By default TOML parses all Lists into ArrayLists (java.util.ArrayList).
+            // Since the list TOML returns is not assignable from Arrays.asList's impl,
+            // `defaultValue.getClass().isAssignableFrom(o.getClass())` will always be false, and the element will
+            // always be incorrect and it will be reset whenever #correct() is called.
+            // This is undesirable so an instanceof List check is performed on the value instead which results in correct behaviour.
+            if (defaultValue.getClass().getName().equals("java.util.Arrays$ArrayList"))
+                return define(path, defaultValue, o -> o != null && o instanceof List);
             return define(path, defaultValue, o -> o != null && defaultValue.getClass().isAssignableFrom(o.getClass()));
         }
         public <T> ConfigValue<T> define(String path, T defaultValue, Predicate<Object> validator) {
