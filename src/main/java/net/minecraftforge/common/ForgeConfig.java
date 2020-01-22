@@ -152,14 +152,14 @@ public class ForgeConfig
                 .define("disableStairSlabCulling", false);
 
             alwaysSetupTerrainOffThread = builder
-                .comment("Enable forge to queue all chunk updates to the Chunk Update thread.",
+                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
                         "May increase FPS significantly, but may also cause weird rendering lag.",
                         "Not recommended for computers without a significant number of cores available.")
                 .translation("forge.configgui.alwaysSetupTerrainOffThread")
                 .define("alwaysSetupTerrainOffThread", false);
 
             forgeLightPipelineEnabled = builder
-                .comment("Enable the forge block rendering pipeline - fixes the lighting of custom models.")
+                .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
                 .define("forgeLightPipelineEnabled", true);
 
@@ -169,7 +169,7 @@ public class ForgeConfig
                 .define("selectiveResourceReloadEnabled", true);
 
             showLoadWarnings = builder
-                .comment("When enabled, forge will show any warnings that occurred during loading")
+                .comment("When enabled, Forge will show any warnings that occurred during loading.")
                 .translation("forge.configgui.showloadwarnings")
                 .define("showLoadWarnings", true);
 
