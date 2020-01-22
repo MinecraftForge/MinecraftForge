@@ -30,7 +30,7 @@
     }
 +
 +   public static final int UNSET_FG_COLOR = -1;
-+   protected int packedFGColor = 0;
++   protected int packedFGColor = UNSET_FG_COLOR;
 +   public int getFGColor() {
 +      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
 +      return this.active ? 16777215 : 10526880; // White : Light Grey
