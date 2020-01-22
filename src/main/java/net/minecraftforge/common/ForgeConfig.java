@@ -67,7 +67,7 @@ public class ForgeConfig
                     .define("removeErroringTileEntities", false);
 
             fullBoundingBoxLadders = builder
-                    .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false")
+                    .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
                     .translation("forge.configgui.fullBoundingBoxLadders")
                     .worldRestart()
                     .define("fullBoundingBoxLadders", false);
@@ -100,13 +100,13 @@ public class ForgeConfig
                     .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
             clumpingThreshold = builder
-                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
+                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024.")
                     .translation("forge.configgui.clumpingThreshold")
                     .worldRestart()
                     .defineInRange("clumpingThreshold", 64, 64, 1024);
 
             treatEmptyTagsAsAir = builder
-                    .comment("Vanilla will treat crafting recipess using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
+                    .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
 
