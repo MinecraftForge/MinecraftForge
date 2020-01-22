@@ -146,7 +146,7 @@
 +         return this;
 +      }
 +
-+      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> teisr) {
++      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister) {
 +         this.ister = ister;
 +         return this;
 +      }
