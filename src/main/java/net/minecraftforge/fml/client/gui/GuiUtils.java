@@ -453,4 +453,20 @@ public class GuiUtils
 
         AbstractGui.blit(x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
     }
+
+    /**
+     * @param font The FontRenderer to use
+     * @param str The string to trim
+     * @param maxLength The maximum length of the string (including the ellipsis)
+     * @return The string with the end trimmed off and replaced with an ellipsis if it is too long
+     */
+    public static String trimStringToSize(final FontRenderer font, final String str, final int maxLength)
+    {
+        int strWidth = font.getStringWidth(str);
+        int ellipsisWidth = font.getStringWidth("...");
+        if (strWidth > maxLength && strWidth > ellipsisWidth)
+            return font.trimStringToWidth(str, maxLength - ellipsisWidth).trim() + "...";
+        return str;
+    }
+
 }
