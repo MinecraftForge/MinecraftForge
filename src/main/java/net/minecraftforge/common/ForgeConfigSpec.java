@@ -321,8 +321,23 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (!allowedValues.contains(defaultSupplier.get()))
                 throw new IllegalArgumentException("Allowed values must contain the default value.");
             context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues.stream().map(t -> t instanceof Enum<?>? ((Enum<?>) t).name() : t.toString()).collect(Collectors.joining(", "))));
+            if (defaultSupplier.get() instanceof Number)
+                return define(path, defaultSupplier, obj -> {
+                    if (!(obj instanceof Number))
+                        return false;
+                    return allowedValues.stream().anyMatch(n -> ((Number) n).doubleValue() == ((Number) obj).doubleValue());
+                }, clazz);
             return define(path, defaultSupplier, allowedValues::contains, clazz);
         }
+        }
+        //Object > Limited Value Object (Long)
+        // Long needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public LongValue defineInList(String path, long defaultValue, Collection<Long> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public LongValue defineInList(List<String> path, long defaultValue, Collection<Long> allowedValues) {
+            final Supplier<Long> defaultSupplier = () -> defaultValue;
+            return new LongValue(this, defineInList(path, defaultSupplier, allowedValues, Long.class).getPath(), defaultSupplier);
         }
         }
 
