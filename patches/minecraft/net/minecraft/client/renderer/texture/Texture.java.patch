@@ -5,8 +5,8 @@
     }
  
 +   // FORGE: This seems to have been stripped out, but we need it
-+   boolean lastBlur;
-+   boolean lastMipmap;
++   private boolean lastBlur;
++   private boolean lastMipmap;
 +
 +   public void setBlurMipmap(boolean blur, boolean mipmap) {
 +      this.lastBlur = this.field_174940_b;
