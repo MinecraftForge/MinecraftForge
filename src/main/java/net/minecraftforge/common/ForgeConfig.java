@@ -170,7 +170,7 @@ public class ForgeConfig
 
             showLoadWarnings = builder
                 .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                .translation("forge.configgui.showloadwarnings")
+                .translation("forge.configgui.showLoadWarnings")
                 .define("showLoadWarnings", true);
 
             builder.pop();
