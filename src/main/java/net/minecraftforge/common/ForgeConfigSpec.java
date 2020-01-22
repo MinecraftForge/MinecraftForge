@@ -749,14 +749,36 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         public String toString()
         {
-            if (clazz == Integer.class) {
-                if (max.equals(Integer.MAX_VALUE)) {
-                    return "> " + min;
-                } else if (min.equals(Integer.MIN_VALUE)) {
-                    return "< " + max;
-                }
-            } // TODO add more special cases?
-            return min + " ~ " + max;
+            final String greaterThan = "> " + min;
+            final String lessThan = "< " + max;
+            final String between = min + " ~ " + max;
+
+            if (clazz == Byte.class)
+                if (max.equals(Byte.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Byte.MIN_VALUE)) return lessThan;
+                else return between;
+            if (clazz == Short.class)
+                if (max.equals(Short.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Short.MIN_VALUE)) return lessThan;
+                else return between;
+            if (clazz == Integer.class)
+                if (max.equals(Integer.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Integer.MIN_VALUE)) return lessThan;
+                else return between;
+            if (clazz == Long.class)
+                if (max.equals(Long.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Long.MIN_VALUE)) return lessThan;
+                else return between;
+            else if (clazz == Float.class)
+                if (max.equals(Float.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Float.MIN_VALUE)) return lessThan;
+                else return between;
+            else if (clazz == Double.class)
+                if (max.equals(Double.MAX_VALUE)) return greaterThan;
+                else if (min.equals(Double.MIN_VALUE)) return lessThan;
+                else return between;
+
+            return between;
         }
     }
 
