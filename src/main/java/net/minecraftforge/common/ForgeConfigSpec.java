@@ -329,6 +329,23 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }, clazz);
             return define(path, defaultSupplier, allowedValues::contains, clazz);
         }
+        //Object > Limited Value Object (Byte)
+        // Byte needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public ByteValue defineInList(String path, byte defaultValue, Collection<Byte> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public ByteValue defineInList(List<String> path, byte defaultValue, Collection<Byte> allowedValues) {
+            final Supplier<Byte> defaultSupplier = () -> defaultValue;
+            return new ByteValue(this, defineInList(path, defaultSupplier, allowedValues, Byte.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Short)
+        // Short needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
+        public ShortValue defineInList(String path, short defaultValue, Collection<Short> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public ShortValue defineInList(List<String> path, short defaultValue, Collection<Short> allowedValues) {
+            final Supplier<Short> defaultSupplier = () -> defaultValue;
+            return new ShortValue(this, defineInList(path, defaultSupplier, allowedValues, Short.class).getPath(), defaultSupplier);
         }
         //Object > Limited Value Object (Long)
         // Long needs special handling otherwise it gets read as an Integer and a class cast exception can occur.
@@ -338,6 +355,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public LongValue defineInList(List<String> path, long defaultValue, Collection<Long> allowedValues) {
             final Supplier<Long> defaultSupplier = () -> defaultValue;
             return new LongValue(this, defineInList(path, defaultSupplier, allowedValues, Long.class).getPath(), defaultSupplier);
+        }
+        //Object > Limited Value Object (Float)
+        // Float needs special handling otherwise it gets read as an Double and a class cast exception can occur.
+        public FloatValue defineInList(String path, float defaultValue, Collection<Float> allowedValues) {
+            return defineInList(split(path), defaultValue, allowedValues);
+        }
+        public FloatValue defineInList(List<String> path, float defaultValue, Collection<Float> allowedValues) {
+            final Supplier<Float> defaultSupplier = () -> defaultValue;
+            return new FloatValue(this, defineInList(path, defaultSupplier, allowedValues, Float.class).getPath(), defaultSupplier);
         }
         //Object > Limited Value Object (Enum)
         // Enum needs special handling otherwise it gets read as a String and a class cast exception can occur.
@@ -471,18 +497,32 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }, Boolean.class).getPath(), defaultSupplier);
         }
 
-        //Double
-        public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
+        //Byte
+        public ByteValue defineInRange(String path, byte defaultValue, byte min, byte max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
-        public DoubleValue defineInRange(List<String> path, double defaultValue, double min, double max) {
-            return defineInRange(path, (Supplier<Double>)() -> defaultValue, min, max);
+        public ByteValue defineInRange(List<String> path, byte defaultValue, byte min, byte max) {
+            return defineInRange(path, (Supplier<Byte>)() -> defaultValue, min, max);
         }
-        public DoubleValue defineInRange(String path, Supplier<Double> defaultSupplier, double min, double max) {
+        public ByteValue defineInRange(String path, Supplier<Byte> defaultSupplier, byte min, byte max) {
             return defineInRange(split(path), defaultSupplier, min, max);
         }
-        public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
-            return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
+        public ByteValue defineInRange(List<String> path, Supplier<Byte> defaultSupplier, byte min, byte max) {
+            return new ByteValue(this, defineInRange(path, defaultSupplier, min, max, Byte.class).getPath(), defaultSupplier);
+        }
+
+        //Short
+        public ShortValue defineInRange(String path, short defaultValue, short min, short max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, short defaultValue, short min, short max) {
+            return defineInRange(path, (Supplier<Short>)() -> defaultValue, min, max);
+        }
+        public ShortValue defineInRange(String path, Supplier<Short> defaultSupplier, short min, short max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, Supplier<Short> defaultSupplier, short min, short max) {
+            return new ShortValue(this, defineInRange(path, defaultSupplier, min, max, Short.class).getPath(), defaultSupplier);
         }
 
         //Int
@@ -511,6 +551,34 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public LongValue defineInRange(List<String> path, Supplier<Long> defaultSupplier, long min, long max) {
             return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier);
+        }
+
+        //Float
+        public FloatValue defineInRange(String path, float defaultValue, float min, float max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, float defaultValue, float min, float max) {
+            return defineInRange(path, (Supplier<Float>)() -> defaultValue, min, max);
+        }
+        public FloatValue defineInRange(String path, Supplier<Float> defaultSupplier, float min, float max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, Supplier<Float> defaultSupplier, float min, float max) {
+            return new FloatValue(this, defineInRange(path, defaultSupplier, min, max, Float.class).getPath(), defaultSupplier);
+        }
+
+        //Double
+        public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public DoubleValue defineInRange(List<String> path, double defaultValue, double min, double max) {
+            return defineInRange(path, (Supplier<Double>)() -> defaultValue, min, max);
+        }
+        public DoubleValue defineInRange(String path, Supplier<Double> defaultSupplier, double min, double max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
+            return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
 
         public Builder comment(String comment)
@@ -796,6 +864,34 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    public static class ByteValue extends ConfigValue<Byte>
+    {
+        ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Byte getRaw(Config config, List<String> path, Supplier<Byte> defaultSupplier)
+        {
+            return config.getByteOrElse(path, defaultSupplier.get());
+        }
+    }
+
+    public static class ShortValue extends ConfigValue<Short>
+    {
+        ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Short getRaw(Config config, List<String> path, Supplier<Short> defaultSupplier)
+        {
+            return config.getShortOrElse(path, defaultSupplier.get());
+        }
+    }
+
     public static class IntValue extends ConfigValue<Integer>
     {
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
@@ -821,6 +917,26 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
         {
             return config.getLongOrElse(path, () -> defaultSupplier.get());
+        }
+    }
+
+    public static class FloatValue extends ConfigValue<Float>
+    {
+        FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        public Float get() {
+            return super.get();
+        }
+
+        @Override
+        protected Float getRaw(Config config, List<String> path, Supplier<Float> defaultSupplier)
+        {
+            Number n = config.<Number>get(path);
+            return n == null ? defaultSupplier.get() : n.floatValue();
         }
     }
 
