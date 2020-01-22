@@ -70,6 +70,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> materials = Sets.newHashSet();
+        materials.add(owner.resolveTexture("particle"));
         for (IUnbakedModel m : models.values())
             materials.addAll(m.func_225614_a_(modelGetter, missingTextureErrors));
         return materials;

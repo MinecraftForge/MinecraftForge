@@ -23,12 +23,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Matrix3f;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -98,7 +101,7 @@ public interface IForgeVertexBuilder
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
                 pos.func_229372_a_(matrix4f);
-                applyBakedNormals(normal, bytebuffer);
+                applyBakedNormals(normal, bytebuffer, matrixEntry.func_227872_b_());
                 ((IVertexBuilder)this).func_225588_a_(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
             }
         }
@@ -107,19 +110,21 @@ public interface IForgeVertexBuilder
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
         int bl = LightTexture.func_228450_a_(lightmapCoord);
         int sl = LightTexture.func_228454_b_(lightmapCoord);
-        int blBaked = Short.toUnsignedInt(data.getShort(24)) >> 4;
-        int slBaked = Short.toUnsignedInt(data.getShort(26)) >> 4;
+        int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
+        int blBaked = Short.toUnsignedInt(data.getShort(offset)) >> 4;
+        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2)) >> 4;
         bl = Math.max(bl, blBaked);
         sl = Math.max(sl, slBaked);
         return LightTexture.func_228451_a_(bl, sl);
     }
     
-    default void applyBakedNormals(Vector3f generated, ByteBuffer data) {
+    default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
         byte nx = data.get(28);
         byte ny = data.get(29);
         byte nz = data.get(30);
         if (nx != 0 || ny != 0 || nz != 0) {
             generated.set(nx / 127f, ny / 127f, nz / 127f);
+            generated.func_229188_a_(normalTransform);
         }
     }
 }
