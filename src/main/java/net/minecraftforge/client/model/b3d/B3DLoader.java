@@ -44,7 +44,6 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.model.*;
@@ -151,9 +150,9 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         if(model == null) throw new ModelLoadingException("Error loading model previously: " + file);
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
-            return new ModelWrapper(modelLocation, model, ImmutableSet.of(), true, true, 1);
+            return new ModelWrapper(modelLocation, model, ImmutableSet.of(), true, true, true, 1);
         }
-        return new ModelWrapper(modelLocation, model, ImmutableSet.of(model.getRoot().getName()), true, true, 1);
+        return new ModelWrapper(modelLocation, model, ImmutableSet.of(model.getRoot().getName()), true, true, true, 1);
     }
 
     public static final class B3DState implements IModelTransform
@@ -406,18 +405,20 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final ImmutableMap<String, String> textures;
         private final boolean smooth;
         private final boolean gui3d;
+        private final boolean isSideLit;
         private final int defaultKey;
 
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey)
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, boolean isSideLit, int defaultKey)
         {
-            this(modelLocation, model, meshes, smooth, gui3d, defaultKey, buildTextures(model.getTextures()));
+            this(modelLocation, model, meshes, smooth, gui3d, isSideLit, defaultKey, buildTextures(model.getTextures()));
         }
 
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, String> textures)
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, boolean isSideLit, int defaultKey, ImmutableMap<String, String> textures)
         {
             this.modelLocation = modelLocation;
             this.model = model;
             this.meshes = meshes;
+            this.isSideLit = isSideLit;
             this.textures = textures;
             this.smooth = smooth;
             this.gui3d = gui3d;
@@ -477,7 +478,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, meshes, builder.build());
+            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, isSideLit, meshes, builder.build());
         }
 
         public ModelWrapper retexture(ImmutableMap<String, String> textures)
@@ -501,7 +502,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     builder.put(e);
                 }
             }
-            return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, defaultKey, builder.build());
+            return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, isSideLit, defaultKey, builder.build());
         }
 
         public ModelWrapper process(ImmutableMap<String, String> data)
@@ -514,7 +515,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 JsonElement e = new JsonParser().parse(data.get("mesh"));
                 if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
                 {
-                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), smooth, gui3d, defaultKey, textures);
+                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), smooth, gui3d, isSideLit, defaultKey, textures);
                 }
                 else if (e.isJsonArray())
                 {
@@ -554,7 +555,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     return this;
                 }
             }
-            return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, newDefaultKey, textures) : this;
+            return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, isSideLit, newDefaultKey, textures) : this;
         }
 
         @Override
@@ -578,7 +579,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             {
                 return this;
             }
-            return new ModelWrapper(modelLocation, model, meshes, value, gui3d, defaultKey, textures);
+            return new ModelWrapper(modelLocation, model, meshes, value, gui3d, isSideLit, defaultKey, textures);
         }
 
         public ModelWrapper gui3d(boolean value)
@@ -587,7 +588,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             {
                 return this;
             }
-            return new ModelWrapper(modelLocation, model, meshes, smooth, value, defaultKey, textures);
+            return new ModelWrapper(modelLocation, model, meshes, smooth, value, isSideLit, defaultKey, textures);
         }
     }
 
@@ -597,15 +598,16 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final IModelTransform state;
         private final boolean smooth;
         private final boolean gui3d;
+        private final boolean isSideLit;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
         private final LoadingCache<Integer, B3DState> cache;
 
         private ImmutableList<BakedQuad> quads;
 
-        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
+        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, boolean isSideLit, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this(node, state, smooth, gui3d, meshes, textures, CacheBuilder.newBuilder()
+            this(node, state, smooth, gui3d, isSideLit, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
                 .build(new CacheLoader<Integer, B3DState>()
@@ -625,12 +627,13 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }));
         }
 
-        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
+        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, boolean isSideLit, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
         {
             this.node = node;
             this.state = state;
             this.smooth = smooth;
             this.gui3d = gui3d;
+            this.isSideLit = isSideLit;
             this.meshes = meshes;
             this.textures = textures;
             this.cache = cache;
@@ -797,8 +800,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         @Override
         public boolean func_230044_c_()
         {
-            // TODO: Forge: Auto-generated method stub
-            return false;
+            return isSideLit;
         }
 
         @Override

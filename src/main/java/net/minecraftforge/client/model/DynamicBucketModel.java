@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -185,7 +184,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             }
         }
 
-        return new BakedModel(bakery, owner, this, builder.build(), particleSprite, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform);
+        return new BakedModel(bakery, owner, this, builder.build(), particleSprite, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform, owner.isSideLit());
     }
 
     @Override
@@ -297,6 +296,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         private final DynamicBucketModel parent;
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
         private final IModelTransform originalTransform;
+        private final boolean isSideLit;
 
         BakedModel(ModelBakery bakery,
                    IModelConfiguration owner, DynamicBucketModel parent,
@@ -305,13 +305,14 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
                    ImmutableMap<TransformType, TransformationMatrix> transforms,
                    Map<String, IBakedModel> cache,
                    boolean untransformed,
-                   IModelTransform originalTransform)
+                   IModelTransform originalTransform, boolean isSideLit)
         {
-            super(quads, particle, transforms, new ContainedFluidOverrideHandler(bakery), untransformed);
+            super(quads, particle, transforms, new ContainedFluidOverrideHandler(bakery), untransformed, isSideLit);
             this.owner = owner;
             this.parent = parent;
             this.cache = cache;
             this.originalTransform = originalTransform;
+            this.isSideLit = isSideLit;
         }
     }
 

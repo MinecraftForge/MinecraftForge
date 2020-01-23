@@ -178,7 +178,7 @@ final class FancyMissingModel implements IUnbakedModel
         public boolean isGui3d() { return false; }
 
         @Override
-        public boolean func_230044_c_() { return false; } // TODO: Forge: Auto-generated method stub
+        public boolean func_230044_c_() { return false; }
 
         @Override
         public boolean isBuiltInRenderer() { return false; }

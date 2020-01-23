@@ -43,13 +43,15 @@ public class BakedItemModel implements IBakedModel
     protected final ImmutableMap<TransformType, TransformationMatrix> transforms;
     protected final ItemOverrideList overrides;
     protected final IBakedModel guiModel;
+    protected final boolean isSideLit;
 
-    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TransformationMatrix> transforms, ItemOverrideList overrides, boolean untransformed)
+    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TransformationMatrix> transforms, ItemOverrideList overrides, boolean untransformed, boolean isSideLit)
     {
         this.quads = quads;
         this.particle = particle;
         this.transforms = transforms;
         this.overrides = overrides;
+        this.isSideLit = isSideLit;
         this.guiModel = untransformed && hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
     }
 
@@ -61,7 +63,7 @@ public class BakedItemModel implements IBakedModel
 
     @Override public boolean isAmbientOcclusion() { return true; }
     @Override public boolean isGui3d() { return false; }
-    @Override public boolean func_230044_c_() { return false; }
+    @Override public boolean func_230044_c_() { return isSideLit; }
     @Override public boolean isBuiltInRenderer() { return false; }
     @Override public TextureAtlasSprite getParticleTexture() { return particle; }
     @Override public ItemOverrideList getOverrides() { return overrides; }

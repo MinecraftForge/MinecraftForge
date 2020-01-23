@@ -5,7 +5,7 @@
        private final ItemCameraTransforms field_177651_f;
  
 +      public Builder(net.minecraftforge.client.model.IModelConfiguration model, ItemOverrideList overrides) {
-+         this(model.useSmoothLighting(), model.isShadedInGui(), true/*TODO: Forge*/, model.getCameraTransforms(), overrides);
++         this(model.useSmoothLighting(), model.isShadedInGui(), model.isSideLit(), model.getCameraTransforms(), overrides);
 +      }
 +
        public Builder(BlockModel p_i230060_1_, ItemOverrideList p_i230060_2_, boolean p_i230060_3_) {

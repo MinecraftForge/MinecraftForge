@@ -47,26 +47,35 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Central hub for custom model loaders.
  */
 public class ModelLoaderRegistry
 {
+    public static final String WHITE_TEXTURE = "forge:white";
+
     private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
+    private static volatile boolean registryFrozen = false;
 
     // Forge built-in loaders
     public static void init()
     {
-        registerLoader(new ResourceLocation("forge:obj"), OBJLoader.INSTANCE);
-        registerLoader(new ResourceLocation("forge:bucket"), DynamicBucketModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge:composite"), CompositeModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("minecraft:elements"), VanillaProxy.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge:multi-layer"), MultiLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","obj"), OBJLoader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
+    }
+
+    public static void initComplete()
+    {
+        registryFrozen = true;
     }
 
     /**
@@ -74,8 +83,14 @@ public class ModelLoaderRegistry
      */
     public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
-        loaders.put(id, loader);
-        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
+        if (registryFrozen)
+            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use FMLClientSetupEvent or ModelRegistryEvent to register your loaders.");
+
+        synchronized(loaders)
+        {
+            loaders.put(id, loader);
+            ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
+        }
     }
 
     public static IModelGeometry<?> getModel(ResourceLocation loaderId, JsonDeserializationContext deserializationContext, JsonObject data)
@@ -83,7 +98,10 @@ public class ModelLoaderRegistry
         try
         {
             if (!loaders.containsKey(loaderId))
-                throw new IllegalStateException(String.format("Model loader '%s' not found.", loaderId));
+            {
+                throw new IllegalStateException(String.format("Model loader '%s' not found. Registered loaders: %s", loaderId,
+                        loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "))));
+            }
 
             IModelLoader<?> loader = loaders.get(loaderId);
 
@@ -106,12 +124,26 @@ public class ModelLoaderRegistry
         return getModel(loader, deserializationContext, object);
     }
 
-    private static final Pattern FILESYSTEM_PATH_TO_RESLOC = Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
+    /* Explanation:
+     * This takes anything that looks like a valid resourcepack texture location, and tries to extract a resourcelocation out of it.
+     *  1. it will ignore anything up to and including an /assets/ folder,
+     *  2. it will take the next path component as a namespace,
+     *  3. it will match but skip the /textures/ part of the path,
+     *  4. it will take the rest of the path up to but excluding the .png extension as the resource path
+     * It's a best-effort situation, to allow model files exported by modelling software to be used without post-processing.
+     * Example:
+     *   C:\Something\Or Other\src\main\resources\assets\mymodid\textures\item\my_thing.png
+     *   ........................................--------_______----------_____________----
+     *                                                 <namespace>        <path>
+     * Result after replacing '\' to '/': mymodid:item/my_thing
+     */
+    private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
+            Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
 
     public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner)
     {
         if (tex == null)
-            return blockMaterial("forge:white");
+            return blockMaterial(WHITE_TEXTURE);
         if (tex.startsWith("#"))
             return owner.resolveTexture(tex);
 

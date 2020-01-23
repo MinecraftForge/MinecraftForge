@@ -125,6 +125,7 @@ public class ClientModLoader
 
     private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
         RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
+        ModelLoaderRegistry.initComplete();
     }
 
     private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
