@@ -585,7 +585,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     @SuppressWarnings("unused")
-    private static class Range<V extends Comparable<? super V>> implements Predicate<Object>
+    public static class Range<V extends Comparable<? super V>> implements Predicate<Object>
     {
         private final Class<? extends V> clazz;
         private final V min;
