@@ -19,7 +19,9 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.client.config.screen.ModConfigScreen;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
@@ -139,8 +141,14 @@ public abstract class ModContainer
         extensionPoints.put(point, extension);
     }
 
+    /**
+     * Adds a ModConfig to this mod.
+     * If on the client distribution this also adds a config gui extension point to this mod
+     * ONLY IF one is NOT already present.
+     */
     public void addConfig(final ModConfig modConfig) {
-       configs.put(modConfig.getType(), modConfig);
+        configs.put(modConfig.getType(), modConfig);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> ModConfigScreen.makeConfigGuiExtensionPoint(this));
     }
 
     public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
