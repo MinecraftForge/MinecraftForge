@@ -57,3 +57,5 @@ loaderVersion="[28,)"
     modId="trsr_transformer_test"
 [[mods]]
     modId="nameplate_render_test"
+[[mods]]
+    modId="config_test"
