@@ -771,11 +771,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 else return between;
             else if (clazz == Float.class)
                 if (max.equals(Float.MAX_VALUE)) return greaterThan;
-                else if (min.equals(Float.MIN_VALUE)) return lessThan;
+                else if (min.equals(-Float.MAX_VALUE)) return lessThan; // Float.MIN_VALUE stores the smallest POSITIVE value a float can have
                 else return between;
             else if (clazz == Double.class)
                 if (max.equals(Double.MAX_VALUE)) return greaterThan;
-                else if (min.equals(Double.MIN_VALUE)) return lessThan;
+                else if (min.equals(-Double.MAX_VALUE)) return lessThan; // Double.MIN_VALUE stores the smallest POSITIVE value a float can have
                 else return between;
 
             return between;
