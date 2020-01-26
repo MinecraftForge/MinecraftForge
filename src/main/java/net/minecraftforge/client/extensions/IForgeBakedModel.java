@@ -28,10 +28,13 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
@@ -74,5 +77,10 @@ public interface IForgeBakedModel
     default TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
     {
         return getBakedModel().getParticleTexture();
+    }
+
+    default RenderType getRenderType(ItemStack itemStack)
+    {
+        return RenderTypeLookup.func_228389_a_(itemStack);
     }
 }

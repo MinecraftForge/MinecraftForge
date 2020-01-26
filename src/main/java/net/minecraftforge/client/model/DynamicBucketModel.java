@@ -27,6 +27,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
@@ -41,6 +42,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -313,6 +315,12 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             this.cache = cache;
             this.originalTransform = originalTransform;
             this.isSideLit = isSideLit;
+        }
+
+        @Override
+        public RenderType getRenderType(ItemStack itemStack)
+        {
+            return ForgeRenderTypes.UNSORTED_TRANSLUCENT;
         }
     }
 
