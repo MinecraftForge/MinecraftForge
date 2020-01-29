@@ -17,7 +17,24 @@
                    chunkprimer.func_201637_h(blockpos);
                 }
              }
-@@ -294,12 +295,22 @@
+@@ -182,6 +183,7 @@
+       }
+ 
+       if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
+          return new ChunkPrimerWrapper((Chunk)ichunk);
+       } else {
+          ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
+@@ -215,6 +217,8 @@
+             chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
++
+          return chunkprimer1;
+       }
+    }
+@@ -294,12 +298,22 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {
                 CompoundNBT compoundnbt3 = new CompoundNBT();

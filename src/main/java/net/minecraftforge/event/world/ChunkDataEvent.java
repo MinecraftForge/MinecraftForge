@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -54,7 +55,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
-     * {@link net.minecraftforge.common.chunkio.ChunkIOProvider#syncCallback()}.<br>
+     * {@link net.minecraft.world.chunk.storage.ChunkSerializer.read(ServerWorld, TemplateManager, PointOfInterestManager, ChunkPos, CompoundNBT)} which means it is async, so be careful.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -64,9 +65,17 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        public Load(IChunk chunk, CompoundNBT data)
+        private ChunkStatus.Type status;
+
+        public Load(IChunk chunk, CompoundNBT data, ChunkStatus.Type status)
         {
             super(chunk, data);
+            this.status = status;
+        }
+
+        public ChunkStatus.Type getStatus()
+        {
+            return this.status;
         }
     }
 
