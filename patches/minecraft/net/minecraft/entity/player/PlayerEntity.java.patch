@@ -312,14 +312,14 @@
        return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
     }
  
-@@ -1289,6 +1357,7 @@
+@@ -1287,6 +1355,7 @@
+    }
+ 
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
++      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_225652_1_, p_225652_2_);
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
-+      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_225652_1_, p_225652_2_);
           ((ServerWorld)this.field_70170_p).func_72854_c();
-       }
- 
 @@ -1300,17 +1369,17 @@
     }
  
