@@ -19,7 +19,7 @@
 +         int i = mapdata != null ? p_225623_1_.func_82333_j() % 4 * 2 : p_225623_1_.func_82333_j();
           p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_((float)i * 360.0F / 8.0F));
 -         if (flag) {
-+         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_225623_1_, this))) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_225623_1_, this, p_225623_4_, p_225623_5_, p_225623_6_))) {
 +         if (mapdata != null) {
              p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_(180.0F));
              float f = 0.0078125F;

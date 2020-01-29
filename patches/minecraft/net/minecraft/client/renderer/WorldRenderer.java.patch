@@ -68,7 +68,7 @@
           BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
 -         if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, 0, p_228426_2_))
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
 +         if (!blockstate.isAir(this.field_72769_h, blockpos) && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
