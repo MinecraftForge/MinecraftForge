@@ -41,7 +41,7 @@
        this.func_174967_a(p_228426_3_ + l1);
        iprofiler.func_219895_b("terrain");
        this.func_228441_a_(RenderType.func_228639_c_(), p_228426_1_, d0, d1, d2);
-+      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).func_174937_a(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
++      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).setBlurMipmap(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
        this.func_228441_a_(RenderType.func_228641_d_(), p_228426_1_, d0, d1, d2);
 +      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).restoreLastBlurMipmap();
        this.func_228441_a_(RenderType.func_228643_e_(), p_228426_1_, d0, d1, d2);
