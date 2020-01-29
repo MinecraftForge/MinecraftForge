@@ -35,7 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
  * Canceling the event causes the hand to not render.
  */
 @Cancelable
-public class RenderSpecificHandEvent extends Event
+public class RenderHandEvent extends Event
 {
     private final Hand hand;
     private final MatrixStack mat;
@@ -48,9 +48,9 @@ public class RenderSpecificHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light,
-                                   float partialTicks, float interpolatedPitch,
-                                   float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+    public RenderHandEvent(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light,
+                           float partialTicks, float interpolatedPitch,
+                           float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
         this.mat = mat;

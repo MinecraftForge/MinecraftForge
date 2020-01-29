@@ -52,6 +52,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -126,7 +127,6 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -179,7 +179,7 @@ public class ForgeHooksClient
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
