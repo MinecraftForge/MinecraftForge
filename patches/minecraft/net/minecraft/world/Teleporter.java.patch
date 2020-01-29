@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/Teleporter.java
++++ b/net/minecraft/world/Teleporter.java
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.server.TicketType;
+ 
+-public class Teleporter {
++public class Teleporter implements net.minecraftforge.common.util.ITeleporter {
+    protected final ServerWorld field_85192_a;
+    protected final Random field_77187_a;
+ 
