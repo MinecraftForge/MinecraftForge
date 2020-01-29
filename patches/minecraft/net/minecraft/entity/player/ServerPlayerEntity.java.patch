@@ -132,12 +132,13 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1207,15 +1231,16 @@
+@@ -1207,15 +1231,17 @@
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
 -      } else {
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.field_73011_w.func_186058_p())) {
++         DimensionType oldDimension = this.field_71093_bK;
           ServerWorld serverworld = this.func_71121_q();
           this.field_71093_bK = p_200619_1_.field_73011_w.func_186058_p();
           WorldInfo worldinfo = p_200619_1_.func_72912_H();
@@ -152,15 +153,15 @@
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);
           p_200619_1_.func_217446_a(this);
-@@ -1224,6 +1249,7 @@
+@@ -1224,6 +1250,7 @@
           this.field_71134_c.func_73080_a(p_200619_1_);
           this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
           this.field_71133_b.func_184103_al().func_72385_f(this);
-+         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, p_200619_1_.field_73011_w.func_186058_p(), this.field_71093_bK);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, oldDimension, this.field_71093_bK);
        }
  
     }
-@@ -1261,6 +1287,8 @@
+@@ -1261,6 +1288,8 @@
        if (itementity == null) {
           return null;
        } else {
