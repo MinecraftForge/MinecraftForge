@@ -180,9 +180,9 @@
  
 -         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_);
 +         net.minecraft.client.gui.FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
-+         net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
++         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
 +         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
-+         net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
++         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
        } else {
           super.renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_);
        }

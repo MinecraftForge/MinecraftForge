@@ -370,7 +370,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return faces.computeIfAbsent(dir, FaceBuilder::new);
         }
 
-        public RotationBuilder rotation(BlockPartRotation rotation) {
+        public RotationBuilder rotation() {
             if (this.rotation == null) {
                 this.rotation = new RotationBuilder();
             }
@@ -550,7 +550,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
              */
             public RotationBuilder angle(float angle) {
                 // Same logic from BlockPart.Deserializer#parseAngle
-                Preconditions.checkArgument(angle != 0.0F && MathHelper.abs(angle) != 22.5F && MathHelper.abs(angle) != 45.0F, "Invalid rotation %f found, only -45/-22.5/0/22.5/45 allowed", angle);
+                Preconditions.checkArgument(angle == 0.0F || MathHelper.abs(angle) == 22.5F || MathHelper.abs(angle) == 45.0F, "Invalid rotation %f found, only -45/-22.5/0/22.5/45 allowed", angle);
                 this.angle = angle;
                 return this;
             }

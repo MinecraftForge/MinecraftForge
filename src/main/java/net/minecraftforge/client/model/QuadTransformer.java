@@ -19,40 +19,38 @@
 
 package net.minecraftforge.client.model;
 
-import com.google.common.collect.Lists;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.Vector4f;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
+
 public class QuadTransformer
 {
-    private final VertexFormat format;
-    private final int positionOffset;
-    private final int normalOffset;
+    private static final int POSITION = findPositionOffset(DefaultVertexFormats.BLOCK);
+    private static final int NORMAL = findNormalOffset(DefaultVertexFormats.BLOCK);
     private final TransformationMatrix transform;
 
-    public QuadTransformer(VertexFormat format, TransformationMatrix transform)
+    public QuadTransformer(TransformationMatrix transform)
     {
-        this.format = format;
-        this.positionOffset = findPositionOffset(format);
-        this.normalOffset = findNormalOffset(format);
         this.transform = transform;
     }
 
     private void processVertices(int[] inData, int[] outData)
     {
-        int stride = format.getSize();
+        int stride = DefaultVertexFormats.BLOCK.getSize();
         int count = (inData.length * 4) / stride;
         for (int i=0;i<count;i++)
         {
-            int offset = positionOffset + i * stride;
+            int offset = POSITION + i * stride;
             float x = Float.intBitsToFloat(getAtByteOffset(inData, offset ));
             float y = Float.intBitsToFloat(getAtByteOffset(inData, offset + 4));
             float z = Float.intBitsToFloat(getAtByteOffset(inData, offset + 8));
@@ -66,29 +64,27 @@ public class QuadTransformer
             putAtByteOffset(outData,offset + 8, Float.floatToRawIntBits(pos.getZ()));
         }
 
-        if (normalOffset >= 0)
+        for (int i=0;i<count;i++)
         {
-            for (int i=0;i<count;i++)
+            int offset = NORMAL + i * stride;
+            int normalIn = getAtByteOffset(inData,offset);
+            if (normalIn != 0)
             {
-                int offset = normalOffset + i * stride;
-                int normalIn = getAtByteOffset(inData,offset);
-                if (normalIn != 0)
-                {
-                    float x = (((normalIn) >> 24) & 0xFF) / 255.0f;
-                    float y = (((normalIn << 8) >> 24) & 0xFF) / 255.0f;
-                    float z = (((normalIn << 16) >> 24) & 0xFF) / 255.0f;
 
-                    Vector3f pos = new Vector3f(x, y, z);
-                    transform.transformNormal(pos);
-                    pos.func_229194_d_();
+                float x = ((byte)((normalIn) >> 24)) / 127.0f;
+                float y = ((byte)((normalIn << 8) >> 24)) / 127.0f;
+                float z = ((byte)((normalIn << 16) >> 24)) / 127.0f;
 
-                    int normalOut = (((int) (x / 255.0) & 0xFF) << 24) |
-                                    (((int) (y / 255.0) & 0xFF) << 16) |
-                                    (((int) (z / 255.0) & 0xFF) << 8) |
-                                    (normalIn & 0xFF);
+                Vector3f pos = new Vector3f(x, y, z);
+                transform.transformNormal(pos);
+                pos.func_229194_d_();
 
-                    putAtByteOffset(outData, offset, normalOut);
-                }
+                int normalOut = ((((byte)(x / 127.0f)) & 0xFF) << 24) |
+                                ((((byte)(y / 127.0f)) & 0xFF) << 16) |
+                                ((((byte)(z / 127.0f)) & 0xFF) << 8) |
+                                (normalIn & 0xFF);
+
+                putAtByteOffset(outData, offset, normalOut);
             }
         }
     }
@@ -113,7 +109,10 @@ public class QuadTransformer
         int shift = (offset % 4) * 8;
 
         if (shift == 0)
+        {
             outData[index] = value;
+            return;
+        }
 
         int lsbMask = 0xFFFFFFFF >>> (32-shift);
         int msbMask = 0xFFFFFFFF << shift;
@@ -158,7 +157,7 @@ public class QuadTransformer
             }
         }
         if (index == fmt.func_227894_c_().size() || element == null)
-            return -1;
+            throw new IllegalStateException("BLOCK format does not have normals?");
         if (element.getType() != VertexFormatElement.Type.BYTE)
             throw new RuntimeException("Expected NORMAL attribute to have data type BYTE");
         if (element.getSize() < 3)
@@ -177,7 +176,7 @@ public class QuadTransformer
         int[] outData = Arrays.copyOf(inData, inData.length);
         processVertices(inData, outData);
 
-        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting(), format);
+        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting());
     }
 
     /**
@@ -209,7 +208,7 @@ public class QuadTransformer
             int[] outData = Arrays.copyOf(inData, inData.length);
             processVertices(inData, outData);
 
-            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting(), format));
+            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting()));
         }
         return outputs;
     }

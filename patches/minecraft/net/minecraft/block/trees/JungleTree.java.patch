@@ -3,7 +3,7 @@
 @@ -12,7 +12,7 @@
  public class JungleTree extends BigTree {
     @Nullable
-    protected ConfiguredFeature<TreeFeatureConfig, ?> func_225546_b_(Random p_225546_1_) {
+    protected ConfiguredFeature<TreeFeatureConfig, ?> func_225546_b_(Random p_225546_1_, boolean p_225546_2_) {
 -      return (new TreeFeature(TreeFeatureConfig::func_227338_a_)).func_225566_b_(DefaultBiomeFeatures.field_226808_c_);
 +      return (new TreeFeature(TreeFeatureConfig::deserializeJungle)).func_225566_b_(DefaultBiomeFeatures.field_226808_c_);
     }

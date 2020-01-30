@@ -122,12 +122,19 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -296,9 +321,16 @@
+@@ -287,6 +312,8 @@
+    public ActionResultType func_219441_a(PlayerEntity p_219441_1_, World p_219441_2_, ItemStack p_219441_3_, Hand p_219441_4_, BlockRayTraceResult p_219441_5_) {
+       BlockPos blockpos = p_219441_5_.func_216350_a();
+       BlockState blockstate = p_219441_2_.func_180495_p(blockpos);
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
++      if (event.isCanceled()) return event.getCancellationResult();
+       if (this.field_73091_c == GameType.SPECTATOR) {
+          INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
+          if (inamedcontainerprovider != null) {
+@@ -296,9 +323,14 @@
              return ActionResultType.PASS;
           }
        } else {
-+         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
-+         if (event.isCanceled()) return event.getCancellationResult();
 +         ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
 +         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);

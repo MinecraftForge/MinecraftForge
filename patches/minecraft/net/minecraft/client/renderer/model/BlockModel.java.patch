@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/BlockModel.java
 +++ b/net/minecraft/client/renderer/model/BlockModel.java
-@@ -56,9 +56,10 @@
+@@ -57,9 +57,10 @@
     public BlockModel field_178315_d;
     @Nullable
     protected ResourceLocation field_178316_e;
@@ -12,8 +12,8 @@
     }
  
     public static BlockModel func_178294_a(String p_178294_0_) {
-@@ -75,10 +76,15 @@
-       this.field_187968_k = p_i46573_7_;
+@@ -76,10 +77,15 @@
+       this.field_187968_k = p_i230056_7_;
     }
  
 +   @Deprecated
@@ -28,7 +28,7 @@
     public boolean func_178309_b() {
        return this.field_178315_d != null ? this.field_178315_d.func_178309_b() : this.field_178322_i;
     }
-@@ -95,6 +101,10 @@
+@@ -100,6 +106,10 @@
        return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
     }
  
@@ -39,7 +39,7 @@
     public Collection<ResourceLocation> func_187965_e() {
        Set<ResourceLocation> set = Sets.newHashSet();
  
-@@ -138,6 +148,9 @@
+@@ -143,6 +153,9 @@
  
        Set<Material> set1 = Sets.newHashSet(this.func_228816_c_("particle"));
  
@@ -49,20 +49,25 @@
        for(BlockPart blockpart : this.func_178298_a()) {
           for(BlockPartFace blockpartface : blockpart.field_178240_c.values()) {
              Material material = this.func_228816_c_(blockpartface.field_178242_d);
-@@ -168,7 +181,11 @@
-       return this.func_228813_a_(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_);
+@@ -169,11 +182,17 @@
+       return set1;
     }
  
--   public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_) {
-+   public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_)
-+   {
-+      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_);
++   @Deprecated //Forge: Use Boolean variant
+    public IBakedModel func_225613_a_(ModelBakery p_225613_1_, Function<Material, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
+       return this.func_228813_a_(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_, true);
+    }
+ 
+    public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
++      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
 +   }
-+   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_) {
++
++   @Deprecated //Forge: exposed for our callbacks only. Use the above function.
++   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
        TextureAtlasSprite textureatlassprite = p_228813_3_.apply(this.func_228816_c_("particle"));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {
-          return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_228813_1_, p_228813_2_), textureatlassprite);
-@@ -195,6 +212,10 @@
+          return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_228813_1_, p_228813_2_), textureatlassprite, this.func_230176_c_().func_230178_a_());
+@@ -200,6 +219,10 @@
        return field_217647_g.func_228824_a_(p_228812_0_.field_178241_a, p_228812_0_.field_178239_b, p_228812_1_, p_228812_2_, p_228812_3_, p_228812_4_, p_228812_0_.field_178237_d, p_228812_0_.field_178238_e, p_228812_5_);
     }
  

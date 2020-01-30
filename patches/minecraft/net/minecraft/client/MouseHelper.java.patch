@@ -1,12 +1,14 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
-@@ -72,16 +72,21 @@
-                if (!this.field_198051_p && flag) {
-                   this.func_198034_i();
-                }
-+               if (net.minecraftforge.client.ForgeHooksClient.onRawMouseClicked(p_198023_3_, p_198023_4_, p_198023_5_)) return;
-             } else {
-                double d0 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
+@@ -66,6 +66,7 @@
+             this.field_198042_g = -1;
+          }
+ 
++         if (net.minecraftforge.client.ForgeHooksClient.onRawMouseClicked(p_198023_3_, p_198023_4_, p_198023_5_)) return;
+          boolean[] aboolean = new boolean[]{false};
+          if (this.field_198036_a.field_213279_p == null) {
+             if (this.field_198036_a.field_71462_r == null) {
+@@ -77,11 +78,15 @@
                 double d1 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
                 if (flag) {
                    Screen.wrapScreenError(() -> {

@@ -84,7 +84,7 @@ public interface IForgeBlockState
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      */
-    default int getLightValue(ILightReader world, BlockPos pos)
+    default int getLightValue(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);
     }
@@ -493,6 +493,18 @@ public interface IForgeBlockState
     default boolean isBeaconBase(IWorldReader world, BlockPos pos, BlockPos beacon)
     {
         return getBlockState().getBlock().isBeaconBase(getBlockState(), world, pos, beacon);
+    }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(IWorldReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().isPortalFrame(getBlockState(), world, pos);
     }
 
    /**

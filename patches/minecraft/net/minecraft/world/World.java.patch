@@ -331,9 +331,9 @@
        if (this.field_72986_A.func_76059_o()) {
           this.field_73004_o = 1.0F;
           if (this.field_72986_A.func_76061_m()) {
-@@ -739,10 +807,10 @@
- 
+@@ -740,10 +808,10 @@
     public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
        List<Entity> list = Lists.newArrayList();
 -      int i = MathHelper.func_76128_c((p_175674_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_175674_2_.field_72336_d + 2.0D) / 16.0D);
@@ -346,10 +346,10 @@
  
        for(int i1 = i; i1 <= j; ++i1) {
           for(int j1 = k; j1 <= l; ++j1) {
-@@ -757,10 +825,10 @@
-    }
+@@ -759,10 +827,10 @@
  
     public <T extends Entity> List<T> func_217394_a(@Nullable EntityType<T> p_217394_1_, AxisAlignedBB p_217394_2_, Predicate<? super T> p_217394_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
 -      int i = MathHelper.func_76128_c((p_217394_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76143_f((p_217394_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_217394_2_.field_72339_c - 2.0D) / 16.0D);
@@ -361,10 +361,10 @@
        List<T> list = Lists.newArrayList();
  
        for(int i1 = i; i1 < j; ++i1) {
-@@ -776,10 +844,10 @@
-    }
+@@ -779,10 +847,10 @@
  
     public <T extends Entity> List<T> func_175647_a(Class<? extends T> p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate<? super T> p_175647_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
 -      int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - 2.0D) / 16.0D);
@@ -376,10 +376,10 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -796,10 +864,10 @@
-    }
+@@ -800,10 +868,10 @@
  
     public <T extends Entity> List<T> func_225316_b(Class<? extends T> p_225316_1_, AxisAlignedBB p_225316_2_, @Nullable Predicate<? super T> p_225316_3_) {
+       this.func_217381_Z().func_230035_c_("getLoadedEntities");
 -      int i = MathHelper.func_76128_c((p_225316_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76143_f((p_225316_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_225316_2_.field_72339_c - 2.0D) / 16.0D);
@@ -391,7 +391,7 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -826,7 +894,8 @@
+@@ -830,7 +898,8 @@
     }
  
     public int func_181545_F() {
@@ -401,7 +401,7 @@
     }
  
     public World func_201672_e() {
-@@ -874,7 +943,7 @@
+@@ -878,7 +947,7 @@
  
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
        BlockState blockstate = this.func_180495_p(p_175651_1_);
@@ -410,7 +410,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -919,7 +988,7 @@
+@@ -923,7 +992,7 @@
     }
  
     public long func_72905_C() {
@@ -419,7 +419,7 @@
     }
  
     public long func_82737_E() {
-@@ -927,11 +996,11 @@
+@@ -931,11 +1000,11 @@
     }
  
     public long func_72820_D() {
@@ -433,7 +433,7 @@
     }
  
     protected void func_217389_a() {
-@@ -943,7 +1012,7 @@
+@@ -947,7 +1016,7 @@
     }
  
     public BlockPos func_175694_M() {
@@ -442,7 +442,7 @@
        if (!this.func_175723_af().func_177746_a(blockpos)) {
           blockpos = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, new BlockPos(this.func_175723_af().func_177731_f(), 0.0D, this.func_175723_af().func_177721_g()));
        }
-@@ -952,10 +1021,14 @@
+@@ -956,10 +1025,14 @@
     }
  
     public void func_175652_B(BlockPos p_175652_1_) {
@@ -458,7 +458,7 @@
        return true;
     }
  
-@@ -1023,8 +1096,7 @@
+@@ -1027,8 +1100,7 @@
     }
  
     public boolean func_180502_D(BlockPos p_180502_1_) {
@@ -468,7 +468,7 @@
     }
  
     @Nullable
-@@ -1038,7 +1110,7 @@
+@@ -1042,7 +1114,7 @@
     }
  
     public int func_72940_L() {
@@ -477,7 +477,7 @@
     }
  
     public CrashReportCategory func_72914_a(CrashReport p_72914_1_) {
-@@ -1069,16 +1141,15 @@
+@@ -1073,16 +1145,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -498,7 +498,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1146,4 +1217,16 @@
+@@ -1150,4 +1221,16 @@
     public BiomeManager func_225523_d_() {
        return this.field_226689_w_;
     }

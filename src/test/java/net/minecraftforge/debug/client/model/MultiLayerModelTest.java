@@ -53,7 +53,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             event.getRegistry().register(
-                new Block(Block.Properties.create(Material.WOOD))
+                new Block(Block.Properties.create(Material.WOOD).func_226896_b_())
                 {
                 }.setRegistryName(blockId)
             );

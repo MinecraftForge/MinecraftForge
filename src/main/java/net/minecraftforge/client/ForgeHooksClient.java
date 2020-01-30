@@ -51,6 +51,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -125,8 +127,6 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -159,17 +159,17 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
-    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         switch (target.getType()) {
             case BLOCK:
                 if (!(target instanceof BlockRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, partialTicks, matrix, buffers));
             case ENTITY:
                 if (!(target instanceof EntityRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
         }
-        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, subID, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
@@ -177,14 +177,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
     }
 
-    public static boolean renderFirstPersonHand(WorldRenderer context, MatrixStack mat, float partialTicks)
+    public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, mat, partialTicks));
-    }
-
-    public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
-    {
-        return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, mat, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
@@ -556,169 +551,6 @@ public class ForgeHooksClient
         return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
-    private static class LightGatheringTransformer extends QuadGatheringTransformer {
-
-        private static final VertexFormat FORMAT = new VertexFormat(ImmutableList.of(DefaultVertexFormats.TEX_2F, DefaultVertexFormats.TEX_2S));
-
-        int blockLight, skyLight;
-
-        { setVertexFormat(FORMAT); }
-
-        boolean hasLighting()
-        {
-            return dataLength[1] >= 2;
-        }
-
-        @Override
-        protected void processQuad()
-        {
-            // Reset light data
-            blockLight = 0;
-            skyLight = 0;
-            // Compute average light for all 4 vertices
-            for (int i = 0; i < 4; i++)
-            {
-                blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
-                skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
-            }
-            // Values must be multiplied by 16, divided by 4 for average => x4
-            blockLight *= 4;
-            skyLight *= 4;
-        }
-
-        // Dummy overrides
-
-        @Override
-        public void setQuadTint(int tint) {}
-
-        @Override
-        public void setQuadOrientation(Direction orientation) {}
-
-        @Override
-        public void setApplyDiffuseLighting(boolean diffuse) {}
-
-        @Override
-        public void setTexture(TextureAtlasSprite texture) {}
-    }
-
-    private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
-
-    // TODO: Fix: Vanilla now batches rendering items, so our hack of forcing the GL lighting state does not work.
-    public static void renderLitItem(ItemRenderer ri, MatrixStack mat, IVertexBuilder consumer, IBakedModel model, ItemStack stack)
-    {
-        List<BakedQuad> allquads = new ArrayList<>();
-        Random random = new Random();
-        long seed = 42L;
-
-        for (Direction enumfacing : Direction.values())
-        {
-            random.setSeed(seed);
-            allquads.addAll(model.getQuads(null, enumfacing, random, EmptyModelData.INSTANCE));
-        }
-
-        random.setSeed(seed);
-        allquads.addAll(model.getQuads(null, null, random, EmptyModelData.INSTANCE));
-
-        if (allquads.isEmpty()) return;
-
-        // Current list of consecutive quads with the same lighting
-        List<BakedQuad> segment = new ArrayList<>();
-
-        // Lighting of the current segment
-        int segmentBlockLight = 0;
-        int segmentSkyLight = 0;
-        // Diffuse lighting state
-        boolean segmentShading = true;
-        // State changed by the current segment
-        boolean segmentLightingDirty = false;
-        boolean segmentShadingDirty = false;
-        // If the current segment contains lighting data
-        boolean hasLighting = false;
-
-        for (int i = 0; i < allquads.size(); i++)
-        {
-            BakedQuad q = allquads.get(i);
-
-            // Lighting of the current quad
-            int bl = 0;
-            int sl = 0;
-
-            if (q.getFormat().hasUV(1))
-            {
-                LightUtil.putBakedQuad(lightGatherer, q);
-                if (lightGatherer.hasLighting())
-                {
-                    bl = lightGatherer.blockLight;
-                    sl = lightGatherer.skyLight;
-                }
-            }
-
-            boolean shade = q.shouldApplyDiffuseLighting();
-
-            boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
-            boolean shadeDirty = shade != segmentShading;
-
-            // If lighting or color data has changed, draw the segment and flush it
-            if (lightingDirty || shadeDirty)
-            {
-                if (i > 0) // Make sure this isn't the first quad being processed
-                    drawSegment(ri, mat, consumer, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < i), segmentShadingDirty);
-                segmentBlockLight = bl;
-                segmentSkyLight = sl;
-                segmentShading = shade;
-                segmentLightingDirty = lightingDirty;
-                segmentShadingDirty = shadeDirty;
-                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0 || !segmentShading;
-            }
-
-            segment.add(q);
-        }
-
-        drawSegment(ri, mat, consumer, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentShadingDirty);
-
-        // Clean up render state if necessary
-        if (hasLighting)
-        {
-            RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, GlStateManager.lastBrightnessX, GlStateManager.lastBrightnessY);
-            RenderSystem.enableLighting();
-        }
-    }
-
-    private static void drawSegment(ItemRenderer ir, MatrixStack mat, IVertexBuilder cons, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean shade, boolean updateLighting, boolean updateShading)
-    {
-        float lastBl = GlStateManager.lastBrightnessX;
-        float lastSl = GlStateManager.lastBrightnessY;
-
-        if (updateShading)
-        {
-            if (shade)
-            {
-                // (Re-)enable lighting for normal look with shading
-                RenderSystem.enableLighting();
-            }
-            else
-            {
-                // Disable lighting to simulate a lack of diffuse lighting
-                RenderSystem.disableLighting();
-            }
-        }
-
-        if (updateLighting)
-        {
-            // Force lightmap coords to simulate synthetic lighting
-            RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, Math.max(bl, lastBl), Math.max(sl, lastSl));
-        }
-
-        // TODO can we just use this light value ??
-        ir.func_229112_a_(mat, cons, segment, stack, (bl << 16) | sl, OverlayTexture.field_229196_a_);
-
-        // Preserve this as it represents the "world" lighting
-        GlStateManager.lastBrightnessX = lastBl;
-        GlStateManager.lastBrightnessY = lastSl;
-
-        segment.clear();
-    }
-
     /**
      * internal, relies on fixed format of FaceBakery
      */
@@ -964,5 +796,12 @@ public class ForgeHooksClient
     public static boolean onRawMouseClicked(int button, int action, int mods)
     {
         return MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods));
+    }
+
+    public static InputEvent.ClickInputEvent onClickInput(int button, KeyBinding keyBinding, Hand hand)
+    {
+        InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }

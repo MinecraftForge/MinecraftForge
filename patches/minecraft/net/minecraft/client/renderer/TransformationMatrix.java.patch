@@ -9,15 +9,6 @@
     private final Matrix4f field_227976_a_;
     private boolean field_227977_b_;
     @Nullable
-@@ -97,7 +97,7 @@
-       if (p_227986_0_ != null) {
-          matrix4f.field_226578_d_ = p_227986_0_.func_195899_a();
-          matrix4f.field_226582_h_ = p_227986_0_.func_195900_b();
--         matrix4f.field_226589_o_ = p_227986_0_.func_195902_c();
-+         matrix4f.field_226586_l_ = p_227986_0_.func_195902_c();
-       }
- 
-       return matrix4f;
 @@ -133,4 +133,32 @@
     public int hashCode() {
        return Objects.hash(this.field_227976_a_);

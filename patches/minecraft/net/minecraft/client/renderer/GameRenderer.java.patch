@@ -18,15 +18,7 @@
        }
     }
  
-@@ -358,6 +360,7 @@
-          }
- 
-          boolean flag = this.field_78531_r.func_175606_aa() instanceof LivingEntity && ((LivingEntity)this.field_78531_r.func_175606_aa()).func_70608_bn();
-+         if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_228381_1_, p_228381_3_))
-          if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && this.field_78531_r.field_71442_b.func_178889_l() != GameType.SPECTATOR) {
-             this.field_78513_d.func_205109_c();
-             this.field_78516_c.func_228396_a_(p_228381_3_, p_228381_1_, this.field_228374_i_.func_228487_b_(), this.field_78531_r.field_71439_g, this.field_78531_r.func_175598_ae().func_229085_a_(this.field_78531_r.field_71439_g, p_228381_3_));
-@@ -475,7 +478,7 @@
+@@ -475,7 +477,7 @@
              }
           } else if (this.field_78531_r.field_71462_r != null) {
              try {
@@ -35,7 +27,7 @@
              } catch (Throwable throwable) {
                 CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Screen render details");
-@@ -588,9 +591,16 @@
+@@ -588,9 +590,16 @@
        Matrix4f matrix4f = matrixstack.func_227866_c_().func_227870_a_();
        this.func_228379_a_(matrix4f);
        activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), this.field_78531_r.field_71474_y.field_74320_O > 0, this.field_78531_r.field_71474_y.field_74320_O == 2, p_228378_1_);
@@ -52,7 +44,7 @@
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
           RenderSystem.clear(256, Minecraft.field_142025_a);
-@@ -670,4 +680,9 @@
+@@ -670,4 +679,9 @@
     public OverlayTexture func_228385_m_() {
        return this.field_228375_t_;
     }

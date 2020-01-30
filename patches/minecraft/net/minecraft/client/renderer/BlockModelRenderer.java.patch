@@ -6,10 +6,11 @@
  
 +   @Deprecated //Forge: Model data argument
     public boolean func_228802_a_(ILightReader p_228802_1_, IBakedModel p_228802_2_, BlockState p_228802_3_, BlockPos p_228802_4_, MatrixStack p_228802_5_, IVertexBuilder p_228802_6_, boolean p_228802_7_, Random p_228802_8_, long p_228802_9_, int p_228802_11_) {
+-      boolean flag = Minecraft.func_71379_u() && p_228802_3_.func_185906_d() == 0 && p_228802_2_.func_177555_b();
 +      return renderModel(p_228802_1_, p_228802_2_, p_228802_3_, p_228802_4_, p_228802_5_, p_228802_6_, p_228802_7_, p_228802_8_, p_228802_9_, p_228802_11_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
 +   public boolean renderModel(ILightReader p_228802_1_, IBakedModel p_228802_2_, BlockState p_228802_3_, BlockPos p_228802_4_, MatrixStack p_228802_5_, IVertexBuilder p_228802_6_, boolean p_228802_7_, Random p_228802_8_, long p_228802_9_, int p_228802_11_, net.minecraftforge.client.model.data.IModelData modelData) {
-       boolean flag = Minecraft.func_71379_u() && p_228802_3_.func_185906_d() == 0 && p_228802_2_.func_177555_b();
++      boolean flag = Minecraft.func_71379_u() && p_228802_3_.getLightValue(p_228802_1_, p_228802_4_) == 0 && p_228802_2_.func_177555_b();
        Vec3d vec3d = p_228802_3_.func_191059_e(p_228802_1_, p_228802_4_);
        p_228802_5_.func_227861_a_(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c);
 +      modelData = p_228802_2_.getModelData(p_228802_1_, p_228802_4_, p_228802_3_, modelData);
