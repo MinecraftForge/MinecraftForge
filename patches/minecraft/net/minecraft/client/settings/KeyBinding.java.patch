@@ -17,7 +17,7 @@
  
     public static void func_197981_a(InputMappings.Input p_197981_0_) {
 -      KeyBinding keybinding = field_74514_b.get(p_197981_0_);
-+      for (KeyBinding keybinding : field_74514_b.lookupAll(p_197981_0_))
++      KeyBinding keybinding = field_74514_b.lookupActive(p_197981_0_);
        if (keybinding != null) {
           ++keybinding.field_151474_i;
        }

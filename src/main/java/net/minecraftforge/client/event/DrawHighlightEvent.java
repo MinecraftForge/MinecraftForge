@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client.event;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -37,23 +39,26 @@ public class DrawHighlightEvent extends Event
     private final WorldRenderer context;
     private final ActiveRenderInfo info;
     private final RayTraceResult target;
-    private final int subID;
     private final float partialTicks;
+    private final MatrixStack matrix;
+    private final IRenderTypeBuffer buffers;
 
-    public DrawHighlightEvent(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+    public DrawHighlightEvent(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         this.context = context;
         this.info = info;
         this.target = target;
-        this.subID = subID;
         this.partialTicks= partialTicks;
+        this.matrix = matrix;
+        this.buffers = buffers;
     }
 
     public WorldRenderer getContext() { return context; }
     public ActiveRenderInfo getInfo() { return info; }
     public RayTraceResult getTarget() { return target; }
-    public int getSubID() { return subID; }
     public float getPartialTicks() { return partialTicks; }
+    public MatrixStack getMatrix() { return matrix; }
+    public IRenderTypeBuffer getBuffers() { return buffers; }
 
     /**
      * A variant of the DrawBlockHighlightEvent only called when a block is highlighted.
@@ -61,9 +66,9 @@ public class DrawHighlightEvent extends Event
     @Cancelable
     public static class HighlightBlock extends DrawHighlightEvent
     {
-        public HighlightBlock(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+        public HighlightBlock(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
         {
-            super(context, info, target, subID, partialTicks);
+            super(context, info, target, partialTicks, matrix, buffers);
         }
 
         @Override
@@ -80,9 +85,9 @@ public class DrawHighlightEvent extends Event
     @Cancelable
     public static class HighlightEntity extends DrawHighlightEvent
     {
-        public HighlightEntity(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+        public HighlightEntity(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
         {
-            super(context, info, target, subID, partialTicks);
+            super(context, info, target, partialTicks, matrix, buffers);
         }
 
         @Override

@@ -52,6 +52,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -126,8 +127,6 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -160,17 +159,17 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
-    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         switch (target.getType()) {
             case BLOCK:
                 if (!(target instanceof BlockRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, partialTicks, matrix, buffers));
             case ENTITY:
                 if (!(target instanceof EntityRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
         }
-        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, subID, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
@@ -178,14 +177,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
     }
 
-    public static boolean renderFirstPersonHand(WorldRenderer context, MatrixStack mat, float partialTicks)
+    public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, mat, partialTicks));
-    }
-
-    public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
-    {
-        return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, mat, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)

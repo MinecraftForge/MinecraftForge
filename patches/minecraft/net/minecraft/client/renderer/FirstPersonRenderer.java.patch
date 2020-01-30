@@ -35,14 +35,14 @@
        if (flag) {
           float f5 = hand == Hand.MAIN_HAND ? f : 0.0F;
           float f2 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187470_g, this.field_187469_f);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.MAIN_HAND, p_228396_2_, p_228396_1_, f1, f3, f5, this.field_187467_d))
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.MAIN_HAND, p_228396_2_, p_228396_3_, p_228396_5_, p_228396_1_, f1, f3, f5, this.field_187467_d))
           this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.MAIN_HAND, f5, this.field_187467_d, f2, p_228396_2_, p_228396_3_, p_228396_5_);
        }
  
        if (flag1) {
           float f6 = hand == Hand.OFF_HAND ? f : 0.0F;
           float f7 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187472_i, this.field_187471_h);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_228396_2_, p_228396_1_, f1, f4, f6, this.field_187468_e))
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_228396_2_, p_228396_3_, p_228396_5_, p_228396_1_, f1, f4, f6, this.field_187468_e))
           this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.OFF_HAND, f6, this.field_187468_e, f7, p_228396_2_, p_228396_3_, p_228396_5_);
        }
  

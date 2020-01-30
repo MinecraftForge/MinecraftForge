@@ -41,7 +41,7 @@
        this.func_174967_a(p_228426_3_ + l1);
        iprofiler.func_219895_b("terrain");
        this.func_228441_a_(RenderType.func_228639_c_(), p_228426_1_, d0, d1, d2);
-+      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).func_174937_a(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
++      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).setBlurMipmap(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
        this.func_228441_a_(RenderType.func_228641_d_(), p_228426_1_, d0, d1, d2);
 +      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).restoreLastBlurMipmap();
        this.func_228441_a_(RenderType.func_228643_e_(), p_228426_1_, d0, d1, d2);
@@ -68,7 +68,7 @@
           BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
 -         if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, 0, p_228426_2_))
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
 +         if (!blockstate.isAir(this.field_72769_h, blockpos) && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
