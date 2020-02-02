@@ -108,7 +108,12 @@ public class LootModifierManager extends JsonReloadListener {
 
     private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonObject object) {
         ILootCondition[] ailootcondition = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, ailootcondition);
+        ResourceLocation serializer = location;
+        if (object.has("type"))
+        {
+            serializer = new ResourceLocation(JSONUtils.getString(object, "type"));
+        }
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, ailootcondition);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
