@@ -321,7 +321,15 @@
           if (integratedserver != null) {
              while(!integratedserver.func_213201_w()) {
                 this.func_195542_b(false);
-@@ -1674,112 +1734,9 @@
+@@ -1627,6 +1687,7 @@
+          this.field_71456_v.func_181029_i();
+          this.field_71422_O = null;
+          this.field_71455_al = false;
++         net.minecraftforge.fml.client.ClientHooks.handleClientWorldClosing(field_71441_e);
+          this.field_213274_aO.func_216815_b();
+       }
+ 
+@@ -1674,112 +1735,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -437,7 +445,7 @@
        }
     }
  
-@@ -1861,6 +1818,7 @@
+@@ -1861,6 +1819,7 @@
        return field_71432_P;
     }
  
@@ -445,7 +453,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -1988,6 +1946,8 @@
+@@ -1988,6 +1947,8 @@
     }
  
     public MusicTicker.MusicType func_147109_W() {
@@ -454,7 +462,7 @@
        if (this.field_71462_r instanceof WinGameScreen) {
           return MusicTicker.MusicType.CREDITS;
        } else if (this.field_71439_g == null) {
-@@ -2164,7 +2124,7 @@
+@@ -2164,7 +2125,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -463,7 +471,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2182,4 +2142,12 @@
+@@ -2182,4 +2143,12 @@
     public void func_228020_b_(int p_228020_1_) {
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
