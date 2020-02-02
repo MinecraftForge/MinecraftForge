@@ -898,4 +898,17 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().collisionExtendsVertically(getBlockState(), world, pos, collidingEntity);
     }
+
+    /**
+     * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @param fluidState The state of the fluid
+     * @return Whether the fluid overlay texture should be used
+     */
+    default boolean shouldDisplayFluidOverlay(ILightReader world, BlockPos pos, IFluidState fluidState)
+    {
+        return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
+    }
 }

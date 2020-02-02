@@ -51,20 +51,21 @@
              flag7 = true;
           }
  
-@@ -222,10 +223,10 @@
+@@ -222,10 +223,9 @@
                 flag7 = true;
                 BlockPos blockpos = p_228796_2_.func_177972_a(direction);
                 TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
 -               if (!flag) {
-+               if (atextureatlassprite[2] != null) {
-                   Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
-                   if (block == Blocks.field_150359_w || block instanceof StainedGlassBlock) {
+-                  Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
+-                  if (block == Blocks.field_150359_w || block instanceof StainedGlassBlock) {
 -                     textureatlassprite2 = this.field_187501_d;
++               if (atextureatlassprite[2] != null) {
++                  if (p_228796_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_228796_1_, blockpos, p_228796_4_)) {
 +                     textureatlassprite2 = atextureatlassprite[2];
                    }
                 }
  
-@@ -239,15 +240,15 @@
+@@ -239,15 +239,15 @@
                 float f31 = 1.0F * f30 * f;
                 float f32 = 1.0F * f30 * f1;
                 float f33 = 1.0F * f30 * f2;
@@ -89,7 +90,7 @@
                 }
              }
           }
-@@ -256,10 +257,15 @@
+@@ -256,10 +256,15 @@
        }
     }
  
