@@ -302,13 +302,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1608,15 +1665,18 @@
-       if (clientplaynethandler != null) {
-          this.func_213159_be();
-          clientplaynethandler.func_147296_c();
-+      net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
-       }
- 
+@@ -1613,10 +1670,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -321,7 +315,7 @@
           if (integratedserver != null) {
              while(!integratedserver.func_213201_w()) {
                 this.func_195542_b(false);
-@@ -1627,6 +1687,7 @@
+@@ -1627,6 +1686,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -329,6 +323,14 @@
           this.field_213274_aO.func_216815_b();
        }
  
+@@ -1649,6 +1709,7 @@
+       this.field_71452_i.func_78870_a(p_213257_1_);
+       TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
+       this.func_230150_b_();
++      net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
+    }
+ 
+    public final boolean func_71355_q() {
 @@ -1674,112 +1735,9 @@
  
     private void func_147112_ai() {

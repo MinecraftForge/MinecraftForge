@@ -210,7 +210,7 @@ project(':forge') {
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.7:fatjar'
+        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
     def getVersion = {
