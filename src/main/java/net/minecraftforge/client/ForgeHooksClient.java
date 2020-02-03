@@ -367,7 +367,7 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(fogRenderer, renderer, info, partial, mode, distance));
     }
-    
+
     public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, ActiveRenderInfo info, float partial, float yaw, float pitch, float roll)
     {
         EntityViewRenderEvent.CameraSetup event = new EntityViewRenderEvent.CameraSetup(renderer, info, partial, yaw, pitch, roll);
