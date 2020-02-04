@@ -70,6 +70,12 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
+    public boolean func_230044_c_()
+    {
+        return originalModel.func_230044_c_();
+    }
+
+    @Override
     public boolean isBuiltInRenderer()
     {
         return originalModel.isBuiltInRenderer();

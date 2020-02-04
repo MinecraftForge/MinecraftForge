@@ -90,6 +90,13 @@ public class CompositeModel implements IDynamicBakedModel
     }
 
     @Override
+    public boolean func_230044_c_()
+    {
+        // TODO: Forge: Auto-generated method stub
+        return false;
+    }
+
+    @Override
     public boolean isBuiltInRenderer()
     {
         return false;

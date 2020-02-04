@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
@@ -32,9 +34,9 @@ import net.minecraft.client.gui.widget.button.Button;
  *
  * @author bspkrs
  */
-public class GuiButtonExt extends Button
+public class ExtendedButton extends Button
 {
-    public GuiButtonExt(int xPos, int yPos, int width, int height, String displayString, IPressable handler)
+    public ExtendedButton(int xPos, int yPos, int width, int height, String displayString, IPressable handler)
     {
         super(xPos, yPos, width, height, displayString, handler);
     }
@@ -52,20 +54,10 @@ public class GuiButtonExt extends Button
             int k = this.getYImage(this.isHovered);
             GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
             this.renderBg(mc, mouseX, mouseY);
-            int color = 14737632;
+            int color = getFGColor();
 
-            if (packedFGColor != 0)
-            {
-                color = packedFGColor;
-            }
-            else if (!this.active)
-            {
-                color = 10526880;
-            }
-            else if (this.isHovered)
-            {
-                color = 16777120;
-            }
+            if (this.isHovered && this.packedFGColor == Widget.UNSET_FG_COLOR)
+                color = 0xFFFFA0; // Slightly Yellow
 
             String buttonText = this.getMessage();
             int strWidth = mc.fontRenderer.getStringWidth(buttonText);

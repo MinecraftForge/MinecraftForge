@@ -117,7 +117,7 @@ public interface IForgeBlock
      * @param pos
      * @return The light value
      */
-    default int getLightValue(BlockState state, ILightReader world, BlockPos pos)
+    default int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getLightValue();
     }

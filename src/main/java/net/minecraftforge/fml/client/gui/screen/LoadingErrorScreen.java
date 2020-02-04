@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 
 import com.google.common.base.Strings;
 import net.minecraft.client.Minecraft;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.client.ClientHooks;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,10 +73,10 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.warningHeader = TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET;
 
         int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
-        this.addButton(new GuiButtonExt(50, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.mods.folder"), b -> Util.getOSType().openFile(modsDir.toFile())));
-        this.addButton(new GuiButtonExt(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), b -> Util.getOSType().openFile(logFile.toFile())));
+        this.addButton(new ExtendedButton(50, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.mods.folder"), b -> Util.getOSType().openFile(modsDir.toFile())));
+        this.addButton(new ExtendedButton(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), b -> Util.getOSType().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
-            this.addButton(new GuiButtonExt(this.width / 4, this.height - 24, this.width / 2, 20, ForgeI18n.parseMessage("fml.button.continue.launch"), b -> {
+            this.addButton(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, ForgeI18n.parseMessage("fml.button.continue.launch"), b -> {
                 ClientHooks.logMissingTextureErrors();
                 this.minecraft.displayGuiScreen(null);
             }));

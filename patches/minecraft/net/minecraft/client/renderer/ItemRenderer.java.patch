@@ -9,18 +9,7 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-@@ -70,6 +70,10 @@
-    }
- 
-    private void func_229114_a_(IBakedModel p_229114_1_, ItemStack p_229114_2_, int p_229114_3_, int p_229114_4_, MatrixStack p_229114_5_, IVertexBuilder p_229114_6_) {
-+      if (false && net.minecraftforge.common.ForgeConfig.CLIENT.allowEmissiveItems.get()) { //TODO: Find way to re-introduce emissive items.
-+         net.minecraftforge.client.ForgeHooksClient.renderLitItem(this, p_229114_5_, p_229114_6_, p_229114_1_, p_229114_2_);
-+         return;
-+      }
-       Random random = new Random();
-       long i = 42L;
- 
-@@ -91,7 +95,7 @@
+@@ -91,7 +91,7 @@
              p_229111_8_ = this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation("minecraft:trident#inventory"));
           }
  
@@ -29,16 +18,16 @@
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag1)) {
              RenderType rendertype = RenderTypeLookup.func_228389_a_(p_229111_1_);
-@@ -105,7 +109,7 @@
+@@ -105,7 +105,7 @@
              IVertexBuilder ivertexbuilder = func_229113_a_(p_229111_5_, rendertype1, true, p_229111_1_.func_77962_s());
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
           } else {
 -            ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
-+            p_229111_1_.func_77973_b().getTileEntityItemStackRenderer().func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
++            p_229111_1_.func_77973_b().getItemStackTileEntityRenderer().func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
           }
  
           p_229111_4_.func_227865_b_();
-@@ -129,7 +133,7 @@
+@@ -129,7 +129,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -47,7 +36,7 @@
        }
  
     }
-@@ -216,6 +220,7 @@
+@@ -215,6 +215,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -55,7 +44,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -247,18 +252,16 @@
+@@ -246,18 +247,16 @@
              irendertypebuffer$impl.func_228461_a_();
           }
  
@@ -78,7 +67,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.enableBlend();
-@@ -296,4 +299,9 @@
+@@ -295,4 +294,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

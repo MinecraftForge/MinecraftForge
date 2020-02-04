@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui;
 
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.Widget;
 
 /**
  * This class implements an easy way to check if the mouse has hovered within a certain region of the screen for a given
@@ -30,7 +30,7 @@ import net.minecraft.client.gui.widget.button.Button;
 public class HoverChecker
 {
     private int       top, bottom, left, right, threshold;
-    private Button button;
+    private Widget    widget;
     private long      hoverStart;
 
     public HoverChecker(int top, int bottom, int left, int right, int threshold)
@@ -43,9 +43,9 @@ public class HoverChecker
         this.hoverStart = -1;
     }
 
-    public HoverChecker(Button button, int threshold)
+    public HoverChecker(Widget widget, int threshold)
     {
-        this.button = button;
+        this.widget = widget;
         this.threshold = threshold;
     }
 
@@ -76,13 +76,13 @@ public class HoverChecker
      */
     public boolean checkHover(int mouseX, int mouseY, boolean canHover)
     {
-        if (this.button != null)
+        if (this.widget != null)
         {
-            this.top = button.y;
-            this.bottom = button.y + button.getHeight();
-            this.left = button.x;
-            this.right = button.x + button.getWidth();
-            canHover = canHover && button.visible;
+            this.top = widget.y;
+            this.bottom = widget.y + widget.getHeight();
+            this.left = widget.x;
+            this.right = widget.x + widget.getWidth();
+            canHover = canHover && widget.visible;
         }
 
         if (canHover && hoverStart == -1 && mouseY >= top && mouseY <= bottom && mouseX >= left && mouseX <= right)

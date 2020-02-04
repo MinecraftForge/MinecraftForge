@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -91,7 +90,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                 owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : textures.get(0)
         );
         ImmutableMap<TransformType, TransformationMatrix> map = PerspectiveMapWrapper.getTransforms(modelTransform);
-        return new BakedItemModel(quads, particle, map, overrides, transform.isIdentity());
+        return new BakedItemModel(quads, particle, map, overrides, transform.isIdentity(), owner.isSideLit());
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter)
