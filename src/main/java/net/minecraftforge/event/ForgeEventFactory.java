@@ -686,12 +686,18 @@ public class ForgeEventFactory
         return event.getResult() != Result.DENY;
     }
 
+    public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
+    {
+        if (watch)
+            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+        else
+            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+    }
+
     public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
     {
-        if (!wasLoaded && load)
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
-        else if (wasLoaded && !load)
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+        if (wasLoaded != load)
+            fireChunkWatch(load, entity, chunkpos, world);
     }
 
     public static boolean onPistonMovePre(World world, BlockPos pos, Direction direction, boolean extending)
