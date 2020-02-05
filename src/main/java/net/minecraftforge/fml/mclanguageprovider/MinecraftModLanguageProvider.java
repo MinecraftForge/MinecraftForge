@@ -19,7 +19,10 @@
 
 package net.minecraftforge.fml.mclanguageprovider;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.client.config.ExampleDummyConfigScreen;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
@@ -71,6 +74,7 @@ public class MinecraftModLanguageProvider implements IModLanguageProvider {
         public MinecraftModContainer(final IModInfo info) {
             super(info);
             contextExtension = ()->null;
+            DistExecutor.runWhenOn(Dist.CLIENT, () -> ExampleDummyConfigScreen.makeConfigGuiExtensionPoint(this));
         }
 
         @Override
