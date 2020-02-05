@@ -103,9 +103,15 @@ public class ConfigTracker {
     }
 
     public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
+        final String fileName = s2CConfigData.getFileName();
+        final byte[] bytes = s2CConfigData.getBytes();
+        receiveSyncedConfig(fileName, bytes);
+    }
+
+    public void receiveSyncedConfig(final String fileName, final byte[] bytes) {
         if (!Minecraft.getInstance().isIntegratedServerRunning()) {
-            Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
-                mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
+            Optional.ofNullable(fileMap.get(fileName)).ifPresent(mc-> {
+                mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(bytes)));
                 mc.fireEvent(new ModConfig.Reloading(mc));
             });
         }

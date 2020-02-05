@@ -55,8 +55,7 @@ import java.util.Map;
  */
 public class ModConfigCategoryElement extends CategoryElement<ModConfig> {
 
-	// TODO: Move these to translation keys once Forge's API stabilizes a bit more and the PLAYER config type is implemented.
-	@Deprecated
+	@Deprecated // TODO: Move these to translation keys once Forge's API stabilizes a bit more and the PLAYER config type is implemented.
 	private static final Map<ModConfig.Type, String> COMMENTS = makeTypeComments();
 	private final ModConfig modConfig;
 	private final String label;
@@ -70,11 +69,12 @@ public class ModConfigCategoryElement extends CategoryElement<ModConfig> {
 		final String str = type.name().toLowerCase();
 		this.label = StringUtils.capitalize(str);
 		this.translationKey = "fml.configgui.modConfigType." + str;
-		String tempComment = COMMENTS.get(type);
-		final String fileName = getFileName();
-		if (fileName != null)
-			tempComment += "\n" + TextFormatting.GRAY + fileName;
-		this.comment = tempComment;
+		final String comment = COMMENTS.get(type);
+		final String filePath = getFilePath();
+		if (filePath != null)
+			this.comment = comment + "\n" + TextFormatting.GRAY + filePath;
+		else
+			this.comment = comment;
 		this.configElements = makeConfigElements(modConfig);
 	}
 
@@ -130,7 +130,7 @@ public class ModConfigCategoryElement extends CategoryElement<ModConfig> {
 	}
 
 	@Nullable
-	public String getFileName() {
+	public String getFilePath() {
 		// For Server Configs:
 		// ConfigData is null unless we are in world
 		// and ConfigData is not an instanceof FileConfig when connected to a multiplayer server.
@@ -205,7 +205,7 @@ public class ModConfigCategoryElement extends CategoryElement<ModConfig> {
 	@Override
 	public void save() {
 		super.save();
-		saveOrSync();
+		this.saveOrSync();
 	}
 
 	@Nonnull
@@ -217,6 +217,10 @@ public class ModConfigCategoryElement extends CategoryElement<ModConfig> {
 	public void saveOrSync() {
 		if (modConfig.getType() == ModConfig.Type.SERVER) {
 			// TODO: Syncing to Server
+//			final ByteArrayOutputStream output = new ByteArrayOutputStream();
+//			final CommentedConfig configData = modConfig.getConfigData();
+//			configData.configFormat().createWriter().write(configData, output);
+//			new C2SRequestUpdateConfigData(modConfig.getFileName(), output.toByteArray()).sendToServer();
 		} else {
 			modConfig.save();
 			modConfig.fireEvent(new ModConfig.Reloading(modConfig));
