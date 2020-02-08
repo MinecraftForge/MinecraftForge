@@ -57,7 +57,7 @@ public interface ITeleporter {
      * @param repositionEntity a function to reposition the entity, which returns the new entity in the new dimension. This is the vanilla implementation of the dimension travel logic. If the supplied boolean is true, it is attempted to spawn a new portal.
      * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.dimension.DimensionType, ITeleporter)}
      *
-     * @apiNote This method will not be called if the entity is a {@link ServerPlayerEntity} and {@link #specialEndReturn()} is true.
+     * @apiNote This method will not be called if the entity is a {@link ServerPlayerEntity} and {@link #specialEndReturn()} is true, and current world is the end, and destWorld is the overworld.
      */
     default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
        return repositionEntity.apply(true);
