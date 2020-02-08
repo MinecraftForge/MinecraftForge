@@ -56,15 +56,6 @@ public class CommandSetDimension
                 )
             );
     }
-
-    private static final ITeleporter PORTALLESS = new ITeleporter()
-    {
-        @Override
-        public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) 
-        {
-            return repositionEntity.apply(false);
-        }
-    };
     
     private static int execute(CommandSource sender, Collection<? extends Entity> entities, DimensionType dim, BlockPos pos) throws CommandSyntaxException
     {
@@ -76,7 +67,16 @@ public class CommandSetDimension
         //    throw INVALID_DIMENSION.create(dim);
 
         entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getFormattedText(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, PORTALLESS));
+        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, new ITeleporter()
+        {
+            @Override
+            public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
+            {
+                Entity repositionedEntity = repositionEntity.apply(false);
+                repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+                return repositionedEntity;
+            }
+        }));
 
         return 0;
     }
