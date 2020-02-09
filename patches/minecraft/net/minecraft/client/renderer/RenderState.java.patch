@@ -5,7 +5,7 @@
  
        public LineState(OptionalDouble p_i225982_1_) {
 -         super("alpha", () -> {
-+         super("line", () -> { // FORGE: fix MC-167447
++         super("line_width", () -> { // FORGE: fix MC-167447
              if (!Objects.equals(p_i225982_1_, OptionalDouble.of(1.0D))) {
                 if (p_i225982_1_.isPresent()) {
                    RenderSystem.lineWidth((float)p_i225982_1_.getAsDouble());
