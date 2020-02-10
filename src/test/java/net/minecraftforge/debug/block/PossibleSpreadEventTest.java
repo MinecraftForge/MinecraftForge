@@ -45,9 +45,6 @@ import org.apache.logging.log4j.Logger;
  * - disable spreading to dirt blocks, where dirt is below
  * - force spreading to dirt blocks, where stone is below
  *
- * fire test
- * - disable spreading to air blocks. (only replace flammable blocks nearby)
- *
  * mushroom test
  * - force spreading mushrooms on dirt
  *
@@ -66,7 +63,6 @@ public class PossibleSpreadEventTest {
 
     private static final boolean GRASS_TEST = true;
     private static final boolean MYCELIUM_TEST = true;
-    private static final boolean FIRE_TEST = true;
     private static final boolean MUSHROOM_TEST = true;
     private static final boolean SEA_PICKLE_TEST = true;
 
@@ -128,14 +124,6 @@ public class PossibleSpreadEventTest {
             }
         }
 
-        if (FIRE_TEST && block == Blocks.FIRE) {
-            sendPreSpreadMessage(event);
-            if (world.isAirBlock(spreadPos)) {
-                sendMessageToAllPlayersWithDebugItem(world, "Blocking " + event.getState() + " spread onto air block at " + spreadPos);
-                event.setResult(Result.DENY);
-            }
-        }
-
         if (MUSHROOM_TEST && block instanceof MushroomBlock) {
             sendPreSpreadMessage(event);
             //force spreading mushrooms on dirt
@@ -160,7 +148,6 @@ public class PossibleSpreadEventTest {
         Block block = event.getState().getBlock();
         if ((GRASS_TEST && block == Blocks.GRASS_BLOCK)
                 || (MYCELIUM_TEST && block == Blocks.MYCELIUM)
-                || (FIRE_TEST && block == Blocks.FIRE)
                 || (MUSHROOM_TEST && block instanceof MushroomBlock)
                 || (SEA_PICKLE_TEST && block == Blocks.SEA_PICKLE)) {
             sendPostSpreadMessage(event);

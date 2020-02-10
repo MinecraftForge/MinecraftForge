@@ -1,6 +1,27 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -64,7 +64,7 @@
+@@ -25,7 +25,6 @@
+    }
+ 
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+-      if (p_225534_4_.nextInt(25) == 0) {
+          int i = 5;
+          int j = 4;
+ 
+@@ -47,9 +46,9 @@
+ 
+             blockpos1 = p_225534_3_.func_177982_a(p_225534_4_.nextInt(3) - 1, p_225534_4_.nextInt(2) - p_225534_4_.nextInt(2), p_225534_4_.nextInt(3) - 1);
+          }
+-
+-         if (p_225534_2_.func_175623_d(blockpos1) && p_225534_1_.func_196955_c(p_225534_2_, blockpos1)) {
+-            p_225534_2_.func_180501_a(blockpos1, p_225534_1_, 2);
++         if (net.minecraftforge.common.ForgeHooks.onPossibleSpreadPre(p_225534_2_, p_225534_3_, p_225534_1_, blockpos1, p_225534_1_, p_225534_2_.func_175623_d(blockpos1) && p_225534_1_.func_196955_c(p_225534_2_, blockpos1) && p_225534_4_.nextInt(25) == 0)) {
++            if (p_225534_2_.func_180501_a(blockpos1, p_225534_1_, 2)) {
++               net.minecraftforge.common.ForgeHooks.onPossibleSpreadPost(p_225534_2_, p_225534_3_, p_225534_1_, blockpos1);
+          }
+       }
+ 
+@@ -64,7 +63,7 @@
        BlockState blockstate = p_196260_2_.func_180495_p(blockpos);
        Block block = blockstate.func_177230_c();
        if (block != Blocks.field_150391_bh && block != Blocks.field_196661_l) {
