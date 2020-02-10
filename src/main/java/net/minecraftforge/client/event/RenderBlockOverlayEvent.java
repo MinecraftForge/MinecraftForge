@@ -19,7 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.block.Block;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -29,8 +30,8 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Called when a block's texture is going to be overlaid on the player's HUD. Cancel this event to prevent the overlay.
  */
-@net.minecraftforge.eventbus.api.Cancelable
-public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Event
+@Cancelable
+public class RenderBlockOverlayEvent extends Event
 {
 
     public static enum OverlayType {
@@ -38,15 +39,15 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
     }
     
     private final PlayerEntity player;
-    private final float renderPartialTicks;
+    private final MatrixStack mat;
     private final OverlayType overlayType;
     private final BlockState blockForOverlay;
     private final BlockPos blockPos;
     
-    public RenderBlockOverlayEvent(PlayerEntity player, float renderPartialTicks, OverlayType type, BlockState block, BlockPos blockPos)
+    public RenderBlockOverlayEvent(PlayerEntity player, MatrixStack mat, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
-        this.renderPartialTicks = renderPartialTicks;
+        this.mat = mat;
         this.overlayType = type;
         this.blockForOverlay = block;
         this.blockPos = blockPos;
@@ -57,7 +58,7 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
      * The player which the overlay will apply to
      */
     public PlayerEntity getPlayer() { return player; }
-    public float getRenderPartialTicks() { return renderPartialTicks; }
+    public MatrixStack getMatrixStack() { return mat; }
     /**
      * The type of overlay to occur
      */

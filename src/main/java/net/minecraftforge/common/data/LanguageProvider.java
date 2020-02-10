@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.common.data;
 
 import java.io.BufferedWriter;
@@ -86,63 +87,63 @@ public abstract class LanguageProvider implements IDataProvider {
         cache.func_208316_a(target, hash);
     }
 
-    protected void addBlock(Supplier<? extends Block> key, String name) {
+    public void addBlock(Supplier<? extends Block> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(Block key, String name) {
+    public void add(Block key, String name) {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addItem(Supplier<? extends Item> key, String name) {
+    public void addItem(Supplier<? extends Item> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(Item key, String name) {
+    public void add(Item key, String name) {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addItemStack(Supplier<ItemStack> key, String name) {
+    public void addItemStack(Supplier<ItemStack> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(ItemStack key, String name) {
+    public void add(ItemStack key, String name) {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addEnchantment(Supplier<? extends Enchantment> key, String name) {
+    public void addEnchantment(Supplier<? extends Enchantment> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(Enchantment key, String name) {
+    public void add(Enchantment key, String name) {
         add(key.getName(), name);
     }
 
-    protected void addBiome(Supplier<? extends Biome> key, String name) {
+    public void addBiome(Supplier<? extends Biome> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(Biome key, String name) {
+    public void add(Biome key, String name) {
         add(key.getTranslationKey(), name);
     }
 
-    protected void addEffect(Supplier<? extends Effect> key, String name) {
+    public void addEffect(Supplier<? extends Effect> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(Effect key, String name) {
+    public void add(Effect key, String name) {
         add(key.getName(), name);
     }
 
-    protected void addEntityType(Supplier<? extends EntityType<?>> key, String name) {
+    public void addEntityType(Supplier<? extends EntityType<?>> key, String name) {
         add(key.get(), name);
     }
 
-    protected void add(EntityType<?> key, String name) {
+    public void add(EntityType<?> key, String name) {
         add(key.getTranslationKey(), name);
     }
 
-    protected void add(String key, String value) {
+    public void add(String key, String value) {
         if (data.put(key, value) != null)
             throw new IllegalStateException("Duplicate translation key " + key);
     }

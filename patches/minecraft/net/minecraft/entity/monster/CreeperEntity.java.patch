@@ -1,11 +1,11 @@
 --- a/net/minecraft/entity/monster/CreeperEntity.java
 +++ b/net/minecraft/entity/monster/CreeperEntity.java
-@@ -208,7 +208,7 @@
+@@ -214,7 +214,7 @@
  
     private void func_146077_cc() {
        if (!this.field_70170_p.field_72995_K) {
 -         Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
 +         Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
-          float f = this.func_70830_n() ? 2.0F : 1.0F;
+          float f = this.func_225509_J__() ? 2.0F : 1.0F;
           this.field_70729_aU = true;
-          this.field_70170_p.func_217385_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, (float)this.field_82226_g * f, explosion$mode);
+          this.field_70170_p.func_217385_a(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), (float)this.field_82226_g * f, explosion$mode);

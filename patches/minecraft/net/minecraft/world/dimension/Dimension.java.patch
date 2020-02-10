@@ -9,7 +9,7 @@
     public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected final World field_76579_a;
     private final DimensionType field_222669_f;
-@@ -63,7 +63,7 @@
+@@ -59,7 +59,7 @@
  
     @OnlyIn(Dist.CLIENT)
     public float func_76571_f() {
@@ -18,7 +18,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -78,7 +78,7 @@
+@@ -74,7 +74,7 @@
  
     @OnlyIn(Dist.CLIENT)
     public double func_76565_k() {
@@ -27,7 +27,7 @@
     }
  
     public boolean func_177500_n() {
-@@ -107,6 +107,7 @@
+@@ -103,6 +103,7 @@
     public void func_186059_r() {
     }
  
@@ -35,7 +35,7 @@
     public abstract ChunkGenerator<?> func_186060_c();
  
     @Nullable
-@@ -127,5 +128,64 @@
+@@ -123,5 +124,64 @@
     @OnlyIn(Dist.CLIENT)
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  

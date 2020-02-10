@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -165,11 +165,11 @@
+@@ -164,11 +164,11 @@
  
-    public boolean func_175655_b(BlockPos p_175655_1_, boolean p_175655_2_) {
-       BlockState blockstate = this.func_180495_p(p_175655_1_);
+    public boolean func_225521_a_(BlockPos p_225521_1_, boolean p_225521_2_, @Nullable Entity p_225521_3_) {
+       BlockState blockstate = this.func_180495_p(p_225521_1_);
 -      if (blockstate.func_196958_f()) {
-+      if (blockstate.isAir(this, p_175655_1_)) {
++      if (blockstate.isAir(this, p_225521_1_)) {
           return false;
        } else {
-          if (p_175655_2_) {
--            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_175655_1_) : null;
-+            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_175655_1_) : null;
-             Block.func_220059_a(blockstate, this.field_201689_f, p_175655_1_, tileentity);
+          if (p_225521_2_) {
+-            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_225521_1_) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_225521_1_) : null;
+             Block.func_220054_a(blockstate, this.field_201689_f, p_225521_1_, tileentity, p_225521_3_, ItemStack.field_190927_a);
           }
  
-@@ -187,12 +187,12 @@
+@@ -186,12 +186,12 @@
           CompoundNBT compoundnbt = ichunk.func_201579_g(p_175625_1_);
           if (compoundnbt != null) {
              if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
@@ -30,7 +30,7 @@
              } else {
                 tileentity = TileEntity.func_203403_c(compoundnbt);
              }
-@@ -203,7 +203,7 @@
+@@ -202,7 +202,7 @@
              }
           }
  
@@ -39,7 +39,7 @@
              field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
           }
  
-@@ -219,9 +219,9 @@
+@@ -218,9 +218,9 @@
        }
  
        Block block = p_180501_2_.func_177230_c();
@@ -51,7 +51,7 @@
           } else {
              CompoundNBT compoundnbt = new CompoundNBT();
              compoundnbt.func_74768_a("x", p_180501_1_.func_177958_n());
-@@ -230,7 +230,7 @@
+@@ -229,7 +229,7 @@
              compoundnbt.func_74778_a("id", "DUMMY");
              ichunk.func_201591_a(compoundnbt);
           }

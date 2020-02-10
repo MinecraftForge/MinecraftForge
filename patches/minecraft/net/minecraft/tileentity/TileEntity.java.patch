@@ -22,7 +22,7 @@
     }
  
     @Nullable
-@@ -46,6 +49,8 @@
+@@ -47,6 +50,8 @@
  
     public void func_145839_a(CompoundNBT p_145839_1_) {
        this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
@@ -31,7 +31,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -61,6 +66,8 @@
+@@ -62,6 +67,8 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -40,7 +40,7 @@
           return p_189516_1_;
        }
     }
-@@ -93,7 +100,7 @@
+@@ -94,7 +101,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -49,7 +49,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -139,6 +146,8 @@
+@@ -140,6 +147,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -58,7 +58,7 @@
     }
  
     public void func_145829_t() {
-@@ -181,6 +190,13 @@
+@@ -182,6 +191,13 @@
        return this.field_200663_e;
     }
  

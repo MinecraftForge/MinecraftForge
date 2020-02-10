@@ -1,58 +1,65 @@
 --- a/net/minecraft/client/renderer/entity/layers/ArmorLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/ArmorLayer.java
-@@ -55,24 +55,25 @@
+@@ -45,21 +45,22 @@
           ArmorItem armoritem = (ArmorItem)itemstack.func_77973_b();
-          if (armoritem.func_185083_B_() == p_188361_9_) {
-             A a = this.func_215337_a(p_188361_9_);
-+            a = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, a);
+          if (armoritem.func_185083_B_() == p_229129_10_) {
+             A a = this.func_215337_a(p_229129_10_);
++            a = getArmorModelHook(p_229129_3_, itemstack, p_229129_10_, a);
              ((BipedModel)this.func_215332_c()).func_217148_a(a);
-             a.func_212843_a_(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_4_);
-             this.func_188359_a(a, p_188361_9_);
-             boolean flag = this.func_188363_b(p_188361_9_);
--            this.func_215333_a(this.func_177181_a(armoritem, flag));
+             a.func_212843_a_(p_229129_3_, p_229129_4_, p_229129_5_, p_229129_6_);
+             this.func_188359_a(a, p_229129_10_);
+             a.func_225597_a_(p_229129_3_, p_229129_4_, p_229129_5_, p_229129_7_, p_229129_8_, p_229129_9_);
+             boolean flag = this.func_188363_b(p_229129_10_);
+             boolean flag1 = itemstack.func_77962_s();
 -            if (armoritem instanceof DyeableArmorItem) {
 -               int i = ((DyeableArmorItem)armoritem).func_200886_f(itemstack);
-+            this.func_215333_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, null));
 +            if (armoritem instanceof net.minecraft.item.IDyeableArmorItem) { // Allow this for anything, not only cloth
 +               int i = ((net.minecraft.item.IDyeableArmorItem)armoritem).func_200886_f(itemstack);
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
                 float f2 = (float)(i & 255) / 255.0F;
-                GlStateManager.color4f(this.field_177184_f * f, this.field_177185_g * f1, this.field_177192_h * f2, this.field_177187_e);
-                a.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
--               this.func_215333_a(this.func_177178_a(armoritem, flag, "overlay"));
-+               this.func_215333_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, "overlay"));
+-               this.func_229128_a_(p_229129_1_, p_229129_2_, p_229129_11_, armoritem, flag1, a, flag, f, f1, f2, (String)null);
+-               this.func_229128_a_(p_229129_1_, p_229129_2_, p_229129_11_, armoritem, flag1, a, flag, 1.0F, 1.0F, 1.0F, "overlay");
++               renderArmor(p_229129_1_, p_229129_2_, p_229129_11_, flag1, a, f, f1, f2, this.getArmorResource(p_229129_3_, itemstack, p_229129_10_, null));
++               renderArmor(p_229129_1_, p_229129_2_, p_229129_11_, flag1, a, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_229129_3_, itemstack, p_229129_10_, "overlay"));
+             } else {
+-               this.func_229128_a_(p_229129_1_, p_229129_2_, p_229129_11_, armoritem, flag1, a, flag, 1.0F, 1.0F, 1.0F, (String)null);
++               renderArmor(p_229129_1_, p_229129_2_, p_229129_11_, flag1, a, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_229129_3_, itemstack, p_229129_10_, null));
              }
  
-             GlStateManager.color4f(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
-             a.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
--            if (!this.field_177193_i && itemstack.func_77948_v()) {
-+            if (!this.field_177193_i && itemstack.func_77962_s()) {
-                func_215338_a(this::func_215333_a, p_188361_1_, a, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
-             }
- 
-@@ -125,15 +126,60 @@
-       gamerenderer.func_191514_d(false);
+          }
+@@ -67,7 +68,10 @@
     }
  
-+   @Deprecated //Use the more sensitive version getArmorResource below
-    private ResourceLocation func_177181_a(ArmorItem p_177181_1_, boolean p_177181_2_) {
-       return this.func_177178_a(p_177181_1_, p_177181_2_, (String)null);
+    private void func_229128_a_(MatrixStack p_229128_1_, IRenderTypeBuffer p_229128_2_, int p_229128_3_, ArmorItem p_229128_4_, boolean p_229128_5_, A p_229128_6_, boolean p_229128_7_, float p_229128_8_, float p_229128_9_, float p_229128_10_, @Nullable String p_229128_11_) {
+-      IVertexBuilder ivertexbuilder = ItemRenderer.func_229113_a_(p_229128_2_, RenderType.func_228640_c_(this.func_177178_a(p_229128_4_, p_229128_7_, p_229128_11_)), false, p_229128_5_);
++      renderArmor(p_229128_1_, p_229128_2_, p_229128_3_, p_229128_5_, p_229128_6_, p_229128_8_, p_229128_9_, p_229128_10_, this.func_177178_a(p_229128_4_, p_229128_7_, p_229128_11_));
++   }
++   private void renderArmor(MatrixStack p_229128_1_, IRenderTypeBuffer p_229128_2_, int p_229128_3_, boolean p_229128_5_, A p_229128_6_, float p_229128_8_, float p_229128_9_, float p_229128_10_, ResourceLocation armorResource) {
++      IVertexBuilder ivertexbuilder = ItemRenderer.func_229113_a_(p_229128_2_, RenderType.func_228640_c_(armorResource), false, p_229128_5_);
+       p_229128_6_.func_225598_a_(p_229128_1_, ivertexbuilder, p_229128_3_, OverlayTexture.field_229196_a_, p_229128_8_, p_229128_9_, p_229128_10_, 1.0F);
+    }
+ 
+@@ -79,6 +83,7 @@
+       return p_188363_1_ == EquipmentSlotType.LEGS;
     }
  
 +   @Deprecated //Use the more sensitive version getArmorResource below
     private ResourceLocation func_177178_a(ArmorItem p_177178_1_, boolean p_177178_2_, @Nullable String p_177178_3_) {
        String s = "textures/models/armor/" + p_177178_1_.func_200880_d().func_200897_d() + "_layer_" + (p_177178_2_ ? 2 : 1) + (p_177178_3_ == null ? "" : "_" + p_177178_3_) + ".png";
        return field_177191_j.computeIfAbsent(s, ResourceLocation::new);
-    }
+@@ -87,4 +92,48 @@
+    protected abstract void func_188359_a(A p_188359_1_, EquipmentSlotType p_188359_2_);
  
+    protected abstract void func_177194_a(A p_177194_1_);
++
 +
 +   /*=================================== FORGE START =========================================*/
 +
 +   /**
 +    * Hook to allow item-sensitive armor model. for LayerBipedArmor.
 +    */
-+   protected A getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlotType slot, A model) {
++   protected A getArmorModelHook(T entity, ItemStack itemStack, EquipmentSlotType slot, A model) {
 +      return model;
 +   }
 +
@@ -78,7 +85,7 @@
 +      String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (func_188363_b(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
 +      s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
-+      ResourceLocation resourcelocation = (ResourceLocation)field_177191_j.get(s1);
++      ResourceLocation resourcelocation = field_177191_j.get(s1);
 +
 +      if (resourcelocation == null)
 +      {
@@ -89,6 +96,4 @@
 +      return resourcelocation;
 +   }
 +   /*=================================== FORGE END ===========================================*/
-    protected abstract void func_188359_a(A p_188359_1_, EquipmentSlotType p_188359_2_);
- 
-    protected abstract void func_177194_a(A p_177194_1_);
+ }

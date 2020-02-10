@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/dimension/OverworldDimension.java
 +++ b/net/minecraft/world/dimension/OverworldDimension.java
 @@ -51,10 +51,6 @@
-       super(p_i49933_1_, p_i49933_2_);
+       super(p_i49933_1_, p_i49933_2_, 0.0F);
     }
  
 -   public DimensionType func_186058_p() {

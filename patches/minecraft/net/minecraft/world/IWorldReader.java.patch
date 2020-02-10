@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/IWorldReader.java
 +++ b/net/minecraft/world/IWorldReader.java
-@@ -29,7 +29,7 @@
+@@ -57,7 +57,7 @@
+    }
  
- public interface IWorldReader extends IEnviromentBlockReader {
     default boolean func_175623_d(BlockPos p_175623_1_) {
 -      return this.func_180495_p(p_175623_1_).func_196958_f();
 +      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
     }
  
     default boolean func_175710_j(BlockPos p_175710_1_) {
-@@ -233,6 +233,10 @@
+@@ -148,6 +148,10 @@
        return this.func_217354_b(p_175667_1_.func_177958_n() >> 4, p_175667_1_.func_177952_p() >> 4);
     }
  

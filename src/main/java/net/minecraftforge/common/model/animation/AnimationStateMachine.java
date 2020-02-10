@@ -26,11 +26,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -40,6 +36,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +45,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.util.JsonUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -81,13 +77,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     private transient IClip currentState;
     private transient float lastPollTime;
 
-    private static final LoadingCache<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>> clipCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Triple<? extends IClip, Float, Float>, Pair<IModelTransform, Iterable<Event>>> clipCache = CacheBuilder.newBuilder()
         .maximumSize(100)
         .expireAfterWrite(100, TimeUnit.MILLISECONDS)
-        .build(new CacheLoader<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>>()
+        .build(new CacheLoader<Triple<? extends IClip, Float, Float>, Pair<IModelTransform, Iterable<Event>>>()
         {
             @Override
-            public Pair<IModelState, Iterable<Event>> load(Triple<? extends IClip, Float, Float> key) throws Exception
+            public Pair<IModelTransform, Iterable<Event>> load(Triple<? extends IClip, Float, Float> key) throws Exception
             {
                 return Clips.apply(key.getLeft(), key.getMiddle(), key.getRight());
             }
@@ -136,13 +132,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     }
 
     @Override
-    public Pair<IModelState, Iterable<Event>> apply(float time)
+    public Pair<IModelTransform, Iterable<Event>> apply(float time)
     {
         if(lastPollTime == Float.NEGATIVE_INFINITY)
         {
             lastPollTime = time;
         }
-        Pair<IModelState, Iterable<Event>> pair = clipCache.getUnchecked(Triple.of(currentState, lastPollTime, time));
+        Pair<IModelTransform, Iterable<Event>> pair = clipCache.getUnchecked(Triple.of(currentState, lastPollTime, time));
         lastPollTime = time;
         boolean shouldFilter = false;
         if(shouldHandleSpecialEvents)

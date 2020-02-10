@@ -395,12 +395,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
-    @Deprecated //Public for ByteByfUtils only!
-    public V getRaw(int id)
-    {
-        return this.ids.get(id);
-    }
-
     void addAlias(ResourceLocation from, ResourceLocation to)
     {
         if (this.isLocked())
@@ -855,7 +849,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             data.putIntArray("blocked", blocked);
 
             ListNBT dummied = new ListNBT();
-            this.dummied.stream().sorted().forEach(e -> dummied.add(new StringNBT(e.toString())));
+            this.dummied.stream().sorted().forEach(e -> dummied.add(StringNBT.func_229705_a_(e.toString())));
             data.put("dummied", dummied);
 
             return data;

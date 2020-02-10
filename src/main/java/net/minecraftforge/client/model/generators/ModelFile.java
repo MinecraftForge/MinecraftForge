@@ -69,11 +69,6 @@ public abstract class ModelFile {
     public static class ExistingModelFile extends ModelFile {
         private final ExistingFileHelper existingHelper;
 
-        @Deprecated
-        public ExistingModelFile(String location, ExistingFileHelper existingHelper) {
-            this(new ResourceLocation(location), existingHelper);
-        }
-
         public ExistingModelFile(ResourceLocation location, ExistingFileHelper existingHelper) {
             super(location);
             this.existingHelper = existingHelper;

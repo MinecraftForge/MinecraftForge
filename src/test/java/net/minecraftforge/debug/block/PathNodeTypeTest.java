@@ -22,7 +22,6 @@ package net.minecraftforge.debug.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -30,8 +29,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
-
-import javax.annotation.Nullable;
 
 @Mod(PathNodeTypeTest.MOD_ID)
 @Mod.EventBusSubscriber
@@ -44,20 +41,20 @@ public class PathNodeTypeTest
     @ObjectHolder(BLOCK_ID)
     private static Block TEST_BLOCK = null;
 
+    /*TODO
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
         {
             @Override
-            public PathNodeType getAiPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+            public PathNodeType getAiPathNodeType(BlockState state, IBlockReader world, BlockPos pos)
             {
                 return PathNodeType.DOOR_OPEN;
             }
         }).setRegistryName(MOD_ID, BLOCK_ID));
     }
 
-    /*
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {

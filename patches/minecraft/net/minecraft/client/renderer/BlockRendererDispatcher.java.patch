@@ -1,42 +1,56 @@
 --- a/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/BlockRendererDispatcher.java
-@@ -28,7 +28,7 @@
- 
-    public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_) {
-       this.field_175028_a = p_i46577_1_;
--      this.field_175027_c = new BlockModelRenderer(p_i46577_2_);
-+      this.field_175027_c = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer(p_i46577_2_);
-       this.field_175025_e = new FluidBlockRenderer();
+@@ -40,18 +40,26 @@
+       return this.field_175028_a;
     }
  
-@@ -40,12 +40,16 @@
-       if (p_215329_1_.func_185901_i() == BlockRenderType.MODEL) {
-          IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_215329_1_);
-          long i = p_215329_1_.func_209533_a(p_215329_2_);
--         IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(p_215329_1_, ibakedmodel, p_215329_3_, this.field_195476_e, i)).func_177645_b();
-+         IBakedModel ibakedmodel1 = net.minecraftforge.client.ForgeHooksClient.getDamageModel(ibakedmodel, p_215329_3_, p_215329_1_, p_215329_4_, p_215329_2_, i);
-          this.field_175027_c.func_217631_a(p_215329_4_, ibakedmodel1, p_215329_1_, p_215329_2_, Tessellator.func_178181_a().func_178180_c(), true, this.field_195476_e, i);
++   @Deprecated //Forge: Model parameter
+    public void func_228792_a_(BlockState p_228792_1_, BlockPos p_228792_2_, ILightReader p_228792_3_, MatrixStack p_228792_4_, IVertexBuilder p_228792_5_) {
++      renderModel(p_228792_1_, p_228792_2_, p_228792_3_, p_228792_4_, p_228792_5_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
++   public void renderModel(BlockState p_228792_1_, BlockPos p_228792_2_, ILightReader p_228792_3_, MatrixStack p_228792_4_, IVertexBuilder p_228792_5_, net.minecraftforge.client.model.data.IModelData modelData) {
+       if (p_228792_1_.func_185901_i() == BlockRenderType.MODEL) {
+          IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_228792_1_);
+          long i = p_228792_1_.func_209533_a(p_228792_2_);
+-         this.field_175027_c.func_228802_a_(p_228792_3_, ibakedmodel, p_228792_1_, p_228792_2_, p_228792_4_, p_228792_5_, true, this.field_195476_e, i, OverlayTexture.field_229196_a_);
++         this.field_175027_c.renderModel(p_228792_3_, ibakedmodel, p_228792_1_, p_228792_2_, p_228792_4_, p_228792_5_, true, this.field_195476_e, i, OverlayTexture.field_229196_a_, modelData);
        }
     }
  
 +   @Deprecated //Forge: Model parameter
-    public boolean func_215330_a(BlockState p_215330_1_, BlockPos p_215330_2_, IEnviromentBlockReader p_215330_3_, BufferBuilder p_215330_4_, Random p_215330_5_) {
-+      return renderBlock(p_215330_1_, p_215330_2_, p_215330_3_, p_215330_4_, p_215330_5_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
+    public boolean func_228793_a_(BlockState p_228793_1_, BlockPos p_228793_2_, ILightReader p_228793_3_, MatrixStack p_228793_4_, IVertexBuilder p_228793_5_, boolean p_228793_6_, Random p_228793_7_) {
++      return renderModel(p_228793_1_, p_228793_2_, p_228793_3_, p_228793_4_, p_228793_5_, p_228793_6_, p_228793_7_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
-+   public boolean renderBlock(BlockState p_215330_1_, BlockPos p_215330_2_, IEnviromentBlockReader p_215330_3_, BufferBuilder p_215330_4_, Random p_215330_5_, net.minecraftforge.client.model.data.IModelData modelData) {
++   public boolean renderModel(BlockState p_228793_1_, BlockPos p_228793_2_, ILightReader p_228793_3_, MatrixStack p_228793_4_, IVertexBuilder p_228793_5_, boolean p_228793_6_, Random p_228793_7_, net.minecraftforge.client.model.data.IModelData modelData) {
        try {
-          BlockRenderType blockrendertype = p_215330_1_.func_185901_i();
-          if (blockrendertype == BlockRenderType.INVISIBLE) {
-@@ -53,7 +57,7 @@
-          } else {
-             switch(blockrendertype) {
-             case MODEL:
--               return this.field_175027_c.func_217631_a(p_215330_3_, this.func_184389_a(p_215330_1_), p_215330_1_, p_215330_2_, p_215330_4_, true, p_215330_5_, p_215330_1_.func_209533_a(p_215330_2_));
-+               return this.field_175027_c.renderModel(p_215330_3_, this.func_184389_a(p_215330_1_), p_215330_1_, p_215330_2_, p_215330_4_, true, p_215330_5_, p_215330_1_.func_209533_a(p_215330_2_), modelData);
-             case ENTITYBLOCK_ANIMATED:
-                return false;
-             default:
-@@ -105,4 +109,9 @@
+          BlockRenderType blockrendertype = p_228793_1_.func_185901_i();
+-         return blockrendertype != BlockRenderType.MODEL ? false : this.field_175027_c.func_228802_a_(p_228793_3_, this.func_184389_a(p_228793_1_), p_228793_1_, p_228793_2_, p_228793_4_, p_228793_5_, p_228793_6_, p_228793_7_, p_228793_1_.func_209533_a(p_228793_2_), OverlayTexture.field_229196_a_);
++         return blockrendertype != BlockRenderType.MODEL ? false : this.field_175027_c.renderModel(p_228793_3_, this.func_184389_a(p_228793_1_), p_228793_1_, p_228793_2_, p_228793_4_, p_228793_5_, p_228793_6_, p_228793_7_, p_228793_1_.func_209533_a(p_228793_2_), OverlayTexture.field_229196_a_, modelData);
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.func_85055_a(throwable, "Tesselating block in world");
+          CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being tesselated");
+@@ -79,7 +87,11 @@
+       return this.field_175028_a.func_178125_b(p_184389_1_);
+    }
+ 
++   @Deprecated //Forge: Model parameter
+    public void func_228791_a_(BlockState p_228791_1_, MatrixStack p_228791_2_, IRenderTypeBuffer p_228791_3_, int p_228791_4_, int p_228791_5_) {
++      renderBlock(p_228791_1_, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
++   public void renderBlock(BlockState p_228791_1_, MatrixStack p_228791_2_, IRenderTypeBuffer p_228791_3_, int p_228791_4_, int p_228791_5_, net.minecraftforge.client.model.data.IModelData modelData) {
+       BlockRenderType blockrendertype = p_228791_1_.func_185901_i();
+       if (blockrendertype != BlockRenderType.INVISIBLE) {
+          switch(blockrendertype) {
+@@ -89,7 +101,7 @@
+             float f = (float)(i >> 16 & 255) / 255.0F;
+             float f1 = (float)(i >> 8 & 255) / 255.0F;
+             float f2 = (float)(i & 255) / 255.0F;
+-            this.field_175027_c.func_228804_a_(p_228791_2_.func_227866_c_(), p_228791_3_.getBuffer(RenderTypeLookup.func_228394_b_(p_228791_1_)), p_228791_1_, ibakedmodel, f, f1, f2, p_228791_4_, p_228791_5_);
++            this.field_175027_c.renderModel(p_228791_2_.func_227866_c_(), p_228791_3_.getBuffer(RenderTypeLookup.func_228394_b_(p_228791_1_)), p_228791_1_, ibakedmodel, f, f1, f2, p_228791_4_, p_228791_5_, modelData);
+             break;
+          case ENTITYBLOCK_ANIMATED:
+             ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(new ItemStack(p_228791_1_.func_177230_c()), p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
+@@ -101,4 +113,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175025_e.func_178268_a();
     }

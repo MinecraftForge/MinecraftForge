@@ -1,6 +1,6 @@
 --- a/net/minecraft/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -258,7 +258,7 @@
+@@ -262,7 +262,7 @@
  
     public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_) {
        Item item = p_77514_3_.func_77973_b();
@@ -9,7 +9,7 @@
        if (i <= 0) {
           return 0;
        } else {
-@@ -296,7 +296,7 @@
+@@ -300,7 +300,7 @@
     public static List<EnchantmentData> func_77513_b(Random p_77513_0_, ItemStack p_77513_1_, int p_77513_2_, boolean p_77513_3_) {
        List<EnchantmentData> list = Lists.newArrayList();
        Item item = p_77513_1_.func_77973_b();
@@ -18,7 +18,7 @@
        if (i <= 0) {
           return list;
        } else {
-@@ -349,7 +349,7 @@
+@@ -353,7 +353,7 @@
        boolean flag = p_185291_1_.func_77973_b() == Items.field_151122_aG;
  
        for(Enchantment enchantment : Registry.field_212628_q) {

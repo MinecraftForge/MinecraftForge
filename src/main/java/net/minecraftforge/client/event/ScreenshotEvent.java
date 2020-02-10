@@ -26,6 +26,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * This event is fired before and after a screenshot is taken
@@ -51,6 +52,9 @@ public class ScreenshotEvent extends Event
     {
         this.image = image;
         this.screenshotFile = screenshotFile;
+        try {
+            this.screenshotFile = screenshotFile.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
+        } catch (IOException e) {}
     }
 
     public NativeImage getImage()

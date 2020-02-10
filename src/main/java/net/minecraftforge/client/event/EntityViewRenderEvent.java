@@ -19,16 +19,11 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.client.renderer.FogRenderer.FogType;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
@@ -64,15 +59,14 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
 
     private static class FogEvent extends EntityViewRenderEvent
     {
-        private final FogRenderer fogRenderer;
-
-        protected FogEvent(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks)
+        private final FogType type;
+        protected FogEvent(FogType type, ActiveRenderInfo info, double renderPartialTicks)
         {
-            super(renderer, info, renderPartialTicks);
-            this.fogRenderer = fogRenderer;
+            super(Minecraft.getInstance().gameRenderer, info, renderPartialTicks);
+            this.type = type;
         }
 
-        public FogRenderer getFogRenderer() { return fogRenderer; }
+        public FogType getType() { return type; }
     }
 
     /**
@@ -84,9 +78,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     {
         private float density;
 
-        public FogDensity(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float density)
+        public FogDensity(FogType type, ActiveRenderInfo info, float partialTicks, float density)
         {
-            super(fogRenderer, renderer, info, renderPartialTicks);
+            super(type, info, partialTicks);
             this.setDensity(density);
         }
 
@@ -107,19 +101,12 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     @HasResult
     public static class RenderFogEvent extends FogEvent
     {
-        private final int fogMode;
         private final float farPlaneDistance;
 
-        public RenderFogEvent(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, int fogMode, float farPlaneDistance)
+        public RenderFogEvent(FogType type, ActiveRenderInfo info, float partialTicks, float distance)
         {
-            super(fogRenderer, renderer, info, renderPartialTicks);
-            this.fogMode = fogMode;
-            this.farPlaneDistance = farPlaneDistance;
-        }
-
-        public int getFogMode()
-        {
-            return fogMode;
+            super(type, info, partialTicks);
+            this.farPlaneDistance = distance;
         }
 
         public float getFarPlaneDistance()
@@ -132,15 +119,15 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * Event that allows any feature to customize the color of fog the player sees.
      * NOTE: Any change made to one of the color variables will affect the result seen in-game.
      */
-    public static class FogColors extends FogEvent
+    public static class FogColors extends EntityViewRenderEvent
     {
         private float red;
         private float green;
         private float blue;
 
-        public FogColors(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float red, float green, float blue)
+        public FogColors(ActiveRenderInfo info, float partialTicks, float red, float green, float blue)
         {
-            super(fogRenderer, renderer, info, renderPartialTicks);
+            super(Minecraft.getInstance().gameRenderer, info, partialTicks);
             this.setRed(red);
             this.setGreen(green);
             this.setBlue(blue);

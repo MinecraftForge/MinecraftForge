@@ -1,18 +1,12 @@
 --- a/net/minecraft/client/renderer/entity/PlayerRenderer.java
 +++ b/net/minecraft/client/renderer/entity/PlayerRenderer.java
-@@ -52,6 +52,7 @@
-    public void func_76986_a(AbstractClientPlayerEntity p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
-       if (!p_76986_1_.func_175144_cb() || this.field_76990_c.field_217783_c.func_216773_g() == p_76986_1_) {
-          double d0 = p_76986_4_;
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_))) return;
-          if (p_76986_1_.func_213287_bg()) {
-             d0 = p_76986_4_ - 0.125D;
-          }
-@@ -61,6 +62,7 @@
-          super.func_76986_a(p_76986_1_, p_76986_2_, d0, p_76986_6_, p_76986_8_, p_76986_9_);
-          GlStateManager.unsetProfile(GlStateManager.Profile.PLAYER_SKIN);
-       }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_));
+@@ -58,7 +58,9 @@
+ 
+    public void func_225623_a_(AbstractClientPlayerEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
+       this.func_177137_d(p_225623_1_);
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_225623_1_, this, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_))) return;
+       super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_225623_1_, this, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_));
     }
  
-    private void func_177137_d(AbstractClientPlayerEntity p_177137_1_) {
+    public Vec3d func_225627_b_(AbstractClientPlayerEntity p_225627_1_, float p_225627_2_) {

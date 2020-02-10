@@ -14,15 +14,15 @@
        for(Stitcher.Holder stitcher$holder : list) {
           if (!this.func_94310_b(stitcher$holder)) {
 +            LOGGER.info(new net.minecraftforge.fml.loading.AdvancedLogMessageAdapter(sb->{
-+               sb.append("Unable to fit: ").append(stitcher$holder.field_98151_a.func_195668_m());
-+               sb.append(" - size: ").append(stitcher$holder.field_98151_a.func_94211_a()).append("x").append(stitcher$holder.field_98151_a.func_94216_b());
++               sb.append("Unable to fit: ").append(stitcher$holder.field_229213_a_.func_229248_a_());
++               sb.append(" - size: ").append(stitcher$holder.field_229213_a_.func_229250_b_()).append("x").append(stitcher$holder.field_229213_a_.func_229252_c_());
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
 +               list.forEach(h-> sb.append("\t").append(h).append("\n"));
 +            }));
-             throw new StitcherException(stitcher$holder.field_98151_a, list.stream().map((p_225334_0_) -> {
-                return p_225334_0_.field_98151_a;
+             throw new StitcherException(stitcher$holder.field_229213_a_, list.stream().map((p_229212_0_) -> {
+                return p_229212_0_.field_229213_a_;
              }).collect(ImmutableList.toImmutableList()));
-@@ -107,7 +115,7 @@
+@@ -103,7 +111,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
@@ -31,12 +31,12 @@
           } else {
              flag = flag1 && i <= j;
           }
-@@ -144,7 +152,7 @@
+@@ -140,7 +148,7 @@
        }
  
        public String toString() {
 -         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + '}';
-+         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + ", name=" + this.field_98151_a.func_195668_m() + '}';
++         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + ", name=" + this.field_229213_a_.func_229248_a_() + '}';
        }
     }
  

@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/gen/feature/MegaJungleFeature.java
 +++ b/net/minecraft/world/gen/feature/MegaJungleFeature.java
-@@ -16,6 +16,7 @@
- public class MegaJungleFeature extends HugeTreesFeature<NoFeatureConfig> {
-    public MegaJungleFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i51483_1_, boolean p_i51483_2_, int p_i51483_3_, int p_i51483_4_, BlockState p_i51483_5_, BlockState p_i51483_6_) {
-       super(p_i51483_1_, p_i51483_2_, p_i51483_3_, p_i51483_4_, p_i51483_5_, p_i51483_6_);
-+      setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196678_w);
-    }
+@@ -16,7 +16,7 @@
  
-    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
+    public boolean func_225557_a_(IWorldGenerationReader p_225557_1_, Random p_225557_2_, BlockPos p_225557_3_, Set<BlockPos> p_225557_4_, Set<BlockPos> p_225557_5_, MutableBoundingBox p_225557_6_, HugeTreeFeatureConfig p_225557_7_) {
+       int i = this.func_227256_a_(p_225557_2_, p_225557_7_);
+-      if (!this.func_203427_a(p_225557_1_, p_225557_3_, i)) {
++      if (!this.hasRoom(p_225557_1_, p_225557_3_, i, p_225557_7_)) {
+          return false;
+       } else {
+          this.func_227252_c_(p_225557_1_, p_225557_2_, p_225557_3_.func_177981_b(i), 2, p_225557_5_, p_225557_6_, p_225557_7_);

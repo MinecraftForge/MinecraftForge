@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MilkBucketItem.java
 +++ b/net/minecraft/item/MilkBucketItem.java
-@@ -16,6 +16,8 @@
+@@ -15,6 +15,8 @@
     }
  
     public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, LivingEntity p_77654_3_) {
@@ -9,9 +9,9 @@
        if (p_77654_3_ instanceof ServerPlayerEntity) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_77654_3_;
           CriteriaTriggers.field_193138_y.func_193148_a(serverplayerentity, p_77654_1_);
-@@ -45,4 +47,9 @@
+@@ -44,4 +46,9 @@
        p_77659_2_.func_184598_c(p_77659_3_);
-       return new ActionResult<>(ActionResultType.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
+       return ActionResult.func_226248_a_(p_77659_2_.func_184586_b(p_77659_3_));
     }
 +
 +   @Override

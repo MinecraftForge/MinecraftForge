@@ -98,7 +98,7 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     IAttributeInstance grav = liv.getAttribute(LivingEntity.ENTITY_GRAVITY);
-                    boolean inPlains = liv.world.getBiome(liv.getPosition()).getCategory() == Category.PLAINS;
+                    boolean inPlains = liv.world.func_226691_t_(liv.getPosition()).getCategory() == Category.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);

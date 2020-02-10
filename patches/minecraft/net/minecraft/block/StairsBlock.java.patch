@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/StairsBlock.java
 +++ b/net/minecraft/block/StairsBlock.java
-@@ -83,13 +83,24 @@
+@@ -84,13 +84,24 @@
        return voxelshape;
     }
  
@@ -25,7 +25,7 @@
     public boolean func_220074_n(BlockState p_220074_1_) {
        return true;
     }
-@@ -265,4 +276,12 @@
+@@ -262,4 +273,12 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
     }

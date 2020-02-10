@@ -33,7 +33,7 @@
        final NetworkManager networkmanager = new NetworkManager(PacketDirection.CLIENTBOUND);
 +      networkmanager.activationHandler = net.minecraftforge.fml.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
-       LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
+       LazyValue<? extends EventLoopGroup> lazyvalue;
        if (Epoll.isAvailable() && p_181124_2_) {
 @@ -285,6 +289,7 @@
     @OnlyIn(Dist.CLIENT)

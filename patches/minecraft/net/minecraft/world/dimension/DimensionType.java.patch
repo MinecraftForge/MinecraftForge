@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/dimension/DimensionType.java
 +++ b/net/minecraft/world/dimension/DimensionType.java
-@@ -10,7 +10,7 @@
- import net.minecraft.util.registry.Registry;
- import net.minecraft.world.World;
+@@ -13,7 +13,7 @@
+ import net.minecraft.world.biome.FuzzedBiomeMagnifier;
+ import net.minecraft.world.biome.IBiomeMagnifier;
  
 -public class DimensionType implements IDynamicSerializable {
 +public class DimensionType extends net.minecraftforge.registries.ForgeRegistryEntry<DimensionType> implements IDynamicSerializable {
-    public static final DimensionType field_223227_a_ = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true));
-    public static final DimensionType field_223228_b_ = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false));
-    public static final DimensionType field_223229_c_ = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false));
-@@ -19,17 +19,31 @@
-    private final String field_212682_f;
+    public static final DimensionType field_223227_a_ = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true, ColumnFuzzedBiomeMagnifier.INSTANCE));
+    public static final DimensionType field_223228_b_ = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false, FuzzedBiomeMagnifier.INSTANCE));
+    public static final DimensionType field_223229_c_ = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false, FuzzedBiomeMagnifier.INSTANCE));
+@@ -23,18 +23,32 @@
     private final BiFunction<World, DimensionType, ? extends Dimension> field_201038_g;
     private final boolean field_218273_h;
+    private final IBiomeMagnifier field_227175_i_;
 +   private final boolean isVanilla;
 +   private final net.minecraftforge.common.ModDimension modType;
 +   private final net.minecraft.network.PacketBuffer data;
@@ -23,25 +23,26 @@
  
 +   //Forge, Internal use only. Use DimensionManager instead.
 +   @Deprecated
-    protected DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_) {
-+      this(p_i49935_1_, p_i49935_2_, p_i49935_3_, p_i49935_4_, p_i49935_5_, null, null);
+    protected DimensionType(int p_i225789_1_, String p_i225789_2_, String p_i225789_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i225789_4_, boolean p_i225789_5_, IBiomeMagnifier p_i225789_6_) {
++      this(p_i225789_1_, p_i225789_2_, p_i225789_3_, p_i225789_4_, p_i225789_5_, p_i225789_6_, null, null);
 +   }
 +
 +   //Forge, Internal use only. Use DimensionManager instead.
 +   @Deprecated
-+   public DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
-       this.field_186074_d = p_i49935_1_;
-       this.field_186076_f = p_i49935_2_;
-       this.field_212682_f = p_i49935_3_;
-       this.field_201038_g = p_i49935_4_;
-       this.field_218273_h = p_i49935_5_;
++   public DimensionType(int p_i225789_1_, String p_i225789_2_, String p_i225789_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i225789_4_, boolean p_i225789_5_, IBiomeMagnifier p_i225789_6_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
+       this.field_186074_d = p_i225789_1_;
+       this.field_186076_f = p_i225789_2_;
+       this.field_212682_f = p_i225789_3_;
+       this.field_201038_g = p_i225789_4_;
+       this.field_218273_h = p_i225789_5_;
+       this.field_227175_i_ = p_i225789_6_;
 +      this.isVanilla = this.field_186074_d >= 0 && this.field_186074_d <= 2;
 +      this.modType = modType;
 +      this.data = data;
     }
  
     public static DimensionType func_218271_a(Dynamic<?> p_218271_0_) {
-@@ -44,8 +58,9 @@
+@@ -49,8 +63,9 @@
        return this.field_186074_d + -1;
     }
  
@@ -52,7 +53,7 @@
     }
  
     public File func_212679_a(File p_212679_1_) {
-@@ -57,7 +72,7 @@
+@@ -62,7 +77,7 @@
     }
  
     public String toString() {
@@ -61,7 +62,7 @@
     }
  
     @Nullable
-@@ -65,7 +80,21 @@
+@@ -70,7 +85,21 @@
        return Registry.field_212622_k.func_148745_a(p_186069_0_ - -1);
     }
  

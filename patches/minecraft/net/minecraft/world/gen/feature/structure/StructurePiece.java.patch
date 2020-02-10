@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/StructurePiece.java
 +++ b/net/minecraft/world/gen/feature/structure/StructurePiece.java
-@@ -55,6 +55,9 @@
+@@ -56,6 +56,9 @@
     }
  
     public final CompoundNBT func_143010_b() {

@@ -19,38 +19,24 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.StackTraceUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static net.minecraftforge.fml.Logging.CORE;
 
 public class ModFileResourcePack extends DelegatableResourcePack
 {
@@ -86,8 +72,9 @@ public class ModFileResourcePack extends DelegatableResourcePack
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
 
+
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> func_225637_a_(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
     {
         try
         {

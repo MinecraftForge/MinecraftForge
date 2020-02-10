@@ -31,7 +31,6 @@ net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/PotatoBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 net/minecraft/block/SoundType func_185845_c()Lnet/minecraft/util/SoundEvent; # getBreakSound
 net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # getHitSound
-net/minecraft/item/DyeColor func_196057_c()I # getSwappedColorValue
 net/minecraft/item/DyeColor func_218388_g()I # getTextColor
 net/minecraft/item/DyeColor func_196058_b(I)Lnet/minecraft/item/DyeColor; # byFireworkColor
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks
@@ -77,20 +76,10 @@ net/minecraft/resources/IResourceManager func_199001_a()Ljava/util/Set; # getRes
 net/minecraft/resources/IResourceManager func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z # hasResource
 	net/minecraft/resources/FallbackResourceManager func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z
 	net/minecraft/resources/SimpleReloadableResourceManager func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z
-net/minecraft/resources/IResourceManager func_199021_a(Lnet/minecraft/resources/IResourcePack;)V # addResourcePack
-	net/minecraft/resources/FallbackResourceManager func_199021_a(Lnet/minecraft/resources/IResourcePack;)V
-	net/minecraft/resources/SimpleReloadableResourceManager func_199021_a(Lnet/minecraft/resources/IResourcePack;)V
-net/minecraft/resources/IReloadableResourceManager func_219535_a(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader; # initialReload
-	net/minecraft/resources/SimpleReloadableResourceManager func_219535_a(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;
 net/minecraft/tags/TagCollection func_199913_a(Ljava/lang/Object;)Ljava/util/Collection; # getOwningTags
 net/minecraft/tileentity/TileEntity func_145835_a(DDD)D # getDistanceSq
-net/minecraft/util/Direction func_176732_a(Lnet/minecraft/util/Direction$Axis;)Lnet/minecraft/util/Direction; # rotateAround
-net/minecraft/util/Direction func_176744_n()Lnet/minecraft/util/Direction; # rotateX
-net/minecraft/util/Direction func_176738_p()Lnet/minecraft/util/Direction; # rotateZ
 net/minecraft/util/Direction func_176739_a(Ljava/lang/String;)Lnet/minecraft/util/Direction; # byName
 net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraft/util/Direction$Axis; # byName
 net/minecraft/util/math/Vec3d func_216371_e()Lnet/minecraft/util/math/Vec3d;
 net/minecraft/util/math/Vec3d func_189984_a(Lnet/minecraft/util/math/Vec2f;)Lnet/minecraft/util/math/Vec3d; # fromPitchYaw
 net/minecraft/util/math/Vec3d func_189986_a(FF)Lnet/minecraft/util/math/Vec3d; # fromPitchYaw
-net/minecraft/world/World func_72971_b(F)F # getSunBrightness
-net/minecraft/world/World func_72919_O()D # getHorizon

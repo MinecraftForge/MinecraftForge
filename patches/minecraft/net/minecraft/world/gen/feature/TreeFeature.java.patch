@@ -1,31 +1,11 @@
 --- a/net/minecraft/world/gen/feature/TreeFeature.java
 +++ b/net/minecraft/world/gen/feature/TreeFeature.java
-@@ -38,7 +38,7 @@
-    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
-       int i = this.func_208534_a(p_208519_3_);
-       boolean flag = true;
--      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= 256) {
-+      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.getMaxHeight()) {
-          for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
-             int k = 1;
-             if (j == p_208519_4_.func_177956_o()) {
-@@ -53,7 +53,7 @@
- 
-             for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
-                for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
--                  if (j >= 0 && j < 256) {
-+                  if (j >= 0 && j < p_208519_2_.getMaxHeight()) {
-                      if (!func_214587_a(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
-                         flag = false;
-                      }
-@@ -66,8 +66,8 @@
- 
-          if (!flag) {
-             return false;
--         } else if (func_214585_i(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < 256 - i - 1) {
--            this.func_214584_a(p_208519_2_, p_208519_4_.func_177977_b());
-+         } else if (isSoil(p_208519_2_, p_208519_4_.func_177977_b(), getSapling()) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
-+            this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
-             int j2 = 3;
-             int k2 = 0;
- 
+@@ -23,7 +23,7 @@
+          return false;
+       } else {
+          BlockPos blockpos = optional.get();
+-         this.func_214584_a(p_225557_1_, blockpos.func_177977_b());
++         this.setDirtAt(p_225557_1_, blockpos.func_177977_b(), blockpos);
+          p_225557_7_.field_227327_a_.func_225571_a_(p_225557_1_, p_225557_2_, p_225557_7_, i, j, k, blockpos, p_225557_5_);
+          this.func_227213_a_(p_225557_1_, p_225557_2_, i, blockpos, p_225557_7_.field_227332_g_ + p_225557_2_.nextInt(p_225557_7_.field_227333_h_ + 1), p_225557_4_, p_225557_6_, p_225557_7_);
+          return true;

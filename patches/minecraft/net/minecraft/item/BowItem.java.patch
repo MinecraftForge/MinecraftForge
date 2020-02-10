@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BowItem.java
 +++ b/net/minecraft/item/BowItem.java
-@@ -22,7 +22,7 @@
+@@ -21,7 +21,7 @@
           if (p_210310_2_ == null) {
              return 0.0F;
           } else {
@@ -9,7 +9,7 @@
           }
        });
        this.func_185043_a(new ResourceLocation("pulling"), (p_210309_0_, p_210309_1_, p_210309_2_) -> {
-@@ -35,18 +35,23 @@
+@@ -34,18 +34,23 @@
           PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
           boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
           ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
@@ -35,7 +35,7 @@
                    abstractarrowentity.func_184547_a(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -111,6 +116,10 @@
+@@ -110,6 +115,10 @@
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
@@ -44,9 +44,9 @@
 +      if (ret != null) return ret;
 +
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
-          return flag ? new ActionResult<>(ActionResultType.PASS, itemstack) : new ActionResult<>(ActionResultType.FAIL, itemstack);
+          return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -122,4 +131,8 @@
+@@ -121,4 +130,8 @@
     public Predicate<ItemStack> func_220004_b() {
        return field_220007_a;
     }

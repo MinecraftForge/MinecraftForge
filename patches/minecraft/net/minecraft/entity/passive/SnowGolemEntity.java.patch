@@ -19,11 +19,11 @@
           }
  
 @@ -99,7 +99,7 @@
-             j = MathHelper.func_76128_c(this.field_70163_u);
-             k = MathHelper.func_76128_c(this.field_70161_v + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
+             j = MathHelper.func_76128_c(this.func_226278_cu_());
+             k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
--            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_180494_b(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_180494_b(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
+-            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
++            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }
@@ -31,12 +31,12 @@
  
     protected boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
        ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
--      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o() && !this.field_70170_p.field_72995_K) {
-+      if (false &&  itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o() && !this.field_70170_p.field_72995_K) { //Forge: Moved to onSheared
-          this.func_184747_a(false);
-          itemstack.func_222118_a(1, p_184645_1_, (p_213622_1_) -> {
-             p_213622_1_.func_213334_d(p_184645_2_);
-@@ -163,4 +163,15 @@
+-      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) {
++      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) { //Forge: Moved to onSheared
+          if (!this.field_70170_p.field_72995_K) {
+             this.func_184747_a(false);
+             itemstack.func_222118_a(1, p_184645_1_, (p_213622_1_) -> {
+@@ -167,4 +167,15 @@
     protected SoundEvent func_184615_bR() {
        return SoundEvents.field_187801_fC;
     }

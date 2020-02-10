@@ -20,102 +20,160 @@
 package net.minecraftforge.client.model;
 
 import java.util.EnumMap;
-import java.util.Optional;
 import java.util.Random;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.common.model.TransformationHelper;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import java.util.List;
 
-public class PerspectiveMapWrapper implements IBakedModel
+public class PerspectiveMapWrapper implements IDynamicBakedModel
 {
     private final IBakedModel parent;
-    private final ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms;
+    private final ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms;
+    private final OverrideListWrapper overrides = new OverrideListWrapper();
 
-    public PerspectiveMapWrapper(IBakedModel parent, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms)
+    public PerspectiveMapWrapper(IBakedModel parent, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms)
     {
         this.parent = parent;
         this.transforms = transforms;
     }
 
-    public PerspectiveMapWrapper(IBakedModel parent, IModelState state)
+    public PerspectiveMapWrapper(IBakedModel parent, IModelTransform state)
     {
         this(parent, getTransforms(state));
     }
 
-    public static ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> getTransforms(IModelState state)
+    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransforms(IModelTransform state)
     {
-        EnumMap<ItemCameraTransforms.TransformType, TRSRTransformation> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
         for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
         {
-            Optional<TRSRTransformation> tr = state.apply(Optional.of(type));
-            if(tr.isPresent())
+            TransformationMatrix tr = state.getPartTransformation(type);
+            if(!tr.isIdentity())
             {
-                map.put(type, tr.get());
+                map.put(type, tr);
             }
         }
         return ImmutableMap.copyOf(map);
     }
 
     @SuppressWarnings("deprecation")
-    public static ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> getTransforms(ItemCameraTransforms transforms)
+    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransforms(ItemCameraTransforms transforms)
     {
-        EnumMap<ItemCameraTransforms.TransformType, TRSRTransformation> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
         for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
         {
             if (transforms.hasCustomTransform(type))
             {
-                map.put(type, TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transforms.getTransform(type))));
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
             }
         }
         return ImmutableMap.copyOf(map);
     }
 
-    public static Pair<? extends IBakedModel, Matrix4f> handlePerspective(IBakedModel model, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms, ItemCameraTransforms.TransformType cameraTransformType)
+    @SuppressWarnings("deprecation")
+    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransformsWithFallback(IModelTransform state, ItemCameraTransforms transforms)
     {
-        TRSRTransformation tr = transforms.getOrDefault(cameraTransformType, TRSRTransformation.identity());
-        if (!tr.isIdentity())
+        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+        for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
         {
-            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrixVec());
+            TransformationMatrix tr = state.getPartTransformation(type);
+            if(!tr.isIdentity())
+            {
+                map.put(type, tr);
+            }
+            else if (transforms.hasCustomTransform(type))
+            {
+                map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
+            }
         }
-        return Pair.of(model, null);
+        return ImmutableMap.copyOf(map);
     }
 
-    public static Pair<? extends IBakedModel, Matrix4f> handlePerspective(IBakedModel model, IModelState state, ItemCameraTransforms.TransformType cameraTransformType)
+    public static IBakedModel handlePerspective(IBakedModel model, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms, ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
     {
-        TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).orElse(TRSRTransformation.identity());
+        TransformationMatrix tr = transforms.getOrDefault(cameraTransformType, TransformationMatrix.func_227983_a_());
         if (!tr.isIdentity())
         {
-            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrixVec());
+            tr.push(mat);
         }
-        return Pair.of(model, null);
+        return model;
+    }
+
+    public static IBakedModel handlePerspective(IBakedModel model, IModelTransform state, ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    {
+        TransformationMatrix tr = state.getPartTransformation(cameraTransformType);
+        if (!tr.isIdentity())
+        {
+            tr.push(mat);
+        }
+        return model;
     }
 
     @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
     @Override public boolean isAmbientOcclusion(BlockState state) { return parent.isAmbientOcclusion(state); }
     @Override public boolean isGui3d() { return parent.isGui3d(); }
+    @Override public boolean func_230044_c_() { return parent.func_230044_c_(); }
     @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) { return parent.getQuads(state, side, rand); }
-    @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
+    @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
+    {
+        return parent.getQuads(state, side, rand, extraData);
+    }
 
     @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
+    public ItemOverrideList getOverrides()
     {
-        return handlePerspective(this, transforms, cameraTransformType);
+        return overrides;
+    }
+
+    @Override
+    public boolean doesHandlePerspectives()
+    {
+        return true;
+    }
+
+    @Override
+    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    {
+        return handlePerspective(this, transforms, cameraTransformType, mat);
+    }
+
+    private class OverrideListWrapper extends ItemOverrideList
+    {
+        public OverrideListWrapper()
+        {
+            super();
+        }
+
+        @Nullable
+        @Override
+        public IBakedModel getModelWithOverrides(IBakedModel model, ItemStack stack, @Nullable World worldIn, @Nullable LivingEntity entityIn)
+        {
+            model = parent.getOverrides().getModelWithOverrides(parent, stack, worldIn, entityIn);
+            return new PerspectiveMapWrapper(model, transforms);
+        }
+
+        @Override
+        public ImmutableList<ItemOverride> getOverrides()
+        {
+            return parent.getOverrides().getOverrides();
+        }
     }
 }

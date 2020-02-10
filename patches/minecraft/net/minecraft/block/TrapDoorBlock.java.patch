@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TrapDoorBlock.java
 +++ b/net/minecraft/block/TrapDoorBlock.java
-@@ -153,6 +153,16 @@
+@@ -149,6 +149,16 @@
        return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
  

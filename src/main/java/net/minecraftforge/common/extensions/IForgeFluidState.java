@@ -26,7 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorldReader;
@@ -75,8 +74,9 @@ public interface IForgeFluidState
      * Queries if this fluidstate should render in a given layer.
      * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
      */
+    /* TODO: reimplement
     default boolean canRenderInLayer(BlockRenderLayer layer)
     {
         return getFluidState().getFluid().canRenderInLayer(getFluidState(), layer);
-    }
+    }*/
 }

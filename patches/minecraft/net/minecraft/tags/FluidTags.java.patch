@@ -1,13 +1,9 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
-@@ -18,6 +18,14 @@
-       ++field_206962_d;
+@@ -22,6 +22,10 @@
+       return field_206961_c;
     }
  
-+   public static TagCollection<Fluid> getCollection() {
-+      return field_206961_c;
-+   }
-+
 +   public static int getGeneration() {
 +      return field_206962_d;
 +   }

@@ -1,6 +1,14 @@
 --- a/net/minecraft/nbt/CompoundNBT.java
 +++ b/net/minecraft/nbt/CompoundNBT.java
-@@ -72,6 +72,7 @@
+@@ -39,6 +39,7 @@
+             while((b0 = CompoundNBT.func_152447_a(p_225649_1_, p_225649_3_)) != 0) {
+                String s = CompoundNBT.func_152448_b(p_225649_1_, p_225649_3_);
+                p_225649_3_.func_152450_a((long)(224 + 16 * s.length()));
++               p_225649_3_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
+                INBT inbt = CompoundNBT.func_229680_b_(NBTTypes.func_229710_a_(b0), s, p_225649_1_, p_225649_2_ + 1, p_225649_3_);
+                if (map.put(s, inbt) != null) {
+                   p_225649_3_.func_152450_a(288L);
+@@ -94,6 +95,7 @@
  
     @Nullable
     public INBT func_218657_a(String p_218657_1_, INBT p_218657_2_) {
@@ -8,7 +16,7 @@
        return this.field_74784_a.put(p_218657_1_, p_218657_2_);
     }
  
-@@ -390,6 +391,7 @@
+@@ -410,11 +412,12 @@
     }
  
     private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException {
@@ -16,11 +24,9 @@
        return p_152447_0_.readByte();
     }
  
-@@ -398,6 +400,7 @@
+    private static String func_152448_b(DataInput p_152448_0_, NBTSizeTracker p_152448_1_) throws IOException {
+-      return p_152448_0_.readUTF();
++      return p_152448_1_.readUTF(p_152448_0_.readUTF());
     }
  
-    static INBT func_152449_a(byte p_152449_0_, String p_152449_1_, DataInput p_152449_2_, int p_152449_3_, NBTSizeTracker p_152449_4_) throws IOException {
-+      p_152449_4_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
-       INBT inbt = INBT.func_150284_a(p_152449_0_);
- 
-       try {
+    private static INBT func_229680_b_(INBTType<?> p_229680_0_, String p_229680_1_, DataInput p_229680_2_, int p_229680_3_, NBTSizeTracker p_229680_4_) {

@@ -151,8 +151,8 @@ public class ModConfig
         }
     }
 
-    public static class ConfigReloading extends ModConfigEvent {
-        ConfigReloading(final ModConfig config) {
+    public static class Reloading extends ModConfigEvent {
+        Reloading(final ModConfig config) {
             super(config);
         }
     }

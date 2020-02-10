@@ -1,13 +1,28 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -257,6 +257,10 @@
+@@ -183,13 +183,15 @@
+       this.field_178637_m = new PlayerRenderer(this);
+       this.field_178636_l.put("default", this.field_178637_m);
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
++   }
+ 
++   //FORGE: Validate the existence of a renderer for each entity type after modded entity renderers have been added
++   public void validateRendererExistence() {
+       for(EntityType<?> entitytype : Registry.field_212629_r) {
+          if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {
+             throw new IllegalStateException("No renderer registered for " + Registry.field_212629_r.func_177774_c(entitytype));
+          }
+       }
+-
     }
  
-+   public Map<String, PlayerRenderer> getSkinMap() {
-+       return (Map<String, PlayerRenderer>) java.util.Collections.unmodifiableMap(field_178636_l);
-+   }
+    public <T extends Entity> EntityRenderer<? super T> func_78713_a(T p_78713_1_) {
+@@ -445,4 +447,8 @@
+    public FontRenderer func_78716_a() {
+       return this.field_78736_p;
+    }
 +
-    public void func_178628_a(double p_178628_1_, double p_178628_3_, double p_178628_5_) {
-       this.field_78725_b = p_178628_1_;
-       this.field_78726_c = p_178628_3_;
++   public Map<String, PlayerRenderer> getSkinMap() {
++      return (Map<String, PlayerRenderer>) java.util.Collections.unmodifiableMap(field_178636_l);
++   }
+ }

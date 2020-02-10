@@ -19,1550 +19,630 @@
 
 package net.minecraftforge.client.model.obj;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix3f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.ISprite;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.Models;
-import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.Properties;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.function.Function;
-import com.google.common.base.Objects;
-import java.util.Optional;
-import java.util.Random;
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import joptsimple.internal.Strings;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.Vector4f;
+import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec2f;
+import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.geometry.IModelGeometryPart;
+import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.common.model.TransformationHelper;
+import org.apache.commons.lang3.tuple.Pair;
 
-public class OBJModel implements IUnbakedModel
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
+    private static Vec2f[] DEFAULT_COORDS = {
+            new Vec2f(0, 0),
+            new Vec2f(0, 1),
+            new Vec2f(1, 1),
+            new Vec2f(1, 0),
+    };
 
-    //private Gson GSON = new GsonBuilder().create();
-    private MaterialLibrary matLib;
-    private final ResourceLocation modelLocation;
-    private CustomData customData;
+    private final Map<String, ModelGroup> parts = Maps.newHashMap();
 
-    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation)
-    {
-        this(matLib, modelLocation, new CustomData());
-    }
+    private final List<Vector3f> positions = Lists.newArrayList();
+    private final List<Vec2f> texCoords = Lists.newArrayList();
+    private final List<Vector3f> normals = Lists.newArrayList();
+    private final List<Vector4f> colors = Lists.newArrayList();
 
-    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation, CustomData customData)
-    {
-        this.matLib = matLib;
-        this.modelLocation = modelLocation;
-        this.customData = customData;
-    }
+    public final boolean detectCullableFaces;
+    public final boolean diffuseLighting;
+    public final boolean flipV;
+    public final boolean ambientToFullbright;
 
-    @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
-    {
-        Iterator<Material> materialIterator = this.matLib.materials.values().iterator();
-        List<ResourceLocation> textures = Lists.newArrayList();
-        while (materialIterator.hasNext())
-        {
-            Material mat = materialIterator.next();
-            ResourceLocation textureLoc = new ResourceLocation(mat.getTexture().getPath());
-            if (!textures.contains(textureLoc) && !mat.isWhite())
-                textures.add(textureLoc);
-        }
-        return textures;
-    }
-
-    @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return Collections.emptyList();
-    }
+    public final ResourceLocation modelLocation;
 
     @Nullable
-    @Override
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public final String materialLibraryOverrideLocation;
+
+
+    OBJModel(LineReader reader, ModelSettings settings) throws IOException
     {
-        ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-        builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
-        TextureAtlasSprite missing = spriteGetter.apply(new ResourceLocation("missingno"));
-        for (Map.Entry<String, Material> e : matLib.materials.entrySet())
+        this.modelLocation = settings.modelLocation;
+        this.detectCullableFaces = settings.detectCullableFaces;
+        this.diffuseLighting = settings.diffuseLighting;
+        this.flipV = settings.flipV;
+        this.ambientToFullbright = settings.ambientToFullbright;
+        this.materialLibraryOverrideLocation = settings.materialLibraryOverrideLocation;
+
+        // for relative references to material libraries
+        String modelDomain = modelLocation.getNamespace();
+        String modelPath = modelLocation.getPath();
+        int lastSlash = modelPath.lastIndexOf('/');
+        if (lastSlash >= 0)
+            modelPath = modelPath.substring(0,lastSlash+1); // include the '/'
+        else
+            modelPath = "";
+
+        MaterialLibrary mtllib = MaterialLibrary.EMPTY;
+        MaterialLibrary.Material currentMat = null;
+        String currentSmoothingGroup = null;
+        ModelGroup currentGroup = null;
+        ModelObject currentObject = null;
+        ModelMesh currentMesh = null;
+
+        boolean objAboveGroup = false;
+
+        if (materialLibraryOverrideLocation != null)
         {
-            if (e.getValue().getTexture().getTextureLocation().getPath().startsWith("#"))
-            {
-                LOGGER.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getPath(), modelLocation);
-                builder.put(e.getKey(), missing);
-            }
+            String lib = materialLibraryOverrideLocation;
+            if (lib.contains(":"))
+                mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
             else
+                mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+        }
+
+        String[] line;
+        while((line = reader.readAndSplitLine(true)) != null)
+        {
+            switch(line[0])
             {
-                builder.put(e.getKey(), spriteGetter.apply(e.getValue().getTexture().getTextureLocation()));
-            }
-        }
-        builder.put("missingno", missing);
-        return new OBJBakedModel(this, sprite.getState(), format, builder.build());
-    }
-
-    public MaterialLibrary getMatLib()
-    {
-        return this.matLib;
-    }
-
-    @Override
-    public IUnbakedModel process(ImmutableMap<String, String> customData)
-    {
-        OBJModel ret = new OBJModel(this.matLib, this.modelLocation, new CustomData(this.customData, customData));
-        return ret;
-    }
-
-    @Override
-    public IUnbakedModel retexture(ImmutableMap<String, String> textures)
-    {
-        OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
-        return ret;
-    }
-
-    static class CustomData
-    {
-        public boolean ambientOcclusion = true;
-        public boolean gui3d = true;
-        // should be an enum, TODO
-        //public boolean modifyUVs = false;
-        public boolean flipV = false;
-
-        public CustomData(CustomData parent, ImmutableMap<String, String> customData)
-        {
-            this.ambientOcclusion = parent.ambientOcclusion;
-            this.gui3d = parent.gui3d;
-            this.flipV = parent.flipV;
-            this.process(customData);
-        }
-
-        public CustomData() {}
-
-        public void process(ImmutableMap<String, String> customData)
-        {
-            for (Map.Entry<String, String> e : customData.entrySet())
-            {
-                if (e.getKey().equals("ambient"))
-                    this.ambientOcclusion = Boolean.valueOf(e.getValue());
-                else if (e.getKey().equals("gui3d"))
-                    this.gui3d = Boolean.valueOf(e.getValue());
-                /*else if (e.getKey().equals("modifyUVs"))
-                    this.modifyUVs = Boolean.valueOf(e.getValue());*/
-                else if (e.getKey().equals("flip-v"))
-                    this.flipV = Boolean.valueOf(e.getValue());
-            }
-        }
-    }
-
-    public static class Parser
-    {
-        private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
-        private static Set<String> unknownObjectCommands = new HashSet<String>();
-        public MaterialLibrary materialLibrary = new MaterialLibrary();
-        private IResourceManager manager;
-        private InputStreamReader objStream;
-        private BufferedReader objReader;
-        private ResourceLocation objFrom;
-
-        private List<String> groupList = Lists.newArrayList();
-        private List<Vertex> vertices = Lists.newArrayList();
-        private List<Normal> normals = Lists.newArrayList();
-        private List<TextureCoordinate> texCoords = Lists.newArrayList();
-
-        public Parser(IResource from, IResourceManager manager) throws IOException
-        {
-            this.manager = manager;
-            this.objFrom = from.getLocation();
-            this.objStream = new InputStreamReader(from.getInputStream(), StandardCharsets.UTF_8);
-            this.objReader = new BufferedReader(objStream);
-        }
-
-        public List<String> getElements()
-        {
-            return this.groupList;
-        }
-
-        private float[] parseFloats(String[] data) // Helper converting strings to floats
-        {
-            float[] ret = new float[data.length];
-            for (int i = 0; i < data.length; i++)
-                ret[i] = Float.parseFloat(data[i]);
-            return ret;
-        }
-
-        //Partial reading of the OBJ format. Documentation taken from http://paulbourke.net/dataformats/obj/
-        public OBJModel parse() throws IOException
-        {
-            String currentLine = "";
-            Material material = new Material();
-            material.setName(Material.DEFAULT_NAME);
-            int usemtlCounter = 0;
-            int lineNum = 0;
-
-            for (;;)
-            {
-                lineNum++;
-                currentLine = objReader.readLine();
-                if (currentLine == null) break;
-                currentLine.trim();
-                if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
-
-                try
+                case "mtllib": // Loads material library
                 {
-                    String[] fields = WHITE_SPACE.split(currentLine, 2);
-                    String key = fields[0];
-                    String data = fields[1];
-                    String[] splitData = WHITE_SPACE.split(data);
+                    if (materialLibraryOverrideLocation != null)
+                        break;
 
-                    if (key.equalsIgnoreCase("mtllib"))
+                    String lib = line[1];
+                    if (lib.contains(":"))
+                        mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+                    else
+                        mtllib = OBJLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+                    break;
+                }
+
+                case "usemtl": // Sets the current material (starts new mesh)
+                {
+                    String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+                    MaterialLibrary.Material newMat = mtllib.getMaterial(mat);
+                    if (!Objects.equals(newMat, currentMat))
                     {
-                        this.materialLibrary.parseMaterials(manager, data, objFrom);
-                    }
-                    else if (key.equalsIgnoreCase("usemtl"))
-                    {
-                        if (this.materialLibrary.materials.containsKey(data))
+                        currentMat = newMat;
+                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0)
                         {
-                            material = this.materialLibrary.materials.get(data);
+                            currentMesh.mat = currentMat;
                         }
                         else
                         {
-                            LOGGER.error("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
+                            // Start new mesh
+                            currentMesh = null;
                         }
-                        usemtlCounter++;
                     }
-                    else if (key.equalsIgnoreCase("v")) // Vertices: x y z [w] - w Defaults to 1.0
-                    {
-                        float[] coords = parseFloats(splitData);
-                        Vector4f pos = new Vector4f(coords[0], coords[1], coords[2], coords.length == 4 ? coords[3] : 1.0F);
-                        this.vertices.add(new Vertex(pos, material));
-                    }
-                    else if (key.equalsIgnoreCase("vn")) // Vertex normals: x y z
-                    {
-                        this.normals.add(new Normal(parseFloats(splitData)));
-                    }
-                    else if (key.equalsIgnoreCase("vt")) // Vertex Textures: u [v] [w] - v/w Defaults to 0
-                    {
-                        float[] coords = parseFloats(splitData);
-                        TextureCoordinate texCoord = new TextureCoordinate(coords[0],
-                                coords.length >= 2 ? coords[1] : 0.0F,
-                                coords.length >= 3 ? coords[2] : 0.0F);
-                        if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
-                            throw new UVsOutOfBoundsException(this.objFrom);
-                        this.texCoords.add(texCoord);
-                    }
-                    else if (key.equalsIgnoreCase("f")) // Face Elements: f v1[/vt1][/vn1] ...
-                    {
-                        if (splitData.length > 4)
-                            LOGGER.warn("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                    break;
+                }
 
-                        List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
+                case "v": // Vertex
+                    positions.add(parseVector4To3(line));
+                    break;
+                case "vt": // Vertex texcoord
+                    texCoords.add(parseVector2(line));
+                    break;
+                case "vn": // Vertex normal
+                    normals.add(parseVector3(line));
+                    break;
+                case "vc": // Vertex color (non-standard)
+                    colors.add(parseVector4(line));
+                    break;
 
-                        for (int i = 0; i < splitData.length; i++)
+                case "f": // Face
+                {
+                    if (currentMesh == null)
+                    {
+                        currentMesh = new ModelMesh(currentMat, currentSmoothingGroup);
+                        if (currentObject != null)
                         {
-                            String[] pts = splitData[i].split("/");
-
-                            int vert = Integer.parseInt(pts[0]);
-                            Integer texture = pts.length < 2 || Strings.isNullOrEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
-                            Integer normal = pts.length < 3 || Strings.isNullOrEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
-
-                            vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
-
-                            if (texture != null)
-                                newV.setTextureCoordinate(this.texCoords.get(texture < 0 ? this.texCoords.size() - 1 : texture - 1));
-                            if (normal != null)
-                                newV.setNormal(this.normals.get(normal < 0 ? this.normals.size() - 1 : normal - 1));
-
-                            v.add(newV);
-                        }
-
-                        Vertex[] va = v.toArray(new Vertex[v.size()]);
-
-                        Face face = new Face(va, material.name);
-                        if (usemtlCounter < this.vertices.size())
-                        {
-                            for (Vertex ver : face.getVertices())
-                            {
-                                ver.setMaterial(material);
-                            }
-                        }
-
-                        if (groupList.isEmpty())
-                        {
-                            if (this.materialLibrary.getGroups().containsKey(Group.DEFAULT_NAME))
-                            {
-                                this.materialLibrary.getGroups().get(Group.DEFAULT_NAME).addFace(face);
-                            }
-                            else
-                            {
-                                Group def = new Group(Group.DEFAULT_NAME, null);
-                                def.addFace(face);
-                                this.materialLibrary.getGroups().put(Group.DEFAULT_NAME, def);
-                            }
+                            currentObject.meshes.add(currentMesh);
                         }
                         else
                         {
-                            for (String s : groupList)
+                            if (currentGroup == null)
                             {
-                                if (this.materialLibrary.getGroups().containsKey(s))
+                                currentGroup = new ModelGroup("");
+                                parts.put("", currentGroup);
+                            }
+                            currentGroup.meshes.add(currentMesh);
+                        }
+                    }
+
+                    int[][] vertices = new int[line.length-1][];
+                    for(int i=0;i<vertices.length;i++)
+                    {
+                        String vertexData = line[i+1];
+                        String[] vertexParts = vertexData.split("/");
+                        int[] vertex = Arrays.stream(vertexParts).mapToInt(num -> Strings.isNullOrEmpty(num) ? 0 : Integer.parseInt(num)).toArray();
+                        if (vertex[0] < 0) vertex[0] = positions.size() + vertex[0];
+                        else vertex[0]--;
+                        if (vertex.length > 1)
+                        {
+                            if (vertex[1] < 0) vertex[1] = texCoords.size() + vertex[1];
+                            else vertex[1]--;
+                            if (vertex.length > 2)
+                            {
+                                if (vertex[2] < 0) vertex[2] = normals.size() + vertex[2];
+                                else vertex[2]--;
+                                if (vertex.length > 3)
                                 {
-                                    this.materialLibrary.getGroups().get(s).addFace(face);
-                                }
-                                else
-                                {
-                                    Group e = new Group(s, null);
-                                    e.addFace(face);
-                                    this.materialLibrary.getGroups().put(s, e);
+                                    if (vertex[3] < 0) vertex[3] = colors.size() + vertex[3];
+                                    else vertex[3]--;
                                 }
                             }
                         }
+                        vertices[i] = vertex;
                     }
-                    else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o"))
+
+                    currentMesh.faces.add(vertices);
+
+                    break;
+                }
+
+                case "s": // Smoothing group (starts new mesh)
+                {
+                    String smoothingGroup = "off".equals(line[1]) ? null : line[1];
+                    if (!Objects.equals(currentSmoothingGroup, smoothingGroup))
                     {
-                        groupList.clear();
-                        if (key.equalsIgnoreCase("g"))
+                        currentSmoothingGroup = smoothingGroup;
+                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0)
                         {
-                            String[] splitSpace = data.split(" ");
-                            for (String s : splitSpace)
-                                groupList.add(s);
+                            currentMesh.smoothingGroup = currentSmoothingGroup;
                         }
                         else
                         {
-                            groupList.add(data);
+                            // Start new mesh
+                            currentMesh = null;
                         }
+                    }
+                    break;
+                }
+
+                case "g":
+                {
+                    String name = line[1];
+                    if (objAboveGroup)
+                    {
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
+                        currentGroup.parts.put(name, currentObject);
                     }
                     else
                     {
-                        if (!unknownObjectCommands.contains(key))
-                        {
-                            unknownObjectCommands.add(key);
-                            LOGGER.info("OBJLoader.Parser: command '{}' (model: '{}') is not currently supported, skipping. Line: {} '{}'", key, objFrom, lineNum, currentLine);
-                        }
+                        currentGroup = new ModelGroup(name);
+                        parts.put(name, currentGroup);
+                        currentObject = null;
                     }
+                    // Start new mesh
+                    currentMesh = null;
+                    break;
                 }
-                catch (RuntimeException e)
+
+                case "o":
                 {
-                    throw new RuntimeException(String.format("OBJLoader.Parser: Exception parsing line #%d: `%s`", lineNum, currentLine), e);
-                }
-            }
-
-            return new OBJModel(this.materialLibrary, this.objFrom);
-        }
-    }
-
-    public static class MaterialLibrary
-    {
-        private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
-        private Set<String> unknownMaterialCommands = new HashSet<String>();
-        private Map<String, Material> materials = new HashMap<String, Material>();
-        private Map<String, Group> groups = new HashMap<String, Group>();
-        private InputStreamReader mtlStream;
-        private BufferedReader mtlReader;
-
-//        private float[] minUVBounds = new float[] {0.0f, 0.0f};
-//        private float[] maxUVBounds = new float[] {1.0f, 1.0f};
-
-        public MaterialLibrary()
-        {
-            this.groups.put(Group.DEFAULT_NAME, new Group(Group.DEFAULT_NAME, null));
-            Material def = new Material();
-            def.setName(Material.DEFAULT_NAME);
-            this.materials.put(Material.DEFAULT_NAME, def);
-        }
-
-        public MaterialLibrary makeLibWithReplacements(ImmutableMap<String, String> replacements)
-        {
-            Map<String, Material> mats = new HashMap<String, Material>();
-            for (Map.Entry<String, Material> e : this.materials.entrySet())
-            {
-                // key for the material name, with # added if missing
-                String keyMat = e.getKey();
-                if(!keyMat.startsWith("#")) keyMat = "#" + keyMat;
-                // key for the texture name, with ".png" stripped and # added if missing
-                String keyTex = e.getValue().getTexture().getPath();
-                if(keyTex.endsWith(".png")) keyTex = keyTex.substring(0, keyTex.length() - ".png".length());
-                if(!keyTex.startsWith("#")) keyTex = "#" + keyTex;
-                if (replacements.containsKey(keyMat))
-                {
-                    Texture currentTexture = e.getValue().texture;
-                    Texture replacementTexture = new Texture(replacements.get(keyMat), currentTexture.position, currentTexture.scale, currentTexture.rotation);
-                    Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
-                    mats.put(e.getKey(), replacementMaterial);
-                }
-                else if (replacements.containsKey(keyTex))
-                {
-                    Texture currentTexture = e.getValue().texture;
-                    Texture replacementTexture = new Texture(replacements.get(keyTex), currentTexture.position, currentTexture.scale, currentTexture.rotation);
-                    Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
-                    mats.put(e.getKey(), replacementMaterial);
-                }
-                else
-                {
-                    mats.put(e.getKey(), e.getValue());
-                }
-            }
-            MaterialLibrary ret = new MaterialLibrary();
-            ret.unknownMaterialCommands = this.unknownMaterialCommands;
-            ret.materials = mats;
-            ret.groups = this.groups;
-            ret.mtlStream = this.mtlStream;
-            ret.mtlReader = this.mtlReader;
-//            ret.minUVBounds = this.minUVBounds;
-//            ret.maxUVBounds = this.maxUVBounds;
-            return ret;
-        }
-
-//        public float[] getMinUVBounds()
-//        {
-//            return this.minUVBounds;
-//        }
-
-//        public float[] getMaxUVBounds()
-//        {
-//            return this.maxUVBounds;
-//        }
-
-//        public void setUVBounds(float minU, float maxU, float minV, float maxV)
-//        {
-//            this.minUVBounds[0] = minU;
-//            this.maxUVBounds[0] = maxU;
-//            this.minUVBounds[1] = minV;
-//            this.maxUVBounds[1] = maxV;
-//        }
-
-        public Map<String, Group> getGroups()
-        {
-            return this.groups;
-        }
-
-        public List<Group> getGroupsContainingFace(Face f)
-        {
-            List<Group> groupList = Lists.newArrayList();
-            for (Group g : this.groups.values())
-            {
-                if (g.faces.contains(f)) groupList.add(g);
-            }
-            return groupList;
-        }
-
-        public void changeMaterialColor(String name, int color)
-        {
-            Vector4f colorVec = new Vector4f();
-            colorVec.w = (color >> 24 & 255) / 255;
-            colorVec.x = (color >> 16 & 255) / 255;
-            colorVec.y = (color >> 8 & 255) / 255;
-            colorVec.z = (color & 255) / 255;
-            this.materials.get(name).setColor(colorVec);
-        }
-
-        public Material getMaterial(String name)
-        {
-            return this.materials.get(name);
-        }
-
-        public ImmutableList<String> getMaterialNames()
-        {
-            return ImmutableList.copyOf(this.materials.keySet());
-        }
-
-        public void parseMaterials(IResourceManager manager, String path, ResourceLocation from) throws IOException
-        {
-            this.materials.clear();
-            boolean hasSetTexture = false;
-            boolean hasSetColor = false;
-            String domain = from.getNamespace();
-            if (!path.contains("/"))
-                path = from.getPath().substring(0, from.getPath().lastIndexOf("/") + 1) + path;
-            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), StandardCharsets.UTF_8);
-            mtlReader = new BufferedReader(mtlStream);
-
-            String currentLine = "";
-            Material material = new Material();
-            material.setName(Material.WHITE_NAME);
-            material.setTexture(Texture.WHITE);
-            this.materials.put(Material.WHITE_NAME, material);
-            this.materials.put(Material.DEFAULT_NAME, new Material(Texture.WHITE));
-
-            for (;;)
-            {
-                currentLine = mtlReader.readLine();
-                if (currentLine == null) break;
-                currentLine.trim();
-                if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
-
-                String[] fields = WHITE_SPACE.split(currentLine, 2);
-                String key = fields[0];
-                String data = fields[1];
-
-                if (key.equalsIgnoreCase("newmtl"))
-                {
-                    hasSetColor = false;
-                    hasSetTexture = false;
-                    material = new Material();
-                    material.setName(data);
-                    this.materials.put(data, material);
-                }
-                else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks"))
-                {
-                    if (key.equalsIgnoreCase("Kd") || !hasSetColor)
+                    String name = line[1];
+                    if (objAboveGroup || currentGroup == null)
                     {
-                        String[] rgbStrings = WHITE_SPACE.split(data, 3);
-                        Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
-                        hasSetColor = true;
-                        material.setColor(color);
+                        objAboveGroup = true;
+
+                        currentGroup = new ModelGroup(name);
+                        parts.put(name, currentGroup);
+                        currentObject = null;
                     }
                     else
                     {
-                        LOGGER.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        currentObject = new ModelObject(currentGroup.name() + "/" + name);
+                        currentGroup.parts.put(name, currentObject);
                     }
-                }
-                else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
-                {
-                    if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture)
-                    {
-                        if (data.contains(" "))
-                        {
-                            String[] mapStrings = WHITE_SPACE.split(data);
-                            String texturePath = mapStrings[mapStrings.length - 1];
-                            Texture texture = new Texture(texturePath);
-                            hasSetTexture = true;
-                            material.setTexture(texture);
-                        }
-                        else
-                        {
-                            Texture texture = new Texture(data);
-                            hasSetTexture = true;
-                            material.setTexture(texture);
-                        }
-                    }
-                    else
-                    {
-                        LOGGER.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
-                    }
-                }
-                else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
-                {
-                    //d <-optional key here> float[0.0:1.0, 1.0]
-                    //Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
-                    String[] splitData = WHITE_SPACE.split(data);
-                    float alpha = Float.parseFloat(splitData[splitData.length - 1]);
-                    material.getColor().setW(alpha);
-                }
-                else
-                {
-                    if (!unknownMaterialCommands.contains(key))
-                    {
-                        unknownMaterialCommands.add(key);
-                        LOGGER.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
-                    }
+                    // Start new mesh
+                    currentMesh = null;
+                    break;
                 }
             }
         }
     }
 
-    public static class Material
+    public static Vector3f parseVector4To3(String[] line)
     {
-        public static final String WHITE_NAME = "OBJModel.White.Texture.Name";
-        public static final String DEFAULT_NAME = "OBJModel.Default.Texture.Name";
-        private Vector4f color;
-        private Texture texture = Texture.WHITE;
-        private String name = DEFAULT_NAME;
+        switch (line.length) {
+            case 1: return new Vector3f(0,0,0);
+            case 2: return new Vector3f(Float.parseFloat(line[1]), 0, 0);
+            case 3: return new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0);
+            case 4: return new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
+            default:
+            {
+                Vector4f vec4 = parseVector4(line);
+                return new Vector3f(
+                        vec4.getX() / vec4.getW(),
+                        vec4.getY() / vec4.getW(),
+                        vec4.getZ() / vec4.getW()
+                );
+            }
+        }
+    }
 
-        public Material()
+    public static Vec2f parseVector2(String[] line)
+    {
+        switch (line.length) {
+            case 1: return new Vec2f(0,0);
+            case 2: return new Vec2f(Float.parseFloat(line[1]), 0);
+            default: return new Vec2f(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
+        }
+    }
+
+    public static Vector3f parseVector3(String[] line)
+    {
+        switch (line.length) {
+            case 1: return new Vector3f(0,0,0);
+            case 2: return new Vector3f(Float.parseFloat(line[1]), 0, 0);
+            case 3: return new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0);
+            default: return new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
+        }
+    }
+
+    public static Vector4f parseVector4(String[] line)
+    {
+        switch (line.length) {
+            case 1: return new Vector4f(0,0,0,1);
+            case 2: return new Vector4f(Float.parseFloat(line[1]), 0, 0,1);
+            case 3: return new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0,1);
+            case 4: return new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]),1);
+            default: return new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), Float.parseFloat(line[4]));
+        }
+    }
+
+    @Override
+    public Collection<? extends IModelGeometryPart> getParts()
+    {
+        return parts.values();
+    }
+
+    @Override
+    public Optional<? extends IModelGeometryPart> getPart(String name)
+    {
+        return Optional.ofNullable(parts.get(name));
+    }
+
+    private Pair<BakedQuad,Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, TransformationMatrix transform)
+    {
+        boolean needsNormalRecalculation = false;
+        for (int[] ints : indices)
         {
-            this(new Vector4f(1f, 1f, 1f, 1f));
+            needsNormalRecalculation |= ints.length < 3;
+        }
+        Vector3f faceNormal = new Vector3f(0,0,0);
+        if (needsNormalRecalculation) {
+            Vector3f a = positions.get(indices[0][0]);
+            Vector3f ab = positions.get(indices[1][0]);
+            Vector3f ac = positions.get(indices[2][0]);
+            Vector3f abs = ab.func_229195_e_();
+            abs.sub(a);
+            Vector3f acs = ac.func_229195_e_();
+            acs.sub(a);
+            abs.cross(acs);
+            abs.func_229194_d_();
+            faceNormal = abs;
         }
 
-        public Material(Vector4f color)
+        Vector4f[] pos = new Vector4f[4];
+        Vector3f[] norm = new Vector3f[4];
+
+        BakedQuadBuilder builder = new BakedQuadBuilder(texture);
+
+        builder.setQuadTint(tintIndex);
+
+        Vec2f uv2 = new Vec2f(0, 0);
+        if (ambientToFullbright)
         {
-            this(color, Texture.WHITE, WHITE_NAME);
+            int fakeLight = (int) ((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
+            uv2 = new Vec2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
+            builder.setApplyDiffuseLighting(fakeLight == 0);
         }
 
-        public Material(Texture texture)
+        boolean hasTransform = !transform.isIdentity();
+        // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
+        TransformationMatrix transformation = hasTransform ? transform.blockCenterToCorner() : transform;
+
+        for(int i=0;i<4;i++)
         {
-            this(new Vector4f(1f, 1f, 1f, 1f), texture, DEFAULT_NAME);
+            int[] index = indices[Math.min(i,indices.length-1)];
+            Vector3f pos0 = positions.get(index[0]);
+            Vector4f position = new Vector4f(pos0);
+            Vec2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
+            Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
+            Vector3f normal = norm0;
+            Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
+            if (hasTransform)
+            {
+                normal = norm0.func_229195_e_();
+                transformation.transformPosition(position);
+                transformation.transformNormal(normal);
+            };
+            Vector4f tintedColor = new Vector4f(
+                    color.getX() * colorTint.getX(),
+                    color.getY() * colorTint.getY(),
+                    color.getZ() * colorTint.getZ(),
+                    color.getW() * colorTint.getW());
+            putVertexData(builder, position, texCoord, normal, tintedColor, uv2, texture);
+            pos[i] = position;
+            norm[i] = normal;
         }
 
-        public Material(Vector4f color, Texture texture, String name)
+        builder.setQuadOrientation(Direction.getFacingFromVector(norm[0].getX(), norm[0].getY(),norm[0].getZ()));
+
+        Direction cull = null;
+        if (detectCullableFaces)
         {
-            this.color = color;
-            this.texture = texture;
-            this.name = name != null ? name : DEFAULT_NAME;
+            if (MathHelper.epsilonEquals(pos[0].getX(), 0) && // vertex.position.x
+                    MathHelper.epsilonEquals(pos[1].getX(), 0) &&
+                    MathHelper.epsilonEquals(pos[2].getX(), 0) &&
+                    MathHelper.epsilonEquals(pos[3].getX(), 0) &&
+                    norm[0].getX() < 0) // vertex.normal.x
+            {
+                cull = Direction.WEST;
+            }
+            else if (MathHelper.epsilonEquals(pos[0].getX(), 1) && // vertex.position.x
+                    MathHelper.epsilonEquals(pos[1].getX(), 1) &&
+                    MathHelper.epsilonEquals(pos[2].getX(), 1) &&
+                    MathHelper.epsilonEquals(pos[3].getX(), 1) &&
+                    norm[0].getX() > 0) // vertex.normal.x
+            {
+                cull = Direction.EAST;
+            }
+            else if (MathHelper.epsilonEquals(pos[0].getZ(), 0) && // vertex.position.z
+                    MathHelper.epsilonEquals(pos[1].getZ(), 0) &&
+                    MathHelper.epsilonEquals(pos[2].getZ(), 0) &&
+                    MathHelper.epsilonEquals(pos[3].getZ(), 0) &&
+                    norm[0].getZ() < 0) // vertex.normal.z
+            {
+                cull = Direction.NORTH; // can never remember
+            }
+            else if (MathHelper.epsilonEquals(pos[0].getZ(), 1) && // vertex.position.z
+                    MathHelper.epsilonEquals(pos[1].getZ(), 1) &&
+                    MathHelper.epsilonEquals(pos[2].getZ(), 1) &&
+                    MathHelper.epsilonEquals(pos[3].getZ(), 1) &&
+                    norm[0].getZ() > 0) // vertex.normal.z
+            {
+                cull = Direction.SOUTH;
+            }
+            else if (MathHelper.epsilonEquals(pos[0].getY(), 0) && // vertex.position.y
+                    MathHelper.epsilonEquals(pos[1].getY(), 0) &&
+                    MathHelper.epsilonEquals(pos[2].getY(), 0) &&
+                    MathHelper.epsilonEquals(pos[3].getY(), 0) &&
+                    norm[0].getY() < 0) // vertex.normal.z
+            {
+                cull = Direction.DOWN; // can never remember
+            }
+            else if (MathHelper.epsilonEquals(pos[0].getY(), 1) && // vertex.position.y
+                    MathHelper.epsilonEquals(pos[1].getY(), 1) &&
+                    MathHelper.epsilonEquals(pos[2].getY(), 1) &&
+                    MathHelper.epsilonEquals(pos[3].getY(), 1) &&
+                    norm[0].getY() > 0) // vertex.normal.y
+            {
+                cull = Direction.UP;
+            }
         }
 
-        public void setName(String name)
-        {
-            this.name = name != null ? name : DEFAULT_NAME;
-        }
+        return Pair.of(builder.build(), cull);
+    }
 
-        public String getName()
+    private void putVertexData(IVertexConsumer consumer, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
+    {
+        ImmutableList<VertexFormatElement> elements = consumer.getVertexFormat().func_227894_c_();
+        for(int j=0;j<elements.size();j++)
         {
-            return this.name;
+            VertexFormatElement e = elements.get(j);
+            switch(e.getUsage())
+            {
+                case POSITION:
+                    consumer.put(j, position0.getX(), position0.getY(), position0.getZ(), position0.getW());
+                    break;
+                case COLOR:
+                    consumer.put(j, color0.getX(), color0.getY(), color0.getZ(), color0.getW());
+                    break;
+                case UV:
+                    switch (e.getIndex())
+                    {
+                        case 0:
+                            consumer.put(j,
+                                    texture.getInterpolatedU(texCoord0.x * 16),
+                                    texture.getInterpolatedV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
+                            );
+                            break;
+                        case 2:
+                            consumer.put(j, uv2.x, uv2.y);
+                            break;
+                        default:
+                            consumer.put(j);
+                            break;
+                    }
+                    break;
+                case NORMAL:
+                    consumer.put(j, normal0.getX(), normal0.getY(), normal0.getZ());
+                    break;
+                default:
+                    consumer.put(j);
+                    break;
+            }
         }
+    }
 
-        public void setColor(Vector4f color)
-        {
-            this.color = color;
-        }
+    public class ModelObject implements IModelGeometryPart
+    {
+        public final String name;
 
-        public Vector4f getColor()
-        {
-            return this.color;
-        }
+        List<ModelMesh> meshes = Lists.newArrayList();
 
-        public void setTexture(Texture texture)
+        ModelObject(String name)
         {
-            this.texture = texture;
-        }
-
-        public Texture getTexture()
-        {
-            return this.texture;
-        }
-
-        public boolean isWhite()
-        {
-            return this.texture.equals(Texture.WHITE);
+            this.name = name;
         }
 
         @Override
-        public String toString()
+        public String name()
         {
-            StringBuilder builder = new StringBuilder(String.format("%nMaterial:%n"));
-            builder.append(String.format("    Name: %s%n", this.name));
-            builder.append(String.format("    Color: %s%n", this.color.toString()));
-            builder.append(String.format("    Is White: %b%n", this.isWhite()));
-            return builder.toString();
-        }
-    }
-
-    public static class Texture
-    {
-        public static Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
-        private String path;
-        private Vector2f position;
-        private Vector2f scale;
-        private float rotation;
-
-        public Texture(String path)
-        {
-            this(path, new Vector2f(0, 0), new Vector2f(1, 1), 0);
-        }
-
-        public Texture(String path, Vector2f position, Vector2f scale, float rotation)
-        {
-            this.path = path;
-            this.position = position;
-            this.scale = scale;
-            this.rotation = rotation;
-        }
-
-        public ResourceLocation getTextureLocation()
-        {
-            ResourceLocation loc = new ResourceLocation(this.path);
-            return loc;
-        }
-
-        public void setPath(String path)
-        {
-            this.path = path;
-        }
-
-        public String getPath()
-        {
-            return this.path;
-        }
-
-        public void setPosition(Vector2f position)
-        {
-            this.position = position;
-        }
-
-        public Vector2f getPosition()
-        {
-            return this.position;
-        }
-
-        public void setScale(Vector2f scale)
-        {
-            this.scale = scale;
-        }
-
-        public Vector2f getScale()
-        {
-            return this.scale;
-        }
-
-        public void setRotation(float rotation)
-        {
-            this.rotation = rotation;
-        }
-
-        public float getRotation()
-        {
-            return this.rotation;
-        }
-    }
-
-    public static class Face
-    {
-        private Vertex[] verts = new Vertex[4];
-//        private Normal[] norms = new Normal[4];
-//        private TextureCoordinate[] texCoords = new TextureCoordinate[4];
-        private String materialName = Material.DEFAULT_NAME;
-        private boolean isTri = false;
-
-        public Face(Vertex[] verts)
-        {
-            this(verts, Material.DEFAULT_NAME);
-        }
-
-        public Face(Vertex[] verts, String materialName) {
-            this.verts = verts != null && verts.length > 2 ? verts : null;
-            setMaterialName(materialName);
-            checkData();
-        }
-
-//        public Face(Vertex[] verts, Normal[] norms)
-//        {
-//            this(verts, norms, null);
-//        }
-
-//        public Face(Vertex[] verts, TextureCoordinate[] texCoords)
-//        {
-//            this(verts, null, texCoords);
-//        }
-
-//        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords)
-//        {
-//            this(verts, norms, texCoords, Material.DEFAULT_NAME);
-//        }
-
-//        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords, String materialName)
-//        {
-//            this.verts = verts != null && verts.length > 2 ? verts : null;
-//            this.norms = norms != null && norms.length > 2 ? norms : null;
-//            this.texCoords = texCoords != null && texCoords.length > 2 ? texCoords : null;
-//            setMaterialName(materialName);
-//            checkData();
-//        }
-
-        private void checkData()
-        {
-            if (this.verts != null && this.verts.length == 3)
-            {
-                this.isTri = true;
-                this.verts = new Vertex[]{this.verts[0], this.verts[1], this.verts[2], this.verts[2]};
-            }
-        }
-
-        public void setMaterialName(String materialName)
-        {
-            this.materialName = materialName != null && !materialName.isEmpty() ? materialName : this.materialName;
-        }
-
-        public String getMaterialName()
-        {
-            return this.materialName;
-        }
-
-        public boolean isTriangles()
-        {
-            return isTri;
-        }
-
-        public boolean setVertices(Vertex[] verts)
-        {
-            if (verts == null) return false;
-            else this.verts = verts;
-            checkData();
-            return true;
-        }
-
-        public Vertex[] getVertices()
-        {
-            return this.verts;
-        }
-
-//        public boolean areUVsNormalized()
-//        {
-//            for (Vertex v : this.verts)
-//                if (!v.hasNormalizedUVs())
-//                    return false;
-//            return true;
-//        }
-
-//        public void normalizeUVs(float[] min, float[] max)
-//        {
-//            if (!this.areUVsNormalized())
-//            {
-//                for (int i = 0; i < this.verts.length; i++) {
-//                    TextureCoordinate texCoord = this.verts[i].getTextureCoordinate();
-//                    min[0] = texCoord.u < min[0] ? texCoord.u : min[0];
-//                    max[0] = texCoord.u > max[0] ? texCoord.u : max[0];
-//                    min[1] = texCoord.v < min[1] ? texCoord.v : min[1];
-//                    max[1] = texCoord.v > max[1] ? texCoord.v : max[1];
-//                }
-//
-//                for (Vertex v : this.verts) {
-//                    v.texCoord.u = (v.texCoord.u - min[0]) / (max[0] - min[0]);
-//                    v.texCoord.v = (v.texCoord.v - min[1]) / (max[1] - max[1]);
-//                }
-//            }
-//        }
-
-        public Face bake(TRSRTransformation transform)
-        {
-            Vertex[] vertices = new Vertex[verts.length];
-//            Normal[] normals = norms != null ? new Normal[norms.length] : null;
-//            TextureCoordinate[] textureCoords = texCoords != null ? new TextureCoordinate[texCoords.length] : null;
-
-            for (int i = 0; i < verts.length; i++)
-            {
-                Vertex v = verts[i];
-//                Normal n = norms != null ? norms[i] : null;
-//                TextureCoordinate t = texCoords != null ? texCoords[i] : null;
-
-                Vector4f pos = new Vector4f(v.getPos());
-                pos.w = 1;
-                transform.transformPosition(pos);
-                vertices[i] = new Vertex(pos, v.getMaterial());
-
-                if (v.hasNormal())
-                {
-                    Vector3f normal = new Vector3f(v.getNormal().getData());
-                    transform.transformNormal(normal);
-                    vertices[i].setNormal(new Normal(normal));
-                }
-
-                if (v.hasTextureCoordinate()) vertices[i].setTextureCoordinate(v.getTextureCoordinate());
-                else v.setTextureCoordinate(TextureCoordinate.getDefaultUVs()[i]);
-
-                //texCoords TODO
-//                if (t != null) textureCoords[i] = t;
-            }
-            return new Face(vertices, this.materialName);
-        }
-
-        public Normal getNormal()
-        {
-            Vector3f a = this.verts[2].getPos3();
-            a.sub(this.verts[0].getPos3());
-            Vector3f b = this.verts[3].getPos3();
-            b.sub(this.verts[1].getPos3());
-            a.cross(a, b);
-            a.normalize();
-            return new Normal(a);
-        }
-    }
-
-    public static class Vertex
-    {
-        private Vector4f position;
-        private Normal normal;
-        private TextureCoordinate texCoord;
-        private Material material = new Material();
-
-        public Vertex(Vector4f position, Material material)
-        {
-            this.position = position;
-            this.material = material;
-        }
-
-        public void setPos(Vector4f position)
-        {
-            this.position = position;
-        }
-
-        public Vector4f getPos()
-        {
-            return this.position;
-        }
-
-        public Vector3f getPos3()
-        {
-            return new Vector3f(this.position.x, this.position.y, this.position.z);
-        }
-
-        public boolean hasNormal()
-        {
-            return this.normal != null;
-        }
-
-        public void setNormal(Normal normal)
-        {
-            this.normal = normal;
-        }
-
-        public Normal getNormal()
-        {
-            return this.normal;
-        }
-
-        public boolean hasTextureCoordinate()
-        {
-            return this.texCoord != null;
-        }
-
-        public void setTextureCoordinate(TextureCoordinate texCoord)
-        {
-            this.texCoord = texCoord;
-        }
-
-        public TextureCoordinate getTextureCoordinate()
-        {
-            return this.texCoord;
-        }
-
-//        public boolean hasNormalizedUVs()
-//        {
-//            return this.texCoord.u >= 0.0f && this.texCoord.u <= 1.0f && this.texCoord.v >= 0.0f && this.texCoord.v <= 1.0f;
-//        }
-
-        public void setMaterial(Material material)
-        {
-            this.material = material;
-        }
-
-        public Material getMaterial()
-        {
-            return this.material;
+            return name;
         }
 
         @Override
-        public String toString()
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.append(String.format("v:%n"));
-            builder.append(String.format("    position: %s %s %s%n", position.x, position.y, position.z));
-            builder.append(String.format("    material: %s %s %s %s %s%n", material.getName(), material.getColor().x, material.getColor().y, material.getColor().z, material.getColor().w));
-            return builder.toString();
-        }
-    }
-
-    public static class Normal
-    {
-        public float x, y, z;
-
-        public Normal()
-        {
-            this(0.0f, 0.0f, 0.0f);
-        }
-
-        public Normal(float[] data)
-        {
-            this(data[0], data[1], data[2]);
-        }
-
-        public Normal(Vector3f vector3f)
-        {
-            this(vector3f.x, vector3f.y, vector3f.z);
-        }
-
-        public Normal(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Vector3f getData()
-        {
-            return new Vector3f(this.x, this.y, this.z);
-        }
-    }
-
-    public static class TextureCoordinate
-    {
-        public float u, v, w;
-
-        public TextureCoordinate()
-        {
-            this(0.0f, 0.0f, 1.0f);
-        }
-
-        public TextureCoordinate(float[] data)
-        {
-            this(data[0], data[1], data[2]);
-        }
-
-        public TextureCoordinate(Vector3f data)
-        {
-            this(data.x, data.y, data.z);
-        }
-
-        public TextureCoordinate(float u, float v, float w)
-        {
-            this.u = u;
-            this.v = v;
-            this.w = w;
-        }
-
-        public Vector3f getData()
-        {
-            return new Vector3f(this.u, this.v, this.w);
-        }
-
-        public static TextureCoordinate[] getDefaultUVs()
-        {
-            TextureCoordinate[] texCoords = new TextureCoordinate[4];
-            texCoords[0] = new TextureCoordinate(0.0f, 0.0f, 1.0f);
-            texCoords[1] = new TextureCoordinate(1.0f, 0.0f, 1.0f);
-            texCoords[2] = new TextureCoordinate(1.0f, 1.0f, 1.0f);
-            texCoords[3] = new TextureCoordinate(0.0f, 1.0f, 1.0f);
-            return texCoords;
-        }
-    }
-
-    @Deprecated
-    public static class Group implements IModelPart
-    {
-        public static final String DEFAULT_NAME = "OBJModel.Default.Element.Name";
-        public static final String ALL = "OBJModel.Group.All.Key";
-        public static final String ALL_EXCEPT = "OBJModel.Group.All.Except.Key";
-        private String name = DEFAULT_NAME;
-        private LinkedHashSet<Face> faces = new LinkedHashSet<Face>();
-        public float[] minUVBounds = new float[] {0.0f, 0.0f};
-        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
-
-//        public float[] minUVBounds = new float[] {0.0f, 0.0f};
-//        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
-
-        public Group(String name, @Nullable LinkedHashSet<Face> faces)
-        {
-            this.name = name != null ? name : DEFAULT_NAME;
-            this.faces = faces == null ? new LinkedHashSet<Face>() : faces;
-        }
-
-        public LinkedHashSet<Face> applyTransform(Optional<TRSRTransformation> transform)
-        {
-            LinkedHashSet<Face> faceSet = new LinkedHashSet<Face>();
-            for (Face f : this.faces)
+            for(ModelMesh mesh : meshes)
             {
-//                if (minUVBounds != null && maxUVBounds != null) f.normalizeUVs(minUVBounds, maxUVBounds);
-                faceSet.add(f.bake(transform.orElse(TRSRTransformation.identity())));
+                MaterialLibrary.Material mat = mesh.mat;
+                if (mat == null)
+                    continue;
+                TextureAtlasSprite texture = spriteGetter.apply(ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, owner));
+                int tintIndex = mat.diffuseTintIndex;
+                Vector4f colorTint = mat.diffuseColor;
+
+                for (int[][] face : mesh.faces)
+                {
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.func_225615_b_());
+                    if (quad.getRight() == null)
+                        modelBuilder.addGeneralQuad(quad.getLeft());
+                    else
+                        modelBuilder.addFaceQuad(quad.getRight(), quad.getLeft());
+                }
             }
-            return faceSet;
         }
 
-        public String getName()
+        @Override
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
-            return this.name;
-        }
-
-        public LinkedHashSet<Face> getFaces()
-        {
-            return this.faces;
-        }
-
-        public void setFaces(LinkedHashSet<Face> faces)
-        {
-            this.faces = faces;
-        }
-
-        public void addFace(Face face)
-        {
-            this.faces.add(face);
-        }
-
-        public void addFaces(List<Face> faces)
-        {
-            this.faces.addAll(faces);
+            return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
         }
     }
 
-    @Deprecated
-    public static class OBJState implements IModelState
+    public class ModelGroup extends ModelObject
     {
-        protected Map<String, Boolean> visibilityMap = Maps.newHashMap();
-        public IModelState parent;
-        protected Operation operation = Operation.SET_TRUE;
+        final Map<String, ModelObject> parts = Maps.newHashMap();
 
-        public OBJState(List<String> visibleGroups, boolean visibility)
+        ModelGroup(String name)
         {
-            this(visibleGroups, visibility, TRSRTransformation.identity());
+            super(name);
         }
 
-        public OBJState(List<String> visibleGroups, boolean visibility, IModelState parent)
+        public Collection<? extends IModelGeometryPart> getParts()
         {
-            this.parent = parent;
-            for (String s : visibleGroups) this.visibilityMap.put(s, visibility);
+            return parts.values();
         }
 
+        @Override
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        {
+            super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
+
+            getParts().stream().filter(part -> owner.getPartVisibility(part))
+                    .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
+        }
+
+        @Override
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        {
+            Set<Material> combined = Sets.newHashSet();
+            combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
+            for (IModelGeometryPart part : getParts())
+                combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
+            return combined;
+        }
+    }
+
+    private class ModelMesh
+    {
         @Nullable
-        public IModelState getParent(IModelState parent)
+        public MaterialLibrary.Material mat;
+        @Nullable
+        public String smoothingGroup;
+        public final List<int[][]> faces = Lists.newArrayList();
+
+        public ModelMesh(@Nullable MaterialLibrary.Material currentMat, @Nullable String currentSmoothingGroup)
         {
-            if (parent == null) return null;
-            else if (parent instanceof OBJState) return ((OBJState) parent).parent;
-            return parent;
+            this.mat = currentMat;
+            this.smoothingGroup = currentSmoothingGroup;
+        }
+    }
+
+    public static class ModelSettings
+    {
+        @Nonnull
+        public final ResourceLocation modelLocation;
+        public final boolean detectCullableFaces;
+        public final boolean diffuseLighting;
+        public final boolean flipV;
+        public final boolean ambientToFullbright;
+        @Nullable
+        public final String materialLibraryOverrideLocation;
+
+        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright,
+                             @Nullable String materialLibraryOverrideLocation)
+        {
+            this.modelLocation = modelLocation;
+            this.detectCullableFaces = detectCullableFaces;
+            this.diffuseLighting = diffuseLighting;
+            this.flipV = flipV;
+            this.ambientToFullbright = ambientToFullbright;
+            this.materialLibraryOverrideLocation = materialLibraryOverrideLocation;
         }
 
         @Override
-        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+        public boolean equals(Object o)
         {
-            if (parent != null) return parent.apply(part);
-            return Optional.empty();
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ModelSettings that = (ModelSettings) o;
+            return equals(that);
         }
 
-        public Map<String, Boolean> getVisibilityMap()
+        public boolean equals(@Nonnull ModelSettings that)
         {
-            return this.visibilityMap;
-        }
-
-        public List<String> getGroupsWithVisibility(boolean visibility)
-        {
-            List<String> ret = Lists.newArrayList();
-            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet())
-            {
-                if (e.getValue() == visibility)
-                {
-                    ret.add(e.getKey());
-                }
-            }
-            return ret;
-        }
-
-        public List<String> getGroupNamesFromMap()
-        {
-            return Lists.newArrayList(this.visibilityMap.keySet());
-        }
-
-        public void changeGroupVisibilities(List<String> names, Operation operation)
-        {
-            if (names == null || names.isEmpty()) return;
-            this.operation = operation;
-            if (names.get(0).equals(Group.ALL))
-            {
-                for (String s : this.visibilityMap.keySet())
-                {
-                    this.visibilityMap.put(s, this.operation.performOperation(this.visibilityMap.get(s)));
-                }
-            }
-            else if (names.get(0).equals(Group.ALL_EXCEPT))
-            {
-                for (String s : this.visibilityMap.keySet())
-                {
-                    if (!names.subList(1,  names.size()).contains(s))
-                    {
-                        this.visibilityMap.put(s,  this.operation.performOperation(this.visibilityMap.get(s)));
-                    }
-                }
-            }
-            else
-            {
-                for (String s : names)
-                {
-                    this.visibilityMap.put(s, this.operation.performOperation(this.visibilityMap.get(s)));
-                }
-            }
-        }
-
-        @Override
-        public String toString()
-        {
-            StringBuilder builder = new StringBuilder("OBJState: ");
-            builder.append(String.format("%n    parent: %s%n", this.parent.toString()));
-            builder.append(String.format("    visibility map: %n"));
-            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet())
-            {
-                builder.append(String.format("        name: %s visible: %b%n", e.getKey(), e.getValue()));
-            }
-            return builder.toString();
+            return detectCullableFaces == that.detectCullableFaces &&
+                    diffuseLighting == that.diffuseLighting &&
+                    flipV == that.flipV &&
+                    ambientToFullbright == that.ambientToFullbright &&
+                    modelLocation.equals(that.modelLocation) &&
+                    Objects.equals(materialLibraryOverrideLocation, that.materialLibraryOverrideLocation);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hashCode(visibilityMap, parent, operation);
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            OBJState other = (OBJState) obj;
-            return Objects.equal(visibilityMap, other.visibilityMap) &&
-                Objects.equal(parent, other.parent) &&
-                operation == other.operation;
-        }
-
-        public enum Operation
-        {
-            SET_TRUE,
-            SET_FALSE,
-            TOGGLE;
-
-            Operation(){}
-
-            public boolean performOperation(boolean valueToToggle)
-            {
-                switch(this)
-                {
-                default:
-                case SET_TRUE: return true;
-                case SET_FALSE: return false;
-                case TOGGLE: return !valueToToggle;
-                }
-            }
-        }
-    }
-
-    public class OBJBakedModel implements IDynamicBakedModel
-    {
-        private final OBJModel model;
-        private IModelState state;
-        private final VertexFormat format;
-        private ImmutableList<BakedQuad> quads;
-        private ImmutableMap<String, TextureAtlasSprite> textures;
-        private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
-
-        public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
-        {
-            this.model = model;
-            this.state = state;
-            if (this.state instanceof OBJState) this.updateStateVisibilityMap((OBJState) this.state);
-            this.format = format;
-            this.textures = textures;
-        }
-
-        public void scheduleRebake()
-        {
-        }
-
-        // FIXME: merge with getQuads
-        @Override
-        public List<BakedQuad> getQuads(BlockState blockState, Direction side, Random rand, IModelData modelData)
-        {
-            if (side != null) return ImmutableList.of();
-            if (quads == null)
-            {
-                quads = buildQuads(this.state);
-            }
-            IModelState newState = modelData.getData(Properties.AnimationProperty);
-            if (newState != null)
-            {
-                newState = new ModelStateComposition(this.state, newState);
-                return buildQuads(newState);
-            }
-            return quads;
-        }
-
-        private ImmutableList<BakedQuad> buildQuads(IModelState modelState)
-        {
-            List<BakedQuad> quads = Lists.newArrayList();
-            Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
-            Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
-            Optional<TRSRTransformation> transform = Optional.empty();
-            for (Group g : this.model.getMatLib().getGroups().values())
-            {
-//                g.minUVBounds = this.model.getMatLib().minUVBounds;
-//                g.maxUVBounds = this.model.getMatLib().maxUVBounds;
-//                FMLLog.info("Group: %s u: [%f, %f] v: [%f, %f]", g.name, g.minUVBounds[0], g.maxUVBounds[0], g.minUVBounds[1], g.maxUVBounds[1]);
-
-                if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(g.getName())))).isPresent())
-                {
-                    continue;
-                }
-                if (modelState instanceof OBJState)
-                {
-                    OBJState state = (OBJState) modelState;
-                    if (state.parent != null)
-                    {
-                        transform = state.parent.apply(Optional.empty());
-                    }
-                    //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
-                    if (state.getGroupNamesFromMap().contains(Group.ALL))
-                    {
-                        state.visibilityMap.clear();
-                        for (String s : this.model.getMatLib().getGroups().keySet())
-                        {
-                            state.visibilityMap.put(s, state.operation.performOperation(true));
-                        }
-                    }
-                    else if (state.getGroupNamesFromMap().contains(Group.ALL_EXCEPT))
-                    {
-                        List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
-                        state.visibilityMap.clear();
-                        for (String s : this.model.getMatLib().getGroups().keySet())
-                        {
-                            if (!exceptList.contains(s))
-                            {
-                                state.visibilityMap.put(s, state.operation.performOperation(true));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (String s : state.visibilityMap.keySet())
-                        {
-                            state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
-                        }
-                    }
-                    if (state.getGroupsWithVisibility(true).contains(g.getName()))
-                    {
-                        faces.addAll(g.applyTransform(transform));
-                    }
-                }
-                else
-                {
-                    transform = modelState.apply(Optional.empty());
-                    faces.addAll(g.applyTransform(transform));
-                }
-            }
-            for (Face f : faces)
-            {
-                if (this.model.getMatLib().materials.get(f.getMaterialName()).isWhite())
-                {
-                    for (Vertex v : f.getVertices())
-                    {//update material in each vertex
-                        if (!v.getMaterial().equals(this.model.getMatLib().getMaterial(v.getMaterial().getName())))
-                        {
-                            v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
-                        }
-                    }
-                    sprite = ModelLoader.White.INSTANCE;
-                }
-                else sprite = this.textures.get(f.getMaterialName());
-                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-                builder.setContractUVs(true);
-                builder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
-                builder.setTexture(sprite);
-                Normal faceNormal = f.getNormal();
-                putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);
-                putVertexData(builder, f.verts[1], faceNormal, TextureCoordinate.getDefaultUVs()[1], sprite);
-                putVertexData(builder, f.verts[2], faceNormal, TextureCoordinate.getDefaultUVs()[2], sprite);
-                putVertexData(builder, f.verts[3], faceNormal, TextureCoordinate.getDefaultUVs()[3], sprite);
-                quads.add(builder.build());
-            }
-            return ImmutableList.copyOf(quads);
-        }
-
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Normal faceNormal, TextureCoordinate defUV, TextureAtlasSprite sprite)
-        {
-            for (int e = 0; e < format.getElementCount(); e++)
-            {
-                switch (format.getElement(e).getUsage())
-                {
-                    case POSITION:
-                        builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, v.getPos().w);
-                        break;
-                    case COLOR:
-                        if (v.getMaterial() != null)
-                            builder.put(e,
-                                    v.getMaterial().getColor().x,
-                                    v.getMaterial().getColor().y,
-                                    v.getMaterial().getColor().z,
-                                    v.getMaterial().getColor().w);
-                        else
-                            builder.put(e, 1, 1, 1, 1);
-                        break;
-                    case UV:
-                        if (!v.hasTextureCoordinate())
-                            builder.put(e,
-                                    sprite.getInterpolatedU(defUV.u * 16),
-                                    sprite.getInterpolatedV((model.customData.flipV ? 1 - defUV.v: defUV.v) * 16),
-                                    0, 1);
-                        else
-                            builder.put(e,
-                                    sprite.getInterpolatedU(v.getTextureCoordinate().u * 16),
-                                    sprite.getInterpolatedV((model.customData.flipV ? 1 - v.getTextureCoordinate().v : v.getTextureCoordinate().v) * 16),
-                                    0, 1);
-                        break;
-                    case NORMAL:
-                        if (!v.hasNormal())
-                            builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 0);
-                        else
-                            builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 0);
-                        break;
-                    default:
-                        builder.put(e);
-                }
-            }
-        }
-
-        @Override
-        public boolean isAmbientOcclusion()
-        {
-            return model != null ? model.customData.ambientOcclusion : true;
-        }
-
-        @Override
-        public boolean isGui3d()
-        {
-            return model != null ? model.customData.gui3d : true;
-        }
-
-        @Override
-        public boolean isBuiltInRenderer()
-        {
-            return false;
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleTexture()
-        {
-            return this.sprite;
-        }
-
-        // FIXME: merge with getQuads
-        /* @Override
-        public OBJBakedModel handleBlockState(IBlockState state)
-        {
-            if (state instanceof IExtendedBlockState)
-            {
-                IExtendedBlockState exState = (IExtendedBlockState) state;
-                if (exState.getUnlistedNames().contains(OBJProperty.instance))
-                {
-                    OBJState s = exState.getValue(OBJProperty.instance);
-                    if (s != null)
-                    {
-                        if (s.visibilityMap.containsKey(Group.ALL) || s.visibilityMap.containsKey(Group.ALL_EXCEPT))
-                        {
-                            this.updateStateVisibilityMap(s);
-                        }
-                        return getCachedModel(s);
-                    }
-                }
-            }
-            return this;
-        }*/
-
-        private void updateStateVisibilityMap(OBJState state)
-        {
-            if (state.visibilityMap.containsKey(Group.ALL))
-            {
-                boolean operation = state.visibilityMap.get(Group.ALL);
-                state.visibilityMap.clear();
-                for (String s : this.model.getMatLib().getGroups().keySet())
-                {
-                    state.visibilityMap.put(s,  state.operation.performOperation(operation));
-                }
-            }
-            else if (state.visibilityMap.containsKey(Group.ALL_EXCEPT))
-            {
-                List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
-                state.visibilityMap.remove(Group.ALL_EXCEPT);
-                for (String s : this.model.getMatLib().getGroups().keySet())
-                {
-                    if (!exceptList.contains(s))
-                    {
-                        state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
-                    }
-                }
-            }
-            else
-            {
-                for (String s : state.visibilityMap.keySet())
-                {
-                    state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
-                }
-            }
-        }
-
-        private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
-        {
-            @Override
-            public OBJBakedModel load(IModelState state) throws Exception
-            {
-                return new OBJBakedModel(model, state, format, textures);
-            }
-        });
-
-        public OBJBakedModel getCachedModel(IModelState state)
-        {
-            return cache.getUnchecked(state);
-        }
-
-        public OBJModel getModel()
-        {
-            return this.model;
-        }
-
-        public IModelState getState()
-        {
-            return this.state;
-        }
-
-        public OBJBakedModel getBakedModel()
-        {
-            return new OBJBakedModel(this.model, this.state, this.format, this.textures);
-        }
-
-        @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
-        {
-            return PerspectiveMapWrapper.handlePerspective(this, state, cameraTransformType);
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.model.modelLocation.toString();
-        }
-
-        @Override
-        public ItemOverrideList getOverrides()
-        {
-            return ItemOverrideList.EMPTY;
-        }
-    }
-
-    @SuppressWarnings("serial")
-    public static class UVsOutOfBoundsException extends RuntimeException
-    {
-        public ResourceLocation modelLocation;
-
-        public UVsOutOfBoundsException(ResourceLocation modelLocation)
-        {
-            super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
-            this.modelLocation = modelLocation;
+            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation);
         }
     }
 }

@@ -8,7 +8,7 @@
     }
  
     public boolean func_213358_a(EntityType<?> p_213358_1_) {
-@@ -458,7 +459,7 @@
+@@ -460,7 +461,7 @@
     public void func_70636_d() {
        super.func_70636_d();
        this.field_70170_p.func_217381_Z().func_76320_a("looting");
@@ -17,9 +17,9 @@
           for(ItemEntity itementity : this.field_70170_p.func_217357_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D))) {
              if (!itementity.field_70128_L && !itementity.func_92059_d().func_190926_b() && !itementity.func_174874_s()) {
                 this.func_175445_a(itementity);
-@@ -548,6 +549,14 @@
-    protected void func_70623_bb() {
-       if (!this.func_104002_bU() && !this.func_213392_I()) {
+@@ -556,6 +557,14 @@
+          this.func_70106_y();
+       } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
 +         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
@@ -32,7 +32,7 @@
           if (entity != null) {
              double d0 = entity.func_70068_e(this);
              if (d0 > 16384.0D && this.func_213397_c(d0)) {
-@@ -786,6 +795,8 @@
+@@ -791,6 +800,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -41,7 +41,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -793,7 +804,7 @@
+@@ -798,7 +809,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {
@@ -50,7 +50,7 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -1173,10 +1184,10 @@
+@@ -1178,10 +1189,10 @@
              PlayerEntity playerentity = (PlayerEntity)p_70652_1_;
              ItemStack itemstack = this.func_184614_ca();
              ItemStack itemstack1 = playerentity.func_184587_cr() ? playerentity.func_184607_cu() : ItemStack.field_190927_a;

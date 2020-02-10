@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/Explosion.java
 +++ b/net/minecraft/world/Explosion.java
-@@ -48,6 +48,7 @@
+@@ -54,6 +54,7 @@
     private DamageSource field_199593_j;
     private final List<BlockPos> field_77281_g = Lists.newArrayList();
     private final Map<PlayerEntity, Vec3d> field_77288_k = Maps.newHashMap();
@@ -8,7 +8,7 @@
  
     @OnlyIn(Dist.CLIENT)
     public Explosion(World p_i45752_1_, @Nullable Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_) {
-@@ -70,6 +71,7 @@
+@@ -76,6 +77,7 @@
        this.field_77286_a = p_i50007_10_;
        this.field_222260_b = p_i50007_11_;
        this.field_199593_j = DamageSource.func_94539_a(this);
@@ -16,7 +16,7 @@
     }
  
     public static float func_222259_a(Vec3d p_222259_0_, Entity p_222259_1_) {
-@@ -129,8 +131,8 @@
+@@ -135,8 +137,8 @@
                       BlockPos blockpos = new BlockPos(d4, d6, d8);
                       BlockState blockstate = this.field_77287_j.func_180495_p(blockpos);
                       IFluidState ifluidstate = this.field_77287_j.func_204610_c(blockpos);
@@ -27,7 +27,7 @@
                          if (this.field_77283_e != null) {
                             f2 = this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, blockstate, ifluidstate, f2);
                          }
-@@ -160,6 +162,7 @@
+@@ -166,6 +168,7 @@
        int j2 = MathHelper.func_76128_c(this.field_77282_d - (double)f3 - 1.0D);
        int j1 = MathHelper.func_76128_c(this.field_77282_d + (double)f3 + 1.0D);
        List<Entity> list = this.field_77287_j.func_72839_b(this.field_77283_e, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -35,38 +35,32 @@
        Vec3d vec3d = new Vec3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -230,9 +233,9 @@
-                this.field_77287_j.func_195594_a(ParticleTypes.field_197601_L, d0, d1, d2, d3, d4, d5);
-             }
- 
+@@ -224,11 +227,11 @@
+          for(BlockPos blockpos : this.field_77281_g) {
+             BlockState blockstate = this.field_77287_j.func_180495_p(blockpos);
+             Block block = blockstate.func_177230_c();
 -            if (!blockstate.func_196958_f()) {
++            if (!blockstate.isAir(this.field_77287_j, blockpos)) {
+                BlockPos blockpos1 = blockpos.func_185334_h();
+                this.field_77287_j.func_217381_Z().func_76320_a("explosion_blocks");
 -               if (block.func_149659_a(this) && this.field_77287_j instanceof ServerWorld) {
 -                  TileEntity tileentity = block.func_149716_u() ? this.field_77287_j.func_175625_s(blockpos) : null;
-+            if (!blockstate.isAir(this.field_77287_j, blockpos)) {
-+               if (this.field_77287_j instanceof ServerWorld && blockstate.canDropFromExplosion(this.field_77287_j, blockpos, this)) {
++               if (blockstate.canDropFromExplosion(this.field_77287_j, blockpos, this) && this.field_77287_j instanceof ServerWorld) {
 +                  TileEntity tileentity = blockstate.hasTileEntity() ? this.field_77287_j.func_175625_s(blockpos) : null;
-                   LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_77287_j)).func_216023_a(this.field_77287_j.field_73012_v).func_216015_a(LootParameters.field_216286_f, blockpos).func_216015_a(LootParameters.field_216289_i, ItemStack.field_190927_a).func_216021_b(LootParameters.field_216288_h, tileentity);
+                   LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_77287_j)).func_216023_a(this.field_77287_j.field_73012_v).func_216015_a(LootParameters.field_216286_f, blockpos).func_216015_a(LootParameters.field_216289_i, ItemStack.field_190927_a).func_216021_b(LootParameters.field_216288_h, tileentity).func_216021_b(LootParameters.field_216281_a, this.field_77283_e);
                    if (this.field_222260_b == Explosion.Mode.DESTROY) {
                       lootcontext$builder.func_216015_a(LootParameters.field_216290_j, this.field_77280_f);
-@@ -241,15 +244,14 @@
-                   Block.func_220078_b(blockstate, lootcontext$builder);
+@@ -239,8 +242,7 @@
+                   });
                 }
  
 -               this.field_77287_j.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 3);
 -               block.func_180652_a(this.field_77287_j, blockpos, this);
 +               blockstate.onBlockExploded(this.field_77287_j, blockpos, this);
+                this.field_77287_j.func_217381_Z().func_76319_b();
              }
           }
-       }
- 
-       if (this.field_77286_a) {
-          for(BlockPos blockpos1 : this.field_77281_g) {
--            if (this.field_77287_j.func_180495_p(blockpos1).func_196958_f() && this.field_77287_j.func_180495_p(blockpos1.func_177977_b()).func_200015_d(this.field_77287_j, blockpos1.func_177977_b()) && this.field_77290_i.nextInt(3) == 0) {
-+            if (this.field_77287_j.func_180495_p(blockpos1).isAir(field_77287_j, blockpos1) && this.field_77287_j.func_180495_p(blockpos1.func_177977_b()).func_200015_d(this.field_77287_j, blockpos1.func_177977_b()) && this.field_77290_i.nextInt(3) == 0) {
-                this.field_77287_j.func_175656_a(blockpos1, Blocks.field_150480_ab.func_176223_P());
-             }
-          }
-@@ -288,6 +290,10 @@
+@@ -311,6 +313,10 @@
        return this.field_77281_g;
     }
  
