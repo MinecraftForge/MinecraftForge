@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/MineshaftPieces.java
 +++ b/net/minecraft/world/gen/feature/structure/MineshaftPieces.java
-@@ -206,7 +206,7 @@
+@@ -207,7 +207,7 @@
  
        protected boolean func_186167_a(IWorld p_186167_1_, MutableBoundingBox p_186167_2_, Random p_186167_3_, int p_186167_4_, int p_186167_5_, int p_186167_6_, ResourceLocation p_186167_7_) {
           BlockPos blockpos = new BlockPos(this.func_74865_a(p_186167_4_, p_186167_6_), this.func_74862_a(p_186167_5_), this.func_74873_b(p_186167_4_, p_186167_6_));

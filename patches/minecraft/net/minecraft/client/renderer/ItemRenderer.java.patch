@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -51,7 +51,7 @@
+@@ -54,7 +54,7 @@
  
     public ItemRenderer(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_) {
        this.field_175057_n = p_i46552_1_;
@@ -9,59 +9,34 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-@@ -75,6 +75,10 @@
-    }
- 
-    private void func_191967_a(IBakedModel p_191967_1_, int p_191967_2_, ItemStack p_191967_3_) {
-+      if (net.minecraftforge.common.ForgeConfig.CLIENT.allowEmissiveItems.get()) {
-+         net.minecraftforge.client.ForgeHooksClient.renderLitItem(this, p_191967_1_, p_191967_2_, p_191967_3_);
-+         return;
-+      }
-       Tessellator tessellator = Tessellator.func_178181_a();
-       BufferBuilder bufferbuilder = tessellator.func_178180_c();
-       bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_176599_b);
-@@ -98,7 +102,7 @@
-          if (p_180454_2_.func_188618_c()) {
-             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-             GlStateManager.enableRescaleNormal();
--            ItemStackTileEntityRenderer.field_147719_a.func_179022_a(p_180454_1_);
-+            p_180454_1_.func_77973_b().getTileEntityItemStackRenderer().func_179022_a(p_180454_1_);
-          } else {
-             this.func_191961_a(p_180454_2_, p_180454_1_);
-             if (p_180454_1_.func_77962_s()) {
-@@ -164,7 +168,7 @@
-             k = k | -16777216;
+@@ -91,7 +91,7 @@
+             p_229111_8_ = this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation("minecraft:trident#inventory"));
           }
  
--         this.func_191969_a(p_191970_1_, bakedquad, k);
-+         net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(p_191970_1_, bakedquad, k);
+-         p_229111_8_.func_177552_f().func_181688_b(p_229111_2_).func_228830_a_(p_229111_3_, p_229111_4_);
++         p_229111_8_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_229111_4_, p_229111_8_, p_229111_2_, p_229111_3_);
+          p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
+          if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag1)) {
+             RenderType rendertype = RenderTypeLookup.func_228389_a_(p_229111_1_);
+@@ -105,7 +105,7 @@
+             IVertexBuilder ivertexbuilder = func_229113_a_(p_229111_5_, rendertype1, true, p_229111_1_.func_77962_s());
+             this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
+          } else {
+-            ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
++            p_229111_1_.func_77973_b().getItemStackTileEntityRenderer().func_228364_a_(p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
+          }
+ 
+          p_229111_4_.func_227865_b_();
+@@ -129,7 +129,7 @@
+          float f = (float)(i >> 16 & 255) / 255.0F;
+          float f1 = (float)(i >> 8 & 255) / 255.0F;
+          float f2 = (float)(i & 255) / 255.0F;
+-         p_229112_2_.func_227889_a_(matrixstack$entry, bakedquad, f, f1, f2, p_229112_5_, p_229112_6_);
++         p_229112_2_.addVertexData(matrixstack$entry, bakedquad, f, f1, f2, p_229112_5_, p_229112_6_, true);
        }
  
     }
-@@ -225,11 +229,8 @@
-          GlStateManager.enableBlend();
-          GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-          GlStateManager.pushMatrix();
--         ItemCameraTransforms itemcameratransforms = p_184394_2_.func_177552_f();
--         ItemCameraTransforms.func_188034_a(itemcameratransforms.func_181688_b(p_184394_3_), p_184394_4_);
--         if (this.func_183005_a(itemcameratransforms.func_181688_b(p_184394_3_))) {
--            GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
--         }
-+         // TODO: check if negative scale is a thing
-+         p_184394_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184394_2_, p_184394_3_, p_184394_4_);
- 
-          this.func_180454_a(p_184394_1_, p_184394_2_);
-          GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-@@ -260,7 +261,7 @@
-       GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-       this.func_180452_a(p_191962_2_, p_191962_3_, p_191962_4_.func_177556_c());
--      p_191962_4_.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GUI);
-+      p_191962_4_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_191962_4_, ItemCameraTransforms.TransformType.GUI, false);
-       this.func_180454_a(p_191962_1_, p_191962_4_);
-       GlStateManager.disableAlphaTest();
-       GlStateManager.disableRescaleNormal();
-@@ -299,6 +300,7 @@
+@@ -215,6 +215,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -69,22 +44,16 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -330,9 +332,12 @@
-             GlStateManager.enableBlend();
-             GlStateManager.enableLighting();
-             GlStateManager.enableDepthTest();
-+            // Fixes opaque cooldown overlay a bit lower
-+            // TODO: check if enabled blending still screws things up down the line.
-+            GlStateManager.enableBlend();
+@@ -246,18 +247,16 @@
+             irendertypebuffer$impl.func_228461_a_();
           }
  
 -         if (p_180453_2_.func_77951_h()) {
 +         if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_)) {
-             GlStateManager.disableLighting();
-             GlStateManager.disableDepthTest();
-             GlStateManager.disableTexture();
-@@ -340,11 +345,9 @@
-             GlStateManager.disableBlend();
+             RenderSystem.disableDepthTest();
+             RenderSystem.disableTexture();
+             RenderSystem.disableAlphaTest();
+             RenderSystem.disableBlend();
              Tessellator tessellator = Tessellator.func_178181_a();
              BufferBuilder bufferbuilder = tessellator.func_178180_c();
 -            float f = (float)p_180453_2_.func_77952_i();
@@ -97,8 +66,8 @@
 +            int j = p_180453_2_.func_77973_b().getRGBDurabilityForDisplay(p_180453_2_);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-             GlStateManager.enableBlend();
-@@ -383,4 +386,9 @@
+             RenderSystem.enableBlend();
+@@ -295,4 +294,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

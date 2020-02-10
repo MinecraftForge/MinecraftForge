@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/world/ClientWorld.java
 +++ b/net/minecraft/client/world/ClientWorld.java
-@@ -87,6 +87,8 @@
+@@ -103,6 +103,8 @@
        this.func_175652_B(new BlockPos(8, 64, 8));
        this.func_72966_v();
        this.func_72947_a();
@@ -9,15 +9,15 @@
     }
  
     public void func_72835_b(BooleanSupplier p_72835_1_) {
-@@ -111,6 +113,7 @@
+@@ -127,6 +129,7 @@
           Entity entity = this.field_217428_a.get(i);
-          this.func_217390_a((p_217415_0_) -> {
-             ++p_217415_0_.field_70173_aa;
-+            if (p_217415_0_.canUpdate())
-             p_217415_0_.func_70071_h_();
+          this.func_217390_a((p_228325_0_) -> {
+             ++p_228325_0_.field_70173_aa;
++            if (p_228325_0_.canUpdate())
+             p_228325_0_.func_70071_h_();
           }, entity);
           if (entity.field_70128_L) {
-@@ -158,6 +161,7 @@
+@@ -172,6 +175,7 @@
              this.func_217381_Z().func_194340_a(() -> {
                 return Registry.field_212629_r.func_177774_c(p_217418_1_.func_200600_R()).toString();
              });
@@ -25,19 +25,19 @@
              p_217418_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -265,9 +269,11 @@
+@@ -289,9 +293,11 @@
     }
  
     private void func_217424_b(int p_217424_1_, Entity p_217424_2_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217424_2_, this))) return;
        this.func_217413_d(p_217424_1_);
        this.field_217429_b.put(p_217424_1_, p_217424_2_);
-       this.func_72863_F().func_212849_a_(MathHelper.func_76128_c(p_217424_2_.field_70165_t / 16.0D), MathHelper.func_76128_c(p_217424_2_.field_70161_v / 16.0D), ChunkStatus.field_222617_m, true).func_76612_a(p_217424_2_);
+       this.func_72863_F().func_212849_a_(MathHelper.func_76128_c(p_217424_2_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_217424_2_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, true).func_76612_a(p_217424_2_);
 +      p_217424_2_.onAddedToWorld();
     }
  
     public void func_217413_d(int p_217413_1_) {
-@@ -286,6 +292,7 @@
+@@ -310,6 +316,7 @@
        }
  
        this.field_217431_w.remove(p_217414_1_);
@@ -45,7 +45,7 @@
     }
  
     public void func_217417_b(Chunk p_217417_1_) {
-@@ -411,6 +418,11 @@
+@@ -443,6 +450,11 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -57,7 +57,7 @@
        if (p_184148_1_ == this.field_73037_M.field_71439_g) {
           this.func_184134_a(p_184148_2_, p_184148_4_, p_184148_6_, p_184148_8_, p_184148_9_, p_184148_10_, p_184148_11_, false);
        }
-@@ -418,6 +430,11 @@
+@@ -450,6 +462,11 @@
     }
  
     public void func_217384_a(@Nullable PlayerEntity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {

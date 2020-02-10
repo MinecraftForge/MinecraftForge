@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/carver/WorldCarver.java
 +++ b/net/minecraft/world/gen/carver/WorldCarver.java
-@@ -21,7 +21,7 @@
+@@ -22,7 +22,7 @@
  import net.minecraft.world.chunk.IChunk;
  import net.minecraft.world.gen.feature.ProbabilityConfig;
  

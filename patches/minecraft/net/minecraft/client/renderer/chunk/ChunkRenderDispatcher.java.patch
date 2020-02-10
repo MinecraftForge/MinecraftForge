@@ -1,18 +1,172 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
-@@ -45,10 +45,14 @@
+@@ -68,12 +68,15 @@
     private Vec3d field_217672_l = Vec3d.field_186680_a;
  
-    public ChunkRenderDispatcher(boolean p_i51518_1_) {
-+      this(p_i51518_1_, -1);
+    public ChunkRenderDispatcher(World p_i226020_1_, WorldRenderer p_i226020_2_, Executor p_i226020_3_, boolean p_i226020_4_, RegionRenderCacheBuilder p_i226020_5_) {
++      this(p_i226020_1_, p_i226020_2_, p_i226020_3_, p_i226020_4_, p_i226020_5_, -1);
 +   }
-+
-+   public ChunkRenderDispatcher(boolean p_i51518_1_, int countRenderBuilders) {
-       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / 10485760 - 1);
++   public ChunkRenderDispatcher(World p_i226020_1_, WorldRenderer p_i226020_2_, Executor p_i226020_3_, boolean p_i226020_4_, RegionRenderCacheBuilder p_i226020_5_, int countRenderBuilders) {
+       this.field_228893_j_ = p_i226020_1_;
+       this.field_228894_k_ = p_i226020_2_;
+       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.func_228661_n_().stream().mapToInt(RenderType::func_228662_o_).sum() * 4) - 1);
        int j = Runtime.getRuntime().availableProcessors();
-       int k = p_i51518_1_ ? j : Math.min(j, 4);
--      int l = Math.max(1, Math.min(k * 2, i));
-+      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k * 2, i)) : countRenderBuilders;
-       this.field_178525_i = new ChunkRenderWorker(this, new RegionRenderCacheBuilder());
+       int k = p_i226020_4_ ? j : Math.min(j, 4);
+-      int l = Math.max(1, Math.min(k, i));
++      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k, i)) : countRenderBuilders;
+       this.field_228890_g_ = p_i226020_5_;
        List<RegionRenderCacheBuilder> list = Lists.newArrayListWithExpectedSize(l);
+ 
+@@ -206,7 +209,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public class ChunkRender {
++   public class ChunkRender implements net.minecraftforge.client.extensions.IForgeRenderChunk {
+       public final AtomicReference<ChunkRenderDispatcher.CompiledChunk> field_178590_b = new AtomicReference<>(ChunkRenderDispatcher.CompiledChunk.field_178502_a);
+       @Nullable
+       private ChunkRenderDispatcher.ChunkRender.RebuildTask field_228921_d_;
+@@ -332,7 +335,7 @@
+          if (!chunkrenderdispatcher$compiledchunk.field_178501_c.contains(p_228925_1_)) {
+             return false;
+          } else {
+-            this.field_228922_e_ = new ChunkRenderDispatcher.ChunkRender.SortTransparencyTask(this.func_188280_f(), chunkrenderdispatcher$compiledchunk);
++            this.field_228922_e_ = new ChunkRenderDispatcher.ChunkRender.SortTransparencyTask(new net.minecraft.util.math.ChunkPos(func_178568_j()), this.func_188280_f(), chunkrenderdispatcher$compiledchunk);
+             p_228925_2_.func_228900_a_(this.field_228922_e_);
+             return true;
+          }
+@@ -355,8 +358,8 @@
+          this.func_228935_i_();
+          BlockPos blockpos = this.field_178586_f.func_185334_h();
+          int i = 1;
+-         ChunkRenderCache chunkrendercache = ChunkRenderCache.func_212397_a(ChunkRenderDispatcher.this.field_228893_j_, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
+-         this.field_228921_d_ = new ChunkRenderDispatcher.ChunkRender.RebuildTask(this.func_188280_f(), chunkrendercache);
++         ChunkRenderCache chunkrendercache = createRegionRenderCache(ChunkRenderDispatcher.this.field_228893_j_, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++         this.field_228921_d_ = new ChunkRenderDispatcher.ChunkRender.RebuildTask(new net.minecraft.util.math.ChunkPos(func_178568_j()), this.func_188280_f(), chunkrendercache);
+          return this.field_228921_d_;
+       }
+ 
+@@ -384,9 +387,19 @@
+       abstract class ChunkRenderTask implements Comparable<ChunkRenderDispatcher.ChunkRender.ChunkRenderTask> {
+          protected final double field_188229_e;
+          protected final AtomicBoolean field_178554_h = new AtomicBoolean(false);
++         protected java.util.Map<net.minecraft.util.math.BlockPos, net.minecraftforge.client.model.data.IModelData> modelData;
+ 
+          public ChunkRenderTask(double p_i226023_2_) {
++            this(null, p_i226023_2_);
++         }
++
++         public ChunkRenderTask(@Nullable net.minecraft.util.math.ChunkPos pos, double p_i226023_2_) {
+             this.field_188229_e = p_i226023_2_;
++            if (pos == null) {
++                this.modelData = java.util.Collections.emptyMap();
++            } else {
++                this.modelData = net.minecraftforge.client.model.ModelDataManager.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, pos);
++            }
+          }
+ 
+          public abstract CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> func_225618_a_(RegionRenderCacheBuilder p_225618_1_);
+@@ -396,6 +409,10 @@
+          public int compareTo(ChunkRenderDispatcher.ChunkRender.ChunkRenderTask p_compareTo_1_) {
+             return Doubles.compare(this.field_188229_e, p_compareTo_1_.field_188229_e);
+          }
++
++         public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.util.math.BlockPos pos) {
++            return modelData.getOrDefault(pos, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++         }
+       }
+ 
+       @OnlyIn(Dist.CLIENT)
+@@ -403,8 +420,13 @@
+          @Nullable
+          protected ChunkRenderCache field_228938_d_;
+ 
++         @Deprecated
+          public RebuildTask(double p_i226024_2_, @Nullable ChunkRenderCache p_i226024_4_) {
+-            super(p_i226024_2_);
++            this(null, p_i226024_2_, p_i226024_4_);
++         }
++
++         public RebuildTask(@Nullable net.minecraft.util.math.ChunkPos pos, double p_i226024_2_, @Nullable ChunkRenderCache p_i226024_4_) {
++            super(pos, p_i226024_2_);
+             this.field_228938_d_ = p_i226024_4_;
+          }
+ 
+@@ -470,7 +492,7 @@
+                      visgraph.func_178606_a(blockpos2);
+                   }
+ 
+-                  if (block.func_149716_u()) {
++                  if (blockstate.hasTileEntity()) {
+                      TileEntity tileentity = chunkrendercache.func_212399_a(blockpos2, Chunk.CreateEntityType.CHECK);
+                      if (tileentity != null) {
+                         this.func_228942_a_(p_228940_4_, set, tileentity);
+@@ -478,8 +500,10 @@
+                   }
+ 
+                   IFluidState ifluidstate = chunkrendercache.func_204610_c(blockpos2);
+-                  if (!ifluidstate.func_206888_e()) {
+-                     RenderType rendertype = RenderTypeLookup.func_228391_a_(ifluidstate);
++                  net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
++                  for (RenderType rendertype : RenderType.func_228661_n_()) {
++                      net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
++                  if (!ifluidstate.func_206888_e() && RenderTypeLookup.canRenderInLayer(ifluidstate, rendertype)) {
+                      BufferBuilder bufferbuilder = p_228940_5_.func_228366_a_(rendertype);
+                      if (p_228940_4_.field_178501_c.add(rendertype)) {
+                         ChunkRender.this.func_228923_a_(bufferbuilder);
+@@ -491,8 +515,8 @@
+                      }
+                   }
+ 
+-                  if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
+-                     RenderType rendertype1 = RenderTypeLookup.func_228390_a_(blockstate);
++                  if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE && RenderTypeLookup.canRenderInLayer(blockstate, rendertype)) {
++                     RenderType rendertype1 = rendertype;
+                      BufferBuilder bufferbuilder2 = p_228940_5_.func_228366_a_(rendertype1);
+                      if (p_228940_4_.field_178501_c.add(rendertype1)) {
+                         ChunkRender.this.func_228923_a_(bufferbuilder2);
+@@ -500,7 +524,7 @@
+ 
+                      matrixstack.func_227860_a_();
+                      matrixstack.func_227861_a_((double)(blockpos2.func_177958_n() & 15), (double)(blockpos2.func_177956_o() & 15), (double)(blockpos2.func_177952_p() & 15));
+-                     if (blockrendererdispatcher.func_228793_a_(blockstate, blockpos2, chunkrendercache, matrixstack, bufferbuilder2, true, random)) {
++                     if (blockrendererdispatcher.renderModel(blockstate, blockpos2, chunkrendercache, matrixstack, bufferbuilder2, true, random, modelData)) {
+                         p_228940_4_.field_178498_d = false;
+                         p_228940_4_.field_178500_b.add(rendertype1);
+                      }
+@@ -508,6 +532,8 @@
+                      matrixstack.func_227865_b_();
+                   }
+                }
++               }
++               net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+ 
+                if (p_228940_4_.field_178500_b.contains(RenderType.func_228645_f_())) {
+                   BufferBuilder bufferbuilder1 = p_228940_5_.func_228366_a_(RenderType.func_228645_f_());
+@@ -526,10 +552,10 @@
+          private <E extends TileEntity> void func_228942_a_(ChunkRenderDispatcher.CompiledChunk p_228942_1_, Set<TileEntity> p_228942_2_, E p_228942_3_) {
+             TileEntityRenderer<E> tileentityrenderer = TileEntityRendererDispatcher.field_147556_a.func_147547_b(p_228942_3_);
+             if (tileentityrenderer != null) {
+-               p_228942_1_.field_178499_e.add(p_228942_3_);
+                if (tileentityrenderer.func_188185_a(p_228942_3_)) {
+                   p_228942_2_.add(p_228942_3_);
+                }
++               else p_228942_1_.field_178499_e.add(p_228942_3_); //FORGE: Fix MC-112730
+             }
+ 
+          }
+@@ -547,8 +573,13 @@
+       class SortTransparencyTask extends ChunkRenderDispatcher.ChunkRender.ChunkRenderTask {
+          private final ChunkRenderDispatcher.CompiledChunk field_228945_e_;
+ 
++         @Deprecated
+          public SortTransparencyTask(double p_i226025_2_, ChunkRenderDispatcher.CompiledChunk p_i226025_4_) {
+-            super(p_i226025_2_);
++            this(null, p_i226025_2_, p_i226025_4_);
++         }
++
++         public SortTransparencyTask(@Nullable net.minecraft.util.math.ChunkPos pos, double p_i226025_2_, ChunkRenderDispatcher.CompiledChunk p_i226025_4_) {
++            super(pos, p_i226025_2_);
+             this.field_228945_e_ = p_i226025_4_;
+          }
  

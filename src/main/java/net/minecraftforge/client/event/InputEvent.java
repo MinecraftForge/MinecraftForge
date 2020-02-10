@@ -19,7 +19,9 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.util.Hand;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -251,6 +253,73 @@ public class InputEvent extends Event
         public int getModifiers()
         {
             return this.modifiers;
+        }
+    }
+
+    /**
+     * This event fires when one of the keybindings that by default involves clicking the mouse buttons
+     * is triggered.
+     *
+     * These key bindings are use item, pick block and attack keybindings. (right, middle and left mouse click)
+     * In the case that these key bindings are re-bound to a keyboard key the event will still be fired as normal.
+     */
+    @Cancelable
+    public static class ClickInputEvent extends InputEvent
+    {
+        private final int button;
+        private final KeyBinding keyBinding;
+        private final Hand hand;
+        private boolean handSwing = true;
+        public ClickInputEvent(int button, KeyBinding keyBinding, Hand hand)
+        {
+            this.button = button;
+            this.keyBinding = keyBinding;
+            this.hand = hand;
+        }
+
+        /**
+         * Set to false to disable the hand swing animation.
+         * Has no effect if this is a pick block input.
+         */
+        public void setSwingHand(boolean value)
+        {
+            handSwing = value;
+        }
+
+        public boolean shouldSwingHand()
+        {
+            return handSwing;
+        }
+
+        /**
+         * The hand which is causing the event to get triggered.
+         * The event will be called for both hands if this is a use item input regardless
+         * of if either gets canceled.
+         * Will always be MAIN_HAND if this is an attack or pick block input.
+         */
+        public Hand getHand()
+        {
+            return hand;
+        }
+
+        public boolean isAttack()
+        {
+            return button == 0;
+        }
+
+        public boolean isUseItem()
+        {
+            return button == 1;
+        }
+
+        public boolean isPickBlock()
+        {
+            return button == 2;
+        }
+
+        public KeyBinding getKeyBinding()
+        {
+            return keyBinding;
         }
     }
 }

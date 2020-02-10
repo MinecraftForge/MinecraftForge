@@ -4,8 +4,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
--public abstract class World implements IEnviromentBlockReader, IWorld, AutoCloseable {
-+public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider<World> implements IEnviromentBlockReader, IWorld, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
+-public abstract class World implements IWorld, AutoCloseable {
++public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider<World> implements IWorld, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
     protected static final Logger field_195596_d = LogManager.getLogger();
     private static final Direction[] field_200007_a = Direction.values();
     public final List<TileEntity> field_147482_g = Lists.newArrayList();
@@ -13,13 +13,13 @@
     protected final List<TileEntity> field_147484_a = Lists.newArrayList();
 -   protected final List<TileEntity> field_147483_b = Lists.newArrayList();
 +   protected final java.util.Set<TileEntity> field_147483_b = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()); // Forge: faster "contains" makes removal much more efficient
-    private final long field_73001_c = 16777215L;
     private final Thread field_217407_c;
     private int field_73008_k;
-@@ -87,8 +87,12 @@
-    public final boolean field_72995_K;
+    protected int field_73005_l = (new Random()).nextInt();
+@@ -86,8 +86,12 @@
     protected boolean field_147481_N;
     private final WorldBorder field_175728_M;
+    private final BiomeManager field_226689_w_;
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
@@ -29,18 +29,7 @@
        this.field_72984_F = p_i50005_4_;
        this.field_72986_A = p_i50005_1_;
        this.field_73011_w = p_i50005_2_.func_218270_a(this);
-@@ -99,6 +103,10 @@
-    }
- 
-    public Biome func_180494_b(BlockPos p_180494_1_) {
-+      return this.field_73011_w.getBiome(p_180494_1_);
-+   }
-+
-+   public Biome getBiomeBody(BlockPos p_180494_1_) {
-       AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
-       Chunk chunk = abstractchunkprovider.func_217205_a(p_180494_1_.func_177958_n() >> 4, p_180494_1_.func_177952_p() >> 4, false);
-       if (chunk != null) {
-@@ -169,23 +177,51 @@
+@@ -158,23 +162,51 @@
        } else {
           Chunk chunk = this.func_175726_f(p_180501_1_);
           Block block = p_180501_2_.func_177230_c();
@@ -94,7 +83,7 @@
                    this.func_184138_a(p_180501_1_, blockstate, p_180501_2_, p_180501_3_);
                 }
  
-@@ -205,8 +241,6 @@
+@@ -194,8 +226,6 @@
  
                 this.func_217393_a(p_180501_1_, blockstate, blockstate1);
              }
@@ -103,32 +92,32 @@
           }
        }
     }
-@@ -221,13 +255,13 @@
+@@ -210,13 +240,13 @@
  
-    public boolean func_175655_b(BlockPos p_175655_1_, boolean p_175655_2_) {
-       BlockState blockstate = this.func_180495_p(p_175655_1_);
+    public boolean func_225521_a_(BlockPos p_225521_1_, boolean p_225521_2_, @Nullable Entity p_225521_3_) {
+       BlockState blockstate = this.func_180495_p(p_225521_1_);
 -      if (blockstate.func_196958_f()) {
-+      if (blockstate.isAir(this, p_175655_1_)) {
++      if (blockstate.isAir(this, p_225521_1_)) {
           return false;
        } else {
-          IFluidState ifluidstate = this.func_204610_c(p_175655_1_);
-          this.func_217379_c(2001, p_175655_1_, Block.func_196246_j(blockstate));
-          if (p_175655_2_) {
--            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_175655_1_) : null;
-+            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_175655_1_) : null;
-             Block.func_220059_a(blockstate, this, p_175655_1_, tileentity);
+          IFluidState ifluidstate = this.func_204610_c(p_225521_1_);
+          this.func_217379_c(2001, p_225521_1_, Block.func_196246_j(blockstate));
+          if (p_225521_2_) {
+-            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_225521_1_) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_225521_1_) : null;
+             Block.func_220054_a(blockstate, this, p_225521_1_, tileentity, p_225521_3_, ItemStack.field_190927_a);
           }
  
-@@ -252,6 +286,8 @@
+@@ -241,6 +271,8 @@
     }
  
     public void func_195593_d(BlockPos p_195593_1_, Block p_195593_2_) {
-+      if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_195593_1_, this.func_180495_p(p_195593_1_), java.util.EnumSet.allOf(Direction.class), false).isCanceled())
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_195593_1_, this.func_180495_p(p_195593_1_), java.util.EnumSet.allOf(Direction.class), false).isCanceled())
 +         return;
        this.func_190524_a(p_195593_1_.func_177976_e(), p_195593_2_, p_195593_1_);
        this.func_190524_a(p_195593_1_.func_177974_f(), p_195593_2_, p_195593_1_);
        this.func_190524_a(p_195593_1_.func_177977_b(), p_195593_2_, p_195593_1_);
-@@ -261,6 +297,11 @@
+@@ -250,6 +282,11 @@
     }
  
     public void func_175695_a(BlockPos p_175695_1_, Block p_175695_2_, Direction p_175695_3_) {
@@ -140,7 +129,7 @@
        if (p_175695_3_ != Direction.WEST) {
           this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
        }
-@@ -298,9 +339,9 @@
+@@ -287,9 +324,9 @@
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being updated");
              crashreportcategory.func_189529_a("Source block type", () -> {
                 try {
@@ -152,75 +141,20 @@
                 }
              });
              CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, blockstate);
-@@ -363,7 +404,7 @@
+@@ -336,7 +373,7 @@
     }
  
     public boolean func_72935_r() {
--      return this.field_73008_k < 4;
+-      return this.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ && this.field_73008_k < 4;
 +      return this.field_73011_w.isDaytime();
     }
  
-    public void func_184133_a(@Nullable PlayerEntity p_184133_1_, BlockPos p_184133_2_, SoundEvent p_184133_3_, SoundCategory p_184133_4_, float p_184133_5_, float p_184133_6_) {
-@@ -391,6 +432,10 @@
-    }
- 
-    public float func_72971_b(float p_72971_1_) {
-+      return this.field_73011_w.getSunBrightness(p_72971_1_);
-+   }
-+
-+   public float getSunBrightnessBody(float p_72971_1_) {
-       float f = this.func_72826_c(p_72971_1_);
-       float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.2F);
-       f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -402,12 +447,15 @@
- 
-    @OnlyIn(Dist.CLIENT)
-    public Vec3d func_217382_a(BlockPos p_217382_1_, float p_217382_2_) {
-+      return this.field_73011_w.getSkyColor(p_217382_1_, p_217382_2_);
-+   }
-+
-+   @OnlyIn(Dist.CLIENT)
-+   public Vec3d getSkyColorBody(BlockPos p_217382_1_, float p_217382_2_) {
-       float f = this.func_72826_c(p_217382_2_);
-       float f1 = MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
-       f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
--      Biome biome = this.func_180494_b(p_217382_1_);
--      float f2 = biome.func_225486_c(p_217382_1_);
--      int i = biome.func_76731_a(f2);
-+      int i = net.minecraftforge.client.ForgeHooksClient.getSkyBlendColour(this, p_217382_1_);
-       float f3 = (float)(i >> 16 & 255) / 255.0F;
-       float f4 = (float)(i >> 8 & 255) / 255.0F;
-       float f5 = (float)(i & 255) / 255.0F;
-@@ -454,6 +502,11 @@
- 
-    @OnlyIn(Dist.CLIENT)
-    public Vec3d func_72824_f(float p_72824_1_) {
-+      return this.field_73011_w.getCloudColor(p_72824_1_);
-+   }
-+
-+   @OnlyIn(Dist.CLIENT)
-+   public Vec3d getCloudColorBody(float p_72824_1_) {
-       float f = this.func_72826_c(p_72824_1_);
-       float f1 = MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
-       f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -492,17 +545,24 @@
- 
-    @OnlyIn(Dist.CLIENT)
-    public float func_72880_h(float p_72880_1_) {
--      float f = this.func_72826_c(p_72880_1_);
-+      return this.field_73011_w.getStarBrightness(p_72880_1_);
-+   }
-+
-+   @OnlyIn(Dist.CLIENT)
-+   public float getStarBrightnessBody(float partialTicks) {
-+      float f = this.func_72826_c(partialTicks);
-       float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
-       f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-       return f1 * f1 * 0.5F;
+    public boolean func_226690_K_() {
+@@ -373,10 +410,12 @@
     }
  
     public boolean func_175700_a(TileEntity p_175700_1_) {
-+      if (p_175700_1_.func_145831_w() != this) p_175700_1_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
++      if (p_175700_1_.func_145831_w() != this) p_175700_1_.func_226984_a_(this, p_175700_1_.func_174877_v()); // Forge - set the world early as vanilla doesn't set it until next tick
        if (this.field_147481_N) {
           field_195596_d.error("Adding block entity while ticking: {} @ {}", () -> {
              return Registry.field_212626_o.func_177774_c(p_175700_1_.func_200662_C());
@@ -229,7 +163,7 @@
        }
  
        boolean flag = this.field_147482_g.add(p_175700_1_);
-@@ -510,6 +570,8 @@
+@@ -384,6 +423,8 @@
           this.field_175730_i.add(p_175700_1_);
        }
  
@@ -238,20 +172,19 @@
        if (this.field_72995_K) {
           BlockPos blockpos = p_175700_1_.func_174877_v();
           BlockState blockstate = this.func_180495_p(blockpos);
-@@ -521,6 +583,7 @@
+@@ -395,6 +436,7 @@
  
     public void func_147448_a(Collection<TileEntity> p_147448_1_) {
        if (this.field_147481_N) {
-+         p_147448_1_.stream().filter(te -> te.func_145831_w() != this).forEach(te -> te.func_145834_a(this)); // Forge - set the world early as vanilla doesn't set it until next tick
++         p_147448_1_.stream().filter(te -> te.func_145831_w() != this).forEach(te -> te.func_226984_a_(this, te.func_174877_v())); // Forge - set the world early as vanilla doesn't set it until next tick
           this.field_147484_a.addAll(p_147448_1_);
        } else {
           for(TileEntity tileentity : p_147448_1_) {
-@@ -533,13 +596,15 @@
+@@ -407,13 +449,14 @@
     public void func_217391_K() {
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("blockEntities");
 +      this.field_147481_N = true;// Forge: Move above remove to prevent CMEs
-+
        if (!this.field_147483_b.isEmpty()) {
 +         this.field_147483_b.forEach(e -> e.onChunkUnloaded());
           this.field_175730_i.removeAll(this.field_147483_b);
@@ -263,7 +196,7 @@
        Iterator<TileEntity> iterator = this.field_175730_i.iterator();
  
        while(iterator.hasNext()) {
-@@ -548,8 +613,9 @@
+@@ -422,8 +465,9 @@
              BlockPos blockpos = tileentity.func_174877_v();
              if (this.field_73020_y.func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
                 try {
@@ -274,7 +207,7 @@
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();
-@@ -562,8 +628,16 @@
+@@ -436,8 +480,16 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory);
@@ -291,19 +224,19 @@
              }
           }
  
-@@ -571,7 +645,10 @@
+@@ -445,7 +497,10 @@
              iterator.remove();
              this.field_147482_g.remove(tileentity);
              if (this.func_175667_e(tileentity.func_174877_v())) {
 -               this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
-+                //Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
-+                Chunk chunk = this.func_175726_f(tileentity.func_174877_v());
-+                if (chunk.func_177424_a(tileentity.func_174877_v(), Chunk.CreateEntityType.CHECK) == tileentity)
-+                   chunk.func_177425_e(tileentity.func_174877_v());
++               //Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
++               Chunk chunk = this.func_175726_f(tileentity.func_174877_v());
++               if (chunk.func_177424_a(tileentity.func_174877_v(), Chunk.CreateEntityType.CHECK) == tileentity)
++                  chunk.func_177425_e(tileentity.func_174877_v());
              }
           }
        }
-@@ -603,12 +680,15 @@
+@@ -477,12 +532,15 @@
  
     public void func_217390_a(Consumer<Entity> p_217390_1_, Entity p_217390_2_) {
        try {
@@ -319,27 +252,27 @@
        }
     }
  
-@@ -625,7 +705,7 @@
+@@ -499,7 +557,7 @@
              for(int l1 = k; l1 < l; ++l1) {
                 for(int i2 = i1; i2 < j1; ++i2) {
-                   BlockState blockstate = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2));
+                   BlockState blockstate = this.func_180495_p(blockpos$pooledmutable.func_181079_c(k1, l1, i2));
 -                  if (!blockstate.func_196958_f()) {
-+                  if (!blockstate.isAir(this, blockpos$pooledmutableblockpos)) {
++                  if (!blockstate.isAir(this, blockpos$pooledmutable)) {
                       boolean flag = true;
                       return flag;
                    }
-@@ -649,8 +729,8 @@
+@@ -523,8 +581,8 @@
              for(int k1 = i; k1 < j; ++k1) {
                 for(int l1 = k; l1 < l; ++l1) {
                    for(int i2 = i1; i2 < j1; ++i2) {
--                     Block block = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2)).func_177230_c();
+-                     Block block = this.func_180495_p(blockpos$pooledmutable.func_181079_c(k1, l1, i2)).func_177230_c();
 -                     if (block == Blocks.field_150480_ab || block == Blocks.field_150353_l) {
-+                     BlockState state = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2));
-+                     if (state.isBurning(this, blockpos$pooledmutableblockpos)) {
++                     BlockState state = this.func_180495_p(blockpos$pooledmutable.func_181079_c(k1, l1, i2));
++                     if (state.isBurning(this, blockpos$pooledmutable)) {
                          boolean flag = true;
                          return flag;
                       }
-@@ -721,6 +801,7 @@
+@@ -594,6 +652,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
@@ -347,20 +280,15 @@
  
        explosion.func_77278_a();
        explosion.func_77279_a(true);
-@@ -781,9 +862,12 @@
+@@ -654,6 +713,7 @@
  
     public void func_175690_a(BlockPos p_175690_1_, @Nullable TileEntity p_175690_2_) {
        if (!func_189509_E(p_175690_1_)) {
 +         p_175690_1_ = p_175690_1_.func_185334_h(); // Forge - prevent mutable BlockPos leaks
           if (p_175690_2_ != null && !p_175690_2_.func_145837_r()) {
              if (this.field_147481_N) {
-                p_175690_2_.func_174878_a(p_175690_1_);
-+               if (p_175690_2_.func_145831_w() != this)
-+                  p_175690_2_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
-                Iterator<TileEntity> iterator = this.field_147484_a.iterator();
- 
-                while(iterator.hasNext()) {
-@@ -796,7 +880,8 @@
+                p_175690_2_.func_226984_a_(this, p_175690_1_);
+@@ -669,7 +729,8 @@
  
                 this.field_147484_a.add(p_175690_2_);
              } else {
@@ -370,7 +298,7 @@
                 this.func_175700_a(p_175690_2_);
              }
           }
-@@ -809,6 +894,8 @@
+@@ -682,6 +743,8 @@
        if (tileentity != null && this.field_147481_N) {
           tileentity.func_145843_s();
           this.field_147484_a.remove(tileentity);
@@ -379,7 +307,7 @@
        } else {
           if (tileentity != null) {
              this.field_147484_a.remove(tileentity);
-@@ -818,7 +905,7 @@
+@@ -691,7 +754,7 @@
  
           this.func_175726_f(p_175713_1_).func_177425_e(p_175713_1_);
        }
@@ -388,7 +316,7 @@
     }
  
     public boolean func_195588_v(BlockPos p_195588_1_) {
-@@ -843,9 +930,14 @@
+@@ -716,9 +779,14 @@
  
     public void func_72891_a(boolean p_72891_1_, boolean p_72891_2_) {
        this.func_72863_F().func_217203_a(p_72891_1_, p_72891_2_);
@@ -403,9 +331,9 @@
        if (this.field_72986_A.func_76059_o()) {
           this.field_73004_o = 1.0F;
           if (this.field_72986_A.func_76061_m()) {
-@@ -865,10 +957,10 @@
- 
+@@ -740,10 +808,10 @@
     public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
        List<Entity> list = Lists.newArrayList();
 -      int i = MathHelper.func_76128_c((p_175674_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_175674_2_.field_72336_d + 2.0D) / 16.0D);
@@ -418,10 +346,10 @@
  
        for(int i1 = i; i1 <= j; ++i1) {
           for(int j1 = k; j1 <= l; ++j1) {
-@@ -883,10 +975,10 @@
-    }
+@@ -759,10 +827,10 @@
  
-    public List<Entity> func_217394_a(@Nullable EntityType<?> p_217394_1_, AxisAlignedBB p_217394_2_, Predicate<? super Entity> p_217394_3_) {
+    public <T extends Entity> List<T> func_217394_a(@Nullable EntityType<T> p_217394_1_, AxisAlignedBB p_217394_2_, Predicate<? super T> p_217394_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
 -      int i = MathHelper.func_76128_c((p_217394_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76143_f((p_217394_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_217394_2_.field_72339_c - 2.0D) / 16.0D);
@@ -430,13 +358,13 @@
 +      int j = MathHelper.func_76143_f((p_217394_2_.field_72336_d + getMaxEntityRadius()) / 16.0D);
 +      int k = MathHelper.func_76128_c((p_217394_2_.field_72339_c - getMaxEntityRadius()) / 16.0D);
 +      int l = MathHelper.func_76143_f((p_217394_2_.field_72334_f + getMaxEntityRadius()) / 16.0D);
-       List<Entity> list = Lists.newArrayList();
+       List<T> list = Lists.newArrayList();
  
        for(int i1 = i; i1 < j; ++i1) {
-@@ -902,10 +994,10 @@
-    }
+@@ -779,10 +847,10 @@
  
     public <T extends Entity> List<T> func_175647_a(Class<? extends T> p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate<? super T> p_175647_3_) {
+       this.func_217381_Z().func_230035_c_("getEntities");
 -      int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - 2.0D) / 16.0D);
@@ -448,7 +376,22 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -952,7 +1044,8 @@
+@@ -800,10 +868,10 @@
+ 
+    public <T extends Entity> List<T> func_225316_b(Class<? extends T> p_225316_1_, AxisAlignedBB p_225316_2_, @Nullable Predicate<? super T> p_225316_3_) {
+       this.func_217381_Z().func_230035_c_("getLoadedEntities");
+-      int i = MathHelper.func_76128_c((p_225316_2_.field_72340_a - 2.0D) / 16.0D);
+-      int j = MathHelper.func_76143_f((p_225316_2_.field_72336_d + 2.0D) / 16.0D);
+-      int k = MathHelper.func_76128_c((p_225316_2_.field_72339_c - 2.0D) / 16.0D);
+-      int l = MathHelper.func_76143_f((p_225316_2_.field_72334_f + 2.0D) / 16.0D);
++      int i = MathHelper.func_76128_c((p_225316_2_.field_72340_a - getMaxEntityRadius()) / 16.0D);
++      int j = MathHelper.func_76143_f((p_225316_2_.field_72336_d + getMaxEntityRadius()) / 16.0D);
++      int k = MathHelper.func_76128_c((p_225316_2_.field_72339_c - getMaxEntityRadius()) / 16.0D);
++      int l = MathHelper.func_76143_f((p_225316_2_.field_72334_f + getMaxEntityRadius()) / 16.0D);
+       List<T> list = Lists.newArrayList();
+       AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
+ 
+@@ -830,7 +898,8 @@
     }
  
     public int func_181545_F() {
@@ -458,7 +401,7 @@
     }
  
     public World func_201672_e() {
-@@ -1000,7 +1093,7 @@
+@@ -878,7 +947,7 @@
  
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
        BlockState blockstate = this.func_180495_p(p_175651_1_);
@@ -467,7 +410,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -1045,7 +1138,7 @@
+@@ -923,7 +992,7 @@
     }
  
     public long func_72905_C() {
@@ -476,7 +419,7 @@
     }
  
     public long func_82737_E() {
-@@ -1053,11 +1146,11 @@
+@@ -931,11 +1000,11 @@
     }
  
     public long func_72820_D() {
@@ -490,7 +433,7 @@
     }
  
     protected void func_217389_a() {
-@@ -1069,7 +1162,7 @@
+@@ -947,7 +1016,7 @@
     }
  
     public BlockPos func_175694_M() {
@@ -499,7 +442,7 @@
        if (!this.func_175723_af().func_177746_a(blockpos)) {
           blockpos = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, new BlockPos(this.func_175723_af().func_177731_f(), 0.0D, this.func_175723_af().func_177721_g()));
        }
-@@ -1078,10 +1171,14 @@
+@@ -956,10 +1025,14 @@
     }
  
     public void func_175652_B(BlockPos p_175652_1_) {
@@ -508,24 +451,24 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
-+       return field_73011_w.canMineBlock(p_175660_1_, p_175660_2_);
++      return field_73011_w.canMineBlock(p_175660_1_, p_175660_2_);
 +   }
 +
 +   public boolean canMineBlockBody(PlayerEntity player, BlockPos pos) {
        return true;
     }
  
-@@ -1149,8 +1246,7 @@
+@@ -1027,8 +1100,7 @@
     }
  
     public boolean func_180502_D(BlockPos p_180502_1_) {
--      Biome biome = this.func_180494_b(p_180502_1_);
+-      Biome biome = this.func_226691_t_(p_180502_1_);
 -      return biome.func_76736_e();
 +      return this.field_73011_w.isHighHumidity(p_180502_1_);
     }
  
     @Nullable
-@@ -1164,11 +1260,11 @@
+@@ -1042,7 +1114,7 @@
     }
  
     public int func_72940_L() {
@@ -533,13 +476,8 @@
 +      return this.field_73011_w.getActualHeight();
     }
  
-    public double func_72919_O() {
--      return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
-+      return this.field_73011_w.getHorizon();
-    }
- 
     public CrashReportCategory func_72914_a(CrashReport p_72914_1_) {
-@@ -1199,16 +1295,15 @@
+@@ -1073,16 +1145,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -560,9 +498,9 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1287,4 +1382,16 @@
-    public BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_) {
-       return new BlockPos(p_205770_2_.func_177958_n(), this.func_201676_a(p_205770_1_, p_205770_2_.func_177958_n(), p_205770_2_.func_177952_p()), p_205770_2_.func_177952_p());
+@@ -1150,4 +1221,16 @@
+    public BiomeManager func_225523_d_() {
+       return this.field_226689_w_;
     }
 +
 +   private double maxEntityRadius = 2.0D;

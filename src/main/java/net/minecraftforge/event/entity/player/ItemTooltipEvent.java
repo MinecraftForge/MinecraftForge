@@ -79,8 +79,8 @@ public class ItemTooltipEvent extends PlayerEvent
      */
     @Override
     @Nullable
-    public PlayerEntity getEntityPlayer()
+    public PlayerEntity getPlayer()
     {
-        return super.getEntityPlayer();
+        return super.getPlayer();
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/AbstractRailBlock.java
 +++ b/net/minecraft/block/AbstractRailBlock.java
-@@ -35,7 +35,7 @@
+@@ -36,7 +36,7 @@
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
@@ -9,7 +9,7 @@
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
  
-@@ -57,7 +57,7 @@
+@@ -56,7 +56,7 @@
  
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
        if (!p_220069_2_.field_72995_K) {
@@ -27,8 +27,8 @@
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
  
-@@ -127,5 +127,66 @@
-       }
+@@ -134,5 +134,66 @@
+       return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
  
 +   //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability

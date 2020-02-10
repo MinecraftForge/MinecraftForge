@@ -34,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.FuzzedBiomeMagnifier;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -72,9 +73,9 @@ public class FMLPlayMessages
             this.typeId = Registry.ENTITY_TYPE.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
-            this.posX = e.posX;
-            this.posY = e.posY;
-            this.posZ = e.posZ;
+            this.posX = e.func_226277_ct_();
+            this.posY = e.func_226278_cu_();
+            this.posZ = e.func_226281_cx_();
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
@@ -357,7 +358,7 @@ public class FMLPlayMessages
             // default to overworld if no moddim found
             if (modDim == null) return DimensionType.OVERWORLD;
             modDim.read(extraData, true);
-            return new DimensionType(id, "dummy", "dummy", modDim.getFactory(), skylight, modDim, extraData);
+            return new DimensionType(id, "dummy", "dummy", modDim.getFactory(), skylight, FuzzedBiomeMagnifier.INSTANCE, modDim, extraData);
         }
 
         public static boolean handle(final DimensionInfoMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {

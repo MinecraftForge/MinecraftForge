@@ -5,6 +5,6 @@
  
     public boolean func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
 +      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
-       if (p_184230_1_.func_70093_af()) {
+       if (p_184230_1_.func_226563_dT_()) {
           return false;
        } else if (this.func_184207_aI()) {

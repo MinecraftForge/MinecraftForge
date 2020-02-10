@@ -18,15 +18,15 @@
           this.func_213612_dV();
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_184645_1_, (p_213613_1_) -> {
-@@ -224,6 +224,7 @@
-       return super.func_184645_a(p_184645_1_, p_184645_2_);
+@@ -226,6 +226,7 @@
+       }
     }
  
 +   @Deprecated //Forge: Use Shearable interface
     public void func_213612_dV() {
        if (!this.field_70170_p.field_72995_K) {
           this.func_70893_e(true);
-@@ -353,4 +354,24 @@
+@@ -354,4 +355,24 @@
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
     }

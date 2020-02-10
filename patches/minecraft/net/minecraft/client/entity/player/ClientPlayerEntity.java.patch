@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/player/ClientPlayerEntity.java
 +++ b/net/minecraft/client/entity/player/ClientPlayerEntity.java
-@@ -130,6 +130,7 @@
+@@ -134,6 +134,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -8,7 +8,7 @@
        return false;
     }
  
-@@ -449,6 +450,11 @@
+@@ -458,6 +459,11 @@
     }
  
     public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_) {
@@ -17,33 +17,36 @@
 +      p_184185_1_ = event.getSound();
 +      p_184185_2_ = event.getVolume();
 +      p_184185_3_ = event.getPitch();
-       this.field_70170_p.func_184134_a(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_, false);
+       this.field_70170_p.func_184134_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_, false);
     }
  
-@@ -591,6 +597,7 @@
+@@ -599,6 +605,7 @@
+       boolean flag1 = this.field_71158_b.field_228350_h_;
        boolean flag2 = this.func_223110_ee();
-       boolean flag3 = this.func_213287_bg() || this.func_213300_bk();
-       this.field_71158_b.func_217607_a(flag3, this.func_175149_v());
+       this.field_71158_b.func_225607_a_(this.func_228354_I_());
 +      net.minecraftforge.client.ForgeHooksClient.onInputUpdate(this, this.field_71158_b);
        this.field_71159_c.func_193032_ao().func_193293_a(this.field_71158_b);
        if (this.func_184587_cr() && !this.func_184218_aH()) {
           this.field_71158_b.field_78902_a *= 0.2F;
-@@ -607,10 +614,14 @@
- 
-       if (!this.field_70145_X) {
-          AxisAlignedBB axisalignedbb = this.func_174813_aQ();
-+         net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent event = new net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent(this, axisalignedbb);
-+         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+         axisalignedbb = event.getEntityBoundingBox();
-          this.func_213282_i(this.field_70165_t - (double)this.func_213311_cf() * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v + (double)this.func_213311_cf() * 0.35D);
-          this.func_213282_i(this.field_70165_t - (double)this.func_213311_cf() * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v - (double)this.func_213311_cf() * 0.35D);
-          this.func_213282_i(this.field_70165_t + (double)this.func_213311_cf() * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v - (double)this.func_213311_cf() * 0.35D);
-          this.func_213282_i(this.field_70165_t + (double)this.func_213311_cf() * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v + (double)this.func_213311_cf() * 0.35D);
-+         }
+@@ -613,11 +620,12 @@
+          this.field_71158_b.field_78901_c = true;
        }
  
-       boolean flag7 = (float)this.func_71024_bL().func_75116_a() > 6.0F || this.field_71075_bZ.field_75101_c;
-@@ -950,4 +961,16 @@
+-      if (!this.field_70145_X) {
+-         this.func_213282_i(this.func_226277_ct_() - (double)this.func_213311_cf() * 0.35D, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() + (double)this.func_213311_cf() * 0.35D);
+-         this.func_213282_i(this.func_226277_ct_() - (double)this.func_213311_cf() * 0.35D, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() - (double)this.func_213311_cf() * 0.35D);
+-         this.func_213282_i(this.func_226277_ct_() + (double)this.func_213311_cf() * 0.35D, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() - (double)this.func_213311_cf() * 0.35D);
+-         this.func_213282_i(this.func_226277_ct_() + (double)this.func_213311_cf() * 0.35D, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() + (double)this.func_213311_cf() * 0.35D);
++      net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent event = new net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent(this);
++      if (!this.field_70145_X && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++         this.func_213282_i(this.func_226277_ct_() - (double)this.func_213311_cf() * 0.35D, event.getMinY(), this.func_226281_cx_() + (double)this.func_213311_cf() * 0.35D);
++         this.func_213282_i(this.func_226277_ct_() - (double)this.func_213311_cf() * 0.35D, event.getMinY(), this.func_226281_cx_() - (double)this.func_213311_cf() * 0.35D);
++         this.func_213282_i(this.func_226277_ct_() + (double)this.func_213311_cf() * 0.35D, event.getMinY(), this.func_226281_cx_() - (double)this.func_213311_cf() * 0.35D);
++         this.func_213282_i(this.func_226277_ct_() + (double)this.func_213311_cf() * 0.35D, event.getMinY(), this.func_226281_cx_() + (double)this.func_213311_cf() * 0.35D);
+       }
+ 
+       boolean flag4 = (float)this.func_71024_bL().func_75116_a() > 6.0F || this.field_71075_bZ.field_75101_c;
+@@ -961,4 +969,16 @@
           return this.field_204230_bP;
        }
     }
@@ -55,7 +58,7 @@
 +      this.field_175164_bL = old.field_175164_bL;
 +      this.field_175165_bM = old.field_175165_bM;
 +      this.field_184841_cd = old.field_184841_cd;
-+      this.field_175170_bN = old.field_175170_bN;
++      this.field_228351_cj_ = old.field_228351_cj_;
 +      this.field_175171_bO = old.field_175171_bO;
 +      this.field_175168_bP = old.field_175168_bP;
 +   }

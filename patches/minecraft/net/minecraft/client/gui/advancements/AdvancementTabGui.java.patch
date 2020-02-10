@@ -24,7 +24,7 @@
     public Advancement func_193935_c() {
        return this.field_191805_h;
     }
-@@ -136,8 +146,8 @@
+@@ -150,8 +160,8 @@
           return null;
        } else {
           for(AdvancementTabType advancementtabtype : AdvancementTabType.values()) {

@@ -37,14 +37,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 
+import net.minecraft.client.renderer.*;
+import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -252,8 +249,8 @@ public class B3DModel
                 String path = readString();
                 int flags = buf.getInt();
                 int blend = buf.getInt();
-                Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
-                Vector2f scale = new Vector2f(buf.getFloat(), buf.getFloat());
+                Vec2f pos = new Vec2f(buf.getFloat(), buf.getFloat());
+                Vec2f scale = new Vec2f(buf.getFloat(), buf.getFloat());
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
             }
@@ -388,7 +385,7 @@ public class B3DModel
             Map<Integer, Key> ret = new HashMap<>();
             int flags = buf.getInt();
             Vector3f pos = null, scale = null;
-            Quat4f rot = null;
+            Quaternion rot = null;
             while(buf.hasRemaining())
             {
                 int frame = buf.getInt();
@@ -455,7 +452,7 @@ public class B3DModel
             String name = readString();
             Vector3f pos = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
             Vector3f scale = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
-            Quat4f rot = readQuat();
+            Quaternion rot = readQuat();
             dump("NODE(" + name + ", " + pos + ", " + scale + ", " + rot + ") {");
             while(buf.hasRemaining())
             {
@@ -493,13 +490,13 @@ public class B3DModel
             return node;
         }
 
-        private Quat4f readQuat()
+        private Quaternion readQuat()
         {
             float w = buf.getFloat();
             float x = buf.getFloat();
             float y = buf.getFloat();
             float z = buf.getFloat();
-            return new Quat4f(x, y, z, w);
+            return new Quaternion(x, y, z, w);
         }
 
         private void skip()
@@ -532,15 +529,15 @@ public class B3DModel
 
     public static class Texture
     {
-        public static final Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        public static final Texture White = new Texture("builtin/white", 0, 0, new Vec2f(0, 0), new Vec2f(1, 1), 0);
         private final String path;
         private final int flags;
         private final int blend;
-        private final Vector2f pos;
-        private final Vector2f scale;
+        private final Vec2f pos;
+        private final Vec2f scale;
         private final float rot;
 
-        public Texture(String path, int flags, int blend, Vector2f pos, Vector2f scale, float rot)
+        public Texture(String path, int flags, int blend, Vec2f pos, Vec2f scale, float rot)
         {
             this.path = path;
             this.flags = flags;
@@ -565,12 +562,12 @@ public class B3DModel
             return blend;
         }
 
-        public Vector2f getPos()
+        public Vec2f getPos()
         {
             return pos;
         }
 
-        public Vector2f getScale()
+        public Vec2f getScale()
         {
             return scale;
         }
@@ -666,7 +663,7 @@ public class B3DModel
             Matrix4f t = new Matrix4f();
             if(mesh.getWeightMap().get(this).isEmpty())
             {
-                t.setIdentity();
+                t.func_226591_a_();
             }
             else
             {
@@ -674,27 +671,28 @@ public class B3DModel
                 {
                     totalWeight += bone.getLeft();
                     Matrix4f bm = animator.apply(bone.getRight());
-                    bm.mul(bone.getLeft());
+                    bm.func_226592_a_(bone.getLeft());
                     t.add(bm);
                 }
-                if(Math.abs(totalWeight) > 1e-4) t.mul(1f / totalWeight);
-                else t.setIdentity();
+                if(Math.abs(totalWeight) > 1e-4) t.func_226592_a_(1f / totalWeight);
+                else t.func_226591_a_();
             }
 
-            TRSRTransformation trsr = new TRSRTransformation(t);
+            TransformationMatrix trsr = new TransformationMatrix(t);
 
             // pos
             Vector4f pos = new Vector4f(this.pos);
-            pos.w = 1;
+            pos.setW(1);
             trsr.transformPosition(pos);
-            Vector3f rPos = new Vector3f(pos.x / pos.w, pos.y / pos.w, pos.z / pos.w);
+            pos.func_229374_e_();
+            Vector3f rPos = new Vector3f(pos.getX(), pos.getY(), pos.getZ());
 
             // normal
             Vector3f rNormal = null;
 
             if(this.normal != null)
             {
-                rNormal = new Vector3f(this.normal);
+                rNormal = this.normal.func_229195_e_();
                 trsr.transformNormal(rNormal);
             }
 
@@ -786,13 +784,13 @@ public class B3DModel
 
         public static Vector3f getNormal(Vertex v1, Vertex v2, Vertex v3)
         {
-            Vector3f a = new Vector3f(v2.getPos());
+            Vector3f a = v2.getPos().func_229195_e_();
             a.sub(v1.getPos());
-            Vector3f b = new Vector3f(v3.getPos());
+            Vector3f b = v3.getPos().func_229195_e_();
             b.sub(v1.getPos());
-            Vector3f c = new Vector3f();
-            c.cross(a, b);
-            c.normalize();
+            Vector3f c = a.func_229195_e_();
+            c.cross(b);
+            c.func_229194_d_();
             return c;
         }
     }
@@ -804,9 +802,9 @@ public class B3DModel
         @Nullable
         private final Vector3f scale;
         @Nullable
-        private final Quat4f rot;
+        private final Quaternion rot;
 
-        public Key(@Nullable Vector3f pos, @Nullable Vector3f scale, @Nullable Quat4f rot)
+        public Key(@Nullable Vector3f pos, @Nullable Vector3f scale, @Nullable Quaternion rot)
         {
             this.pos = pos;
             this.scale = scale;
@@ -826,7 +824,7 @@ public class B3DModel
         }
 
         @Nullable
-        public Quat4f getRot()
+        public Quaternion getRot()
         {
             return rot;
         }
@@ -891,7 +889,7 @@ public class B3DModel
         private final String name;
         private final Vector3f pos;
         private final Vector3f scale;
-        private final Quat4f rot;
+        private final Quaternion rot;
         private final ImmutableMap<String, Node<?>> nodes;
         @Nullable
         private Animation animation;
@@ -899,12 +897,12 @@ public class B3DModel
         @Nullable
         private Node<? extends IKind<?>> parent;
 
-        public static <K extends IKind<K>> Node<K> create(String name, Vector3f pos, Vector3f scale, Quat4f rot, List<Node<?>> nodes, K kind)
+        public static <K extends IKind<K>> Node<K> create(String name, Vector3f pos, Vector3f scale, Quaternion rot, List<Node<?>> nodes, K kind)
         {
             return new Node<>(name, pos, scale, rot, nodes, kind);
         }
 
-        public Node(String name, Vector3f pos, Vector3f scale, Quat4f rot, List<Node<?>> nodes, K kind)
+        public Node(String name, Vector3f pos, Vector3f scale, Quaternion rot, List<Node<?>> nodes, K kind)
         {
             this.name = name;
             this.pos = pos;
@@ -973,7 +971,7 @@ public class B3DModel
             return scale;
         }
 
-        public Quat4f getRot()
+        public Quaternion getRot()
         {
             return rot;
         }

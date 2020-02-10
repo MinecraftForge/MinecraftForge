@@ -17,7 +17,7 @@
  
     public static void func_197981_a(InputMappings.Input p_197981_0_) {
 -      KeyBinding keybinding = field_74514_b.get(p_197981_0_);
-+      for (KeyBinding keybinding : field_74514_b.lookupAll(p_197981_0_))
++      KeyBinding keybinding = field_74514_b.lookupActive(p_197981_0_);
        if (keybinding != null) {
           ++keybinding.field_151474_i;
        }
@@ -28,7 +28,7 @@
 -      KeyBinding keybinding = field_74514_b.get(p_197980_0_);
 +      for (KeyBinding keybinding : field_74514_b.lookupAll(p_197980_0_))
        if (keybinding != null) {
-          keybinding.field_74513_e = p_197980_1_;
+          keybinding.func_225593_a_(p_197980_1_);
        }
 @@ -67,10 +67,10 @@
     }
@@ -102,7 +102,7 @@
        String s = this.field_74512_d.func_197935_d();
        int i = this.field_74512_d.func_197937_c();
        String s1 = null;
-@@ -171,13 +192,94 @@
+@@ -171,16 +192,97 @@
        }
  
        return s1 == null ? I18n.func_135052_a(s) : s1;
@@ -117,7 +117,7 @@
     public String func_197982_m() {
        return this.field_74512_d.func_197935_d();
     }
-+
+ 
 +   /****************** Forge Start *****************************/
 +   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
@@ -197,4 +197,7 @@
 +      field_74514_b.addKey(keyCode, this);
 +   }
 +   /****************** Forge End *****************************/
- }
++
+    public void func_225593_a_(boolean p_225593_1_) {
+       this.field_74513_e = p_225593_1_;
+    }

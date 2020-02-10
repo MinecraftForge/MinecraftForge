@@ -1,14 +1,23 @@
 --- a/net/minecraft/entity/monster/ShulkerEntity.java
 +++ b/net/minecraft/entity/monster/ShulkerEntity.java
+@@ -183,7 +183,7 @@
+          this.field_184708_bA = 0;
+       } else if (!this.field_70170_p.field_72995_K) {
+          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
+-         if (!blockstate.func_196958_f()) {
++         if (!blockstate.isAir(this.field_70170_p, blockpos)) {
+             if (blockstate.func_177230_c() == Blocks.field_196603_bb) {
+                Direction direction = blockstate.func_177229_b(PistonBlock.field_176387_N);
+                if (this.field_70170_p.func_175623_d(blockpos.func_177972_a(direction))) {
 @@ -249,6 +249,7 @@
-          this.field_70165_t = (double)blockpos.func_177958_n() + 0.5D;
-          this.field_70163_u = (double)blockpos.func_177956_o();
-          this.field_70161_v = (double)blockpos.func_177952_p() + 0.5D;
+          this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
+          double d0 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184706_by) * (float)Math.PI) * 0.5D;
+          double d1 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184705_bx) * (float)Math.PI) * 0.5D;
 +         if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
-          this.field_70169_q = this.field_70165_t;
-          this.field_70167_r = this.field_70163_u;
-          this.field_70166_s = this.field_70161_v;
-@@ -315,6 +316,12 @@
+          Direction direction3 = this.func_184696_cZ().func_176734_d();
+          this.func_174826_a((new AxisAlignedBB(this.func_226277_ct_() - 0.5D, this.func_226278_cu_(), this.func_226281_cx_() - 0.5D, this.func_226277_ct_() + 0.5D, this.func_226278_cu_() + 1.0D, this.func_226281_cx_() + 0.5D)).func_72321_a((double)direction3.func_82601_c() * d0, (double)direction3.func_96559_d() * d0, (double)direction3.func_82599_e() * d0));
+          double d2 = d0 - d1;
+@@ -307,6 +308,12 @@
                 }
  
                 if (flag) {

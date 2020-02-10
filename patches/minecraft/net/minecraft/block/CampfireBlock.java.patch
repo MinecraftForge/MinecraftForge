@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/CampfireBlock.java
++++ b/net/minecraft/block/CampfireBlock.java
+@@ -187,7 +187,7 @@
+          boolean flag = p_220066_4_ instanceof AbstractFireballEntity || p_220066_4_ instanceof AbstractArrowEntity && p_220066_4_.func_70027_ad();
+          if (flag) {
+             Entity entity = this.func_226913_a_(p_220066_4_);
+-            boolean flag1 = entity == null || entity instanceof PlayerEntity || p_220066_1_.func_82736_K().func_223586_b(GameRules.field_223599_b);
++            boolean flag1 = entity == null || entity instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_220066_1_, entity);
+             if (flag1 && !p_220066_2_.func_177229_b(field_220101_b) && !p_220066_2_.func_177229_b(field_220103_d)) {
+                BlockPos blockpos = p_220066_3_.func_216350_a();
+                p_220066_1_.func_180501_a(blockpos, p_220066_2_.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)), 11);

@@ -1,58 +1,25 @@
 --- a/net/minecraft/client/renderer/BufferBuilder.java
 +++ b/net/minecraft/client/renderer/BufferBuilder.java
-@@ -120,7 +120,8 @@
+@@ -121,7 +121,6 @@
  
-          bitset.set(i1);
+          bitset.set(l);
        }
 -
-+      this.field_178999_b.limit(this.field_178999_b.capacity());
-+      this.field_178999_b.position(this.func_181664_j());
     }
  
-    public BufferBuilder.State func_181672_a() {
-@@ -459,15 +460,15 @@
-          break;
-       case USHORT:
-       case SHORT:
--         this.field_179001_a.putShort(i, (short)((int)p_181663_1_ * 32767 & '\uffff'));
--         this.field_179001_a.putShort(i + 2, (short)((int)p_181663_2_ * 32767 & '\uffff'));
--         this.field_179001_a.putShort(i + 4, (short)((int)p_181663_3_ * 32767 & '\uffff'));
-+         this.field_179001_a.putShort(i, (short)((int)(p_181663_1_ * Short.MAX_VALUE) & 0xFFFF));
-+         this.field_179001_a.putShort(i + 2, (short)((int)(p_181663_2_ * Short.MAX_VALUE) & 0xFFFF));
-+         this.field_179001_a.putShort(i + 4, (short)((int)(p_181663_3_ * Short.MAX_VALUE) & 0xFFFF));
-          break;
-       case UBYTE:
-       case BYTE:
--         this.field_179001_a.put(i, (byte)((int)p_181663_1_ * 127 & 255));
--         this.field_179001_a.put(i + 1, (byte)((int)p_181663_2_ * 127 & 255));
--         this.field_179001_a.put(i + 2, (byte)((int)p_181663_3_ * 127 & 255));
-+         this.field_179001_a.put(i, (byte)((int)(p_181663_1_ * Byte.MAX_VALUE) & 0xFF));
-+         this.field_179001_a.put(i + 1, (byte)((int)(p_181663_2_ * Byte.MAX_VALUE) & 0xFF));
-+         this.field_179001_a.put(i + 2, (byte)((int)(p_181663_3_ * Byte.MAX_VALUE) & 0xFF));
-       }
- 
-       this.func_181667_k();
-@@ -542,4 +543,23 @@
-          return this.field_179018_e;
+    private void func_227829_a_(FloatBuffer p_227829_1_, int p_227829_2_) {
+@@ -364,4 +363,14 @@
+          this.field_179018_e = p_i225907_2_;
        }
     }
-+   
-+   //For some unknown reason Mojang changed the vanilla function to hardcode alpha as 255.... So lets re-add the parameter -.-
-+   public void putColorRGBA(int index, int red, int green, int blue, int alpha) {
-+      if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
-+         this.field_178999_b.put(index, alpha << 24 | blue << 16 | green << 8 | red);
-+      else
-+         this.field_178999_b.put(index, red << 24 | green << 16 | blue << 8 | alpha);
-+   }
-+   
-+   public boolean isColorDisabled() {
-+      return field_78939_q;
-+   }
-+   
++
 +   public void putBulkData(ByteBuffer buffer) {
 +      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
 +      this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
 +      this.field_179001_a.put(buffer);
 +      this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +   }
++
++   // Forge start
++   public VertexFormat getVertexFormat() { return this.field_179011_q; }
  }

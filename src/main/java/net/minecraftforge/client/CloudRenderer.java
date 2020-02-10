@@ -24,9 +24,12 @@ import java.nio.ByteBuffer;
 import java.util.function.Predicate;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL31;
 
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -49,6 +52,7 @@ import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
 
+/* TODO: reimplement using the new rendering system? or remove?
 public class CloudRenderer implements ISelectiveResourceReloadListener
 {
     // Shared constants.
@@ -68,7 +72,6 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     private final Minecraft mc = Minecraft.getInstance();
     private final ResourceLocation texture = new ResourceLocation("textures/environment/clouds.png");
 
-    private int displayList = -1;
     private VertexBuffer vbo;
     private CloudOption cloudMode = CloudOption.OFF;
     private int renderDistance = -1;
@@ -138,18 +141,18 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                 float v1 = sectZ1 * sectPx;
 
                 // Bottom
-                buffer.pos(sectX0, 0, sectZ0).tex(u0, v0).color(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.pos(sectX1, 0, sectZ0).tex(u1, v0).color(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.pos(sectX1, 0, sectZ1).tex(u1, v1).color(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.pos(sectX0, 0, sectZ1).tex(u0, v1).color(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.func_225582_a_(sectX0, 0, sectZ0).func_225583_a_(u0, v0).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.func_225582_a_(sectX1, 0, sectZ0).func_225583_a_(u1, v0).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.func_225582_a_(sectX1, 0, sectZ1).func_225583_a_(u1, v1).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.func_225582_a_(sectX0, 0, sectZ1).func_225583_a_(u0, v1).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
 
                 if (fancy)
                 {
                     // Top
-                    buffer.pos(sectX0, HEIGHT, sectZ0).tex(u0, v0).color(1, 1, 1, ALPHA).endVertex();
-                    buffer.pos(sectX0, HEIGHT, sectZ1).tex(u0, v1).color(1, 1, 1, ALPHA).endVertex();
-                    buffer.pos(sectX1, HEIGHT, sectZ1).tex(u1, v1).color(1, 1, 1, ALPHA).endVertex();
-                    buffer.pos(sectX1, HEIGHT, sectZ0).tex(u1, v0).color(1, 1, 1, ALPHA).endVertex();
+                    buffer.func_225582_a_(sectX0, HEIGHT, sectZ0).func_225583_a_(u0, v0).func_227885_a_(1, 1, 1, ALPHA).endVertex();
+                    buffer.func_225582_a_(sectX0, HEIGHT, sectZ1).func_225583_a_(u0, v1).func_227885_a_(1, 1, 1, ALPHA).endVertex();
+                    buffer.func_225582_a_(sectX1, HEIGHT, sectZ1).func_225583_a_(u1, v1).func_227885_a_(1, 1, 1, ALPHA).endVertex();
+                    buffer.func_225582_a_(sectX1, HEIGHT, sectZ0).func_225583_a_(u1, v0).func_227885_a_(1, 1, 1, ALPHA).endVertex();
 
                     float slice;
                     float sliceCoord0;
@@ -164,10 +167,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice > -CULL_DIST)
                         {
                             slice += INSET;
-                            buffer.pos(slice, 0,      sectZ1).tex(sliceCoord0, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, HEIGHT, sectZ1).tex(sliceCoord1, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, HEIGHT, sectZ0).tex(sliceCoord1, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, 0,      sectZ0).tex(sliceCoord0, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, 0,      sectZ1).func_225583_a_(sliceCoord0, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, HEIGHT, sectZ1).func_225583_a_(sliceCoord1, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, HEIGHT, sectZ0).func_225583_a_(sliceCoord1, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, 0,      sectZ0).func_225583_a_(sliceCoord0, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
                             slice -= INSET;
                         }
 
@@ -176,10 +179,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice <= CULL_DIST)
                         {
                             slice -= INSET;
-                            buffer.pos(slice, 0,      sectZ0).tex(sliceCoord0, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, HEIGHT, sectZ0).tex(sliceCoord1, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, HEIGHT, sectZ1).tex(sliceCoord1, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.pos(slice, 0,      sectZ1).tex(sliceCoord0, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, 0,      sectZ0).func_225583_a_(sliceCoord0, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, HEIGHT, sectZ0).func_225583_a_(sliceCoord1, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, HEIGHT, sectZ1).func_225583_a_(sliceCoord1, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.func_225582_a_(slice, 0,      sectZ1).func_225583_a_(sliceCoord0, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
                             slice += INSET;
                         }
                     }
@@ -193,10 +196,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice > -CULL_DIST)
                         {
                             slice += INSET;
-                            buffer.pos(sectX0, 0,      slice).tex(u0, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX0, HEIGHT, slice).tex(u0, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX1, HEIGHT, slice).tex(u1, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX1, 0,      slice).tex(u1, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX0, 0,      slice).func_225583_a_(u0, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX0, HEIGHT, slice).func_225583_a_(u0, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX1, HEIGHT, slice).func_225583_a_(u1, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX1, 0,      slice).func_225583_a_(u1, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
                             slice -= INSET;
                         }
 
@@ -205,10 +208,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice <= CULL_DIST)
                         {
                             slice -= INSET;
-                            buffer.pos(sectX1, 0,      slice).tex(u1, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX1, HEIGHT, slice).tex(u1, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX0, HEIGHT, slice).tex(u0, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.pos(sectX0, 0,      slice).tex(u0, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX1, 0,      slice).func_225583_a_(u1, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX1, HEIGHT, slice).func_225583_a_(u1, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX0, HEIGHT, slice).func_225583_a_(u0, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.func_225582_a_(sectX0, 0,      slice).func_225583_a_(u0, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
                             slice += INSET;
                         }
                     }
@@ -228,11 +231,6 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             vbo.deleteGlBuffers();
             vbo = null;
         }
-        if (displayList >= 0)
-        {
-            GLAllocation.deleteDisplayLists(displayList);
-            displayList = -1;
-        }
     }
 
     private void build()
@@ -240,24 +238,13 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buffer = tess.getBuffer();
 
-        if (GLX.useVbo())
-            vbo = new VertexBuffer(FORMAT);
-        else
-            GlStateManager.newList(displayList = GLAllocation.generateDisplayLists(1), GL11.GL_COMPILE);
+        vbo = new VertexBuffer(FORMAT);
 
         vertices(buffer);
 
-        if (GLX.useVbo())
-        {
-            buffer.finishDrawing();
-            buffer.reset();
-            vbo.bufferData(buffer.getByteBuffer());
-        }
-        else
-        {
-            tess.draw();
-            GlStateManager.endList();
-        }
+        buffer.finishDrawing();
+        buffer.reset();
+        vbo.bufferData(buffer.getByteBuffer());
     }
 
     private int fullCoord(double coord, int scale)
@@ -267,7 +254,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     private boolean isBuilt()
     {
-        return GLX.useVbo() ? vbo != null : displayList >= 0;
+        return vbo != null;
     }
 
     public void checkSettings()
@@ -303,12 +290,12 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         double totalOffset = cloudTicks + partialTicks;
 
-        double x = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks
+        double x = entity.prevPosX + (entity.func_226277_ct_() - entity.prevPosX) * partialTicks
                 + totalOffset * 0.03;
         double y = mc.world.dimension.getCloudHeight()
-                - (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks)
+                - (entity.lastTickPosY + (entity.func_226278_cu_() - entity.lastTickPosY) * partialTicks)
                 + 0.33;
-        double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+        double z = entity.prevPosZ + (entity.func_226281_cx_() - entity.prevPosZ) * partialTicks;
 
         int scale = getScale();
 
@@ -319,26 +306,24 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         int offU = fullCoord(x, scale);
         int offV = fullCoord(z, scale);
 
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
         // Translate by the remainder after the UV offset.
-        GlStateManager.translated((offU * scale) - x, y, (offV * scale) - z);
+        RenderSystem.translated((offU * scale) - x, y, (offV * scale) - z);
 
         // Modulo to prevent texture samples becoming inaccurate at extreme offsets.
         offU = offU % texW;
         offV = offV % texH;
 
         // Translate the texture.
-        GlStateManager.matrixMode(GL11.GL_TEXTURE);
-        GlStateManager.translatef(offU * PX_SIZE, offV * PX_SIZE, 0);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        RenderSystem.matrixMode(GL11.GL_TEXTURE);
+        RenderSystem.translatef(offU * PX_SIZE, offV * PX_SIZE, 0);
+        RenderSystem.matrixMode(GL11.GL_MODELVIEW);
 
-        GlStateManager.disableCull();
+        RenderSystem.disableCull();
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(
-                GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
 
         // Color multiplier.
         Vec3d color = mc.world.getCloudColour(partialTicks);
@@ -356,94 +341,71 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                 | (int) (b * 255));
         COLOR_TEX.updateDynamicTexture();
 
-        GlStateManager.activeTexture(GLX.GL_TEXTURE1);
-        GlStateManager.bindTexture(COLOR_TEX.getGlTextureId());
-        GlStateManager.enableTexture();
+        RenderSystem.activeTexture(GL13.GL_TEXTURE1);
+        RenderSystem.bindTexture(COLOR_TEX.getGlTextureId());
+        RenderSystem.enableTexture();
 
         // Bind the clouds texture last so the shader's sampler2D is correct.
-        GlStateManager.activeTexture(GLX.GL_TEXTURE0);
+        RenderSystem.activeTexture(GL13.GL_TEXTURE0);
         mc.textureManager.bindTexture(texture);
 
         ByteBuffer buffer = Tessellator.getInstance().getBuffer().getByteBuffer();
 
         // Set up pointers for the display list/VBO.
-        if (GLX.useVbo())
-        {
-            vbo.bindBuffer();
+        vbo.bindBuffer();
 
-            int stride = FORMAT.getSize();
-            GlStateManager.vertexPointer(3, GL11.GL_FLOAT, stride, 0);
-            GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
-            GlStateManager.texCoordPointer(2, GL11.GL_FLOAT, stride, 12);
-            GlStateManager.enableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GlStateManager.colorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 20);
-            GlStateManager.enableClientState(GL11.GL_COLOR_ARRAY);
-        }
-        else
-        {
-            buffer.limit(FORMAT.getSize());
-            for (int i = 0; i < FORMAT.getElementCount(); i++)
-                FORMAT.getElements().get(i).getUsage().preDraw(FORMAT, i, FORMAT.getSize(), buffer);
-            buffer.position(0);
-        }
+        int stride = FORMAT.getSize();
+        RenderSystem.vertexPointer(3, GL11.GL_FLOAT, stride, 0);
+        RenderSystem.enableClientState(GL11.GL_VERTEX_ARRAY);
+        RenderSystem.texCoordPointer(2, GL11.GL_FLOAT, stride, 12);
+        RenderSystem.enableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        RenderSystem.colorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 20);
+        RenderSystem.enableClientState(GL11.GL_COLOR_ARRAY);
 
         // Depth pass to prevent insides rendering from the outside.
-        GlStateManager.colorMask(false, false, false, false);
-        if (GLX.useVbo())
-            vbo.drawArrays(GL11.GL_QUADS);
-        else
-            GlStateManager.callList(displayList);
+        RenderSystem.colorMask(false, false, false, false);
+        vbo.drawArrays(GL11.GL_QUADS);
 
         // Full render.
-        GlStateManager.colorMask(true, true, true, true);
+        RenderSystem.colorMask(true, true, true, true);
 
         // Wireframe for debug.
         if (WIREFRAME)
         {
-            GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-            GlStateManager.lineWidth(2.0F);
-            GlStateManager.disableTexture();
-            GlStateManager.depthMask(false);
-            GlStateManager.disableFog();
-            if (GLX.useVbo())
-                vbo.drawArrays(GL11.GL_QUADS);
-            else
-                GlStateManager.callList(displayList);
-            GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture();
-            GlStateManager.enableFog();
+            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            RenderSystem.lineWidth(2.0F);
+            RenderSystem.disableTexture();
+            RenderSystem.depthMask(false);
+            RenderSystem.disableFog();
+            vbo.drawArrays(GL11.GL_QUADS);
+            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            RenderSystem.depthMask(true);
+            RenderSystem.enableTexture();
+            RenderSystem.enableFog();
         }
 
-        if (GLX.useVbo())
-        {
-            vbo.drawArrays(GL11.GL_QUADS);
-            vbo.unbindBuffer(); // Unbind buffer and disable pointers.
-        }
-        else
-        {
-            GlStateManager.callList(displayList);
-        }
+        vbo.drawArrays(GL11.GL_QUADS);
+        VertexBuffer.unbindBuffer(); // Unbind buffer and disable pointers.
 
         buffer.limit(0);
-        for (int i = 0; i < FORMAT.getElementCount(); i++)
+        for (int i = 0; i < FORMAT.func_227894_c_().size(); i++)
             FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getSize(), buffer);
         buffer.position(0);
 
         // Disable our coloring.
-        GlStateManager.activeTexture(GLX.GL_TEXTURE1);
-        GlStateManager.disableTexture();
-        GlStateManager.activeTexture(GLX.GL_TEXTURE0);
+        RenderSystem.activeTexture(GL13.GL_TEXTURE1);
+        RenderSystem.disableTexture();
+        RenderSystem.activeTexture(GL13.GL_TEXTURE0);
 
         // Reset texture matrix.
-        GlStateManager.matrixMode(GL11.GL_TEXTURE);
-        GlStateManager.loadIdentity();
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        RenderSystem.matrixMode(GL11.GL_TEXTURE);
+        RenderSystem.loadIdentity();
+        RenderSystem.matrixMode(GL11.GL_MODELVIEW);
 
-        GlStateManager.disableBlend();
-        GlStateManager.enableCull();
+        RenderSystem.disableBlend();
+        RenderSystem.enableCull();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
 
         return true;
     }
@@ -453,8 +415,8 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         if (mc.textureManager != null)
         {
             mc.textureManager.bindTexture(texture);
-            texW = GlStateManager.getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-            texH = GlStateManager.getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+            texW = GlStateManager.func_227692_c_(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+            texH = GlStateManager.func_227692_c_(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
         }
     }
 
@@ -492,3 +454,4 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     }
 
 }
+*/

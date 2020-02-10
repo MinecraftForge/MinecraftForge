@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.ClientResourcePackInfo;
@@ -65,7 +65,7 @@ import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
+import net.minecraftforge.fml.client.gui.screen.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.packs.DelegatableResourcePack;
@@ -93,7 +93,7 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
+        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.func_228018_at_());
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
@@ -125,6 +125,7 @@ public class ClientModLoader
 
     private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
         RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
+        ModelLoaderRegistry.initComplete();
     }
 
     private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
@@ -144,16 +145,10 @@ public class ClientModLoader
         return VersionChecker.Status.UP_TO_DATE;
     }
 
-    @Deprecated // TODO: remove in 1.15
-    public static void complete()
-    {
-        completeModLoading();
-    }
-
     public static boolean completeModLoading()
     {
-        GlStateManager.disableTexture();
-        GlStateManager.enableTexture();
+        RenderSystem.disableTexture();
+        RenderSystem.enableTexture();
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
@@ -215,8 +210,8 @@ public class ClientModLoader
                 hiddenPacks.add(e.getValue());
             }
         }
-        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources", 
-                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 4),
+        final T packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
+                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 5),
                 hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM);
         packList.put("mod_resources", packInfo);
     }

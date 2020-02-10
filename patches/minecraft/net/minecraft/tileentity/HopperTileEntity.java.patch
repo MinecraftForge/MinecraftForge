@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/HopperTileEntity.java
 +++ b/net/minecraft/tileentity/HopperTileEntity.java
-@@ -147,6 +147,7 @@
+@@ -133,6 +133,7 @@
     }
  
     private boolean func_145883_k() {
@@ -8,7 +8,7 @@
        IInventory iinventory = this.func_145895_l();
        if (iinventory == null) {
           return false;
-@@ -191,6 +192,8 @@
+@@ -177,6 +178,8 @@
     }
  
     public static boolean func_145891_a(IHopper p_145891_0_) {
@@ -17,7 +17,7 @@
        IInventory iinventory = func_145884_b(p_145891_0_);
        if (iinventory != null) {
           Direction direction = Direction.DOWN;
-@@ -339,7 +342,7 @@
+@@ -325,7 +328,7 @@
        Block block = blockstate.func_177230_c();
        if (block instanceof ISidedInventoryProvider) {
           iinventory = ((ISidedInventoryProvider)block).func_219966_a(blockstate, p_145893_0_, blockpos);
@@ -26,7 +26,7 @@
           TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
           if (tileentity instanceof IInventory) {
              iinventory = (IInventory)tileentity;
-@@ -418,4 +421,13 @@
+@@ -404,4 +407,13 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new HopperContainer(p_213906_1_, p_213906_2_, this);
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NBTSizeTracker.java
 +++ b/net/minecraft/nbt/NBTSizeTracker.java
-@@ -18,4 +18,32 @@
+@@ -18,4 +18,34 @@
           throw new RuntimeException("Tried to read NBT tag that was too big; tried to allocate: " + this.field_152453_c + "bytes where max allowed: " + this.field_152452_b);
        }
     }
@@ -16,10 +16,10 @@
 +    *
 +    * This will accurately count the correct byte length to encode this string, plus the 2 bytes for it's length prefix.
 +    */
-+   public static void readUTF(NBTSizeTracker tracker, String data) {
-+      tracker.func_152450_a(16); //Header length
++   public String readUTF(String data) {
++      func_152450_a(16); //Header length
 +      if (data == null)
-+         return;
++         return data;
 +
 +      int len = data.length();
 +      int utflen = 0;
@@ -30,6 +30,8 @@
 +          else if (c > 0x07FF)                utflen += 3;
 +          else                                utflen += 2;
 +      }
-+      tracker.func_152450_a(8 * utflen);
++      func_152450_a(8 * utflen);
++
++      return data;
 +   }
  }

@@ -115,7 +115,7 @@ public class ContainerTypeTest
             if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
                 String text = "Hello World!";
-                NetworkHooks.openGui((ServerPlayerEntity) event.getEntityPlayer(), new INamedContainerProvider()
+                NetworkHooks.openGui((ServerPlayerEntity) event.getPlayer(), new INamedContainerProvider()
                 {
                     @Override
                     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)

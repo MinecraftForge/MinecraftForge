@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardListener.java
 +++ b/net/minecraft/client/KeyboardListener.java
-@@ -252,7 +252,9 @@
+@@ -251,7 +251,9 @@
           }
  
           INestedGuiEventHandler inestedguieventhandler = this.field_197972_a.field_71462_r;
@@ -9,9 +9,9 @@
 +         if ((!(this.field_197972_a.field_71462_r instanceof ControlsScreen) || ((ControlsScreen)inestedguieventhandler).field_152177_g <= Util.func_211177_b() - 20L)) {
 +            if (p_197961_5_ == 1) {
              if (this.field_197972_a.field_71474_y.field_152395_am.func_197976_a(p_197961_3_, p_197961_4_)) {
-                this.field_197972_a.field_195558_d.func_198077_g();
-                this.field_197972_a.field_71474_y.field_74353_u = this.field_197972_a.field_195558_d.func_198113_j();
-@@ -271,6 +273,8 @@
+                this.field_197972_a.func_228018_at_().func_198077_g();
+                this.field_197972_a.field_71474_y.field_74353_u = this.field_197972_a.func_228018_at_().func_198113_j();
+@@ -270,6 +272,8 @@
                 });
                 return;
              }
@@ -20,7 +20,7 @@
           }
  
           boolean flag = inestedguieventhandler == null || !(inestedguieventhandler.getFocused() instanceof TextFieldWidget) || !((TextFieldWidget)inestedguieventhandler.getFocused()).func_212955_f();
-@@ -290,10 +294,14 @@
+@@ -289,10 +293,14 @@
              Screen.wrapScreenError(() -> {
                 if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
                    if (p_197961_5_ == 0) {
@@ -37,7 +37,7 @@
                 }
  
              }, "keyPressed event handler", inestedguieventhandler.getClass().getCanonicalName());
-@@ -354,7 +362,7 @@
+@@ -353,7 +361,7 @@
                 }
              }
           }
@@ -46,7 +46,7 @@
        }
     }
  
-@@ -364,12 +372,16 @@
+@@ -363,12 +371,16 @@
           if (iguieventlistener != null && this.field_197972_a.func_213250_au() == null) {
              if (Character.charCount(p_197963_3_) == 1) {
                 Screen.wrapScreenError(() -> {

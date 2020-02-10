@@ -65,37 +65,6 @@ public class ObfuscationReflectionHelper
     }
 
     /**
-     * Gets the value a field with the specified index in the given class.
-     * Note: For performance, use {@link #findField(Class, int)} if you are getting the value more than once.
-     * <p>
-     * Throws an exception if the field is not found or the value of the field cannot be gotten.
-     *
-     * @param classToAccess The class to find the field on.
-     * @param instance      The instance of the {@code classToAccess}.
-     * @param fieldIndex    The index of the field in the {@code classToAccess}.
-     * @param <T>           The type of the value.
-     * @param <E>           The type of the {@code classToAccess}.
-     * @return The value of the field with the specified index in the {@code classToAccess}.
-     * @throws UnableToAccessFieldException If there was a problem getting the field or the value.
-     * @deprecated Use {@link #getPrivateValue(Class, Object, String)} because field indices change a lot more often than field names do.
-     * TODO: Remove in 1.15
-     */
-    @Deprecated
-    @Nullable
-    public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
-    {
-        try
-        {
-            return (T) findField(classToAccess, fieldIndex).get(instance);
-        }
-        catch (Exception e)
-        {
-            LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", fieldIndex, classToAccess.getName(), e);
-            throw new UnableToAccessFieldException(e);
-        }
-    }
-
-    /**
      * Gets the value a field with the specified name in the given class.
      * Note: For performance, use {@link #findField(Class, String)} if you are getting the value more than once.
      * <p>
@@ -125,36 +94,6 @@ public class ObfuscationReflectionHelper
         catch (IllegalAccessException e)
         {
             LOGGER.error(REFLECTION,"Unable to access field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
-            throw new UnableToAccessFieldException(e);
-        }
-    }
-
-    /**
-     * Sets the value a field with the specified index in the given class.
-     * Note: For performance, use {@link #findField(Class, int)} if you are setting the value more than once.
-     * <p>
-     * Throws an exception if the field is not found or the value of the field cannot be set.
-     *
-     * @param classToAccess The class to find the field on.
-     * @param instance      The instance of the {@code classToAccess}.
-     * @param value         The new value for the field
-     * @param fieldIndex    The index of the field in the {@code classToAccess}.
-     * @param <T>           The type of the value.
-     * @param <E>           The type of the {@code classToAccess}.
-     * @throws UnableToAccessFieldException If there was a problem setting the value of the field.
-     * @deprecated Use {@link #setPrivateValue(Class, Object, Object, String)} because field indices change a lot more often than field names do.
-     * TODO: Remove in 1.15
-     */
-    @Deprecated
-    public static <T, E> void setPrivateValue(@Nonnull final Class<? super T> classToAccess, @Nonnull final T instance, @Nullable final E value, int fieldIndex)
-    {
-        try
-        {
-            findField(classToAccess, fieldIndex).set(instance, value);
-        }
-        catch (IllegalAccessException e)
-        {
-            LOGGER.error("There was a problem setting field index {} on type {}", fieldIndex, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -300,35 +239,6 @@ public class ObfuscationReflectionHelper
         }
         catch (Exception e)
         {
-            throw new UnableToFindFieldException(e);
-        }
-    }
-
-    /**
-     * Finds a field with the specified index in the given class and makes it accessible.
-     * Note: For performance, store the returned value and avoid calling this repeatedly.
-     * <p>
-     * Throws an exception if the field is not found.
-     *
-     * @param clazz      The class to find the field on.
-     * @param fieldIndex The index of the field on the class
-     * @param <T>        The type.
-     * @return The constructor with the specified parameters in the given class.
-     * @throws NullPointerException       If {@code clazz} is null.
-     * @throws UnableToFindFieldException If the field could not be found.
-     * @deprecated Use {@link #findField(Class, String)} because field indices change a lot more often than field names do.
-     * TODO: Remove in 1.15
-     */
-    @Deprecated
-    @Nonnull
-    public static <T> Field findField(final Class<? super T> clazz, final int fieldIndex) {
-        Preconditions.checkNotNull(clazz, "Class to find field on cannot be null.");
-
-        try {
-            final Field f = clazz.getDeclaredFields()[fieldIndex];
-            f.setAccessible(true);
-            return f;
-        } catch (Exception e) {
             throw new UnableToFindFieldException(e);
         }
     }

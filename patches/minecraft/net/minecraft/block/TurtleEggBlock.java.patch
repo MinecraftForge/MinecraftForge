@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TurtleEggBlock.java
 +++ b/net/minecraft/block/TurtleEggBlock.java
-@@ -146,7 +146,7 @@
+@@ -141,7 +141,7 @@
        if (p_212570_2_ instanceof TurtleEntity) {
           return false;
        } else {

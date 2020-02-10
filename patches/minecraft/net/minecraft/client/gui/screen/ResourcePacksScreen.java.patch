@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/ResourcePacksScreen.java
 +++ b/net/minecraft/client/gui/screen/ResourcePacksScreen.java
-@@ -84,11 +84,14 @@
+@@ -86,11 +86,14 @@
           resourcepacklist.func_198983_a();
           List<ClientResourcePackInfo> list = Lists.newArrayList(resourcepacklist.func_198978_b());
           list.removeAll(resourcepacklist.func_198980_d());

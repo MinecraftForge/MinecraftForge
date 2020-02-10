@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/gen/feature/HugeTreesFeature.java
 +++ b/net/minecraft/world/gen/feature/HugeTreesFeature.java
-@@ -22,6 +22,7 @@
-       this.field_150538_d = p_i51481_4_;
-       this.field_76520_b = p_i51481_5_;
-       this.field_76521_c = p_i51481_6_;
-+      setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196674_t);
-    }
- 
-    protected int func_150533_a(Random p_150533_1_) {
-@@ -35,7 +36,7 @@
+@@ -25,7 +25,7 @@
  
     private boolean func_175926_c(IWorldGenerationBaseReader p_175926_1_, BlockPos p_175926_2_, int p_175926_3_) {
        boolean flag = true;
@@ -17,7 +9,7 @@
           for(int i = 0; i <= 1 + p_175926_3_; ++i) {
              int j = 2;
              if (i == 0) {
-@@ -46,7 +47,7 @@
+@@ -36,7 +36,7 @@
  
              for(int k = -j; k <= j && flag; ++k) {
                 for(int l = -j; l <= j && flag; ++l) {
@@ -26,17 +18,19 @@
                       flag = false;
                    }
                 }
-@@ -61,11 +62,12 @@
+@@ -49,23 +49,28 @@
+       }
+    }
  
-    private boolean func_202405_b(IWorldGenerationReader p_202405_1_, BlockPos p_202405_2_) {
+-   private boolean func_202405_b(IWorldGenerationReader p_202405_1_, BlockPos p_202405_2_) {
++   private boolean validSoil(IWorldGenerationReader p_202405_1_, BlockPos p_202405_2_, net.minecraftforge.common.IPlantable sapling) {
        BlockPos blockpos = p_202405_2_.func_177977_b();
 -      if (func_214589_h(p_202405_1_, blockpos) && p_202405_2_.func_177956_o() >= 2) {
 -         this.func_214584_a(p_202405_1_, blockpos);
 -         this.func_214584_a(p_202405_1_, blockpos.func_177974_f());
 -         this.func_214584_a(p_202405_1_, blockpos.func_177968_d());
 -         this.func_214584_a(p_202405_1_, blockpos.func_177968_d().func_177974_f());
-+
-+      if (isSoil(p_202405_1_, blockpos, getSapling()) && p_202405_2_.func_177956_o() >= 2) {
++      if (isSoil(p_202405_1_, blockpos, sapling) && p_202405_2_.func_177956_o() >= 2) {
 +         setDirtAt(p_202405_1_, blockpos, p_202405_2_);
 +         setDirtAt(p_202405_1_, blockpos.func_177974_f(), p_202405_2_);
 +         setDirtAt(p_202405_1_, blockpos.func_177968_d(), p_202405_2_);
@@ -44,3 +38,19 @@
           return true;
        } else {
           return false;
+       }
+    }
+ 
++   @Deprecated //Forge: Use config sensitive version
+    protected boolean func_203427_a(IWorldGenerationReader p_203427_1_, BlockPos p_203427_2_, int p_203427_3_) {
+-      return this.func_175926_c(p_203427_1_, p_203427_2_, p_203427_3_) && this.func_202405_b(p_203427_1_, p_203427_2_);
++      return this.func_175926_c(p_203427_1_, p_203427_2_, p_203427_3_) && this.validSoil(p_203427_1_, p_203427_2_, (net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196674_t);
+    }
+ 
++   protected boolean hasRoom(IWorldGenerationReader world, BlockPos pos, int height, BaseTreeFeatureConfig config) {
++      return this.func_175926_c(world, pos, height) && this.validSoil(world, pos, config.getSapling());
++   }
++
+    protected void func_227255_a_(IWorldGenerationReader p_227255_1_, Random p_227255_2_, BlockPos p_227255_3_, int p_227255_4_, Set<BlockPos> p_227255_5_, MutableBoundingBox p_227255_6_, BaseTreeFeatureConfig p_227255_7_) {
+       int i = p_227255_4_ * p_227255_4_;
+ 

@@ -21,14 +21,19 @@ package net.minecraftforge.client.model.animation;
 
 import java.util.Random;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IModelData;
@@ -42,12 +47,17 @@ import net.minecraftforge.common.util.LazyOptional;
 /**
  * Generic {@link TileGameRenderer} that works with the Forge model system and animations.
  */
-public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntityRendererFast<T> implements IEventHandler<T>
+public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntityRenderer<T> implements IEventHandler<T>
 {
-    protected static BlockRendererDispatcher blockRenderer;
+    public TileEntityRendererAnimation(TileEntityRendererDispatcher p_i226006_1_)
+    {
+        super(p_i226006_1_);
+    }
 
+    protected static BlockRendererDispatcher blockRenderer;
+    
     @Override
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
+    public void func_225616_a_(T te, float partialTick, MatrixStack mat, IRenderTypeBuffer renderer, int light, int otherlight)
     {
         LazyOptional<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
         if(!cap.isPresent())
@@ -56,13 +66,13 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         }
         if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
-        net.minecraft.world.IEnviromentBlockReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        ILightReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         BlockState state = world.getBlockState(pos);
         IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
         IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
         if (data.hasProperty(Properties.AnimationProperty))
         {
-            float time = Animation.getWorldTime(getWorld(), partialTick);
+            float time = Animation.getWorldTime(Minecraft.getInstance().world, partialTick);
             cap
                 .map(asm -> asm.apply(time))
                 .ifPresent(pair -> {
@@ -70,10 +80,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
 
                     // TODO: caching?
                     data.setData(Properties.AnimationProperty, pair.getLeft());
-
-                    renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
-
-                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, renderer, false, new Random(), 42, data);
+                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.func_228782_g_()), false, new Random(), 42, light, data);
                 });
         }
     }

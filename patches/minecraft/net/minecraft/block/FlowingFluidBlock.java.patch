@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowingFluidBlock.java
 +++ b/net/minecraft/block/FlowingFluidBlock.java
-@@ -30,9 +30,11 @@
+@@ -31,9 +31,11 @@
  
  public class FlowingFluidBlock extends Block implements IBucketPickupHandler {
     public static final IntegerProperty field_176367_b = BlockStateProperties.field_208132_ag;
@@ -13,7 +13,7 @@
     protected FlowingFluidBlock(FlowingFluid p_i49014_1_, Block.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
-@@ -45,8 +47,21 @@
+@@ -46,8 +48,21 @@
  
        this.field_212565_c.add(p_i49014_1_.func_207207_a(8, true));
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
@@ -32,10 +32,10 @@
 +      this.supplier = supplier;
 +   }
 +
-    public void func_196265_a(BlockState p_196265_1_, World p_196265_2_, BlockPos p_196265_3_, Random p_196265_4_) {
-       p_196265_2_.func_204610_c(p_196265_3_).func_206891_b(p_196265_2_, p_196265_3_, p_196265_4_);
+    public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
+       p_225542_2_.func_204610_c(p_225542_3_).func_206891_b(p_225542_2_, p_225542_3_, p_225542_4_);
     }
-@@ -61,6 +76,7 @@
+@@ -62,6 +77,7 @@
  
     public IFluidState func_204507_t(BlockState p_204507_1_) {
        int i = p_204507_1_.func_177229_b(field_176367_b);
@@ -43,7 +43,7 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
-@@ -121,13 +137,13 @@
+@@ -122,13 +138,13 @@
           if (flag) {
              IFluidState ifluidstate = p_204515_1_.func_204610_c(p_204515_2_);
              if (ifluidstate.func_206889_d()) {
@@ -59,7 +59,7 @@
                 this.func_180688_d(p_204515_1_, p_204515_2_);
                 return false;
              }
-@@ -160,4 +176,27 @@
+@@ -161,4 +177,23 @@
        }
  
     }
@@ -72,17 +72,13 @@
 +
 +   private boolean fluidStateCacheInitialized = false;
 +   protected synchronized void initFluidStateCache() {
-+      if (fluidStateCacheInitialized == false)
-+      {
++      if (fluidStateCacheInitialized == false) {
 +         this.field_212565_c.add(getFluid().func_207204_a(false));
 +
 +         for (int i = 1; i < 8; ++i)
-+         {
 +            this.field_212565_c.add(getFluid().func_207207_a(8 - i, false));
-+         }
 +
 +         this.field_212565_c.add(getFluid().func_207207_a(8, true));
-+
 +         fluidStateCacheInitialized = true;
 +      }
 +   }

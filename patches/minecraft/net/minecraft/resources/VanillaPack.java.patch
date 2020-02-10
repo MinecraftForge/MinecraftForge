@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/VanillaPack.java
 +++ b/net/minecraft/resources/VanillaPack.java
-@@ -183,7 +183,7 @@
+@@ -176,7 +176,7 @@
  
        try {
           URL url = VanillaPack.class.getResource(s);
@@ -9,7 +9,7 @@
        } catch (IOException var6) {
           return VanillaPack.class.getResourceAsStream(s);
        }
-@@ -199,7 +199,7 @@
+@@ -192,7 +192,7 @@
  
     @Nullable
     protected InputStream func_200010_a(String p_200010_1_) {
@@ -18,7 +18,7 @@
     }
  
     public boolean func_195764_b(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
-@@ -239,4 +239,18 @@
+@@ -232,4 +232,18 @@
  
     public void close() {
     }

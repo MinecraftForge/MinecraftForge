@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -183,7 +183,15 @@
+@@ -194,7 +194,15 @@
  
        try {
           try {

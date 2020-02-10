@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RedstoneOreBlock.java
 +++ b/net/minecraft/block/RedstoneOreBlock.java
-@@ -61,11 +61,11 @@
+@@ -68,11 +68,11 @@
  
     public void func_220062_a(BlockState p_220062_1_, World p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
        super.func_220062_a(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);

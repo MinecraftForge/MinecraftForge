@@ -1,22 +1,22 @@
 --- a/net/minecraft/block/CropsBlock.java
 +++ b/net/minecraft/block/CropsBlock.java
-@@ -57,12 +57,14 @@
+@@ -58,12 +58,14 @@
  
-    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
-       super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
-+      if (!p_196267_2_.isAreaLoaded(p_196267_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_196267_2_.func_201669_a(p_196267_3_, 0) >= 9) {
-          int i = this.func_185527_x(p_196267_1_);
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+       super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
++      if (!p_225534_2_.isAreaLoaded(p_225534_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_225534_2_.func_226659_b_(p_225534_3_, 0) >= 9) {
+          int i = this.func_185527_x(p_225534_1_);
           if (i < this.func_185526_g()) {
-             float f = func_180672_a(this, p_196267_2_, p_196267_3_);
--            if (p_196267_4_.nextInt((int)(25.0F / f) + 1) == 0) {
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
-                p_196267_2_.func_180501_a(p_196267_3_, this.func_185528_e(i + 1), 2);
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+             float f = func_180672_a(this, p_225534_2_, p_225534_3_);
+-            if (p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
+                p_225534_2_.func_180501_a(p_225534_3_, this.func_185528_e(i + 1), 2);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
              }
           }
        }
-@@ -91,9 +93,9 @@
+@@ -92,9 +94,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
              BlockState blockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
@@ -28,12 +28,12 @@
                    f1 = 3.0F;
                 }
              }
-@@ -129,7 +131,7 @@
+@@ -130,7 +132,7 @@
     }
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
 -      if (p_196262_4_ instanceof RavagerEntity && p_196262_2_.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +      if (p_196262_4_ instanceof RavagerEntity && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_196262_2_, p_196262_4_)) {
-          p_196262_2_.func_175655_b(p_196262_3_, true);
+          p_196262_2_.func_225521_a_(p_196262_3_, true, p_196262_4_);
        }
  

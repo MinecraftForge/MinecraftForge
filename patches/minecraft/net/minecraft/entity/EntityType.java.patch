@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/EntityType.java
 +++ b/net/minecraft/entity/EntityType.java
-@@ -134,7 +134,7 @@
+@@ -135,7 +135,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F));
     public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F));
-@@ -252,6 +252,12 @@
+@@ -254,6 +254,12 @@
     private ResourceLocation field_220358_bg;
     private final EntitySize field_220359_bi;
  
@@ -22,16 +22,19 @@
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
     }
-@@ -264,7 +270,7 @@
+@@ -266,7 +272,11 @@
        return Registry.field_212629_r.func_218349_b(ResourceLocation.func_208304_a(p_220327_0_));
     }
  
--   public EntityType(EntityType.IFactory<T> p_i51559_1_, EntityClassification p_i51559_2_, boolean p_i51559_3_, boolean p_i51559_4_, boolean p_i51559_5_, boolean p_i51559_6_, EntitySize p_i51559_7_) {
++
+    public EntityType(EntityType.IFactory<T> p_i51559_1_, EntityClassification p_i51559_2_, boolean p_i51559_3_, boolean p_i51559_4_, boolean p_i51559_5_, boolean p_i51559_6_, EntitySize p_i51559_7_) {
++      this(p_i51559_1_, p_i51559_2_, p_i51559_3_, p_i51559_4_, p_i51559_5_, p_i51559_6_, p_i51559_7_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
++   }
 +   public EntityType(EntityType.IFactory<T> p_i51559_1_, EntityClassification p_i51559_2_, boolean p_i51559_3_, boolean p_i51559_4_, boolean p_i51559_5_, boolean p_i51559_6_, EntitySize p_i51559_7_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
        this.field_200732_aK = p_i51559_1_;
        this.field_220355_ba = p_i51559_2_;
        this.field_225438_be = p_i51559_6_;
-@@ -272,6 +278,10 @@
+@@ -274,6 +284,10 @@
        this.field_200734_aM = p_i51559_4_;
        this.field_220357_bd = p_i51559_5_;
        this.field_220359_bi = p_i51559_7_;
@@ -42,7 +45,7 @@
     }
  
     @Nullable
-@@ -282,6 +292,7 @@
+@@ -284,6 +298,7 @@
     @Nullable
     public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
        T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
@@ -50,7 +53,7 @@
        p_220342_1_.func_217376_c(t);
        return t;
     }
-@@ -464,6 +475,9 @@
+@@ -466,6 +481,9 @@
     }
  
     public int func_220345_k() {
@@ -60,7 +63,7 @@
        if (this == field_200729_aH) {
           return 32;
        } else if (this == field_200801_o) {
-@@ -476,6 +490,9 @@
+@@ -478,6 +496,9 @@
     }
  
     public int func_220332_l() {
@@ -70,7 +73,7 @@
        if (this != field_200729_aH && this != field_200805_s) {
           if (this == field_200808_v) {
              return 4;
-@@ -496,6 +513,9 @@
+@@ -498,6 +519,9 @@
     }
  
     public boolean func_220340_m() {
@@ -80,7 +83,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -503,12 +523,30 @@
+@@ -505,12 +529,30 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
@@ -111,7 +114,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -553,11 +591,35 @@
+@@ -555,11 +597,35 @@
           return this;
        }
  
@@ -148,7 +151,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -566,7 +628,7 @@
+@@ -568,7 +634,7 @@
              }
           }
  

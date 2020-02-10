@@ -1,22 +1,22 @@
 --- a/net/minecraft/world/gen/layer/LayerUtil.java
 +++ b/net/minecraft/world/gen/layer/LayerUtil.java
-@@ -69,12 +69,11 @@
-          i = 6;
-       }
- 
-+      i = getModdedBiomeSize(p_202828_0_, i);
-+
-       IAreaFactory<T> lvt_7_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, iareafactory, 0, p_202828_2_);
-       lvt_7_1_ = StartRiverLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_202828_2_.apply(100L), lvt_7_1_);
--      IAreaFactory<T> lvt_8_1_ = (new BiomeLayer(p_202828_0_, p_202828_1_)).func_202713_a(p_202828_2_.apply(200L), iareafactory);
--      lvt_8_1_ = AddBambooForestLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_202828_2_.apply(1001L), lvt_8_1_);
--      lvt_8_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_8_1_, 2, p_202828_2_);
--      lvt_8_1_ = EdgeBiomeLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_202828_2_.apply(1000L), lvt_8_1_);
-+      IAreaFactory<T> lvt_8_1_ = p_202828_0_.getBiomeLayer(iareafactory, p_202828_1_, p_202828_2_);
-       IAreaFactory<T> lvt_9_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_202828_2_);
-       lvt_8_1_ = HillsLayer.INSTANCE.func_202707_a((IExtendedNoiseRandom)p_202828_2_.apply(1000L), lvt_8_1_, lvt_9_1_);
-       lvt_7_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_202828_2_);
-@@ -134,6 +133,15 @@
+@@ -58,13 +58,11 @@
+       iareafactory = DeepOceanLayer.INSTANCE.func_202713_a(p_227475_2_.apply(4L), iareafactory);
+       iareafactory = func_202829_a(1000L, ZoomLayer.NORMAL, iareafactory, 0, p_227475_2_);
+       int i = p_227475_0_ == WorldType.field_77135_d ? 6 : p_227475_1_.func_202200_j();
++      i = getModdedBiomeSize(p_227475_0_, i);
+       int j = p_227475_1_.func_202198_k();
+       IAreaFactory<T> lvt_7_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, iareafactory, 0, p_227475_2_);
+       lvt_7_1_ = StartRiverLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_227475_2_.apply(100L), lvt_7_1_);
+-      IAreaFactory<T> lvt_8_1_ = (new BiomeLayer(p_227475_0_, p_227475_1_.func_202199_l())).func_202713_a(p_227475_2_.apply(200L), iareafactory);
+-      lvt_8_1_ = AddBambooForestLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_227475_2_.apply(1001L), lvt_8_1_);
+-      lvt_8_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_8_1_, 2, p_227475_2_);
+-      lvt_8_1_ = EdgeBiomeLayer.INSTANCE.func_202713_a((IExtendedNoiseRandom)p_227475_2_.apply(1000L), lvt_8_1_);
++      IAreaFactory<T> lvt_8_1_ = p_227475_0_.getBiomeLayer(iareafactory, p_227475_1_, p_227475_2_);
+       IAreaFactory<T> lvt_9_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_227475_2_);
+       lvt_8_1_ = HillsLayer.INSTANCE.func_202707_a((IExtendedNoiseRandom)p_227475_2_.apply(1000L), lvt_8_1_, lvt_9_1_);
+       lvt_7_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_227475_2_);
+@@ -120,6 +118,15 @@
        }
     }
  

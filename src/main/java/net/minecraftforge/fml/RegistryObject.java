@@ -22,10 +22,10 @@ package net.minecraftforge.fml;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.IRegistryDelegate;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.Objects;
@@ -42,18 +42,8 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     @Nullable
     private T value;
 
-    @Deprecated
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
-        return of(new ResourceLocation(name), registryType);
-    }
-
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
-    }
-
-    @Deprecated
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, IForgeRegistry<T> registry) {
-        return of(new ResourceLocation(name), registry);
     }
 
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry) {
@@ -93,11 +83,13 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     /**
      * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
      */
-    @Nullable
     @Override
+    @Nonnull
     public T get()
     {
-        return this.value;
+        T ret = this.value;
+        Objects.requireNonNull(ret, "Registry Object not present");
+        return ret;
     }
 
     public void updateReference(IForgeRegistry<? extends T> registry)
@@ -108,14 +100,6 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     public ResourceLocation getId() 
     {
         return this.name;
-    }
-
-    /**
-     * @deprecated Prefer {@link #getId()}
-     */
-    @Deprecated
-    public String getName() {
-        return getId().toString();
     }
 
     public Stream<T> stream() {

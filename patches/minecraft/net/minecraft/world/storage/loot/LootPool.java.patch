@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/loot/LootPool.java
 +++ b/net/minecraft/world/storage/loot/LootPool.java
-@@ -28,17 +28,19 @@
+@@ -25,17 +25,19 @@
  import org.apache.commons.lang3.mutable.MutableInt;
  
  public class LootPool {
@@ -25,28 +25,28 @@
        this.field_216101_c = LootConditionManager.func_216305_a(p_i51268_2_);
        this.field_216102_d = p_i51268_3_;
        this.field_216103_e = LootFunctionManager.func_216241_a(p_i51268_3_);
-@@ -95,16 +97,16 @@
+@@ -92,16 +94,16 @@
     }
  
-    public void func_216099_a(ValidationResults p_216099_1_, Function<ResourceLocation, LootTable> p_216099_2_, Set<ResourceLocation> p_216099_3_, LootParameterSet p_216099_4_) {
+    public void func_227505_a_(ValidationTracker p_227505_1_) {
 -      for(int i = 0; i < this.field_186454_b.length; ++i) {
--         this.field_186454_b[i].func_215856_a(p_216099_1_.func_216108_b(".condition[" + i + "]"), p_216099_2_, p_216099_3_, p_216099_4_);
+-         this.field_186454_b[i].func_225580_a_(p_227505_1_.func_227534_b_(".condition[" + i + "]"));
 +      for(int i = 0; i < this.field_186454_b.size(); ++i) {
-+         this.field_186454_b.get(i).func_215856_a(p_216099_1_.func_216108_b(".condition[" + i + "]"), p_216099_2_, p_216099_3_, p_216099_4_);
++         this.field_186454_b.get(i).func_225580_a_(p_227505_1_.func_227534_b_(".condition[" + i + "]"));
        }
  
        for(int j = 0; j < this.field_216102_d.length; ++j) {
-          this.field_216102_d[j].func_215856_a(p_216099_1_.func_216108_b(".functions[" + j + "]"), p_216099_2_, p_216099_3_, p_216099_4_);
+          this.field_216102_d[j].func_225580_a_(p_227505_1_.func_227534_b_(".functions[" + j + "]"));
        }
  
 -      for(int k = 0; k < this.field_186453_a.length; ++k) {
--         this.field_186453_a[k].func_216142_a(p_216099_1_.func_216108_b(".entries[" + k + "]"), p_216099_2_, p_216099_3_, p_216099_4_);
+-         this.field_186453_a[k].func_225579_a_(p_227505_1_.func_227534_b_(".entries[" + k + "]"));
 +      for(int k = 0; k < this.field_186453_a.size(); ++k) {
-+         this.field_186453_a.get(k).func_216142_a(p_216099_1_.func_216108_b(".entries[" + k + "]"), p_216099_2_, p_216099_3_, p_216099_4_);
++         this.field_186453_a.get(k).func_225579_a_(p_227505_1_.func_227534_b_(".entries[" + k + "]"));
        }
  
     }
-@@ -119,6 +121,7 @@
+@@ -116,6 +118,7 @@
        private final List<ILootFunction> field_216049_c = Lists.newArrayList();
        private IRandomRange field_216050_d = new RandomValueRange(1.0F);
        private RandomValueRange field_216051_e = new RandomValueRange(0.0F, 0.0F);
@@ -54,7 +54,7 @@
  
        public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
           this.field_216050_d = p_216046_1_;
-@@ -144,15 +147,61 @@
+@@ -141,15 +144,61 @@
           return this;
        }
  
@@ -117,7 +117,7 @@
     public static class Serializer implements JsonDeserializer<LootPool>, JsonSerializer<LootPool> {
        public LootPool deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
           JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot pool");
-@@ -161,18 +210,20 @@
+@@ -158,18 +207,20 @@
           ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
           IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
           RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);

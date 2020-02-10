@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ArmorItem.java
 +++ b/net/minecraft/item/ArmorItem.java
-@@ -104,4 +104,8 @@
+@@ -102,4 +102,8 @@
     public int func_200881_e() {
        return this.field_77879_b;
     }

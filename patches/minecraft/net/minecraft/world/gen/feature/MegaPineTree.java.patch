@@ -1,19 +1,11 @@
 --- a/net/minecraft/world/gen/feature/MegaPineTree.java
 +++ b/net/minecraft/world/gen/feature/MegaPineTree.java
-@@ -20,6 +20,7 @@
-    public MegaPineTree(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i51482_1_, boolean p_i51482_2_, boolean p_i51482_3_) {
-       super(p_i51482_1_, p_i51482_2_, 13, 15, field_181633_e, field_181634_f);
-       this.field_150542_e = p_i51482_3_;
-+      setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196675_u);
-    }
+@@ -16,7 +16,7 @@
  
-    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
-@@ -98,7 +99,7 @@
-    private void func_175934_c(IWorldGenerationReader p_175934_1_, BlockPos p_175934_2_) {
-       for(int i = 2; i >= -3; --i) {
-          BlockPos blockpos = p_175934_2_.func_177981_b(i);
--         if (func_214589_h(p_175934_1_, blockpos)) {
-+         if (isSoil(p_175934_1_, blockpos, getSapling())) {
-             this.func_202278_a(p_175934_1_, blockpos, field_181635_g);
-             break;
-          }
+    public boolean func_225557_a_(IWorldGenerationReader p_225557_1_, Random p_225557_2_, BlockPos p_225557_3_, Set<BlockPos> p_225557_4_, Set<BlockPos> p_225557_5_, MutableBoundingBox p_225557_6_, HugeTreeFeatureConfig p_225557_7_) {
+       int i = this.func_227256_a_(p_225557_2_, p_225557_7_);
+-      if (!this.func_203427_a(p_225557_1_, p_225557_3_, i)) {
++      if (!this.hasRoom(p_225557_1_, p_225557_3_, i, p_225557_7_)) {
+          return false;
+       } else {
+          this.func_227253_a_(p_225557_1_, p_225557_2_, p_225557_3_.func_177958_n(), p_225557_3_.func_177952_p(), p_225557_3_.func_177956_o() + i, 0, p_225557_5_, p_225557_6_, p_225557_7_);

@@ -52,10 +52,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.IBiomeMagnifier;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.listener.IChunkStatusListener;
+import net.minecraft.world.server.ServerMultiWorld;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -96,6 +97,7 @@ public class DimensionManager
      * @param type ModDimension type data
      * @param data Extra data for the ModDimension
      * @param hasSkyLight does this dimension have a skylight?
+     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight) {
@@ -111,6 +113,7 @@ public class DimensionManager
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
      * @param hasSkyLight skylight for this dimension
+     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
@@ -129,7 +132,7 @@ public class DimensionManager
             savedEntries.remove(name);
         }
         @SuppressWarnings("deprecation")
-        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
+        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type.getMagnifier(), type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;
@@ -214,7 +217,7 @@ public class DimensionManager
         Validate.isTrue(REGISTRY.getByValue(id) == null, "Dimension with id " + id + " already registered as name " + REGISTRY.getKey(REGISTRY.getByValue(id)));
 
         @SuppressWarnings("deprecation")
-        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
+        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type.getMagnifier(), type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;

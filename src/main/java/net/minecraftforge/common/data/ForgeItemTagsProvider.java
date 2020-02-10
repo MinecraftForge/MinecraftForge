@@ -146,7 +146,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.SUPPORTS_CONDUIT, Tags.Items.SUPPORTS_CONDUIT);
     }
 
-    private void addColored(Consumer<Item> consumer, Tag<Item> group, String pattern)
+    private void addColored(Consumer<Tag<Item>> consumer, Tag<Item> group, String pattern)
     {
         String prefix = group.getId().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
@@ -157,7 +157,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());
             getBuilder(tag).add(item);
-            consumer.accept(item);
+            consumer.accept(tag);
         }
     }
 

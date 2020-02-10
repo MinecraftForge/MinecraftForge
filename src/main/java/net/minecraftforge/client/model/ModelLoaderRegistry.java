@@ -19,255 +19,369 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
-
+import com.google.gson.*;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.Direction;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
-import net.minecraftforge.client.model.ModelLoader.VariantLoader;
-import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.model.animation.AnimationStateMachine;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.common.model.TransformationHelper;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Central hub for custom model loaders.
  */
 public class ModelLoaderRegistry
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final String WHITE_TEXTURE = "forge:white";
 
-    private static final Set<ICustomModelLoader> loaders = Sets.newHashSet();
-    private static final Map<ResourceLocation, IUnbakedModel> cache = Maps.newHashMap();
-    private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
-
-    private static IResourceManager manager;
+    private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
+    private static volatile boolean registryFrozen = false;
 
     // Forge built-in loaders
     public static void init()
     {
-        registerLoader(B3DLoader.INSTANCE);
-        registerLoader(OBJLoader.INSTANCE);
-        registerLoader(ModelFluid.FluidLoader.INSTANCE);
-        registerLoader(ItemLayerModel.Loader.INSTANCE);
-        registerLoader(MultiLayerModel.Loader.INSTANCE);
-        registerLoader(ModelDynBucket.LoaderDynBucket.INSTANCE);
+        registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","obj"), OBJLoader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
+
+        // TODO: Implement as new model loaders
+        //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
+        //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
+    }
+
+    public static void initComplete()
+    {
+        registryFrozen = true;
     }
 
     /**
      * Makes system aware of your loader.
      */
-    public static void registerLoader(ICustomModelLoader loader)
+    public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
-        loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
-        // FIXME: Existing model loaders expect to receive a call as soon as they are registered, which was the old behaviour pre-1.13
-        // without this, their manager field is never initialized.
-        loader.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
-    }
+        if (registryFrozen)
+            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use FMLClientSetupEvent or ModelRegistryEvent to register your loaders.");
 
-    public static boolean loaded(ResourceLocation location)
-    {
-        return cache.containsKey(location);
-    }
-
-
-    public static ResourceLocation getActualLocation(ResourceLocation location)
-    {
-        if(location instanceof ModelResourceLocation) return location;
-        if(location.getPath().startsWith("builtin/")) return location;
-        return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
-    }
-
-    /**
-     * Primary method to get IModel instances.
-     * @param location The path to load, either:
-     *                 - Pure {@link ResourceLocation}. "models/" will be prepended to the path, then
-     *                   the path is passed to the {@link ICustomModelLoader}s, which may further modify
-     *                   the path before asking resource packs for it. For example, the {@link VanillaLoader}
-     *                   appends ".json" before looking the model up.
-     *                 - {@link ModelResourceLocation}. The blockstate system will load the model, using {@link VariantLoader}.
-     */
-    public static IUnbakedModel getModel(ResourceLocation location) throws Exception
-    {
-        IUnbakedModel model;
-
-        IUnbakedModel cached = cache.get(location);
-        if (cached != null) return cached;
-
-        for(ResourceLocation loading : loadingModels)
+        synchronized(loaders)
         {
-            if(location.getClass() == loading.getClass() && location.equals(loading))
-            {
-                throw new LoaderException("circular model dependencies, stack: [" + Joiner.on(", ").join(loadingModels) + "]");
-            }
+            loaders.put(id, loader);
+            ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
         }
-        loadingModels.addLast(location);
+    }
+
+    public static IModelGeometry<?> getModel(ResourceLocation loaderId, JsonDeserializationContext deserializationContext, JsonObject data)
+    {
         try
         {
-            ResourceLocation actual = getActualLocation(location);
-            ICustomModelLoader accepted = null;
-            for(ICustomModelLoader loader : loaders)
+            if (!loaders.containsKey(loaderId))
             {
-                try
-                {
-                    if(loader.accepts(actual))
-                    {
-                        if(accepted != null)
-                        {
-                            throw new LoaderException(String.format("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location));
-                        }
-                        accepted = loader;
-                    }
-                }
-                catch(Exception e)
-                {
-                    throw new LoaderException(String.format("Exception checking if model %s can be loaded with loader %s, skipping", location, loader), e);
-                }
+                throw new IllegalStateException(String.format("Model loader '%s' not found. Registered loaders: %s", loaderId,
+                        loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "))));
             }
 
-            // no custom loaders found, try vanilla ones
-            if(accepted == null)
-            {
-                if(VariantLoader.INSTANCE.accepts(actual))
-                {
-                     accepted = VariantLoader.INSTANCE;
-                }
-                else if(VanillaLoader.INSTANCE.accepts(actual))
-                {
-                    accepted = VanillaLoader.INSTANCE;
-                }
-            }
+            IModelLoader<?> loader = loaders.get(loaderId);
 
-            if(accepted == null)
-            {
-                throw new LoaderException("no suitable loader found for the model " + location + ", skipping");
-            }
+            return loader.read(deserializationContext, data);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Nullable
+    public static IModelGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) {
+        if (!object.has("loader")) {
+            return null;
+        }
+
+        ResourceLocation loader = new ResourceLocation(JSONUtils.getString(object,"loader"));
+        return getModel(loader, deserializationContext, object);
+    }
+
+    /* Explanation:
+     * This takes anything that looks like a valid resourcepack texture location, and tries to extract a resourcelocation out of it.
+     *  1. it will ignore anything up to and including an /assets/ folder,
+     *  2. it will take the next path component as a namespace,
+     *  3. it will match but skip the /textures/ part of the path,
+     *  4. it will take the rest of the path up to but excluding the .png extension as the resource path
+     * It's a best-effort situation, to allow model files exported by modelling software to be used without post-processing.
+     * Example:
+     *   C:\Something\Or Other\src\main\resources\assets\mymodid\textures\item\my_thing.png
+     *   ........................................--------_______----------_____________----
+     *                                                 <namespace>        <path>
+     * Result after replacing '\' to '/': mymodid:item/my_thing
+     */
+    private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
+            Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
+
+    public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner)
+    {
+        if (tex == null)
+            return blockMaterial(WHITE_TEXTURE);
+        if (tex.startsWith("#"))
+            return owner.resolveTexture(tex);
+
+        // Attempt to convert a common (windows/linux/mac) filesystem path to a ResourceLocation.
+        // This makes no promises, if it doesn't work, too bad, fix your mtl file.
+        Matcher match = FILESYSTEM_PATH_TO_RESLOC.matcher(tex);
+        if (match.matches())
+        {
+            String namespace = match.group("namespace");
+            String path = match.group("path").replace("\\", "/");
+            if (namespace != null)
+                return blockMaterial(new ResourceLocation(namespace, path));
+            return blockMaterial(path);
+        }
+
+        return blockMaterial(tex);
+    }
+
+    public static Material blockMaterial(String location)
+    {
+        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
+    }
+
+    public static Material blockMaterial(ResourceLocation location)
+    {
+        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
+    }
+
+    @Nullable
+    public static IModelTransform deserializeModelTransforms(JsonDeserializationContext deserializationContext, JsonObject modelData)
+    {
+        if (!modelData.has("transform"))
+            return null;
+
+        return deserializeTransform(deserializationContext, modelData.get("transform")).orElse(null);
+    }
+
+    public static Optional<IModelTransform> deserializeTransform(JsonDeserializationContext context, JsonElement transformData)
+    {
+        if (!transformData.isJsonObject())
+        {
             try
             {
-                model = accepted.loadModel(actual);
+                TransformationMatrix base = context.deserialize(transformData, TransformationMatrix.class);
+                return Optional.of(new SimpleModelTransform(ImmutableMap.of(), base.blockCenterToCorner()));
             }
-            catch(Exception e)
+            catch (JsonParseException e)
             {
-                throw new LoaderException(String.format("Exception loading model %s with loader %s, skipping", location, accepted), e);
-            }
-            if(model == getMissingModel())
-            {
-                throw new LoaderException(String.format("Loader %s returned missing model while loading model %s", accepted, location));
-            }
-            if(model == null)
-            {
-                throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
+                throw new JsonParseException("transform: expected a string, object or valid base transformation, got: " + transformData);
             }
         }
-        finally
+        else
         {
-            ResourceLocation popLoc = loadingModels.removeLast();
-            if(popLoc != location)
+            JsonObject transform = transformData.getAsJsonObject();
+            EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms = Maps.newEnumMap(ItemCameraTransforms.TransformType.class);
+
+            deserializeTRSR(context, transforms, transform, "thirdperson", ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
+            deserializeTRSR(context, transforms, transform, "thirdperson_righthand", ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
+            deserializeTRSR(context, transforms, transform, "thirdperson_lefthand", ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
+
+            deserializeTRSR(context, transforms, transform, "firstperson", ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
+            deserializeTRSR(context, transforms, transform, "firstperson_righthand", ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
+            deserializeTRSR(context, transforms, transform, "firstperson_lefthand", ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
+
+            deserializeTRSR(context, transforms, transform, "head", ItemCameraTransforms.TransformType.HEAD);
+            deserializeTRSR(context, transforms, transform, "gui", ItemCameraTransforms.TransformType.GUI);
+            deserializeTRSR(context, transforms, transform, "ground", ItemCameraTransforms.TransformType.GROUND);
+            deserializeTRSR(context, transforms, transform, "fixed", ItemCameraTransforms.TransformType.FIXED);
+
+            int k = transform.entrySet().size();
+            if(transform.has("matrix")) k--;
+            if(transform.has("translation")) k--;
+            if(transform.has("rotation")) k--;
+            if(transform.has("scale")) k--;
+            if(transform.has("post-rotation")) k--;
+            if(k > 0)
             {
-                throw new IllegalStateException("Corrupted loading model stack: " + popLoc + " != " + location);
+                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
             }
+            TransformationMatrix base = TransformationMatrix.func_227983_a_();
+            if(!transform.entrySet().isEmpty())
+            {
+                base = context.deserialize(transform, TransformationMatrix.class);
+                base = base.blockCenterToCorner();
+            }
+            IModelTransform state = new SimpleModelTransform(Maps.immutableEnumMap(transforms), base);
+            return Optional.of(state);
         }
-        cache.put(location, model);
-        for (ResourceLocation dep : model.getDependencies())
+    }
+
+    private static void deserializeTRSR(JsonDeserializationContext context, EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms, JsonObject transform, String name, ItemCameraTransforms.TransformType itemCameraTransform)
+    {
+        if(transform.has(name))
         {
-            getModelOrMissing(dep);
+            TransformationMatrix t = context.deserialize(transform.remove(name), TransformationMatrix.class);
+            transforms.put(itemCameraTransform, t.blockCenterToCorner());
         }
+    }
+
+    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
+    {
+        IBakedModel model;
+        IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
+        IModelTransform customModelState = blockModel.customData.getCustomModelState();
+        if (customModelState != null)
+            modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
+
+        if (customModel != null)
+            model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
+        else
+            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+
+        if (customModelState != null && !model.doesHandlePerspectives())
+            model = new PerspectiveMapWrapper(model, customModelState);
+
         return model;
     }
 
-    /**
-     * Use this if you don't care about the exception and want some model anyway.
-     */
-    public static IUnbakedModel getModelOrMissing(ResourceLocation location)
+    public static class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
     {
-        try
+        private final List<BlockPart> elements;
+
+        public VanillaProxy(List<BlockPart> list)
         {
-            return getModel(location);
+            this.elements = list;
         }
-        catch(Exception e)
+
+        @Override
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            return getMissingModel(location, e);
+            for(BlockPart blockpart : elements) {
+                for(Direction direction : blockpart.mapFaces.keySet()) {
+                    BlockPartFace blockpartface = blockpart.mapFaces.get(direction);
+                    TextureAtlasSprite textureatlassprite1 = spriteGetter.apply(owner.resolveTexture(blockpartface.texture));
+                    if (blockpartface.cullFace == null) {
+                        modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
+                    } else {
+                        modelBuilder.addFaceQuad(
+                                modelTransform.func_225615_b_().rotateTransform(blockpartface.cullFace),
+                                BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        {
+            Set<Material> textures = Sets.newHashSet();
+
+            for(BlockPart part : elements) {
+                for(BlockPartFace face : part.mapFaces.values()) {
+                    Material texture = owner.resolveTexture(face.texture);
+                    if (Objects.equals(texture, MissingTextureSprite.getLocation().toString())) {
+                        missingTextureErrors.add(Pair.of(face.texture, owner.getModelName()));
+                    }
+
+                    textures.add(texture);
+                }
+            }
+
+            return textures;
+        }
+
+        public static class Loader implements IModelLoader<VanillaProxy>
+        {
+            public static final Loader INSTANCE = new Loader();
+
+            private Loader()
+            {
+            }
+
+            @Override
+            public void onResourceManagerReload(IResourceManager resourceManager)
+            {
+
+            }
+
+            @Override
+            public VanillaProxy read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
+            {
+                List<BlockPart> list = this.getModelElements(deserializationContext, modelContents);
+                return new VanillaProxy(list);
+            }
+
+            private List<BlockPart> getModelElements(JsonDeserializationContext deserializationContext, JsonObject object) {
+                List<BlockPart> list = Lists.newArrayList();
+                if (object.has("elements")) {
+                    for(JsonElement jsonelement : JSONUtils.getJsonArray(object, "elements")) {
+                        list.add(deserializationContext.deserialize(jsonelement, BlockPart.class));
+                    }
+                }
+
+                return list;
+            }
         }
     }
 
-    /**
-     * Use this if you want the model, but need to log the error.
-     */
-    public static IUnbakedModel getModelOrLogError(ResourceLocation location, String error)
+    public static class ExpandedBlockModelDeserializer extends BlockModel.Deserializer
     {
-        try
-        {
-            return getModel(location);
+        public static final Gson INSTANCE = (new GsonBuilder())
+                .registerTypeAdapter(BlockModel.class, new ExpandedBlockModelDeserializer())
+                .registerTypeAdapter(BlockPart.class, new BlockPart.Deserializer())
+                .registerTypeAdapter(BlockPartFace.class, new BlockPartFace.Deserializer())
+                .registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer())
+                .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
+                .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
+                .registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer())
+                .registerTypeAdapter(TransformationMatrix.class, new TransformationHelper.Deserializer())
+                .create();
+
+        public BlockModel deserialize(JsonElement element, Type targetType, JsonDeserializationContext deserializationContext) throws JsonParseException {
+            BlockModel model = super.deserialize(element, targetType, deserializationContext);
+            JsonObject jsonobject = element.getAsJsonObject();
+            IModelGeometry<?> geometry = deserializeGeometry(deserializationContext, jsonobject);
+
+            List<BlockPart> elements = model.getElements();
+            if (geometry != null) {
+                elements.clear();
+                model.customData.setCustomGeometry(geometry);
+            }
+
+            IModelTransform modelState = deserializeModelTransforms(deserializationContext, jsonobject);
+            if (modelState != null)
+            {
+                model.customData.setCustomModelState(modelState);
+            }
+
+            if (jsonobject.has("visibility"))
+            {
+                JsonObject visibility = JSONUtils.getJsonObject(jsonobject, "visibility");
+                for(Map.Entry<String, JsonElement> part : visibility.entrySet())
+                {
+                    model.customData.visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
+                }
+            }
+
+            return model;
         }
-        catch(Exception e)
-        {
-            LOGGER.error(error, e);
-            return getMissingModel(location, e);
-        }
-    }
-
-    public static IUnbakedModel getMissingModel()
-    {
-        final ModelLoader loader = VanillaLoader.INSTANCE.getLoader();
-        if(loader == null)
-        {
-            throw new IllegalStateException("Using ModelLoaderRegistry too early.");
-        }
-        return loader.getMissingModel();
-    }
-
-    static IUnbakedModel getMissingModel(ResourceLocation location, Throwable cause)
-    {
-        //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
-        IUnbakedModel model = new FancyMissingModel(getMissingModel(), location.toString());
-        return model;
-    }
-
-    public static void clearModelCache(IResourceManager manager)
-    {
-        ModelLoaderRegistry.manager = manager;
-        cache.clear();
-        // putting the builtin models in
-        cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.INSTANCE);
-        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ItemLayerModel.INSTANCE);
-        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ItemLayerModel.INSTANCE);
-    }
-
-    public static class LoaderException extends Exception
-    {
-        public LoaderException(String message)
-        {
-            super(message);
-        }
-
-        public LoaderException(String message, Throwable cause)
-        {
-            super(message, cause);
-        }
-
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static IAnimationStateMachine loadASM(ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
-    {
-        return AnimationStateMachine.load(manager, location, customParameters);
     }
 }

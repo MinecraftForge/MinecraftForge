@@ -13,18 +13,27 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
+@@ -151,7 +152,7 @@
+ 
+    @Deprecated
+    public boolean func_220067_a(BlockState p_220067_1_, IBlockReader p_220067_2_, BlockPos p_220067_3_, EntityType<?> p_220067_4_) {
+-      return p_220067_1_.func_224755_d(p_220067_2_, p_220067_3_, Direction.UP) && this.field_149784_t < 14;
++      return p_220067_1_.func_224755_d(p_220067_2_, p_220067_3_, Direction.UP) && p_220067_1_.getLightValue(p_220067_2_, p_220067_3_) < 14;
+    }
+ 
+    @Deprecated
 @@ -246,6 +247,10 @@
-       this.field_149765_K = p_i48440_1_.field_200961_i;
-       this.field_208621_p = p_i48440_1_.field_208772_j;
-       this.field_220085_g = p_i48440_1_.field_222381_j;
+       this.field_149781_w = p_i48440_1_.field_200958_f;
+       this.field_149782_v = p_i48440_1_.field_200959_g;
+       this.field_149789_z = p_i48440_1_.field_200960_h;
 +      this.harvestLevel = p_i48440_1_.harvestLevel;
 +      this.harvestTool = p_i48440_1_.harvestTool;
 +      final ResourceLocation lootTableCache = p_i48440_1_.field_222381_j;
 +      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_i48440_1_.lootTableSupplier != null ? p_i48440_1_.lootTableSupplier : () -> new ResourceLocation(this.getRegistryName().func_110624_b(), "blocks/" + this.getRegistryName().func_110623_a());
-       this.field_176227_L = builder.func_206893_a(BlockState::new);
-       this.func_180632_j(this.field_176227_L.func_177621_b());
-    }
-@@ -291,7 +296,7 @@
+       this.field_149765_K = p_i48440_1_.field_200961_i;
+       this.field_226886_f_ = p_i48440_1_.field_226893_j_;
+       this.field_226887_g_ = p_i48440_1_.field_226894_k_;
+@@ -297,7 +302,7 @@
  
     @Deprecated
     public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -33,7 +42,7 @@
     }
  
     @Deprecated
-@@ -303,8 +308,9 @@
+@@ -314,8 +319,9 @@
        return this.field_149789_z;
     }
  
@@ -44,16 +53,7 @@
     }
  
     @Deprecated
-@@ -315,7 +321,7 @@
-    @Deprecated
-    @OnlyIn(Dist.CLIENT)
-    public int func_220058_a(BlockState p_220058_1_, IEnviromentBlockReader p_220058_2_, BlockPos p_220058_3_) {
--      return p_220058_2_.func_217338_b(p_220058_3_, p_220058_1_.func_185906_d());
-+      return p_220058_2_.func_217338_b(p_220058_3_, p_220058_1_.getLightValue(p_220058_2_, p_220058_3_));
-    }
- 
-    @OnlyIn(Dist.CLIENT)
-@@ -460,10 +466,9 @@
+@@ -471,10 +477,9 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
@@ -65,7 +65,7 @@
     }
  
     @Deprecated
-@@ -472,8 +477,8 @@
+@@ -483,8 +488,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -76,7 +76,7 @@
        }
     }
  
-@@ -483,8 +488,7 @@
+@@ -494,8 +499,7 @@
  
     public ResourceLocation func_220068_i() {
        if (this.field_220085_g == null) {
@@ -86,7 +86,7 @@
        }
  
        return this.field_220085_g;
-@@ -553,7 +557,7 @@
+@@ -555,7 +559,7 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -95,7 +95,7 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -565,7 +569,7 @@
+@@ -567,7 +571,7 @@
     }
  
     public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
@@ -104,7 +104,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -575,6 +579,7 @@
+@@ -577,6 +581,7 @@
  
     }
  
@@ -112,7 +112,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -677,6 +682,7 @@
+@@ -675,6 +680,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -120,7 +120,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -690,6 +696,7 @@
+@@ -688,6 +694,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -128,7 +128,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -710,6 +717,7 @@
+@@ -716,6 +723,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -136,7 +136,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -754,6 +762,7 @@
+@@ -760,6 +768,7 @@
        }
     }
  
@@ -144,7 +144,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -763,7 +772,7 @@
+@@ -769,7 +778,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -153,7 +153,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -771,7 +780,7 @@
+@@ -777,13 +786,81 @@
     }
  
     public String toString() {
@@ -162,17 +162,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -779,13 +788,81 @@
-    }
- 
-    public static boolean func_196252_e(Block p_196252_0_) {
--      return p_196252_0_ == Blocks.field_150348_b || p_196252_0_ == Blocks.field_196650_c || p_196252_0_ == Blocks.field_196654_e || p_196252_0_ == Blocks.field_196656_g;
-+      return net.minecraftforge.common.Tags.Blocks.STONE.func_199685_a_(p_196252_0_);
-    }
- 
-    public static boolean func_196245_f(Block p_196245_0_) {
--      return p_196245_0_ == Blocks.field_150346_d || p_196245_0_ == Blocks.field_196660_k || p_196245_0_ == Blocks.field_196661_l;
-+      return net.minecraftforge.common.Tags.Blocks.DIRT.func_199685_a_(p_196245_0_);
+    public void func_190948_a(ItemStack p_190948_1_, @Nullable IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_) {
     }
  
 +   /* ======================================== FORGE START =====================================*/
@@ -217,10 +207,10 @@
 +           case Nether: return this.getBlock() == Blocks.field_150425_aM;
 +           case Crop:   return this.getBlock() == Blocks.field_150458_ak;
 +           case Cave:   return Block.func_220056_d(state, world, pos, Direction.UP);
-+           case Plains: return this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
++           case Plains: return this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_199685_a_(this) || this.getBlock() == Blocks.field_150458_ak;
 +           case Water:  return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
 +           case Beach:
-+               boolean isBeach = this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
++               boolean isBeach = this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_199685_a_(this) || this.getBlock() == Blocks.field_150354_m;
 +               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
@@ -246,9 +236,9 @@
     public static enum OffsetType {
        NONE,
        XZ,
-@@ -804,6 +881,9 @@
-       private float field_200961_i = 0.6F;
+@@ -805,6 +882,9 @@
        private ResourceLocation field_222381_j;
+       private boolean field_226895_m_ = true;
        private boolean field_208772_j;
 +      private int harvestLevel = -1;
 +      private net.minecraftforge.common.ToolType harvestTool;
@@ -256,16 +246,16 @@
  
        private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
           this.field_200953_a = p_i48616_1_;
-@@ -834,6 +914,8 @@
-          block$properties.field_200956_d = p_200950_0_.field_149762_H;
-          block$properties.field_200961_i = p_200950_0_.func_208618_m();
+@@ -837,6 +917,8 @@
+          block$properties.field_226893_j_ = p_200950_0_.func_226891_m_();
           block$properties.field_208772_j = p_200950_0_.field_208621_p;
+          block$properties.field_226895_m_ = p_200950_0_.field_226888_j_;
 +         block$properties.harvestLevel = p_200950_0_.harvestLevel;
 +         block$properties.harvestTool = p_200950_0_.harvestTool;
           return block$properties;
        }
  
-@@ -882,13 +964,23 @@
+@@ -901,13 +983,23 @@
           return this;
        }
  

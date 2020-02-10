@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ScaffoldingBlock.java
 +++ b/net/minecraft/block/ScaffoldingBlock.java
-@@ -142,6 +142,8 @@
+@@ -138,6 +138,8 @@
        return i;
     }
  

@@ -19,8 +19,8 @@
     }
  
 @@ -33,4 +35,11 @@
-    public boolean func_200123_i(BlockState p_200123_1_, IBlockReader p_200123_2_, BlockPos p_200123_3_) {
-       return true;
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return p_196266_4_ == PathType.AIR && !this.field_196274_w ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
     }
 +
 +   @Override

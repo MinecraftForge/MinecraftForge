@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.model.animation;
 
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraft.client.renderer.TransformationMatrix;
 
 /**
  * Various implementations of IJointClip.
@@ -31,9 +31,9 @@ public final class JointClips
         INSTANCE;
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TransformationMatrix apply(float time)
         {
-            return TRSRTransformation.identity();
+            return TransformationMatrix.func_227983_a_();
         }
     }
 
@@ -49,7 +49,7 @@ public final class JointClips
         }
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TransformationMatrix apply(float time)
         {
             return clip.apply(child).apply(time);
         }

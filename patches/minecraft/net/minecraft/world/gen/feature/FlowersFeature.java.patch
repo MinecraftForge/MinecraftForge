@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/FlowersFeature.java
++++ b/net/minecraft/world/gen/feature/FlowersFeature.java
+@@ -20,7 +20,7 @@
+ 
+       for(int j = 0; j < this.func_225560_a_(p_212245_5_); ++j) {
+          BlockPos blockpos = this.func_225561_a_(p_212245_3_, p_212245_4_, p_212245_5_);
+-         if (p_212245_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < 255 && blockstate.func_196955_c(p_212245_1_, blockpos) && this.func_225559_a_(p_212245_1_, blockpos, p_212245_5_)) {
++         if (p_212245_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < p_212245_1_.getMaxHeight() - 1 && blockstate.func_196955_c(p_212245_1_, blockpos) && this.func_225559_a_(p_212245_1_, blockpos, p_212245_5_)) {
+             p_212245_1_.func_180501_a(blockpos, blockstate, 2);
+             ++i;
+          }
