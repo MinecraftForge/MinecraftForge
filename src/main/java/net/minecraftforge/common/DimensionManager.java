@@ -346,11 +346,16 @@ public class DimensionManager
     {
         data.putInt("version", 1);
         List<SavedEntry> list = new ArrayList<>();
-        for (DimensionType type : REGISTRY) {
-            if (type.getModType() == null) {
+        for (DimensionType type : REGISTRY)
+        {
+            if (type.getModType() == null)
+            {
                 list.add(new SavedEntry(type));
-            } else {
-                if (type.getModType().saveToLevelDat()) {
+            }
+            else
+            {
+                if (type.getModType().persistToLevelDat())
+                {
                     list.add(new SavedEntry(type));
                 }
             }
@@ -413,8 +418,10 @@ public class DimensionManager
                     continue;
                 }
 
-                if (mod.loadFromLevelDat()) registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
-
+                if (mod.persistToLevelDat())
+                {
+                    registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
+                }
             }
         }
     }

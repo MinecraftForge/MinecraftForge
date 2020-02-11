@@ -38,20 +38,11 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
 {
     /**
-     * Whether this dimension should be saved to the level.dat.
-     * If true, Forge will save the DimensionType and ModDimension to level.dat.
+     * Whether this dimension should be saved and loaded from the level.dat.
+     * If true, Forge will save the DimensionType and ModDimension to level.dat, then on next server boot, use that data to register it again.
      * For persistent dimensions, keep this true, but if you don't want the dimension to exist on next server boot, set to false.
      */
-    public boolean saveToLevelDat() {
-        return true;
-    }
-
-    /**
-     * Whether this dimension should be loaded from the level.dat.
-     * If true, Forge will automatically try to register this dimension from the level.dat on server boot.
-     * For persistent dimensions, keep this true, but if you don't want the dimension to exist on next server boot, set to false.
-     */
-    public boolean loadFromLevelDat() {
+    public boolean persistToLevelDat() {
         return true;
     }
 
