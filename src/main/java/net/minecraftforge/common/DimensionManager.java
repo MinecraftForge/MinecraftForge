@@ -415,7 +415,8 @@ public class DimensionManager
                 if (mod.loadFromLevelDat()) {
                     registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(
                             Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
-                } }
+                }
+            }
         }
     }
 
