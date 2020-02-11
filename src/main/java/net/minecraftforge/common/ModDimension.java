@@ -41,7 +41,9 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
      * Stops the dimension from being saved to level.dat file.
      * Can be overridden for dynamic dimensions
      */
-    public boolean saveToLevelDat(){return true;}
+    public boolean saveToLevelDat(){
+        return true;
+    }
 
 
     /**
@@ -49,7 +51,9 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
      * Override for dynamic dimensions, if you don't want them loaded back from level.dat file
      * on every server restart.
      */
-    public boolean loadFromLevelDat(){return true;}
+    public boolean loadFromLevelDat(){
+        return true;
+    }
 
 
     public abstract BiFunction<World, DimensionType, ? extends Dimension> getFactory();
