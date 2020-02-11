@@ -19,7 +19,10 @@
 
 package net.minecraftforge.common;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +47,9 @@ import com.google.common.collect.Multiset;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
@@ -58,6 +63,8 @@ import net.minecraft.world.chunk.listener.IChunkStatusListener;
 import net.minecraft.world.server.ServerMultiWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.StartupQuery;
@@ -65,6 +72,7 @@ import net.minecraftforge.fml.server.ServerModLoader;
 import net.minecraftforge.registries.ClearableRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,6 +93,7 @@ public class DimensionManager
     private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
     private static final Map<ResourceLocation, SavedEntry> savedEntries = new HashMap<>();
+    private static final List<String> foldersScheduledForDeletion = new ArrayList<>();
     private static volatile Set<World> playerWorlds = new HashSet<>();
 
     /**
@@ -199,14 +208,46 @@ public class DimensionManager
         return ret;
     }
 
+    /**
+     * Marks the given dimension for deletion upon next reload of the save.
+     * The corresponding data directory will be deleted as well.
+     *
+     * Vanilla dimensions are not supported and will throw an exception.
+     *
+     * @param dim the dimension to delete
+     */
+    public static void markForDeletion(DimensionType dim)
+    {
+        if (dim.isVanilla())
+        {
+            throw new IllegalArgumentException("Cannot delete vanilla dimensions.");
+        }
+        getData(dim).markedForDeletion = true;
+
+        Path base = Paths.get(".").toAbsolutePath().normalize();
+        Path directory = dim.getDirectory(base.toFile()).toPath().toAbsolutePath().normalize();
+        if (!directory.startsWith(base))
+        {
+            LOGGER.warn("DimensionType {} returned save directory outside of base directory. This is bad. The directory will not be deleted.", dim);
+        }
+        else
+        {
+            String relative = base.relativize(directory).toString();
+            foldersScheduledForDeletion.add(relative);
+        }
+    }
+
     //==========================================================================================================
     //                                         FORGE INTERNAL
     //==========================================================================================================
 
+    /**
+     * Deprecated, unregistering dimensions at runtime is not supported.
+     * @see DimensionManager#markForDeletion(DimensionType)
+     */
+    @Deprecated
     public static void unregisterDimension(int id)
     {
-        Validate.isTrue(dimensions.containsKey(id), String.format("Failed to unregister dimension for id %d; No provider registered", id));
-        dimensions.remove(id);
     }
 
     public static DimensionType registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
@@ -347,7 +388,7 @@ public class DimensionManager
         data.putInt("version", 1);
         List<SavedEntry> list = new ArrayList<>();
         for (DimensionType type : REGISTRY)
-            list.add(new SavedEntry(type));
+            list.add(new SavedEntry(type, getData(type).markedForDeletion));
         savedEntries.values().forEach(list::add);
 
         Collections.sort(list, (a, b) -> a.id - b.id);
@@ -355,6 +396,10 @@ public class DimensionManager
         list.forEach(e -> lst.add(e.write()));
 
         data.put("entries", lst);
+
+        ListNBT deleteLst = new ListNBT();
+        foldersScheduledForDeletion.forEach(folder -> deleteLst.add(StringNBT.func_229705_a_(folder)));
+        data.put("delete_dirs", deleteLst);
     }
 
     public static void readRegistry(CompoundNBT data)
@@ -396,7 +441,7 @@ public class DimensionManager
                     continue;
                 }
             }
-            else
+            else if (!entry.markedForDeletion)
             {
                 ModDimension mod = ForgeRegistries.MOD_DIMENSIONS.getValue(entry.type);
                 if (mod == null)
@@ -408,6 +453,28 @@ public class DimensionManager
                 registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
             }
         }
+        ListNBT folderList = data.getList("delete_dirs", Constants.NBT.TAG_STRING);
+        folderList.stream()
+                .map(INBT::getString)
+                .forEach(foldersScheduledForDeletion::add);
+    }
+
+    public static void processScheduledDeletions(SaveHandler saveHandler)
+    {
+        for (String folderName : foldersScheduledForDeletion)
+        {
+            File folder = new File(saveHandler.getWorldDirectory(), folderName);
+            try
+            {
+                FileUtils.deleteDirectory(folder);
+                LOGGER.info(DIMMGR, "Modded dimension directory {} scheduled for deletion was deleted.", folderName);
+            }
+            catch (Exception e)
+            {
+                LOGGER.error(DIMMGR, "Failed to delete modded dimension directory {} that was scheduled for deletion.", folderName, e);
+            }
+        }
+        foldersScheduledForDeletion.clear();
     }
 
     public static void fireRegister()
@@ -436,6 +503,7 @@ public class DimensionManager
     {
         int ticksWaited = 0;
         boolean keepLoaded = false;
+        boolean markedForDeletion = false;
     }
 
     public static class SavedEntry
@@ -445,6 +513,7 @@ public class DimensionManager
         ResourceLocation type;
         byte[] data;
         boolean skyLight;
+        boolean markedForDeletion;
 
         public int getId()
         {
@@ -480,9 +549,10 @@ public class DimensionManager
             this.type = data.contains("type", 8) ? new ResourceLocation(data.getString("type")) : null;
             this.data = data.contains("data", 7) ? data.getByteArray("data") : null;
             this.skyLight = data.contains("sky_light", 99) ? data.getBoolean("sky_light") : true;
+            this.markedForDeletion = data.getBoolean("marked_for_deletion");
         }
 
-        private SavedEntry(DimensionType data)
+        private SavedEntry(DimensionType data, boolean markedForDeletion)
         {
             this.id = REGISTRY.getId(data);
             this.name = REGISTRY.getKey(data);
@@ -491,6 +561,7 @@ public class DimensionManager
             if (data.getData() != null)
                 this.data = data.getData().array();
             this.skyLight = data.func_218272_d();
+            this.markedForDeletion = markedForDeletion;
         }
 
         private CompoundNBT write()
@@ -503,6 +574,7 @@ public class DimensionManager
             if (data != null)
                 ret.putByteArray("data", data);
             ret.putBoolean("sky_light", skyLight);
+            ret.putBoolean("marked_for_deletion", markedForDeletion);
             return ret;
         }
     }
