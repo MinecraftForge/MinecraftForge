@@ -347,14 +347,10 @@ public class DimensionManager
         data.putInt("version", 1);
         List<SavedEntry> list = new ArrayList<>();
         for (DimensionType type : REGISTRY) {
-
-            if (type.getModType() == null){
-
+            if (type.getModType() == null) {
                 list.add(new SavedEntry(type));
-            }else{
-
+            } else {
                 if (type.getModType().saveToLevelDat()) {
-
                     list.add(new SavedEntry(type));
                 }
             }
