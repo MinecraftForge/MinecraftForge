@@ -413,9 +413,8 @@ public class DimensionManager
                     continue;
                 }
 
-                if (mod.loadFromLevelDat()) {
-                    registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
-                }
+                if (mod.loadFromLevelDat()) registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
+
             }
         }
     }
