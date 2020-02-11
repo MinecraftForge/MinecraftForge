@@ -37,6 +37,21 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  */
 public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
 {
+    /**
+     * Stops the dimension from being saved to level.dat file.
+     * Can be overridden for dynamic dimensions
+     */
+    public boolean saveToLevelDat(){return true;}
+
+
+    /**
+     * Stops the dimension from being loaded from level.dat file.
+     * Override for dynamic dimensions, if you don't want them loaded back from level.dat file
+     * on every server restart.
+     */
+    public boolean loadFromLevelDat(){return true;}
+
+
     public abstract BiFunction<World, DimensionType, ? extends Dimension> getFactory();
 
     /**
