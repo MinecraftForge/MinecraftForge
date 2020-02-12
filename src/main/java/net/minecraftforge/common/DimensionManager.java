@@ -458,6 +458,9 @@ public class DimensionManager
                 registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
             }
         }
+
+        foldersScheduledForDeletion.clear();
+
         ListNBT folderList = data.getList("delete_dirs", Constants.NBT.TAG_STRING);
         folderList.stream()
                 .map(INBT::getString)
