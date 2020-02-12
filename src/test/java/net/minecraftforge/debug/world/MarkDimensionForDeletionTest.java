@@ -12,8 +12,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.server.ServerWorld;
@@ -41,8 +41,9 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Mod(MarkDimensionForDeletionTest.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class MarkDimensionForDeletionTest {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = MarkDimensionForDeletionTest.MODID)
+public class MarkDimensionForDeletionTest
+{
 
     public static final String MODID = "mark_dimension_for_deletion_test";
 
@@ -53,29 +54,46 @@ public class MarkDimensionForDeletionTest {
             "dynamic_dimension",
             () -> ModDimension.withFactory(OverworldDimension::new)
     );
-    private static final RegistryObject<Item> DIM_ITEM = ITEMS.register("dim_item", () -> new Item(new Item.Properties().group(ItemGroup.MISC)) {
+    private static final RegistryObject<Item> DIM_ITEM = ITEMS.register("dim_item", () -> new Item(new Item.Properties().group(ItemGroup.MISC))
+    {
         @Override
-        public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-            if (!worldIn.isRemote) {
-                DynamicDimensionCap cap = playerIn.getCapability(CAP).orElseThrow(IllegalStateException::new);
-                if (cap.dimension == null) {
-                    ResourceLocation dimName = new ResourceLocation(MODID, "dynamic_" + playerIn.getUniqueID().toString() + "_" + UUID.randomUUID().toString());
-                    cap.dimension = DimensionManager.registerDimension(dimName, DYNAMIC_DIMENSION_TYPE.get(), null, true);
-                    DimensionManager.initWorld(worldIn.getServer(), cap.dimension);
-                    playerIn.changeDimension(cap.dimension, new ITeleporter() {
+        public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
+        {
+            if (!worldIn.isRemote)
+            {
+                if (playerIn.func_225608_bj_())
+                {
+                    playerIn.sendMessage(new StringTextComponent("You are in dimension " + worldIn.dimension.getType().getRegistryName()));
+                }
+                else
+                {
+                    DynamicDimensionCap cap = playerIn.getCapability(CAP).orElseThrow(IllegalStateException::new);
+                    ITeleporter teleporter = new ITeleporter()
+                    {
                         @Override
-                        public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
+                        public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
+                        {
                             return repositionEntity.apply(false);
                         }
-                    });
-                } else {
-                    playerIn.changeDimension(DimensionType.OVERWORLD);
-                    ServerWorld world = DimensionManager.getWorld(worldIn.getServer(), cap.dimension, false, false);
-                    if (world != null) {
-                        DimensionManager.unloadWorld(world);
+                    };
+                    if (cap.dimension == null)
+                    {
+                        ResourceLocation dimName = new ResourceLocation(MODID, "dynamic_" + playerIn.getUniqueID().toString() + "_" + UUID.randomUUID().toString());
+                        cap.dimension = DimensionManager.registerDimension(dimName, DYNAMIC_DIMENSION_TYPE.get(), null, true);
+                        DimensionManager.initWorld(worldIn.getServer(), cap.dimension);
+                        playerIn.changeDimension(cap.dimension, teleporter);
                     }
-                    DimensionManager.markForDeletion(cap.dimension);
-                    cap.dimension = null;
+                    else
+                    {
+                        playerIn.changeDimension(DimensionType.OVERWORLD, teleporter);
+                        ServerWorld world = DimensionManager.getWorld(worldIn.getServer(), cap.dimension, false, false);
+                        if (world != null)
+                        {
+                            DimensionManager.unloadWorld(world);
+                        }
+                        DimensionManager.markForDeletion(cap.dimension);
+                        cap.dimension = null;
+                    }
                 }
             }
             return ActionResult.func_226248_a_(playerIn.getHeldItem(handIn));
@@ -85,39 +103,49 @@ public class MarkDimensionForDeletionTest {
     @CapabilityInject(DynamicDimensionCap.class)
     public static Capability<DynamicDimensionCap> CAP;
 
-    public MarkDimensionForDeletionTest() {
+    public MarkDimensionForDeletionTest()
+    {
         DIMENSIONS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
+    public static void commonSetup(FMLCommonSetupEvent event)
+    {
         CapabilityManager.INSTANCE.register(DynamicDimensionCap.class, new DynamicDimensionCap.Storage(), DynamicDimensionCap::new);
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public static class ForgeEventSubscriber {
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = MODID)
+    public static class ForgeEventSubscriber
+    {
 
         @SubscribeEvent
-        public static void attachCaps(AttachCapabilitiesEvent<Entity> event) {
-            if (event.getObject() instanceof ServerPlayerEntity) {
+        public static void attachCaps(AttachCapabilitiesEvent<Entity> event)
+        {
+            if (event.getObject() instanceof ServerPlayerEntity)
+            {
                 event.addCapability(new ResourceLocation(MODID, "dynamic_dimension"), new DynamicDimensionCap());
             }
         }
 
     }
 
-    public static class DynamicDimensionCap implements ICapabilitySerializable<CompoundNBT> {
+    public static class DynamicDimensionCap implements ICapabilitySerializable<CompoundNBT>
+    {
 
-        static class Storage implements Capability.IStorage<DynamicDimensionCap> {
+        static class Storage implements Capability.IStorage<DynamicDimensionCap>
+        {
 
             @Nullable
             @Override
-            public INBT writeNBT(Capability<DynamicDimensionCap> capability, DynamicDimensionCap instance, Direction side) {
+            public INBT writeNBT(Capability<DynamicDimensionCap> capability, DynamicDimensionCap instance, Direction side)
+            {
                 return instance.serializeNBT();
             }
 
             @Override
-            public void readNBT(Capability<DynamicDimensionCap> capability, DynamicDimensionCap instance, Direction side, INBT nbt) {
+            public void readNBT(Capability<DynamicDimensionCap> capability, DynamicDimensionCap instance, Direction side, INBT nbt)
+            {
                 instance.deserializeNBT((CompoundNBT) nbt);
             }
         }
@@ -128,28 +156,33 @@ public class MarkDimensionForDeletionTest {
 
         @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+        {
             return CAP.orEmpty(cap, instance);
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
+        public CompoundNBT serializeNBT()
+        {
             CompoundNBT result = new CompoundNBT();
-            if (dimension != null && dimension.getRegistryName() != null) {
+            if (dimension != null && dimension.getRegistryName() != null)
+            {
                 result.putString("dimension", dimension.getRegistryName().toString());
             }
             return result;
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
-            if (nbt.contains("dimension", Constants.NBT.TAG_STRING)) {
-                dimension = DimensionManager.getDimension(new ResourceLocation(nbt.getString("dimension"))).orElse(null);
-            } else {
+        public void deserializeNBT(CompoundNBT nbt)
+        {
+            if (nbt.contains("dimension", Constants.NBT.TAG_STRING))
+            {
+                dimension = DimensionType.byName(new ResourceLocation(nbt.getString("dimension")));
+            }
+            else
+            {
                 dimension = null;
             }
         }
     }
-
-
 }

@@ -16,6 +16,7 @@ loaderVersion="[28,)"
 ##[[mods]] # Fluid System needs implementing
 ##    modId="fog_color_in_material_test"
 [[mods]]
+
     modId="neighbor_notify_event_test"
 #[[mods]]
 #    modId="block_particle_effects_test"
