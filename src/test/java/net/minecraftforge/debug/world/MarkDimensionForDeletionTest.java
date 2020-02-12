@@ -83,7 +83,7 @@ public class MarkDimensionForDeletionTest
                         DimensionManager.initWorld(worldIn.getServer(), cap.dimension);
                         playerIn.changeDimension(cap.dimension, teleporter);
                     }
-                    else
+                    else if (playerIn.dimension == cap.dimension)
                     {
                         playerIn.changeDimension(DimensionType.OVERWORLD, teleporter);
                         ServerWorld world = DimensionManager.getWorld(worldIn.getServer(), cap.dimension, false, false);
