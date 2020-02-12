@@ -91,16 +91,6 @@ public class DimensionManager
     private static volatile Set<World> playerWorlds = new HashSet<>();
 
     /**
-     * Get the given existing dimension type, if it exists.
-     * @param name the registry name
-     * @return the DimensionType
-     */
-    public static Optional<DimensionType> getDimension(ResourceLocation name)
-    {
-        return REGISTRY.getValue(name);
-    }
-
-    /**
      * Register or get the existing dimension type for the given dimtype name.
      *
      * Dimensions already known to the save are loaded into the DimensionType map before the {@link RegisterDimensionsEvent} is fired.
