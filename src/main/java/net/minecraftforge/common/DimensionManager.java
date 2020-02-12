@@ -213,6 +213,9 @@ public class DimensionManager
      * Marks the given dimension for deletion upon next reload of the save.
      * The corresponding data directory will be deleted as well.
      *
+     * Note that the dimension need not be currently unloaded. The dimension will stay functioning as normal
+     * until the save is reloaded.
+     *
      * Vanilla dimensions are not supported and will throw an exception.
      *
      * @param dim the dimension to delete
