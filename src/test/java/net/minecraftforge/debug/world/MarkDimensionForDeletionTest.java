@@ -86,13 +86,11 @@ public class MarkDimensionForDeletionTest
                     else if (playerIn.dimension == cap.dimension)
                     {
                         playerIn.changeDimension(DimensionType.OVERWORLD, teleporter);
-                        ServerWorld world = DimensionManager.getWorld(worldIn.getServer(), cap.dimension, false, false);
-                        if (world != null)
-                        {
-                            DimensionManager.unloadWorld(world);
-                        }
                         DimensionManager.markForDeletion(cap.dimension);
-                        cap.dimension = null;
+                    }
+                    else
+                    {
+                        playerIn.changeDimension(cap.dimension, teleporter);
                     }
                 }
             }
