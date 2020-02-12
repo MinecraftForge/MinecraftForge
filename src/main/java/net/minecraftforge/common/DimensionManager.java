@@ -23,13 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
@@ -97,6 +91,16 @@ public class DimensionManager
     private static volatile Set<World> playerWorlds = new HashSet<>();
 
     /**
+     * Get the given existing dimension type, if it exists.
+     * @param name the registry name
+     * @return the DimensionType
+     */
+    public static Optional<DimensionType> getDimension(ResourceLocation name)
+    {
+        return REGISTRY.getValue(name);
+    }
+
+    /**
      * Register or get the existing dimension type for the given dimtype name.
      *
      * Dimensions already known to the save are loaded into the DimensionType map before the {@link RegisterDimensionsEvent} is fired.
@@ -109,7 +113,8 @@ public class DimensionManager
      * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
-    public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight) {
+    public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
+    {
         return REGISTRY.getValue(name).orElseGet(()->registerDimension(name, type, data, hasSkyLight));
     }
     /**
