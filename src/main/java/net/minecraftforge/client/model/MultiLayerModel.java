@@ -93,7 +93,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
 
         return new MultiLayerBakedModel(
                 owner.useSmoothLighting(), owner.isShadedInGui(),
-                spriteGetter.apply(owner.resolveTexture("particle")), overrides,
+                owner.isSideLit(), spriteGetter.apply(owner.resolveTexture("particle")), overrides,
                 buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
                 missing.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation),
                 PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform)));
@@ -105,14 +105,16 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         private final ImmutableMap<TransformType, TransformationMatrix> cameraTransforms;
         protected final boolean ambientOcclusion;
         protected final boolean gui3d;
+        protected final boolean isSideLit;
         protected final TextureAtlasSprite particle;
         protected final ItemOverrideList overrides;
         private final IBakedModel missing;
 
         public MultiLayerBakedModel(
-                boolean ambientOcclusion, boolean isGui3d, TextureAtlasSprite particle, ItemOverrideList overrides,
+                boolean ambientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrideList overrides,
                 ImmutableMap<RenderType, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
         {
+            this.isSideLit = isSideLit;
             this.models = models;
             this.cameraTransforms = cameraTransforms;
             this.missing = missing;
@@ -162,6 +164,12 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         public boolean isGui3d()
         {
             return gui3d;
+        }
+
+        @Override
+        public boolean func_230044_c_()
+        {
+            return isSideLit;
         }
 
         @Override

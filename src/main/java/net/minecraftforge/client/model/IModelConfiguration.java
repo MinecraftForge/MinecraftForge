@@ -63,6 +63,11 @@ public interface IModelConfiguration {
     boolean isShadedInGui();
 
     /**
+     * @return True if the item is lit from the side
+     */
+    boolean isSideLit();
+
+    /**
      * @return True if the item requires per-vertex lighting.
      */
     boolean useSmoothLighting();

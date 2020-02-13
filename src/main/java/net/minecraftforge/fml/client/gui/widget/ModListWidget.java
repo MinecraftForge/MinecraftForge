@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.gui;
+package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
@@ -59,7 +60,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         return this.listWidth;
     }
 
-    void refreshList() {
+    public void refreshList() {
         this.clearEntries();
         parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
@@ -70,7 +71,7 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         this.parent.renderBackground();
     }
 
-    class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
+    public class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
         private final ModInfo modInfo;
         private final ModListScreen parent;
 

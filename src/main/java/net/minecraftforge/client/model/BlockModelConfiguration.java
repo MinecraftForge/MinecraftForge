@@ -106,7 +106,13 @@ public class BlockModelConfiguration implements IModelConfiguration
 
     @Override
     public boolean isShadedInGui() {
-        return owner.isGui3d();
+        return true;
+    }
+
+    @Override
+    public boolean isSideLit()
+    {
+        return owner.func_230176_c_().func_230178_a_();
     }
 
     @Override

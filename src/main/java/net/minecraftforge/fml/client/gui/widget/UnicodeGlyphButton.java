@@ -17,24 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client.config;
+package net.minecraftforge.fml.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 /**
  * This class provides a button that shows a string glyph at the beginning. The glyph can be scaled using the glyphScale parameter.
  *
  * @author bspkrs
  */
-public class GuiUnicodeGlyphButton extends GuiButtonExt
+public class UnicodeGlyphButton extends ExtendedButton
 {
     public String glyph;
     public float  glyphScale;
 
-    public GuiUnicodeGlyphButton(int xPos, int yPos, int width, int height, String displayString, String glyph, float glyphScale, IPressable handler)
+    public UnicodeGlyphButton(int xPos, int yPos, int width, int height, String displayString, String glyph, float glyphScale, IPressable handler)
     {
         super(xPos, yPos, width, height, displayString, handler);
         this.glyph = glyph;
