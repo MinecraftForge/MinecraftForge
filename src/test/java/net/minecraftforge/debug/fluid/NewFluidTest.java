@@ -50,8 +50,8 @@ public class NewFluidTest
 {
     public static final String MODID = "new_fluid_test";
 
-    public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/brown_mushroom_block");
-    public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/mushroom_stem");
+    public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/water_still");
+    public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/water_flow");
     public static final ResourceLocation FLUID_OVERLAY = new ResourceLocation("minecraft:block/obsidian");
 
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);

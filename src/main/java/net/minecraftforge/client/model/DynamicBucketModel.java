@@ -320,7 +320,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         @Override
         public RenderType getRenderType(ItemStack itemStack)
         {
-            return ForgeRenderTypes.UNSORTED_TRANSLUCENT;
+            return ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get();
         }
     }
 

@@ -19,31 +19,72 @@
 
 package net.minecraftforge.client;
 
-import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.common.util.NonNullLazy;
+import net.minecraftforge.common.util.NonNullSupplier;
+import org.lwjgl.opengl.GL11;
 
-public class ForgeRenderTypes extends RenderType
+import java.util.function.Supplier;
+
+public enum ForgeRenderTypes
 {
-    private ForgeRenderTypes(String p_i225992_1_, VertexFormat p_i225992_2_, int p_i225992_3_, int p_i225992_4_, boolean p_i225992_5_, boolean p_i225992_6_, Runnable p_i225992_7_, Runnable p_i225992_8_)
+    /**
+     * A cached copy of {@link ForgeRenderTypes#unsortedTranslucent(ResourceLocation)}
+     * for use in item models and TileEntityRenderers that use the block/item atlas.
+     */
+    ITEM_UNSORTED_TRANSLUCENT(()->unsortedTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE));
+
+    /**
+     * @return A RenderType fit for translucent item/entity rendering, but with depth sorting disabled.
+     */
+    public static RenderType unsortedTranslucent(ResourceLocation textureLocation)
     {
-        super(p_i225992_1_, p_i225992_2_, p_i225992_3_, p_i225992_4_, p_i225992_5_, p_i225992_6_, p_i225992_7_, p_i225992_8_);
-        throw new IllegalStateException("This class must not be instantiated");
+        return Internal.unsortedTranslucent(textureLocation);
     }
 
-    public static RenderType unsortedTranslucent(ResourceLocation textureLocation, boolean outline) {
-        RenderType.State rendertype$state = RenderType.State.func_228694_a_().func_228724_a_(new RenderState.TextureState(textureLocation, false, false))
-                .func_228726_a_(field_228515_g_).func_228716_a_(field_228532_x_).func_228713_a_(field_228517_i_).func_228714_a_(field_228491_A_)
-                .func_228719_a_(field_228528_t_).func_228722_a_(field_228530_v_).func_228728_a_(outline);
-        return func_228633_a_("entity_unsorted_translucent", DefaultVertexFormats.field_227849_i_, 7, 256, true, false /* disable sorting*/, rendertype$state);
-    }
-    public static RenderType unsortedTranslucent(ResourceLocation p_230168_0_)
+    // ----------------------------------------
+    //  Implementation details below this line
+    // ----------------------------------------
+
+    private final NonNullSupplier<RenderType> renderTypeSupplier;
+
+    ForgeRenderTypes(NonNullSupplier<RenderType> renderTypeSupplier)
     {
-        return unsortedTranslucent(p_230168_0_, true);
+        // Wrap in a Lazy<> to avoid running the supplier more than once.
+        this.renderTypeSupplier = NonNullLazy.of(renderTypeSupplier);
     }
 
-    public static RenderType UNSORTED_TRANSLUCENT = unsortedTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE, true);
+    public RenderType get()
+    {
+        return renderTypeSupplier.get();
+    }
+
+    private static class Internal extends RenderType
+    {
+        private Internal(String name, VertexFormat fmt, int glMode, int size, boolean doCrumbling, boolean depthSorting, Runnable onEnable, Runnable onDisable)
+        {
+            super(name, fmt, glMode, size, doCrumbling, depthSorting, onEnable, onDisable);
+            throw new IllegalStateException("This class must not be instantiated");
+        }
+
+        public static RenderType unsortedTranslucent(ResourceLocation textureLocation)
+        {
+            final boolean sortingEnabled = false;
+            State renderState = State.func_228694_a_()
+                    .func_228724_a_(new TextureState(textureLocation, false, false))
+                    .func_228726_a_(field_228515_g_)
+                    .func_228716_a_(field_228532_x_)
+                    .func_228713_a_(field_228517_i_)
+                    .func_228714_a_(field_228491_A_)
+                    .func_228719_a_(field_228528_t_)
+                    .func_228722_a_(field_228530_v_)
+                    .func_228728_a_(true);
+            return func_228633_a_("entity_unsorted_translucent", DefaultVertexFormats.field_227849_i_, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
+        }
+    }
 }
