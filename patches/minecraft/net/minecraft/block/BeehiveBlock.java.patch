@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BeehiveBlock.java
++++ b/net/minecraft/block/BeehiveBlock.java
+@@ -96,7 +96,7 @@
+    }
+ 
+    public static void func_226878_a_(World p_226878_0_, BlockPos p_226878_1_) {
+-      func_180635_a(p_226878_0_, p_226878_1_, new ItemStack(Items.field_226635_pU_, 3));
++      net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(p_226878_0_, p_226878_1_, p_226878_0_.func_180495_p(p_226878_1_), null, new ItemStack(Items.field_226635_pU_, 3));
+    }
+ 
+    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {

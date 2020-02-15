@@ -48,12 +48,3 @@
                    return false;
                 }
              }
-@@ -209,7 +209,7 @@
- 
-    public void func_220066_a(World p_220066_1_, BlockState p_220066_2_, BlockRayTraceResult p_220066_3_, Entity p_220066_4_) {
-       BlockPos blockpos = p_220066_3_.func_216350_a();
--      func_180635_a(p_220066_1_, blockpos, new ItemStack(this));
-+      net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(p_220066_1_, blockpos, p_220066_2_, null, new ItemStack(this));
-       p_220066_1_.func_175655_b(blockpos, true);
-    }
- }

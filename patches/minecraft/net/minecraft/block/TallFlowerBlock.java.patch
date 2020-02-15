@@ -1,10 +1,10 @@
 --- a/net/minecraft/block/TallFlowerBlock.java
 +++ b/net/minecraft/block/TallFlowerBlock.java
-@@ -25,6 +25,6 @@
+@@ -26,6 +26,6 @@
     }
  
-    public void func_176474_b(World p_176474_1_, Random p_176474_2_, BlockPos p_176474_3_, BlockState p_176474_4_) {
--      func_180635_a(p_176474_1_, p_176474_3_, new ItemStack(this));
-+      net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(p_176474_1_, p_176474_3_, p_176474_4_, null, new ItemStack(this));
+    public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
+-      func_180635_a(p_225535_1_, p_225535_3_, new ItemStack(this));
++      net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(p_225535_1_, p_225535_3_, p_225535_4_, null, new ItemStack(this));
     }
  }
