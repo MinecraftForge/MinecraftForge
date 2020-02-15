@@ -3,7 +3,7 @@
 @@ -24,8 +24,8 @@
  
     public EndDimension(World p_i49932_1_, DimensionType p_i49932_2_) {
-       super(p_i49932_1_, p_i49932_2_);
+       super(p_i49932_1_, p_i49932_2_, 0.0F);
 -      CompoundNBT compoundnbt = p_i49932_1_.func_72912_H().func_186347_a(DimensionType.field_223229_c_);
 -      this.field_186064_g = p_i49932_1_ instanceof ServerWorld ? new DragonFightManager((ServerWorld)p_i49932_1_, compoundnbt.func_74775_l("DragonFight")) : null;
 +      CompoundNBT compoundnbt = p_i49932_1_.func_72912_H().func_186347_a(p_i49932_2_);

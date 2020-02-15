@@ -5,7 +5,7 @@
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
 +            boolean clientStackChanged = !itemstack1.equals(itemstack, true);
-             itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
+             itemstack1 = itemstack.func_77946_l();
              this.field_75153_a.set(i, itemstack1);
  
 +            if (clientStackChanged)

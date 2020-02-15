@@ -25,12 +25,12 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -74,6 +74,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
@@ -462,7 +464,7 @@ public class ForgeEventFactory
 
         if(isCanceled)
         {
-            entityMounting.setPositionAndRotation(entityMounting.posX, entityMounting.posY, entityMounting.posZ, entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            entityMounting.setPositionAndRotation(entityMounting.func_226277_ct_(), entityMounting.func_226278_cu_(), entityMounting.func_226281_cx_(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
             return false;
         }
         else
@@ -481,9 +483,9 @@ public class ForgeEventFactory
         return event.getResultStatus();
     }
 
-    public static void onPlayerWakeup(PlayerEntity player, boolean wakeImmediately, boolean updateWorldFlag, boolean setSpawn)
+    public static void onPlayerWakeup(PlayerEntity player, boolean wakeImmediately, boolean updateWorldFlag)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerWakeUpEvent(player, wakeImmediately, updateWorldFlag, setSpawn));
+        MinecraftForge.EVENT_BUS.post(new PlayerWakeUpEvent(player, wakeImmediately, updateWorldFlag));
     }
 
     public static void onPlayerFall(PlayerEntity player, float distance, float multiplier)
@@ -564,19 +566,22 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
     }
 
-    public static boolean renderFireOverlay(PlayerEntity player, float renderPartialTicks)
+    @OnlyIn(Dist.CLIENT)
+    public static boolean renderFireOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), new BlockPos(player));
     }
 
-    public static boolean renderWaterOverlay(PlayerEntity player, float renderPartialTicks)
+    @OnlyIn(Dist.CLIENT)
+    public static boolean renderWaterOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.WATER.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.getDefaultState(), new BlockPos(player));
     }
 
-    public static boolean renderBlockOverlay(PlayerEntity player, float renderPartialTicks, OverlayType type, BlockState block, BlockPos pos)
+    @OnlyIn(Dist.CLIENT)
+    public static boolean renderBlockOverlay(PlayerEntity player, MatrixStack mat, OverlayType type, BlockState block, BlockPos pos)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
+        return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, mat, type, block, pos));
     }
 
     @Nullable
@@ -726,6 +731,12 @@ public class ForgeEventFactory
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
         else
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+    }
+
+    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
+    {
+        if (wasLoaded != load)
+            fireChunkWatch(load, entity, chunkpos, world);
     }
 
     public static boolean onPistonMovePre(World world, BlockPos pos, Direction direction, boolean extending)

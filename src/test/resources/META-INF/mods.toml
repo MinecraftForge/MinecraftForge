@@ -2,14 +2,6 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
-	modId="testobjmodelmod"
-#[[mods]]
-#	modId="forgedebugmodeldata"
-##[[mods]]
-##    modId="forgedebugmodelloaderregistry"
-[[mods]]
-    modId="forge_blockstate_retexture_test"
-[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
@@ -56,8 +48,16 @@ loaderVersion="[28,)"
 [[mods]]
     modId="player_xp_event_test"
 [[mods]]
-    modId="forgeblockstatesloader"
-[[mods]]
     modId="block_loot_test"
+##[[mods]]
+##    modId="custom_tnt_test"
 [[mods]]
-    modId="custom_tnt_test"
+    modId="new_model_loader_test"
+[[mods]]
+    modId="forgedebugmultilayermodel"
+[[mods]]
+    modId="chunkwatchworldtest"
+[[mods]]
+    modId="trsr_transformer_test"
+[[mods]]
+    modId="nameplate_render_test"

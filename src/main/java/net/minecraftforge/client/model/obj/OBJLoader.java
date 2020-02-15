@@ -19,101 +19,100 @@
 
 package net.minecraftforge.client.model.obj;
 
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.IModelLoader;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
-/*
- * Loader for OBJ models.
- * To enable your mod call instance.addDomain(modid).
- * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
- */
-public enum OBJLoader implements ICustomModelLoader {
-    INSTANCE;
+public class OBJLoader implements IModelLoader<OBJModel>
+{
+    public static OBJLoader INSTANCE = new OBJLoader();
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private IResourceManager manager;
-    private final Set<String> enabledDomains = new HashSet<>();
-    private final Map<ResourceLocation, OBJModel> cache = new HashMap<>();
-    private final Map<ResourceLocation, Exception> errors = new HashMap<>();
+    private final Map<OBJModel.ModelSettings, OBJModel> modelCache = Maps.newHashMap();
+    private final Map<ResourceLocation, MaterialLibrary> materialCache = Maps.newHashMap();
 
-    public void addDomain(String domain)
-    {
-        enabledDomains.add(domain.toLowerCase());
-        LOGGER.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
-    }
+    private IResourceManager manager = Minecraft.getInstance().getResourceManager();
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
-        this.manager = resourceManager;
-        cache.clear();
-        errors.clear();
+        modelCache.clear();
+        materialCache.clear();
+        manager = resourceManager;
     }
 
     @Override
-    public boolean accepts(ResourceLocation modelLocation)
+    public OBJModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
     {
-        return enabledDomains.contains(modelLocation.getNamespace()) && modelLocation.getPath().endsWith(".obj");
+        if (!modelContents.has("model"))
+            throw new RuntimeException("OBJ Loader requires a 'model' key that points to a valid .OBJ model.");
+
+        String modelLocation = modelContents.get("model").getAsString();
+
+        boolean detectCullableFaces = JSONUtils.getBoolean(modelContents, "detectCullableFaces", true);
+        boolean diffuseLighting = JSONUtils.getBoolean(modelContents, "diffuseLighting", false);
+        boolean flipV = JSONUtils.getBoolean(modelContents, "flip-v", false);
+        boolean ambientToFullbright = JSONUtils.getBoolean(modelContents, "ambientToFullbright", true);
+        @Nullable
+        String materialLibraryOverrideLocation = modelContents.has("materialLibraryOverride") ? JSONUtils.getString(modelContents, "materialLibraryOverride") : null;
+
+        return loadModel(new OBJModel.ModelSettings(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation));
     }
 
-    @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
+    public OBJModel loadModel(OBJModel.ModelSettings settings)
     {
-        ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
-        if (!cache.containsKey(file))
-        {
-            IResource resource = null;
+        return modelCache.computeIfAbsent(settings, (data) -> {
+            IResource resource;
             try
             {
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    if (modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
-                    else if (modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
-                    else throw e;
-                }
-                OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = null;
-                try
-                {
-                    model = parser.parse();
-                }
-                catch (Exception e)
-                {
-                    errors.put(modelLocation, e);
-                }
-                finally
-                {
-                    cache.put(modelLocation, model);
-                }
+                resource = manager.getResource(settings.modelLocation);
             }
-            finally
+            catch (IOException e)
             {
-                IOUtils.closeQuietly(resource);
+                throw new RuntimeException("Could not find OBJ model", e);
             }
-        }
-        OBJModel model = cache.get(file);
-        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file, errors.get(modelLocation));
-        return model;
+
+            try(LineReader rdr = new LineReader(resource))
+            {
+                return new OBJModel(rdr, settings);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Could not read OBJ model", e);
+            }
+        });
+    }
+
+    public MaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation)
+    {
+        return materialCache.computeIfAbsent(materialLocation, (location) -> {
+            IResource resource;
+            try
+            {
+                resource = manager.getResource(location);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Could not find OBJ material library", e);
+            }
+
+            try(LineReader rdr = new LineReader(resource))
+            {
+                return new MaterialLibrary(rdr);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Could not read OBJ material library", e);
+            }
+        });
     }
 }

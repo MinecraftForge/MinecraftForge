@@ -9,7 +9,7 @@
           netherportalblock$size.func_150859_c();
           return true;
        } else {
-@@ -245,13 +245,13 @@
+@@ -241,13 +241,13 @@
           int i;
           for(i = 0; i < 22; ++i) {
              BlockPos blockpos = p_180120_1_.func_177967_a(p_180120_2_, i);
@@ -26,7 +26,7 @@
        }
  
        public int func_181100_a() {
-@@ -278,13 +278,13 @@
+@@ -274,13 +274,13 @@
                 }
  
                 if (i == 0) {
@@ -44,7 +44,7 @@
                       break label56;
                    }
                 }
-@@ -292,7 +292,8 @@
+@@ -288,7 +288,8 @@
           }
  
           for(int j = 0; j < this.field_150868_h; ++j) {

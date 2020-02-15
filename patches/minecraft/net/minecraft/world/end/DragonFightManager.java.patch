@@ -34,7 +34,7 @@
        if (this.field_186121_o != null) {
           compoundnbt.func_218657_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
        }
-@@ -490,6 +492,13 @@
+@@ -492,6 +494,13 @@
              endercrystalentity.func_184516_a((BlockPos)null);
           }
        }

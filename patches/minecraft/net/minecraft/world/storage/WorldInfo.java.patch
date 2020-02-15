@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/WorldInfo.java
 +++ b/net/minecraft/world/storage/WorldInfo.java
-@@ -348,6 +348,7 @@
+@@ -362,6 +362,7 @@
        CompoundNBT compoundnbt1 = new CompoundNBT();
  
        for(Entry<DimensionType, CompoundNBT> entry : this.field_186348_N.entrySet()) {

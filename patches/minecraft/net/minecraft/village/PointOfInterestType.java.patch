@@ -1,7 +1,7 @@
 --- a/net/minecraft/village/PointOfInterestType.java
 +++ b/net/minecraft/village/PointOfInterestType.java
-@@ -21,7 +21,7 @@
- import net.minecraft.util.SoundEvents;
+@@ -19,7 +19,7 @@
+ import net.minecraft.util.Util;
  import net.minecraft.util.registry.Registry;
  
 -public class PointOfInterestType {

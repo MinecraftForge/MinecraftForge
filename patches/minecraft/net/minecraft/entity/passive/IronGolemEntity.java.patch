@@ -1,11 +1,16 @@
 --- a/net/minecraft/entity/passive/IronGolemEntity.java
 +++ b/net/minecraft/entity/passive/IronGolemEntity.java
-@@ -106,7 +106,7 @@
-          int k = MathHelper.func_76128_c(this.field_70161_v);
-          BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
-          if (!blockstate.func_196958_f()) {
--            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
-+            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(new BlockPos(i, j, k)), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
+@@ -113,9 +113,10 @@
+          int i = MathHelper.func_76128_c(this.func_226277_ct_());
+          int j = MathHelper.func_76128_c(this.func_226278_cu_() - (double)0.2F);
+          int k = MathHelper.func_76128_c(this.func_226281_cx_());
+-         BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
+-         if (!blockstate.func_196958_f()) {
+-            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.func_226277_ct_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
++         BlockPos pos = new BlockPos(i, j, k);
++         BlockState blockstate = this.field_70170_p.func_180495_p(pos);
++         if (!blockstate.isAir(this.field_70170_p, pos)) {
++            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(pos), this.func_226277_ct_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
           }
        }
  

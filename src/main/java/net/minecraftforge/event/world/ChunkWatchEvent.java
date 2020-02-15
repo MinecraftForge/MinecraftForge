@@ -29,7 +29,8 @@ import net.minecraftforge.eventbus.api.Event;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #chunk} contains the ChunkPos of the Chunk this event is affecting.<br>
+ * {@link #pos} contains the ChunkPos of the Chunk this event is affecting.<br>
+ * {@link #world} contains the World of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
  * <br>
  * The {@link #player}'s world may not be the same as the world of the chunk
@@ -68,7 +69,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-     * {@link PlayerChunkMapEntry#addPlayer(EntityPlayerMP)} and {@link PlayerChunkMapEntry#sendToPlayers()}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#setChunkLoadedAtClient}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
@@ -84,7 +85,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.UnWatch is fired when an EntityPlayer stops watching a chunk.<br>
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
-     * {@link PlayerChunkMapEntry#removePlayer(EntityPlayerMP)}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#setChunkLoadedAtClient}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

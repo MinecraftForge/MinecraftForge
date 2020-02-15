@@ -119,7 +119,7 @@ public interface IForgeWorldType
     default <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer,
             OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)
     {
-        parentLayer = (new BiomeLayer(getWorldType(), chunkSettings)).apply(contextFactory.apply(200L), parentLayer);
+        parentLayer = (new BiomeLayer(getWorldType(), chunkSettings.getBiomeId())).apply(contextFactory.apply(200L), parentLayer);
         parentLayer = AddBambooForestLayer.INSTANCE.apply(contextFactory.apply(1001L), parentLayer);
         parentLayer = LayerUtil.repeat(1000L, ZoomLayer.NORMAL, parentLayer, 2, contextFactory);
         parentLayer = EdgeBiomeLayer.INSTANCE.apply(contextFactory.apply(1000L), parentLayer);

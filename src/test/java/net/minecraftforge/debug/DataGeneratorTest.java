@@ -282,10 +282,10 @@ public class DataGeneratorTest
         protected void registerStatesAndModels()
         {
             // Unnecessarily complicated example to showcase how manual building works
-            ModelFile birchFenceGate = fenceGate("birch_fence_gate", mcLoc("block/birch_planks"));
-            ModelFile birchFenceGateOpen = fenceGateOpen("birch_fence_gate_open", mcLoc("block/birch_planks"));
-            ModelFile birchFenceGateWall = fenceGateWall("birch_fence_gate_wall", mcLoc("block/birch_planks"));
-            ModelFile birchFenceGateWallOpen = fenceGateWallOpen("birch_fence_gate_wall_open", mcLoc("block/birch_planks"));
+            ModelFile birchFenceGate = models().fenceGate("birch_fence_gate", mcLoc("block/birch_planks"));
+            ModelFile birchFenceGateOpen = models().fenceGateOpen("birch_fence_gate_open", mcLoc("block/birch_planks"));
+            ModelFile birchFenceGateWall = models().fenceGateWall("birch_fence_gate_wall", mcLoc("block/birch_planks"));
+            ModelFile birchFenceGateWallOpen = models().fenceGateWallOpen("birch_fence_gate_wall_open", mcLoc("block/birch_planks"));
             ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
             VariantBlockStateBuilder builder = getVariantBuilder(Blocks.BIRCH_FENCE_GATE);
             for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
@@ -339,7 +339,7 @@ public class DataGeneratorTest
                     ConfiguredModel.class));
 
             // From here on, models are 1-to-1 copies of vanilla (except for model locations) and will be tested as such below
-            ModelFile block = getBuilder("block").transforms()
+            ModelFile block = models().getBuilder("block").transforms()
                     .transform(Perspective.GUI)
                         .rotation(30, 225, 0)
                         .scale(0.625f)
@@ -366,13 +366,13 @@ public class DataGeneratorTest
                         .end()
                     .end();
 
-            getBuilder("cube")
+            models().getBuilder("cube")
                 .parent(block)
                 .element()
                     .allFaces((dir, face) -> face.texture("#" + dir.getName()).cullface(dir));
 
-            ModelFile furnace = orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
-            ModelFile furnaceLit = orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
+            ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
+            ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
 
             getVariantBuilder(Blocks.FURNACE)
                 .forAllStates(state -> ConfiguredModel.builder()
@@ -381,8 +381,8 @@ public class DataGeneratorTest
                         .build()
                 );
 
-            ModelFile barrel = cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
-            ModelFile barrelOpen = cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
+            ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
+            ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
 
             logBlock((LogBlock) Blocks.ACACIA_LOG);
@@ -401,8 +401,8 @@ public class DataGeneratorTest
             trapdoorBlock((TrapDoorBlock) Blocks.ACACIA_TRAPDOOR, "acacia", mcLoc("block/acacia_trapdoor"), true);
             trapdoorBlock((TrapDoorBlock) Blocks.OAK_TRAPDOOR, "oak", mcLoc("block/oak_trapdoor"), false); // Test a non-orientable trapdoor
 
-            simpleBlock(Blocks.TORCH, torch("torch", mcLoc("block/torch")));
-            horizontalBlock(Blocks.WALL_TORCH, torchWall("wall_torch", mcLoc("block/torch")), 90);
+            simpleBlock(Blocks.TORCH, models().torch("torch", mcLoc("block/torch")));
+            horizontalBlock(Blocks.WALL_TORCH, models().torchWall("wall_torch", mcLoc("block/torch")), 90);
         }
 
         // Testing the outputs
@@ -416,12 +416,12 @@ public class DataGeneratorTest
         public void act(DirectoryCache cache) throws IOException
         {
             super.act(cache);
-            this.errors.addAll(testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS));
+            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, IGNORED_MODELS));
             this.registeredBlocks.forEach((block, state) -> {
                 if (IGNORED_BLOCKS.contains(block)) return;
                 JsonObject generated = state.toJson();
                 try {
-                    IResource vanillaResource = existingFileHelper.getResource(block.getRegistryName(), ResourcePackType.CLIENT_RESOURCES, ".json", "blockstates");
+                    IResource vanillaResource = models().existingFileHelper.getResource(block.getRegistryName(), ResourcePackType.CLIENT_RESOURCES, ".json", "blockstates");
                     JsonObject existing = GSON.fromJson(new InputStreamReader(vanillaResource.getInputStream()), JsonObject.class);
                     if (state instanceof VariantBlockStateBuilder) {
                         compareVariantBlockstates(block, generated, existing);

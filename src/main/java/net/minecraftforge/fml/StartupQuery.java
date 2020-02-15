@@ -29,8 +29,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PendingCommand;
-import net.minecraftforge.fml.client.gui.GuiConfirmation;
-import net.minecraftforge.fml.client.gui.GuiNotification;
+import net.minecraftforge.fml.client.gui.screen.ConfirmationScreen;
+import net.minecraftforge.fml.client.gui.screen.NotificationScreen;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -220,13 +220,13 @@ public class StartupQuery {
             return (query) -> {
                 Minecraft client = clientSupplier.get();
                 if (query.getResult() == null) {
-                    client.displayGuiScreen(new GuiNotification(query));
+                    client.displayGuiScreen(new NotificationScreen(query));
                 } else {
-                    client.displayGuiScreen(new GuiConfirmation(query));
+                    client.displayGuiScreen(new ConfirmationScreen(query));
                 }
 
                 if (query.isSynchronous()) {
-                    while (client.currentScreen instanceof GuiNotification) {
+                    while (client.currentScreen instanceof NotificationScreen) {
                         if (Thread.interrupted()) {
                             query.exception = new InterruptedException();
                             throw new RuntimeException();

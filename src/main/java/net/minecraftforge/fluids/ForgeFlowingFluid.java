@@ -31,7 +31,6 @@ import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -54,7 +53,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     private final int slopeFindDistance;
     private final int levelDecreasePerBlock;
     private final float explosionResistance;
-    private final BlockRenderLayer renderLayer;
+    //private final BlockRenderLayer renderLayer; // TODO: reimplement
     private final int tickRate;
 
     protected ForgeFlowingFluid(Properties properties)
@@ -68,7 +67,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         this.slopeFindDistance = properties.slopeFindDistance;
         this.levelDecreasePerBlock = properties.levelDecreasePerBlock;
         this.explosionResistance = properties.explosionResistance;
-        this.renderLayer = properties.renderLayer;
+        //this.renderLayer = properties.renderLayer;
         this.tickRate = properties.tickRate;
     }
 
@@ -109,11 +108,11 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         return levelDecreasePerBlock;
     }
 
-    @Override
+    /*@Override
     public BlockRenderLayer getRenderLayer()
     {
         return renderLayer;
-    }
+    }*/
 
     @Override
     public Item getFilledBucket()
@@ -208,7 +207,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private int slopeFindDistance = 4;
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
-        private BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
+        //private BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
         private int tickRate = 5;
 
         public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
@@ -254,10 +253,10 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             return this;
         }
 
-        public Properties renderLayer(BlockRenderLayer layer)
+        /*public Properties renderLayer(BlockRenderLayer layer)
         {
             this.renderLayer = layer;
             return this;
-        }
+        }*/
     }
 }

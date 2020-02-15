@@ -10,7 +10,7 @@
                 p_77659_1_.func_180501_a(blockpos1, Blocks.field_196651_dG.func_176223_P(), 11);
 +               if (net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_77659_2_, blocksnapshot, net.minecraft.util.Direction.UP)) {
 +                  blocksnapshot.restore(true, false);
-+                  return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
++                  return ActionResult.func_226251_d_(itemstack);
 +               }
 +
                 if (p_77659_2_ instanceof ServerPlayerEntity) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/AcaciaFeature.java
++++ b/net/minecraft/world/gen/feature/AcaciaFeature.java
+@@ -24,7 +24,7 @@
+          return false;
+       } else {
+          BlockPos blockpos = optional.get();
+-         this.func_214584_a(p_225557_1_, blockpos.func_177977_b());
++         this.setDirtAt(p_225557_1_, blockpos.func_177977_b(), blockpos);
+          Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_225557_2_);
+          int l = i - p_225557_2_.nextInt(4) - 1;
+          int i1 = 3 - p_225557_2_.nextInt(3);

@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/gen/feature/AbstractSmallTreeFeature.java
++++ b/net/minecraft/world/gen/feature/AbstractSmallTreeFeature.java
+@@ -35,7 +35,7 @@
+          blockpos = p_227212_5_;
+       }
+ 
+-      if (blockpos.func_177956_o() >= 1 && blockpos.func_177956_o() + p_227212_2_ + 1 <= 256) {
++      if (blockpos.func_177956_o() >= 1 && blockpos.func_177956_o() + p_227212_2_ + 1 <= p_227212_1_.getMaxHeight()) {
+          for(int i1 = 0; i1 <= p_227212_2_ + 1; ++i1) {
+             int j1 = p_227212_6_.field_227327_a_.func_225570_a_(p_227212_3_, p_227212_2_, p_227212_4_, i1);
+             BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+@@ -44,7 +44,7 @@
+                int l = -j1;
+ 
+                while(l <= j1) {
+-                  if (i1 + blockpos.func_177956_o() >= 0 && i1 + blockpos.func_177956_o() < 256) {
++                  if (i1 + blockpos.func_177956_o() >= 0 && i1 + blockpos.func_177956_o() < p_227212_1_.getMaxHeight()) {
+                      blockpos$mutable.func_181079_c(k + blockpos.func_177958_n(), i1 + blockpos.func_177956_o(), l + blockpos.func_177952_p());
+                      if (func_214587_a(p_227212_1_, blockpos$mutable) && (p_227212_6_.field_227337_l_ || !func_227222_d_(p_227212_1_, blockpos$mutable))) {
+                         ++l;
+@@ -59,7 +59,7 @@
+             }
+          }
+ 
+-         return func_214585_i(p_227212_1_, blockpos.func_177977_b()) && blockpos.func_177956_o() < 256 - p_227212_2_ - 1 ? Optional.of(blockpos) : Optional.empty();
++         return isSoilOrFarm(p_227212_1_, blockpos.func_177977_b(), p_227212_6_.getSapling()) && blockpos.func_177956_o() < p_227212_1_.getMaxHeight() - p_227212_2_ - 1 ? Optional.of(blockpos) : Optional.empty();
+       } else {
+          return Optional.empty();
+       }

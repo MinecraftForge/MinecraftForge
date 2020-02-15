@@ -45,7 +45,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -84,7 +84,7 @@ public interface IForgeBlockState
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      */
-    default int getLightValue(IEnviromentBlockReader world, BlockPos pos)
+    default int getLightValue(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);
     }
@@ -100,25 +100,6 @@ public interface IForgeBlockState
     default boolean isLadder(IWorldReader world, BlockPos pos, LivingEntity entity)
     {
         return getBlockState().getBlock().isLadder(getBlockState(), world, pos, entity);
-    }
-
-    //TODO: remove in 1.15
-    /**
-     * Check if the face of a block should block rendering.
-     *
-     * Faces which are fully opaque should return true, faces with transparency
-     * or faces which do not span the full size of the block should return false.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @param face The side to check
-     * @return True if the block is opaque on the specified side.
-     * @deprecated This is no longer used for rendering logic.
-     */
-    @Deprecated
-    default boolean doesSideBlockRendering(IEnviromentBlockReader world, BlockPos pos, Direction face)
-    {
-        return getBlockState().getBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
     }
 
     /**
@@ -645,23 +626,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Can return IExtendedBlockState
-     */
-    default BlockState getExtendedState(IBlockReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().getExtendedState(getBlockState(), world, pos);
-    }
-
-    /**
-     * Queries if this blockstate should render in a given layer.
-     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
-     */
-    default boolean canRenderInLayer(BlockRenderLayer layer)
-    {
-        return getBlockState().getBlock().canRenderInLayer(getBlockState(), layer);
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param world The world
      * @param pos The position. Note that the world may not necessarily have {@code state} here!
@@ -751,9 +715,28 @@ public interface IForgeBlockState
      * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
+    default boolean isSlimeBlock()
+    {
+        return getBlockState().getBlock().isSlimeBlock(getBlockState());
+    }
+
+    /**
+     * @param state The state
+     * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
+     */
     default boolean isStickyBlock()
     {
         return getBlockState().getBlock().isStickyBlock(getBlockState());
+    }
+
+    /**
+     * Determines if this block can stick to another block when pushed by a piston.
+     * @param other Other block
+     * @return True to link blocks
+     */
+    default boolean canStickTo(BlockState other)
+    {
+        return getBlockState().getBlock().canStickTo(getBlockState(), other);
     }
 
     /**
@@ -869,6 +852,17 @@ public interface IForgeBlockState
      * @return the PathNodeType
      */
     @Nullable
+    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos)
+    {
+        return getAiPathNodeType(world, pos, null);
+    }
+
+    /**
+     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     *
+     * @return the PathNodeType
+     */
+    @Nullable
     default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
         return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
@@ -903,5 +897,18 @@ public interface IForgeBlockState
     default boolean collisionExtendsVertically(IBlockReader world, BlockPos pos, Entity collidingEntity)
     {
         return getBlockState().getBlock().collisionExtendsVertically(getBlockState(), world, pos, collidingEntity);
+    }
+
+    /**
+     * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @param fluidState The state of the fluid
+     * @return Whether the fluid overlay texture should be used
+     */
+    default boolean shouldDisplayFluidOverlay(ILightReader world, BlockPos pos, IFluidState fluidState)
+    {
+        return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
     }
 }

@@ -19,9 +19,53 @@
 
 package net.minecraftforge.client;
 
-import com.mojang.blaze3d.platform.GLX;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
+import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glColorPointer;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glMultMatrixf;
+import static org.lwjgl.opengl.GL11.glNormalPointer;
+import static org.lwjgl.opengl.GL11.glTexCoordPointer;
+import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
+import org.lwjgl.opengl.GL13;
+
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.block.BlockState;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -32,13 +76,7 @@ import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -47,11 +85,11 @@ import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -61,11 +99,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
@@ -76,11 +114,11 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -89,21 +127,16 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.ITransformation;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
@@ -113,29 +146,6 @@ import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
-import org.lwjgl.BufferUtils;
-
-import javax.annotation.Nonnull;
-import javax.vecmath.Matrix3f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.*;
-
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 public class ForgeHooksClient
 {
@@ -149,39 +159,33 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
-    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, int subID, float partialTicks)
+    public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         switch (target.getType()) {
             case BLOCK:
                 if (!(target instanceof BlockRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, partialTicks, matrix, buffers));
             case ENTITY:
                 if (!(target instanceof EntityRayTraceResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
         }
-        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
-    public static void dispatchRenderLast(WorldRenderer context, float partialTicks)
+    public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
+        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
     }
 
-    public static boolean renderFirstPersonHand(WorldRenderer context, float partialTicks)
+    public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks));
-    }
-
-    public static boolean renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
-    {
-        return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
     {
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
-        ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }
 
     public static void onTextureStitchedPost(AtlasTexture map)
@@ -199,9 +203,9 @@ public class ForgeHooksClient
         ModLoader.get().postEvent(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
-    static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();
+    static final ThreadLocal<RenderType> renderLayer = new ThreadLocal<RenderType>();
 
-    public static void setRenderLayer(BlockRenderLayer layer)
+    public static void setRenderLayer(RenderType layer)
     {
         renderLayer.set(layer);
     }
@@ -282,8 +286,8 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BlockPos pos = center.add(x, 0, z);
-                Biome biome = world.getBiome(pos);
-                int colour = biome.getSkyColorByTemp(biome.getTemperature(pos));
+                Biome biome = world.func_225526_b_(pos.getX(), pos.getY(), pos.getZ());
+                int colour = 0xFFFFFF; // TODO: biome.getSkyColorByTemp(biome.getTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;
@@ -356,21 +360,21 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
-    public static float getFogDensity(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, float partial, float density)
+    public static float getFogDensity(FogType type, ActiveRenderInfo info, float partial, float density)
     {
-        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(fogRenderer, renderer, info, partial, density);
+        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(type, info, partial, density);
         if (MinecraftForge.EVENT_BUS.post(event)) return event.getDensity();
         return -1;
     }
 
-    public static void onFogRender(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, float partial, int mode, float distance)
+    public static void onFogRender(FogType type, ActiveRenderInfo info, float partial, float distance)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(fogRenderer, renderer, info, partial, mode, distance));
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, info, partial, distance));
     }
 
-    public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, ActiveRenderInfo info, float partial, float yaw, float pitch, float roll)
+    public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, ActiveRenderInfo info, float partial)
     {
-        EntityViewRenderEvent.CameraSetup event = new EntityViewRenderEvent.CameraSetup(renderer, info, partial, yaw, pitch, roll);
+        EntityViewRenderEvent.CameraSetup event = new EntityViewRenderEvent.CameraSetup(renderer, info, partial, info.getYaw(), info.getPitch(), 0);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -381,73 +385,42 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
-    {
-        Matrix4f m = new Matrix4f(), t = new Matrix4f();
-        m.setIdentity();
-        m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
-        t.setIdentity();
-        t.rotY(transform.rotation.getY());
-        m.mul(t);
-        t.setIdentity();
-        t.rotX(transform.rotation.getX());
-        m.mul(t);
-        t.setIdentity();
-        t.rotZ(transform.rotation.getZ());
-        m.mul(t);
-        t.setIdentity();
-        t.m00 = transform.scale.getX();
-        t.m11 = transform.scale.getY();
-        t.m22 = transform.scale.getZ();
-        m.mul(t);
-        return m;
-    }
-
-    private static final Matrix4f flipX;
+    private static final net.minecraft.client.renderer.Matrix4f flipX;
+    private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
     static {
-        flipX = new Matrix4f();
-        flipX.setIdentity();
-        flipX.m00 = -1;
+        flipX = Matrix4f.func_226593_a_(-1,1,1);
+        flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
     }
 
-    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
+    public static IBakedModel handleCameraTransforms(MatrixStack matrixStack, IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
     {
-        Pair<? extends IBakedModel, Matrix4f> pair = model.handlePerspective(cameraTransformType);
+        MatrixStack stack = new MatrixStack();
+        model = model.handlePerspective(cameraTransformType, stack);
 
-        if (pair.getRight() != null)
+        // If the stack is not empty, the code has added a matrix for us to use.
+        if (!stack.func_227867_d_())
         {
-            Matrix4f matrix = new Matrix4f(pair.getRight());
+            // Apply the transformation to the real matrix stack, flipping for left hand
+            net.minecraft.client.renderer.Matrix4f tMat = stack.func_227866_c_().func_227870_a_();
+            net.minecraft.client.renderer.Matrix3f nMat = stack.func_227866_c_().func_227872_b_();
             if (leftHandHackery)
             {
-                matrix.mul(flipX, matrix);
-                matrix.mul(matrix, flipX);
+                tMat.multiplyBackward(flipX);
+                tMat.func_226595_a_(flipX);
+                nMat.multiplyBackward(flipXNormal);
+                nMat.func_226118_b_(flipXNormal);
             }
-            multiplyCurrentGlMatrix(matrix);
+            matrixStack.func_227866_c_().func_227870_a_().func_226595_a_(tMat);
+            matrixStack.func_227866_c_().func_227872_b_().func_226118_b_(nMat);
         }
-        return pair.getLeft();
-    }
-
-    private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
-
-    public static void multiplyCurrentGlMatrix(Matrix4f matrix)
-    {
-        matrixBuf.clear();
-        float[] t = new float[4];
-        for(int i = 0; i < 4; i++)
-        {
-            matrix.getColumn(i, t);
-            matrixBuf.put(t);
-        }
-        matrixBuf.flip();
-        glMultMatrixf(matrixBuf);
+        return model;
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw
 
     public static void preDraw(Usage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
-        VertexFormatElement attr = format.getElement(element);
+        VertexFormatElement attr = format.func_227894_c_().get(element);
         int count = attr.getElementCount();
         int constant = attr.getType().getGlConstant();
         buffer.position(format.getOffset(element));
@@ -470,10 +443,10 @@ public class ForgeHooksClient
                 glEnableClientState(GL_COLOR_ARRAY);
                 break;
             case UV:
-                GLX.glClientActiveTexture(GLX.GL_TEXTURE0 + attr.getIndex());
+                GL13.glClientActiveTexture(GL13.GL_TEXTURE0 + attr.getIndex());
                 glTexCoordPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                GLX.glClientActiveTexture(GLX.GL_TEXTURE0);
+                GL13.glClientActiveTexture(GL13.GL_TEXTURE0);
                 break;
             case PADDING:
                 break;
@@ -488,7 +461,7 @@ public class ForgeHooksClient
 
     public static void postDraw(Usage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
-        VertexFormatElement attr = format.getElement(element);
+        VertexFormatElement attr = format.func_227894_c_().get(element);
         switch(attrType)
         {
             case POSITION:
@@ -499,13 +472,11 @@ public class ForgeHooksClient
                 break;
             case COLOR:
                 glDisableClientState(GL_COLOR_ARRAY);
-                // is this really needed?
-                GlStateManager.clearCurrentColor();
                 break;
             case UV:
-                GLX.glClientActiveTexture(GLX.GL_TEXTURE0 + attr.getIndex());
+                GL13.glClientActiveTexture(GL13.GL_TEXTURE0 + attr.getIndex());
                 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-                GLX.glClientActiveTexture(GLX.GL_TEXTURE0);
+                GL13.glClientActiveTexture(GL13.GL_TEXTURE0);
                 break;
             case PADDING:
                 break;
@@ -517,35 +488,24 @@ public class ForgeHooksClient
         }
     }
 
-    public static void transform(net.minecraft.client.renderer.Vector3f vec, Matrix4f m)
+    public static int getColorIndex(VertexFormat fmt)
     {
-        Vector4f tmp = new Vector4f(vec.getX(), vec.getY(), vec.getZ(), 1f);
-        m.transform(tmp);
-        if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
-        vec.set(tmp.x, tmp.y, tmp.z);
+        ImmutableList<VertexFormatElement> elements = fmt.func_227894_c_();
+        for(int i=0;i<elements.size();i++)
+        {
+            if (elements.get(i).getUsage() == Usage.COLOR)
+                return i;
+        }
+        throw new IndexOutOfBoundsException("There is no COLOR element in the provided VertexFormat.");
     }
 
-    public static Matrix4f getMatrix(ModelRotation modelRotation)
+    // TODO: IVertexBuilder doesn't have a means to modify existing data.
+    /*
+    public static void putQuadColor(IVertexBuilder renderer, BakedQuad quad, float cr, float cg, float cb, float ca)
     {
-        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.func_217650_a()), new Vector3f(), 1), tmp = new Matrix4f();
-        tmp.setIdentity();
-        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
-        ret.mul(tmp, ret);
-        tmp.invert();
-        //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
-        ret.mul(tmp);
-        return ret;
-    }
-
-    public static void putQuadColor(BufferBuilder renderer, BakedQuad quad, int color)
-    {
-        float cb = color & 0xFF;
-        float cg = (color >>> 8) & 0xFF;
-        float cr = (color >>> 16) & 0xFF;
-        float ca = (color >>> 24) & 0xFF;
         VertexFormat format = quad.getFormat();
         int size = format.getIntegerSize();
-        int offset = format.getColorOffset() / 4; // assumes that color is aligned
+        int offset = format.getOffset(getColorIndex(format)) / 4; // assumes that color is aligned
         boolean hasColor = format.hasColor();
         for(int i = 0; i < 4; i++)
         {
@@ -560,247 +520,75 @@ public class ForgeHooksClient
             int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
             renderer.putColorRGBA(renderer.getColorIndex(4 - i), ncr, ncg, ncb, nca);
         }
-    }
+    }*/
 
-    public static TextureAtlasSprite[] getFluidSprites(IEnviromentBlockReader world, BlockPos pos, IFluidState fluidStateIn)
+    @SuppressWarnings("deprecation")
+    public static TextureAtlasSprite[] getFluidSprites(ILightReader world, BlockPos pos, IFluidState fluidStateIn)
     {
-        AtlasTexture atlas = Minecraft.getInstance().getTextureMap();
+        ResourceLocation overlayTexture = fluidStateIn.getFluid().getAttributes().getOverlayTexture();
         return new TextureAtlasSprite[] {
-                atlas.getSprite(fluidStateIn.getFluid().getAttributes().getStill(world, pos)),
-                atlas.getSprite(fluidStateIn.getFluid().getAttributes().getFlowing(world, pos)),
+                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getStillTexture(world, pos)),
+                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getFlowingTexture(world, pos)),
+                overlayTexture == null ? null : Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(overlayTexture),
         };
     }
 
-    public static void gatherFluidTextures(Set<ResourceLocation> textures)
+    public static void gatherFluidTextures(Set<Material> textures)
     {
         ForgeRegistries.FLUIDS.getValues().stream()
-                .flatMap(f -> f.getAttributes().getTextures())
-                .filter(Objects::nonNull)
+                .flatMap(ForgeHooksClient::getFluidMaterials)
                 .forEach(textures::add);
     }
 
-    private static class LightGatheringTransformer extends QuadGatheringTransformer {
-
-        private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
-
-        int blockLight, skyLight;
-
-        { setVertexFormat(FORMAT); }
-
-        boolean hasLighting()
-        {
-            return dataLength[1] >= 2;
-        }
-
-        @Override
-        protected void processQuad()
-        {
-            // Reset light data
-            blockLight = 0;
-            skyLight = 0;
-            // Compute average light for all 4 vertices
-            for (int i = 0; i < 4; i++)
-            {
-                blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
-                skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
-            }
-            // Values must be multiplied by 16, divided by 4 for average => x4
-            blockLight *= 4;
-            skyLight *= 4;
-        }
-
-        // Dummy overrides
-
-        @Override
-        public void setQuadTint(int tint) {}
-
-        @Override
-        public void setQuadOrientation(Direction orientation) {}
-
-        @Override
-        public void setApplyDiffuseLighting(boolean diffuse) {}
-
-        @Override
-        public void setTexture(TextureAtlasSprite texture) {}
+    public static Stream<Material> getFluidMaterials(Fluid fluid)
+    {
+        return fluid.getAttributes().getTextures()
+                .filter(Objects::nonNull)
+                .map(ForgeHooksClient::getBlockMaterial);
     }
 
-    private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
-
-    public static void renderLitItem(ItemRenderer ri, IBakedModel model, int color, ItemStack stack)
+    @SuppressWarnings("deprecation")
+    public static Material getBlockMaterial(ResourceLocation loc)
     {
-        List<BakedQuad> allquads = new ArrayList<>();
-        Random random = new Random();
-        long seed = 42L;
-
-        for (Direction enumfacing : Direction.values())
-        {
-            random.setSeed(seed);
-            allquads.addAll(model.getQuads(null, enumfacing, random));
-        }
-
-        random.setSeed(seed);
-        allquads.addAll(model.getQuads(null, null, random));
-
-        if (allquads.isEmpty()) return;
-
-        // Current list of consecutive quads with the same lighting
-        List<BakedQuad> segment = new ArrayList<>();
-
-        // Lighting of the current segment
-        int segmentBlockLight = 0;
-        int segmentSkyLight = 0;
-        // Diffuse lighting state
-        boolean segmentShading = true;
-        // State changed by the current segment
-        boolean segmentLightingDirty = false;
-        boolean segmentShadingDirty = false;
-        // If the current segment contains lighting data
-        boolean hasLighting = false;
-
-        for (int i = 0; i < allquads.size(); i++)
-        {
-            BakedQuad q = allquads.get(i);
-
-            // Lighting of the current quad
-            int bl = 0;
-            int sl = 0;
-
-            // Fail-fast on ITEM, as it cannot have light data
-            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUv(1))
-            {
-                q.pipe(lightGatherer);
-                if (lightGatherer.hasLighting())
-                {
-                    bl = lightGatherer.blockLight;
-                    sl = lightGatherer.skyLight;
-                }
-            }
-
-            boolean shade = q.shouldApplyDiffuseLighting();
-
-            boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
-            boolean shadeDirty = shade != segmentShading;
-
-            // If lighting or color data has changed, draw the segment and flush it
-            if (lightingDirty || shadeDirty)
-            {
-                if (i > 0) // Make sure this isn't the first quad being processed
-                {
-                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < i), segmentShadingDirty);
-                }
-                segmentBlockLight = bl;
-                segmentSkyLight = sl;
-                segmentShading = shade;
-                segmentLightingDirty = lightingDirty;
-                segmentShadingDirty = shadeDirty;
-                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0 || !segmentShading;
-            }
-
-            segment.add(q);
-        }
-
-        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentShadingDirty);
-
-        // Clean up render state if necessary
-        if (hasLighting)
-        {
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, GLX.lastBrightnessX, GLX.lastBrightnessY);
-            GlStateManager.enableLighting();
-        }
-    }
-
-    private static void drawSegment(ItemRenderer ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean shade, boolean updateLighting, boolean updateShading)
-    {
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.ITEM);
-
-        float lastBl = GLX.lastBrightnessX;
-        float lastSl = GLX.lastBrightnessY;
-
-        if (updateShading)
-        {
-            if (shade)
-            {
-                // (Re-)enable lighting for normal look with shading
-                GlStateManager.enableLighting();
-            }
-            else
-            {
-                // Disable lighting to simulate a lack of diffuse lighting
-                GlStateManager.disableLighting();
-            }
-        }
-
-        if (updateLighting)
-        {
-            // Force lightmap coords to simulate synthetic lighting
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, Math.max(bl, lastBl), Math.max(sl, lastSl));
-        }
-
-        ri.renderQuads(bufferbuilder, segment, baseColor, stack);
-        Tessellator.getInstance().draw();
-
-        // Preserve this as it represents the "world" lighting
-        GLX.lastBrightnessX = lastBl;
-        GLX.lastBrightnessY = lastSl;
-
-        segment.clear();
+        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
     /**
      * internal, relies on fixed format of FaceBakery
      */
+    // TODO Do we need this?
     public static void fillNormal(int[] faceData, Direction facing)
     {
         Vector3f v1 = getVertexPos(faceData, 3);
-        Vector3f t  = getVertexPos(faceData, 1);
+        Vector3f t1 = getVertexPos(faceData, 1);
         Vector3f v2 = getVertexPos(faceData, 2);
-        v1.sub(t);
-        t.set(getVertexPos(faceData, 0));
-        v2.sub(t);
-        v1.cross(v2, v1);
-        v1.normalize();
+        Vector3f t2 = getVertexPos(faceData, 0);
+        v1.sub(t1);
+        v2.sub(t2);
+        v2.cross(v1);
+        v2.func_229194_d_();
 
-        int x = ((byte) Math.round(v1.x * 127)) & 0xFF;
-        int y = ((byte) Math.round(v1.y * 127)) & 0xFF;
-        int z = ((byte) Math.round(v1.z * 127)) & 0xFF;
+        int x = ((byte) Math.round(v2.getX() * 127)) & 0xFF;
+        int y = ((byte) Math.round(v2.getY() * 127)) & 0xFF;
+        int z = ((byte) Math.round(v2.getZ() * 127)) & 0xFF;
 
         int normal = x | (y << 0x08) | (z << 0x10);
 
         for(int i = 0; i < 4; i++)
         {
-            faceData[i * 7 + 6] = normal;
+            faceData[i * 8 + 7] = normal;
         }
     }
 
     private static Vector3f getVertexPos(int[] data, int vertex)
     {
-        int idx = vertex * 7;
+        int idx = vertex * 8;
 
         float x = Float.intBitsToFloat(data[idx]);
         float y = Float.intBitsToFloat(data[idx + 1]);
         float z = Float.intBitsToFloat(data[idx + 2]);
 
         return new Vector3f(x, y, z);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
-    {
-        if(part.isPresent()) return Optional.empty();
-        return Optional.of(TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transform)));
-    }
-
-    public static Optional<TRSRTransformation> applyTransform(ModelRotation rotation, Optional<? extends IModelPart> part)
-    {
-        if(part.isPresent()) return Optional.empty();
-        return Optional.of(TRSRTransformation.from(rotation));
-    }
-
-    public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
-    {
-        if(part.isPresent()) return Optional.empty();
-        return Optional.of(new TRSRTransformation(matrix));
     }
 
     public static void loadEntityShader(Entity entity, GameRenderer entityRenderer)
@@ -813,12 +601,6 @@ public class ForgeHooksClient
                 entityRenderer.loadShader(shader);
             }
         }
-    }
-
-    public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, BlockState state, IEnviromentBlockReader world, BlockPos pos, long randomPosition)
-    {
-        state = state.getBlock().getExtendedState(state, world, pos);
-        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, new Random(), randomPosition)).build();
     }
 
     private static int slotMainHand = 0;
@@ -838,48 +620,6 @@ public class ForgeHooksClient
             slotMainHand = slot;
         }
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
-    }
-
-    public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, Direction originalSide, ITransformation rotation)
-    {
-        TRSRTransformation global = new TRSRTransformation(rotation.getMatrixVec());
-        Matrix4f uv = global.getUVLockTransform(originalSide).getMatrixVec();
-        Vector4f vec = new Vector4f(0, 0, 0, 1);
-        float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
-        float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
-        vec.x = u0 / 16;
-        vec.y = v0 / 16;
-        uv.transform(vec);
-        float uMin = 16 * vec.x; // / vec.w;
-        float vMin = 16 * vec.y; // / vec.w;
-        float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
-        float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
-        vec.x = u1 / 16;
-        vec.y = v1 / 16;
-        vec.z = 0;
-        vec.w = 1;
-        uv.transform(vec);
-        float uMax = 16 * vec.x; // / vec.w;
-        float vMax = 16 * vec.y; // / vec.w;
-        if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
-        {
-            float t = uMin;
-            uMin = uMax;
-            uMax = t;
-        }
-        if (vMin > vMax && v0 < v1 || vMin < vMax && v0 > v1)
-        {
-            float t = vMin;
-            vMin = vMax;
-            vMax = t;
-        }
-        float a = (float)Math.toRadians(blockFaceUV.rotation);
-        Vector3f rv = new Vector3f(MathHelper.cos(a), MathHelper.sin(a), 0);
-        Matrix3f rot = new Matrix3f();
-        uv.getRotationScale(rot);
-        rot.transform(rv);
-        int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.y, rv.x)) / 90) * 90, 360);
-        return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 
     public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)
@@ -903,12 +643,13 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
+    public static IBakedModel handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type, MatrixStack stack)
     {
-        TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
-        Matrix4f mat = null;
-        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrixVec();
-        return Pair.of(model, mat);
+        TransformationMatrix tr = TransformationHelper.toTransformation(model.getItemCameraTransforms().getTransform(type));
+        if(!tr.isIdentity()) {
+            tr.push(stack);
+        }
+        return model;
     }
 
     public static void onInputUpdate(PlayerEntity player, MovementInput movementInput)
@@ -960,7 +701,7 @@ public class ForgeHooksClient
 
     public static boolean onGuiMouseScrollPre(MouseHelper mouseHelper, Screen guiScreen, double scrollDelta)
     {
-        MainWindow mainWindow = guiScreen.getMinecraft().mainWindow;
+        MainWindow mainWindow = guiScreen.getMinecraft().func_228018_at_();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
         Event event = new GuiScreenEvent.MouseScrollEvent.Pre(guiScreen, mouseX, mouseY, scrollDelta);
@@ -969,7 +710,7 @@ public class ForgeHooksClient
 
     public static boolean onGuiMouseScrollPost(MouseHelper mouseHelper, Screen guiScreen, double scrollDelta)
     {
-        MainWindow mainWindow = guiScreen.getMinecraft().mainWindow;
+        MainWindow mainWindow = guiScreen.getMinecraft().func_228018_at_();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
         Event event = new GuiScreenEvent.MouseScrollEvent.Post(guiScreen, mouseX, mouseY, scrollDelta);
@@ -1057,5 +798,12 @@ public class ForgeHooksClient
     public static boolean onRawMouseClicked(int button, int action, int mods)
     {
         return MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods));
+    }
+
+    public static InputEvent.ClickInputEvent onClickInput(int button, KeyBinding keyBinding, Hand hand)
+    {
+        InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }

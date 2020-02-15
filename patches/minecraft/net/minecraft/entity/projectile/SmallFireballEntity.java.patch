@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/SmallFireballEntity.java
 +++ b/net/minecraft/entity/projectile/SmallFireballEntity.java
-@@ -40,7 +40,7 @@
+@@ -41,7 +41,7 @@
                    entity.func_223308_g(i);
                 }
              }

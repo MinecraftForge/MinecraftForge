@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/MainMenuScreen.java
 +++ b/net/minecraft/client/gui/screen/MainMenuScreen.java
-@@ -51,6 +51,7 @@
+@@ -45,6 +45,7 @@
     private final RenderSkybox field_209101_K = new RenderSkybox(field_213098_a);
     private final boolean field_213102_y;
     private long field_213103_z;
@@ -8,7 +8,7 @@
  
     public MainMenuScreen() {
        this(false);
-@@ -98,10 +99,14 @@
+@@ -88,10 +89,14 @@
        this.field_193979_N = this.width - this.field_193978_M - 2;
        int i = 24;
        int j = this.height / 4 + 48;
@@ -18,12 +18,12 @@
        } else {
           this.func_73969_a(j, 24);
 +         modbutton = this.addButton(new Button(this.width / 2 - 100, j + 24 * 2, 98, 20, I18n.func_135052_a("fml.menu.mods"), button -> {
-+            this.minecraft.func_147108_a(new net.minecraftforge.fml.client.gui.GuiModList(this));
++            this.minecraft.func_147108_a(new net.minecraftforge.fml.client.gui.screen.ModListScreen(this));
 +         }));
        }
  
        this.addButton(new ImageButton(this.width / 2 - 124, j + 72 + 12, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (p_213090_1_) -> {
-@@ -130,6 +135,7 @@
+@@ -116,6 +121,7 @@
        if (this.func_183501_a()) {
           this.field_183503_M.init(this.minecraft, this.width, this.height);
        }
@@ -31,25 +31,25 @@
  
     }
  
-@@ -140,7 +146,7 @@
-       this.addButton(new Button(this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 1, 200, 20, I18n.func_135052_a("menu.multiplayer"), (p_213086_1_) -> {
-          this.minecraft.func_147108_a(new MultiplayerScreen(this));
+@@ -131,7 +137,7 @@
+          }
+ 
        }));
 -      this.addButton(new Button(this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 200, 20, I18n.func_135052_a("menu.online"), (p_213095_1_) -> {
 +      this.addButton(new Button(this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online"), (p_213095_1_) -> {
           this.func_140005_i();
        }));
     }
-@@ -204,6 +210,7 @@
+@@ -195,6 +201,7 @@
  
           this.minecraft.func_110434_K().func_110577_a(field_194400_H);
           blit(j + 88, 67, 0.0F, 0.0F, 98, 14, 128, 16);
 +         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.font, this.width, this.height);
           if (this.field_73975_c != null) {
-             GlStateManager.pushMatrix();
-             GlStateManager.translatef((float)(this.width / 2 + 90), 70.0F, 0.0F);
-@@ -222,7 +229,13 @@
-             s = s + ("release".equalsIgnoreCase(this.minecraft.func_184123_d()) ? "" : "/" + this.minecraft.func_184123_d());
+             RenderSystem.pushMatrix();
+             RenderSystem.translatef((float)(this.width / 2 + 90), 70.0F, 0.0F);
+@@ -217,7 +224,13 @@
+             s = s + I18n.func_135052_a("menu.modded");
           }
  
 -         this.drawString(this.font, s, 2, this.height - 10, 16777215 | l);
@@ -63,7 +63,7 @@
           this.drawString(this.font, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.height - 10, 16777215 | l);
           if (p_render_1_ > this.field_193979_N && p_render_1_ < this.field_193979_N + this.field_193978_M && p_render_2_ > this.height - 10 && p_render_2_ < this.height) {
              fill(this.field_193979_N, this.height - 1, this.field_193979_N + this.field_193978_M, this.height, 16777215 | l);
-@@ -240,6 +253,7 @@
+@@ -231,6 +244,7 @@
           if (this.func_183501_a() && f1 >= 1.0F) {
              this.field_183503_M.render(p_render_1_, p_render_2_, p_render_3_);
           }

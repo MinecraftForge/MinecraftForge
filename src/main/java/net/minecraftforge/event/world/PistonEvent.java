@@ -21,7 +21,7 @@ package net.minecraftforge.event.world;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.PistonBlockStructureHelper;
+import net.minecraft.block.PistonBlockStructureHelper;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

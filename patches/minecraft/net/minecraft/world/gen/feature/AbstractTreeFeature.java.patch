@@ -1,47 +1,38 @@
 --- a/net/minecraft/world/gen/feature/AbstractTreeFeature.java
 +++ b/net/minecraft/world/gen/feature/AbstractTreeFeature.java
-@@ -27,19 +27,25 @@
- import net.minecraft.world.gen.feature.template.Template;
- 
- public abstract class AbstractTreeFeature<T extends IFeatureConfig> extends Feature<T> {
-+   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196674_t;
-+
-    public AbstractTreeFeature(Function<Dynamic<?>, ? extends T> p_i49920_1_, boolean p_i49920_2_) {
-       super(p_i49920_1_, p_i49920_2_);
+@@ -34,6 +34,8 @@
     }
  
     protected static boolean func_214587_a(IWorldGenerationBaseReader p_214587_0_, BlockPos p_214587_1_) {
-+      if (!(p_214587_0_ instanceof net.minecraft.world.IWorldReader)) // FORGE: Redirect to state method when possible
++      if (p_214587_0_ instanceof net.minecraft.world.IWorldReader) // FORGE: Redirect to state method when possible
++         return p_214587_0_.func_217375_a(p_214587_1_, state -> state.canBeReplacedByLogs((net.minecraft.world.IWorldReader)p_214587_0_, p_214587_1_));
        return p_214587_0_.func_217375_a(p_214587_1_, (p_214573_0_) -> {
           Block block = p_214573_0_.func_177230_c();
-          return p_214573_0_.func_196958_f() || p_214573_0_.func_203425_a(BlockTags.field_206952_E) || block == Blocks.field_196658_i || Block.func_196245_f(block) || block.func_203417_a(BlockTags.field_200031_h) || block.func_203417_a(BlockTags.field_200030_g) || block == Blocks.field_150395_bd;
-       });
-+      else return p_214587_0_.func_217375_a(p_214587_1_, state -> state.canBeReplacedByLogs((net.minecraft.world.IWorldReader)p_214587_0_, p_214587_1_)); 
+          return p_214573_0_.func_196958_f() || p_214573_0_.func_203425_a(BlockTags.field_206952_E) || func_227250_b_(block) || block.func_203417_a(BlockTags.field_200031_h) || block.func_203417_a(BlockTags.field_200030_g) || block == Blocks.field_150395_bd;
+@@ -41,6 +43,8 @@
     }
  
-    protected static boolean func_214574_b(IWorldGenerationBaseReader p_214574_0_, BlockPos p_214574_1_) {
-+      if (!(p_214574_0_ instanceof net.minecraft.world.IBlockReader)) // FORGE: Redirect to state method when possible
+    public static boolean func_214574_b(IWorldGenerationBaseReader p_214574_0_, BlockPos p_214574_1_) {
++      if (p_214574_0_ instanceof net.minecraft.world.IBlockReader) // FORGE: Redirect to state method when possible
++        return p_214574_0_.func_217375_a(p_214574_1_, state -> state.isAir((net.minecraft.world.IBlockReader)p_214574_0_, p_214574_1_));
        return p_214574_0_.func_217375_a(p_214574_1_, BlockState::func_196958_f);
-+      else return p_214574_0_.func_217375_a(p_214574_1_, state -> state.isAir((net.minecraft.world.IBlockReader)p_214574_0_, p_214574_1_));
     }
  
-    protected static boolean func_214578_c(IWorldGenerationBaseReader p_214578_0_, BlockPos p_214578_1_) {
-@@ -61,11 +67,14 @@
+@@ -64,17 +68,27 @@
     }
  
-    protected static boolean func_214572_g(IWorldGenerationBaseReader p_214572_0_, BlockPos p_214572_1_) {
-+      if (!(p_214572_0_ instanceof net.minecraft.world.IWorldReader)) // FORGE: Redirect to state method when possible
-       return p_214572_0_.func_217375_a(p_214572_1_, (p_214581_0_) -> {
-          return p_214581_0_.func_196958_f() || p_214581_0_.func_203425_a(BlockTags.field_206952_E);
+    public static boolean func_214572_g(IWorldGenerationBaseReader p_214572_0_, BlockPos p_214572_1_) {
++      if (p_214572_0_ instanceof net.minecraft.world.IWorldReader) // FORGE: Redirect to state method when possible
++         return p_214572_0_.func_217375_a(p_214572_1_, state -> state.canBeReplacedByLeaves((net.minecraft.world.IWorldReader)p_214572_0_, p_214572_1_));
+       return p_214572_0_.func_217375_a(p_214572_1_, (p_227223_0_) -> {
+          return p_227223_0_.func_196958_f() || p_227223_0_.func_203425_a(BlockTags.field_206952_E);
        });
-+      else return p_214572_0_.func_217375_a(p_214572_1_, state -> state.canBeReplacedByLeaves((net.minecraft.world.IWorldReader)p_214572_0_, p_214572_1_));
     }
  
 +   @Deprecated //Forge: moved to isSoil
-    protected static boolean func_214589_h(IWorldGenerationBaseReader p_214589_0_, BlockPos p_214589_1_) {
-       return p_214589_0_.func_217375_a(p_214589_1_, (p_214582_0_) -> {
-          Block block = p_214582_0_.func_177230_c();
-@@ -73,6 +82,13 @@
+    public static boolean func_214589_h(IWorldGenerationBaseReader p_214589_0_, BlockPos p_214589_1_) {
+       return p_214589_0_.func_217375_a(p_214589_1_, (p_227221_0_) -> {
+          return func_227250_b_(p_227221_0_.func_177230_c());
        });
     }
  
@@ -53,9 +44,9 @@
 +
 +   @Deprecated //Forge: moved to isSoilOrFarm
     protected static boolean func_214585_i(IWorldGenerationBaseReader p_214585_0_, BlockPos p_214585_1_) {
-       return p_214585_0_.func_217375_a(p_214585_1_, (p_214586_0_) -> {
-          Block block = p_214586_0_.func_177230_c();
-@@ -80,6 +96,12 @@
+       return p_214585_0_.func_217375_a(p_214585_1_, (p_227220_0_) -> {
+          Block block = p_227220_0_.func_177230_c();
+@@ -82,6 +96,12 @@
        });
     }
  
@@ -65,10 +56,10 @@
 +      return reader.func_217375_a(pos, state -> state.canSustainPlant((net.minecraft.world.IBlockReader)reader, pos, Direction.UP, sapling));
 +   }
 +
-    protected static boolean func_214576_j(IWorldGenerationBaseReader p_214576_0_, BlockPos p_214576_1_) {
-       return p_214576_0_.func_217375_a(p_214576_1_, (p_214588_0_) -> {
-          Material material = p_214588_0_.func_185904_a();
-@@ -87,6 +109,7 @@
+    public static boolean func_214576_j(IWorldGenerationBaseReader p_214576_0_, BlockPos p_214576_1_) {
+       return p_214576_0_.func_217375_a(p_214576_1_, (p_227218_0_) -> {
+          Material material = p_227218_0_.func_185904_a();
+@@ -89,6 +109,7 @@
        });
     }
  
@@ -76,8 +67,8 @@
     protected void func_214584_a(IWorldGenerationReader p_214584_1_, BlockPos p_214584_2_) {
        if (!func_214578_c(p_214584_1_, p_214584_2_)) {
           this.func_202278_a(p_214584_1_, p_214584_2_, Blocks.field_150346_d.func_176223_P());
-@@ -94,6 +117,14 @@
- 
+@@ -116,6 +137,13 @@
+       }
     }
  
 +   protected void setDirtAt(IWorldGenerationReader reader, BlockPos pos, BlockPos origin) {
@@ -87,29 +78,6 @@
 +      }
 +      ((IWorld)reader).func_180495_p(pos).onPlantGrow((IWorld)reader, pos, origin);
 +   }
-+
     protected void func_202278_a(IWorldWriter p_202278_1_, BlockPos p_202278_2_, BlockState p_202278_3_) {
        this.func_208521_b(p_202278_1_, p_202278_2_, p_202278_3_);
     }
-@@ -104,7 +135,6 @@
-       if (BlockTags.field_200031_h.func_199685_a_(p_208520_4_.func_177230_c())) {
-          p_208520_1_.add(p_208520_3_.func_185334_h());
-       }
--
-    }
- 
-    private void func_208521_b(IWorldWriter p_208521_1_, BlockPos p_208521_2_, BlockState p_208521_3_) {
-@@ -192,4 +222,13 @@
-    }
- 
-    protected abstract boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_);
-+
-+   protected net.minecraftforge.common.IPlantable getSapling() {
-+      return sapling;
-+   }
-+
-+   public AbstractTreeFeature<T> setSapling(net.minecraftforge.common.IPlantable sapling) {
-+      this.sapling = sapling;
-+      return this;
-+   }
- }

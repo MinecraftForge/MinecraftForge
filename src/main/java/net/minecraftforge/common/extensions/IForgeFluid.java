@@ -27,10 +27,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -109,10 +107,11 @@ public interface IForgeFluid
      * Queries if this fluid should render in a given layer.
      * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
      */
+    /* TODO: reimplement
     default boolean canRenderInLayer(IFluidState state, BlockRenderLayer layer)
     {
         return this.getFluid().getRenderLayer() == layer;
-    }
+    }*/
 
     /**
      * Retrieves a list of tags names this is known to be associated with.

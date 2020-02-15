@@ -1,33 +1,33 @@
 --- a/net/minecraft/entity/boss/WitherEntity.java
 +++ b/net/minecraft/entity/boss/WitherEntity.java
-@@ -207,7 +207,7 @@
+@@ -212,7 +212,7 @@
        if (this.func_82212_n() > 0) {
           int j1 = this.func_82212_n() - 1;
           if (j1 <= 0) {
 -            Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
 +            Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
-             this.field_70170_p.func_217398_a(this, this.field_70165_t, this.field_70163_u + (double)this.func_70047_e(), this.field_70161_v, 7.0F, false, explosion$mode);
+             this.field_70170_p.func_217398_a(this, this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_(), 7.0F, false, explosion$mode);
              this.field_70170_p.func_175669_a(1023, new BlockPos(this), 0);
           }
-@@ -282,7 +282,7 @@
+@@ -287,7 +287,7 @@
  
           if (this.field_82222_j > 0) {
              --this.field_82222_j;
 -            if (this.field_82222_j == 0 && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +            if (this.field_82222_j == 0 && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
-                int i1 = MathHelper.func_76128_c(this.field_70163_u);
-                int l1 = MathHelper.func_76128_c(this.field_70165_t);
-                int i2 = MathHelper.func_76128_c(this.field_70161_v);
-@@ -296,7 +296,7 @@
+                int i1 = MathHelper.func_76128_c(this.func_226278_cu_());
+                int l1 = MathHelper.func_76128_c(this.func_226277_ct_());
+                int i2 = MathHelper.func_76128_c(this.func_226281_cx_());
+@@ -301,7 +301,7 @@
                          int l = i2 + l2;
                          BlockPos blockpos = new BlockPos(i3, k, l);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
 -                        if (func_181033_a(blockstate)) {
 +                        if (blockstate.canEntityDestroy(this.field_70170_p, blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, blockstate)) {
-                            flag = this.field_70170_p.func_175655_b(blockpos, true) || flag;
+                            flag = this.field_70170_p.func_225521_a_(blockpos, true, this) || flag;
                          }
                       }
-@@ -317,6 +317,7 @@
+@@ -322,6 +322,7 @@
        }
     }
  

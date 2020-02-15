@@ -21,7 +21,7 @@ package net.minecraftforge.common.model;
 
 import com.google.common.collect.ImmutableList;
 
-final class HiddenModelPart implements IModelPart
+final class HiddenModelPart
 {
     private final ImmutableList<String> path;
 

@@ -1,0 +1,46 @@
+# Rhino
+newmtl New material 001 (1)
+Ka 1 1 1
+Kd 0.4588 0.3333 0.1882
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0
+map_Kd #qr
+
+newmtl New material 001
+Ka 1 1 1
+Kd 0.6745 0.5216 0.3412
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0
+map_Kd #qr
+
+newmtl Default
+Ka 1 1 1
+Kd 1.0000 1.0000 1.0000
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0
+map_Kd #qr
+
+newmtl New material 002
+Ka 1 1 1
+Kd 0.4118 0.4118 0.4118
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0
+map_Kd #qr
+
+newmtl New material 003
+Ka 1 1 1
+Kd 0.1490 0.1490 0.1490
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0
+map_Kd #qr
+

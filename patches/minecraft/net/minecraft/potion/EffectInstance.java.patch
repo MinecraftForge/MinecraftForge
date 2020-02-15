@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/EffectInstance.java
 +++ b/net/minecraft/potion/EffectInstance.java
-@@ -8,7 +8,7 @@
+@@ -9,7 +9,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,15 +9,15 @@
     private static final Logger field_180155_a = LogManager.getLogger();
     private final Effect field_188420_b;
     private int field_76460_b;
-@@ -52,6 +52,7 @@
-       this.field_82724_e = p_i1577_1_.field_82724_e;
-       this.field_188421_h = p_i1577_1_.field_188421_h;
-       this.field_205349_i = p_i1577_1_.field_205349_i;
-+      this.curativeItems = p_i1577_1_.curativeItems == null ? null : new java.util.ArrayList<net.minecraft.item.ItemStack>(p_i1577_1_.curativeItems);
+@@ -64,6 +64,7 @@
+       this.field_82724_e = p_230117_1_.field_82724_e;
+       this.field_188421_h = p_230117_1_.field_188421_h;
+       this.field_205349_i = p_230117_1_.field_205349_i;
++      this.curativeItems = p_230117_1_.curativeItems == null ? null : new java.util.ArrayList<net.minecraft.item.ItemStack>(p_230117_1_.curativeItems);
     }
  
     public boolean func_199308_a(EffectInstance p_199308_1_) {
-@@ -88,7 +89,7 @@
+@@ -112,7 +113,7 @@
     }
  
     public Effect func_188419_a() {
@@ -26,30 +26,30 @@
     }
  
     public int func_76459_b() {
-@@ -188,11 +189,12 @@
-       p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
-       p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
-       p_82719_1_.func_74757_a("ShowIcon", this.func_205348_f());
-+      writeCurativeItems(p_82719_1_);
-       return p_82719_1_;
+@@ -231,11 +232,12 @@
+          this.field_230115_j_.func_82719_a(compoundnbt);
+          p_230119_1_.func_218657_a("HiddenEffect", compoundnbt);
+       }
++      writeCurativeItems(p_230119_1_);
+ 
     }
  
     public static EffectInstance func_82722_b(CompoundNBT p_82722_0_) {
 -      int i = p_82722_0_.func_74771_c("Id");
 +      int i = p_82722_0_.func_74771_c("Id") & 0xFF;
        Effect effect = Effect.func_188412_a(i);
-       if (effect == null) {
-          return null;
-@@ -210,7 +212,7 @@
-             flag2 = p_82722_0_.func_74767_n("ShowIcon");
-          }
- 
--         return new EffectInstance(effect, k, j < 0 ? 0 : j, flag, flag1, flag2);
-+         return readCurativeItems(new EffectInstance(effect, k, j < 0 ? 0 : j, flag, flag1, flag2), p_82722_0_);
+       return effect == null ? null : func_230116_a_(effect, p_82722_0_);
+    }
+@@ -259,7 +261,7 @@
+          effectinstance = func_230116_a_(p_230116_0_, p_230116_1_.func_74775_l("HiddenEffect"));
        }
+ 
+-      return new EffectInstance(p_230116_0_, j, i < 0 ? 0 : i, flag, flag1, flag2, effectinstance);
++      return readCurativeItems(new EffectInstance(p_230116_0_, j, i < 0 ? 0 : i, flag, flag1, flag2, effectinstance), p_230116_1_);
     }
  
-@@ -226,6 +228,32 @@
+    @OnlyIn(Dist.CLIENT)
+@@ -274,6 +276,32 @@
  
     public int compareTo(EffectInstance p_compareTo_1_) {
        int i = 32147;

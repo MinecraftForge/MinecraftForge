@@ -1,29 +1,11 @@
 --- a/net/minecraft/world/gen/feature/BigRedMushroomFeature.java
 +++ b/net/minecraft/world/gen/feature/BigRedMushroomFeature.java
-@@ -44,7 +44,7 @@
-                for(int i1 = -l; i1 <= l; ++i1) {
-                   for(int j1 = -l; j1 <= l; ++j1) {
-                      BlockState blockstate = p_212245_1_.func_180495_p(blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_196234_d(i1, k, j1));
--                     if (!blockstate.func_196958_f() && !blockstate.func_203425_a(BlockTags.field_206952_E)) {
-+                     if (!blockstate.isAir(p_212245_1_, blockpos$mutableblockpos) && !blockstate.func_203425_a(BlockTags.field_206952_E)) {
-                         return false;
-                      }
+@@ -27,7 +27,7 @@
+                boolean flag5 = flag2 || flag3;
+                if (i >= p_225564_4_ || flag4 != flag5) {
+                   p_225564_5_.func_189533_g(p_225564_3_).func_196234_d(l, i, i1);
+-                  if (!p_225564_1_.func_180495_p(p_225564_5_).func_200015_d(p_225564_1_, p_225564_5_)) {
++                  if (p_225564_1_.func_180495_p(p_225564_5_).canBeReplacedByLeaves(p_225564_1_, p_225564_5_)) {
+                      this.func_202278_a(p_225564_1_, p_225564_5_, p_225564_6_.field_227272_a_.func_225574_a_(p_225564_2_, p_225564_3_).func_206870_a(HugeMushroomBlock.field_196465_z, Boolean.valueOf(i >= p_225564_4_ - 1)).func_206870_a(HugeMushroomBlock.field_196464_y, Boolean.valueOf(l < -k)).func_206870_a(HugeMushroomBlock.field_196461_b, Boolean.valueOf(l > k)).func_206870_a(HugeMushroomBlock.field_196459_a, Boolean.valueOf(i1 < -k)).func_206870_a(HugeMushroomBlock.field_196463_c, Boolean.valueOf(i1 > k)));
                    }
-@@ -67,7 +67,7 @@
-                      boolean flag5 = flag2 || flag3;
-                      if (l1 >= i || flag4 != flag5) {
-                         blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_196234_d(l2, l1, k1);
--                        if (!p_212245_1_.func_180495_p(blockpos$mutableblockpos).func_200015_d(p_212245_1_, blockpos$mutableblockpos)) {
-+                        if (p_212245_1_.func_180495_p(blockpos$mutableblockpos).canBeReplacedByLeaves(p_212245_1_, blockpos$mutableblockpos)) {
-                            this.func_202278_a(p_212245_1_, blockpos$mutableblockpos, blockstate1.func_206870_a(HugeMushroomBlock.field_196465_z, Boolean.valueOf(l1 >= i - 1)).func_206870_a(HugeMushroomBlock.field_196464_y, Boolean.valueOf(l2 < 0)).func_206870_a(HugeMushroomBlock.field_196461_b, Boolean.valueOf(l2 > 0)).func_206870_a(HugeMushroomBlock.field_196459_a, Boolean.valueOf(k1 < 0)).func_206870_a(HugeMushroomBlock.field_196463_c, Boolean.valueOf(k1 > 0)));
-                         }
-                      }
-@@ -79,7 +79,7 @@
- 
-             for(int j2 = 0; j2 < i; ++j2) {
-                blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_189534_c(Direction.UP, j2);
--               if (!p_212245_1_.func_180495_p(blockpos$mutableblockpos).func_200015_d(p_212245_1_, blockpos$mutableblockpos)) {
-+               if (p_212245_1_.func_180495_p(blockpos$mutableblockpos).canBeReplacedByLeaves(p_212245_1_, blockpos$mutableblockpos)) {
-                   if (p_212245_5_.field_222854_a) {
-                      p_212245_1_.func_180501_a(blockpos$mutableblockpos, blockstate2, 3);
-                   } else {
+                }

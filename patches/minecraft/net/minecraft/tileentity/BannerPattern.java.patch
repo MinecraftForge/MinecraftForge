@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BannerPattern.java
 +++ b/net/minecraft/tileentity/BannerPattern.java
-@@ -13,7 +13,7 @@
+@@ -14,7 +14,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.commons.lang3.tuple.Pair;
  
@@ -9,7 +9,7 @@
     BASE("base", "b"),
     SQUARE_BOTTOM_LEFT("square_bottom_left", "bl", "   ", "   ", "#  "),
     SQUARE_BOTTOM_RIGHT("square_bottom_right", "br", "   ", "   ", "  #"),
-@@ -100,6 +100,14 @@
+@@ -107,6 +107,14 @@
        return null;
     }
  

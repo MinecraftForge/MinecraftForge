@@ -19,8 +19,10 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.util.math.BlockPos;
@@ -33,14 +35,14 @@ public class VertexBufferConsumer implements IVertexConsumer
 {
     private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
 
-    private BufferBuilder renderer;
+    private IVertexBuilder renderer;
     private int[] quadData;
     private int v = 0;
     private BlockPos offset = BlockPos.ZERO;
 
     public VertexBufferConsumer() {}
 
-    public VertexBufferConsumer(BufferBuilder buffer)
+    public VertexBufferConsumer(IVertexBuilder buffer)
     {
         setBuffer(buffer);
     }
@@ -48,19 +50,21 @@ public class VertexBufferConsumer implements IVertexConsumer
     @Override
     public VertexFormat getVertexFormat()
     {
-        return renderer.getVertexFormat();
+        return DefaultVertexFormats.BLOCK; // renderer.getVertexFormat();
     }
 
     @Override
     public void put(int e, float... data)
     {
+        // TODO
+        /*
         VertexFormat format = getVertexFormat();
-        if(renderer.isColorDisabled() && format.getElement(e).getUsage() == Usage.COLOR)
+        if(renderer.isColorDisabled() && format.func_227894_c_().get(e).getUsage() == Usage.COLOR)
         {
             data = dummyColor;
         }
         LightUtil.pack(data, quadData, format, v, e);
-        if(e == format.getElementCount() - 1)
+        if(e == format.func_227894_c_().size() - 1)
         {
             v++;
             if(v == 4)
@@ -71,17 +75,18 @@ public class VertexBufferConsumer implements IVertexConsumer
                 v = 0;
             }
         }
+         */
     }
 
     private void checkVertexFormat()
     {
-        if (quadData == null || renderer.getVertexFormat().getSize() != quadData.length)
+        if (quadData == null || getVertexFormat().getSize() != quadData.length)
         {
-            quadData = new int[renderer.getVertexFormat().getSize()];
+            quadData = new int[getVertexFormat().getSize()];
         }
     }
 
-    public void setBuffer(BufferBuilder buffer)
+    public void setBuffer(IVertexBuilder buffer)
     {
         this.renderer = buffer;
         checkVertexFormat();

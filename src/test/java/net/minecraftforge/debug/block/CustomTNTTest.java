@@ -47,10 +47,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+/*
 @Mod(CustomTNTTest.MODID)
 @Mod.EventBusSubscriber(modid = CustomTNTTest.MODID, bus = Bus.MOD)
 public class CustomTNTTest {
-
     static final String MODID = "custom_tnt_test";
     static final String BLOCK_ID = "test_tnt";
 
@@ -94,14 +94,14 @@ public class CustomTNTTest {
             if (!world.isRemote) {
                 TNTEntity tnt = new CustomTNTEntity(world, pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F, igniter);
                 world.addEntity(tnt);
-                world.playSound(null, tnt.posX, tnt.posY, tnt.posZ, SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, tnt.func_226277_ct_(), tnt.func_226278_cu_(), tnt.func_226281_cx_(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
     }
 
     /**
      * Custom TNT Entity that has a fuse of a quarter length, and four times the explosion strength
-     */
+     *//*
     public static class CustomTNTEntity extends TNTEntity {
 
         public CustomTNTEntity(EntityType<CustomTNTEntity> type, World world) {
@@ -122,7 +122,7 @@ public class CustomTNTTest {
 
         @Override
         protected void explode() {
-            this.world.createExplosion(this, this.posX, this.posY, this.posZ, 16.0F, Explosion.Mode.BREAK);
+            this.world.createExplosion(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 16.0F, Explosion.Mode.BREAK);
         }
 
         @Nonnull
@@ -132,3 +132,4 @@ public class CustomTNTTest {
         }
     }
 }
+    */

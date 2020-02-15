@@ -51,7 +51,7 @@
              ;
           }
  
-@@ -336,13 +346,41 @@
+@@ -336,13 +346,42 @@
        return list;
     }
  
@@ -62,15 +62,16 @@
 +      for(Template.EntityInfo entityInfo : p_215387_3_) {
 +         Vec3d pos = transformedVec3d(p_215387_2_, entityInfo.field_186247_a).func_178787_e(new Vec3d(p_215387_1_));
 +         BlockPos blockpos = func_186266_a(p_215387_2_, entityInfo.field_186248_b).func_177971_a(p_215387_1_);
-+         Template.EntityInfo entityInfo1 = new Template.EntityInfo(pos, blockpos, entityInfo.field_186249_c);
++         Template.EntityInfo info = new Template.EntityInfo(pos, blockpos, entityInfo.field_186249_c);
 +
-+         for(Iterator<StructureProcessor> iterator = p_215387_2_.func_215221_j().iterator(); entityInfo1 != null && iterator.hasNext(); entityInfo1 = iterator.next().processEntity(p_215387_0_, p_215387_1_, entityInfo, entityInfo1, p_215387_2_, template)) {
-+            ;
++         for (StructureProcessor proc : p_215387_2_.func_215221_j()) {
++             info = proc.processEntity(p_215387_0_, p_215387_1_, entityInfo, info, p_215387_2_, template);
++             if (info == null)
++                 break;
 +         }
 +
-+         if (entityInfo1 != null) {
-+            list.add(entityInfo1);
-+         }
++         if (info != null)
++            list.add(info);
 +      }
 +
 +      return list;
@@ -93,5 +94,5 @@
 +            vec3d = vec3d.func_72441_c((double)p_207668_2_.func_177958_n(), (double)p_207668_2_.func_177956_o(), (double)p_207668_2_.func_177952_p());
 +            Vec3d vec3d1 = template$entityinfo.field_186247_a; // FORGE: Position will have already been transformed by processEntityInfos
              ListNBT listnbt = new ListNBT();
-             listnbt.add(new DoubleNBT(vec3d1.field_72450_a));
-             listnbt.add(new DoubleNBT(vec3d1.field_72448_b));
+             listnbt.add(DoubleNBT.func_229684_a_(vec3d1.field_72450_a));
+             listnbt.add(DoubleNBT.func_229684_a_(vec3d1.field_72448_b));

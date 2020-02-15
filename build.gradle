@@ -3,12 +3,16 @@ buildscript {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-        classpath 'org.ow2.asm:asm:7.1'
-        classpath 'org.ow2.asm:asm-tree:7.1'
+        classpath 'org.ow2.asm:asm:7.2'
+        classpath 'org.ow2.asm:asm-tree:7.2'
     }
 }
 import groovy.json.JsonSlurper
@@ -59,8 +63,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.14.4'
-    MCP_VERSION = '20190829.143755'
+    MC_VERSION = '1.15.2'
+    MCP_VERSION = '20200122.131323'
 }
 
 project(':mcp') {
@@ -78,11 +82,15 @@ project(':clean') {
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     
     repositories {
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     
     dependencies {
-        implementation 'net.minecraftforge:forgespi:1.1.+'
+        implementation 'net.minecraftforge:forgespi:2.0.+'
     }
     patcher {
         parent = project(':mcp')
@@ -175,17 +183,27 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
+        userdev_test {
+            compileClasspath += sourceSets.userdev.runtimeClasspath
+            runtimeClasspath += sourceSets.userdev.runtimeClasspath
+            compileClasspath += sourceSets.test.runtimeClasspath
+            runtimeClasspath += sourceSets.test.runtimeClasspath
+        }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
 
     ext {
-        SPEC_VERSION = '28.1' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '30.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -254,6 +272,8 @@ project(':forge') {
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
+
                 mods {
                     TestMods { sources sourceSets.test }
                 }
@@ -285,6 +305,8 @@ project(':forge') {
                 taskName 'forge_test_server'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     TestMods { sources sourceSets.test }
@@ -320,6 +342,8 @@ project(':forge') {
                 taskName 'forge_test_data'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     tests { sources  sourceSets.test }
@@ -402,22 +426,21 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        installer 'org.ow2.asm:asm:6.2'
-        installer 'org.ow2.asm:asm-commons:6.2'
-        installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:4.1.+'
+        installer 'org.ow2.asm:asm:7.2'
+        installer 'org.ow2.asm:asm-commons:7.2'
+        installer 'org.ow2.asm:asm-tree:7.2'
+        installer 'cpw.mods:modlauncher:5.0.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
-        installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
-        installer 'net.minecraftforge:eventbus:1.0.+:service'
-        installer 'net.minecraftforge:forgespi:1.5.+'
-        installer 'net.minecraftforge:coremods:1.0.+'
+        installer 'net.minecraftforge:accesstransformers:2.0.+:shadowed'
+        installer 'net.minecraftforge:eventbus:2.0.+:service'
+        installer 'net.minecraftforge:forgespi:2.0.+'
+        installer 'net.minecraftforge:coremods:2.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
-        installer 'com.electronwill.night-config:core:3.6.0'
-        installer 'com.electronwill.night-config:toml:3.6.0'
+        installer 'com.electronwill.night-config:core:3.6.2'
+        installer 'com.electronwill.night-config:toml:3.6.2'
         installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
-        installer 'net.jodah:typetools:0.6.0'
-        installer 'java3d:vecmath:1.5.2'
+        installer 'net.jodah:typetools:0.6.1'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
@@ -796,16 +819,16 @@ project(':forge') {
                         server: '/data/server.lzma'
                     ],
                     MC_SLIM: [
-                        client: "[net.minecraft:client:${MC_VERSION}:slim${MC_VERSION == '1.14.4' ? '-stable' : ''}]",
-                        server: "[net.minecraft:server:${MC_VERSION}:slim${MC_VERSION == '1.14.4' ? '-stable' : ''}]"
+                        client: "[net.minecraft:client:${MC_VERSION}:slim]",
+                        server: "[net.minecraft:server:${MC_VERSION}:slim]"
                     ],
                     MC_SLIM_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
                         server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
                     ],
                     MC_EXTRA: [
-                        client: "[net.minecraft:client:${MC_VERSION}:extra${MC_VERSION == '1.14.4' ? '-stable' : ''}]",
-                        server: "[net.minecraft:server:${MC_VERSION}:extra${MC_VERSION == '1.14.4' ? '-stable' : ''}]"
+                        client: "[net.minecraft:client:${MC_VERSION}:extra]",
+                        server: "[net.minecraft:server:${MC_VERSION}:extra]"
                     ],
                     MC_EXTRA_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientExtra').output)}'",
@@ -893,7 +916,7 @@ project(':forge') {
         ['slim', 'extra'].each { type -> 
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
-                artifact = "net.minecraft:${side}:${MC_VERSION}${MC_VERSION == '1.14.4' ? '-stable' : ''}:${type}"
+                artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
             }
             installerJson.dependsOn(name)
             installerJson.inputs.file(tasks.getByName(name).output)
@@ -946,7 +969,7 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra${MC_VERSION == '1.14.4' ? '-stable' : ''}.jar"
+            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
             
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
@@ -979,7 +1002,7 @@ project(':forge') {
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
         from(extraTxts)
-        from(rootProject.file('/src/main/resources/forge_logo.png')) {
+        from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
         }
         from(rootProject.file('/src/main/resources/url.png'))

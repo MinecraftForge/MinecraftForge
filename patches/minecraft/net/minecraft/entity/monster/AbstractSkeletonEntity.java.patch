@@ -15,6 +15,6 @@
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);
 +      if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.BowItem)
 +         abstractarrowentity = ((net.minecraft.item.BowItem)this.func_184614_ca().func_77973_b()).customeArrow(abstractarrowentity);
-       double d0 = p_82196_1_.field_70165_t - this.field_70165_t;
-       double d1 = p_82196_1_.func_174813_aQ().field_72338_b + (double)(p_82196_1_.func_213302_cg() / 3.0F) - abstractarrowentity.field_70163_u;
-       double d2 = p_82196_1_.field_70161_v - this.field_70161_v;
+       double d0 = p_82196_1_.func_226277_ct_() - this.func_226277_ct_();
+       double d1 = p_82196_1_.func_226283_e_(0.3333333333333333D) - abstractarrowentity.func_226278_cu_();
+       double d2 = p_82196_1_.func_226281_cx_() - this.func_226281_cx_();

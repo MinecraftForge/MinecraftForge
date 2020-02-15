@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
@@ -28,7 +28,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.VersionChecker;
@@ -73,8 +72,8 @@ public class NotificationModUpdateScreen extends Screen
         }
 
         Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
-        GlStateManager.color4f(1, 1, 1, 1);
-        GlStateManager.pushMatrix();
+        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.pushMatrix();
 
         int x = modButton.x;
         int y = modButton.y;
@@ -82,7 +81,7 @@ public class NotificationModUpdateScreen extends Screen
         int h = modButton.getHeight();
 
         blit(x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     public static NotificationModUpdateScreen init(MainMenuScreen guiMainMenu, Button modButton)

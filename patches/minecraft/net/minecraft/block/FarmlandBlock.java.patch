@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FarmlandBlock.java
 +++ b/net/minecraft/block/FarmlandBlock.java
-@@ -73,7 +73,7 @@
+@@ -76,7 +76,7 @@
     }
  
     public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_) {
@@ -9,7 +9,7 @@
           func_199610_d(p_180658_1_.func_180495_p(p_180658_2_), p_180658_1_, p_180658_2_);
        }
  
-@@ -84,9 +84,9 @@
+@@ -87,9 +87,9 @@
        p_199610_1_.func_175656_a(p_199610_2_, func_199601_a(p_199610_0_, Blocks.field_150346_d.func_176223_P(), p_199610_1_, p_199610_2_));
     }
  
@@ -22,7 +22,7 @@
     }
  
     private static boolean func_176530_e(IWorldReader p_176530_0_, BlockPos p_176530_1_) {
-@@ -96,7 +96,7 @@
+@@ -99,7 +99,7 @@
           }
        }
  

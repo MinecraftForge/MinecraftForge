@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DetectorRailBlock.java
 +++ b/net/minecraft/block/DetectorRailBlock.java
-@@ -128,6 +128,8 @@
+@@ -129,6 +129,8 @@
  
     public int func_180641_l(BlockState p_180641_1_, World p_180641_2_, BlockPos p_180641_3_) {
        if (p_180641_1_.func_177229_b(field_176574_M)) {

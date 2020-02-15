@@ -6,13 +6,13 @@
  
 +   @Deprecated //Forge: Use IUnbakedModel, add texture getter
     public ItemOverrideList(ModelBakery p_i50984_1_, BlockModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, List<ItemOverride> p_i50984_4_) {
-+      this(p_i50984_1_, (IUnbakedModel)p_i50984_2_, p_i50984_3_, p_i50984_1_.field_177609_j::func_195424_a, p_i50984_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++      this(p_i50984_1_, (IUnbakedModel)p_i50984_2_, p_i50984_3_, p_i50984_1_.getSpriteMap()::func_229151_a_, p_i50984_4_);
 +   }
-+   public ItemOverrideList(ModelBakery p_i50984_1_, IUnbakedModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, List<ItemOverride> p_i50984_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
++   public ItemOverrideList(ModelBakery p_i50984_1_, IUnbakedModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, Function<Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, List<ItemOverride> p_i50984_4_) {
        this.field_209582_c = p_i50984_4_.stream().map((p_217649_3_) -> {
           IUnbakedModel iunbakedmodel = p_i50984_3_.apply(p_217649_3_.func_188026_a());
 -         return Objects.equals(iunbakedmodel, p_i50984_2_) ? null : p_i50984_1_.func_217845_a(p_217649_3_.func_188026_a(), ModelRotation.X0_Y0);
-+         return Objects.equals(iunbakedmodel, p_i50984_2_) ? null : p_i50984_1_.getBakedModel(p_217649_3_.func_188026_a(), ModelRotation.X0_Y0, textureGetter, format);
++         return Objects.equals(iunbakedmodel, p_i50984_2_) ? null : p_i50984_1_.getBakedModel(p_217649_3_.func_188026_a(), ModelRotation.X0_Y0, textureGetter);
        }).collect(Collectors.toList());
        Collections.reverse(this.field_209582_c);
  

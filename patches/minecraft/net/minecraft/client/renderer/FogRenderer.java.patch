@@ -1,62 +1,60 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -101,6 +101,9 @@
-             f3 = 1.0F / this.field_205095_e;
+@@ -150,17 +150,28 @@
           }
  
+          float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
 +         // Forge: fix MC-4647 and MC-10480
-+         if (Float.isInfinite(f3)) f3 = Math.nextAfter(f3, 0.0);
-+
-          this.field_205093_c = this.field_205093_c * (1.0F - f1) + this.field_205093_c * f3 * f1;
-          this.field_205094_d = this.field_205094_d * (1.0F - f1) + this.field_205094_d * f3 * f1;
-          this.field_205095_e = this.field_205095_e * (1.0F - f1) + this.field_205095_e * f3 * f1;
-@@ -115,11 +118,21 @@
-             f4 = 1.0F / this.field_205095_e;
-          }
- 
++         if (Float.isInfinite(f9)) f9 = Math.nextAfter(f9, 0.0);
+          field_205093_c = field_205093_c * (1.0F - f6) + field_205093_c * f9 * f6;
+          field_205094_d = field_205094_d * (1.0F - f6) + field_205094_d * f9 * f6;
+          field_205095_e = field_205095_e * (1.0F - f6) + field_205095_e * f9 * f6;
+       } else if (p_228371_0_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228371_0_.func_216773_g()).func_70644_a(Effects.field_76439_r)) {
+          float f7 = GameRenderer.func_180438_a((LivingEntity)p_228371_0_.func_216773_g(), p_228371_1_);
+          float f10 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
 +         // Forge: fix MC-4647 and MC-10480
-+         if (Float.isInfinite(f4)) f4 = Math.nextAfter(f4, 0.0);
-+
-          this.field_205093_c = this.field_205093_c * (1.0F - f2) + this.field_205093_c * f4 * f2;
-          this.field_205094_d = this.field_205094_d * (1.0F - f2) + this.field_205094_d * f4 * f2;
-          this.field_205095_e = this.field_205095_e * (1.0F - f2) + this.field_205095_e * f4 * f2;
++         if (Float.isInfinite(f10)) f10 = Math.nextAfter(f10, 0.0);
+          field_205093_c = field_205093_c * (1.0F - f7) + field_205093_c * f10 * f7;
+          field_205094_d = field_205094_d * (1.0F - f7) + field_205094_d * f10 * f7;
+          field_205095_e = field_205095_e * (1.0F - f7) + field_205095_e * f10 * f7;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, this.field_205104_n, p_217619_1_, p_217619_2_, this.field_205093_c, this.field_205094_d, this.field_205095_e);
++      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_228371_0_, p_228371_1_, field_205093_c, field_205094_d, field_205095_e);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
-+      this.field_205093_c = event.getRed();
-+      this.field_205094_d = event.getGreen();
-+      this.field_205095_e = event.getBlue();
++      field_205093_c = event.getRed();
++      field_205094_d = event.getGreen();
++      field_205095_e = event.getBlue();
 +
-       GlStateManager.clearColor(this.field_205093_c, this.field_205094_d, this.field_205095_e, 0.0F);
+       RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
     }
  
-@@ -205,11 +218,19 @@
- 
+@@ -169,10 +180,18 @@
+       RenderSystem.fogMode(GlStateManager.FogMode.EXP2);
     }
  
-+   @Deprecated //Forge: pass in partial ticks to setupFog
-    public void func_217618_a(ActiveRenderInfo p_217618_1_, int p_217618_2_) {
-+      setupFog(p_217618_1_, p_217618_2_, 0F);
++   @Deprecated // FORGE: Pass in partialTicks
+    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
++      setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
 +   }
 +
-+   public void setupFog(ActiveRenderInfo p_217618_1_, int p_217618_2_, float partialTicks) {
-       this.func_205090_a(false);
-       GlStateManager.normal3f(0.0F, -1.0F, 0.0F);
-       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-       IFluidState ifluidstate = p_217618_1_.func_216771_k();
-+      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, this.field_205104_n, p_217618_1_, partialTicks, 0.1F);
-+      if (hook >= 0) GlStateManager.fogDensity(hook);
++   public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {
+       IFluidState ifluidstate = p_228372_0_.func_216771_k();
+       Entity entity = p_228372_0_.func_216773_g();
+       boolean flag = ifluidstate.func_206886_c() != Fluids.field_204541_a;
++      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_228372_1_, p_228372_0_, partialTicks, 0.1F);
++      if (hook >= 0) RenderSystem.fogDensity(hook);
 +      else
-       if (p_217618_1_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_217618_1_.func_216773_g()).func_70644_a(Effects.field_76440_q)) {
-          float f2 = 5.0F;
-          int i = ((LivingEntity)p_217618_1_.func_216773_g()).func_70660_b(Effects.field_76440_q).func_76459_b();
-@@ -264,6 +285,7 @@
-             GlStateManager.fogStart(f1 * 0.05F);
-             GlStateManager.fogEnd(Math.min(f1, 192.0F) * 0.5F);
-          }
-+         net.minecraftforge.client.ForgeHooksClient.onFogRender(this, this.field_205104_n, p_217618_1_, partialTicks, p_217618_2_, f1);
+       if (flag) {
+          float f = 1.0F;
+          if (ifluidstate.func_206884_a(FluidTags.field_206959_a)) {
+@@ -219,8 +238,8 @@
+          RenderSystem.fogEnd(f3);
+          RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
+          RenderSystem.setupNvFogDistance();
++         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_228372_1_, p_228372_0_, partialTicks, f3);
        }
+-
+    }
  
-       GlStateManager.enableColorMaterial();
+    public static void func_228373_b_() {

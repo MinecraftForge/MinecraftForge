@@ -27,14 +27,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 
 public class BlockInfo
 {
     private static final Direction[] SIDES = Direction.values();
 
     private final BlockColors colors;
-    private IEnviromentBlockReader world;
+    private ILightReader world;
     private BlockState state;
     private BlockPos blockPos;
 
@@ -63,7 +63,7 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.getColor(state, world, blockPos, tint);
+        cachedMultiplier = colors.func_228054_a_(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 
@@ -75,7 +75,7 @@ public class BlockInfo
         shz = (float) offset.z;
     }
 
-    public void setWorld(IEnviromentBlockReader world)
+    public void setWorld(ILightReader world)
     {
         this.world = world;
         cachedTint = -1;
@@ -127,7 +127,7 @@ public class BlockInfo
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
                     BlockState state = world.getBlockState(pos);
                     t[x][y][z] = state.getOpacity(world, pos) < 15;
-                    int brightness = state.getPackedLightmapCoords(world, pos);
+                    int brightness = 0x00FF00FF; // FIXME: state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
                     ao[x][y][z] = state.func_215703_d(world, pos);
@@ -195,16 +195,16 @@ public class BlockInfo
     public void updateFlatLighting()
     {
         full = Block.isOpaque(state.getCollisionShape(world, blockPos));
-        packed[0] = state.getPackedLightmapCoords(world, blockPos);
+        packed[0] = 0x00FF00FF; // FIXME:  state.getPackedLightmapCoords(world, blockPos);
 
         for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = state.getPackedLightmapCoords(world, blockPos.offset(side));
+            packed[i] = 0x00FF00FF; // FIXME:  state.getPackedLightmapCoords(world, blockPos.offset(side));
         }
     }
 
-    public IEnviromentBlockReader getWorld()
+    public ILightReader getWorld()
     {
         return world;
     }

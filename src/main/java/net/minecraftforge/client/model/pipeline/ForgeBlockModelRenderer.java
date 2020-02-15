@@ -22,19 +22,21 @@ package net.minecraftforge.client.model.pipeline;
 import java.util.List;
 import java.util.Random;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeConfig;
 
+/*
 public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
     private final ThreadLocal<VertexLighterFlat> lighterFlat;
@@ -50,7 +52,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelFlat(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public boolean renderModelFlat(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228806_11_, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
@@ -61,16 +63,16 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
 
-            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed, modelData);
+            return render(lighter, world, model, state, pos, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.renderModelFlat(world, model, state, pos, buffer, checkSides, rand, seed, modelData);
+            return super.renderModelFlat(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, p_228806_11_, modelData);
         }
     }
 
     @Override
-    public boolean renderModelSmooth(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public boolean renderModelSmooth(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228805_11_, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
@@ -81,15 +83,15 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
 
-            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed, modelData);
+            return render(lighter, world, model, state, pos, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.renderModelSmooth(world, model, state, pos, buffer, checkSides, rand, seed, modelData);
+            return super.renderModelSmooth(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, p_228805_11_, modelData);
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder wr, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, ILightReader world, IBakedModel model, BlockState state, BlockPos pos, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         lighter.setWorld(world);
         lighter.setState(state);
@@ -127,3 +129,4 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         return !empty;
     }
 }
+*/

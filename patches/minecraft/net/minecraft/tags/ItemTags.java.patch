@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -59,6 +59,10 @@
+@@ -62,6 +62,10 @@
        return field_199906_c;
     }
  

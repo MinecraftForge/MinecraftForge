@@ -1,20 +1,21 @@
 --- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
-@@ -230,7 +230,7 @@
+@@ -228,7 +228,7 @@
        if (flag) {
           itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
           return true;
 -      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_213716_dX() && !this.func_70608_bn()) {
-+      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_213716_dX() && !this.func_70608_bn() && !p_184645_1_.func_70093_af()) {
++      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_213716_dX() && !this.func_70608_bn() && !p_184645_1_.func_226563_dT_()) {
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return super.func_184645_a(p_184645_1_, p_184645_2_);
-@@ -611,7 +611,7 @@
-          });
-       } else {
-          VillagerProfession villagerprofession = this.func_213700_eh().func_221130_b();
--         ITextComponent itextcomponent1 = (new TranslationTextComponent(this.func_200600_R().func_210760_d() + '.' + Registry.field_218370_L.func_177774_c(villagerprofession).func_110623_a())).func_211710_a((p_213773_1_) -> {
-+         ITextComponent itextcomponent1 = (new TranslationTextComponent(this.func_200600_R().func_210760_d() + '.' + (!"minecraft".equals(villagerprofession.getRegistryName().func_110624_b()) ? villagerprofession.getRegistryName().func_110624_b() + '.' : "") + villagerprofession.getRegistryName().func_110623_a())).func_211710_a((p_213773_1_) -> {
-             p_213773_1_.func_150209_a(this.func_174823_aP()).func_179989_a(this.func_189512_bd());
-          });
-          if (team != null) {
+@@ -607,7 +607,8 @@
+    }
+ 
+    protected ITextComponent func_225513_by_() {
+-      return new TranslationTextComponent(this.func_200600_R().func_210760_d() + '.' + Registry.field_218370_L.func_177774_c(this.func_213700_eh().func_221130_b()).func_110623_a());
++      net.minecraft.util.ResourceLocation profName = this.func_213700_eh().func_221130_b().getRegistryName();
++      return new TranslationTextComponent(this.func_200600_R().func_210760_d() + '.' + (!"minecraft".equals(profName.func_110624_b()) ? profName.func_110624_b() + '.' : "") + profName.func_110623_a());
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

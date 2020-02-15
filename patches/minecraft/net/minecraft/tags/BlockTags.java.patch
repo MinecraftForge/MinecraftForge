@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -70,6 +70,10 @@
+@@ -76,6 +76,10 @@
        return field_199899_c;
     }
  

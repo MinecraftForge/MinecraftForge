@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/JigsawBlock.java
 +++ b/net/minecraft/block/JigsawBlock.java
-@@ -29,6 +29,13 @@
+@@ -30,6 +30,13 @@
        return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
     }
  

@@ -13,34 +13,35 @@
  
           this.func_184185_a(soundevent, 1.0F, 1.0F);
           return true;
--      } else if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) {
-+      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) { //Forge: Moved to onSheared
-          this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.field_70165_t, this.field_70163_u + (double)(this.func_213302_cg() / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D);
+-      } else if (itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70631_g_()) {
++      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70631_g_()) { //Forge: Moved to onSheared
+          this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.func_226277_ct_(), this.func_226283_e_(0.5D), this.func_226281_cx_(), 0.0D, 0.0D, 0.0D);
           if (!this.field_70170_p.field_72995_K) {
              this.func_70106_y();
-@@ -203,6 +203,33 @@
+@@ -209,6 +209,34 @@
        return mooshroomentity$type2;
     }
  
 +   @Override
 +   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, net.minecraft.util.math.BlockPos pos) {
-+      return this.func_70874_b() >= 0;
++      return !this.func_70631_g_();
 +   }
 +
 +   @Override
 +   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, net.minecraft.util.math.BlockPos pos, int fortune) {
 +      java.util.List<ItemStack> ret = new java.util.ArrayList<>();
-+      this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.field_70165_t, this.field_70163_u + (double)(this.func_213302_cg() / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D);
++      this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.func_226277_ct_(), this.func_226283_e_(0.5D), this.func_226281_cx_(), 0.0D, 0.0D, 0.0D);
 +      if (!this.field_70170_p.field_72995_K) {
 +         this.func_70106_y();
-+         CowEntity entitycow = EntityType.field_200796_j.func_200721_a(this.field_70170_p);
-+         entitycow.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);
-+         entitycow.func_70606_j(this.func_110143_aJ());
-+         entitycow.field_70761_aq = this.field_70761_aq;
++         CowEntity cowentity = EntityType.field_200796_j.func_200721_a(this.field_70170_p);
++         cowentity.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
++         cowentity.func_70606_j(this.func_110143_aJ());
++         cowentity.field_70761_aq = this.field_70761_aq;
 +         if (this.func_145818_k_()) {
-+            entitycow.func_200203_b(this.func_200201_e());
++             cowentity.func_200203_b(this.func_200201_e());
++             cowentity.func_174805_g(this.func_174833_aM());
 +         }
-+         this.field_70170_p.func_217376_c(entitycow);
++         this.field_70170_p.func_217376_c(cowentity);
 +         for(int i = 0; i < 5; ++i) {
 +            ret.add(new ItemStack(this.func_213444_dV().field_221099_d.func_177230_c()));
 +         }

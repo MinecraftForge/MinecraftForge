@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screen/ServerSelectionList.java
-@@ -292,6 +292,8 @@
+@@ -294,6 +294,8 @@
              this.field_148303_c.func_146793_a(s);
           }
  
