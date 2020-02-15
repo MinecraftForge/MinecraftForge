@@ -1,0 +1,37 @@
+--- a/net/minecraft/data/loot/BlockLootTables.java
++++ b/net/minecraft/data/loot/BlockLootTables.java
+@@ -188,7 +188,7 @@
+       return LootTable.func_216119_b();
+    }
+ 
+-   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_accept_1_) {
++   protected void addTables() {
+       this.func_218492_c(Blocks.field_196650_c);
+       this.func_218492_c(Blocks.field_196652_d);
+       this.func_218492_c(Blocks.field_196654_e);
+@@ -962,9 +962,13 @@
+       this.func_218507_a(Blocks.field_196713_dt, func_218482_a());
+       this.func_218507_a(Blocks.field_185778_de, func_218482_a());
+       this.func_218507_a(Blocks.field_150474_ac, func_218482_a());
++   }
++
++   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_accept_1_) {
++      this.addTables();
+       Set<ResourceLocation> set = Sets.newHashSet();
+ 
+-      for(Block block : Registry.field_212618_g) {
++      for(Block block : getKnownBlocks()) {
+          ResourceLocation resourcelocation = block.func_220068_i();
+          if (resourcelocation != LootTables.field_186419_a && set.add(resourcelocation)) {
+             LootTable.Builder loottable$builder = this.field_218581_i.remove(resourcelocation);
+@@ -981,6 +985,10 @@
+       }
+    }
+ 
++   protected Iterable<Block> getKnownBlocks() {
++       return Registry.field_212618_g;
++   }
++
+    public void func_218547_a(Block p_218547_1_) {
+       this.func_218522_a(p_218547_1_, (p_218524_0_) -> {
+          return func_218523_c(((FlowerPotBlock)p_218524_0_).func_220276_d());

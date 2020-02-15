@@ -9,3 +9,48 @@
           netherportalblock$size.func_150859_c();
           return true;
        } else {
+@@ -245,13 +245,13 @@
+          int i;
+          for(i = 0; i < 22; ++i) {
+             BlockPos blockpos = p_180120_1_.func_177967_a(p_180120_2_, i);
+-            if (!this.func_196900_a(this.field_150867_a.func_180495_p(blockpos)) || this.field_150867_a.func_180495_p(blockpos.func_177977_b()).func_177230_c() != Blocks.field_150343_Z) {
++            if (!this.func_196900_a(this.field_150867_a.func_180495_p(blockpos)) || !this.field_150867_a.func_180495_p(blockpos.func_177977_b()).isPortalFrame(this.field_150867_a, blockpos.func_177977_b())) {
+                break;
+             }
+          }
+ 
+-         Block block = this.field_150867_a.func_180495_p(p_180120_1_.func_177967_a(p_180120_2_, i)).func_177230_c();
+-         return block == Blocks.field_150343_Z ? i : 0;
++         BlockPos framePos = p_180120_1_.func_177967_a(p_180120_2_, i);
++         return this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos) ? i : 0;
+       }
+ 
+       public int func_181100_a() {
+@@ -278,13 +278,13 @@
+                }
+ 
+                if (i == 0) {
+-                  block = this.field_150867_a.func_180495_p(blockpos.func_177972_a(this.field_150863_d)).func_177230_c();
+-                  if (block != Blocks.field_150343_Z) {
++                  BlockPos framePos = blockpos.func_177972_a(this.field_150863_d);
++                  if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
+                      break label56;
+                   }
+                } else if (i == this.field_150868_h - 1) {
+-                  block = this.field_150867_a.func_180495_p(blockpos.func_177972_a(this.field_150866_c)).func_177230_c();
+-                  if (block != Blocks.field_150343_Z) {
++                  BlockPos framePos = blockpos.func_177972_a(this.field_150866_c);
++                  if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
+                      break label56;
+                   }
+                }
+@@ -292,7 +292,8 @@
+          }
+ 
+          for(int j = 0; j < this.field_150868_h; ++j) {
+-            if (this.field_150867_a.func_180495_p(this.field_150861_f.func_177967_a(this.field_150866_c, j).func_177981_b(this.field_150862_g)).func_177230_c() != Blocks.field_150343_Z) {
++            BlockPos framePos = this.field_150861_f.func_177967_a(this.field_150866_c, j).func_177981_b(this.field_150862_g);
++            if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
+                this.field_150862_g = 0;
+                break;
+             }

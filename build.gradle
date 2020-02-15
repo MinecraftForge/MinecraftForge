@@ -159,7 +159,10 @@ project(':forge') {
                 ]
             }
             resources {
-                srcDirs = ["$rootDir/src/test/resources"]
+                srcDirs = [
+                    "$rootDir/src/test/resources",
+                    "$rootDir/src/generated_test/resources"
+                ]
             }
         }
         userdev {
@@ -189,7 +192,7 @@ project(':forge') {
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.7:fatjar'
+        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
     def getVersion = {
@@ -308,7 +311,8 @@ project(':forge') {
                 source sourceSets.main
                 source sourceSets.userdev
                 
-                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
 
             forge_test_data {
@@ -321,7 +325,8 @@ project(':forge') {
                     tests { sources  sourceSets.test }
                 }
                 
-                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/')
+                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/'), '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }
@@ -404,7 +409,7 @@ project(':forge') {
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
         installer 'net.minecraftforge:eventbus:1.0.+:service'
-        installer 'net.minecraftforge:forgespi:1.4.+'
+        installer 'net.minecraftforge:forgespi:1.5.+'
         installer 'net.minecraftforge:coremods:1.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'

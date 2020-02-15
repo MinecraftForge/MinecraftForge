@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/lighting/SectionLightStorage.java
++++ b/net/minecraft/world/lighting/SectionLightStorage.java
+@@ -154,6 +154,11 @@
+       int j = SectionPos.func_218142_c(SectionPos.func_218144_c(p_215528_2_));
+       int k = SectionPos.func_218142_c(SectionPos.func_218153_d(p_215528_2_));
+ 
++      // FORGE: Optimize loop when lighting update count is lower than section size
++      if (p_215528_1_.queuedUpdateSize() < 16 * 16 * 16) {
++         p_215528_1_.bulkCancel(l -> SectionPos.func_218162_e(l) == p_215528_2_);
++         return;
++      }
+       for(int l = 0; l < 16; ++l) {
+          for(int i1 = 0; i1 < 16; ++i1) {
+             for(int j1 = 0; j1 < 16; ++j1) {

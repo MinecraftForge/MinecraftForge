@@ -1,0 +1,11 @@
+--- a/net/minecraft/inventory/container/StonecutterContainer.java
++++ b/net/minecraft/inventory/container/StonecutterContainer.java
+@@ -183,7 +183,7 @@
+             if (!this.func_75135_a(itemstack1, 2, 38, false)) {
+                return ItemStack.field_190927_a;
+             }
+-         } else if (field_217084_c.contains(item)) {
++         } else if (!this.field_217090_i.func_199532_z().func_215370_b(IRecipeType.field_222154_f, new Inventory(itemstack1), this.field_217090_i).isEmpty()) {
+             if (!this.func_75135_a(itemstack1, 0, 1, false)) {
+                return ItemStack.field_190927_a;
+             }

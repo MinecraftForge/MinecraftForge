@@ -51,13 +51,18 @@ public class LoadingModList
 
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
-        this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
-        this.sortedList = sortedList.stream().
-                map(ModInfo.class::cast).
-                collect(Collectors.toList());
-        this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
-                map(ModInfo.class::cast).
-                collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
+        this.modFiles = modFiles.stream()
+                .map(ModFile::getModFileInfo)
+                .map(ModFileInfo.class::cast)
+                .collect(Collectors.toList());
+        this.sortedList = sortedList.stream()
+                .map(ModInfo.class::cast)
+                .collect(Collectors.toList());
+        this.fileById = this.modFiles.stream()
+                .map(ModFileInfo::getMods)
+                .flatMap(Collection::stream)
+                .map(ModInfo.class::cast)
+                .collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
         this.preLoadErrors = new ArrayList<>();
     }
 
@@ -76,19 +81,27 @@ public class LoadingModList
     }
     public void addCoreMods()
     {
-        modFiles.stream().map(ModFileInfo::getFile).map(ModFile::getCoreMods).flatMap(List::stream).forEach(FMLLoader.getCoreModProvider()::addCoreMod);
+        modFiles.stream()
+                .map(ModFileInfo::getFile)
+                .map(ModFile::getCoreMods)
+                .flatMap(List::stream)
+                .forEach(FMLLoader.getCoreModProvider()::addCoreMod);
     }
 
     public void addAccessTransformers()
     {
-        modFiles.stream().map(ModFileInfo::getFile).forEach(mod -> mod.getAccessTransformer().ifPresent(path -> FMLLoader.addAccessTransformer(path, mod)));
+        modFiles.stream()
+                .map(ModFileInfo::getFile)
+                .forEach(mod -> mod.getAccessTransformer().ifPresent(path -> FMLLoader.addAccessTransformer(path, mod)));
     }
 
     public void addForScanning(BackgroundScanHandler backgroundScanHandler)
     {
         this.scanner = backgroundScanHandler;
         backgroundScanHandler.setLoadingModList(this);
-        modFiles.stream().map(ModFileInfo::getFile).forEach(backgroundScanHandler::submitForScanning);
+        modFiles.stream()
+                .map(ModFileInfo::getFile)
+                .forEach(backgroundScanHandler::submitForScanning);
     }
 
     public List<ModFileInfo> getModFiles()

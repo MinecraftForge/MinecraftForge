@@ -32,7 +32,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class FMLMCRegisterPacketHandler {
     public static final FMLMCRegisterPacketHandler INSTANCE = new FMLMCRegisterPacketHandler();
@@ -40,10 +42,18 @@ public class FMLMCRegisterPacketHandler {
     public static class ChannelList {
         private Set<ResourceLocation> locations = new HashSet<>();
 
-        public void updateFrom(PacketBuffer buffer) {
-            byte[] data = new byte[buffer.readableBytes() < 0 ? 0 : buffer.readableBytes()];
+        public void updateFrom(final Supplier<NetworkEvent.Context> source, PacketBuffer buffer, final NetworkEvent.RegistrationChangeType changeType) {
+            byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
             buffer.readBytes(data);
-            locations = bytesToResLocation(data);
+            Set<ResourceLocation> oldLocations = this.locations;
+            this.locations = bytesToResLocation(data);
+            // ensure all locations receive updates, old and new.
+            oldLocations.addAll(this.locations);
+            oldLocations.stream()
+                    .map(NetworkRegistry::findTarget)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .forEach(t->t.dispatchEvent(new NetworkEvent.ChannelRegistrationChangeEvent(source, changeType)));
         }
 
         byte[] toByteArray() {
@@ -79,13 +89,13 @@ public class FMLMCRegisterPacketHandler {
 
     void registerListener(NetworkEvent evt) {
         final ChannelList channelList = getFrom(evt);
-        channelList.updateFrom(evt.getPayload());
+        channelList.updateFrom(evt.getSource(), evt.getPayload(), NetworkEvent.RegistrationChangeType.REGISTER);
         evt.getSource().get().setPacketHandled(true);
     }
 
     void unregisterListener(NetworkEvent evt) {
         final ChannelList channelList = getFrom(evt);
-        channelList.updateFrom(evt.getPayload());
+        channelList.updateFrom(evt.getSource(), evt.getPayload(), NetworkEvent.RegistrationChangeType.UNREGISTER);
         evt.getSource().get().setPacketHandled(true);
     }
 

@@ -42,7 +42,7 @@
 +         }
 +         this.field_70170_p.func_217376_c(entitycow);
 +         for(int i = 0; i < 5; ++i) {
-+            ret.add(new ItemStack(Blocks.field_150337_Q));
++            ret.add(new ItemStack(this.func_213444_dV().field_221099_d.func_177230_c()));
 +         }
 +         this.func_184185_a(SoundEvents.field_187784_dt, 1.0F, 1.0F);
 +      }

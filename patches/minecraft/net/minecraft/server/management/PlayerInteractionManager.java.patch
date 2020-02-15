@@ -122,7 +122,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -285,12 +310,18 @@
+@@ -285,12 +310,19 @@
              return ActionResultType.PASS;
           }
        } else {
@@ -134,11 +134,14 @@
 +            if (result != ActionResultType.PASS) return result;
 +         }
           boolean flag = !p_219441_1_.func_184614_ca().func_190926_b() || !p_219441_1_.func_184592_cb().func_190926_b();
-          boolean flag1 = p_219441_1_.func_70093_af() && flag;
-          if (!flag1 && blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
+-         boolean flag1 = p_219441_1_.func_70093_af() && flag;
+-         if (!flag1 && blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
++         boolean flag1 = !(p_219441_1_.func_70093_af() && flag) || (p_219441_1_.func_184614_ca().doesSneakBypassUse(p_219441_2_,blockpos,p_219441_1_) && p_219441_1_.func_184592_cb().doesSneakBypassUse(p_219441_2_,blockpos,p_219441_1_));
++         if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && flag1 && blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
              return ActionResultType.SUCCESS;
           } else if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
 -            ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return ActionResultType.PASS;
              if (this.func_73083_d()) {
                 int i = p_219441_3_.func_190916_E();
                 ActionResultType actionresulttype = p_219441_3_.func_196084_a(itemusecontext);

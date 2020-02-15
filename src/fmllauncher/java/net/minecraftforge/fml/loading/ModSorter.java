@@ -30,12 +30,14 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.toposort.CyclePresentException;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,7 +47,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
@@ -87,11 +88,19 @@ public class ModSorter
         // lambdas are identity based, so sorting them is impossible unless you hold reference to them
         final MutableGraph<ModFileInfo> graph = GraphBuilder.directed().build();
         AtomicInteger counter = new AtomicInteger();
-        Map<IModFileInfo, Integer> infos = modFiles.stream().map(ModFile::getModFileInfo).collect(Collectors.toMap(Function.identity(), (e) -> counter.incrementAndGet()));
+        Map<IModFileInfo, Integer> infos = modFiles
+                .stream()
+                .map(ModFile::getModFileInfo)
+                .collect(Collectors.toMap(Function.identity(), e -> counter.incrementAndGet()));
         infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
-        modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).
-                map(IModInfo::getDependencies).flatMap(Collection::stream).
-                forEach(dep -> addDependency(graph, dep));
+        modFiles
+                .stream()
+                .map(ModFile::getModInfos)
+                .flatMap(Collection::stream)
+                .map(IModInfo::getDependencies)
+                .flatMap(Collection::stream)
+                .forEach(dep -> addDependency(graph, dep));
+
         final List<ModFileInfo> sorted;
         try
         {
@@ -109,15 +118,24 @@ public class ModSorter
             List<ExceptionData> dataList = cycles.stream()
                     .map(Set::stream)
                     .map(stream -> stream
-                            .flatMap(modFileInfo -> modFileInfo.getMods().stream()
-                                    .map(IModInfo::getModId)).collect(Collectors.toList()))
+                            .flatMap(modFileInfo -> modFileInfo.getMods()
+                                    .stream()
+                                    .map(IModInfo::getModId))
+                            .collect(Collectors.toList()))
                     .map(list -> new ExceptionData("fml.modloading.cycle", list))
                     .collect(Collectors.toList());
             throw new EarlyLoadingException("Sorting error", e, dataList);
         }
-        this.sortedList = sorted.stream().map(ModFileInfo::getMods).
-                flatMap(Collection::stream).map(ModInfo.class::cast).collect(Collectors.toList());
-        this.modFiles = sorted.stream().map(ModFileInfo::getFile).collect(Collectors.toList());
+        this.sortedList = sorted
+                .stream()
+                .map(ModFileInfo::getMods)
+                .flatMap(Collection::stream)
+                .map(ModInfo.class::cast)
+                .collect(Collectors.toList());
+        this.modFiles = sorted
+                .stream()
+                .map(ModFileInfo::getFile)
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -144,13 +162,27 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = modFiles.stream()
+        // Collect mod files by first modid in the file. This will be used for deduping purposes
+        final Map<String, List<IModFile>> modFilesByFirstId = modFiles
+                .stream()
+                .collect(Collectors.groupingBy(mf -> mf.getModInfos().get(0).getModId()));
+
+        // Select the newest by artifact version sorting of non-unique files thus identified
+        this.modFiles = modFilesByFirstId.entrySet().stream()
+                .map(this::selectNewestModInfo)
+                .map(Map.Entry::getValue)
+                .map(ModFile.class::cast)
+                .collect(Collectors.toList());
+
+        // Transform to the full mod id list
+        final Map<String, List<ModInfo>> modIds = modFiles.stream()
                 .map(ModFile::getModInfos)
                 .flatMap(Collection::stream)
-                .map(ModInfo.class::cast);
-        final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
+                .map(ModInfo.class::cast)
+                .collect(Collectors.groupingBy(IModInfo::getModId));
 
-        // TODO: make this figure out dupe handling better
+        // Its theoretically possible that some mod has somehow moved an id to a secondary place, thus causing a dupe.
+        // We can't handle this
         final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds
                 .entrySet()
                 .stream()
@@ -171,30 +203,58 @@ public class ModSorter
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
     }
 
+    private Map.Entry<String, IModFile> selectNewestModInfo(Map.Entry<String, List<IModFile>> fullList) {
+        List<IModFile> modInfoList = fullList.getValue();
+        if (modInfoList.size() > 1) {
+            LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
+            modInfoList.sort(Comparator.<IModFile, ArtifactVersion>comparing(mf -> mf.getModInfos().get(0).getVersion()).reversed());
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
+        }
+        return new AbstractMap.SimpleImmutableEntry<>(fullList.getKey(), modInfoList.get(0));
+    }
+
     private void verifyDependencyVersions()
     {
-        final Map<String, ArtifactVersion> modVersions = modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
-        final Map<IModInfo, List<IModInfo.ModVersion>> modVersionDependencies = modFiles.stream().
-                map(ModFile::getModInfos).flatMap(Collection::stream).
-                collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));
-        final Set<IModInfo.ModVersion> mandatoryModVersions = modVersionDependencies.values().stream().flatMap(Collection::stream).
-                filter(mv -> mv.isMandatory() && mv.getSide().isCorrectSide()).collect(Collectors.toSet());
+        final Map<String, ArtifactVersion> modVersions = modFiles
+                .stream()
+                .map(ModFile::getModInfos)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
+
+        final Map<IModInfo, List<IModInfo.ModVersion>> modVersionDependencies = modFiles
+                .stream()
+                .map(ModFile::getModInfos)
+                .flatMap(Collection::stream)
+                .collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));
+
+        final Set<IModInfo.ModVersion> mandatoryModVersions = modVersionDependencies
+                .values()
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(mv -> mv.isMandatory() && mv.getSide().isCorrectSide())
+                .collect(Collectors.toSet());
+
         LOGGER.debug(LOADING, "Found {} mandatory requirements", mandatoryModVersions.size());
-        final Set<IModInfo.ModVersion> missingVersions = mandatoryModVersions.stream().filter(mv->this.modVersionMatches(mv, modVersions)).collect(Collectors.toSet());
+        final Set<IModInfo.ModVersion> missingVersions = mandatoryModVersions
+                .stream()
+                .filter(mv->this.modVersionMatches(mv, modVersions))
+                .collect(Collectors.toSet());
         LOGGER.debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions.stream().map(mv ->
-                    new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency", mv.getModId(),
-                            mv.getOwner().getModId(), mv.getVersionRange(), modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null")))).
-                    collect(Collectors.toList());
+            final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions
+                    .stream()
+                    .map(mv -> new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency",
+                            mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
+                            modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null"))))
+                    .collect(Collectors.toList());
             throw new EarlyLoadingException("Missing mods", null, exceptionData);
         }
     }
 
     private boolean modVersionMatches(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
-        return !modVersions.containsKey(mv.getModId()) || !mv.getVersionRange().containsVersion(modVersions.get(mv.getModId()));
+        return !(modVersions.containsKey(mv.getModId()) &&
+                (mv.getVersionRange().containsVersion(modVersions.get(mv.getModId())) || modVersions.get(mv.getModId()).toString().equals("NONE")));
     }
 }

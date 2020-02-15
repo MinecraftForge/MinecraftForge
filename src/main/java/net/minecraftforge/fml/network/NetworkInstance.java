@@ -25,9 +25,11 @@ import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -83,7 +85,6 @@ public class NetworkInstance
         return context.getPacketHandled();
     }
 
-
     String getNetworkProtocolVersion() {
         return networkProtocolVersion;
     }
@@ -102,5 +103,9 @@ public class NetworkInstance
 
     void dispatchLoginPacket(final NetworkEvent.LoginPayloadEvent loginPayloadEvent) {
         this.networkEventBus.post(loginPayloadEvent);
+    }
+
+    void dispatchEvent(final NetworkEvent networkEvent) {
+        this.networkEventBus.post(networkEvent);
     }
 }

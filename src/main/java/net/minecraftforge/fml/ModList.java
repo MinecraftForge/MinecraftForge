@@ -209,7 +209,7 @@ public class ModList
         modFiles.stream().map(ModFileInfo::getFile).forEach(fileConsumer);
     }
 
-    private <T> Stream<T> applyForEachModFile(Function<ModFile, T> function) {
+    public <T> Stream<T> applyForEachModFile(Function<ModFile, T> function) {
         return modFiles.stream().map(ModFileInfo::getFile).map(function);
     }
 

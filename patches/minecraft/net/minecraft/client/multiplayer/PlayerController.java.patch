@@ -37,7 +37,12 @@
              if (flag && blockstate1.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F) {
                 this.func_187103_a(p_180511_1_);
              } else {
-@@ -187,13 +193,13 @@
+@@ -183,22 +189,24 @@
+          BlockState blockstate1 = this.field_78776_a.field_71441_e.func_180495_p(p_180512_1_);
+          this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180512_1_, blockstate1, 1.0F);
+          this.func_225324_a(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
++         if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_).isCanceled())
+          func_178891_a(this.field_78776_a, this, p_180512_1_, p_180512_2_);
           return true;
        } else if (this.func_178893_a(p_180512_1_)) {
           BlockState blockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180512_1_);
@@ -53,7 +58,13 @@
                 this.field_78776_a.func_147118_V().func_147682_a(new SimpleSound(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
              }
  
-@@ -217,7 +223,8 @@
+             ++this.field_78780_h;
+             this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180512_1_, blockstate, MathHelper.func_76131_a(this.field_78770_f, 0.0F, 1.0F));
++            if (net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
+             if (this.field_78770_f >= 1.0F) {
+                this.field_78778_j = false;
+                this.func_225324_a(CPlayerDiggingPacket.Action.STOP_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
+@@ -217,7 +225,8 @@
     }
  
     public float func_78757_d() {
@@ -63,7 +74,7 @@
     }
  
     public void func_78765_e() {
-@@ -234,7 +241,7 @@
+@@ -234,7 +243,7 @@
        ItemStack itemstack = this.field_78776_a.field_71439_g.func_184614_ca();
        boolean flag = this.field_85183_f.func_190926_b() && itemstack.func_190926_b();
        if (!this.field_85183_f.func_190926_b() && !itemstack.func_190926_b()) {
@@ -72,7 +83,7 @@
        }
  
        return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -257,6 +264,12 @@
+@@ -257,17 +266,24 @@
           return ActionResultType.FAIL;
        } else {
           ItemStack itemstack = p_217292_1_.func_184586_b(p_217292_3_);
@@ -85,7 +96,21 @@
           if (this.field_78779_k == GameType.SPECTATOR) {
              this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
              return ActionResultType.SUCCESS;
-@@ -298,11 +311,14 @@
+          } else {
+             boolean flag = !p_217292_1_.func_184614_ca().func_190926_b() || !p_217292_1_.func_184592_cb().func_190926_b();
+-            boolean flag1 = p_217292_1_.func_70093_af() && flag;
+-            if (!flag1 && p_217292_2_.func_180495_p(blockpos).func_215687_a(p_217292_2_, p_217292_1_, p_217292_3_, p_217292_4_)) {
++            boolean flag1 = !(p_217292_1_.func_70093_af() && flag) || (p_217292_1_.func_184614_ca().doesSneakBypassUse(p_217292_2_,blockpos,p_217292_1_) && p_217292_1_.func_184592_cb().doesSneakBypassUse(p_217292_2_,blockpos,p_217292_1_));
++            if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && flag1 && p_217292_2_.func_180495_p(blockpos).func_215687_a(p_217292_2_, p_217292_1_, p_217292_3_, p_217292_4_)) {
+                this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
+                return ActionResultType.SUCCESS;
+             } else {
+                this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
++               if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return ActionResultType.PASS;
+                if (!itemstack.func_190926_b() && !p_217292_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
+                   ItemUseContext itemusecontext = new ItemUseContext(p_217292_1_, p_217292_3_, p_217292_4_);
+                   ActionResultType actionresulttype;
+@@ -298,11 +314,14 @@
           if (p_187101_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
              return ActionResultType.PASS;
           } else {
@@ -100,7 +125,7 @@
              }
  
              return actionresult.func_188397_a();
-@@ -327,6 +343,9 @@
+@@ -327,6 +346,9 @@
     public ActionResultType func_187097_a(PlayerEntity p_187097_1_, Entity p_187097_2_, Hand p_187097_3_) {
        this.func_78750_j();
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187097_2_, p_187097_3_));
@@ -110,7 +135,7 @@
        return this.field_78779_k == GameType.SPECTATOR ? ActionResultType.PASS : p_187097_1_.func_190775_a(p_187097_2_, p_187097_3_);
     }
  
-@@ -334,6 +353,9 @@
+@@ -334,6 +356,9 @@
        this.func_78750_j();
        Vec3d vec3d = p_187102_3_.func_216347_e().func_178786_a(p_187102_2_.field_70165_t, p_187102_2_.field_70163_u, p_187102_2_.field_70161_v);
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187102_2_, p_187102_4_, vec3d));

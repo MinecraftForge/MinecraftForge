@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/lighting/SkyLightEngine.java
++++ b/net/minecraft/world/lighting/SkyLightEngine.java
+@@ -229,4 +229,11 @@
+    public String func_215614_b(long p_215614_1_) {
+       return super.func_215614_b(p_215614_1_) + (this.field_215627_c.func_215549_m(p_215614_1_) ? "*" : "");
+    }
++
++   // FORGE START
++
++   @Override
++   public int queuedUpdateSize() {
++      return 0;
++   }
+ }

@@ -1,0 +1,12 @@
+--- a/net/minecraft/pathfinding/SwimmerPathNavigator.java
++++ b/net/minecraft/pathfinding/SwimmerPathNavigator.java
+@@ -68,7 +68,8 @@
+ 
+          int i = 6;
+          Vec3d vec3d2 = this.field_75514_c.func_186310_f();
+-         if (Math.abs(this.field_75515_a.field_70165_t - (vec3d2.field_72450_a + 0.5D)) < (double)f1 && Math.abs(this.field_75515_a.field_70161_v - (vec3d2.field_72449_c + 0.5D)) < (double)f1 && Math.abs(this.field_75515_a.field_70163_u - vec3d2.field_72448_b) < (double)(f1 * 2.0F)) {
++         // Forge: fix MC-94054
++         if (Math.abs(this.field_75515_a.field_70165_t - (vec3d2.field_72450_a + (int)(this.field_75515_a.func_213311_cf() + 1) / 2D)) < (double)f1 && Math.abs(this.field_75515_a.field_70161_v - (vec3d2.field_72449_c + (int)(this.field_75515_a.func_213311_cf() + 1) / 2D)) < (double)f1 && Math.abs(this.field_75515_a.field_70163_u - vec3d2.field_72448_b) < (double)(f1 * 2.0F)) {
+             this.field_75514_c.func_75875_a();
+          }
+ 

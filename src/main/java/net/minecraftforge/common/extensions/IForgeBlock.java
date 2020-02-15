@@ -82,6 +82,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -136,6 +137,7 @@ public interface IForgeBlock
         return false;
     }
 
+    //TODO: remove in 1.15
     /**
      * Check if the face of a block should block rendering.
      *
@@ -147,7 +149,9 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param face The side to check
      * @return True if the block is opaque on the specified side.
+     * @deprecated This is no longer used for rendering logic.
      */
+    @Deprecated
     default boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face)
     {
        return state.isOpaqueCube(world, pos);
@@ -586,9 +590,22 @@ public interface IForgeBlock
     */
     default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
     {
-        return this.getBlock() == Blocks.EMERALD_BLOCK || this.getBlock() == Blocks.GOLD_BLOCK ||
-                this.getBlock() == Blocks.DIAMOND_BLOCK || this.getBlock() == Blocks.IRON_BLOCK;
+        return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
     }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    {
+        return state.getBlock() == Blocks.OBSIDIAN;
+    }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
@@ -919,6 +936,17 @@ public interface IForgeBlock
     {
         return state.getFlammability(world, pos, face) > 0;
     }
+
+    /**
+     * If the block is flammable, this is called when it gets lit on fire.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @param igniter The entity that lit the fire
+     */
+    default void catchFire(BlockState state, World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {}
 
     /**
      * Called when fire is updating on a neighbor block.

@@ -52,6 +52,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey().getId()).collect(Collectors.toSet());
 
         getBuilder(Tags.Items.ARROWS).add(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
+        getBuilder(Tags.Items.BEACON_PAYMENT).add(Items.EMERALD, Items.DIAMOND, Items.GOLD_INGOT, Items.IRON_INGOT);
         getBuilder(Tags.Items.BONES).add(Items.BONE);
         getBuilder(Tags.Items.BOOKSHELVES).add(Items.BOOKSHELF);
         copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
@@ -141,9 +142,11 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
         getBuilder(Tags.Items.STRING).add(Items.STRING);
+        copy(Tags.Blocks.SUPPORTS_BEACON, Tags.Items.SUPPORTS_BEACON);
+        copy(Tags.Blocks.SUPPORTS_CONDUIT, Tags.Items.SUPPORTS_CONDUIT);
     }
 
-    private void addColored(Consumer<Item> consumer, Tag<Item> group, String pattern)
+    private void addColored(Consumer<Tag<Item>> consumer, Tag<Item> group, String pattern)
     {
         String prefix = group.getId().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
@@ -154,7 +157,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());
             getBuilder(tag).add(item);
-            consumer.accept(item);
+            consumer.accept(tag);
         }
     }
 

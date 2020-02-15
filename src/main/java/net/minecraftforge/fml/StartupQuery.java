@@ -280,22 +280,23 @@ public class StartupQuery {
                             for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
                             {
                                 String cmd = it.next().command.trim().toLowerCase();
+                                cmd = cmd.charAt(0) == '/' ? cmd.substring(1) : cmd; // strip the forward slash to make it optional
 
-                                if (cmd.equals("/fml confirm"))
+                                if (cmd.equals("fml confirm"))
                                 {
                                     LOGGER.info(SQ, "confirmed");
                                     query.setResult(true);
                                     done = true;
                                     it.remove();
                                 }
-                                else if (cmd.equals("/fml cancel"))
+                                else if (cmd.equals("fml cancel"))
                                 {
                                     LOGGER.info(SQ, "cancelled");
                                     query.setResult(false);
                                     done = true;
                                     it.remove();
                                 }
-                                else if (cmd.equals("/stop"))
+                                else if (cmd.equals("stop"))
                                 {
                                     StartupQuery.abort();
                                 }

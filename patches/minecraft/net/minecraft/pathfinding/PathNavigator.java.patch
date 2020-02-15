@@ -1,0 +1,12 @@
+--- a/net/minecraft/pathfinding/PathNavigator.java
++++ b/net/minecraft/pathfinding/PathNavigator.java
+@@ -195,7 +195,8 @@
+       Vec3d vec3d = this.func_75502_i();
+       this.field_188561_o = this.field_75515_a.func_213311_cf() > 0.75F ? this.field_75515_a.func_213311_cf() / 2.0F : 0.75F - this.field_75515_a.func_213311_cf() / 2.0F;
+       Vec3d vec3d1 = this.field_75514_c.func_186310_f();
+-      if (Math.abs(this.field_75515_a.field_70165_t - (vec3d1.field_72450_a + 0.5D)) < (double)this.field_188561_o && Math.abs(this.field_75515_a.field_70161_v - (vec3d1.field_72449_c + 0.5D)) < (double)this.field_188561_o && Math.abs(this.field_75515_a.field_70163_u - vec3d1.field_72448_b) < 1.0D) {
++      // Forge: fix MC-94054
++      if (Math.abs(this.field_75515_a.field_70165_t - (vec3d1.field_72450_a + (int)(this.field_75515_a.func_213311_cf() + 1) / 2D)) < (double)this.field_188561_o && Math.abs(this.field_75515_a.field_70161_v - (vec3d1.field_72449_c + (int)(this.field_75515_a.func_213311_cf() + 1) / 2D)) < (double)this.field_188561_o && Math.abs(this.field_75515_a.field_70163_u - vec3d1.field_72448_b) < 1.0D) {
+          this.field_75514_c.func_75872_c(this.field_75514_c.func_75873_e() + 1);
+       }
+ 
