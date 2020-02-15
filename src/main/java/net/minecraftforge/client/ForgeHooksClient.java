@@ -525,9 +525,11 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static TextureAtlasSprite[] getFluidSprites(ILightReader world, BlockPos pos, IFluidState fluidStateIn)
     {
+        ResourceLocation overlayTexture = fluidStateIn.getFluid().getAttributes().getOverlayTexture();
         return new TextureAtlasSprite[] {
                 Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getStillTexture(world, pos)),
                 Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getFlowingTexture(world, pos)),
+                overlayTexture == null ? null : Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(overlayTexture),
         };
     }
 

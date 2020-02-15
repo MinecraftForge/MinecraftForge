@@ -183,6 +183,12 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
+        userdev_test {
+            compileClasspath += sourceSets.userdev.runtimeClasspath
+            runtimeClasspath += sourceSets.userdev.runtimeClasspath
+            compileClasspath += sourceSets.test.runtimeClasspath
+            runtimeClasspath += sourceSets.test.runtimeClasspath
+        }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
@@ -204,7 +210,7 @@ project(':forge') {
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.7:fatjar'
+        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
     def getVersion = {
@@ -266,6 +272,8 @@ project(':forge') {
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
+
                 mods {
                     TestMods { sources sourceSets.test }
                 }
@@ -297,6 +305,8 @@ project(':forge') {
                 taskName 'forge_test_server'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     TestMods { sources sourceSets.test }
@@ -332,6 +342,8 @@ project(':forge') {
                 taskName 'forge_test_data'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     tests { sources  sourceSets.test }

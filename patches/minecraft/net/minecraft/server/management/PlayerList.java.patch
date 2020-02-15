@@ -8,12 +8,14 @@
  
     public PlayerList(MinecraftServer p_i50688_1_, int p_i50688_2_) {
        this.field_72400_f = p_i50688_1_;
-@@ -110,6 +111,14 @@
+@@ -109,7 +110,15 @@
+       String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
-       ServerWorld serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+-      ServerWorld serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
 +
 +      //Forge: Make sure the dimension hasn't been deleted, if so stick them in the overworld.
++      ServerWorld serverworld = p_72355_2_.field_71093_bK != null ? this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK) : null ;
 +      if (serverworld == null) {
 +         p_72355_2_.field_71093_bK = DimensionType.field_223227_a_;
 +         serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);

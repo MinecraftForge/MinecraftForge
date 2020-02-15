@@ -52,6 +52,7 @@ public class NewFluidTest
 
     public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/brown_mushroom_block");
     public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/mushroom_stem");
+    public static final ResourceLocation FLUID_OVERLAY = new ResourceLocation("minecraft:block/obsidian");
 
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
@@ -72,7 +73,7 @@ public class NewFluidTest
     );
 
     public static final ForgeFlowingFluid.Properties test_fluid_properties =
-            new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0x3F1080FF))
+            new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF))
                     .bucket(test_fluid_bucket).block(test_fluid_block);
 
     public NewFluidTest()
