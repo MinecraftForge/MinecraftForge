@@ -25,6 +25,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
@@ -70,5 +71,23 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
         {
             public Post(LivingEntity entity, LivingRenderer<T, M> renderer, MatrixStack matrixStack){ super(entity, renderer,  matrixStack); }
         }
+    }
+    
+    public static class Texture<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    {
+    	private ResourceLocation textureLocation;
+    	
+		public Texture(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack, ResourceLocation textureLocation) 
+		{
+			super(entity, renderer, partialRenderTick, matrixStack);
+			this.textureLocation = textureLocation;
+		}
+		
+		public ResourceLocation getTextureLocation() { return textureLocation; }
+		
+		public void setTextureLocation(ResourceLocation textureLocation) 
+		{ 
+			this.textureLocation = textureLocation; 
+		}
     }
 }
