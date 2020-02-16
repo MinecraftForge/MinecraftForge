@@ -51,7 +51,21 @@
              flag7 = true;
           }
  
-@@ -239,15 +240,15 @@
+@@ -222,10 +223,9 @@
+                flag7 = true;
+                BlockPos blockpos = p_228796_2_.func_177972_a(direction);
+                TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
+-               if (!flag) {
+-                  Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
+-                  if (block == Blocks.field_150359_w || block instanceof StainedGlassBlock) {
+-                     textureatlassprite2 = this.field_187501_d;
++               if (atextureatlassprite[2] != null) {
++                  if (p_228796_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_228796_1_, blockpos, p_228796_4_)) {
++                     textureatlassprite2 = atextureatlassprite[2];
+                   }
+                }
+ 
+@@ -239,15 +239,15 @@
                 float f31 = 1.0F * f30 * f;
                 float f32 = 1.0F * f30 * f1;
                 float f33 = 1.0F * f30 * f2;
@@ -59,15 +73,16 @@
 -               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
 -               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
 -               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
-+               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
-+               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
-+               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
-+               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
-                if (textureatlassprite2 != this.field_187501_d) {
+-               if (textureatlassprite2 != this.field_187501_d) {
 -                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
 -                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
 -                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
 -                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, f48, f50, k);
++               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
++               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
++               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
++               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
++               if (textureatlassprite2 != atextureatlassprite[2]) {
 +                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
 +                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
 +                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
@@ -75,7 +90,7 @@
                 }
              }
           }
-@@ -256,10 +257,15 @@
+@@ -256,10 +256,15 @@
        }
     }
  

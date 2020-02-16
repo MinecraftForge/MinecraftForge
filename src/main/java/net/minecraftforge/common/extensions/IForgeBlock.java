@@ -35,6 +35,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.StainedGlassBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
@@ -117,7 +118,7 @@ public interface IForgeBlock
      * @param pos
      * @return The light value
      */
-    default int getLightValue(BlockState state, ILightReader world, BlockPos pos)
+    default int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getLightValue();
     }
@@ -571,6 +572,20 @@ public interface IForgeBlock
     {
         return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
     }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    {
+        return state.getBlock() == Blocks.OBSIDIAN;
+    }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
@@ -1039,5 +1054,19 @@ public interface IForgeBlock
     default boolean collisionExtendsVertically(BlockState state, IBlockReader world, BlockPos pos, Entity collidingEntity)
     {
         return getBlock().isIn(BlockTags.FENCES) || getBlock().isIn(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
+    }
+
+    /**
+     * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos Block position in world
+     * @param fluidState The state of the fluid
+     * @return Whether the fluid overlay texture should be used
+     */
+    default boolean shouldDisplayFluidOverlay(BlockState state, ILightReader world, BlockPos pos, IFluidState fluidState)
+    {
+        return state.getBlock() == Blocks.GLASS || state.getBlock() instanceof StainedGlassBlock;
     }
 }

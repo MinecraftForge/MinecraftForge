@@ -46,7 +46,7 @@
              field_177603_c.warn("Unable to bake model: '{}': {}", p_229350_1_, exception);
           }
  
-@@ -447,6 +462,13 @@
+@@ -443,6 +458,13 @@
        this.field_217848_D.addAll(p_209593_2_.func_187965_e());
     }
  
@@ -60,7 +60,7 @@
     private void func_217843_a(ModelResourceLocation p_217843_1_) {
        IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
        this.field_217849_F.put(p_217843_1_, iunbakedmodel);
-@@ -461,7 +483,13 @@
+@@ -457,7 +479,13 @@
     }
  
     @Nullable
@@ -74,12 +74,12 @@
        Triple<ResourceLocation, TransformationMatrix, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_225615_b_(), p_217845_2_.func_188049_c());
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
-@@ -472,11 +500,11 @@
+@@ -468,11 +496,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
--               return field_217854_z.func_209579_a(this.field_229322_z_::func_229151_a_, blockmodel).func_228813_a_(this, blockmodel, this.field_229322_z_::func_229151_a_, p_217845_2_, p_217845_1_);
-+               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_228813_a_(this, blockmodel, textureGetter, p_217845_2_, p_217845_1_);
+-               return field_217854_z.func_209579_a(this.field_229322_z_::func_229151_a_, blockmodel).func_228813_a_(this, blockmodel, this.field_229322_z_::func_229151_a_, p_217845_2_, p_217845_1_, false);
++               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_228813_a_(this, blockmodel, this.field_229322_z_::func_229151_a_, p_217845_2_, p_217845_1_, false);
              }
           }
  
@@ -88,7 +88,7 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -530,6 +558,10 @@
+@@ -526,6 +554,10 @@
        return this.field_225367_M;
     }
  
@@ -99,7 +99,7 @@
     @OnlyIn(Dist.CLIENT)
     static class BlockStateDefinitionException extends RuntimeException {
        public BlockStateDefinitionException(String p_i49526_1_) {
-@@ -537,6 +569,10 @@
+@@ -533,6 +565,10 @@
        }
     }
  

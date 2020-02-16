@@ -109,6 +109,17 @@
                 this.func_70106_y();
                 itemstack.func_190920_e(i);
              }
+@@ -300,8 +328,8 @@
+    }
+ 
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
+-      Entity entity = super.func_212321_a(p_212321_1_);
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      Entity entity = super.changeDimension(p_212321_1_, teleporter);
+       if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
+          ((ItemEntity)entity).func_85054_d();
+       }
 @@ -366,7 +394,7 @@
  
     public void func_174870_v() {

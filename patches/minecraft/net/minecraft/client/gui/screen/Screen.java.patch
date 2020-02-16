@@ -6,9 +6,9 @@
     protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
 -      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_);
 +      FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
-+      net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
++      net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
 +      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
-+      net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
++      net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
     }
  
     public List<String> getTooltipFromItem(ItemStack p_getTooltipFromItem_1_) {
@@ -20,7 +20,7 @@
 +      renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, font);
 +   }
 +   public void renderTooltip(List<String> p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_, FontRenderer font) {
-+      net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, width, height, -1, font);
++      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, width, height, -1, font);
 +      if (false && !p_renderTooltip_1_.isEmpty()) {
           RenderSystem.disableRescaleNormal();
           RenderSystem.disableDepthTest();

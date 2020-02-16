@@ -54,4 +54,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgedebugmultilayermodel"
 [[mods]]
+    modId="chunkwatchworldtest"
+[[mods]]
     modId="trsr_transformer_test"
+[[mods]]
+    modId="nameplate_render_test"

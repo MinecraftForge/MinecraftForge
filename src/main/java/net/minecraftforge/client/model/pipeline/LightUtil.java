@@ -96,7 +96,7 @@ public class LightUtil
         consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
-        VertexFormat formatTo = quad.getFormat();
+        VertexFormat formatTo = DefaultVertexFormats.BLOCK;
         int countFrom = formatFrom.func_227894_c_().size();
         int countTo = formatTo.func_227894_c_().size();
         int[] eMap = mapFormats(formatFrom, formatTo);
@@ -245,6 +245,20 @@ public class LightUtil
                 to[index] |= (((bits & mask) << (offset * 8)));
                 // TODO handle overflow into to[index + 1]
             }
+        }
+    }
+    
+    public static int getLightOffset(int v)
+    {
+        return (v * 8) + 6;
+    }
+
+    public static void setLightData(BakedQuad q, int light)
+    {
+        int[] data = q.getVertexData();
+        for (int i = 0; i < 4; i++)
+        {
+            data[getLightOffset(i)] = light;
         }
     }
 

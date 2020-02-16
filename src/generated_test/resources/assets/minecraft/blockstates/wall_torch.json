@@ -13,8 +13,7 @@
       "y": 180
     },
     "facing=east": {
-      "model": "data_gen_test:block/wall_torch",
-      "y": 360
+      "model": "data_gen_test:block/wall_torch"
     }
   }
 }

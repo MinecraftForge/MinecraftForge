@@ -18,9 +18,9 @@
        WorldInfo worldinfo = savehandler.func_75757_d();
        WorldSettings worldsettings;
        if (worldinfo == null) {
-@@ -356,13 +358,13 @@
-       }
+@@ -357,13 +359,13 @@
  
+       worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
        this.func_213194_a(savehandler, worldinfo, worldsettings, ichunkstatuslistener);
@@ -33,7 +33,7 @@
        if (this.func_71242_L()) {
           p_213194_2_.func_176127_a(field_213219_c);
        }
-@@ -406,6 +408,7 @@
+@@ -407,6 +409,7 @@
           if (dimensiontype != DimensionType.field_223227_a_) {
              this.field_71305_c.put(dimensiontype, new ServerMultiWorld(serverworld1, this, this.field_213217_au, p_213194_1_, dimensiontype, this.field_71304_b, p_213194_4_));
           }
@@ -41,7 +41,7 @@
        }
  
     }
-@@ -564,6 +567,7 @@
+@@ -565,6 +568,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -49,7 +49,7 @@
                 serverworld1.close();
              } catch (IOException ioexception) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception);
-@@ -604,6 +608,7 @@
+@@ -605,6 +609,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
@@ -57,7 +57,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
-@@ -635,9 +640,15 @@
+@@ -636,9 +641,15 @@
                 this.field_71304_b.func_219897_b();
                 this.field_71296_Q = true;
              }
@@ -73,7 +73,7 @@
        } catch (Throwable throwable1) {
           field_147145_h.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport;
-@@ -654,6 +665,7 @@
+@@ -655,6 +666,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -81,7 +81,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -662,6 +674,7 @@
+@@ -663,6 +675,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -89,7 +89,7 @@
              this.func_71240_o();
           }
  
-@@ -758,6 +771,7 @@
+@@ -764,6 +777,7 @@
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
@@ -97,7 +97,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -772,6 +786,7 @@
+@@ -778,6 +792,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -105,7 +105,7 @@
        }
  
        if (this.field_71315_w % 6000 == 0) {
-@@ -799,6 +814,7 @@
+@@ -805,6 +820,7 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -113,7 +113,7 @@
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -806,7 +822,8 @@
+@@ -812,7 +828,8 @@
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
  
@@ -123,7 +123,7 @@
           if (serverworld.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ || this.func_71255_r()) {
              this.field_71304_b.func_194340_a(() -> {
                 return serverworld.func_72912_H().func_76065_j() + " " + Registry.field_212622_k.func_177774_c(serverworld.field_73011_w.func_186058_p());
-@@ -818,6 +835,7 @@
+@@ -824,6 +841,7 @@
              }
  
              this.field_71304_b.func_76320_a("tick");
@@ -131,7 +131,7 @@
  
              try {
                 serverworld.func_72835_b(p_71190_1_);
-@@ -826,12 +844,16 @@
+@@ -832,12 +850,16 @@
                 serverworld.func_72914_a(crashreport);
                 throw new ReportedException(crashreport);
              }
@@ -148,7 +148,7 @@
        this.field_71304_b.func_219895_b("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_219895_b("players");
-@@ -872,6 +894,7 @@
+@@ -878,6 +900,7 @@
        OptionSpec<Integer> optionspec10 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec11 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec12 = optionparser.nonOptions();
@@ -156,7 +156,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -903,6 +926,10 @@
+@@ -910,6 +933,10 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s, field_152367_a.getName()));
           String s1 = Optional.ofNullable(optionset.valueOf(optionspec9)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -167,7 +167,7 @@
           final DedicatedServer dedicatedserver = new DedicatedServer(new File(s), serverpropertiesprovider, DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new, s1);
           dedicatedserver.func_71224_l(optionset.valueOf(optionspec7));
           dedicatedserver.func_71208_b(optionset.valueOf(optionspec10));
-@@ -920,6 +947,7 @@
+@@ -927,6 +954,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
@@ -175,7 +175,7 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147145_h));
-@@ -964,7 +992,7 @@
+@@ -971,7 +999,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -184,7 +184,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -1003,7 +1031,7 @@
+@@ -1010,7 +1038,7 @@
     }
  
     public String getServerModName() {
@@ -193,7 +193,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1558,6 +1586,31 @@
+@@ -1567,6 +1595,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  

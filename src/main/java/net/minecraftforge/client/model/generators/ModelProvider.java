@@ -67,10 +67,9 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     protected final String folder;
     protected final Function<ResourceLocation, T> factory;
     @VisibleForTesting
-    protected final Map<ResourceLocation, T> generatedModels = new HashMap<>();
-    protected final ExistingFileHelper existingFileHelper;
-
-    protected DirectoryCache cache;
+    public final Map<ResourceLocation, T> generatedModels = new HashMap<>();
+    @VisibleForTesting
+    public final ExistingFileHelper existingFileHelper;
 
     protected abstract void registerModels();
 
@@ -91,7 +90,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         this(generator, modid, folder, loc->builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
     }
 
-    protected T getBuilder(String path) {
+    public T getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
         ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
         return generatedModels.computeIfAbsent(outputLoc, factory);
@@ -104,23 +103,23 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return new ResourceLocation(rl.getNamespace(), folder + "/" + rl.getPath());
     }
 
-    protected ResourceLocation modLoc(String name) {
+    public ResourceLocation modLoc(String name) {
         return new ResourceLocation(modid, name);
     }
 
-    protected ResourceLocation mcLoc(String name) {
+    public ResourceLocation mcLoc(String name) {
         return new ResourceLocation(name);
     }
 
-    protected T withExistingParent(String name, String parent) {
+    public T withExistingParent(String name, String parent) {
         return withExistingParent(name, mcLoc(parent));
     }
 
-    protected T withExistingParent(String name, ResourceLocation parent) {
+    public T withExistingParent(String name, ResourceLocation parent) {
         return getBuilder(name).parent(getExistingFile(parent));
     }
 
-    protected T cube(String name, ResourceLocation down, ResourceLocation up, ResourceLocation north, ResourceLocation south, ResourceLocation east, ResourceLocation west) {
+    public T cube(String name, ResourceLocation down, ResourceLocation up, ResourceLocation north, ResourceLocation south, ResourceLocation east, ResourceLocation west) {
         return withExistingParent(name, "cube")
                 .texture("down", down)
                 .texture("up", up)
@@ -134,7 +133,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return singleTexture(name, mcLoc(parent), texture);
     }
 
-    protected T singleTexture(String name, ResourceLocation parent, ResourceLocation texture) {
+    public T singleTexture(String name, ResourceLocation parent, ResourceLocation texture) {
         return singleTexture(name, parent, "texture", texture);
     }
 
@@ -142,16 +141,16 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return singleTexture(name, mcLoc(parent), textureKey, texture);
     }
 
-    protected T singleTexture(String name, ResourceLocation parent, String textureKey, ResourceLocation texture) {
+    public T singleTexture(String name, ResourceLocation parent, String textureKey, ResourceLocation texture) {
         return withExistingParent(name, parent)
                 .texture(textureKey, texture);
     }
 
-    protected T cubeAll(String name, ResourceLocation texture) {
+    public T cubeAll(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/cube_all", "all", texture);
     }
 
-    protected T cubeTop(String name, ResourceLocation side, ResourceLocation top) {
+    public T cubeTop(String name, ResourceLocation side, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/cube_top")
                 .texture("side", side)
                 .texture("top", top);
@@ -164,23 +163,23 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("top", top);
     }
 
-    protected T cubeBottomTop(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T cubeBottomTop(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/cube_bottom_top", side, bottom, top);
     }
 
-    protected T cubeColumn(String name, ResourceLocation side, ResourceLocation end) {
+    public T cubeColumn(String name, ResourceLocation side, ResourceLocation end) {
         return withExistingParent(name, BLOCK_FOLDER + "/cube_column")
                 .texture("side", side)
                 .texture("end", end);
     }
 
-    protected T orientableVertical(String name, ResourceLocation side, ResourceLocation front) {
+    public T orientableVertical(String name, ResourceLocation side, ResourceLocation front) {
         return withExistingParent(name, BLOCK_FOLDER + "/orientable_vertical")
                 .texture("side", side)
                 .texture("front", front);
     }
 
-    protected T orientableWithBottom(String name, ResourceLocation side, ResourceLocation front, ResourceLocation bottom, ResourceLocation top) {
+    public T orientableWithBottom(String name, ResourceLocation side, ResourceLocation front, ResourceLocation bottom, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/orientable_with_bottom")
                 .texture("side", side)
                 .texture("front", front)
@@ -188,78 +187,78 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("top", top);
     }
 
-    protected T orientable(String name, ResourceLocation side, ResourceLocation front, ResourceLocation top) {
+    public T orientable(String name, ResourceLocation side, ResourceLocation front, ResourceLocation top) {
         return withExistingParent(name, BLOCK_FOLDER + "/orientable")
                 .texture("side", side)
                 .texture("front", front)
                 .texture("top", top);
     }
 
-    protected T crop(String name, ResourceLocation crop) {
+    public T crop(String name, ResourceLocation crop) {
         return singleTexture(name, BLOCK_FOLDER + "/crop", "crop", crop);
     }
 
-    protected T cross(String name, ResourceLocation cross) {
+    public T cross(String name, ResourceLocation cross) {
         return singleTexture(name, BLOCK_FOLDER + "/cross", "cross", cross);
     }
 
-    protected T stairs(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T stairs(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/stairs", side, bottom, top);
     }
 
-    protected T stairsOuter(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T stairsOuter(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/outer_stairs", side, bottom, top);
     }
 
-    protected T stairsInner(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T stairsInner(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/inner_stairs", side, bottom, top);
     }
 
-    protected T slab(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T slab(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/slab", side, bottom, top);
     }
 
-    protected T slabTop(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public T slabTop(String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         return sideBottomTop(name, BLOCK_FOLDER + "/slab_top", side, bottom, top);
     }
 
-    protected T fencePost(String name, ResourceLocation texture) {
+    public T fencePost(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/fence_post", texture);
     }
 
-    protected T fenceSide(String name, ResourceLocation texture) {
+    public T fenceSide(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/fence_side", texture);
     }
 
-    protected T fenceInventory(String name, ResourceLocation texture) {
+    public T fenceInventory(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/fence_inventory", texture);
     }
 
-    protected T fenceGate(String name, ResourceLocation texture) {
+    public T fenceGate(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_fence_gate", texture);
     }
 
-    protected T fenceGateOpen(String name, ResourceLocation texture) {
+    public T fenceGateOpen(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_fence_gate_open", texture);
     }
 
-    protected T fenceGateWall(String name, ResourceLocation texture) {
+    public T fenceGateWall(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_fence_gate_wall", texture);
     }
 
-    protected T fenceGateWallOpen(String name, ResourceLocation texture) {
+    public T fenceGateWallOpen(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_fence_gate_wall_open", texture);
     }
 
-    protected T wallPost(String name, ResourceLocation wall) {
+    public T wallPost(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_post", "wall", wall);
     }
 
-    protected T wallSide(String name, ResourceLocation wall) {
+    public T wallSide(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
 
-    protected T wallInventory(String name, ResourceLocation wall) {
+    public T wallInventory(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/wall_inventory", "wall", wall);
     }
 
@@ -269,23 +268,23 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("edge", edge);
     }
 
-    protected T panePost(String name, ResourceLocation pane, ResourceLocation edge) {
+    public T panePost(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_post", pane, edge);
     }
 
-    protected T paneSide(String name, ResourceLocation pane, ResourceLocation edge) {
+    public T paneSide(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_side", pane, edge);
     }
 
-    protected T paneSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
+    public T paneSideAlt(String name, ResourceLocation pane, ResourceLocation edge) {
         return pane(name, "template_glass_pane_side_alt", pane, edge);
     }
 
-    protected T paneNoSide(String name, ResourceLocation pane) {
+    public T paneNoSide(String name, ResourceLocation pane) {
         return singleTexture(name, BLOCK_FOLDER + "/template_glass_pane_noside", "pane", pane);
     }
 
-    protected T paneNoSideAlt(String name, ResourceLocation pane) {
+    public T paneNoSideAlt(String name, ResourceLocation pane) {
         return singleTexture(name, BLOCK_FOLDER + "/template_glass_pane_noside_alt", "pane", pane);
     }
 
@@ -295,74 +294,76 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("top", top);
     }
 
-    protected T doorBottomLeft(String name, ResourceLocation bottom, ResourceLocation top) {
+    public T doorBottomLeft(String name, ResourceLocation bottom, ResourceLocation top) {
         return door(name, "door_bottom", bottom, top);
     }
 
-    protected T doorBottomRight(String name, ResourceLocation bottom, ResourceLocation top) {
+    public T doorBottomRight(String name, ResourceLocation bottom, ResourceLocation top) {
         return door(name, "door_bottom_rh", bottom, top);
     }
 
-    protected T doorTopLeft(String name, ResourceLocation bottom, ResourceLocation top) {
+    public T doorTopLeft(String name, ResourceLocation bottom, ResourceLocation top) {
         return door(name, "door_top", bottom, top);
     }
 
-    protected T doorTopRight(String name, ResourceLocation bottom, ResourceLocation top) {
+    public T doorTopRight(String name, ResourceLocation bottom, ResourceLocation top) {
         return door(name, "door_top_rh", bottom, top);
     }
 
-    protected T trapdoorBottom(String name, ResourceLocation texture) {
+    public T trapdoorBottom(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_trapdoor_bottom", texture);
     }
 
-    protected T trapdoorTop(String name, ResourceLocation texture) {
+    public T trapdoorTop(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_trapdoor_top", texture);
     }
 
-    protected T trapdoorOpen(String name, ResourceLocation texture) {
+    public T trapdoorOpen(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_trapdoor_open", texture);
     }
 
-    protected T trapdoorOrientableBottom(String name, ResourceLocation texture) {
+    public T trapdoorOrientableBottom(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_orientable_trapdoor_bottom", texture);
     }
 
-    protected T trapdoorOrientableTop(String name, ResourceLocation texture) {
+    public T trapdoorOrientableTop(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_orientable_trapdoor_top", texture);
     }
 
-    protected T trapdoorOrientableOpen(String name, ResourceLocation texture) {
+    public T trapdoorOrientableOpen(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/template_orientable_trapdoor_open", texture);
     }
 
-    protected T torch(String name, ResourceLocation torch) {
+    public T torch(String name, ResourceLocation torch) {
         return singleTexture(name, BLOCK_FOLDER + "/template_torch", "torch", torch);
     }
 
-    protected T torchWall(String name, ResourceLocation torch) {
+    public T torchWall(String name, ResourceLocation torch) {
         return singleTexture(name, BLOCK_FOLDER + "/torch_wall", "torch", torch);
     }
 
-    protected T carpet(String name, ResourceLocation wool) {
+    public T carpet(String name, ResourceLocation wool) {
         return singleTexture(name, BLOCK_FOLDER + "/carpet", "wool", wool);
     }
 
-    protected ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
+    public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
         ModelFile.ExistingModelFile ret = new ModelFile.ExistingModelFile(extendWithFolder(path), existingFileHelper);
         ret.assertExistence();
         return ret;
     }
+    
+    protected void clear() {
+        generatedModels.clear();
+    }
 
     @Override
     public void act(DirectoryCache cache) throws IOException {
-        this.cache = cache;
-        generatedModels.clear();
+        clear();
         registerModels();
-        generateAll();
-        this.cache = null;
+        generateAll(cache);
     }
 
-    private void generateAll() {
+    protected void generateAll(DirectoryCache cache) {
         for (T model : generatedModels.values()) {
             Path target = getPath(model);
             try {

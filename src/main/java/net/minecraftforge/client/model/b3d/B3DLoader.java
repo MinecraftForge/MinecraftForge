@@ -44,7 +44,6 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.model.*;
@@ -68,7 +67,6 @@ import com.google.gson.JsonParser;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
@@ -83,7 +81,8 @@ import net.minecraftforge.client.model.b3d.B3DModel.Texture;
 import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.property.Properties;
@@ -151,9 +150,9 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         if(model == null) throw new ModelLoadingException("Error loading model previously: " + file);
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
-            return new ModelWrapper(modelLocation, model, ImmutableSet.of(), true, true, 1);
+            return new ModelWrapper(modelLocation, model, ImmutableSet.of(), true, true, true, 1);
         }
-        return new ModelWrapper(modelLocation, model, ImmutableSet.of(model.getRoot().getName()), true, true, 1);
+        return new ModelWrapper(modelLocation, model, ImmutableSet.of(model.getRoot().getName()), true, true, true, 1);
     }
 
     public static final class B3DState implements IModelTransform
@@ -406,18 +405,20 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final ImmutableMap<String, String> textures;
         private final boolean smooth;
         private final boolean gui3d;
+        private final boolean isSideLit;
         private final int defaultKey;
 
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey)
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, boolean isSideLit, int defaultKey)
         {
-            this(modelLocation, model, meshes, smooth, gui3d, defaultKey, buildTextures(model.getTextures()));
+            this(modelLocation, model, meshes, smooth, gui3d, isSideLit, defaultKey, buildTextures(model.getTextures()));
         }
 
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, String> textures)
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, boolean isSideLit, int defaultKey, ImmutableMap<String, String> textures)
         {
             this.modelLocation = modelLocation;
             this.model = model;
             this.meshes = meshes;
+            this.isSideLit = isSideLit;
             this.textures = textures;
             this.smooth = smooth;
             this.gui3d = gui3d;
@@ -477,7 +478,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, DefaultVertexFormats.BLOCK, meshes, builder.build());
+            return new BakedWrapper(model.getRoot(), modelTransform, smooth, gui3d, isSideLit, meshes, builder.build());
         }
 
         public ModelWrapper retexture(ImmutableMap<String, String> textures)
@@ -501,7 +502,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     builder.put(e);
                 }
             }
-            return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, defaultKey, builder.build());
+            return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, isSideLit, defaultKey, builder.build());
         }
 
         public ModelWrapper process(ImmutableMap<String, String> data)
@@ -514,7 +515,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 JsonElement e = new JsonParser().parse(data.get("mesh"));
                 if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
                 {
-                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), smooth, gui3d, defaultKey, textures);
+                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), smooth, gui3d, isSideLit, defaultKey, textures);
                 }
                 else if (e.isJsonArray())
                 {
@@ -554,7 +555,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     return this;
                 }
             }
-            return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, newDefaultKey, textures) : this;
+            return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, isSideLit, newDefaultKey, textures) : this;
         }
 
         @Override
@@ -578,7 +579,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             {
                 return this;
             }
-            return new ModelWrapper(modelLocation, model, meshes, value, gui3d, defaultKey, textures);
+            return new ModelWrapper(modelLocation, model, meshes, value, gui3d, isSideLit, defaultKey, textures);
         }
 
         public ModelWrapper gui3d(boolean value)
@@ -587,7 +588,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             {
                 return this;
             }
-            return new ModelWrapper(modelLocation, model, meshes, smooth, value, defaultKey, textures);
+            return new ModelWrapper(modelLocation, model, meshes, smooth, value, isSideLit, defaultKey, textures);
         }
     }
 
@@ -597,16 +598,16 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final IModelTransform state;
         private final boolean smooth;
         private final boolean gui3d;
-        private final VertexFormat format;
+        private final boolean isSideLit;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
         private final LoadingCache<Integer, B3DState> cache;
 
         private ImmutableList<BakedQuad> quads;
 
-        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
+        public BakedWrapper(final Node<?> node, final IModelTransform state, final boolean smooth, final boolean gui3d, boolean isSideLit, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this(node, state, smooth, gui3d, format, meshes, textures, CacheBuilder.newBuilder()
+            this(node, state, smooth, gui3d, isSideLit, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
                 .build(new CacheLoader<Integer, B3DState>()
@@ -626,13 +627,13 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }));
         }
 
-        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
+        public BakedWrapper(Node<?> node, IModelTransform state, boolean smooth, boolean gui3d, boolean isSideLit, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
         {
             this.node = node;
             this.state = state;
             this.smooth = smooth;
             this.gui3d = gui3d;
-            this.format = format;
+            this.isSideLit = isSideLit;
             this.meshes = meshes;
             this.textures = textures;
             this.cache = cache;
@@ -713,16 +714,15 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 });
                 for(Face f : faces)
                 {
-                    UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
-                    quadBuilder.setContractUVs(true);
-                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     List<Texture> textures = null;
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
                     else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance();
                     else sprite = this.textures.get(textures.get(0).getPath());
-                    quadBuilder.setTexture(sprite);
+                    BakedQuadBuilder quadBuilder = new BakedQuadBuilder(sprite);
+                    quadBuilder.setContractUVs(true);
+                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
@@ -732,32 +732,32 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             }
         }
 
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
+        private final void putVertexData(IVertexConsumer consumer, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
-            ImmutableList<VertexFormatElement> vertexFormatElements = format.func_227894_c_();
+            ImmutableList<VertexFormatElement> vertexFormatElements = consumer.getVertexFormat().func_227894_c_();
             for(int e = 0; e < vertexFormatElements.size(); e++)
             {
                 switch(vertexFormatElements.get(e).getUsage())
                 {
                 case POSITION:
-                    builder.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
+                    consumer.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
                     {
-                        builder.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
+                        consumer.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
                     }
                     else
                     {
-                        builder.put(e, 1, 1, 1, 1);
+                        consumer.put(e, 1, 1, 1, 1);
                     }
                     break;
                 case UV:
                     // TODO handle more brushes
                     if(vertexFormatElements.get(e).getIndex() < v.getTexCoords().length)
                     {
-                        builder.put(e,
+                        consumer.put(e,
                             sprite.getInterpolatedU(v.getTexCoords()[0].getX() * 16),
                             sprite.getInterpolatedV(v.getTexCoords()[0].getY() * 16),
                             0,
@@ -766,21 +766,21 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     }
                     else
                     {
-                        builder.put(e, 0, 0, 0, 1);
+                        consumer.put(e, 0, 0, 0, 1);
                     }
                     break;
                 case NORMAL:
                     if(v.getNormal() != null)
                     {
-                        builder.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
+                        consumer.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
                     }
                     else
                     {
-                        builder.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
+                        consumer.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
                     }
                     break;
                 default:
-                    builder.put(e);
+                    consumer.put(e);
                 }
             }
         }
@@ -795,6 +795,12 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         public boolean isGui3d()
         {
             return gui3d;
+        }
+
+        @Override
+        public boolean func_230044_c_()
+        {
+            return isSideLit;
         }
 
         @Override
