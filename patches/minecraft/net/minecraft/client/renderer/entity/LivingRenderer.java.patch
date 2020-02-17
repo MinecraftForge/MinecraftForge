@@ -30,17 +30,16 @@
           f5 = p_225623_1_.field_184619_aG - p_225623_1_.field_70721_aZ * (1.0F - p_225623_3_);
           if (p_225623_1_.func_70631_g_()) {
 @@ -109,6 +112,9 @@
-       boolean flag2 = !flag1 && !p_225623_1_.func_98034_c(Minecraft.func_71410_x().field_71439_g);
-       this.field_77045_g.func_225597_a_(p_225623_1_, f5, f8, f7, f2, f6);
-       ResourceLocation resourcelocation = this.func_110775_a(p_225623_1_);
-+      net.minecraftforge.client.event.RenderLivingEvent.Texture<T, M> event = new net.minecraftforge.client.event.RenderLivingEvent.Texture<>(p_225623_1_, this, p_225623_3_, p_225623_4_, resourcelocation);
+       boolean flag = this.func_225622_a_(p_225623_1_);
+       boolean flag1 = !flag && !p_225623_1_.func_98034_c(Minecraft.func_71410_x().field_71439_g);
+       RenderType rendertype = this.func_230042_a_(p_225623_1_, flag, flag1);
++      net.minecraftforge.client.event.RenderLivingEvent.UpdateRenderType<T, M> event = new net.minecraftforge.client.event.RenderLivingEvent.UpdateRenderType<>(p_225623_1_, this, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_, rendertype);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+      resourcelocation = event.getTextureLocation();
-       RenderType rendertype;
-       if (flag2) {
-          rendertype = RenderType.func_228644_e_(resourcelocation);
-@@ -132,6 +138,7 @@
-@@ -123,6 +126,7 @@
++      rendertype = event.getRenderType();
+       if (rendertype != null) {
+          IVertexBuilder ivertexbuilder = p_225623_5_.getBuffer(rendertype);
+          int i = func_229117_c_(p_225623_1_, this.func_225625_b_(p_225623_1_, p_225623_3_));
+@@ -123,6 +129,7 @@
  
        p_225623_4_.func_227865_b_();
        super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);

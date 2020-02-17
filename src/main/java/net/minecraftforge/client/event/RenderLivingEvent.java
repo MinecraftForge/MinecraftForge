@@ -20,13 +20,14 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
@@ -71,21 +72,22 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
         }
     }
     
-    public static class Texture<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    public static class UpdateRenderType<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-    	private ResourceLocation textureLocation;
+        private RenderType renderType;
     	
-		public Texture(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack, ResourceLocation textureLocation) 
-		{
-			super(entity, renderer, partialRenderTick, matrixStack);
-			this.textureLocation = textureLocation;
-		}
+        public UpdateRenderType(LivingEntity entity, LivingRenderer<T, M> renderer, float partialRenderTick, MatrixStack matrixStack,
+                IRenderTypeBuffer buffers, int light, RenderType renderType) 
+        {
+            super(entity, renderer, partialRenderTick, matrixStack, buffers, light);
+            this.renderType = renderType;
+        }
 		
-		public ResourceLocation getTextureLocation() { return textureLocation; }
+        public RenderType getRenderType() { return renderType; }
 		
-		public void setTextureLocation(ResourceLocation textureLocation) 
-		{ 
-			this.textureLocation = textureLocation; 
-		}
+        public void setRenderType(RenderType renderType) 
+        { 
+            this.renderType = renderType; 
+        }
     }
 }
