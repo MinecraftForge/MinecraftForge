@@ -226,13 +226,13 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
 
         @Override
-        public TransformationMatrix func_225615_b_()
+        public TransformationMatrix getRotation()
         {
             if(parent != null)
             {
-                return parent.func_225615_b_();
+                return parent.getRotation();
             }
-            return TransformationMatrix.func_227983_a_();
+            return TransformationMatrix.identity();
         }
 
         @Override
@@ -242,7 +242,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
             if(!(part instanceof NodeJoint))
             {
-                return TransformationMatrix.func_227983_a_();
+                return TransformationMatrix.identity();
             }
             Node<?> node = ((NodeJoint)part).getNode();
             TransformationMatrix nodeTransform;
@@ -290,7 +290,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
         public static TransformationMatrix getNodeMatrix(@Nullable Animation animation, Node<?> node, int frame)
         {
-            TransformationMatrix ret = TransformationMatrix.func_227983_a_();
+            TransformationMatrix ret = TransformationMatrix.identity();
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
             else if(node.getAnimation() != null) key = node.getAnimation().getKeys().get(frame, node);
@@ -355,8 +355,8 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         @Override
         public TransformationMatrix getInvBindPose()
         {
-            Matrix4f m = new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null).func_227988_c_();
-            m.func_226600_c_();
+            Matrix4f m = new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
+            m.invert();
             TransformationMatrix pose = new TransformationMatrix(m);
 
             if(node.getParent() != null)
@@ -446,7 +446,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         }
 
         @Override
-        public Collection<Material> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
+        public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
         {
             return textures.values().stream().filter(loc -> !loc.startsWith("#"))
                     .map(t -> new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(t)))
@@ -461,7 +461,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
         @Nullable
         @Override
-        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             TextureAtlasSprite missing = spriteGetter.apply(new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, MissingTextureSprite.getLocation()));
@@ -694,7 +694,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 Mesh mesh = (Mesh)node.getKind();
                 Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
                 {
-                    private final TransformationMatrix global = state.func_225615_b_();
+                    private final TransformationMatrix global = state.getRotation();
                     private final LoadingCache<Node<?>, TransformationMatrix> localCache = CacheBuilder.newBuilder()
                         .maximumSize(32)
                         .build(new CacheLoader<Node<?>, TransformationMatrix>()
@@ -709,7 +709,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     @Override
                     public Matrix4f apply(Node<?> node)
                     {
-                        return global.compose(localCache.getUnchecked(node)).func_227988_c_();
+                        return global.compose(localCache.getUnchecked(node)).getMatrix();
                     }
                 });
                 for(Face f : faces)
@@ -735,7 +735,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         private final void putVertexData(IVertexConsumer consumer, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
-            ImmutableList<VertexFormatElement> vertexFormatElements = consumer.getVertexFormat().func_227894_c_();
+            ImmutableList<VertexFormatElement> vertexFormatElements = consumer.getVertexFormat().getElements();
             for(int e = 0; e < vertexFormatElements.size(); e++)
             {
                 switch(vertexFormatElements.get(e).getUsage())

@@ -121,7 +121,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean func_215665_a(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canDisplace(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
         return direction == Direction.DOWN && !isEquivalentTo(fluidIn);

@@ -40,7 +40,7 @@ public final class TransformationHelper
     @OnlyIn(Dist.CLIENT)
     public static TransformationMatrix toTransformation(ItemTransformVec3f transform)
     {
-        if (transform.equals(ItemTransformVec3f.DEFAULT)) return TransformationMatrix.func_227983_a_();
+        if (transform.equals(ItemTransformVec3f.DEFAULT)) return TransformationMatrix.identity();
 
         return new TransformationMatrix(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
     }
@@ -62,8 +62,8 @@ public final class TransformationHelper
 
     public static Vector3f lerp(Vector3f from, Vector3f to, float progress)
     {
-        Vector3f res = from.func_229195_e_();
-        res.func_229190_a_(to, progress);
+        Vector3f res = from.copy();
+        res.lerp(to, progress);
         return res;
     }
 
@@ -116,7 +116,7 @@ public final class TransformationHelper
     {
         return new TransformationMatrix(
             lerp(one.getTranslation(), that.getTranslation(), progress),
-            slerp(one.func_227989_d_(), that.func_227989_d_(), progress),
+            slerp(one.getRotationLeft(), that.getRotationLeft(), progress),
             lerp(one.getScale(), that.getScale(), progress),
             slerp(one.getRightRot(), that.getRightRot(), progress)
         );
@@ -140,7 +140,7 @@ public final class TransformationHelper
                 String transform = json.getAsString();
                 if(transform.equals("identity"))
                 {
-                    return TransformationMatrix.func_227983_a_();
+                    return TransformationMatrix.identity();
                 }
                 else
                 {
@@ -266,15 +266,15 @@ public final class TransformationHelper
             {
                 if (entry.getKey().equals("x"))
                 {
-                    ret = Vector3f.field_229179_b_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
+                    ret = Vector3f.XP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
                 }
                 else if (entry.getKey().equals("y"))
                 {
-                    ret = Vector3f.field_229181_d_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
+                    ret = Vector3f.YP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
                 }
                 else if (entry.getKey().equals("z"))
                 {
-                    ret = Vector3f.field_229183_f_.func_229187_a_(entry.getValue().getAsNumber().floatValue());
+                    ret = Vector3f.ZP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
                 }
                 else throw new JsonParseException("Axis rotation: expected single axis key, got: " + entry.getKey());
             }
@@ -291,7 +291,7 @@ public final class TransformationHelper
             {
                 if (e.getAsJsonArray().get(0).isJsonObject())
                 {
-                    Quaternion ret = Quaternion.field_227060_a_.func_227068_g_();
+                    Quaternion ret = Quaternion.ONE.copy();
                     for (JsonElement a : e.getAsJsonArray())
                     {
                         ret.multiply(parseAxisRotation(a));

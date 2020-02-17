@@ -286,7 +286,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BlockPos pos = center.add(x, 0, z);
-                Biome biome = world.func_225526_b_(pos.getX(), pos.getY(), pos.getZ());
+                Biome biome = world.getNoiseBiome(pos.getX(), pos.getY(), pos.getZ());
                 int colour = 0xFFFFFF; // TODO: biome.getSkyColorByTemp(biome.getTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
@@ -388,7 +388,7 @@ public class ForgeHooksClient
     private static final net.minecraft.client.renderer.Matrix4f flipX;
     private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
     static {
-        flipX = Matrix4f.func_226593_a_(-1,1,1);
+        flipX = Matrix4f.makeScale(-1,1,1);
         flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
     }
 
@@ -398,20 +398,20 @@ public class ForgeHooksClient
         model = model.handlePerspective(cameraTransformType, stack);
 
         // If the stack is not empty, the code has added a matrix for us to use.
-        if (!stack.func_227867_d_())
+        if (!stack.clear())
         {
             // Apply the transformation to the real matrix stack, flipping for left hand
-            net.minecraft.client.renderer.Matrix4f tMat = stack.func_227866_c_().func_227870_a_();
-            net.minecraft.client.renderer.Matrix3f nMat = stack.func_227866_c_().func_227872_b_();
+            net.minecraft.client.renderer.Matrix4f tMat = stack.getLast().getMatrix();
+            net.minecraft.client.renderer.Matrix3f nMat = stack.getLast().getNormal();
             if (leftHandHackery)
             {
                 tMat.multiplyBackward(flipX);
-                tMat.func_226595_a_(flipX);
+                tMat.mul(flipX);
                 nMat.multiplyBackward(flipXNormal);
-                nMat.func_226118_b_(flipXNormal);
+                nMat.mul(flipXNormal);
             }
-            matrixStack.func_227866_c_().func_227870_a_().func_226595_a_(tMat);
-            matrixStack.func_227866_c_().func_227872_b_().func_226118_b_(nMat);
+            matrixStack.getLast().getMatrix().mul(tMat);
+            matrixStack.getLast().getNormal().mul(nMat);
         }
         return model;
     }
@@ -420,7 +420,7 @@ public class ForgeHooksClient
 
     public static void preDraw(Usage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
-        VertexFormatElement attr = format.func_227894_c_().get(element);
+        VertexFormatElement attr = format.getElements().get(element);
         int count = attr.getElementCount();
         int constant = attr.getType().getGlConstant();
         buffer.position(format.getOffset(element));
@@ -461,7 +461,7 @@ public class ForgeHooksClient
 
     public static void postDraw(Usage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
-        VertexFormatElement attr = format.func_227894_c_().get(element);
+        VertexFormatElement attr = format.getElements().get(element);
         switch(attrType)
         {
             case POSITION:
@@ -490,7 +490,7 @@ public class ForgeHooksClient
 
     public static int getColorIndex(VertexFormat fmt)
     {
-        ImmutableList<VertexFormatElement> elements = fmt.func_227894_c_();
+        ImmutableList<VertexFormatElement> elements = fmt.getElements();
         for(int i=0;i<elements.size();i++)
         {
             if (elements.get(i).getUsage() == Usage.COLOR)
@@ -527,9 +527,9 @@ public class ForgeHooksClient
     {
         ResourceLocation overlayTexture = fluidStateIn.getFluid().getAttributes().getOverlayTexture();
         return new TextureAtlasSprite[] {
-                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getStillTexture(world, pos)),
-                Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getFlowingTexture(world, pos)),
-                overlayTexture == null ? null : Minecraft.getInstance().func_228015_a_(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(overlayTexture),
+                Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getStillTexture(world, pos)),
+                Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStateIn.getFluid().getAttributes().getFlowingTexture(world, pos)),
+                overlayTexture == null ? null : Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(overlayTexture),
         };
     }
 
@@ -566,7 +566,7 @@ public class ForgeHooksClient
         v1.sub(t1);
         v2.sub(t2);
         v2.cross(v1);
-        v2.func_229194_d_();
+        v2.normalize();
 
         int x = ((byte) Math.round(v2.getX() * 127)) & 0xFF;
         int y = ((byte) Math.round(v2.getY() * 127)) & 0xFF;
@@ -701,7 +701,7 @@ public class ForgeHooksClient
 
     public static boolean onGuiMouseScrollPre(MouseHelper mouseHelper, Screen guiScreen, double scrollDelta)
     {
-        MainWindow mainWindow = guiScreen.getMinecraft().func_228018_at_();
+        MainWindow mainWindow = guiScreen.getMinecraft().getMainWindow();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
         Event event = new GuiScreenEvent.MouseScrollEvent.Pre(guiScreen, mouseX, mouseY, scrollDelta);
@@ -710,7 +710,7 @@ public class ForgeHooksClient
 
     public static boolean onGuiMouseScrollPost(MouseHelper mouseHelper, Screen guiScreen, double scrollDelta)
     {
-        MainWindow mainWindow = guiScreen.getMinecraft().func_228018_at_();
+        MainWindow mainWindow = guiScreen.getMinecraft().getMainWindow();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
         Event event = new GuiScreenEvent.MouseScrollEvent.Post(guiScreen, mouseX, mouseY, scrollDelta);

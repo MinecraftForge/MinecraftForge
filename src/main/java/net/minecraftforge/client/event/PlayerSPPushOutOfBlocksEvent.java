@@ -36,7 +36,7 @@ public class PlayerSPPushOutOfBlocksEvent extends PlayerEvent
     public PlayerSPPushOutOfBlocksEvent(PlayerEntity player)
     {
         super(player);
-        this.minY = player.func_226278_cu_() + 0.5D;
+        this.minY = player.getPosY() + 0.5D;
     }
 
     public void setMinY(double value) {

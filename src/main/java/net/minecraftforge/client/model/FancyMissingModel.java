@@ -91,7 +91,7 @@ final class FancyMissingModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<Material> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
+    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
     {
         return ImmutableList.of(font2);
     }
@@ -104,11 +104,11 @@ final class FancyMissingModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+    public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
     {
-        IBakedModel bigMissing = missingModel.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation);
+        IBakedModel bigMissing = missingModel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
         ModelTransformComposition smallState = new ModelTransformComposition(modelTransform, new SimpleModelTransform(smallTransformation));
-        IBakedModel smallMissing = missingModel.func_225613_a_(bakery, spriteGetter, smallState, modelLocation);
+        IBakedModel smallMissing = missingModel.bakeModel(bakery, spriteGetter, smallState, modelLocation);
         return new BakedModel(bigMissing, smallMissing, fontRenderer, message, spriteGetter.apply(font2));
     }
 
@@ -198,7 +198,7 @@ final class FancyMissingModel implements IUnbakedModel
         @Override
         public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
         {
-            TransformationMatrix transform = TransformationMatrix.func_227983_a_();
+            TransformationMatrix transform = TransformationMatrix.identity();
             boolean big = true;
             switch (cameraTransformType)
             {
@@ -235,7 +235,7 @@ final class FancyMissingModel implements IUnbakedModel
                 default:
                     break;
             }
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(transform.func_227988_c_());
+            mat.getLast().getMatrix().mul(transform.getMatrix());
             if (big != this.big)
             {
                 return otherModel;

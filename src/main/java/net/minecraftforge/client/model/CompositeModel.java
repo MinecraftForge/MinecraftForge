@@ -180,16 +180,16 @@ public class CompositeModel implements IDynamicBakedModel
             throw new UnsupportedOperationException("Attempted to call adQuads on a Submodel instance. Please don't.");
         }
 
-        public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            return model.func_225613_a_(bakery, spriteGetter, new ModelTransformComposition(this.modelTransform, modelTransform,
+            return model.bakeModel(bakery, spriteGetter, new ModelTransformComposition(this.modelTransform, modelTransform,
                     this.modelTransform.isUvLock() || modelTransform.isUvLock()), modelLocation);
         }
 
         @Override
         public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
-            return model.func_225614_a_(modelGetter, missingTextureErrors);
+            return model.getTextures(modelGetter, missingTextureErrors);
         }
     }
 
@@ -226,7 +226,7 @@ public class CompositeModel implements IDynamicBakedModel
                 Submodel submodel = part.getValue();
                 if (!owner.getPartVisibility(submodel))
                     continue;
-                bakedParts.put(part.getKey(), submodel.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation));
+                bakedParts.put(part.getKey(), submodel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation));
             }
             return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }

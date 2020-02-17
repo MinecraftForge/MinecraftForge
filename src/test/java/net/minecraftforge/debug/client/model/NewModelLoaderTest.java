@@ -169,7 +169,7 @@ public class NewModelLoaderTest
 
         private void putVertex(BakedQuadBuilder builder, int x, float y, float z, float u, float v, float red, float green, float blue)
         {
-            ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.func_227894_c_();
+            ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.getElements();
             for(int i=0;i<elements.size();i++)
             {
                 switch(elements.get(i).getUsage())

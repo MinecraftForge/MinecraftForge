@@ -46,7 +46,7 @@ public class VillagerTradingManager
 
     static
     {
-        VillagerTrades.field_221239_a.entrySet().forEach(e ->
+        VillagerTrades.VILLAGER_DEFAULT_TRADES.entrySet().forEach(e ->
         {
             Int2ObjectMap<ITrade[]> copy = new Int2ObjectOpenHashMap<>();
             e.getValue().int2ObjectEntrySet().forEach(ent -> copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length)));
@@ -95,7 +95,7 @@ public class VillagerTradingManager
             MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
             Int2ObjectMap<ITrade[]> newTrades = new Int2ObjectOpenHashMap<>();
             mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new ITrade[0])));
-            VillagerTrades.field_221239_a.put(prof, newTrades);
+            VillagerTrades.VILLAGER_DEFAULT_TRADES.put(prof, newTrades);
         }
     }
 

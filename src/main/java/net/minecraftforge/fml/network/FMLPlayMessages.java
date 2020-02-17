@@ -73,9 +73,9 @@ public class FMLPlayMessages
             this.typeId = Registry.ENTITY_TYPE.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
-            this.posX = e.func_226277_ct_();
-            this.posY = e.func_226278_cu_();
-            this.posZ = e.func_226281_cx_();
+            this.posX = e.getPosX();
+            this.posY = e.getPosY();
+            this.posZ = e.getPosZ();
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
@@ -158,7 +158,7 @@ public class FMLPlayMessages
                     return;
                 }
 
-                e.func_213312_b(msg.posX, msg.posY, msg.posZ);
+                e.setPacketCoordinates(msg.posX, msg.posY, msg.posZ);
                 e.setPositionAndRotation(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
                 e.setRotationYawHead((msg.headYaw * 360) / 256.0F);
                 e.setRenderYawOffset((msg.headYaw * 360) / 256.0F);
@@ -323,7 +323,7 @@ public class FMLPlayMessages
             id = type.getId() + 1;
             dimName = type.getRegistryName();
             modDimensionName = type.getModType().getRegistryName();
-            skylight = type.func_218272_d();
+            skylight = type.hasSkyLight();
             extraData = new PacketBuffer(Unpooled.buffer());
             type.getModType().write(extraData, true);
         }

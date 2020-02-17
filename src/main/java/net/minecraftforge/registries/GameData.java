@@ -461,7 +461,7 @@ public class GameData
                 for (BlockState state : block.getStateContainer().getValidStates())
                 {
                     blockstateMap.add(state);
-                    state.func_215692_c();
+                    state.cacheState();
                 }
 
                 block.getLootTable();

@@ -223,7 +223,7 @@ public class ModelLoaderRegistry
             {
                 throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
             }
-            TransformationMatrix base = TransformationMatrix.func_227983_a_();
+            TransformationMatrix base = TransformationMatrix.identity();
             if(!transform.entrySet().isEmpty())
             {
                 base = context.deserialize(transform, TransformationMatrix.class);
@@ -282,7 +282,7 @@ public class ModelLoaderRegistry
                         modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     } else {
                         modelBuilder.addFaceQuad(
-                                modelTransform.func_225615_b_().rotateTransform(blockpartface.cullFace),
+                                modelTransform.getRotation().rotateTransform(blockpartface.cullFace),
                                 BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     }
                 }
