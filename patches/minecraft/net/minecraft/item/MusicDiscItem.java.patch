@@ -1,11 +1,8 @@
 --- a/net/minecraft/item/MusicDiscItem.java
 +++ b/net/minecraft/item/MusicDiscItem.java
-@@ -21,15 +21,14 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
+@@ -23,13 +23,12 @@
  public class MusicDiscItem extends Item {
--   private static final Map<SoundEvent, MusicDiscItem> field_150928_b = Maps.newHashMap();
-+   private static final Map<net.minecraft.util.ResourceLocation, net.minecraftforge.registries.IRegistryDelegate<Item>> field_150928_b = Maps.newHashMap();
+    private static final Map<SoundEvent, MusicDiscItem> field_150928_b = Maps.newHashMap();
     private final int field_195977_c;
 -   private final SoundEvent field_185076_b;
 +   private SoundEvent field_185076_b;
@@ -21,7 +18,7 @@
     }
  
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
-@@ -71,11 +70,36 @@
+@@ -71,11 +70,38 @@
     @Nullable
     @OnlyIn(Dist.CLIENT)
     public static MusicDiscItem func_185074_a(SoundEvent p_185074_0_) {
@@ -36,6 +33,8 @@
     }
 +
 +   // FORGE START
++   private static final Map<net.minecraft.util.ResourceLocation, net.minecraftforge.registries.IRegistryDelegate<Item>> FORGE_RECORDS = Maps.newHashMap();
++
 +   /**
 +    * For mod use, allows to create a music disc without having to create a new
 +    * SoundEvent before their registry event is fired.
@@ -51,11 +50,11 @@
 +      super(builder);
 +      this.field_195977_c = comparatorValue;
 +      this.soundName = soundName;
-+      field_150928_b.put(soundName, this.delegate);
++      getRecordsMap().put(soundName, this.delegate);
 +   }
 +
 +   public static Map<net.minecraft.util.ResourceLocation, net.minecraftforge.registries.IRegistryDelegate<Item>> getRecordsMap()
 +   {
-+      return field_150928_b;
++      return FORGE_RECORDS;
 +   }
  }
