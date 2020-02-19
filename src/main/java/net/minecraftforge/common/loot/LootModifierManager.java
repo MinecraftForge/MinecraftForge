@@ -111,7 +111,7 @@ public class LootModifierManager extends JsonReloadListener {
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, ailootcondition);
     }
 
-    public static IGlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
+    public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
     }
 

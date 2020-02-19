@@ -5,14 +5,10 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-import com.google.gson.JsonObject;
-
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.conditions.LootConditionManager;
-import net.minecraftforge.registries.GameData;
 
 /**
  * A base implementation of a Global Loot Modifier for modders to extend.
@@ -47,59 +43,4 @@ public abstract class LootModifier implements IGlobalLootModifier {
      */
     @Nonnull
     protected abstract List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context);
-    
-    /**
-     * Abstract base deserializer for LootModifiers. Takes care of Forge registry things.<br/>
-     * Modders should extend this class to return their modifier and implement the abstract
-     * <code>read</code> method to deserialize from json.
-     * @param <T> the final Type
-     */
-    public abstract static class Serializer<T extends LootModifier> implements IGlobalLootModifierSerializer<T> {
-        private ResourceLocation registryName = null;
-        
-        public final IGlobalLootModifierSerializer<T> setRegistryName(String name) {
-            if (getRegistryName() != null)
-                throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-
-            this.registryName = GameData.checkPrefix(name, true);
-            return this;
-        }
-        
-        //Helpers
-        @Override
-        public final IGlobalLootModifierSerializer<T> setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
-
-        public final IGlobalLootModifierSerializer<T> setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-
-        @Override
-        public final ResourceLocation getRegistryName() {
-            return registryName;
-        }
-
-        /**
-         * Most mods will likely not need more than<br/>
-         * <code>return new MyModifier(conditionsIn)</code><br/>
-         * but any additional properties that are needed will need to be deserialized here.
-         * @param name The resource location (if needed)
-         * @param json The full json object (including ILootConditions)
-         * @param conditionsIn An already deserialized list of ILootConditions.
-         */
-        @Override
-        public abstract T read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn);
-        
-        /**
-         * Used by Forge's registry system. Modders should not need to touch this.
-         */
-        @Override
-        public Class<IGlobalLootModifierSerializer<?>> getRegistryType() {
-            return Serializer.<IGlobalLootModifierSerializer<?>>castClass(IGlobalLootModifierSerializer.class);
-        }
-        
-        @SuppressWarnings("unchecked") // Need this wrapper, because generics
-        private static <G> Class<G> castClass(Class<?> cls)
-        {
-            return (Class<G>)cls;
-        }
-    }
-    
 }

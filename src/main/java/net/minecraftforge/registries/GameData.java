@@ -63,7 +63,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
@@ -209,7 +209,7 @@ public class GameData
         // Custom forge registries
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
-        makeRegistry(LOOT_MODIFIER_SERIALIZERS, IGlobalLootModifierSerializer.class).disableSaving().disableSync().create();
+        makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
