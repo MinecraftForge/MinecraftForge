@@ -1,0 +1,61 @@
+--- a/net/minecraft/item/MusicDiscItem.java
++++ b/net/minecraft/item/MusicDiscItem.java
+@@ -21,15 +21,14 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class MusicDiscItem extends Item {
+-   private static final Map<SoundEvent, MusicDiscItem> field_150928_b = Maps.newHashMap();
++   private static final Map<net.minecraft.util.ResourceLocation, net.minecraftforge.registries.IRegistryDelegate<Item>> field_150928_b = Maps.newHashMap();
+    private final int field_195977_c;
+-   private final SoundEvent field_185076_b;
++   private SoundEvent field_185076_b;
++   private final net.minecraft.util.ResourceLocation soundName;
+ 
++   @Deprecated // mods should use the constructor below
+    protected MusicDiscItem(int p_i48475_1_, SoundEvent p_i48475_2_, Item.Properties p_i48475_3_) {
+-      super(p_i48475_3_);
+-      this.field_195977_c = p_i48475_1_;
+-      this.field_185076_b = p_i48475_2_;
+-      field_150928_b.put(this.field_185076_b, this);
++      this(p_i48475_1_, java.util.Objects.requireNonNull(p_i48475_2_.getRegistryName()), p_i48475_3_);
+    }
+ 
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+@@ -71,11 +70,36 @@
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public static MusicDiscItem func_185074_a(SoundEvent p_185074_0_) {
+-      return field_150928_b.get(p_185074_0_);
++      return getRecordsMap().get(p_185074_0_.getRegistryName()).get() instanceof MusicDiscItem ? ((MusicDiscItem) getRecordsMap().get(p_185074_0_.getRegistryName()).get()) : null;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public SoundEvent func_185075_h() {
++      if (this.field_185076_b == null) this.field_185076_b = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getValue(this.soundName);
+       return this.field_185076_b;
+    }
++
++   // FORGE START
++   /**
++    * For mod use, allows to create a music disc without having to create a new
++    * SoundEvent before their registry event is fired.
++    *
++    * @param comparatorValue
++    *       The value this music disc should output on the comparator. Must be between 0 and 15.
++    * @param soundName
++    *       The resource location that identifies the SoundEvent to play with this music disc.
++    * @param builder
++    */
++   public MusicDiscItem(int comparatorValue, net.minecraft.util.ResourceLocation soundName, Item.Properties builder)
++   {
++      super(builder);
++      this.field_195977_c = comparatorValue;
++      this.soundName = soundName;
++      field_150928_b.put(soundName, this.delegate);
++   }
++
++   public static Map<net.minecraft.util.ResourceLocation, net.minecraftforge.registries.IRegistryDelegate<Item>> getRecordsMap()
++   {
++      return field_150928_b;
++   }
+ }
