@@ -41,7 +41,7 @@
     }
  
     public AtlasTexture func_229356_a_(ResourceLocation p_229356_1_) {
-+      if (this.field_229352_b_ == null) throw new RuntimeException("func_229356_a_ called too early!");
++      if (this.field_229352_b_ == null) throw new RuntimeException("getAtlasTexture called too early!");
        return this.field_229352_b_.func_229152_a_(p_229356_1_);
     }
  

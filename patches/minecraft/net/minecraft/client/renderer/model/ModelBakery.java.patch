@@ -50,7 +50,7 @@
        this.field_217848_D.addAll(p_209593_2_.func_187965_e());
     }
  
-+   // Same as func_217843_a but without restricting to MRL's
++   // Same as loadTopModel but without restricting to MRL's
 +   private void addModelToCache(ResourceLocation p_217843_1_) {
 +      IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
 +      this.field_217849_F.put(p_217843_1_, iunbakedmodel);
