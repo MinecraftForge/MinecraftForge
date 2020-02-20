@@ -14,7 +14,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  * @param <T> the Type to deserialize
  */
 public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier> implements IForgeRegistryEntry<GlobalLootModifierSerializer<?>> {
-	private ResourceLocation registryName = null;
+    private ResourceLocation registryName = null;
     
     public final GlobalLootModifierSerializer<T> setRegistryName(String name) {
         if (getRegistryName() != null)
