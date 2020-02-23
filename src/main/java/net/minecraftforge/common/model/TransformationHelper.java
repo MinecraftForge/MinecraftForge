@@ -68,7 +68,7 @@ public final class TransformationHelper
     }
 
     private static final double THRESHOLD = 0.9995;
-    private static Quaternion slerp(Quaternion v0, Quaternion v1, float t)
+    public static Quaternion slerp(Quaternion v0, Quaternion v1, float t)
     {
         // From https://en.wikipedia.org/w/index.php?title=Slerp&oldid=928959428
         // License: CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
