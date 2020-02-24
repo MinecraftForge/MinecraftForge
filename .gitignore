@@ -30,3 +30,14 @@ changelog.txt
 /patches_old_bak/
 *.py
 *.7z
+.project
+/mdk/.gradle/
+/mdk/.settings/
+/mdk/bin/
+/mdk/build/
+/mdk/crash-reports/
+/mdk/logs/
+/mdk/resourcepacks/
+/mdk/run/
+*.launch
+*.classpath

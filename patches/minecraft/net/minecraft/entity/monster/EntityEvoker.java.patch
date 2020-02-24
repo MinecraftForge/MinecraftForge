@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEvoker.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEvoker.java
-@@ -369,7 +369,7 @@
+@@ -365,7 +365,7 @@
              {
                  return false;
              }
