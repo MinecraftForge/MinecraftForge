@@ -147,5 +147,6 @@
   "forge.controlsgui.control.mac": "CMD + %s",
   "forge.controlsgui.alt": "ALT + %s",
 
-  "forge.container.enchant.limitedEnchantability": "Limited Enchantability"
+  "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
+  "attribute.name.forge.swimSpeed": "Swim Speed"
 }
