@@ -148,5 +148,6 @@
   "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
+  "attribute.name.generic.reachDistance": "Reach Distance",
   "attribute.name.forge.swimSpeed": "Swim Speed"
 }
