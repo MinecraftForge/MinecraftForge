@@ -40,7 +40,7 @@
        p_228378_4_.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(activerenderinfo.func_216778_f() + 180.0F));
        this.field_78531_r.field_71438_f.func_228426_a_(p_228378_4_, p_228378_1_, p_228378_2_, flag, activerenderinfo, this, this.field_78513_d, matrix4f);
 +      this.field_78531_r.func_213239_aq().func_219895_b("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.field_78531_r.field_71438_f, p_228378_4_, p_228378_2_);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.field_78531_r.field_71438_f, p_228378_4_, p_228378_2_, matrix4f);
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
           RenderSystem.clear(256, Minecraft.field_142025_a);

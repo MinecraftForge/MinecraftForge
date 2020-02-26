@@ -21,6 +21,7 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.WorldRenderer;
 
 public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
@@ -28,11 +29,13 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
     private final WorldRenderer context;
     private final MatrixStack mat;
     private final float partialTicks;
-    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks)
+    private final Matrix4f projectionMatrix;
+    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix)
     {
         this.context = context;
         this.mat = mat;
         this.partialTicks = partialTicks;
+        this.projectionMatrix = projectionMatrix;
     }
 
     public WorldRenderer getContext()
@@ -48,5 +51,10 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
     public float getPartialTicks()
     {
         return partialTicks;
+    }
+
+    public Matrix4f getProjectionMatrix()
+    {
+        return projectionMatrix;
     }
 }
