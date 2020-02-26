@@ -94,7 +94,7 @@ public class CustomTNTTest {
             if (!world.isRemote) {
                 TNTEntity tnt = new CustomTNTEntity(world, pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F, igniter);
                 world.addEntity(tnt);
-                world.playSound(null, tnt.func_226277_ct_(), tnt.func_226278_cu_(), tnt.func_226281_cx_(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, tnt.getPosX(), tnt.getPosY(), tnt.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
     }
@@ -122,7 +122,7 @@ public class CustomTNTTest {
 
         @Override
         protected void explode() {
-            this.world.createExplosion(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 16.0F, Explosion.Mode.BREAK);
+            this.world.createExplosion(this, this.getPosX(), this.getPosY(), this.getPosZ(), 16.0F, Explosion.Mode.BREAK);
         }
 
         @Nonnull

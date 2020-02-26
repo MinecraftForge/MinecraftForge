@@ -13,11 +13,11 @@
 +   /**
 +    * FORGE: Add template parameter
 +    * 
-+    * @param p_215194_1_
-+    * @param p_215194_2_
++    * @param worldReaderIn
++    * @param pos
 +    * @param p_215194_3_
-+    * @param p_215194_4_
-+    * @param p_215194_5_
++    * @param blockInfo
++    * @param placementSettingsIn
 +    * @param template The template being placed, can be null due to deprecated
 +    *                 method calls.
 +    * @see #process(IWorldReader, BlockPos,

@@ -53,7 +53,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
 {
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
     private static Logger logger = LogManager.getLogger();
     private int ticks;
     private static final UUID REDUCED_GRAVITY_ID = UUID.fromString("DEB06000-7979-4242-8888-00000DEB0600");
@@ -98,7 +98,7 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     IAttributeInstance grav = liv.getAttribute(LivingEntity.ENTITY_GRAVITY);
-                    boolean inPlains = liv.world.func_226691_t_(liv.getPosition()).getCategory() == Category.PLAINS;
+                    boolean inPlains = liv.world.getBiome(liv.getPosition()).getCategory() == Category.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);

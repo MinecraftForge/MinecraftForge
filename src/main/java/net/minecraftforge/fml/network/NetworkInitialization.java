@@ -37,14 +37,14 @@ class NetworkInitialization {
                 networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
                 simpleChannel();
 
-        handshakeChannel.messageBuilder(FMLHandshakeMessages.C2SAcknowledge.class, 99).
+        handshakeChannel.messageBuilder(FMLHandshakeMessages.C2SAcknowledge.class, 99, NetworkDirection.LOGIN_TO_SERVER).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.C2SAcknowledge::decode).
                 encoder(FMLHandshakeMessages.C2SAcknowledge::encode).
                 consumer(FMLHandshakeHandler.indexFirst(FMLHandshakeHandler::handleClientAck)).
                 add();
 
-        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CModList.class, 1).
+        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CModList.class, 1, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.S2CModList::decode).
                 encoder(FMLHandshakeMessages.S2CModList::encode).
@@ -52,14 +52,14 @@ class NetworkInitialization {
                 consumer(FMLHandshakeHandler.biConsumerFor(FMLHandshakeHandler::handleServerModListOnClient)).
                 add();
 
-        handshakeChannel.messageBuilder(FMLHandshakeMessages.C2SModListReply.class, 2).
+        handshakeChannel.messageBuilder(FMLHandshakeMessages.C2SModListReply.class, 2, NetworkDirection.LOGIN_TO_SERVER).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.C2SModListReply::decode).
                 encoder(FMLHandshakeMessages.C2SModListReply::encode).
                 consumer(FMLHandshakeHandler.indexFirst(FMLHandshakeHandler::handleClientModListOnServer)).
                 add();
 
-        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CRegistry.class, 3).
+        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CRegistry.class, 3, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.S2CRegistry::decode).
                 encoder(FMLHandshakeMessages.S2CRegistry::encode).
@@ -67,7 +67,7 @@ class NetworkInitialization {
                 consumer(FMLHandshakeHandler.biConsumerFor(FMLHandshakeHandler::handleRegistryMessage)).
                 add();
 
-        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CConfigData.class, 4).
+        handshakeChannel.messageBuilder(FMLHandshakeMessages.S2CConfigData.class, 4, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.S2CConfigData::decode).
                 encoder(FMLHandshakeMessages.S2CConfigData::encode).

@@ -106,7 +106,7 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
 
     public static IBakedModel handlePerspective(IBakedModel model, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms, ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
     {
-        TransformationMatrix tr = transforms.getOrDefault(cameraTransformType, TransformationMatrix.func_227983_a_());
+        TransformationMatrix tr = transforms.getOrDefault(cameraTransformType, TransformationMatrix.identity());
         if (!tr.isIdentity())
         {
             tr.push(mat);

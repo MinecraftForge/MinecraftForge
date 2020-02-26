@@ -19,7 +19,8 @@
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
        this.field_184851_cj = true;
        DimensionType dimensiontype = this.field_71093_bK;
-       if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
+-      if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
++      if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_ && teleporter instanceof net.minecraft.world.Teleporter) { //Forge: Fix non-vanilla teleporters triggering end credits
           this.func_213319_R();
 -         this.func_71121_q().func_217434_e(this);
 +         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom

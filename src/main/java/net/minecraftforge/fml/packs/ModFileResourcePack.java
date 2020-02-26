@@ -74,7 +74,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
 
 
     @Override
-    public Collection<ResourceLocation> func_225637_a_(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
     {
         try
         {

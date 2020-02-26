@@ -29,14 +29,14 @@ import com.google.common.collect.ImmutableMap;
  */
 public final class SimpleModelTransform implements IModelTransform
 {
-    public static final SimpleModelTransform IDENTITY = new SimpleModelTransform(TransformationMatrix.func_227983_a_());
+    public static final SimpleModelTransform IDENTITY = new SimpleModelTransform(TransformationMatrix.identity());
 
     private final ImmutableMap<?, TransformationMatrix> map;
     private final TransformationMatrix base;
 
     public SimpleModelTransform(ImmutableMap<?, TransformationMatrix> map)
     {
-        this(map, TransformationMatrix.func_227983_a_());
+        this(map, TransformationMatrix.identity());
     }
 
     public SimpleModelTransform(TransformationMatrix base)
@@ -51,7 +51,7 @@ public final class SimpleModelTransform implements IModelTransform
     }
 
     @Override
-    public TransformationMatrix func_225615_b_()
+    public TransformationMatrix getRotation()
     {
         return base;
     }
@@ -59,6 +59,6 @@ public final class SimpleModelTransform implements IModelTransform
     @Override
     public TransformationMatrix getPartTransformation(Object part)
     {
-        return map.getOrDefault(part, TransformationMatrix.func_227983_a_());
+        return map.getOrDefault(part, TransformationMatrix.identity());
     }
 }

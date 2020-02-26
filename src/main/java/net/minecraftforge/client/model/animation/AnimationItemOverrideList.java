@@ -79,7 +79,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.func_225613_a_(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
+            .map(state -> model.bakeModel(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
             .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

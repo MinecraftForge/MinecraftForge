@@ -112,9 +112,6 @@ public class Tags
         public static final Tag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final Tag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
-        public static final Tag<Block> SUPPORTS_BEACON = tag("supports_beacon");
-        public static final Tag<Block> SUPPORTS_CONDUIT = tag("supports_conduit");
-
         private static Tag<Block> tag(String name)
         {
             return new BlockTags.Wrapper(new ResourceLocation("forge", name));
@@ -269,9 +266,6 @@ public class Tags
         public static final Tag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final Tag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final Tag<Item> STRING = tag("string");
-
-        public static final Tag<Item> SUPPORTS_BEACON = tag("supports_beacon");
-        public static final Tag<Item> SUPPORTS_CONDUIT = tag("supports_conduit");
 
         private static Tag<Item> tag(String name)
         {

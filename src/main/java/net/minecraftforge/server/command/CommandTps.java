@@ -42,7 +42,7 @@ class CommandTps
         return Commands.literal("tps")
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .then(Commands.argument("dim", DimensionArgument.getDimension())
-                .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.func_212592_a(ctx, "dim")))
+                .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.getDimensionArgument(ctx, "dim")))
             )
             .executes(ctx -> {
                 for (DimensionType dim : DimensionType.getAll())
