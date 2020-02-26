@@ -42,6 +42,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
@@ -52,7 +54,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 // TODO: Switch to vanilla class, or to something similar
@@ -187,6 +188,11 @@ public final class MultiModel implements IUnbakedModel
         @Override
         public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
+            return getQuads(state, side, rand, EmptyModelData.INSTANCE);
+        }
+
+        @Override
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData) {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             if (base != null)
             {
