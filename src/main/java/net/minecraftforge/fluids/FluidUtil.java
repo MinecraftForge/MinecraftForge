@@ -143,7 +143,7 @@ public class FluidUtil
                             if (player != null)
                             {
                                 SoundEvent soundevent = simulatedTransfer.getFluid().getAttributes().getFillSound(simulatedTransfer);
-                                player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                                player.world.playSound(null, player.getPosX(), player.getPosY() + 0.5, player.getPosZ(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                             }
                         }
                         else
@@ -187,7 +187,7 @@ public class FluidUtil
                     if (doDrain && player != null)
                     {
                         SoundEvent soundevent = transfer.getFluid().getAttributes().getEmptySound(transfer);
-                        player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        player.world.playSound(null, player.getPosX(), player.getPosY() + 0.5, player.getPosZ(), soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     }
 
                     ItemStack resultContainer = containerFluidHandler.getContainer();

@@ -53,6 +53,6 @@ public class RenderingRegistry
     @SuppressWarnings("unchecked")
     private static <T extends Entity> void register(EntityRendererManager manager, EntityType<T> entityType, IRenderFactory<?> renderFactory)
     {
-        manager.func_229087_a_(entityType, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
+        manager.register(entityType, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
     }
 }

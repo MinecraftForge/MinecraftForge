@@ -437,10 +437,10 @@ public class ModListScreen extends Screen
 
                         @Override
                         public void updateDynamicTexture() {
-                            this.func_229148_d_();
+                            this.bindTexture();
                             NativeImage td = this.getTextureData();
                             // Use custom "blur" value which controls texture filtering (nearest-neighbor vs linear)
-                            this.getTextureData().func_227789_a_(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), selectedMod.getLogoBlur(), false, false, false);
+                            this.getTextureData().uploadTextureSub(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), selectedMod.getLogoBlur(), false, false, false);
                         }
                     }), new Size2i(logo.getWidth(), logo.getHeight()));
                 }

@@ -107,9 +107,9 @@ public class ForgeIngameGui extends IngameGui
     @Override
     public void renderGameOverlay(float partialTicks)
     {
-        this.scaledWidth = this.mc.func_228018_at_().getScaledWidth();
-        this.scaledHeight = this.mc.func_228018_at_().getScaledHeight();
-        eventParent = new RenderGameOverlayEvent(partialTicks, this.mc.func_228018_at_());
+        this.scaledWidth = this.mc.getMainWindow().getScaledWidth();
+        this.scaledHeight = this.mc.getMainWindow().getScaledHeight();
+        eventParent = new RenderGameOverlayEvent(partialTicks, this.mc.getMainWindow());
         renderHealthMount = mc.player.getRidingEntity() instanceof LivingEntity;
         renderFood = mc.player.getRidingEntity() == null;
         renderJumpBar = mc.player.isRidingHorse();
@@ -845,14 +845,14 @@ public class ForgeIngameGui extends IngameGui
         public void update()
         {
             Entity entity = this.mc.getRenderViewEntity();
-            this.rayTraceBlock = entity.func_213324_a(rayTraceDistance, 0.0F, false);
-            this.rayTraceFluid = entity.func_213324_a(rayTraceDistance, 0.0F, true);
+            this.rayTraceBlock = entity.pick(rayTraceDistance, 0.0F, false);
+            this.rayTraceFluid = entity.pick(rayTraceDistance, 0.0F, true);
         }
-        @Override protected void func_230024_c_(){}
-        @Override protected void func_230025_d_(){}
+        @Override protected void renderDebugInfoLeft(){}
+        @Override protected void renderDebugInfoRight(){}
         private List<String> getLeft()
         {
-            List<String> ret = this.call();
+            List<String> ret = this.getDebugInfoLeft();
             ret.add("");
             ret.add("Debug: Pie [shift]: " + (this.mc.gameSettings.showDebugProfilerChart ? "visible" : "hidden") + " FPS [alt]: " + (this.mc.gameSettings.showLagometer ? "visible" : "hidden"));
             ret.add("For help: press F3 + Q");

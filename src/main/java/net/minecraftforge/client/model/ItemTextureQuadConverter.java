@@ -264,9 +264,9 @@ public final class ItemTextureQuadConverter
                                   float x, float y, float z, float u, float v, int color)
     {
         VertexFormat format = consumer.getVertexFormat();
-        for (int e = 0; e < format.func_227894_c_().size(); e++)
+        for (int e = 0; e < format.getElements().size(); e++)
         {
-            switch (format.func_227894_c_().get(e).getUsage())
+            switch (format.getElements().get(e).getUsage())
             {
                 case POSITION:
                     consumer.put(e, x, y, z, 1f);
@@ -285,7 +285,7 @@ public final class ItemTextureQuadConverter
                     consumer.put(e, offX, offY, offZ, 0f);
                     break;
                 case UV:
-                    if (format.func_227894_c_().get(e).getIndex() == 0)
+                    if (format.getElements().get(e).getIndex() == 0)
                     {
                         consumer.put(e, u, v, 0f, 1f);
                         break;

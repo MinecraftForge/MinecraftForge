@@ -84,7 +84,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         //TODO: Verify
-        TransformationMatrix transform = modelTransform.func_225615_b_();
+        TransformationMatrix transform = modelTransform.getRotation();
         ImmutableList<BakedQuad> quads = getQuadsForSprites(textures, transform, spriteGetter);
         TextureAtlasSprite particle = spriteGetter.apply(
                 owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : textures.get(0)
@@ -396,9 +396,9 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     private static void putVertex(IVertexConsumer consumer, Direction side, float x, float y, float z, float u, float v)
     {
         VertexFormat format = consumer.getVertexFormat();
-        for(int e = 0; e < format.func_227894_c_().size(); e++)
+        for(int e = 0; e < format.getElements().size(); e++)
         {
-            switch(format.func_227894_c_().get(e).getUsage())
+            switch(format.getElements().get(e).getUsage())
             {
             case POSITION:
                 consumer.put(e, x, y, z, 1f);
@@ -413,7 +413,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                 consumer.put(e, offX, offY, offZ, 0f);
                 break;
             case UV:
-                if(format.func_227894_c_().get(e).getIndex() == 0)
+                if(format.getElements().get(e).getIndex() == 0)
                 {
                     consumer.put(e, u, v, 0f, 1f);
                     break;

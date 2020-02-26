@@ -307,9 +307,9 @@ public final class Clips
         return Pair.of(new IModelTransform()
         {
             @Override
-            public TransformationMatrix func_225615_b_()
+            public TransformationMatrix getRotation()
             {
-                return TransformationMatrix.func_227983_a_();
+                return TransformationMatrix.identity();
             }
 
             @Override
@@ -317,7 +317,7 @@ public final class Clips
             {
                 if(!(part instanceof IJoint))
                 {
-                    return TransformationMatrix.func_227983_a_();
+                    return TransformationMatrix.identity();
                 }
                 IJoint joint = (IJoint)part;
                 // TODO: Cache clip application?

@@ -69,7 +69,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
 
     private void addVertex(BakedQuadBuilder quadBuilder, float x, float y, float u, float v)
     {
-        ImmutableList<VertexFormatElement> elements = quadBuilder.getVertexFormat().func_227894_c_();
+        ImmutableList<VertexFormatElement> elements = quadBuilder.getVertexFormat().getElements();
         for(int e = 0; e < elements.size(); e++)
         {
             VertexFormatElement element = elements.get(e);

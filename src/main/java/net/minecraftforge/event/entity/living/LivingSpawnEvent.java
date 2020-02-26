@@ -173,7 +173,7 @@ public class LivingSpawnEvent extends LivingEvent
     {
         public AllowDespawn(MobEntity entity)
         {
-            super(entity, entity.world, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_());
+            super(entity, entity.world, entity.getPosX(), entity.getPosY(), entity.getPosZ());
         }
 
     }

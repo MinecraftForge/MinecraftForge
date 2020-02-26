@@ -151,7 +151,7 @@ public interface IForgeDimension
      */
     default SleepResult canSleepAt(net.minecraft.entity.player.PlayerEntity player, BlockPos pos)
     {
-        return (getDimension().canRespawnHere() && getWorld().func_226691_t_(pos) != Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
+        return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
     }
 
     enum SleepResult
@@ -221,7 +221,7 @@ public interface IForgeDimension
 
     default boolean isHighHumidity(BlockPos pos)
     {
-        return getWorld().func_226691_t_(pos).isHighHumidity();
+        return getWorld().getBiome(pos).isHighHumidity();
     }
 
     default int getHeight()

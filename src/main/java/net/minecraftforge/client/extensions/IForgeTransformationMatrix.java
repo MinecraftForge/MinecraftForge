@@ -36,22 +36,22 @@ public interface IForgeTransformationMatrix
 
     default boolean isIdentity()
     {
-        return getTransformaion().equals(TransformationMatrix.func_227983_a_());
+        return getTransformaion().equals(TransformationMatrix.identity());
     }
 
     default void push(MatrixStack stack)
     {
-        stack.func_227860_a_();
+        stack.push();
 
         Vector3f trans = getTransformaion().getTranslation();
-        stack.func_227861_a_(trans.getX(), trans.getY(), trans.getZ());
+        stack.translate(trans.getX(), trans.getY(), trans.getZ());
 
-        stack.func_227863_a_(getTransformaion().func_227989_d_());
+        stack.rotate(getTransformaion().getRotationLeft());
 
         Vector3f scale = getTransformaion().getScale();
-        stack.func_227862_a_(scale.getX(), scale.getY(), scale.getZ());
+        stack.scale(scale.getX(), scale.getY(), scale.getZ());
 
-        stack.func_227863_a_(getTransformaion().getRightRot());
+        stack.rotate(getTransformaion().getRightRot());
 
     }
 
@@ -59,33 +59,33 @@ public interface IForgeTransformationMatrix
     {
         if (getTransformaion().isIdentity()) return other;
         if (other.isIdentity()) return getTransformaion();
-        Matrix4f m = getTransformaion().func_227988_c_();
-        m.func_226595_a_(other.func_227988_c_());
+        Matrix4f m = getTransformaion().getMatrix();
+        m.mul(other.getMatrix());
         return new TransformationMatrix(m);
     }
 
     default TransformationMatrix inverse()
     {
         if (isIdentity()) return getTransformaion();
-        Matrix4f m = getTransformaion().func_227988_c_().func_226601_d_();
-        m.func_226600_c_();
+        Matrix4f m = getTransformaion().getMatrix().copy();
+        m.invert();
         return new TransformationMatrix(m);
     }
 
     default void transformPosition(Vector4f position)
     {
-        position.func_229372_a_(getTransformaion().func_227988_c_());
+        position.transform(getTransformaion().getMatrix());
     }
 
     default void transformNormal(Vector3f normal)
     {
-        normal.func_229188_a_(getTransformaion().getNormalMatrix());
-        normal.func_229194_d_();
+        normal.transform(getTransformaion().getNormalMatrix());
+        normal.normalize();
     }
 
     default Direction rotateTransform(Direction facing)
     {
-        return Direction.func_229385_a_(getTransformaion().func_227988_c_(), facing);
+        return Direction.rotateFace(getTransformaion().getMatrix(), facing);
     }
 
     /**
@@ -94,14 +94,14 @@ public interface IForgeTransformationMatrix
     default TransformationMatrix blockCenterToCorner()
     {
         TransformationMatrix transform = getTransformaion();
-        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
+        if (transform.isIdentity()) return TransformationMatrix.identity();
 
-        Matrix4f ret = transform.func_227988_c_();
-        Matrix4f tmp = Matrix4f.func_226599_b_(.5f, .5f, .5f);
+        Matrix4f ret = transform.getMatrix();
+        Matrix4f tmp = Matrix4f.makeTranslate(.5f, .5f, .5f);
         ret.multiplyBackward(tmp);
-        tmp.func_226591_a_();
+        tmp.setIdentity();
         tmp.setTranslation(-.5f, -.5f, -.5f);
-        ret.func_226595_a_(tmp);
+        ret.mul(tmp);
         return new TransformationMatrix(ret);
     }
 
@@ -111,14 +111,14 @@ public interface IForgeTransformationMatrix
     default TransformationMatrix blockCornerToCenter()
     {
         TransformationMatrix transform = getTransformaion();
-        if (transform.isIdentity()) return TransformationMatrix.func_227983_a_();
+        if (transform.isIdentity()) return TransformationMatrix.identity();
 
-        Matrix4f ret = transform.func_227988_c_();
-        Matrix4f tmp = Matrix4f.func_226599_b_(-.5f, -.5f, -.5f);
+        Matrix4f ret = transform.getMatrix();
+        Matrix4f tmp = Matrix4f.makeTranslate(-.5f, -.5f, -.5f);
         ret.multiplyBackward(tmp);
-        tmp.func_226591_a_();
+        tmp.setIdentity();
         tmp.setTranslation(.5f, .5f, .5f);
-        ret.func_226595_a_(tmp);
+        ret.mul(tmp);
         return new TransformationMatrix(ret);
     }
 

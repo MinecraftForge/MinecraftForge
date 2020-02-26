@@ -141,18 +141,18 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                 float v1 = sectZ1 * sectPx;
 
                 // Bottom
-                buffer.func_225582_a_(sectX0, 0, sectZ0).func_225583_a_(u0, v0).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.func_225582_a_(sectX1, 0, sectZ0).func_225583_a_(u1, v0).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.func_225582_a_(sectX1, 0, sectZ1).func_225583_a_(u1, v1).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
-                buffer.func_225582_a_(sectX0, 0, sectZ1).func_225583_a_(u0, v1).func_227885_a_(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.pos(sectX0, 0, sectZ0).tex(u0, v0).color(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.pos(sectX1, 0, sectZ0).tex(u1, v0).color(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.pos(sectX1, 0, sectZ1).tex(u1, v1).color(bCol, bCol, bCol, ALPHA).endVertex();
+                buffer.pos(sectX0, 0, sectZ1).tex(u0, v1).color(bCol, bCol, bCol, ALPHA).endVertex();
 
                 if (fancy)
                 {
                     // Top
-                    buffer.func_225582_a_(sectX0, HEIGHT, sectZ0).func_225583_a_(u0, v0).func_227885_a_(1, 1, 1, ALPHA).endVertex();
-                    buffer.func_225582_a_(sectX0, HEIGHT, sectZ1).func_225583_a_(u0, v1).func_227885_a_(1, 1, 1, ALPHA).endVertex();
-                    buffer.func_225582_a_(sectX1, HEIGHT, sectZ1).func_225583_a_(u1, v1).func_227885_a_(1, 1, 1, ALPHA).endVertex();
-                    buffer.func_225582_a_(sectX1, HEIGHT, sectZ0).func_225583_a_(u1, v0).func_227885_a_(1, 1, 1, ALPHA).endVertex();
+                    buffer.pos(sectX0, HEIGHT, sectZ0).tex(u0, v0).color(1, 1, 1, ALPHA).endVertex();
+                    buffer.pos(sectX0, HEIGHT, sectZ1).tex(u0, v1).color(1, 1, 1, ALPHA).endVertex();
+                    buffer.pos(sectX1, HEIGHT, sectZ1).tex(u1, v1).color(1, 1, 1, ALPHA).endVertex();
+                    buffer.pos(sectX1, HEIGHT, sectZ0).tex(u1, v0).color(1, 1, 1, ALPHA).endVertex();
 
                     float slice;
                     float sliceCoord0;
@@ -167,10 +167,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice > -CULL_DIST)
                         {
                             slice += INSET;
-                            buffer.func_225582_a_(slice, 0,      sectZ1).func_225583_a_(sliceCoord0, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, HEIGHT, sectZ1).func_225583_a_(sliceCoord1, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, HEIGHT, sectZ0).func_225583_a_(sliceCoord1, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, 0,      sectZ0).func_225583_a_(sliceCoord0, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, 0,      sectZ1).tex(sliceCoord0, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, HEIGHT, sectZ1).tex(sliceCoord1, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, HEIGHT, sectZ0).tex(sliceCoord1, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, 0,      sectZ0).tex(sliceCoord0, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
                             slice -= INSET;
                         }
 
@@ -179,10 +179,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice <= CULL_DIST)
                         {
                             slice -= INSET;
-                            buffer.func_225582_a_(slice, 0,      sectZ0).func_225583_a_(sliceCoord0, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, HEIGHT, sectZ0).func_225583_a_(sliceCoord1, v0).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, HEIGHT, sectZ1).func_225583_a_(sliceCoord1, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
-                            buffer.func_225582_a_(slice, 0,      sectZ1).func_225583_a_(sliceCoord0, v1).func_227885_a_(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, 0,      sectZ0).tex(sliceCoord0, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, HEIGHT, sectZ0).tex(sliceCoord1, v0).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, HEIGHT, sectZ1).tex(sliceCoord1, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
+                            buffer.pos(slice, 0,      sectZ1).tex(sliceCoord0, v1).color(0.9F, 0.9F, 0.9F, ALPHA).endVertex();
                             slice += INSET;
                         }
                     }
@@ -196,10 +196,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice > -CULL_DIST)
                         {
                             slice += INSET;
-                            buffer.func_225582_a_(sectX0, 0,      slice).func_225583_a_(u0, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX0, HEIGHT, slice).func_225583_a_(u0, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX1, HEIGHT, slice).func_225583_a_(u1, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX1, 0,      slice).func_225583_a_(u1, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX0, 0,      slice).tex(u0, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX0, HEIGHT, slice).tex(u0, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX1, HEIGHT, slice).tex(u1, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX1, 0,      slice).tex(u1, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
                             slice -= INSET;
                         }
 
@@ -208,10 +208,10 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                         if (slice <= CULL_DIST)
                         {
                             slice -= INSET;
-                            buffer.func_225582_a_(sectX1, 0,      slice).func_225583_a_(u1, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX1, HEIGHT, slice).func_225583_a_(u1, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX0, HEIGHT, slice).func_225583_a_(u0, sliceCoord1).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
-                            buffer.func_225582_a_(sectX0, 0,      slice).func_225583_a_(u0, sliceCoord0).func_227885_a_(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX1, 0,      slice).tex(u1, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX1, HEIGHT, slice).tex(u1, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX0, HEIGHT, slice).tex(u0, sliceCoord1).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
+                            buffer.pos(sectX0, 0,      slice).tex(u0, sliceCoord0).color(0.8F, 0.8F, 0.8F, ALPHA).endVertex();
                             slice += INSET;
                         }
                     }
@@ -290,12 +290,12 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         double totalOffset = cloudTicks + partialTicks;
 
-        double x = entity.prevPosX + (entity.func_226277_ct_() - entity.prevPosX) * partialTicks
+        double x = entity.prevPosX + (entity.getPosX() - entity.prevPosX) * partialTicks
                 + totalOffset * 0.03;
         double y = mc.world.dimension.getCloudHeight()
-                - (entity.lastTickPosY + (entity.func_226278_cu_() - entity.lastTickPosY) * partialTicks)
+                - (entity.lastTickPosY + (entity.getPosY() - entity.lastTickPosY) * partialTicks)
                 + 0.33;
-        double z = entity.prevPosZ + (entity.func_226281_cx_() - entity.prevPosZ) * partialTicks;
+        double z = entity.prevPosZ + (entity.getPosZ() - entity.prevPosZ) * partialTicks;
 
         int scale = getScale();
 
@@ -388,7 +388,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         VertexBuffer.unbindBuffer(); // Unbind buffer and disable pointers.
 
         buffer.limit(0);
-        for (int i = 0; i < FORMAT.func_227894_c_().size(); i++)
+        for (int i = 0; i < FORMAT.getElements().size(); i++)
             FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getSize(), buffer);
         buffer.position(0);
 

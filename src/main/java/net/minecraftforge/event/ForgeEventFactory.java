@@ -425,7 +425,7 @@ public class ForgeEventFactory
 
         if(isCanceled)
         {
-            entityMounting.setPositionAndRotation(entityMounting.func_226277_ct_(), entityMounting.func_226278_cu_(), entityMounting.func_226281_cx_(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            entityMounting.setPositionAndRotation(entityMounting.getPosX(), entityMounting.getPosY(), entityMounting.getPosZ(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
             return false;
         }
         else

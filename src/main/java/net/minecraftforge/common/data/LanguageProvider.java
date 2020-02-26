@@ -84,7 +84,7 @@ public abstract class LanguageProvider implements IDataProvider {
            }
         }
 
-        cache.func_208316_a(target, hash);
+        cache.recordHash(target, hash);
     }
 
     public void addBlock(Supplier<? extends Block> key, String name) {

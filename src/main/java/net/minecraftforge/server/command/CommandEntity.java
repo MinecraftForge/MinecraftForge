@@ -70,7 +70,7 @@ class CommandEntity
                 .then(Commands.argument("filter", StringArgumentType.string())
                     .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
                     .then(Commands.argument("dim", DimensionArgument.getDimension())
-                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.func_212592_a(ctx, "dim")))
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim")))
                     )
                     .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().dimension.getType()))
                 )

@@ -57,7 +57,7 @@ public class QuadTransformer
 
             Vector4f pos = new Vector4f(x, y, z, 1);
             transform.transformPosition(pos);
-            pos.func_229375_f_();
+            pos.perspectiveDivide();
 
             putAtByteOffset(outData, offset, Float.floatToRawIntBits(pos.getX()));
             putAtByteOffset(outData,offset + 4, Float.floatToRawIntBits(pos.getY()));
@@ -77,7 +77,7 @@ public class QuadTransformer
 
                 Vector3f pos = new Vector3f(x, y, z);
                 transform.transformNormal(pos);
-                pos.func_229194_d_();
+                pos.normalize();
 
                 int normalOut = ((((byte)(x / 127.0f)) & 0xFF) << 24) |
                                 ((((byte)(y / 127.0f)) & 0xFF) << 16) |
@@ -125,16 +125,16 @@ public class QuadTransformer
     {
         int index;
         VertexFormatElement element = null;
-        for (index = 0; index < fmt.func_227894_c_().size(); index++)
+        for (index = 0; index < fmt.getElements().size(); index++)
         {
-            VertexFormatElement el = fmt.func_227894_c_().get(index);
+            VertexFormatElement el = fmt.getElements().get(index);
             if (el.getUsage() == VertexFormatElement.Usage.POSITION)
             {
                 element = el;
                 break;
             }
         }
-        if (index == fmt.func_227894_c_().size() || element == null)
+        if (index == fmt.getElements().size() || element == null)
             throw new RuntimeException("Expected vertex format to have a POSITION attribute");
         if (element.getType() != VertexFormatElement.Type.FLOAT)
             throw new RuntimeException("Expected POSITION attribute to have data type FLOAT");
@@ -147,16 +147,16 @@ public class QuadTransformer
     {
         int index;
         VertexFormatElement element = null;
-        for (index = 0; index < fmt.func_227894_c_().size(); index++)
+        for (index = 0; index < fmt.getElements().size(); index++)
         {
-            VertexFormatElement el = fmt.func_227894_c_().get(index);
+            VertexFormatElement el = fmt.getElements().get(index);
             if (el.getUsage() == VertexFormatElement.Usage.NORMAL)
             {
                 element = el;
                 break;
             }
         }
-        if (index == fmt.func_227894_c_().size() || element == null)
+        if (index == fmt.getElements().size() || element == null)
             throw new IllegalStateException("BLOCK format does not have normals?");
         if (element.getType() != VertexFormatElement.Type.BYTE)
             throw new RuntimeException("Expected NORMAL attribute to have data type BYTE");
@@ -176,7 +176,7 @@ public class QuadTransformer
         int[] outData = Arrays.copyOf(inData, inData.length);
         processVertices(inData, outData);
 
-        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting());
+        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.shouldApplyDiffuseLighting());
     }
 
     /**
@@ -208,7 +208,7 @@ public class QuadTransformer
             int[] outData = Arrays.copyOf(inData, inData.length);
             processVertices(inData, outData);
 
-            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.shouldApplyDiffuseLighting()));
+            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.shouldApplyDiffuseLighting()));
         }
         return outputs;
     }

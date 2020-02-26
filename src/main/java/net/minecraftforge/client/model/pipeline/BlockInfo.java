@@ -63,7 +63,7 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.func_228054_a_(state, world, blockPos, tint);
+        cachedMultiplier = colors.getColor(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 
@@ -130,7 +130,7 @@ public class BlockInfo
                     int brightness = 0x00FF00FF; // FIXME: state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
-                    ao[x][y][z] = state.func_215703_d(world, pos);
+                    ao[x][y][z] = state.getAmbientOcclusionLightValue(world, pos);
                 }
             }
         }
@@ -139,10 +139,10 @@ public class BlockInfo
             BlockPos pos = blockPos.offset(side);
             BlockState state = world.getBlockState(pos);
 
-            BlockState thisStateShape = this.state.isSolid() && this.state.func_215691_g() ? this.state : Blocks.AIR.getDefaultState();
-            BlockState otherStateShape = state.isSolid() && state.func_215691_g() ? state : Blocks.AIR.getDefaultState();
+            BlockState thisStateShape = this.state.isSolid() && this.state.isTransparent() ? this.state : Blocks.AIR.getDefaultState();
+            BlockState otherStateShape = state.isSolid() && state.isTransparent() ? state : Blocks.AIR.getDefaultState();
 
-            if(state.getOpacity(world, blockPos) == 15 || VoxelShapes.func_223416_b(thisStateShape.func_215702_a(world, blockPos, side), otherStateShape.func_215702_a(world, pos, side.getOpposite())))
+            if(state.getOpacity(world, blockPos) == 15 || VoxelShapes.faceShapeCovers(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
             {
                 int x = side.getXOffset() + 1;
                 int y = side.getYOffset() + 1;

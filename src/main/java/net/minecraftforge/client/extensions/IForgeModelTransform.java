@@ -35,6 +35,6 @@ public interface IForgeModelTransform
      */
     default TransformationMatrix getPartTransformation(Object part)
     {
-        return TransformationMatrix.func_227983_a_();
+        return TransformationMatrix.identity();
     }
 }

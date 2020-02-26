@@ -350,12 +350,12 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             Vector3f a = positions.get(indices[0][0]);
             Vector3f ab = positions.get(indices[1][0]);
             Vector3f ac = positions.get(indices[2][0]);
-            Vector3f abs = ab.func_229195_e_();
+            Vector3f abs = ab.copy();
             abs.sub(a);
-            Vector3f acs = ac.func_229195_e_();
+            Vector3f acs = ac.copy();
             acs.sub(a);
             abs.cross(acs);
-            abs.func_229194_d_();
+            abs.normalize();
             faceNormal = abs;
         }
 
@@ -389,7 +389,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
             if (hasTransform)
             {
-                normal = norm0.func_229195_e_();
+                normal = norm0.copy();
                 transformation.transformPosition(position);
                 transformation.transformNormal(normal);
             };
@@ -463,7 +463,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
     private void putVertexData(IVertexConsumer consumer, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
     {
-        ImmutableList<VertexFormatElement> elements = consumer.getVertexFormat().func_227894_c_();
+        ImmutableList<VertexFormatElement> elements = consumer.getVertexFormat().getElements();
         for(int j=0;j<elements.size();j++)
         {
             VertexFormatElement e = elements.get(j);
@@ -533,7 +533,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
                 for (int[][] face : mesh.faces)
                 {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.func_225615_b_());
+                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
                     if (quad.getRight() == null)
                         modelBuilder.addGeneralQuad(quad.getLeft());
                     else
