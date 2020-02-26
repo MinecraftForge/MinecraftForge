@@ -30,12 +30,15 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
     private final MatrixStack mat;
     private final float partialTicks;
     private final Matrix4f projectionMatrix;
-    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix)
+    private final long finishTimeNano;
+
+    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         this.context = context;
         this.mat = mat;
         this.partialTicks = partialTicks;
         this.projectionMatrix = projectionMatrix;
+        this.finishTimeNano = finishTimeNano;
     }
 
     public WorldRenderer getContext()
@@ -56,5 +59,10 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
     public Matrix4f getProjectionMatrix()
     {
         return projectionMatrix;
+    }
+
+    public long getFinishTimeNano()
+    {
+        return finishTimeNano;
     }
 }
