@@ -1,0 +1,56 @@
+{
+  "parent": "block/block",
+  "loader": "minecraft:elements",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [ 0, 135, 0 ],
+      "translation": [ 0, 0, 0 ],
+      "scale": [ 0.4, 0.4, 0.4 ]
+    }
+  },
+  "textures": {
+    "particle": "block/lectern_sides",
+    "bottom": "block/oak_planks",
+    "base": "block/lectern_base",
+    "front": "block/lectern_front",
+    "sides": "block/lectern_sides",
+    "top": "block/lectern_top"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 2, 16 ],
+      "faces": {
+        "north": { "uv": [ 0, 14, 16, 16 ], "texture": "#base", "cullface": "north" },
+        "east":  { "uv": [ 0,  6, 16,  8 ], "texture": "#base", "cullface": "east" },
+        "south": { "uv": [ 0,  6, 16,  8 ], "texture": "#base", "cullface": "south" },
+        "west":  { "uv": [ 0,  6, 16,  8 ], "texture": "#base", "cullface": "west" },
+        "up":    { "uv": [ 0,  0, 16, 16 ], "rotation": 180, "texture": "#base" },
+        "down":  { "uv": [ 0,  0, 16, 16 ], "texture": "#bottom", "cullface": "down" }
+      }
+    },
+    {
+      "from": [4, 2, 4],
+      "to": [12, 15, 12],
+      "faces": {
+        "north": { "uv": [ 0,  0,  8, 13 ], "texture": "#front" },
+        "east":  { "uv": [ 2, 16, 15,  8 ], "rotation": 90, "texture": "#sides" },
+        "south": { "uv": [ 8,  3, 16, 16 ], "texture": "#front" },
+        "west":  { "uv": [ 2,  8, 15, 16 ], "rotation": 90, "texture": "#sides" }
+      }
+    },
+    {
+      "from": [ 0.01, 12, 3 ],
+      "to": [ 15.99, 16, 16 ],
+      "rotation": { "angle": -22.5, "axis": "x", "origin": [ 8, 8, 8 ] },
+      "faces": {
+        "north": { "uv": [ 0, 0, 16,  4 ], "texture": "#sides" },
+        "east":  { "uv": [ 0, 4, 13,  8 ], "texture": "#sides" },
+        "south": { "uv": [ 0, 4, 16,  8 ], "texture": "#sides" },
+        "west":  { "uv": [ 0, 4, 13,  8 ], "texture": "#sides" },
+        "up":    { "uv": [ 0, 1, 16, 14 ], "rotation": 180, "texture": "#top" },
+        "down":  { "uv": [ 0, 0, 16, 13 ], "texture": "#bottom" }
+      }
+    }
+  ]
+}

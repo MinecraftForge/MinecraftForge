@@ -63,9 +63,9 @@ public final class MultiLayerModel implements IUnbakedModel
     private static final Logger LOGGER = LogManager.getLogger();
     public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.of());
 
-    private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
+    private final ImmutableMap<Optional<BlockRenderLayer>, ? extends ResourceLocation> models;
 
-    public MultiLayerModel(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models)
+    public MultiLayerModel(ImmutableMap<Optional<BlockRenderLayer>, ? extends ResourceLocation> models)
     {
         this.models = models;
     }
@@ -82,7 +82,7 @@ public final class MultiLayerModel implements IUnbakedModel
     	return Collections.emptyList();
     }
 
-    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, ISprite sprite, VertexFormat format, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
+    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ? extends ResourceLocation> models, ISprite sprite, VertexFormat format, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
@@ -108,7 +108,7 @@ public final class MultiLayerModel implements IUnbakedModel
     @Override
     public MultiLayerModel process(ImmutableMap<String, String> customData)
     {
-        ImmutableMap.Builder<Optional<BlockRenderLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Optional<BlockRenderLayer>, ResourceLocation> builder = ImmutableMap.builder();
         for(String key : customData.keySet())
         {
             if("base".equals(key))
@@ -123,12 +123,12 @@ public final class MultiLayerModel implements IUnbakedModel
                 }
             }
         }
-        ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models = builder.build();
+        ImmutableMap<Optional<BlockRenderLayer>, ResourceLocation> models = builder.build();
         if(models.isEmpty()) return INSTANCE;
         return new MultiLayerModel(models);
     }
 
-    private ModelResourceLocation getLocation(String json)
+    private ResourceLocation getLocation(String json)
     {
         JsonElement e = new JsonParser().parse(json);
         if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
@@ -199,6 +199,12 @@ public final class MultiLayerModel implements IUnbakedModel
         public TextureAtlasSprite getParticleTexture()
         {
             return base.getParticleTexture();
+        }
+
+        @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
         }
 
         @Override

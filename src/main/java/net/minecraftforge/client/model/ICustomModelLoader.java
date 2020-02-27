@@ -28,6 +28,7 @@ import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
 
+@Deprecated // Use the new model loading system and data generators instead.
 public interface ICustomModelLoader extends ISelectiveResourceReloadListener
 {
     @Override

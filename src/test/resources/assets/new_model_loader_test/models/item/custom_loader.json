@@ -1,0 +1,8 @@
+{
+  "parent": "forge:item/default",
+  "loader": "new_model_loader_test:custom_loader",
+  "gui_3d": false,
+  "textures": {
+    "particle": "item/quartz"
+  }
+}

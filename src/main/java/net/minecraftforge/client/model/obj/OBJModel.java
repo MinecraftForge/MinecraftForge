@@ -79,6 +79,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@Deprecated // Use the new model loading system and data generators instead.
 public class OBJModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -1533,6 +1534,12 @@ public class OBJModel implements IUnbakedModel
         public OBJBakedModel getBakedModel()
         {
             return new OBJBakedModel(this.model, this.state, this.format, this.textures);
+        }
+
+        @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
         }
 
         @Override

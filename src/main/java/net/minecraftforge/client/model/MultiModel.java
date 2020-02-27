@@ -200,6 +200,12 @@ public final class MultiModel implements IUnbakedModel
         }
 
         @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
