@@ -1,0 +1,18 @@
+{
+  "type": "global_loot_test:wheat_harvest",
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "item": "minecraft:shears"
+      }
+    },
+    {
+      "condition": "block_state_property",
+      "block":"minecraft:wheat"
+    }
+  ],
+  "seedItem": "minecraft:wheat_seeds",
+  "numSeeds": 3,
+  "replacement": "minecraft:wheat"
+}
