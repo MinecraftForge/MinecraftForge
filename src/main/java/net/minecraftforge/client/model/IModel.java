@@ -41,25 +41,15 @@ import net.minecraftforge.common.model.animation.IClip;
  * Models can be baked to different vertex formats and with different state.
  */
 @SuppressWarnings("unchecked")
-public interface IModel<T extends IModel<T>>
+@Deprecated // Use the new model loading system and data generators instead.
+public interface IModel<T extends IModel<T>> extends IForgeUnbakedModel
 {
-    /**
-     * @param spriteGetter Where textures will be looked up when baking
-     * @param sprite Transforms to apply while baking. Usually will be an instance of {@link IModelState}.
-     */
-    @Nullable
-    IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
-
     /**
      * Default state this model will be baked with.
      * @see IModelState
      */
     default IModelState getDefaultState() {
         return TRSRTransformation.identity();
-    }
-
-    default Optional<? extends IClip> getClip(String name) {
-        return Optional.empty();
     }
 
     /**

@@ -35,6 +35,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,6 +63,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+@Deprecated // Use the new model loading system and data generators instead.
 public class ForgeBlockStateV1 extends Marker
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -390,7 +392,11 @@ public class ForgeBlockStateV1 extends Marker
 
         boolean isVanillaCompatible()
         {
-            return model != null && submodels.isEmpty() && textures.isEmpty() && customData.isEmpty() && !smooth.isPresent() && !gui3d.isPresent() && state.orElse(ModelRotation.X0_Y0) instanceof ModelRotation;
+            return model != null && !ModelLoaderRegistry.isCustomModel(model)
+                    && submodels.isEmpty()
+                    && textures.isEmpty() && customData.isEmpty()
+                    && !smooth.isPresent() && !gui3d.isPresent()
+                    && state.orElse(ModelRotation.X0_Y0) instanceof ModelRotation;
         }
 
         protected SubModel asGenericSubModel()
@@ -495,118 +501,8 @@ public class ForgeBlockStateV1 extends Marker
 
                 if (json.has("transform"))
                 {
-                    if (json.get("transform").isJsonPrimitive() && json.get("transform").getAsJsonPrimitive().isString())
-                    {
-                        String transform = json.get("transform").getAsString();
-                        ret.state = Transforms.get(transform);
-                        if (!ret.state.isPresent())
-                        {
-                            throw new JsonParseException("transform: unknown default string: " + transform);
-                        }
-                    }
-                    else if (!json.get("transform").isJsonObject())
-                    {
-                        try
-                        {
-                            TRSRTransformation base = context.deserialize(json.get("transform"), TRSRTransformation.class);
-                            ret.state = Optional.of(TRSRTransformation.blockCenterToCorner(base));
-                        }
-                        catch (JsonParseException e)
-                        {
-                            throw new JsonParseException("transform: expected a string, object or valid base transformation, got: " + json.get("transform"));
-                        }
-                    }
-                    else
-                    {
-                        JsonObject transform = json.get("transform").getAsJsonObject();
-                        EnumMap<TransformType, TRSRTransformation> transforms = Maps.newEnumMap(TransformType.class);
-                        if(transform.has("thirdperson"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("thirdperson"), TRSRTransformation.class);
-                            transform.remove("thirdperson");
-                            transforms.put(TransformType.THIRD_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("thirdperson_righthand"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("thirdperson_righthand"), TRSRTransformation.class);
-                            transform.remove("thirdperson_righthand");
-                            transforms.put(TransformType.THIRD_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("thirdperson_lefthand"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("thirdperson_lefthand"), TRSRTransformation.class);
-                            transform.remove("thirdperson_lefthand");
-                            transforms.put(TransformType.THIRD_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("firstperson"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("firstperson"), TRSRTransformation.class);
-                            transform.remove("firstperson");
-                            transforms.put(TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("firstperson_righthand"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("firstperson_righthand"), TRSRTransformation.class);
-                            transform.remove("firstperson_righthand");
-                            transforms.put(TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("firstperson_lefthand"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("firstperson_lefthand"), TRSRTransformation.class);
-                            transform.remove("firstperson_lefthand");
-                            transforms.put(TransformType.FIRST_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("head"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("head"), TRSRTransformation.class);
-                            transform.remove("head");
-                            transforms.put(TransformType.HEAD, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("gui"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("gui"), TRSRTransformation.class);
-                            transform.remove("gui");
-                            transforms.put(TransformType.GUI, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("ground"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("ground"), TRSRTransformation.class);
-                            transform.remove("ground");
-                            transforms.put(TransformType.GROUND, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        if(transform.has("fixed"))
-                        {
-                            TRSRTransformation t = context.deserialize(transform.get("fixed"), TRSRTransformation.class);
-                            transform.remove("fixed");
-                            transforms.put(TransformType.FIXED, TRSRTransformation.blockCenterToCorner(t));
-                        }
-                        int k = transform.entrySet().size();
-                        if(transform.has("matrix")) k--;
-                        if(transform.has("translation")) k--;
-                        if(transform.has("rotation")) k--;
-                        if(transform.has("scale")) k--;
-                        if(transform.has("post-rotation")) k--;
-                        if(k > 0)
-                        {
-                            throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
-                        }
-                        TRSRTransformation base = TRSRTransformation.identity();
-                        if(!transform.entrySet().isEmpty())
-                        {
-                            base = context.deserialize(transform, TRSRTransformation.class);
-                            base = TRSRTransformation.blockCenterToCorner(base);
-                        }
-                        IModelState state;
-                        if(transforms.isEmpty())
-                        {
-                            state = base;
-                        }
-                        else
-                        {
-                            state = new SimpleModelState(Maps.immutableEnumMap(transforms), Optional.of(base));
-                        }
-                        ret.state = Optional.of(state);
-                    }
+                    JsonElement transformData = json.get("transform");
+                    ret.state = ModelLoaderRegistry2.deserializeTransform(context, transformData);
                 }
 
                 if (json.has("uvlock"))
@@ -923,6 +819,7 @@ public class ForgeBlockStateV1 extends Marker
             return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
         }
 
+        @Deprecated
         public static Optional<IModelState> get(String name)
         {
             return Optional.ofNullable(transforms.get(name));

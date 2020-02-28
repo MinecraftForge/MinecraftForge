@@ -1,8 +1,13 @@
 --- a/net/minecraft/client/renderer/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/renderer/model/SimpleBakedModel.java
-@@ -75,7 +75,7 @@
+@@ -74,8 +74,12 @@
+          this(p_i46988_1_.func_178309_b(), p_i46988_1_.func_178311_c(), p_i46988_1_.func_181682_g(), p_i46988_2_);
        }
  
++      public Builder(net.minecraftforge.client.model.IModelConfiguration model, ItemOverrideList overrides) {
++         this(model.useSmoothLighting(), model.isShadedInGui(), model.getCameraTransforms(), overrides);
++      }
++
        public Builder(BlockState p_i48189_1_, IBakedModel p_i48189_2_, TextureAtlasSprite p_i48189_3_, Random p_i48189_4_, long p_i48189_5_) {
 -         this(p_i48189_2_.func_177555_b(), p_i48189_2_.func_177556_c(), p_i48189_2_.func_177552_f(), p_i48189_2_.func_188617_f());
 +         this(p_i48189_2_.isAmbientOcclusion(p_i48189_1_), p_i48189_2_.func_177556_c(), p_i48189_2_.func_177552_f(), p_i48189_2_.func_188617_f());

@@ -500,6 +500,12 @@ public final class ModelFluid implements IUnbakedModel
         }
 
         @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
         {
             return PerspectiveMapWrapper.handlePerspective(this, transforms, type);

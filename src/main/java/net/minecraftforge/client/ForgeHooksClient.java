@@ -181,7 +181,6 @@ public class ForgeHooksClient
     {
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
-        ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }
 
     public static void onTextureStitchedPost(AtlasTexture map)

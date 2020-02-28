@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/model/ItemModelGenerator.java
++++ b/net/minecraft/client/renderer/model/ItemModelGenerator.java
+@@ -35,6 +35,7 @@
+       map.put("particle", p_209579_2_.func_178300_b("particle") ? p_209579_2_.func_178308_c("particle") : map.get("layer0"));
+       BlockModel blockmodel = new BlockModel((ResourceLocation)null, list, map, false, false, p_209579_2_.func_181682_g(), p_209579_2_.func_187966_f());
+       blockmodel.field_178317_b = p_209579_2_.field_178317_b;
++      blockmodel.customData.copyFrom(p_209579_2_.customData);
+       return blockmodel;
+    }
+ 

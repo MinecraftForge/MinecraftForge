@@ -32,7 +32,12 @@ public class ModelDataMap implements IModelData
     {
         this.backingMap = new IdentityHashMap<>(map);
     }
-    
+
+    protected ModelDataMap()
+    {
+        this.backingMap = new IdentityHashMap<>();
+    }
+
     @Override
     public boolean hasProperty(ModelProperty<?> prop)
     {

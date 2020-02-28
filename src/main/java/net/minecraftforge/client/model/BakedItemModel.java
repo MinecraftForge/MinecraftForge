@@ -122,6 +122,12 @@ public class BakedItemModel implements IBakedModel
         }
 
         @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
         {
             if (type == TransformType.GUI)

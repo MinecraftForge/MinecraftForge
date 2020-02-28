@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
  * To enable your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
+@Deprecated // Use the new model loading system and data generators instead.
 public enum OBJLoader implements ICustomModelLoader {
     INSTANCE;
 
