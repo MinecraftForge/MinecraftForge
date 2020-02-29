@@ -5,41 +5,16 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:alternatives",
-          "children": [
-            {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "tag": "forge:shears"
-                  }
-                }
-              ],
-              "name": "minecraft:fern"
-            },
-            {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:survives_explosion"
-                },
-                {
-                  "condition": "minecraft:block_state_property",
-                  "block": "minecraft:large_fern",
-                  "properties": {
-                    "half": "lower"
-                  }
-                },
-                {
-                  "condition": "minecraft:random_chance",
-                  "chance": 0.125
-                }
-              ],
-              "name": "minecraft:wheat_seeds"
-            }
-          ]
+          "type": "minecraft:item",
+          "name": "minecraft:fern"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "tag": "forge:shears"
+          }
         }
       ]
     }

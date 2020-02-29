@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:seagrass"
+          "name": "minecraft:air"
         }
       ],
       "conditions": [
