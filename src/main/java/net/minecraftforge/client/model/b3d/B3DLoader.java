@@ -32,6 +32,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
@@ -410,7 +411,7 @@ public enum B3DLoader implements ICustomModelLoader
         private final ResourceLocation modelLocation;
         private final B3DModel model;
         private final ImmutableSet<String> meshes;
-        private final ImmutableMap<String, ResourceLocation> textures;
+        private final ImmutableMap<String, String> textures;
         private final boolean smooth;
         private final boolean gui3d;
         private final int defaultKey;
@@ -420,7 +421,7 @@ public enum B3DLoader implements ICustomModelLoader
             this(modelLocation, model, meshes, smooth, gui3d, defaultKey, buildTextures(model.getTextures()));
         }
 
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, String> textures)
         {
             this.modelLocation = modelLocation;
             this.model = model;
@@ -431,16 +432,16 @@ public enum B3DLoader implements ICustomModelLoader
             this.defaultKey = defaultKey;
         }
 
-        private static ImmutableMap<String, ResourceLocation> buildTextures(List<Texture> textures)
+        private static ImmutableMap<String, String> buildTextures(List<Texture> textures)
         {
-            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 
             for(Texture t : textures)
             {
                 String path = t.getPath();
                 String location = getLocation(path);
                 if(!location.startsWith("#")) location = "#" + location;
-                builder.put(path, new ResourceLocation(location));
+                builder.put(path, location);
             }
             return builder.build();
         }
@@ -454,7 +455,7 @@ public enum B3DLoader implements ICustomModelLoader
         @Override
         public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
         {
-            return Collections2.filter(textures.values(), loc -> !loc.getPath().startsWith("#"));
+            return textures.values().stream().filter(loc -> !loc.startsWith("#")).map(ResourceLocation::new).collect(Collectors.toList());
         }
 
         @Override
@@ -469,16 +470,16 @@ public enum B3DLoader implements ICustomModelLoader
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             TextureAtlasSprite missing = spriteGetter.apply(new ResourceLocation("missingno"));
-            for(Map.Entry<String, ResourceLocation> e : textures.entrySet())
+            for(Map.Entry<String, String> e : textures.entrySet())
             {
-                if(e.getValue().getPath().startsWith("#"))
+                if(e.getValue().startsWith("#"))
                 {
-                    LOGGER.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getPath(), modelLocation);
+                    LOGGER.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue(), modelLocation);
                     builder.put(e.getKey(), missing);
                 }
                 else
                 {
-                    builder.put(e.getKey(), spriteGetter.apply(e.getValue()));
+                    builder.put(e.getKey(), spriteGetter.apply(new ResourceLocation(e.getValue())));
                 }
             }
             builder.put("missingno", missing);
@@ -488,16 +489,19 @@ public enum B3DLoader implements ICustomModelLoader
         @Override
         public ModelWrapper retexture(ImmutableMap<String, String> textures)
         {
-            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-            for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
+            ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+            for(Map.Entry<String, String> e : this.textures.entrySet())
             {
                 String path = e.getKey();
                 String loc = getLocation(path);
-                if(textures.containsKey(loc))
+                // FIXME: Backward compatibilty: support finding textures that start with #, even though this is not how vanilla works
+                if(loc.startsWith("#") && (textures.containsKey(loc) || textures.containsKey(loc.substring(1))))
                 {
+                    String alt = loc.substring(1);
                     String newLoc = textures.get(loc);
-                    if(newLoc == null) newLoc = getLocation(path);
-                    builder.put(e.getKey(), new ResourceLocation(newLoc));
+                    if(newLoc == null) newLoc = textures.get(alt);
+                    if(newLoc == null) newLoc = path.substring(1);
+                    builder.put(e.getKey(), newLoc);
                 }
                 else
                 {
@@ -814,6 +818,12 @@ public enum B3DLoader implements ICustomModelLoader
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);
+        }
+
+        @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
         }
 
         @Override

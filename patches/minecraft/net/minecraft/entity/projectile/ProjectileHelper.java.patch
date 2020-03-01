@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/ProjectileHelper.java
++++ b/net/minecraft/entity/projectile/ProjectileHelper.java
+@@ -89,7 +89,7 @@
+             Vec3d vec3d1 = optional.get();
+             double d1 = p_221273_1_.func_72436_e(vec3d1);
+             if (d1 < d0 || d0 == 0.0D) {
+-               if (entity1.func_184208_bv() == p_221273_0_.func_184208_bv()) {
++               if (entity1.func_184208_bv() == p_221273_0_.func_184208_bv() && !entity1.canRiderInteract()) {
+                   if (d0 == 0.0D) {
+                      entity = entity1;
+                      vec3d = vec3d1;

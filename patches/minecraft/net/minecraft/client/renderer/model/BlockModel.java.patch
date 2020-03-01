@@ -1,6 +1,32 @@
 --- a/net/minecraft/client/renderer/model/BlockModel.java
 +++ b/net/minecraft/client/renderer/model/BlockModel.java
-@@ -75,6 +75,9 @@
+@@ -38,6 +38,7 @@
+ public class BlockModel implements IUnbakedModel {
+    private static final Logger field_178313_f = LogManager.getLogger();
+    private static final FaceBakery field_217647_g = new FaceBakery();
++   @Deprecated
+    @VisibleForTesting
+    static final Gson field_178319_a = (new GsonBuilder()).registerTypeAdapter(BlockModel.class, new BlockModel.Deserializer()).registerTypeAdapter(BlockPart.class, new BlockPart.Deserializer()).registerTypeAdapter(BlockPartFace.class, new BlockPartFace.Deserializer()).registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer()).registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer()).registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer()).registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer()).create();
+    private final List<BlockPart> field_178314_g;
+@@ -52,9 +53,10 @@
+    public BlockModel field_178315_d;
+    @Nullable
+    protected ResourceLocation field_178316_e;
++   public final net.minecraftforge.client.model.BlockModelConfiguration customData = new net.minecraftforge.client.model.BlockModelConfiguration(this);
+ 
+    public static BlockModel func_178307_a(Reader p_178307_0_) {
+-      return JSONUtils.func_193839_a(field_178319_a, p_178307_0_, BlockModel.class);
++      return JSONUtils.func_193839_a(net.minecraftforge.client.model.ModelLoaderRegistry2.ExpandedBlockModelDeserializer.INSTANCE, p_178307_0_, BlockModel.class);
+    }
+ 
+    public static BlockModel func_178294_a(String p_178294_0_) {
+@@ -71,10 +73,15 @@
+       this.field_187968_k = p_i46573_7_;
+    }
+ 
++   @Deprecated
+    public List<BlockPart> func_178298_a() {
++      if (customData.hasCustomGeometry()) return java.util.Collections.emptyList();
        return this.field_178314_g.isEmpty() && this.field_178315_d != null ? this.field_178315_d.func_178298_a() : this.field_178314_g;
     }
  
@@ -10,7 +36,7 @@
     public boolean func_178309_b() {
        return this.field_178315_d != null ? this.field_178315_d.func_178309_b() : this.field_178322_i;
     }
-@@ -91,6 +94,10 @@
+@@ -91,6 +98,10 @@
        return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
     }
  
@@ -21,7 +47,17 @@
     public Collection<ResourceLocation> func_187965_e() {
        Set<ResourceLocation> set = Sets.newHashSet();
  
-@@ -160,25 +167,33 @@
+@@ -134,6 +145,9 @@
+ 
+       Set<ResourceLocation> set1 = Sets.newHashSet(new ResourceLocation(this.func_178308_c("particle")));
+ 
++      if(customData.hasCustomGeometry())
++         set1.addAll(customData.getTextureDependencies(p_209559_1_, p_209559_2_));
++      else
+       for(BlockPart blockpart : this.func_178298_a()) {
+          for(BlockPartFace blockpartface : blockpart.field_178240_c.values()) {
+             String s = this.func_178308_c(blockpartface.field_178242_d);
+@@ -160,25 +174,36 @@
        return set1;
     }
  
@@ -29,8 +65,6 @@
 -      return this.func_217644_a(p_217641_1_, this, p_217641_2_, p_217641_3_);
 +   // FORGE: Override our interface method, binary compatible
 +   public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, net.minecraft.client.renderer.vertex.VertexFormat format) {
-+       if (!net.minecraftforge.client.model.Attributes.moreSpecific(format, net.minecraftforge.client.model.Attributes.DEFAULT_BAKED_FORMAT))
-+           throw new IllegalArgumentException("Cannot bake vanilla model to format other than BLOCK");
 +      return this.bake(bakery, this, spriteGetter, sprite, format);
     }
  
@@ -39,7 +73,12 @@
 +       return bake(p_217644_1_, p_217644_2_, p_217644_3_, p_217644_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +   }
 +
-+   public IBakedModel bake(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
++   public IBakedModel bake(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_, net.minecraft.client.renderer.vertex.VertexFormat format)
++   {
++      return net.minecraftforge.client.model.ModelLoaderRegistry2.bakeHelper(this, p_217644_1_, p_217644_2_, p_217644_3_, p_217644_4_, format);
++   }
++
++   public IBakedModel bakeVanilla(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
        TextureAtlasSprite textureatlassprite = p_217644_3_.apply(new ResourceLocation(this.func_178308_c("particle")));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {
 -         return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_217644_1_, p_217644_2_), textureatlassprite);
@@ -61,7 +100,7 @@
                 }
              }
           }
-@@ -191,6 +206,10 @@
+@@ -191,6 +216,10 @@
        return field_217647_g.func_217648_a(p_217645_0_.field_178241_a, p_217645_0_.field_178239_b, p_217645_1_, p_217645_2_, p_217645_3_, p_217645_4_, p_217645_0_.field_178237_d, p_217645_0_.field_178238_e);
     }
  
@@ -72,3 +111,13 @@
     public boolean func_178300_b(String p_178300_1_) {
        return !MissingTextureSprite.func_195675_b().toString().equals(this.func_178308_c(p_178300_1_));
     }
+@@ -280,7 +309,8 @@
+ 
+          List<ItemOverride> list1 = this.func_187964_a(p_deserialize_3_, jsonobject);
+          ResourceLocation resourcelocation = s.isEmpty() ? null : new ResourceLocation(s);
+-         return new BlockModel(resourcelocation, list, map, flag, true, itemcameratransforms, list1);
++         boolean gui3d = JSONUtils.func_151209_a(jsonobject, "gui_3d", true);
++         return new BlockModel(resourcelocation, list, map, flag, gui3d, itemcameratransforms, list1);
+       }
+ 
+       protected List<ItemOverride> func_187964_a(JsonDeserializationContext p_187964_1_, JsonObject p_187964_2_) {

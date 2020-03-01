@@ -42,14 +42,25 @@
           p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
        }
  
-@@ -464,4 +471,10 @@
+@@ -454,14 +461,21 @@
+    }
+ 
+    public int func_195665_a(int p_195665_1_, int p_195665_2_, int p_195665_3_, int p_195665_4_) {
++      if (this.field_195671_d == null || this.field_195672_e == null) return this.field_195670_c[p_195665_2_].func_195709_a(p_195665_3_, p_195665_4_); // FORGE: Avoid crash if the texture is not animated
+       return this.field_195670_c[p_195665_2_].func_195709_a(p_195665_3_ + (this.field_195671_d[p_195665_1_] * this.field_130223_c >> p_195665_2_), p_195665_4_ + (this.field_195672_e[p_195665_1_] * this.field_130224_d >> p_195665_2_));
+    }
+ 
+    public boolean func_195662_a(int p_195662_1_, int p_195662_2_, int p_195662_3_) {
++      if (this.field_195671_d == null || this.field_195672_e == null) return (this.field_195670_c[0].func_195709_a(p_195662_2_, p_195662_3_) >> 24 & 255) == 0; // FORGE: Avoid crash if the texture is not animated
+       return (this.field_195670_c[0].func_195709_a(p_195662_2_ + this.field_195671_d[p_195662_1_] * this.field_130223_c, p_195662_3_ + this.field_195672_e[p_195662_1_] * this.field_130224_d) >> 24 & 255) == 0;
+    }
+ 
     public void func_195663_q() {
        this.func_195659_d(0);
     }
-+   
++
 +   // Forge Start
-+   
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
-+       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.field_130223_c, y + this.field_195672_e[frameIndex] * this.field_130224_d);
++      return this.func_195665_a(frameIndex, 0, x, y);
 +   }
  }

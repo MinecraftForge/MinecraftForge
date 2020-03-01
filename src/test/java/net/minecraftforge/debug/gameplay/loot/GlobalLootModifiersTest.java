@@ -25,7 +25,7 @@ import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -41,9 +41,7 @@ public class GlobalLootModifiersTest {
     public static final boolean ENABLE = true;
     @ObjectHolder(value = MODID)
     public static final Enchantment smelt = null;
-    public GlobalLootModifiersTest() {
-
-    }
+    public GlobalLootModifiersTest() { }
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
     public static class EventHandlers {
@@ -55,9 +53,11 @@ public class GlobalLootModifiersTest {
         }
 
         @SubscribeEvent
-        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<IGlobalLootModifierSerializer<?>> event) {
+        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
             if (ENABLE) {
-                event.getRegistry().register(new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest")));
+                event.getRegistry().register(
+                        new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
+                );
                 event.getRegistry().register(new SmeltingEnchantmentModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"smelting")));
                 event.getRegistry().register(new SilkTouchTestModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"silk_touch_bamboo")));
             }
@@ -65,22 +65,21 @@ public class GlobalLootModifiersTest {
     }
 
     private static class SmelterEnchantment extends Enchantment {
-        protected SmelterEnchantment(Rarity rarityIn, EnchantmentType typeIn, EquipmentSlotType[] slots) {
+        protected SmelterEnchantment(Rarity rarityIn, EnchantmentType typeIn, EquipmentSlotType... slots) {
             super(rarityIn, typeIn, slots);
         }
     }
 
     /**
      * The smelting enchantment causes this modifier to be invoked, via the smelting loot_modifier json
-     * @author Draco18s
      *
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
-        public SmeltingEnchantmentModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
+        public SmeltingEnchantmentModifier(ILootCondition[] conditionsIn) {
             super(conditionsIn);
-
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
@@ -96,55 +95,49 @@ public class GlobalLootModifiersTest {
                     .orElse(stack);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SmeltingEnchantmentModifier> {
             @Override
             public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
-                return new SmeltingEnchantmentModifier(name, conditionsIn);
+                return new SmeltingEnchantmentModifier(conditionsIn);
             }
         }
     }
 
     /**
      * When harvesting blocks with bamboo, this modifier is invoked, via the silk_touch_bamboo loot_modifier json
-     * @author Draco18s
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
-        public SilkTouchTestModifier(ResourceLocation name, ILootCondition[] conditionsIn) {
+        public SilkTouchTestModifier(ILootCondition[] conditionsIn) {
             super(conditionsIn);
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.get(LootParameters.TOOL);
+            //return early if silk-touch is already applied (otherwise we'll get stuck in an infinite loop).
+            if(EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
             ItemStack fakeTool = ctxTool.copy();
             fakeTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-            if(ItemStack.areItemsEqual(ctxTool, fakeTool) && EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
-            LootContext.Builder builder = new LootContext.Builder(context.getWorld())
-                    .withParameter(LootParameters.BLOCK_STATE, context.get(LootParameters.BLOCK_STATE))
-                    .withRandom(context.getWorld().rand)
-                    .withParameter(LootParameters.POSITION, context.get(LootParameters.POSITION))
-                    .withParameter(LootParameters.TOOL, fakeTool)
-                    .withNullableParameter(LootParameters.BLOCK_ENTITY, context.get(LootParameters.BLOCK_ENTITY));
-            if(context.has(LootParameters.THIS_ENTITY)) {
-                builder.withParameter(LootParameters.THIS_ENTITY, context.get(LootParameters.THIS_ENTITY));
-            }
+            LootContext.Builder builder = new LootContext.Builder(context);
+            builder.withParameter(LootParameters.TOOL, fakeTool);
             LootContext ctx = builder.build(LootParameterSets.BLOCK);
             LootTable loottable = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(context.get(LootParameters.BLOCK_STATE).getBlock().getLootTable());
             return loottable.generate(ctx);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SilkTouchTestModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SilkTouchTestModifier> {
             @Override
             public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
-                return new SilkTouchTestModifier(name, conditionsIn);
+                return new SilkTouchTestModifier(conditionsIn);
             }
         }
     }
 
     /**
-     * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json 
-     * @author Draco18s
+     * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
+     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)  
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
@@ -158,10 +151,12 @@ public class GlobalLootModifiersTest {
             itemReward = reward;
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             //
-            // Additional conditions can be checked, though as much logic as possible should be parameterized via JSON data.
+            // Additional conditions can be checked, though as much as possible should be parameterized via JSON data.
+            // It is better to write a new ILootCondition implementation than to do things here.
             //
             int numSeeds = 0;
             for(ItemStack stack : generatedLoot) {
@@ -171,14 +166,14 @@ public class GlobalLootModifiersTest {
             if(numSeeds >= numSeedsToConvert) {
                 generatedLoot.removeIf(x -> x.getItem() == itemToCheck);
                 generatedLoot.add(new ItemStack(itemReward, (numSeeds/numSeedsToConvert)));
-                numSeeds -= (numSeeds/numSeedsToConvert)*numSeedsToConvert;
+                numSeeds = numSeeds%numSeedsToConvert;
                 if(numSeeds > 0)
                     generatedLoot.add(new ItemStack(itemToCheck, numSeeds));
             }
             return generatedLoot;
         }
 
-        private static class Serializer extends LootModifier.Serializer<WheatSeedsConverterModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
 
             @Override
             public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {

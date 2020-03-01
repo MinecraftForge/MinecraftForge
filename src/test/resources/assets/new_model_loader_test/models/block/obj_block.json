@@ -1,0 +1,10 @@
+{
+  "parent": "block/block",
+  "loader": "forge:obj",
+  "model": "new_model_loader_test:models/item/sugar_glider.obj",
+  "ambientToFullbright": true,
+  "textures": {
+    "qr": "minecraft:block/oak_planks",
+    "particle": "block/oak_planks"
+  }
+}

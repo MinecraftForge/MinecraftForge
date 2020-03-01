@@ -60,6 +60,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgeblockstatesloader"
 [[mods]]
-    modId="forgeblockstatesloader"
-[[mods]]
     modId="custom_tnt_test"
+[[mods]]
+    modId="new_model_loader_test"
+[[mods]]
+    modId="global_loot_test"

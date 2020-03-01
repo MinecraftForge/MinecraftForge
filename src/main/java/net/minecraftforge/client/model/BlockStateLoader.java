@@ -46,6 +46,7 @@ import com.google.gson.GsonBuilder;
 
 import javax.annotation.Nullable;
 
+@Deprecated // Use the new model loading system and data generators instead.
 public class BlockStateLoader
 {
     private static final Gson GSON = (new GsonBuilder())
@@ -103,7 +104,7 @@ public class BlockStateLoader
                                                 entry.getKey().replace("=","_").replace(",","_"))
                                 );
 
-                                IUnbakedModel model = ForgeVariantHelper.prepareInjectedModel((ModelLoader)bakery, modelLocation, var.getModel(), var.getSmooth(), var.getGui3d(), var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData());
+                                IUnbakedModel model = ForgeVariantHelper.prepareInjectedModel(modelLocation, var.getModel(), var.getSmooth(), var.getGui3d(), var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData());
 
                                 modelConsumer.accept(modelLocation, model);
                             }
@@ -185,7 +186,7 @@ public class BlockStateLoader
 
     private static class ForgeVariantHelper
     {
-        public static IUnbakedModel prepareInjectedModel(ModelLoader bakery, ResourceLocation blockstateLocation, @Nullable ResourceLocation modelLocation, Optional<Boolean> smooth, Optional<Boolean> gui3d, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
+        public static IUnbakedModel prepareInjectedModel(ResourceLocation blockstateLocation, @Nullable ResourceLocation modelLocation, Optional<Boolean> smooth, Optional<Boolean> gui3d, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
         {
             int size = parts.size();
 

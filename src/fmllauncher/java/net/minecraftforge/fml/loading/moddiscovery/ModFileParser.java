@@ -42,7 +42,7 @@ public class ModFileParser {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static IModFileInfo readModList(final ModFile modFile) {
-        LOGGER.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
+        LOGGER.debug(LOADING,"Considering mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
             LOGGER.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
