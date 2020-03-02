@@ -69,6 +69,8 @@ loaderVersion="[28,)"
     modId="composite_model_test"
 [[mods]]
     modId="music_disc_test"
+[[mods]]
+    modId="stencil_enable_test"
 [[dependencies.global_loot_test]]
     modId="forge"
     mandatory=true
