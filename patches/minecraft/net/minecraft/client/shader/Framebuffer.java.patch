@@ -1,0 +1,46 @@
+--- a/net/minecraft/client/shader/Framebuffer.java
++++ b/net/minecraft/client/shader/Framebuffer.java
+@@ -100,8 +100,14 @@
+       GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
+       if (this.field_147619_e) {
+          GlStateManager.func_227730_i_(FramebufferConstants.field_227593_b_, this.field_147624_h);
++         if (!stencilEnabled) {
+          GlStateManager.func_227678_b_(FramebufferConstants.field_227593_b_, 33190, this.field_147622_a, this.field_147620_b);
+          GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227595_d_, FramebufferConstants.field_227593_b_, this.field_147624_h);
++         } else {
++         GlStateManager.func_227678_b_(FramebufferConstants.field_227593_b_, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++         GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, FramebufferConstants.field_227593_b_, this.field_147624_h);
++         GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, FramebufferConstants.field_227593_b_, this.field_147624_h);
++         }
+       }
+ 
+       this.func_147611_b();
+@@ -254,4 +260,28 @@
+       GlStateManager.func_227658_a_(i, p_216493_1_);
+       this.func_147609_e();
+    }
++
++    /*================================ FORGE START ================================================*/
++    private boolean stencilEnabled = false;
++    /**
++     * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     */
++    public void enableStencil()
++    {
++        if(stencilEnabled) return;
++        stencilEnabled = true;
++        this.func_216491_a(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
++    }
++
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled()
++    {
++        return this.stencilEnabled;
++    }
++    /*================================ FORGE END   ================================================*/
+ }
