@@ -76,7 +76,7 @@ public class CustomResourcePackTest
         }
 
         @Override
-        public Collection<ResourceLocation> func_225637_a_(ResourcePackType p_225637_1_, String p_225637_2_, String p_225637_3_, int p_225637_4_, Predicate<String> p_225637_5_)
+        public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filterIn)
         {
             return Collections.emptyList();
         }
