@@ -1,0 +1,72 @@
+--- a/net/minecraft/client/shader/Framebuffer.java
++++ b/net/minecraft/client/shader/Framebuffer.java
+@@ -2,7 +2,6 @@
+ 
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+-import java.nio.IntBuffer;
+ import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.client.renderer.texture.TextureUtil;
+@@ -10,6 +9,8 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++import java.nio.IntBuffer;
++
+ @OnlyIn(Dist.CLIENT)
+ public class Framebuffer {
+    public int field_147622_a;
+@@ -100,8 +101,14 @@
+       GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
+       if (this.field_147619_e) {
+          GlStateManager.func_227730_i_(FramebufferConstants.field_227593_b_, this.field_147624_h);
+-         GlStateManager.func_227678_b_(FramebufferConstants.field_227593_b_, 33190, this.field_147622_a, this.field_147620_b);
+-         GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227595_d_, FramebufferConstants.field_227593_b_, this.field_147624_h);
++          if(!stencilEnabled) {
++              GlStateManager.func_227678_b_(FramebufferConstants.field_227593_b_, 33190, this.field_147622_a, this.field_147620_b);
++              GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227595_d_, FramebufferConstants.field_227593_b_, this.field_147624_h);
++          } else {
++              GlStateManager.func_227678_b_(FramebufferConstants.field_227593_b_, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++              GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, FramebufferConstants.field_227593_b_, this.field_147624_h);
++              GlStateManager.func_227693_c_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, FramebufferConstants.field_227593_b_, this.field_147624_h);
++          }
+       }
+ 
+       this.func_147611_b();
+@@ -254,4 +261,35 @@
+       GlStateManager.func_227658_a_(i, p_216493_1_);
+       this.func_147609_e();
+    }
++
++    /*================================ FORGE START ================================================*/
++    private boolean stencilEnabled = false;
++    /**
++     * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * Modders should check the below 'isStencilEnabled' to check if another modder has already enabled them.
++     *
++     * Note:
++     *   As of now the only thing that is checked is if FBOs are supported entirely, in the future
++     *   we may expand to check for errors.
++     *
++     * @return True if the FBO was re-initialized with stencil bits.
++     */
++    public boolean enableStencil()
++    {
++        stencilEnabled = true;
++        this.func_216492_b(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
++        return true; //TODO: Find a way to detect if this failed?
++    }
++
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled()
++    {
++        return this.stencilEnabled;
++    }
++    /*================================ FORGE END   ================================================*/
+ }
