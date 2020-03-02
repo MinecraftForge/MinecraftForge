@@ -39,7 +39,7 @@
 +    public boolean enableStencil()
 +    {
 +        stencilEnabled = true;
-+        this.func_216492_b(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
++        this.func_216491_a(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
 +        return true; //TODO: Find a way to detect if this failed?
 +    }
 +
