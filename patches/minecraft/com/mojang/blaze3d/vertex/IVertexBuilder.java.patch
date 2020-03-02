@@ -9,7 +9,7 @@
     Logger field_227884_f_ = LogManager.getLogger();
  
     IVertexBuilder func_225582_a_(double p_225582_1_, double p_225582_3_, double p_225582_5_);
-@@ -95,7 +95,7 @@
+@@ -95,11 +95,12 @@
                 f5 = p_227890_3_[k] * p_227890_6_;
              }
  
@@ -18,3 +18,8 @@
              float f9 = bytebuffer.getFloat(16);
              float f10 = bytebuffer.getFloat(20);
              Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
+             vector4f.func_229372_a_(matrix4f);
++            applyBakedNormals(vector3f, bytebuffer, p_227890_1_.func_227872_b_());
+             this.func_225588_a_(vector4f.func_195910_a(), vector4f.func_195913_b(), vector4f.func_195914_c(), f3, f4, f5, 1.0F, f9, f10, p_227890_8_, l, vector3f.func_195899_a(), vector3f.func_195900_b(), vector3f.func_195902_c());
+          }
+       }

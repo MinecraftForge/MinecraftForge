@@ -64,6 +64,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.GameData;
 
 public class ServerLifecycleHooks
 {
@@ -108,6 +109,7 @@ public class ServerLifecycleHooks
 
     public static void handleServerStopped(final MinecraftServer server)
     {
+        if (!server.isDedicatedServer()) GameData.revertToFrozen();
         MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent(server));
         currentServer = null;
         LogicalSidedProvider.setServer(null);

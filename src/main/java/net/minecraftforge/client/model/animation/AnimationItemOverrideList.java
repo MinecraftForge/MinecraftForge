@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -80,7 +79,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.func_225613_a_(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
+            .map(state -> model.bakeModel(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
             .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

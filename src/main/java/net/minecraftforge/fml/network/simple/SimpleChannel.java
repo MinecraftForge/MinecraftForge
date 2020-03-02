@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.*;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -83,8 +84,13 @@ public class SimpleChannel
     public <MSG> int encodeMessage(MSG message, final PacketBuffer target) {
         return this.indexedCodec.build(message, target);
     }
+
     public <MSG> IndexedMessageCodec.MessageHandler<MSG> registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
-        return this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer);
+        return registerMessage(index, messageType, encoder, decoder, messageConsumer, Optional.empty());
+    }
+
+    public <MSG> IndexedMessageCodec.MessageHandler<MSG> registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer, final Optional<NetworkDirection> networkDirection) {
+        return this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer, networkDirection);
     }
 
     private <MSG> Pair<PacketBuffer,Integer> toBuffer(MSG msg) {
@@ -137,7 +143,21 @@ public class SimpleChannel
      * @return a MessageBuilder
      */
     public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int id) {
-        return MessageBuilder.forType(this, type, id);
+        return MessageBuilder.forType(this, type, id, null);
+    }
+
+    /**
+     * Build a new MessageBuilder. The type should implement {@link java.util.function.IntSupplier} if it is a login
+     * packet.
+     * @param type Type of message
+     * @param id id in the indexed codec
+     * @param direction a network direction which will be asserted before any processing of this message occurs. Use to
+     *                  enforce strict sided handling to prevent spoofing.
+     * @param <M> Type of type
+     * @return a MessageBuilder
+     */
+    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int id, NetworkDirection direction) {
+        return MessageBuilder.forType(this, type, id, direction);
     }
 
     public static class MessageBuilder<MSG>  {
@@ -150,12 +170,14 @@ public class SimpleChannel
         private Function<MSG, Integer> loginIndexGetter;
         private BiConsumer<MSG, Integer> loginIndexSetter;
         private Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators;
+        private Optional<NetworkDirection> networkDirection;
 
-        private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
+        private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id, NetworkDirection networkDirection) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
             builder.channel = channel;
             builder.id = id;
             builder.type = type;
+            builder.networkDirection = Optional.ofNullable(networkDirection);
             return builder;
         }
 
@@ -215,7 +237,7 @@ public class SimpleChannel
         }
 
         public void add() {
-            final IndexedMessageCodec.MessageHandler<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
+            final IndexedMessageCodec.MessageHandler<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer, this.networkDirection);
             if (this.loginIndexSetter != null) {
                 message.setLoginIndexSetter(this.loginIndexSetter);
             }

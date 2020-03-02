@@ -66,9 +66,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     private void updateIndices()
     {
-        for(int i = 0; i < getVertexFormat().func_227894_c_().size(); i++)
+        for(int i = 0; i < getVertexFormat().getElements().size(); i++)
         {
-            switch(getVertexFormat().func_227894_c_().get(i).getUsage())
+            switch(getVertexFormat().getElements().get(i).getUsage())
             {
                 case POSITION:
                     posIndex = i;
@@ -80,7 +80,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                     colorIndex = i;
                     break;
                 case UV:
-                    if(getVertexFormat().func_227894_c_().get(i).getIndex() == 2)
+                    if(getVertexFormat().getElements().get(i).getIndex() == 2)
                     {
                         lightmapIndex = i;
                     }
@@ -123,7 +123,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         if (format == null || format.hasNormal())
             return format;
-        List<VertexFormatElement> l = Lists.newArrayList(format.func_227894_c_());
+        List<VertexFormatElement> l = Lists.newArrayList(format.getElements());
         l.add(NORMAL_4F);
         return new VertexFormat(ImmutableList.copyOf(l));
     }
@@ -153,7 +153,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             t.set(position[0]);
             v2.sub(t);
             v2.cross(v1);
-            v2.func_229194_d_();
+            v2.normalize();
             for(int v = 0; v < 4; v++)
             {
                 normal[v][0] = v2.getX();
@@ -170,7 +170,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
 
         VertexFormat format = parent.getVertexFormat();
-        int count = format.func_227894_c_().size();
+        int count = format.getElements().size();
 
         for(int v = 0; v < 4; v++)
         {
@@ -209,7 +209,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             // no need for remapping cause all we could've done is add 1 element to the end
             for(int e = 0; e < count; e++)
             {
-                VertexFormatElement element = format.func_227894_c_().get(e);
+                VertexFormatElement element = format.getElements().get(e);
                 switch(element.getUsage())
                 {
                     case POSITION:

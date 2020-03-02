@@ -3,7 +3,11 @@ buildscript {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
@@ -58,9 +62,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.15.1'
-    MCP_VERSION = '20191217.105819'
+    MAPPING_VERSION = '20200225-1.15.1'
+    MC_VERSION = '1.15.2'
+    MCP_VERSION = '20200122.131323'
 }
 
 project(':mcp') {
@@ -78,7 +82,11 @@ project(':clean') {
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     
     repositories {
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     
     dependencies {
@@ -175,13 +183,23 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
+        userdev_test {
+            compileClasspath += sourceSets.userdev.runtimeClasspath
+            runtimeClasspath += sourceSets.userdev.runtimeClasspath
+            compileClasspath += sourceSets.test.runtimeClasspath
+            runtimeClasspath += sourceSets.test.runtimeClasspath
+        }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
 
     ext {
@@ -192,7 +210,7 @@ project(':forge') {
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.7:fatjar'
+        BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
     def getVersion = {
@@ -254,6 +272,8 @@ project(':forge') {
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
+
                 mods {
                     TestMods { sources sourceSets.test }
                 }
@@ -285,6 +305,8 @@ project(':forge') {
                 taskName 'forge_test_server'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     TestMods { sources sourceSets.test }
@@ -320,6 +342,8 @@ project(':forge') {
                 taskName 'forge_test_data'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
                     tests { sources  sourceSets.test }
@@ -978,7 +1002,7 @@ project(':forge') {
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
         from(extraTxts)
-        from(rootProject.file('/src/main/resources/forge_logo.png')) {
+        from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
         }
         from(rootProject.file('/src/main/resources/url.png'))

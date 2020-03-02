@@ -28,6 +28,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.ITeleporter;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -35,6 +37,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 public class CommandSetDimension
 {
@@ -47,13 +50,13 @@ public class CommandSetDimension
             .then(Commands.argument("targets", EntityArgument.entities())
                 .then(Commands.argument("dim", DimensionArgument.getDimension())
                     .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.func_212592_a(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
+                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.func_212592_a(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
+                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
                 )
             );
     }
-
+    
     private static int execute(CommandSource sender, Collection<? extends Entity> entities, DimensionType dim, BlockPos pos) throws CommandSyntaxException
     {
         entities.removeIf(e -> !canEntityTeleport(e));
@@ -64,7 +67,16 @@ public class CommandSetDimension
         //    throw INVALID_DIMENSION.create(dim);
 
         entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getFormattedText(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim));
+        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, new ITeleporter()
+        {
+            @Override
+            public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
+            {
+                Entity repositionedEntity = repositionEntity.apply(false);
+                repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+                return repositionedEntity;
+            }
+        }));
 
         return 0;
     }

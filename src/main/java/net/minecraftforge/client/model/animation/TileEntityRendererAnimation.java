@@ -57,7 +57,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
     protected static BlockRendererDispatcher blockRenderer;
     
     @Override
-    public void func_225616_a_(T te, float partialTick, MatrixStack mat, IRenderTypeBuffer renderer, int light, int otherlight)
+    public void render(T te, float partialTick, MatrixStack mat, IRenderTypeBuffer renderer, int light, int otherlight)
     {
         LazyOptional<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
         if(!cap.isPresent())
@@ -80,7 +80,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
 
                     // TODO: caching?
                     data.setData(Properties.AnimationProperty, pair.getLeft());
-                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.func_228782_g_()), false, new Random(), 42, light, data);
+                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.getSolidBlockType()), false, new Random(), 42, light, data);
                 });
         }
     }

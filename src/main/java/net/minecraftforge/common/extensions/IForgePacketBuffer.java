@@ -22,6 +22,7 @@ package net.minecraftforge.common.extensions;
 import com.google.common.base.Preconditions;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -125,5 +126,29 @@ public interface IForgePacketBuffer
         if (!value.getRegistryType().equals(registrySuperType))
             throw new IllegalArgumentException("Attempted to read an registryValue of the wrong type from the Buffer!");
         return value;
+    }
+
+    /**
+     * Writes a FluidStack to the packet buffer, easy enough. If EMPTY, writes a FALSE.
+     * This behavior provides parity with the ItemStack method in PacketBuffer.
+     *
+     * @param stack FluidStack to be written to the packet buffer.
+     */
+    default void writeFluidStack(FluidStack stack)
+    {
+        if (stack.isEmpty()) {
+            getBuffer().writeBoolean(false);
+        } else {
+            getBuffer().writeBoolean(true);
+            stack.writeToPacket(getBuffer());
+        }
+    }
+
+    /**
+     * Reads a FluidStack from this buffer.
+     */
+    default FluidStack readFluidStack()
+    {
+        return !getBuffer().readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(getBuffer());
     }
 }

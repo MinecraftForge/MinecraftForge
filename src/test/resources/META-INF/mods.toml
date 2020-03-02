@@ -57,3 +57,11 @@ loaderVersion="[28,)"
     modId="forgedebugmultilayermodel"
 [[mods]]
     modId="trsr_transformer_test"
+[[mods]]
+    modId="chunkwatchworldtest"
+[[mods]]
+    modId="trsr_transformer_test"
+[[mods]]
+    modId="nameplate_render_test"
+[[mods]]
+    modId="global_loot_test"

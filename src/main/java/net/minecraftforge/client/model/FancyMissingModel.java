@@ -40,6 +40,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.model.TransformationHelper;
 
@@ -56,34 +57,28 @@ final class FancyMissingModel implements IUnbakedModel
     private static final Material font2 = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("minecraft", "font/ascii"));
     private static final TransformationMatrix smallTransformation = new TransformationMatrix(null, null, new Vector3f(.25f, .25f, .25f), null)
             .blockCenterToCorner();
-    private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
-    {
-        @Override
-        public SimpleModelFontRenderer load(VertexFormat format) throws Exception
-        {
-            float [] mv = new float[16];
-            mv[2*4+0] = 1f / 128f;
-            mv[0*4+1] =mv[1*4+2] = -mv[2*4+0];
-            mv[3*4+3] = 1;
-            mv[0*4+3] = 1;
-            mv[0*4+3] = 1 + 1f / 0x100;
-            mv[0*4+3] = 0;
-            Matrix4f m = new Matrix4f(mv);
-            return new SimpleModelFontRenderer(
-                Minecraft.getInstance().gameSettings,
-                font,
-                Minecraft.getInstance().getTextureManager(),
-                false,
-                m,
-                format
-            ) {/* TODO Implement once SimpleModelFontRenderer is fixed
-                @Override
-                protected float renderUnicodeChar(char c, boolean italic)
-                {
-                    return super.renderDefaultChar(126, italic);
-                }
-          */};
-        }
+    private static final SimpleModelFontRenderer fontRenderer = Util.make(() -> {
+        float [] mv = new float[16];
+        mv[2*4+0] = 1f / 128f;
+        mv[0*4+1] =mv[1*4+2] = -mv[2*4+0];
+        mv[3*4+3] = 1;
+        mv[0*4+3] = 1;
+        mv[0*4+3] = 1 + 1f / 0x100;
+        mv[0*4+3] = 0;
+        Matrix4f m = new Matrix4f(mv);
+        return new SimpleModelFontRenderer(
+            Minecraft.getInstance().gameSettings,
+            font,
+            Minecraft.getInstance().getTextureManager(),
+            false,
+            m
+        ) {/* TODO Implement once SimpleModelFontRenderer is fixed
+            @Override
+            protected float renderUnicodeChar(char c, boolean italic)
+            {
+                return super.renderDefaultChar(126, italic);
+            }
+      */};
     });
 
     private final IUnbakedModel missingModel;
@@ -96,7 +91,7 @@ final class FancyMissingModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<Material> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
+    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
     {
         return ImmutableList.of(font2);
     }
@@ -109,12 +104,12 @@ final class FancyMissingModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel func_225613_a_(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+    public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
     {
-        IBakedModel bigMissing = missingModel.func_225613_a_(bakery, spriteGetter, modelTransform, modelLocation);
+        IBakedModel bigMissing = missingModel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
         ModelTransformComposition smallState = new ModelTransformComposition(modelTransform, new SimpleModelTransform(smallTransformation));
-        IBakedModel smallMissing = missingModel.func_225613_a_(bakery, spriteGetter, smallState, modelLocation);
-        return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(DefaultVertexFormats.BLOCK), message, spriteGetter.apply(font2));
+        IBakedModel smallMissing = missingModel.bakeModel(bakery, spriteGetter, smallState, modelLocation);
+        return new BakedModel(bigMissing, smallMissing, fontRenderer, message, spriteGetter.apply(font2));
     }
 
     static final class BakedModel implements IBakedModel
@@ -183,6 +178,9 @@ final class FancyMissingModel implements IUnbakedModel
         public boolean isGui3d() { return false; }
 
         @Override
+        public boolean func_230044_c_() { return false; }
+
+        @Override
         public boolean isBuiltInRenderer() { return false; }
 
         @Override
@@ -200,7 +198,7 @@ final class FancyMissingModel implements IUnbakedModel
         @Override
         public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
         {
-            TransformationMatrix transform = TransformationMatrix.func_227983_a_();
+            TransformationMatrix transform = TransformationMatrix.identity();
             boolean big = true;
             switch (cameraTransformType)
             {
@@ -237,7 +235,7 @@ final class FancyMissingModel implements IUnbakedModel
                 default:
                     break;
             }
-            mat.func_227866_c_().func_227870_a_().func_226595_a_(transform.func_227988_c_());
+            mat.getLast().getMatrix().mul(transform.getMatrix());
             if (big != this.big)
             {
                 return otherModel;

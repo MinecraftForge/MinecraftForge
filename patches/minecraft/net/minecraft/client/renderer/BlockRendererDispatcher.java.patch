@@ -41,7 +41,7 @@
        BlockRenderType blockrendertype = p_228791_1_.func_185901_i();
        if (blockrendertype != BlockRenderType.INVISIBLE) {
           switch(blockrendertype) {
-@@ -89,7 +101,7 @@
+@@ -89,10 +101,11 @@
              float f = (float)(i >> 16 & 255) / 255.0F;
              float f1 = (float)(i >> 8 & 255) / 255.0F;
              float f2 = (float)(i & 255) / 255.0F;
@@ -49,8 +49,13 @@
 +            this.field_175027_c.renderModel(p_228791_2_.func_227866_c_(), p_228791_3_.getBuffer(RenderTypeLookup.func_228394_b_(p_228791_1_)), p_228791_1_, ibakedmodel, f, f1, f2, p_228791_4_, p_228791_5_, modelData);
              break;
           case ENTITYBLOCK_ANIMATED:
-             ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(new ItemStack(p_228791_1_.func_177230_c()), p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
-@@ -101,4 +113,9 @@
+-            ItemStackTileEntityRenderer.field_147719_a.func_228364_a_(new ItemStack(p_228791_1_.func_177230_c()), p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
++            ItemStack stack = new ItemStack(p_228791_1_.func_177230_c());
++            stack.func_77973_b().getItemStackTileEntityRenderer().func_228364_a_(stack, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
+          }
+ 
+       }
+@@ -101,4 +114,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175025_e.func_178268_a();
     }

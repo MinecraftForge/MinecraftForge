@@ -59,12 +59,12 @@ public class VertexBufferConsumer implements IVertexConsumer
         // TODO
         /*
         VertexFormat format = getVertexFormat();
-        if(renderer.isColorDisabled() && format.func_227894_c_().get(e).getUsage() == Usage.COLOR)
+        if(renderer.isColorDisabled() && format.getElements().get(e).getUsage() == Usage.COLOR)
         {
             data = dummyColor;
         }
         LightUtil.pack(data, quadData, format, v, e);
-        if(e == format.func_227894_c_().size() - 1)
+        if(e == format.getElements().size() - 1)
         {
             v++;
             if(v == 4)

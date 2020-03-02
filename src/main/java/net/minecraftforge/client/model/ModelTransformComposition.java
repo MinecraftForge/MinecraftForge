@@ -51,9 +51,9 @@ public class ModelTransformComposition implements IModelTransform
     }
 
     @Override
-    public TransformationMatrix func_225615_b_()
+    public TransformationMatrix getRotation()
     {
-        return first.func_225615_b_().compose(second.func_225615_b_());
+        return first.getRotation().compose(second.getRotation());
     }
 
     @Override

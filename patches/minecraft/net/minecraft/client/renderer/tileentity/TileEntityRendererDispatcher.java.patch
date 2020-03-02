@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -141,4 +141,9 @@
+@@ -134,4 +134,9 @@
     public FontRenderer func_147548_a() {
        return this.field_147557_n;
     }

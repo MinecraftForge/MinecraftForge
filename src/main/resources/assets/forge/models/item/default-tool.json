@@ -1,4 +1,5 @@
 {
+  "parent": "forge:item/default",
   "display": {
     "thirdperson_righthand": {
       "rotation": [ 0, -90, 55 ],

@@ -24,17 +24,21 @@
     public void setAlpha(float p_setAlpha_1_) {
        this.alpha = p_setAlpha_1_;
     }
-@@ -233,4 +241,13 @@
+@@ -233,4 +241,17 @@
     protected void setFocused(boolean p_setFocused_1_) {
        this.focused = p_setFocused_1_;
     }
 +
-+   protected int packedFGColor = 0;
++   public static final int UNSET_FG_COLOR = -1;
++   protected int packedFGColor = UNSET_FG_COLOR;
 +   public int getFGColor() {
-+      if (packedFGColor != 0) return packedFGColor;
-+      return this.active ? 16777215 : 10526880;
++      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
++      return this.active ? 16777215 : 10526880; // White : Light Grey
 +   }
 +   public void setFGColor(int color) {
 +      this.packedFGColor = color;
++   }
++   public void clearFGColor() {
++      this.packedFGColor = UNSET_FG_COLOR;
 +   }
  }

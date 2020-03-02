@@ -35,11 +35,11 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IBeaconBeamColorProvider;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.StainedGlassBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
@@ -54,7 +54,6 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.IProperty;
@@ -81,7 +80,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -117,7 +115,7 @@ public interface IForgeBlock
      * @param pos
      * @return The light value
      */
-    default int getLightValue(BlockState state, ILightReader world, BlockPos pos)
+    default int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getLightValue();
     }
@@ -569,8 +567,41 @@ public interface IForgeBlock
     */
     default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
     {
-        return Tags.Blocks.SUPPORTS_BEACON.contains(state.getBlock());
+        return  state.getBlock() == Blocks.IRON_BLOCK ||
+                state.getBlock() == Blocks.GOLD_BLOCK ||
+                state.getBlock() == Blocks.DIAMOND_BLOCK ||
+                state.getBlock() == Blocks.EMERALD_BLOCK;
     }
+
+    /**
+     * Determines if this block can be used as the frame of a conduit.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param conduit Conduit position in world
+     * @return True, to support the conduit, and make it active with this block.
+     */
+    default boolean isConduitFrame(BlockState state, IWorldReader world, BlockPos pos, BlockPos conduit)
+    {
+        return  state.getBlock() == Blocks.PRISMARINE ||
+                state.getBlock() == Blocks.PRISMARINE_BRICKS ||
+                state.getBlock() == Blocks.SEA_LANTERN ||
+                state.getBlock() == Blocks.DARK_PRISMARINE;
+    }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    {
+        return state.getBlock() == Blocks.OBSIDIAN;
+    }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
@@ -869,7 +900,7 @@ public interface IForgeBlock
      */
     default boolean isStickyBlock(BlockState state)
     {
-        return state.getBlock() == Blocks.SLIME_BLOCK || state.getBlock() == Blocks.field_226907_mc_;
+        return state.getBlock() == Blocks.SLIME_BLOCK || state.getBlock() == Blocks.HONEY_BLOCK;
     }
 
     /**
@@ -880,8 +911,8 @@ public interface IForgeBlock
      */
     default boolean canStickTo(BlockState state, BlockState other)
     {
-        if (state.getBlock() == Blocks.field_226907_mc_ && other.getBlock() == Blocks.SLIME_BLOCK) return false;
-        if (state.getBlock() == Blocks.SLIME_BLOCK && other.getBlock() == Blocks.field_226907_mc_) return false;
+        if (state.getBlock() == Blocks.HONEY_BLOCK && other.getBlock() == Blocks.SLIME_BLOCK) return false;
+        if (state.getBlock() == Blocks.SLIME_BLOCK && other.getBlock() == Blocks.HONEY_BLOCK) return false;
         return state.isStickyBlock() || other.isStickyBlock();
     }
 
@@ -1039,5 +1070,19 @@ public interface IForgeBlock
     default boolean collisionExtendsVertically(BlockState state, IBlockReader world, BlockPos pos, Entity collidingEntity)
     {
         return getBlock().isIn(BlockTags.FENCES) || getBlock().isIn(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
+    }
+
+    /**
+     * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos Block position in world
+     * @param fluidState The state of the fluid
+     * @return Whether the fluid overlay texture should be used
+     */
+    default boolean shouldDisplayFluidOverlay(BlockState state, ILightReader world, BlockPos pos, IFluidState fluidState)
+    {
+        return state.getBlock() == Blocks.GLASS || state.getBlock() instanceof StainedGlassBlock;
     }
 }

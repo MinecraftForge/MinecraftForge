@@ -24,8 +24,8 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 
 /**
- * Assumes that the data length is not less than e.func_227894_c_().size().
- * Also assumes that element index passed will increment from 0 to format.func_227894_c_().size() - 1.
+ * Assumes that the data length is not less than e.getElements().size().
+ * Also assumes that element index passed will increment from 0 to format.getElements().size() - 1.
  * Normal, Color and UV are assumed to be in 0-1 range.
  */
 public interface IVertexConsumer

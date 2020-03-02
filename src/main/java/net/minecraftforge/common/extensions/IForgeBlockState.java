@@ -84,7 +84,7 @@ public interface IForgeBlockState
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      */
-    default int getLightValue(ILightReader world, BlockPos pos)
+    default int getLightValue(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);
     }
@@ -495,6 +495,31 @@ public interface IForgeBlockState
         return getBlockState().getBlock().isBeaconBase(getBlockState(), world, pos, beacon);
     }
 
+    /**
+     * Determines if this block can be used as the frame of a conduit.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param conduit Conduit position in world
+     * @return True, to support the conduit, and make it active with this block.
+     */
+    default boolean isConduitFrame(IWorldReader world, BlockPos pos, BlockPos conduit)
+    {
+        return getBlockState().getBlock().isConduitFrame(getBlockState(), world, pos, conduit);
+    }
+
+    /**
+     * Determines if this block can be used as part of a frame of a nether portal.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True, to support being part of a nether portal frame, false otherwise.
+     */
+    default boolean isPortalFrame(IWorldReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().isPortalFrame(getBlockState(), world, pos);
+    }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
@@ -885,5 +910,18 @@ public interface IForgeBlockState
     default boolean collisionExtendsVertically(IBlockReader world, BlockPos pos, Entity collidingEntity)
     {
         return getBlockState().getBlock().collisionExtendsVertically(getBlockState(), world, pos, collidingEntity);
+    }
+
+    /**
+     * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @param fluidState The state of the fluid
+     * @return Whether the fluid overlay texture should be used
+     */
+    default boolean shouldDisplayFluidOverlay(ILightReader world, BlockPos pos, IFluidState fluidState)
+    {
+        return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
     }
 }

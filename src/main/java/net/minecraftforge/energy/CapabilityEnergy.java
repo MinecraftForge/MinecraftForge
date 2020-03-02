@@ -37,7 +37,7 @@ public class CapabilityEnergy
             @Override
             public INBT writeNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, Direction side)
             {
-                return IntNBT.func_229692_a_(instance.getEnergyStored());
+                return IntNBT.valueOf(instance.getEnergyStored());
             }
 
             @Override

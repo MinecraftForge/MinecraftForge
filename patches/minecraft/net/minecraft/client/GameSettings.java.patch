@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -170,6 +170,7 @@
+@@ -171,6 +171,7 @@
     public String field_74363_ab = "en_us";
  
     public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_) {
@@ -8,7 +8,7 @@
        this.field_74317_L = p_i46326_1_;
        this.field_74354_ai = new File(p_i46326_2_, "options.txt");
        if (p_i46326_1_.func_147111_S() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
-@@ -485,7 +486,11 @@
+@@ -490,7 +491,11 @@
  
                 for(KeyBinding keybinding : this.field_74324_K) {
                    if (s.equals("key_" + keybinding.func_151464_g())) {
@@ -21,7 +21,7 @@
                    }
                 }
  
-@@ -533,6 +538,7 @@
+@@ -538,6 +543,7 @@
     }
  
     public void func_74303_b() {
@@ -29,8 +29,8 @@
        try (PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.field_74354_ai), StandardCharsets.UTF_8))) {
           printwriter.println("version:" + SharedConstants.func_215069_a().getWorldVersion());
           printwriter.println("autoJump:" + AbstractOption.field_216719_z.func_216741_b(this));
-@@ -609,7 +615,7 @@
-          printwriter.println("glDebugVerbosity:" + this.field_209231_W);
+@@ -615,7 +621,7 @@
+          printwriter.println("skipMultiplayerWarning:" + this.field_230152_Z_);
  
           for(KeyBinding keybinding : this.field_74324_K) {
 -            printwriter.println("key_" + keybinding.func_151464_g() + ":" + keybinding.func_197982_m());
@@ -38,7 +38,7 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -708,4 +714,22 @@
+@@ -714,4 +720,22 @@
  
        p_198017_1_.func_198985_a(set);
     }

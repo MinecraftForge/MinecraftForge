@@ -364,7 +364,7 @@ public class ModelLoaderRegistryTest
         private final List<String> hidden = new ArrayList<String>();
         private final IModelState state = new IModelState()
         {
-            private final Optional<TRSRTransformation> value = Optional.of(TransformationMatrix.func_227983_a_());
+            private final Optional<TRSRTransformation> value = Optional.of(TransformationMatrix.identity());
 
             @Override
             public Optional<TRSRTransformation> apply(Optional<? extends Object> part)
@@ -790,7 +790,7 @@ public class ModelLoaderRegistryTest
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJDynamicEyeTileEntity)
             {
                 OBJDynamicEyeTileEntity te = (OBJDynamicEyeTileEntity) world.getTileEntity(pos);
-                if (te.transform != TransformationMatrix.func_227983_a_())
+                if (te.transform != TransformationMatrix.identity())
                 {
                     return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.transform);
                 }
@@ -807,7 +807,7 @@ public class ModelLoaderRegistryTest
             super(null); // TODO
         }
 
-        private TRSRTransformation transform = TransformationMatrix.func_227983_a_();
+        private TRSRTransformation transform = TransformationMatrix.identity();
 
         @Override
         public void tick()

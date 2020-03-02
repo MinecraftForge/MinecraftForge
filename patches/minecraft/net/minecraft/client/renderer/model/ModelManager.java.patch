@@ -29,7 +29,7 @@
        p_212854_2_.func_219897_b();
        return modelbakery;
     }
-@@ -60,6 +64,7 @@
+@@ -64,6 +68,7 @@
        this.field_174958_a = p_212853_1_.func_217846_a();
        this.field_224744_f = p_212853_1_.func_225354_b();
        this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
@@ -37,15 +37,15 @@
        p_212853_3_.func_219895_b("cache");
        this.field_174957_c.func_178124_c();
        p_212853_3_.func_76319_b();
-@@ -85,6 +90,7 @@
+@@ -89,6 +94,7 @@
     }
  
     public AtlasTexture func_229356_a_(ResourceLocation p_229356_1_) {
-+      if (this.field_229352_b_ == null) throw new RuntimeException("func_229356_a_ called too early!");
++      if (this.field_229352_b_ == null) throw new RuntimeException("getAtlasTexture called too early!");
        return this.field_229352_b_.func_229152_a_(p_229356_1_);
     }
  
-@@ -95,4 +101,10 @@
+@@ -99,4 +105,10 @@
     public void func_229355_a_(int p_229355_1_) {
        this.field_229354_f_ = p_229355_1_;
     }

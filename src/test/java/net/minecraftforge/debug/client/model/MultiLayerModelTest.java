@@ -53,7 +53,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             event.getRegistry().register(
-                new Block(Block.Properties.create(Material.WOOD))
+                new Block(Block.Properties.create(Material.WOOD).notSolid())
                 {
                 }.setRegistryName(blockId)
             );
@@ -73,7 +73,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             RenderTypeLookup.setRenderLayer(TEST_BLOCK, (layer) -> {
-                return layer == RenderType.func_228639_c_() || layer == RenderType.func_228645_f_();
+                return layer == RenderType.getSolid() || layer == RenderType.getTranslucent();
             });
         }
     }

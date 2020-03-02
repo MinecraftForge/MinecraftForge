@@ -95,7 +95,7 @@ public class EarlyLoaderGUI {
     }
 
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
-        GlStateManager.func_227770_y_(GL11.GL_VERTEX_ARRAY);
+        GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
         ByteBuffer charBuffer = MemoryUtil.memAlloc(message.length() * 270);
         int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, charBuffer);
         GL14.glVertexPointer(2, GL11.GL_FLOAT, 16, charBuffer);

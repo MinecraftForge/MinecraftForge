@@ -143,18 +143,18 @@
           i += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           j += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           ++k;
-@@ -583,8 +592,9 @@
-          if (p_217479_1_.field_70175_ag) {
+@@ -584,8 +593,9 @@
              ++p_217479_1_.field_70173_aa;
-             this.func_217381_Z().func_194340_a(() -> {
+             IProfiler iprofiler = this.func_217381_Z();
+             iprofiler.func_194340_a(() -> {
 -               return Registry.field_212629_r.func_177774_c(p_217479_1_.func_200600_R()).toString();
 +               return p_217479_1_.func_200600_R().getRegistryName() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
              });
 +            if (p_217479_1_.canUpdate())
+             iprofiler.func_230035_c_("tickNonPassenger");
              p_217479_1_.func_70071_h_();
-             this.func_217381_Z().func_76319_b();
-          }
-@@ -644,6 +654,11 @@
+             iprofiler.func_76319_b();
+@@ -652,6 +662,11 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
@@ -166,7 +166,7 @@
        return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
     }
  
-@@ -653,6 +668,7 @@
+@@ -661,6 +676,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -174,7 +174,7 @@
           BiomeProvider biomeprovider = this.func_72863_F().func_201711_g().func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(this.func_72905_C());
-@@ -726,6 +742,7 @@
+@@ -734,6 +750,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -182,7 +182,7 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -801,7 +818,7 @@
+@@ -809,7 +826,7 @@
              }
           }
  
@@ -191,7 +191,7 @@
           if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
              object2intmap.mergeInt(entityclassification, 1, Integer::sum);
           }
-@@ -843,6 +860,7 @@
+@@ -851,6 +868,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -199,7 +199,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -867,6 +885,7 @@
+@@ -875,6 +893,7 @@
        } else if (this.func_217478_l(p_72838_1_)) {
           return false;
        } else {
@@ -207,7 +207,7 @@
           IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
-@@ -882,6 +901,7 @@
+@@ -890,6 +909,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -215,7 +215,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -917,12 +937,17 @@
+@@ -925,12 +945,17 @@
  
     }
  
@@ -234,7 +234,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -936,6 +961,7 @@
+@@ -944,6 +969,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -242,7 +242,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -956,15 +982,19 @@
+@@ -964,15 +990,19 @@
           }
        }
  
@@ -263,7 +263,7 @@
        }
     }
  
-@@ -977,8 +1007,11 @@
+@@ -985,8 +1015,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -277,7 +277,7 @@
        this.func_72854_c();
     }
  
-@@ -1002,10 +1035,20 @@
+@@ -1010,10 +1043,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -298,7 +298,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1041,6 +1084,7 @@
+@@ -1049,6 +1092,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, @Nullable DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -306,7 +306,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1369,4 +1413,15 @@
+@@ -1377,4 +1421,15 @@
           return p_229854_1_.func_175898_b(p_229855_1_.func_180328_a());
        });
     }

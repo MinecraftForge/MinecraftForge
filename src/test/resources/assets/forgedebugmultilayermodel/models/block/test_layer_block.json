@@ -2,20 +2,15 @@
   "parent": "block/block",
   "loader": "forge:multi-layer",
   "layers": {
-    "__comment": "base is used for model properties - camera transforms, isGui3d, e.t.c.",
-    "base": {
-      "parent": "block/cube_all",
-      "textures": { "all": "block/slime_block" }
-    },
-
-    "__comment": "per-layer models",
     "solid": {
       "parent": "block/cube_all",
       "textures": { "all": "block/slime_block" },
-      "transform": { "scale": 0.5 }
+      "transform": { "scale": 0.5, "translation": [-0.25,-0.25,-0.25] }
     },
     "translucent": {
-      "parent": "minecraft:block/pink_stained_glass_pane_noside"
+      "parent": "block/cube_all",
+      "textures": { "all": "block/slime_block" }
     }
-  }
+  },
+  "textures": { "particle": "block/slime_block" }
 }

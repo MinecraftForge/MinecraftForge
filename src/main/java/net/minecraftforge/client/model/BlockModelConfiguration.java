@@ -101,12 +101,18 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public Material resolveTexture(String name)
     {
-        return owner.func_228816_c_(name);
+        return owner.resolveTextureName(name);
     }
 
     @Override
     public boolean isShadedInGui() {
-        return owner.isGui3d();
+        return true;
+    }
+
+    @Override
+    public boolean isSideLit()
+    {
+        return owner.func_230176_c_().func_230178_a_();
     }
 
     @Override
@@ -127,7 +133,7 @@ public class BlockModelConfiguration implements IModelConfiguration
         IModelTransform state = getCustomModelState();
 
         return state != null
-                ? new SimpleModelTransform(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.func_225615_b_())
+                ? new SimpleModelTransform(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
                 : new SimpleModelTransform(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
     }
 

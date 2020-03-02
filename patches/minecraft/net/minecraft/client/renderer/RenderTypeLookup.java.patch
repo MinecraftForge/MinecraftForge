@@ -46,8 +46,8 @@
  
 +   // FORGE START
 +
-+   private static final Map<Block, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
-+   private static final Map<Fluid, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
 +   static {
 +      field_228386_a_.forEach(RenderTypeLookup::setRenderLayer);
 +      field_228387_b_.forEach(RenderTypeLookup::setRenderLayer);
@@ -60,7 +60,7 @@
 +      } else {
 +         java.util.function.Predicate<RenderType> rendertype;
 +         synchronized (RenderTypeLookup.class) {
-+             rendertype = blockRenderChecks.get(block);
++             rendertype = blockRenderChecks.get(block.delegate);
 +         }
 +         return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
 +      }
@@ -69,7 +69,7 @@
 +   public static boolean canRenderInLayer(IFluidState fluid, RenderType type) {
 +      java.util.function.Predicate<RenderType> rendertype;
 +      synchronized (RenderTypeLookup.class) {
-+          rendertype = fluidRenderChecks.get(fluid.func_206886_c());
++          rendertype = fluidRenderChecks.get(fluid.func_206886_c().delegate);
 +      }
 +      return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
 +   }
@@ -80,7 +80,7 @@
 +   }
 +
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+       blockRenderChecks.put(block, predicate);
++       blockRenderChecks.put(block.delegate, predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
@@ -89,7 +89,7 @@
 +   }
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+       fluidRenderChecks.put(fluid, predicate);
++       fluidRenderChecks.put(fluid.delegate, predicate);
 +   }
 +
     public static void func_228393_a_(boolean p_228393_0_) {

@@ -443,7 +443,7 @@ public class FluidAttributes
         @Override
         public int getColor(ILightReader world, BlockPos pos)
         {
-            return BiomeColors.func_228363_c_(world, pos) | 0xFF000000;
+            return BiomeColors.getWaterColor(world, pos) | 0xFF000000;
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {

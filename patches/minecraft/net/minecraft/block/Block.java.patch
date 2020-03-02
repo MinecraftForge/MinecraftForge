@@ -13,6 +13,15 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
+@@ -151,7 +152,7 @@
+ 
+    @Deprecated
+    public boolean func_220067_a(BlockState p_220067_1_, IBlockReader p_220067_2_, BlockPos p_220067_3_, EntityType<?> p_220067_4_) {
+-      return p_220067_1_.func_224755_d(p_220067_2_, p_220067_3_, Direction.UP) && this.field_149784_t < 14;
++      return p_220067_1_.func_224755_d(p_220067_2_, p_220067_3_, Direction.UP) && p_220067_1_.getLightValue(p_220067_2_, p_220067_3_) < 14;
+    }
+ 
+    @Deprecated
 @@ -246,6 +247,10 @@
        this.field_149781_w = p_i48440_1_.field_200958_f;
        this.field_149782_v = p_i48440_1_.field_200959_g;
