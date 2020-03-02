@@ -1,23 +1,6 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
-@@ -2,7 +2,6 @@
- 
- import com.mojang.blaze3d.platform.GlStateManager;
- import com.mojang.blaze3d.systems.RenderSystem;
--import java.nio.IntBuffer;
- import net.minecraft.client.renderer.BufferBuilder;
- import net.minecraft.client.renderer.Tessellator;
- import net.minecraft.client.renderer.texture.TextureUtil;
-@@ -10,6 +9,8 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
-+import java.nio.IntBuffer;
-+
- @OnlyIn(Dist.CLIENT)
- public class Framebuffer {
-    public int field_147622_a;
-@@ -100,8 +101,14 @@
+@@ -100,8 +100,14 @@
        GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
        if (this.field_147619_e) {
           GlStateManager.func_227730_i_(FramebufferConstants.field_227593_b_, this.field_147624_h);
@@ -34,7 +17,7 @@
        }
  
        this.func_147611_b();
-@@ -254,4 +261,35 @@
+@@ -254,4 +260,35 @@
        GlStateManager.func_227658_a_(i, p_216493_1_);
        this.func_147609_e();
     }
