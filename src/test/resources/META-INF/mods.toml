@@ -56,8 +56,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgedebugmultilayermodel"
 [[mods]]
-    modId="trsr_transformer_test"
-[[mods]]
     modId="chunkwatchworldtest"
 [[mods]]
     modId="trsr_transformer_test"
