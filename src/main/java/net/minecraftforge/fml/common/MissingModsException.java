@@ -102,7 +102,7 @@ public class MissingModsException extends EnhancedRuntimeException implements ID
             ArtifactVersion acceptedVersion = info.getAcceptedVersion();
             ArtifactVersion currentVersion = info.getCurrentVersion();
             String currentString = currentVersion != null ? currentVersion.getVersionString() : "missing";
-            stream.println(String.format("\t%s : need %s: have %s", acceptedVersion.getVersionString(), acceptedVersion.getRangeString(), currentString));
+            stream.println(String.format("\t%s : need %s: have %s", acceptedVersion.getLabel(), acceptedVersion.getRangeString(), currentString));
         }
         stream.println("");
     }
