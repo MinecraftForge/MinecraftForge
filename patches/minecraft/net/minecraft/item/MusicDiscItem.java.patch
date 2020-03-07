@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MusicDiscItem.java
 +++ b/net/minecraft/item/MusicDiscItem.java
-@@ -21,17 +21,41 @@
+@@ -21,17 +21,40 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class MusicDiscItem extends Item {
@@ -11,8 +11,7 @@
     private final SoundEvent field_185076_b;
 +   private final java.util.function.Supplier<SoundEvent> soundSupplier;
  
-+   // Forge: Use the constructor that takes a supplier instead
-+   @Deprecated
++   @Deprecated // Forge: Use the constructor that takes a supplier instead
     protected MusicDiscItem(int p_i48475_1_, SoundEvent p_i48475_2_, Item.Properties p_i48475_3_) {
        super(p_i48475_3_);
        this.field_195977_c = p_i48475_1_;
@@ -42,7 +41,7 @@
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();
-@@ -76,6 +100,6 @@
+@@ -76,6 +99,6 @@
  
     @OnlyIn(Dist.CLIENT)
     public SoundEvent func_185075_h() {
