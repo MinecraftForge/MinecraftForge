@@ -25,6 +25,7 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.Validate;
 
 @Mod(SeaPlantPlaceTest.MODID)
 @Mod.EventBusSubscriber
@@ -38,10 +39,11 @@ public class SeaPlantPlaceTest
         // Check to see if the Sea Pickle or Sea Grass placed on a block was in the appropriate environment
         // i.e., the sea plant is surrounded by water. If it is, we can cancel the event, signalling the successful
         // end to the test case
-        if ((event.getPlacedBlock().getBlock() == Blocks.SEA_PICKLE
+        if (event.getPlacedBlock().getBlock() == Blocks.SEA_PICKLE
                 || event.getPlacedBlock().getBlock() == Blocks.SEAGRASS)
-                && event.getPlacedAgainst().canSustainPlant(event.getWorld(), event.getPos(),
-                Direction.UP, (IPlantable)Blocks.SEAGRASS))
-            event.setCanceled(true);
+        {
+            Validate.isTrue(event.getPlacedAgainst().canSustainPlant(event.getWorld(), event.getPos(), Direction.UP,
+                    (IPlantable)Blocks.SEAGRASS));
+        }
     }
 }

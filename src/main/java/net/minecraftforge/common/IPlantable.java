@@ -40,7 +40,7 @@ public interface IPlantable
         if (this == Blocks.NETHER_WART)    return PlantType.Nether;
         if (this == Blocks.TALL_GRASS)      return PlantType.Plains;
         // Any blocks that appear in oceans/seas in Minecraft should have a return plant type of Water
-        if ((this == Blocks.SEAGRASS) || (this == Blocks.TALL_SEAGRASS)) return PlantType.Water;
+        if (this == Blocks.SEAGRASS) return PlantType.Water;
         if (this == Blocks.SEA_PICKLE) return PlantType.Water;
         return net.minecraftforge.common.PlantType.Plains;
     }
