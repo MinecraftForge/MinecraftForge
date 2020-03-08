@@ -34,7 +34,7 @@ public class SeaPlantPlaceTest
     static final String MODID = "sea_plant_place_test";
 
     @SubscribeEvent
-    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event){
+    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
 
         // Check to see if the Sea Pickle or Sea Grass placed on a block was in the appropriate environment
         // i.e., the sea plant is surrounded by water. If it is, we can cancel the event, signalling the successful
