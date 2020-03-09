@@ -162,7 +162,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -779,13 +788,83 @@
+@@ -779,13 +788,81 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -218,9 +218,7 @@
 +           case Crop:   return this.getBlock() == Blocks.field_150458_ak;
 +           case Cave:   return Block.func_220056_d(state, world, pos, Direction.UP);
 +           case Plains: return this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
-+           case Water:  return state.func_185904_a() == Material.field_151586_h ||
-+                   (this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) ||
-+                           this.getBlock() == Blocks.field_150458_ak); //&& state.getValue(BlockLiquidWrapper)
++           case Water:  return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
 +           case Beach:
 +               boolean isBeach = this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
 +               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
@@ -248,7 +246,7 @@
     public static enum OffsetType {
        NONE,
        XZ,
-@@ -804,6 +883,9 @@
+@@ -804,6 +881,9 @@
        private float field_200961_i = 0.6F;
        private ResourceLocation field_222381_j;
        private boolean field_208772_j;
@@ -258,7 +256,7 @@
  
        private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
           this.field_200953_a = p_i48616_1_;
-@@ -834,6 +916,8 @@
+@@ -834,6 +914,8 @@
           block$properties.field_200956_d = p_200950_0_.field_149762_H;
           block$properties.field_200961_i = p_200950_0_.func_208618_m();
           block$properties.field_208772_j = p_200950_0_.field_208621_p;
@@ -267,7 +265,7 @@
           return block$properties;
        }
  
-@@ -882,13 +966,23 @@
+@@ -882,13 +964,23 @@
           return this;
        }
  
