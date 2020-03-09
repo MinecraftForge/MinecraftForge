@@ -22,7 +22,7 @@ package net.minecraftforge.common;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-public enum PlantType
+public enum PlantType implements IExtensibleEnum
 {
     Plains,
     Desert,
@@ -45,5 +45,8 @@ public enum PlantType
      * @param name the name of the type of plant, you had better follow the style above
      * @return the acquired {@link PlantType}, a new one if not found.
      */
-    public static PlantType create(String name){ return null; }
+    public static PlantType create(String name)
+    {
+        throw new IllegalStateException("Enum not extended");
+    }
 }
