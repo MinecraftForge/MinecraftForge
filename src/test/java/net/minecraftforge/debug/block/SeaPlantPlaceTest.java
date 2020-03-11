@@ -33,15 +33,19 @@ public class SeaPlantPlaceTest
 {
     static final String MODID = "sea_plant_place_test";
 
+    /***
+     * This event is fired whenever a block is placed in the game.
+     * @param event the event in which this method is listening on, i.e., the event in which an entity places a block
+     */
     @SubscribeEvent
     public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
 
         // Check to see if the Sea Pickle or Sea Grass placed on a block was in the appropriate environment
-        // i.e., the sea plant is surrounded by water. If it is, we can cancel the event, signalling the successful
-        // end to the test case
+        // i.e., the sea plant is surrounded by water. If it is, then we pass the check
         if (event.getPlacedBlock().getBlock() == Blocks.SEA_PICKLE || event.getPlacedBlock().getBlock() ==
                 Blocks.SEAGRASS)
         {
+            // ensure that the block can sustain the plant
             Validate.isTrue(event.getPlacedAgainst().canSustainPlant(event.getWorld(), event.getPos(), Direction.UP,
                     (IPlantable)Blocks.SEAGRASS));
         }
