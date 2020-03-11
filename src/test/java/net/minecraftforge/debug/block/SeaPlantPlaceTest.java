@@ -34,7 +34,7 @@ public class SeaPlantPlaceTest
     static final String MODID = "sea_plant_place_test";
 
     /***
-     * This event is fired whenever a block is placed in the game.
+     * This test method is triggered whenever a block is placed in the game.
      * @param event the event in which this method is listening on, i.e., the event in which an entity places a block
      */
     @SubscribeEvent
