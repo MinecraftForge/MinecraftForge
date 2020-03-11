@@ -172,9 +172,15 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
+    @Deprecated // TODO: Remove in 1.16
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
+    }
+
+    public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
