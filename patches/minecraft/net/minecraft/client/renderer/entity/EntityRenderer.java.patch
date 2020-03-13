@@ -6,7 +6,7 @@
     public void func_225623_a_(T p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
 -      if (this.func_177070_b(p_225623_1_)) {
 -         this.func_225629_a_(p_225623_1_, p_225623_1_.func_145748_c_().func_150254_d(), p_225623_4_, p_225623_5_, p_225623_6_);
-+      net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(p_225623_1_,p_225623_1_.func_145748_c_().func_150254_d(), p_225623_4_, p_225623_5_);
++      net.minecraftforge.client.event.RenderNameplateEvent<T> renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent<T>(p_225623_1_, p_225623_1_.func_145748_c_().func_150254_d(), this, p_225623_4_, p_225623_5_, p_225623_6_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
 +      if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.func_177070_b(p_225623_1_))) {
 +         this.func_225629_a_(p_225623_1_, renderNameplateEvent.getContent(), p_225623_4_, p_225623_5_, p_225623_6_);

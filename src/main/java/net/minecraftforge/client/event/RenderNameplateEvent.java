@@ -21,6 +21,7 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -32,33 +33,41 @@ import net.minecraftforge.eventbus.api.Event;
  * {@link #nameplateContent} contains the content being rendered on the name plate/tag. This can be changed by mods.<br>
  * {@link #originalContent} contains the original content being rendered on the name plate/tag. This cannot be
  * changed by mods.<br>
+ * {@link #entityRenderer} contains the entity renderer instance that renders the name plate/tag. This cannot be
+ * changed by mods.<br>
  * {@link #matrixStack} contains the matrix stack instance involved in rendering the name plate/tag. This cannot
  * be changed by mods.<br>
  * {@link #renderTypeBuffer} contains the render type buffer instance involved in rendering the name plate/tag.
  * This cannot be changed by mods.<br>
+ * {@link #packedLight} contains the sky and block light values used in rendering the name plate/tag.<br>
  * <br>
  * This event has a result. {@link HasResult}. <br>
  * ALLOW will force-render name plate/tag, DEFAULT will ignore the hook and continue using the vanilla check
  * & DENY will prevent name plate/tag from rendering<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * @param <T> the entity type of the renderer
  **/
 @Event.HasResult
-public class RenderNameplateEvent extends EntityEvent
+public class RenderNameplateEvent<T extends Entity> extends EntityEvent
 {
 
     private String nameplateContent;
     private final String originalContent;
+    private final EntityRenderer<T> entityRenderer;
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
+    private final int packedLight;
 
-    public RenderNameplateEvent(Entity entity, String content, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer)
+    public RenderNameplateEvent(Entity entity, String content, EntityRenderer<T> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
     {
         super(entity);
         this.originalContent = content;
         this.setContent(this.originalContent);
+        this.entityRenderer = entityRenderer;
         this.matrixStack = matrixStack;
         this.renderTypeBuffer = renderTypeBuffer;
+        this.packedLight = packedLight;
     }
 
     /**
@@ -86,6 +95,14 @@ public class RenderNameplateEvent extends EntityEvent
     }
 
     /**
+     * The entity renderer that renders the name plate/tag
+     */
+    public EntityRenderer<T> getEntityRenderer()
+    {
+        return this.entityRenderer;
+    }
+
+    /**
      * The matrix stack used during the rendering of the name plate/tag
      */
     public MatrixStack getMatrixStack()
@@ -99,5 +116,13 @@ public class RenderNameplateEvent extends EntityEvent
     public IRenderTypeBuffer getRenderTypeBuffer()
     {
         return this.renderTypeBuffer;
+    }
+
+    /**
+     * The packed values of sky and block light used during the rendering of the name plate/tag
+     */
+    public int getPackedLight()
+    {
+        return this.packedLight;
     }
 }
