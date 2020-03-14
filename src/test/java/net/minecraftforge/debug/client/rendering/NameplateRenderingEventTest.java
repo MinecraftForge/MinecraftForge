@@ -35,7 +35,7 @@ public class NameplateRenderingEventTest
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onNameplateRender(RenderNameplateEvent<Entity> event)
+    public static void onNameplateRender(RenderNameplateEvent event)
     {
 
         if(!ENABLED)

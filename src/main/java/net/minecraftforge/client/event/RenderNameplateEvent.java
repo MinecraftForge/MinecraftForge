@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client.event;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -46,20 +48,31 @@ import net.minecraftforge.eventbus.api.Event;
  * & DENY will prevent name plate/tag from rendering<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
- * @param <T> the entity type of the renderer
  **/
+@SuppressWarnings("rawtypes")
 @Event.HasResult
-public class RenderNameplateEvent<T extends Entity> extends EntityEvent
+public class RenderNameplateEvent extends EntityEvent
 {
 
     private String nameplateContent;
     private final String originalContent;
-    private final EntityRenderer<T> entityRenderer;
+    private final EntityRenderer entityRenderer;
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
 
-    public RenderNameplateEvent(Entity entity, String content, EntityRenderer<T> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
+    public RenderNameplateEvent(Entity entity, String content, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer)
+    {
+        super(entity);
+        this.originalContent = content;
+        this.setContent(this.originalContent);
+        this.entityRenderer = null;
+        this.matrixStack = matrixStack;
+        this.renderTypeBuffer = renderTypeBuffer;
+        this.packedLight = 0;
+    }
+
+    public RenderNameplateEvent(Entity entity, String content, EntityRenderer entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
     {
         super(entity);
         this.originalContent = content;
@@ -95,9 +108,10 @@ public class RenderNameplateEvent<T extends Entity> extends EntityEvent
     }
 
     /**
-     * The entity renderer that renders the name plate/tag
+     * The entity renderer that renders the name plate/tag, if it was provided
      */
-    public EntityRenderer<T> getEntityRenderer()
+    @Nullable
+    public EntityRenderer getEntityRenderer()
     {
         return this.entityRenderer;
     }
