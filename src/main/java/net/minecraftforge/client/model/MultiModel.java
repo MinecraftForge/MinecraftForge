@@ -196,11 +196,11 @@ public final class MultiModel implements IUnbakedModel
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             if (base != null)
             {
-                quads.addAll(base.getQuads(state, side, rand));
+                quads.addAll(base.getQuads(state, side, rand, extraData));
             }
             for (IBakedModel bakedPart : parts.values())
             {
-                quads.addAll(bakedPart.getQuads(state, side, rand));
+                quads.addAll(bakedPart.getQuads(state, side, rand, extraData));
             }
             return quads.build();
         }
