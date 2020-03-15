@@ -49,7 +49,7 @@ public class EarlyLoaderGUI {
     }
 
     private void setupMatrix() {
-        GlStateManager.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
         RenderSystem.matrixMode(5889);
         RenderSystem.loadIdentity();
         RenderSystem.ortho(0.0D, window.getFramebufferWidth() / window.getGuiScaleFactor(), window.getFramebufferHeight() / window.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
@@ -73,9 +73,11 @@ public class EarlyLoaderGUI {
 
         RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.pushMatrix();
         setupMatrix();
         renderMessages();
         window.flipFrame();
+        RenderSystem.popMatrix();
     }
 
     private void renderMessages() {
