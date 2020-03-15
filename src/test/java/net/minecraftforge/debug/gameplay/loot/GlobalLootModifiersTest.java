@@ -25,7 +25,7 @@ import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,7 +53,7 @@ public class GlobalLootModifiersTest {
         }
 
         @SubscribeEvent
-        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<IGlobalLootModifierSerializer<?>> event) {
+        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
             if (ENABLE) {
                 event.getRegistry().register(
                         new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
@@ -95,7 +95,7 @@ public class GlobalLootModifiersTest {
                     .orElse(stack);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SmeltingEnchantmentModifier> {
             @Override
             public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SmeltingEnchantmentModifier(conditionsIn);
@@ -127,7 +127,7 @@ public class GlobalLootModifiersTest {
             return loottable.generate(ctx);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SilkTouchTestModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SilkTouchTestModifier> {
             @Override
             public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SilkTouchTestModifier(conditionsIn);
@@ -137,7 +137,7 @@ public class GlobalLootModifiersTest {
 
     /**
      * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
-     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)  
+     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
@@ -173,7 +173,7 @@ public class GlobalLootModifiersTest {
             return generatedLoot;
         }
 
-        private static class Serializer extends LootModifier.Serializer<WheatSeedsConverterModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
 
             @Override
             public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {

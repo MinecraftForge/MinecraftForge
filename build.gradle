@@ -52,6 +52,8 @@ plugins {
 }
 apply plugin: 'eclipse'
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version'))
+
 ext {
     JAR_SIGNER = null
     if (project.hasProperty('keystore')) {
@@ -64,7 +66,7 @@ ext {
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20200225-1.15.1'
     MC_VERSION = '1.15.2'
-    MCP_VERSION = '20200122.131323'
+    MCP_VERSION = '20200307.202953'
 }
 
 project(':mcp') {
@@ -1316,12 +1318,18 @@ def getArtifacts(project, config, classifiers) {
 }
 
 def checkExists(url) {
-    def code = new URL(url).openConnection().with {
-        requestMethod = 'HEAD'
-        connect()
-        responseCode
+    try {
+        def code = new URL(url).openConnection().with {
+            requestMethod = 'HEAD'
+            connect()
+            responseCode
+        }
+        return code == 200
+    } catch (Exception e) {
+        if (e.toString().contains('unable to find valid certification path to requested target'))
+            throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+        throw e
     }
-    return code == 200
 }
 
 def getClasspath(project, libs, artifact) {
