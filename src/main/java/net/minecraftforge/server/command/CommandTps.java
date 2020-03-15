@@ -20,12 +20,8 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.DimensionArgument;
@@ -34,8 +30,8 @@ import net.minecraft.world.dimension.DimensionType;
 
 class CommandTps
 {
-    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.tps.invalid", dim, StreamSupport.stream(DimensionType.getAll().spliterator(), false).map(d -> DimensionType.getKey(d).toString()).sorted().collect(Collectors.joining(", "))));
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
+    private static final long[] UNLOADED = new long[] {0};
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
@@ -61,8 +57,8 @@ class CommandTps
     {
         long[] times = cs.getServer().getTickTime(dim);
 
-        if (times == null)
-            throw INVALID_DIMENSION.create(DimensionType.getKey(dim));
+        if (times == null) /// Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
+            times = UNLOADED;
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
