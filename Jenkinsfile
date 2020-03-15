@@ -18,11 +18,13 @@ pipeline {
     }
 
     stages {
+        /* This resets the checkout on jenkins, but doesn't take branch into account... 
         stage('fetch') {
             steps {
                 checkout scm
             }
         }
+        */
         stage('notify_start') {
             when {
                 not {
