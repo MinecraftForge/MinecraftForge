@@ -61,6 +61,7 @@ public class RenderNameplateEvent extends EntityEvent
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
 
+    @Deprecated
     public RenderNameplateEvent(Entity entity, String content, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer)
     {
         this(entity, content, null, matrixStack, renderTypeBuffer, 0);
