@@ -63,13 +63,7 @@ public class RenderNameplateEvent extends EntityEvent
 
     public RenderNameplateEvent(Entity entity, String content, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer)
     {
-        super(entity);
-        this.originalContent = content;
-        this.setContent(this.originalContent);
-        this.entityRenderer = null;
-        this.matrixStack = matrixStack;
-        this.renderTypeBuffer = renderTypeBuffer;
-        this.packedLight = 0;
+        this(entity, content, null, matrixStack, renderTypeBuffer, 0);
     }
 
     public RenderNameplateEvent(Entity entity, String content, EntityRenderer entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
