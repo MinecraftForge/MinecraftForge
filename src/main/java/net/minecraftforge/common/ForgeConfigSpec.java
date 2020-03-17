@@ -406,39 +406,51 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         //Enum
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue) {
             return defineEnum(split(path), defaultValue);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(split(path), defaultValue, converter);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue) {
             return defineEnum(path, defaultValue, defaultValue.getDeclaringClass().getEnumConstants());
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
             return defineEnum(split(path), defaultValue, acceptableValues);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
             return defineEnum(split(path), defaultValue, converter, acceptableValues);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
             return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(acceptableValues));
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
             return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
             return defineEnum(split(path), defaultValue, acceptableValues);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(split(path), defaultValue, converter, acceptableValues);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         @SuppressWarnings("unchecked")
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
@@ -455,27 +467,45 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }
             });
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Predicate<Object> validator) {
             return defineEnum(split(path), defaultValue, validator);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Predicate<Object> validator) {
             return defineEnum(split(path), defaultValue, converter, validator);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Predicate<Object> validator) {
             return defineEnum(path, () -> defaultValue, validator, defaultValue.getDeclaringClass());
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Predicate<Object> validator) {
             return defineEnum(path, () -> defaultValue, converter, validator, defaultValue.getDeclaringClass());
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, Supplier<V> defaultSupplier, Predicate<Object> validator, Class<V> clazz) {
             return defineEnum(split(path), defaultSupplier, validator, clazz);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             return defineEnum(split(path), defaultSupplier, converter, validator, clazz);
         }
+        /** @see #defineEnum(List, V, EnumGetMethod, Collection) */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, Predicate<Object> validator, Class<V> clazz) {
             return defineEnum(path, defaultSupplier, EnumGetMethod.NAME_IGNORECASE, validator, clazz);
         }
+
+        /**
+         * Define a new enum configuration entry.
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value if no entry was found or the entry was invalid
+         * @param converter the converter to convert the entry Object to the specified Enum
+         * @param validator the validator that makes sure the supplied value is correct
+         * @param clazz the class of the Enum
+         * @return a new {@link EnumValue}
+         */
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
@@ -484,15 +514,25 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         //boolean
+        /** @see #define(List, Supplier) */
         public BooleanValue define(String path, boolean defaultValue) {
             return define(split(path), defaultValue);
         }
+        /** @see #define(List, Supplier) */
         public BooleanValue define(List<String> path, boolean defaultValue) {
             return define(path, (Supplier<Boolean>)() -> defaultValue);
         }
+        /** @see #define(List, Supplier) */
         public BooleanValue define(String path, Supplier<Boolean> defaultSupplier) {
             return define(split(path), defaultSupplier);
         }
+        /**
+         * Define a new boolean configuration entry
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value if no entry was found
+         * @return a new {@link BooleanValue}
+         */
         public BooleanValue define(List<String> path, Supplier<Boolean> defaultSupplier) {
             return new BooleanValue(this, define(path, defaultSupplier, o -> {
                 if (o instanceof String) return ((String)o).equalsIgnoreCase("true") || ((String)o).equalsIgnoreCase("false");
@@ -501,58 +541,104 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         //String
+        /** @see #defineString(List, Supplier) */
         public StringValue defineString(String path, String defaultValue) {
             return defineString(split(path), defaultValue);
         }
+        /** @see #defineString(List, Supplier) */
         public StringValue defineString(List<String> path, String defaultValue) {
             return defineString(path, () -> defaultValue);
         }
+        /** @see #defineString(List, Supplier) */
         public StringValue defineString(String path, Supplier<String> defaultSupplier) {
             return defineString(split(path), defaultSupplier);
         }
+        /**
+         * Define a new string configuration entry
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value supplier if no entry was found or the entry was invalid
+         * @return a new {@link StringValue}
+         */
         public StringValue defineString(List<String> path, Supplier<String> defaultSupplier) {
             ValueSpec spec = new ValueSpec(defaultSupplier, Objects::nonNull, context);
             return new StringValue(this, define(path, spec, defaultSupplier).getPath(), defaultSupplier);
         }
 
         //Double
+        /** @see #defineInRange(List, Supplier, double, double) */
         public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, double, double) */
         public DoubleValue defineInRange(List<String> path, double defaultValue, double min, double max) {
             return defineInRange(path, (Supplier<Double>)() -> defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, double, double) */
         public DoubleValue defineInRange(String path, Supplier<Double> defaultSupplier, double min, double max) {
             return defineInRange(split(path), defaultSupplier, min, max);
         }
+        /**
+         * Define a new range of numbers for a configuration entry
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value supplier if no entry was found or the entry was invalid
+         * @param min the minimum value allowed
+         * @param max the maximum value allowed
+         * @return a new {@link DoubleValue}
+         */
         public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
             return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
 
         //Ints
+        /** @see #defineInRange(List, Supplier, int, int) */
         public IntValue defineInRange(String path, int defaultValue, int min, int max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, int, int) */
         public IntValue defineInRange(List<String> path, int defaultValue, int min, int max) {
             return defineInRange(path, (Supplier<Integer>)() -> defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, int, int) */
         public IntValue defineInRange(String path, Supplier<Integer> defaultSupplier, int min, int max) {
             return defineInRange(split(path), defaultSupplier, min, max);
         }
+        /**
+         * Define a new range of numbers for a configuration entry
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value supplier if no entry was found or the entry was invalid
+         * @param min the minimum value allowed
+         * @param max the maximum value allowed
+         * @return a new {@link IntValue}
+         */
         public IntValue defineInRange(List<String> path, Supplier<Integer> defaultSupplier, int min, int max) {
             return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
         }
 
         //Longs
+        /** @see #defineInRange(List, Supplier, long, long) */
         public LongValue defineInRange(String path, long defaultValue, long min, long max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, long, long) */
         public LongValue defineInRange(List<String> path, long defaultValue, long min, long max) {
             return defineInRange(path, (Supplier<Long>)() -> defaultValue, min, max);
         }
+        /** @see #defineInRange(List, Supplier, long, long) */
         public LongValue defineInRange(String path, Supplier<Long> defaultSupplier, long min, long max) {
             return defineInRange(split(path), defaultSupplier, min, max);
         }
+        /**
+         * Define a new range of numbers for a configuration entry
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value supplier if no entry was found or the entry was invalid
+         * @param min the minimum value allowed
+         * @param max the maximum value allowed
+         * @return a new {@link LongValue}
+         */
         public LongValue defineInRange(List<String> path, Supplier<Long> defaultSupplier, long min, long max) {
             return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier);
         }
