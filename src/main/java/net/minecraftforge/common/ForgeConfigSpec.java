@@ -274,15 +274,30 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context = new BuilderContext();
             return new ConfigValue<>(this, path, defaultSupplier);
         }
+        /** @see #defineInRange(List, Supplier, Comparable, Comparable, Class) */
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultValue, min, max, clazz);
         }
+        /** @see #defineInRange(List, Supplier, Comparable, Comparable, Class) */
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path,  V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(path, (Supplier<V>)() -> defaultValue, min, max, clazz);
         }
+        /** @see #defineInRange(List, Supplier, Comparable, Comparable, Class) */
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultSupplier, min, max, clazz);
         }
+
+        /**
+         * Define a minimum and maximum allow value for this configuration entry.
+         * All entries must implement {@link Comparable}.
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value if no entry was found, or an entry was invalid
+         * @param min the minimum allowed value
+         * @param max the maximum allowed value
+         * @param clazz the class type of the entry
+         * @return a new {@link ConfigValue}
+         */
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
@@ -291,27 +306,47 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
         }
+        /** @see #defineInList(List, Supplier, Collection) */
         public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> acceptableValues) {
             return defineInList(split(path), defaultValue, acceptableValues);
         }
+        /** @see #defineInList(List, Supplier, Collection) */
         public <T> ConfigValue<T> defineInList(String path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
             return defineInList(split(path), defaultSupplier, acceptableValues);
         }
+        /** @see #defineInList(List, Supplier, Collection) */
         public <T> ConfigValue<T> defineInList(List<String> path, T defaultValue, Collection<? extends T> acceptableValues) {
             return defineInList(path, () -> defaultValue, acceptableValues);
         }
+        /**
+         * Define a new configuration entry that can only be one of a given set of values.
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default entry if no entry was found or it was invalid
+         * @param acceptableValues the list of allowed values
+         * @return a new {@link ConfigValue}
+         */
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
             return define(path, defaultSupplier, acceptableValues::contains);
         }
+        //List
+        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
+        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(String path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultSupplier, elementValidator);
         }
+        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(path, () -> defaultValue, elementValidator);
         }
+        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
             return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
@@ -328,6 +363,46 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     return list;
                 }
             }, defaultSupplier);
+        }
+        /** @see #define(List, Supplier, Predicate, Function) **/
+        public <T> ListValue<T> define(String path, List<T> defaultValue, Function<Object, T> elementConverter) {
+            return define(split(path), () -> defaultValue, Objects::nonNull, elementConverter);
+        }
+        /** @see #define(List, Supplier, Predicate, Function) **/
+        public <T> ListValue<T> define(String path, List<T> defaultValue, Predicate<Object> elementValidator, Function<Object, T> elementConverter) {
+            return define(split(path), () -> defaultValue, elementValidator, elementConverter);
+        }
+        /**
+         * Define a new list/array entry in the config. The list is retrieved via {@link ListValue#get()}
+         *
+         * @param path the path to the configuration entry
+         * @param defaultSupplier the default value if the list is null or empty.
+         * @param elementValidator the predicate that will validate the list entries.
+         *                         If not supplied this defaults to {@link Objects#nonNull(Object)}
+         * @param elementConverter the function that will convert each element of the list to its appropriate type
+         * @return a new {@link ListValue}
+         */
+        public <T> ListValue<T> define(List<String> path, Supplier<List<T>> defaultSupplier, Predicate<Object> elementValidator, Function<Object, T> elementConverter)
+        {
+            context.setClazz(List.class);
+            Predicate<Object> configValidator = x -> x instanceof List && ((List<?>)x).stream().allMatch(elementValidator);
+            ValueSpec spec = new ValueSpec(defaultSupplier, configValidator, context) {
+                @Override
+                public Object correct(Object value)
+                {
+                    if (!(value instanceof List) || ((List<?>)value).isEmpty()) {
+                        return getDefault();
+                    }
+                    List<?> rawList = Lists.newArrayList((List<?>)value);
+                    rawList.removeIf(elementValidator.negate());
+                    if(rawList.isEmpty()) {
+                        return getDefault();
+                    }
+                    return rawList.stream().map(elementConverter).collect(Collectors.toList());
+                }
+            };
+            define(path, spec, defaultSupplier);
+            return new ListValue<>(this, path, defaultSupplier, elementConverter);
         }
 
         //Enum
@@ -423,6 +498,21 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 if (o instanceof String) return ((String)o).equalsIgnoreCase("true") || ((String)o).equalsIgnoreCase("false");
                 return o instanceof Boolean;
             }, Boolean.class).getPath(), defaultSupplier);
+        }
+
+        //String
+        public StringValue defineString(String path, String defaultValue) {
+            return defineString(split(path), defaultValue);
+        }
+        public StringValue defineString(List<String> path, String defaultValue) {
+            return defineString(path, () -> defaultValue);
+        }
+        public StringValue defineString(String path, Supplier<String> defaultSupplier) {
+            return defineString(split(path), defaultSupplier);
+        }
+        public StringValue defineString(List<String> path, Supplier<String> defaultSupplier) {
+            ValueSpec spec = new ValueSpec(defaultSupplier, Objects::nonNull, context);
+            return new StringValue(this, define(path, spec, defaultSupplier).getPath(), defaultSupplier);
         }
 
         //Double
@@ -739,6 +829,37 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
             spec.childConfig.set(path, value);
+        }
+    }
+
+    public static class StringValue extends ConfigValue<String>
+    {
+        StringValue(Builder parent, List<String> path, Supplier<String> defaultSupplier)
+        {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected String getRaw(Config config, List<String> path, Supplier<String> defaultSupplier)
+        {
+            return config.getOrElse(path, defaultSupplier);
+        }
+    }
+
+    public static class ListValue<T> extends ConfigValue<List<T>>
+    {
+        private final Function<Object, T> elementConverter;
+        ListValue(Builder parent, List<String> path, Supplier<List<T>> defaultSupplier, Function<Object, T> converter)
+        {
+            super(parent, path, defaultSupplier);
+            this.elementConverter = converter;
+        }
+
+        @Override
+        protected List<T> getRaw(Config config, List<String> path, Supplier<List<T>> defaultSupplier)
+        {
+            List<?> rawList = config.getOrElse(path, defaultSupplier);
+            return rawList.stream().map(elementConverter).collect(Collectors.toList());
         }
     }
 

@@ -2,7 +2,7 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
-    modId="mark_dimension_for_deletion_test"
+    modId="config_supports_other_types_test"
 [[mods]]
 	modId="containertypetest"
 [[mods]]
