@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/layer/HillsLayer.java
++++ b/net/minecraft/world/gen/layer/HillsLayer.java
+@@ -97,6 +97,8 @@
+             l = field_202809_p;
+          } else if ((i == LayerUtil.field_202830_a || i == LayerUtil.field_203636_g || i == LayerUtil.field_203637_i || i == LayerUtil.field_203638_j) && p_215723_1_.func_202696_a(3) == 0) {
+             l = p_215723_1_.func_202696_a(2) == 0 ? field_202812_s : field_202803_j;
++         } else {
++            l = Registry.field_212624_m.func_148757_b(Registry.field_212624_m.func_148745_a(i).getHill(p_215723_1_));
+          }
+ 
+          if (k == 0 && l != i) {

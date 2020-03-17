@@ -41,7 +41,7 @@
                 return true;
              }
           }
-@@ -375,6 +375,12 @@
+@@ -375,6 +375,35 @@
        return this.field_185364_H;
     }
  
@@ -51,10 +51,33 @@
 +      return Biomes.field_76781_i;
 +   }
 +
++   public Biome getHill(net.minecraft.world.gen.INoiseRandom rand) {
++      if (this == Biomes.field_76769_d) return Biomes.field_76786_s;
++      if (this == Biomes.field_76767_f) return Biomes.field_76785_t;
++      if (this == Biomes.field_150583_P) return Biomes.field_150582_Q;
++      if (this == Biomes.field_150585_R) return Biomes.field_76772_c;
++      if (this == Biomes.field_76768_g) return Biomes.field_76784_u;
++      if (this == Biomes.field_150578_U) return Biomes.field_150581_V;
++      if (this == Biomes.field_150584_S) return Biomes.field_150579_T;
++      if (this == Biomes.field_76772_c) return rand.func_202696_a(3) == 0 ? Biomes.field_76785_t : Biomes.field_76767_f;
++      if (this == Biomes.field_76774_n) return Biomes.field_76775_o;
++      if (this == Biomes.field_76782_w) return Biomes.field_76792_x;
++      if (this == Biomes.field_222370_aw) return Biomes.field_222371_ax;
++      if (this == Biomes.field_76771_b) return Biomes.field_150575_M;
++      if (this == Biomes.field_203615_U) return Biomes.field_203618_X;
++      if (this == Biomes.field_203616_V) return Biomes.field_203619_Y;
++      if (this == Biomes.field_76776_l) return Biomes.field_203620_Z;
++      if (this == Biomes.field_76770_e) return Biomes.field_150580_W;
++      if (this == Biomes.field_150588_X) return Biomes.field_150587_Y;
++      if (net.minecraft.world.gen.layer.LayerUtil.func_202826_a(Registry.field_212624_m.func_148757_b(this), Registry.field_212624_m.func_148757_b(Biomes.field_150607_aa))) return Biomes.field_150589_Z;
++      if ((this == Biomes.field_150575_M || this == Biomes.field_203618_X || this == Biomes.field_203619_Y || this == Biomes.field_203620_Z) && rand.func_202696_a(3) == 0) return rand.func_202696_a(2) == 0 ? Biomes.field_76772_c : Biomes.field_76767_f;
++      return this;
++   }
++
     public static class Builder {
        @Nullable
        private ConfiguredSurfaceBuilder<?> field_205422_a;
-@@ -526,6 +532,18 @@
+@@ -526,6 +555,18 @@
        }
     }
  
