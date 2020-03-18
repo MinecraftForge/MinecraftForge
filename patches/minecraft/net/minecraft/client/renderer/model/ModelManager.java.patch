@@ -9,7 +9,18 @@
     private final AtlasTexture field_174956_b;
     private final BlockModelShapes field_174957_c;
     private final BlockColors field_224743_d;
-@@ -43,7 +43,7 @@
+@@ -29,6 +29,10 @@
+       this.field_174957_c = new BlockModelShapes(this);
+    }
+ 
++   public IBakedModel getModel(ResourceLocation modelLocation) {
++      return this.field_174958_a.getOrDefault(modelLocation, this.field_174955_d);
++   }
++
+    public IBakedModel func_174953_a(ModelResourceLocation p_174953_1_) {
+       return this.field_174958_a.getOrDefault(p_174953_1_, this.field_174955_d);
+    }
+@@ -43,7 +47,7 @@
  
     protected ModelBakery func_212854_a_(IResourceManager p_212854_1_, IProfiler p_212854_2_) {
        p_212854_2_.func_219894_a();
@@ -18,7 +29,7 @@
        p_212854_2_.func_219897_b();
        return modelbakery;
     }
-@@ -55,6 +55,7 @@
+@@ -55,6 +59,7 @@
        this.field_174958_a = p_212853_1_.func_217846_a();
        this.field_224744_f = p_212853_1_.func_225354_b();
        this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
@@ -26,7 +37,7 @@
        p_212853_3_.func_219895_b("cache");
        this.field_174957_c.func_178124_c();
        p_212853_3_.func_76319_b();
-@@ -78,4 +79,10 @@
+@@ -78,4 +83,10 @@
           return true;
        }
     }

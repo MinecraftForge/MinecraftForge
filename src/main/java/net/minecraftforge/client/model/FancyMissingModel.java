@@ -188,6 +188,12 @@ final class FancyMissingModel implements IUnbakedModel
         public ItemOverrideList getOverrides() { return ItemOverrideList.EMPTY; }
 
         @Override
+        public boolean doesHandlePerspectives()
+        {
+            return true;
+        }
+
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
         {
             TRSRTransformation transform = TRSRTransformation.identity();

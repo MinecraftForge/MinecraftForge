@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.IModelData;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -93,6 +92,12 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     public ItemOverrideList getOverrides()
     {
         return originalModel.getOverrides();
+    }
+
+    @Override
+    public boolean doesHandlePerspectives()
+    {
+        return originalModel.doesHandlePerspectives();
     }
 
     @Override

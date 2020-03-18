@@ -61,3 +61,5 @@ loaderVersion="[28,)"
     modId="chunkwatchworldtest"
 [[mods]]
     modId="custom_tnt_test"
+[[mods]]
+    modId="new_model_loader_test"

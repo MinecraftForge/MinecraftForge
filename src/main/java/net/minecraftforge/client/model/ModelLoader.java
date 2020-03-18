@@ -19,25 +19,17 @@
 
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -45,76 +37,61 @@ import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.BuiltInModel;
-import net.minecraft.client.renderer.model.FaceBakery;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemModelGenerator;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.BlockModelDefinition;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraft.client.renderer.model.MultipartBakedModel;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.model.Variant;
 import net.minecraft.client.renderer.model.VariantList;
 import net.minecraft.client.renderer.model.WeightedBakedModel;
-import net.minecraft.client.renderer.model.multipart.Multipart;
-import net.minecraft.client.renderer.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.item.Item;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.logging.ModelLoaderErrorMessage;
-import net.minecraftforge.registries.IRegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
-import com.google.common.base.Joiner;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.fml.Logging.MODELLOADING;
@@ -274,25 +251,35 @@ public final class ModelLoader extends ModelBakery
 
         public IBakedModel bakeImpl(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
         {
-            if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
-            {
-                throw new IllegalArgumentException("can't bake vanilla models to the format that doesn't fit into the default one: " + format);
-            }
             BlockModel model = this.model;
             if(model == null) return getMissingModel().bake(bakery, bakedTextureGetter, new BasicState(getMissingModel().getDefaultState(), uvlock), format);
 
             List<TRSRTransformation> newTransforms = Lists.newArrayList();
-            for(int i = 0; i < model.getElements().size(); i++)
+            IModelGeometry<?> customGeometry = model.customData.getCustomGeometry();
+            if (customGeometry != null)
             {
-                BlockPart part = model.getElements().get(i);
-                newTransforms.add(animation.getPartTransform(state, part, i));
+                Collection<? extends IModelGeometryPart> parts = customGeometry.getParts();
+                for (int i = 0; i < parts.size(); i++)
+                {
+                    newTransforms.add(animation.getPartTransform(state, i));
+                }
+            }
+            else
+            {
+                List<BlockPart> elements = model.getElements();
+                for (int i = 0; i < elements.size(); i++)
+                {
+                    BlockPart part = elements.get(i);
+                    newTransforms.add(animation.getPartTransform(state, part, i));
+                }
             }
 
             ItemCameraTransforms transforms = model.getAllTransforms();
-            Map<TransformType, TRSRTransformation> tMap = Maps.newEnumMap(TransformType.class);
-            tMap.putAll(PerspectiveMapWrapper.getTransforms(transforms));
-            tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
-            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap), state.apply(Optional.empty()));
+            IModelState perState = model.customData.getCustomModelState();
+            if (perState == null)
+            {
+                perState = new SimpleModelState(PerspectiveMapWrapper.getTransformsWithFallback(state, transforms), state.apply(Optional.empty()));
+            }
 
             if(model == ModelBakery.MODEL_GENERATED)
             {
@@ -300,7 +287,39 @@ public final class ModelLoader extends ModelBakery
             }
             TextureAtlasSprite textureatlassprite = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.getOverrides(bakery, model, bakedTextureGetter, format), textureatlassprite);
-            return bakeNormal(bakery, model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
+            if(model.customData.hasCustomGeometry())
+                return bakeNew(bakery, model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
+            else
+                return bakeNormal(bakery, model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
+        }
+
+        private IBakedModel bakeNew(ModelBakery bakery, BlockModel model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        {
+            final TRSRTransformation baseState = modelState.apply(Optional.empty()).orElse(TRSRTransformation.identity());
+
+            IBakedModel baked = model.customData.bake(bakery, bakedTextureGetter, new BasicState(baseState, uvLocked), format, model.getOverrides(bakery, model, bakedTextureGetter, format));
+
+            return new PerspectiveMapWrapper(baked, perState)
+            {
+                private final ItemOverrideList overrides = new AnimationItemOverrideList(bakery, VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
+
+                @Override
+                public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
+                {
+                    IModelState newState = modelData.getData(Properties.AnimationProperty);
+                    if(newState != null)
+                    {
+                        return VanillaModelWrapper.this.bake(bakery, bakedTextureGetter, new ModelStateComposition(modelState, newState, uvlock), format).getQuads(state, side, rand, modelData);
+                    }
+                    return super.getQuads(state, side, rand, modelData);
+                }
+
+                @Override
+                public ItemOverrideList getOverrides()
+                {
+                    return overrides;
+                }
+            };
         }
 
         private IBakedModel bakeNormal(ModelBakery bakery, BlockModel model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
@@ -308,13 +327,14 @@ public final class ModelLoader extends ModelBakery
             final TRSRTransformation baseState = modelState.apply(Optional.empty()).orElse(TRSRTransformation.identity());
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.getOverrides(bakery, model, bakedTextureGetter, format))).setTexture(particle);
-            for(int i = 0; i < model.getElements().size(); i++)
+            List<BlockPart> elements = model.getElements();
+            for(int i = 0; i < elements.size(); i++)
             {
                 if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
                 {
                     continue;
                 }
-                BlockPart part = model.getElements().get(i);
+                BlockPart part = elements.get(i);
                 TRSRTransformation transformation = baseState;
                 if(newTransforms.get(i) != null)
                 {
@@ -350,7 +370,7 @@ public final class ModelLoader extends ModelBakery
                     {
                         return VanillaModelWrapper.this.bake(bakery, bakedTextureGetter, new ModelStateComposition(modelState, newState, uvlock), format).getQuads(state, side, rand, modelData);
                     }
-                    return super.getQuads(state, side, rand);
+                    return super.getQuads(state, side, rand, modelData);
                 }
 
                 @Override
@@ -368,16 +388,19 @@ public final class ModelLoader extends ModelBakery
                 return this;
 
             List<BlockPart> elements = Lists.newArrayList(); //We have to duplicate this so we can edit it below.
-            for (BlockPart part : this.model.getElements())
+            if (!model.customData.hasCustomGeometry())
             {
-                elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
+                for (BlockPart part : this.model.getElements())
+                {
+                    elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
+                }
             }
-
             BlockModel newModel = new BlockModel(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
                 model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.name = this.model.name;
             newModel.parent = this.model.parent;
+            newModel.customData.copyFrom(this.model.customData);
 
             Set<String> removed = Sets.newHashSet();
 
@@ -408,9 +431,12 @@ public final class ModelLoader extends ModelBakery
             newModel.textures.putAll(remapped);
 
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
-            for (BlockPart part : newModel.getElements())
+            if (!newModel.customData.hasCustomGeometry())
             {
-                part.mapFaces.entrySet().removeIf(entry -> removed.contains(entry.getValue().texture));
+                for (BlockPart part : newModel.getElements())
+                {
+                    part.mapFaces.entrySet().removeIf(entry -> removed.contains(entry.getValue().texture));
+                }
             }
 
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
@@ -436,6 +462,7 @@ public final class ModelLoader extends ModelBakery
             BlockModel newModel = new BlockModel(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.parent = model.parent;
             newModel.name = model.name;
+            newModel.customData.copyFrom(model.customData);
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
 
@@ -449,6 +476,7 @@ public final class ModelLoader extends ModelBakery
             BlockModel newModel = new BlockModel(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.parent = model.parent;
             newModel.name = model.name;
+            newModel.customData.copyFrom(model.customData);
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
     }

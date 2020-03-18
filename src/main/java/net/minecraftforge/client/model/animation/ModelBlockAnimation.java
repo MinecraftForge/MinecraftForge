@@ -520,6 +520,12 @@ public class ModelBlockAnimation
     @Nullable
     public TRSRTransformation getPartTransform(IModelState state, BlockPart part, int i)
     {
+        return getPartTransform(state, i);
+    }
+
+    @Nullable
+    public TRSRTransformation getPartTransform(IModelState state, int i)
+    {
         ImmutableCollection<MBJointWeight> infos = getJoint(i);
         if(!infos.isEmpty())
         {
