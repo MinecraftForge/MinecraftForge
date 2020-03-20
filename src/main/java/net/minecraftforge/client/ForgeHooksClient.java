@@ -54,6 +54,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
@@ -190,6 +191,7 @@ public class ForgeHooksClient
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
     {
+        StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.getTextureLocation().toString()));
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
     }
