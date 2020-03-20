@@ -78,3 +78,11 @@
     public boolean func_178300_b(String p_178300_1_) {
        return !MissingTextureSprite.func_195675_b().equals(this.func_228816_c_(p_178300_1_).func_229313_b_());
     }
+@@ -373,5 +396,7 @@
+       public boolean func_230178_a_() {
+          return this == SIDE;
+       }
++      
++      public String getSerializedName() { return field_230177_c_; }
+    }
+ }
