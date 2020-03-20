@@ -18,24 +18,39 @@
        this.field_199888_a = p_i48224_1_;
        this.field_199889_b = (Set<T>)(p_i48224_3_ ? Sets.newLinkedHashSet() : Sets.newHashSet());
        this.field_200150_c = p_i48224_2_;
-@@ -48,7 +52,7 @@
+@@ -45,11 +49,18 @@
+       JsonArray jsonarray = new JsonArray();
+ 
+       for(Tag.ITagEntry<T> itagentry : this.field_200150_c) {
++         if (!(itagentry instanceof net.minecraftforge.common.data.IOptionalTagEntry))
           itagentry.func_200576_a(jsonarray, p_200571_1_);
        }
++      JsonArray optional = new JsonArray();
++      for(Tag.ITagEntry<T> itagentry : this.field_200150_c) {
++         if (itagentry instanceof net.minecraftforge.common.data.IOptionalTagEntry)
++            itagentry.func_200576_a(optional, p_200571_1_);
++      }
  
 -      jsonobject.addProperty("replace", false);
 +      jsonobject.addProperty("replace", replace);
        jsonobject.add("values", jsonarray);
++      jsonobject.add("optional", optional);
        return jsonobject;
     }
-@@ -77,6 +81,7 @@
-    public static class Builder<T> {
+ 
+@@ -74,9 +85,10 @@
+       return this.field_199888_a;
+    }
+ 
+-   public static class Builder<T> {
++   public static class Builder<T> implements net.minecraftforge.common.extensions.IForgeTagBuilder<T> {
        private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.newLinkedHashSet();
        private boolean field_200053_b;
 +      private boolean replace = false;
  
        public static <T> Tag.Builder<T> func_200047_a() {
           return new Tag.Builder<>();
-@@ -103,6 +108,22 @@
+@@ -103,6 +115,22 @@
           return this;
        }
  
@@ -58,7 +73,7 @@
        public Tag.Builder<T> func_200045_a(boolean p_200045_1_) {
           this.field_200053_b = p_200045_1_;
           return this;
-@@ -119,7 +140,7 @@
+@@ -119,7 +147,7 @@
        }
  
        public Tag<T> func_200051_a(ResourceLocation p_200051_1_) {
@@ -67,7 +82,7 @@
        }
  
        public Tag.Builder<T> func_219783_a(Function<ResourceLocation, Optional<T>> p_219783_1_, JsonObject p_219783_2_) {
-@@ -143,8 +164,10 @@
+@@ -143,8 +171,26 @@
           }
  
           this.field_200052_a.addAll(list);
@@ -75,10 +90,26 @@
           return this;
        }
 +      public Tag.Builder<T> remove(Tag.ITagEntry<T> e) { this.field_200052_a.remove(e); return this; }
++
++      public Tag.Builder<T> addOptional(TagCollection<T> collection, ResourceLocation entry) {
++         return addOptional(collection.getEntryLookup(), Collections.singleton(entry));
++      }
++
++      @SafeVarargs
++      public final Tag.Builder<T> addOptional(TagCollection<T> collection, ResourceLocation... entries) {
++         return addOptional(collection.getEntryLookup(), Lists.newArrayList(entries));
++      }
++
++      @SafeVarargs
++      public final Tag.Builder<T> addOptionalTag(ResourceLocation... tags) {
++         for (ResourceLocation tag : tags)
++            addOptionalTag(tag);
++         return this;
++      }
     }
  
     public interface ITagEntry<T> {
-@@ -183,6 +206,8 @@
+@@ -183,6 +229,8 @@
        public Collection<T> func_200578_a() {
           return this.field_200165_a;
        }
@@ -87,7 +118,7 @@
     }
  
     public static class TagEntry<T> implements Tag.ITagEntry<T> {
-@@ -229,5 +254,7 @@
+@@ -229,5 +277,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }

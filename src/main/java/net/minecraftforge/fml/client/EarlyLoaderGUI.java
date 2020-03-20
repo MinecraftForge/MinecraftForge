@@ -24,7 +24,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.tuple.Pair;

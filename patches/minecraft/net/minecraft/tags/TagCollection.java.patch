@@ -1,0 +1,11 @@
+--- a/net/minecraft/tags/TagCollection.java
++++ b/net/minecraft/tags/TagCollection.java
+@@ -154,4 +154,8 @@
+    public Map<ResourceLocation, Tag<T>> func_200039_c() {
+       return this.field_199921_d;
+    }
++
++   Function<ResourceLocation, Optional<T>> getEntryLookup() {
++       return this.field_200040_e;
++   }
+ }
