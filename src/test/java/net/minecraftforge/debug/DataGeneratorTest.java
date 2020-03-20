@@ -65,6 +65,8 @@ import net.minecraft.block.WallBlock;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.Variant;
+import net.minecraft.client.renderer.model.BlockModel.GuiLight;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IFinishedRecipe;
@@ -76,6 +78,7 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -126,6 +129,7 @@ public class DataGeneratorTest
         if (event.includeServer())
         {
             gen.addProvider(new Recipes(gen));
+            gen.addProvider(new Tags(gen));
         }
     }
 
@@ -180,6 +184,25 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+        }
+    }
+    
+    public static class Tags extends BlockTagsProvider
+    {
+
+        public Tags(DataGenerator gen)
+        {
+            super(gen);
+        }
+        
+        @Override
+        protected void registerTags()
+        {
+            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "test")))
+                .add(Blocks.DIAMOND_BLOCK)
+                .add(BlockTags.STONE_BRICKS)
+                .addOptional(BlockTags.getCollection(), new ResourceLocation("chisel", "marble/raw"))
+                .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
         }
     }
     
@@ -339,7 +362,9 @@ public class DataGeneratorTest
                     ConfiguredModel.class));
 
             // From here on, models are 1-to-1 copies of vanilla (except for model locations) and will be tested as such below
-            ModelFile block = models().getBuilder("block").transforms()
+            ModelFile block = models().getBuilder("block")
+                .guiLight(GuiLight.SIDE)
+                .transforms()
                     .transform(Perspective.GUI)
                         .rotation(30, 225, 0)
                         .scale(0.625f)
