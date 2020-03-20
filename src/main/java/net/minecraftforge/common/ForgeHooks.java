@@ -39,6 +39,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -118,6 +119,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -1095,12 +1097,9 @@ public class ForgeHooks
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                {
-                    T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
-                    if (value != null)
-                        builder.add(value);
-                } else
-                    builder.add(new OptionalTagEntry<>(new ResourceLocation(s.substring(1))));
+                    builder.addOptional(valueGetter, Collections.singleton(new ResourceLocation(s)));
+                else
+                    builder.addOptionalTag(new ResourceLocation(s.substring(1)));
             }
         }
 
@@ -1114,7 +1113,7 @@ public class ForgeHooks
                     T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
                     if (value != null)
                     {
-                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singletonList(value));
+                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singleton(value));
                         builder.remove(dummyEntry);
                     }
                 } else
@@ -1122,35 +1121,6 @@ public class ForgeHooks
                     Tag.ITagEntry<T> dummyEntry = new Tag.TagEntry<>(new ResourceLocation(s.substring(1)));
                     builder.remove(dummyEntry);
                 }
-            }
-        }
-    }
-
-    private static class OptionalTagEntry<T> extends Tag.TagEntry<T>
-    {
-        private Tag<T> resolvedTag = null;
-
-        OptionalTagEntry(ResourceLocation referent)
-        {
-            super(referent);
-        }
-
-        @Override
-        public boolean resolve(@Nonnull Function<ResourceLocation, Tag<T>> resolver)
-        {
-            if (this.resolvedTag == null)
-            {
-                this.resolvedTag = resolver.apply(this.getSerializedId());
-            }
-            return true; // never fail if resolver returns null
-        }
-
-        @Override
-        public void populate(@Nonnull Collection<T> items)
-        {
-            if (this.resolvedTag != null)
-            {
-                items.addAll(this.resolvedTag.getAllElements());
             }
         }
     }
