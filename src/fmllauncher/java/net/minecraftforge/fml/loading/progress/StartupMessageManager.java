@@ -102,7 +102,7 @@ public class StartupMessageManager {
         return Optional.of(s -> messages.get(MessageType.LOC).add(new Message(s, MessageType.LOC)));
     }
 
-    static Optional<Consumer<String>> mcLoaderConsumer() {
+    public static Optional<Consumer<String>> mcLoaderConsumer() {
         return Optional.of(s-> messages.get(MessageType.MC).add(new Message(s, MessageType.MC)));
     }
 }
