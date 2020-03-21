@@ -2,11 +2,8 @@
   "test_sound_event": {
     "sounds": [
       {
-        "name": "music_disc_test:example_ogg",
-        "stream": true,
-        "__content": "First 10 seconds of 'The Ice Giants' by Kevin MacLeod",
-        "__link": "https://incompetech.filmmusic.io/song/5745-the-ice-giants",
-        "__license": "http://creativecommons.org/licenses/by/4.0/"
+        "name": "minecraft:music/game/nuance2",
+        "stream": true
       }
     ]
   }
