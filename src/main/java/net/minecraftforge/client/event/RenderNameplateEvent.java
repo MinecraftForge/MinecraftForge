@@ -49,14 +49,13 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@SuppressWarnings("rawtypes")
 @Event.HasResult
 public class RenderNameplateEvent extends EntityEvent
 {
 
     private String nameplateContent;
     private final String originalContent;
-    private final EntityRenderer entityRenderer;
+    private final EntityRenderer<?> entityRenderer;
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
@@ -67,7 +66,7 @@ public class RenderNameplateEvent extends EntityEvent
         this(entity, content, null, matrixStack, renderTypeBuffer, 0);
     }
 
-    public RenderNameplateEvent(Entity entity, String content, EntityRenderer entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
+    public RenderNameplateEvent(Entity entity, String content, EntityRenderer<?> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
     {
         super(entity);
         this.originalContent = content;
@@ -106,7 +105,7 @@ public class RenderNameplateEvent extends EntityEvent
      * The entity renderer that renders the name plate/tag, if it was provided
      */
     @Nullable
-    public EntityRenderer getEntityRenderer()
+    public EntityRenderer<?> getEntityRenderer()
     {
         return this.entityRenderer;
     }
