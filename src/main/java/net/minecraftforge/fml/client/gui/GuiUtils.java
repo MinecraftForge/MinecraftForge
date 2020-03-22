@@ -257,6 +257,10 @@ public class GuiUtils
      * @param screenHeight the available  screen height for the tooltip to drawn in
      * @param maxTextWidth the maximum width of the text in the tooltip box.
      *                     Set to a negative number to have no max width.
+     * @param backgroundColor The background color of the box
+     * @param borderColorStart The starting color of the box border
+     * @param borderColorEnd The ending color of the box border. The border color will be smoothly interpolated
+     *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
      */
     public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
