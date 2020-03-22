@@ -49,6 +49,9 @@ import javax.annotation.Nonnull;
  */
 public class GuiUtils
 {
+    private static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
+    private static final int DEFAULT_BORDER_COLOR_START = 0x505000FF;
+    private static final int DEFAULT_BORDER_COLOR_END = (DEFAULT_BORDER_COLOR_START & 0xFEFEFE) >> 1 | DEFAULT_BORDER_COLOR_START & 0xFF000000;
     public static final String UNDO_CHAR  = "\u21B6";
     public static final String RESET_CHAR = "\u2604";
     public static final String VALID      = "\u2714";
@@ -236,6 +239,11 @@ public class GuiUtils
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    {
+        drawHoveringText(textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
+    }
+
     /**
      *  Draws a tooltip box on the screen with text in it.
      *  Automatically positions the box relative to the mouse to match Mojang's implementation.
@@ -251,17 +259,25 @@ public class GuiUtils
      *                     Set to a negative number to have no max width.
      * @param font the font for drawing the text in the tooltip box
      */
-    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
+                                        int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
-        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
+    }
+
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    {
+        drawHoveringText(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
     /**
      * Use this version if calling from somewhere where ItemStack context is available.
      *
-     * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
+     * @see #drawHoveringText(List, int, int, int, int, int, int, int, int, FontRenderer)
      */
-    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY,
+                                        int screenWidth, int screenHeight, int maxTextWidth,
+                                        int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {
@@ -353,9 +369,6 @@ public class GuiUtils
                 tooltipY = screenHeight - tooltipHeight - 4;
 
             final int zLevel = 300;
-            int backgroundColor = 0xF0100010;
-            int borderColorStart = 0x505000FF;
-            int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
             RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
             MinecraftForge.EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
