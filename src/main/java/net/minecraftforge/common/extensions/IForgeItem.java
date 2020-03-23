@@ -74,6 +74,16 @@ public interface IForgeItem
     }
 
     /**
+     * ItemStack sensitive version of getItemAttributeModifiers with additional entity parameter
+     *
+     * @param entity The entity for which the AttributeModifier are gathered. If {@code null} the entity can be assumed to be a player.
+     */
+    default Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack, @Nullable LivingEntity entity)
+    {
+        return this.getAttributeModifiers(slot, stack);
+    }
+
+    /**
      * Called when a player drops the item into the world, returning false from this
      * will prevent the item from being removed from the players inventory and
      * spawning in the world

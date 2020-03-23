@@ -357,7 +357,7 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2022,7 +2064,9 @@
+@@ -2022,13 +2064,15 @@
  
              ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
              if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -365,8 +365,16 @@
                 ((ServerWorld)this.field_70170_p).func_72863_F().func_217218_b(this, new SEntityEquipmentPacket(this.func_145782_y(), equipmentslottype, itemstack1));
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslottype, itemstack, itemstack1));
                 if (!itemstack.func_190926_b()) {
-                   this.func_110140_aT().func_111148_a(itemstack.func_111283_C(equipmentslottype));
+-                  this.func_110140_aT().func_111148_a(itemstack.func_111283_C(equipmentslottype));
++                  this.func_110140_aT().func_111148_a(itemstack.getAttributeModifiers(equipmentslottype, this));
                 }
+ 
+                if (!itemstack1.func_190926_b()) {
+-                  this.func_110140_aT().func_111147_b(itemstack1.func_111283_C(equipmentslottype));
++                  this.func_110140_aT().func_111147_b(itemstack1.getAttributeModifiers(equipmentslottype, this));
+                }
+ 
+                switch(equipmentslottype.func_188453_a()) {
 @@ -2474,13 +2518,22 @@
  
     private void func_184608_ct() {

@@ -190,6 +190,15 @@
        }
     }
  
+@@ -574,7 +597,7 @@
+       }
+ 
+       for(EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
+-         Multimap<String, AttributeModifier> multimap = this.func_111283_C(equipmentslottype);
++         Multimap<String, AttributeModifier> multimap = this.getAttributeModifiers(equipmentslottype, p_82840_1_);
+          if (!multimap.isEmpty() && (i & 2) == 0) {
+             list.add(new StringTextComponent(""));
+             list.add((new TranslationTextComponent("item.modifiers." + equipmentslottype.func_188450_d())).func_211708_a(TextFormatting.GRAY));
 @@ -652,6 +675,7 @@
           }
        }
@@ -198,16 +207,33 @@
        return list;
     }
  
-@@ -772,7 +796,7 @@
+@@ -759,6 +783,10 @@
+    }
+ 
+    public Multimap<String, AttributeModifier> func_111283_C(EquipmentSlotType p_111283_1_) {
++      return this.getAttributeModifiers(p_111283_1_, null);
++   }
++
++   public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType equipmentSlot, @Nullable LivingEntity entity) {
+       Multimap<String, AttributeModifier> multimap;
+       if (this.func_77942_o() && this.field_77990_d.func_150297_b("AttributeModifiers", 9)) {
+          multimap = HashMultimap.create();
+@@ -767,12 +795,12 @@
+          for(int i = 0; i < listnbt.size(); ++i) {
+             CompoundNBT compoundnbt = listnbt.func_150305_b(i);
+             AttributeModifier attributemodifier = SharedMonsterAttributes.func_111259_a(compoundnbt);
+-            if (attributemodifier != null && (!compoundnbt.func_150297_b("Slot", 8) || compoundnbt.func_74779_i("Slot").equals(p_111283_1_.func_188450_d())) && attributemodifier.func_111167_a().getLeastSignificantBits() != 0L && attributemodifier.func_111167_a().getMostSignificantBits() != 0L) {
++            if (attributemodifier != null && (!compoundnbt.func_150297_b("Slot", 8) || compoundnbt.func_74779_i("Slot").equals(equipmentSlot.func_188450_d())) && attributemodifier.func_111167_a().getLeastSignificantBits() != 0L && attributemodifier.func_111167_a().getMostSignificantBits() != 0L) {
+                multimap.put(compoundnbt.func_74779_i("AttributeName"), attributemodifier);
              }
           }
        } else {
 -         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
-+         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
++         multimap = this.func_77973_b().getAttributeModifiers(equipmentSlot, this, entity);
        }
  
        multimap.values().forEach((p_226631_0_) -> {
-@@ -915,6 +939,35 @@
+@@ -915,6 +943,35 @@
        return this.func_77973_b().func_219971_r();
     }
  
