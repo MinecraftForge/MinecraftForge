@@ -60,7 +60,7 @@ public class RenderNameplateEvent extends EntityEvent
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
 
-    @Deprecated
+    @Deprecated //TODO 1.16: upon removal, also remove @Nullable on getEntityRenderer(), and update its javadoc
     public RenderNameplateEvent(Entity entity, String content, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer)
     {
         this(entity, content, null, matrixStack, renderTypeBuffer, 0);
