@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/gen/layer/HillsLayer.java
 +++ b/net/minecraft/world/gen/layer/HillsLayer.java
-@@ -59,7 +59,9 @@
+@@ -59,7 +59,10 @@
  
        if (p_215723_1_.func_202696_a(3) == 0 || k == 0) {
           int l = i;
 -         if (i == field_202799_f) {
-+         Biome hill = Registry.field_212624_m.func_148745_a(i).getHill(p_215723_1_);
++         Biome biome = Registry.field_212624_m.func_148745_a(i);
++         Biome hill = biome == null ? null : biome.getHill(p_215723_1_);
 +         if (hill != null) l = Registry.field_212624_m.func_148757_b(hill);
 +         else if (i == field_202799_f) {
              l = field_202800_g;
