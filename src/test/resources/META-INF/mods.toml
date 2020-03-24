@@ -61,3 +61,5 @@ loaderVersion="[28,)"
     modId="nameplate_render_test"
 [[mods]]
     modId="global_loot_test"
+[[mods]]
+    modId="command_test"

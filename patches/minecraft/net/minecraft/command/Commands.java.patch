@@ -1,6 +1,23 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -194,7 +194,15 @@
+@@ -94,6 +94,7 @@
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.util.text.event.ClickEvent;
+ import net.minecraft.util.text.event.HoverEvent;
++import net.minecraftforge.command.ForgeCommands;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -176,6 +177,8 @@
+          WhitelistCommand.func_198873_a(this.field_197062_b);
+       }
+ 
++      ForgeCommands.register(this.field_197062_b, p_i49161_1_);
++
+       this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
+          field_197061_a.warn("Ambiguity between arguments {} and {} with inputs: {}", this.field_197062_b.getPath(p_201302_2_), this.field_197062_b.getPath(p_201302_3_), p_201302_4_);
+       });
+@@ -194,7 +197,15 @@
  
        try {
           try {
