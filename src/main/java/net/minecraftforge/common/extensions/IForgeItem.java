@@ -67,7 +67,7 @@ public interface IForgeItem
     /**
      * ItemStack sensitive version of getItemAttributeModifiers
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated //TODO 1.16 remove in favor of overloaded method
     default Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
     {
         return getItem().getAttributeModifiers(slot);
