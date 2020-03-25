@@ -23,7 +23,7 @@
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
 +         boolean flag = false;
-+         net.minecraftforge.event.AnvilUpdateEvent evt = net.minecraftforge.common.ForgeHooks.onAnvilChange(itemstack, itemstack2, this.field_82857_m, this.field_82855_n.field_71075_bZ.field_75098_d);
++         net.minecraftforge.event.AnvilUpdateEvent evt = net.minecraftforge.common.ForgeHooks.onAnvilUpdate(itemstack, itemstack2, this.field_82857_m, this.field_82855_n.field_71075_bZ.field_75098_d);
 +         this.field_82856_l = evt.getMaterialCost();
 +         i += evt.getCost();
 +         if (evt.isCanceled()) {
@@ -50,3 +50,12 @@
  
           this.field_82854_e.func_221494_a(j + i);
           if (i <= 0) {
+@@ -354,4 +371,8 @@
+    public int func_216976_f() {
+       return this.field_82854_e.func_221495_b();
+    }
++
++   public void setMaximumCost(int value) {
++      this.field_82854_e.func_221494_a(value);
++   }
+ }
