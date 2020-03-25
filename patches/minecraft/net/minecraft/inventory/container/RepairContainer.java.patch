@@ -24,15 +24,15 @@
           this.field_82856_l = 0;
 +         boolean flag = false;
 +         net.minecraftforge.event.AnvilUpdateEvent evt = net.minecraftforge.common.ForgeHooks.onAnvilChange(itemstack, itemstack2, this.field_82857_m, this.field_82855_n.field_71075_bZ.field_75098_d);
-+         this.materialCost = evt.getMaterialCost();
++         this.field_82856_l = evt.getMaterialCost();
 +         i += evt.getCost();
 +         if (evt.isCanceled()) {
 +            this.field_82852_f.func_70299_a(0, evt.getOutput());
-+            this.maximumCost.set(i);
-+            if (!evt.getOutput().isEmpty()) this.func_75142_b();
++            this.field_82854_e.func_221494_a(i);
++            if (!evt.getOutput().func_190926_b()) this.func_75142_b();
 +            return;
 +         }
-+         if (!evt.getOutput().isEmpty()) {
++         if (!evt.getOutput().func_190926_b()) {
 +            itemstack1 = evt.getOutput();
 +            map = EnchantmentHelper.func_82781_a(evt.getOutput());
 +         } else
