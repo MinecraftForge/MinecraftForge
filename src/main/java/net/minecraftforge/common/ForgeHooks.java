@@ -681,16 +681,11 @@ public class ForgeHooks
         return ret;
     }
 
-    public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
+    public static AnvilUpdateEvent onAnvilChange(@Nonnull ItemStack left, @Nonnull ItemStack right, String name, boolean creativePlayer)
     {
-        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
-        if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.getOutput().isEmpty()) return true;
-
-        outputSlot.setInventorySlotContents(0, e.getOutput());
-        container.setMaximumCost(e.getCost());
-        container.materialCost = e.getMaterialCost();
-        return false;
+        AnvilUpdateEvent evt = new AnvilUpdateEvent(left, right, name, creativePlayer);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
     }
 
     public static float onAnvilRepair(PlayerEntity player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
