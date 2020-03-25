@@ -65,7 +65,7 @@ public class AnvilUpdateEvent extends Event
     @Nonnull
     public ItemStack getRight() { return right; }
     public String getName() { return name; }
-    public String isCreativePlayer() { return creativePlayer; }
+    public boolean isCreativePlayer() { return creativePlayer; }
     @Nonnull
     public ItemStack getOutput() { return output; }
     public void setOutput(@Nonnull ItemStack output) { this.output = output; }
