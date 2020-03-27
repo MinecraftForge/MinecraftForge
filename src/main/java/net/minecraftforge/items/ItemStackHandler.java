@@ -141,8 +141,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             {
                 this.stacks.set(slot, ItemStack.EMPTY);
                 onContentsChanged(slot);
+                return existing;
             }
-            return existing;
+            else
+            {
+                return existing.copy();
+            }
         }
         else
         {
