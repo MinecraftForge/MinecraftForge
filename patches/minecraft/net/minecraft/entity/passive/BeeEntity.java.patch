@@ -1,0 +1,53 @@
+--- a/net/minecraft/entity/passive/BeeEntity.java
++++ a/net/minecraft/entity/passive/BeeEntity.java
+@@ -68,7 +68,7 @@ import net.minecraft.state.properties.DoubleBlockHalf;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.tags.ItemTags;
+ import net.minecraft.tags.Tag;
+-import net.minecraft.tileentity.BeehiveTileEntity;
++import net.minecraft.tileentity.IBeehiveTileEntity;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityType;
+ import net.minecraft.util.DamageSource;
+@@ -367,7 +367,7 @@ public class BeeEntity extends AnimalEntity implements IFlyingAnimal {
+             return false;
+         } else {
+             TileEntity lvt_1_1_ = this.world.getTileEntity(this.hivePos);
+-            return lvt_1_1_ instanceof BeehiveTileEntity && ((BeehiveTileEntity)lvt_1_1_).func_226968_d_();
++            return lvt_1_1_ instanceof IBeehiveTileEntity && ((IBeehiveTileEntity)lvt_1_1_).func_226968_d_();
+         }
+     }
+
+@@ -385,8 +385,8 @@ public class BeeEntity extends AnimalEntity implements IFlyingAnimal {
+
+     public boolean func_226435_i_(BlockPos p_226435_1_) {
+         TileEntity lvt_2_1_ = this.world.getTileEntity(p_226435_1_);
+-        if (lvt_2_1_ instanceof BeehiveTileEntity) {
+-            return !((BeehiveTileEntity)lvt_2_1_).func_226970_h_();
++        if (lvt_2_1_ instanceof IBeehiveTileEntity) {
++            return !((IBeehiveTileEntity)lvt_2_1_).func_226970_h_();
+         } else {
+             return false;
+         }
+@@ -623,8 +623,8 @@ public class BeeEntity extends AnimalEntity implements IFlyingAnimal {
+         public boolean func_225506_g_() {
+             if (BeeEntity.this.func_226409_eA_() && BeeEntity.this.func_226415_eI_() && BeeEntity.this.hivePos.withinDistance(BeeEntity.this.getPositionVec(), 2.0D)) {
+                 TileEntity lvt_1_1_ = BeeEntity.this.world.getTileEntity(BeeEntity.this.hivePos);
+-                if (lvt_1_1_ instanceof BeehiveTileEntity) {
+-                    BeehiveTileEntity lvt_2_1_ = (BeehiveTileEntity)lvt_1_1_;
++                if (lvt_1_1_ instanceof IBeehiveTileEntity) {
++                    IBeehiveTileEntity lvt_2_1_ = (IBeehiveTileEntity)lvt_1_1_;
+                     if (!lvt_2_1_.func_226970_h_()) {
+                         return true;
+                     }
+@@ -642,8 +642,8 @@ public class BeeEntity extends AnimalEntity implements IFlyingAnimal {
+
+         public void startExecuting() {
+             TileEntity lvt_1_1_ = BeeEntity.this.world.getTileEntity(BeeEntity.this.hivePos);
+-            if (lvt_1_1_ instanceof BeehiveTileEntity) {
+-                BeehiveTileEntity lvt_2_1_ = (BeehiveTileEntity)lvt_1_1_;
++            if (lvt_1_1_ instanceof IBeehiveTileEntity) {
++                IBeehiveTileEntity lvt_2_1_ = (IBeehiveTileEntity)lvt_1_1_;
+                 lvt_2_1_.func_226961_a_(BeeEntity.this, BeeEntity.this.func_226411_eD_());
+             }
+
