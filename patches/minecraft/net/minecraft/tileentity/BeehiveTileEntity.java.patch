@@ -1,17 +1,11 @@
 --- a/net/minecraft/tileentity/BeehiveTileEntity.java
 +++ b/net/minecraft/tileentity/BeehiveTileEntity.java
-@@ -23,12 +23,13 @@ import net.minecraft.nbt.NBTUtil;
- import net.minecraft.network.DebugPacketSender;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.tags.EntityTypeTags;
-+import net.minecraft.tileentity.IBeehiveTileEntity;
- import net.minecraft.util.Direction;
- import net.minecraft.util.SoundCategory;
+@@ -23,7 +23,7 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
-
+ 
 -public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity {
-+public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity, IBeehiveTileEntity {
-     public List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
-     @Nullable
-     public BlockPos field_226959_b_ = null;
++public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity, net.minecraftforge.common.extensions.IForgeBeehiveTileEntity {
+    private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
+    @Nullable
+    private BlockPos field_226959_b_ = null;
