@@ -44,8 +44,8 @@ import net.minecraftforge.registries.ObjectHolder;
 public class CustomPlantTypeTest
 {
     static final String MODID = "custom_plant_type_test";
-    static final String CUSTOM_SOIL_BLOCK = "test_custom_block";
-    static final String CUSTOM_PLANT_BLOCK = "test_custom_plant";
+    private static final String CUSTOM_SOIL_BLOCK = "test_custom_block";
+    private static final String CUSTOM_PLANT_BLOCK = "test_custom_plant";
 
     @ObjectHolder(CUSTOM_SOIL_BLOCK)
     public static Block CUSTOM_SOIL;
