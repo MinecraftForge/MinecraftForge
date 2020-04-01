@@ -5,7 +5,7 @@
        return this.field_199921_d;
     }
 +
-+   Function<ResourceLocation, Optional<T>> getEntryLookup() {
++   public Function<ResourceLocation, Optional<T>> getEntryLookup() {
 +       return this.field_200040_e;
 +   }
  }
