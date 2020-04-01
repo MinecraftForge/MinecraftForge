@@ -39,7 +39,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -47,8 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.model.Material;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.fluid.*;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
@@ -119,7 +116,6 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -1089,6 +1085,7 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
+    @SuppressWarnings("deprecation")
     public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Function<ResourceLocation, Optional<T>> valueGetter, JsonObject json)
     {
         if (json.has("optional"))
@@ -1177,6 +1174,7 @@ public class ForgeHooks
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static synchronized void updateBurns()
     {
         VANILLA_BURNS.clear();
