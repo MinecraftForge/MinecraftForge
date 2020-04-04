@@ -20,25 +20,20 @@
 package net.minecraftforge.client.model.pipeline;
 
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.BufferBuilder;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Assumes VertexFormatElement is present in the BufferBuilder's vertex format.
  */
 public class VertexBufferConsumer implements IVertexConsumer
 {
-    private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
-
     private IVertexBuilder renderer;
-    private int[] quadData;
-    private int v = 0;
-    private BlockPos offset = BlockPos.ZERO;
 
     public VertexBufferConsumer() {}
 
@@ -52,49 +47,61 @@ public class VertexBufferConsumer implements IVertexConsumer
     {
         return DefaultVertexFormats.BLOCK; // renderer.getVertexFormat();
     }
+    
+    private int expandTextureCoord(final float c, final int max)
+    {
+        return (int) (MathHelper.clamp(c, 0, 1) * max);
+    }
 
     @Override
     public void put(int e, float... data)
     {
-        // TODO
-        /*
         VertexFormat format = getVertexFormat();
-        if(renderer.isColorDisabled() && format.getElements().get(e).getUsage() == Usage.COLOR)
+        VertexFormatElement element = format.getElements().get(e);
+        final float d0 = data.length <= 0 ? 0 : data[0];
+        final float d1 = data.length <= 1 ? 0 : data[1];
+        final float d2 = data.length <= 2 ? 0 : data[2];
+        final float d3 = data.length <= 3 ? 0 : data[3];
+
+        switch (element.getUsage())
         {
-            data = dummyColor;
+        case POSITION:
+            renderer.pos(d0, d1, d2);
+            break;
+        case NORMAL:
+            renderer.normal(d0, d1, d2);
+            break;
+        case COLOR:
+            renderer.color(d0, d1, d2, d3);
+            break;
+        case UV:
+            switch (element.getIndex())
+            {
+            case 0:
+                renderer.tex(d0, d1);
+                break;
+            case 1:
+                renderer.overlay(expandTextureCoord(d0, 0xF), expandTextureCoord(d1, 0xF));
+                break;
+            case 2:
+                renderer.lightmap(expandTextureCoord(d0, 0xF0), expandTextureCoord(d1, 0xF0));
+                break;
+            }
+            break;
+        default:
+        case PADDING:
+        case GENERIC:
+            break;
         }
-        LightUtil.pack(data, quadData, format, v, e);
         if(e == format.getElements().size() - 1)
         {
-            v++;
-            if(v == 4)
-            {
-                renderer.addVertexData(quadData);
-                renderer.putPosition(offset.getX(), offset.getY(), offset.getZ());
-                //Arrays.fill(quadData, 0);
-                v = 0;
-            }
-        }
-         */
-    }
-
-    private void checkVertexFormat()
-    {
-        if (quadData == null || getVertexFormat().getSize() != quadData.length)
-        {
-            quadData = new int[getVertexFormat().getSize()];
+            renderer.endVertex();
         }
     }
 
     public void setBuffer(IVertexBuilder buffer)
     {
         this.renderer = buffer;
-        checkVertexFormat();
-    }
-
-    public void setOffset(BlockPos offset)
-    {
-        this.offset = new BlockPos(offset);
     }
 
     @Override

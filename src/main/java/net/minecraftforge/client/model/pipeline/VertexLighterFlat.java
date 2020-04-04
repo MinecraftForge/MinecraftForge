@@ -21,8 +21,11 @@ package net.minecraftforge.client.model.pipeline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -51,7 +54,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     protected int lightmapIndex = -1;
 
     protected VertexFormat baseFormat;
-
+    protected MatrixStack.Entry pose;
+    
     public VertexLighterFlat(BlockColors colors)
     {
         this.blockInfo = new BlockInfo(colors);
@@ -62,6 +66,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         super.setParent(parent);
         setVertexFormat(parent.getVertexFormat());
+    }
+    
+    public void setTransform(final MatrixStack.Entry pose)
+    {
+        this.pose = pose;
     }
 
     private void updateIndices()
@@ -137,9 +146,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] color = quadData[colorIndex];
 
         if (dataLength[normalIndex] >= 3
-            && (quadData[normalIndex][0][0] != -1
-            ||  quadData[normalIndex][0][1] != -1
-            ||  quadData[normalIndex][0][2] != -1))
+            && (quadData[normalIndex][0][0] != 0
+            ||  quadData[normalIndex][0][1] != 0
+            ||  quadData[normalIndex][0][2] != 0))
         {
             normal = quadData[normalIndex];
         }
@@ -213,22 +222,29 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 switch(element.getUsage())
                 {
                     case POSITION:
-                        // position adding moved to VertexBufferConsumer due to x and z not fitting completely into a float
-                        /*float[] pos = new float[4];
-                        System.arraycopy(position[v], 0, pos, 0, position[v].length);
-                        pos[0] += blockInfo.getBlockPos().getX();
-                        pos[1] += blockInfo.getBlockPos().getY();
-                        pos[2] += blockInfo.getBlockPos().getZ();*/
+                        final net.minecraft.client.renderer.Vector4f pos = new net.minecraft.client.renderer.Vector4f(
+                                position[v][0], position[v][1], position[v][2], 1);
+                        pos.transform(pose.getMatrix());
+
+                        position[v][0] = pos.getX();
+                        position[v][1] = pos.getY();
+                        position[v][2] = pos.getZ();
                         parent.put(e, position[v]);
                         break;
                     case NORMAL:
+                        final net.minecraft.client.renderer.Vector3f norm = new net.minecraft.client.renderer.Vector3f(normal[v]);
+                        norm.transform(pose.getNormal());
+
+                        normal[v][0] = norm.getX();
+                        normal[v][1] = norm.getY();
+                        normal[v][2] = norm.getZ();
                         parent.put(e, normal[v]);
                         break;
                     case COLOR:
                         parent.put(e, color[v]);
                         break;
                     case UV:
-                        if(element.getIndex() == 1)
+                        if(element.getIndex() == 2)
                         {
                             parent.put(e, lightmap[v]);
                             break;
@@ -260,8 +276,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         int i = side == null ? 0 : side.ordinal() + 1;
         int brightness = blockInfo.getPackedLight()[i];
 
-        lightmap[0] = ((float)((brightness >> 0x04) & 0xF) * 0x20) / 0xFFFF;
-        lightmap[1] = ((float)((brightness >> 0x14) & 0xF) * 0x20) / 0xFFFF;
+        lightmap[0] = LightTexture.getLightBlock(brightness) / (float) 0xF;
+        lightmap[1] = LightTexture.getLightSky(brightness) / (float) 0xF;
     }
 
     protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier)
