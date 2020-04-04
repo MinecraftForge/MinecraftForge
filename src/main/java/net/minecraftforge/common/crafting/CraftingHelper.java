@@ -654,7 +654,7 @@ public class CraftingHelper {
 
             if (mod.getSource().isFile())
             {
-                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader)null);
                 fPath = fs.getPath("/" + base, "_factories.json");
             }
             else if (mod.getSource().isDirectory())
@@ -791,7 +791,7 @@ public class CraftingHelper {
             {
                 try
                 {
-                    fs = FileSystems.newFileSystem(source.toPath(), null);
+                    fs = FileSystems.newFileSystem(source.toPath(), (ClassLoader)null);
                     root = fs.getPath("/" + base);
                 }
                 catch (IOException e)
@@ -885,7 +885,7 @@ public class CraftingHelper {
         Path fPath = null;
         if(mod.getSource().isFile())
         {
-            try(FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), null))
+            try(FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader)null))
             {
                 fPath = fs.getPath("assets", path.getResourceDomain(), path.getResourcePath());
             }
