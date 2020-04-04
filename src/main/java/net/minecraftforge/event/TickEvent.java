@@ -78,10 +78,12 @@ public class TickEvent extends Event
 
     public static class RenderTickEvent extends TickEvent {
         public final float renderTickTime;
-        public RenderTickEvent(Phase phase, float renderTickTime)
+        public final boolean doRenderWorld;
+        public RenderTickEvent(Phase phase, float renderTickTime, boolean doRenderWorld)
         {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
             this.renderTickTime = renderTickTime;
+            this.doRenderWorld = doRenderWorld;
         }
     }
 }

@@ -68,15 +68,15 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
-    public static void onRenderTickStart(float timer)
+    public static void onRenderTickStart(float timer, boolean doRenderWorld)
     {
         Animation.setClientPartialTickTime(timer);
-        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.START, timer));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.START, timer, doRenderWorld));
     }
 
-    public static void onRenderTickEnd(float timer)
+    public static void onRenderTickEnd(float timer, boolean doRenderWorld)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.END, timer));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.END, timer, doRenderWorld));
     }
 
     public static void onPlayerPreTick(PlayerEntity player)

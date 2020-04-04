@@ -151,13 +151,13 @@
        RenderSystem.enableTexture();
        this.field_71424_I.func_76319_b();
        if (!this.field_71454_w) {
-+         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickStart(this.field_71428_T.field_194147_b);
++         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickStart(this.field_71428_T.field_194147_b, p_195542_1_);
           this.field_71424_I.func_219895_b("gameRenderer");
           this.field_71460_t.func_195458_a(this.field_71445_n ? this.field_193996_ah : this.field_71428_T.field_194147_b, i, p_195542_1_);
           this.field_71424_I.func_219895_b("toasts");
           this.field_193034_aS.func_195625_a();
           this.field_71424_I.func_76319_b();
-+         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickEnd(this.field_71428_T.field_194147_b);
++         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickEnd(this.field_71428_T.field_194147_b, p_195542_1_);
        }
  
        this.field_71424_I.func_219897_b();
