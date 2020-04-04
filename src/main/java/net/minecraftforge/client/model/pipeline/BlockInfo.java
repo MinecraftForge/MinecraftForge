@@ -22,6 +22,8 @@ package net.minecraftforge.client.model.pipeline;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -113,7 +115,7 @@ public class BlockInfo
         if (s1 == 0 && !t1) s1 = Math.max(0, c - 1);
         if (s2 == 0 && !t2) s2 = Math.max(0, c - 1);
         if (s3 == 0 && !t3) s3 = Math.max(0, Math.max(s1, s2) - 1);
-        return (float) (c + s1 + s2 + s3) * 0x20 / (4 * 0xFFFF);
+        return (c + s1 + s2 + s3) / (0xF * 4f);
     }
 
     public void updateLightMatrix()
@@ -127,9 +129,9 @@ public class BlockInfo
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
                     BlockState state = world.getBlockState(pos);
                     t[x][y][z] = state.getOpacity(world, pos) < 15;
-                    int brightness = 0x00FF00FF; // FIXME: state.getPackedLightmapCoords(world, pos);
-                    s[x][y][z] = (brightness >> 0x14) & 0xF;
-                    b[x][y][z] = (brightness >> 0x04) & 0xF;
+                    int brightness = WorldRenderer.getCombinedLight(world, pos);
+                    s[x][y][z] = LightTexture.getLightSky(brightness);
+                    b[x][y][z] = LightTexture.getLightBlock(brightness);
                     ao[x][y][z] = state.getAmbientOcclusionLightValue(world, pos);
                 }
             }
@@ -195,12 +197,12 @@ public class BlockInfo
     public void updateFlatLighting()
     {
         full = Block.isOpaque(state.getCollisionShape(world, blockPos));
-        packed[0] = 0x00FF00FF; // FIXME:  state.getPackedLightmapCoords(world, blockPos);
+        packed[0] = WorldRenderer.getCombinedLight(world, blockPos);
 
         for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = 0x00FF00FF; // FIXME:  state.getPackedLightmapCoords(world, blockPos.offset(side));
+            packed[i] = WorldRenderer.getCombinedLight(world, blockPos.offset(side));
         }
     }
 

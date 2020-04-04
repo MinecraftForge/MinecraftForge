@@ -139,10 +139,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         }
 
         l /= s;
-
-        if(l > 15f * 0x20 / 0xFFFF) l = 15f * 0x20 / 0xFFFF;
-        if(l < 0) l = 0;
-
+        l = MathHelper.clamp(l, 0, 1);
         return l;
     }
 
