@@ -24,9 +24,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.MathHelper;
 
 /**
  * Assumes VertexFormatElement is present in the BufferBuilder's vertex format.
@@ -43,57 +41,42 @@ public class VertexBufferConsumer implements IVertexConsumer
     }
 
     @Override
-    public VertexFormat getVertexFormat()
+    public final VertexFormat getVertexFormat()
     {
-        return DefaultVertexFormats.BLOCK; // renderer.getVertexFormat();
-    }
-    
-    private int expandTextureCoord(final float c, final int max)
-    {
-        return (int) (MathHelper.clamp(c, 0, 1) * max);
+        return DefaultVertexFormats.BLOCK;
     }
 
     @Override
     public void put(int e, float... data)
     {
-        VertexFormat format = getVertexFormat();
-        VertexFormatElement element = format.getElements().get(e);
         final float d0 = data.length <= 0 ? 0 : data[0];
         final float d1 = data.length <= 1 ? 0 : data[1];
         final float d2 = data.length <= 2 ? 0 : data[2];
         final float d3 = data.length <= 3 ? 0 : data[3];
 
-        switch (element.getUsage())
+        switch (e)
         {
-        case POSITION:
+        case 0: // POSITION_3F
             renderer.pos(d0, d1, d2);
             break;
-        case NORMAL:
+        case 4: // NORMAL_3B
             renderer.normal(d0, d1, d2);
             break;
-        case COLOR:
+        case 1: // COLOR_4UB
             renderer.color(d0, d1, d2, d3);
             break;
-        case UV:
-            switch (element.getIndex())
-            {
-            case 0:
-                renderer.tex(d0, d1);
-                break;
-            case 1:
-                renderer.overlay(expandTextureCoord(d0, 0xF), expandTextureCoord(d1, 0xF));
-                break;
-            case 2:
-                renderer.lightmap(expandTextureCoord(d0, 0xF0), expandTextureCoord(d1, 0xF0));
-                break;
-            }
+        case 2: // TEX_2F
+            renderer.tex(d0, d1);
+            break;
+        case 3: // TEX_2SB
+            renderer.lightmap((int) (d0 * 0xF0), (int) (d1 * 0xF0));
+            break;
+        case 5: // PADDING_1B
             break;
         default:
-        case PADDING:
-        case GENERIC:
-            break;
+            throw new IllegalArgumentException("Vertex element out of bounds: " + e);
         }
-        if(e == format.getElements().size() - 1)
+        if(e == 5)
         {
             renderer.endVertex();
         }
