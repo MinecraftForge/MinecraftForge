@@ -31,6 +31,8 @@ net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/PotatoBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 net/minecraft/block/SoundType func_185845_c()Lnet/minecraft/util/SoundEvent; # getBreakSound
 net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # getHitSound
+net/minecraft/block/WoodType func_227046_a_()Ljava/util/stream/Stream; # getValues
+net/minecraft/block/WoodType func_227048_b_()Ljava/lang/String; # getName
 net/minecraft/item/DyeColor func_218388_g()I # getTextColor
 net/minecraft/item/DyeColor func_196058_b(I)Lnet/minecraft/item/DyeColor; # byFireworkColor
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks
