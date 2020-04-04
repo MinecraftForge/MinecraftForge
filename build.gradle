@@ -795,6 +795,7 @@ project(':forge') {
 		classifier 'userdev3'
     }
 
+    /*
     extractRangeMap {
         addDependencies jar.archivePath
         addSources sourceSets.userdev.java.srcDirs
@@ -802,6 +803,7 @@ project(':forge') {
     applyRangeMap {
         setSources sourceSets.userdev.java.srcDirs
     }
+    */
     
     tasks.eclipse.dependsOn('genEclipseRuns')
     
