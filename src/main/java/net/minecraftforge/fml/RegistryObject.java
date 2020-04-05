@@ -88,7 +88,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     public T get()
     {
         T ret = this.value;
-        Objects.requireNonNull(ret, "Registry Object not present");
+        Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);
         return ret;
     }
 
