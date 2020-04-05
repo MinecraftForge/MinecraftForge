@@ -9,7 +9,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.ow2.asm:asm:7.1'
         classpath 'org.ow2.asm:asm-tree:7.1'
-		classpath 'com.github.jponge:lzma-java:1.3' //Needed to compress deobf data
+        classpath 'com.github.jponge:lzma-java:1.3' //Needed to compress deobf data
     }
 }
 import groovy.json.JsonSlurper
@@ -89,16 +89,16 @@ project(':clean') {
     }
     
     dependencies {
-		implementation 'net.minecraftforge:mergetool:0.2.3.3:forge'
+        implementation 'net.minecraftforge:mergetool:0.2.3.3:forge'
     }
-	
+    
     patcher {
         parent = project(':mcp')
         mcVersion = MC_VERSION
         patchedSrc = file('src/main/java')
 
         mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
-		processor = POST_PROCESSOR
+        processor = POST_PROCESSOR
 
         runs {
             clean_client {
@@ -175,10 +175,10 @@ project(':forge') {
     }
 
     ext {
-		LEGACY_MAJOR = 14 //Legacy versions have a API change prefix
-		LEGACY_BUILD = 2848 //Base build number to not conflict with existing build numbers
-		BUILD_NUMBER = 0 // LEGACY_BUILD + commit offset, used to mimic unique build from old versions
-		
+        LEGACY_MAJOR = 14 //Legacy versions have a API change prefix
+        LEGACY_BUILD = 2848 //Base build number to not conflict with existing build numbers
+        BUILD_NUMBER = 0 // LEGACY_BUILD + commit offset, used to mimic unique build from old versions
+        
         SPEC_VERSION = '23.5' // This is overwritten by git tag, but here so dev time doesnt explode
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
@@ -199,7 +199,7 @@ project(':forge') {
         if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
             branch = null
         SPEC_VERSION = tag
-		BUILD_NUMBER = LEGACY_BUILD + offset.toInteger()
+        BUILD_NUMBER = LEGACY_BUILD + offset.toInteger()
         return "${MC_VERSION}-${LEGACY_MAJOR}.${tag}.${BUILD_NUMBER}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
     }
 
@@ -213,8 +213,8 @@ project(':forge') {
         srgPatches = true
         notchObf = true
         accessTransformer = file("$rootDir/src/main/resources/forge_at.cfg")
-        //sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")		
-		processor = POST_PROCESSOR
+        //sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")
+        processor = POST_PROCESSOR
 
         runs {
             forge_client {
@@ -270,13 +270,13 @@ project(':forge') {
         canonicalizeAccess true
         canonicalizeWhitespace true
         maxFuzz 3
-		originalPrefix = '../src-base/minecraft/'
-		modifiedPrefix = '../src-work/minecraft/'
+        originalPrefix = '../src-base/minecraft/'
+        modifiedPrefix = '../src-work/minecraft/'
     }
-	genPatches {
-		originalPrefix = '../src-base/minecraft/'
-		modifiedPrefix = '../src-work/minecraft/'
-	}
+    genPatches {
+        originalPrefix = '../src-base/minecraft/'
+        modifiedPrefix = '../src-work/minecraft/'
+    }
     configurations {
         installer {
             transitive = false //Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
@@ -284,9 +284,9 @@ project(':forge') {
         api.extendsFrom(installer)
         fmllauncherImplementation.extendsFrom(installer)
     }
-    dependencies {		
+    dependencies {
         installer 'org.ow2.asm:asm-debug-all:5.2'
-		installer 'net.minecraft:launchwrapper:1.12'
+        installer 'net.minecraft:launchwrapper:1.12'
         installer 'org.jline:jline:3.5.1'
         installer 'com.typesafe.akka:akka-actor_2.11:2.3.3'
         installer 'com.typesafe:config:1.2.1'
@@ -303,7 +303,7 @@ project(':forge') {
         installer 'java3d:vecmath:1.5.2'
         installer 'net.sf.trove4j:trove4j:3.0.3'
         installer 'org.apache.maven:maven-artifact:3.5.3'
-		
+        
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
@@ -313,8 +313,8 @@ project(':forge') {
     def extraTxts = [
         rootProject.file('CREDITS.txt'),
         rootProject.file('LICENSE.txt'),
-		rootProject.file('LICENSE-Paulscode IBXM Library.txt'),
-		rootProject.file('LICENSE-Paulscode SoundSystem CodecIBXM.txt')
+        rootProject.file('LICENSE-Paulscode IBXM Library.txt'),
+        rootProject.file('LICENSE-Paulscode SoundSystem CodecIBXM.txt')
     ]
     
     def changelog = rootProject.file('build/changelog.txt')
@@ -503,18 +503,18 @@ project(':forge') {
                 mainClass: 'net.minecraft.launchwrapper.Launch',
                 inheritsFrom: MC_VERSION,
                 logging: {},
-				minecraftArguments: [
-					'--username', '${auth_player_name}', 
-					'--version', '${version_name}', 
-					'--gameDir', '${game_directory}', 
-					'--assetsDir', '${assets_root}', 
-					'--assetIndex', '${assets_index_name}', 
-					'--uuid', '${auth_uuid}', 
-					'--accessToken', '${auth_access_token}', 
-					'--userType', '${user_type}', 
-					'--tweakClass', 'net.minecraftforge.fml.common.launcher.FMLTweaker', 
-					'--versionType', 'Forge'
-				].join(' '),
+                minecraftArguments: [
+                    '--username', '${auth_player_name}', 
+                    '--version', '${version_name}', 
+                    '--gameDir', '${game_directory}', 
+                    '--assetsDir', '${assets_root}', 
+                    '--assetIndex', '${assets_index_name}', 
+                    '--uuid', '${auth_uuid}', 
+                    '--accessToken', '${auth_access_token}', 
+                    '--userType', '${user_type}', 
+                    '--tweakClass', 'net.minecraftforge.fml.common.launcher.FMLTweaker', 
+                    '--versionType', 'Forge'
+                ].join(' '),
                 libraries: [
                     [
                         //Package our universal jar as the 'main' jar Mojang's launcher loads. It will in turn load Forge's regular jars itself.
@@ -575,7 +575,7 @@ project(':forge') {
                 minecraft: MC_VERSION,
                 welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
                 data: [
-                ],
+                ] as Map,
                 processors: [
                 ]
             ]
@@ -585,23 +585,23 @@ project(':forge') {
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
-	
-	task extractObf2Srg(type:net.minecraftforge.gradle.common.task.ExtractMCPData, dependsOn: [':mcp:downloadConfig']) {
-		config = project(':mcp').downloadConfig.output
-	}
-	
-	task deobfDataLzma(dependsOn: [extractObf2Srg]) {
-		ext {
+    
+    task extractObf2Srg(type:net.minecraftforge.gradle.common.task.ExtractMCPData, dependsOn: [':mcp:downloadConfig']) {
+        config = project(':mcp').downloadConfig.output
+    }
+    
+    task deobfDataLzma(dependsOn: [extractObf2Srg]) {
+        ext {
             output_srg = file('build/deobfDataLzma/data.srg')
             output = file('build/deobfDataLzma/data.lzma')
         }
-		inputs.file extractObf2Srg.output
+        inputs.file extractObf2Srg.output
         outputs.file output
-		doLast {
-			net.minecraftforge.gradle.common.util.MappingFile.load(extractObf2Srg.output)
-				.write(net.minecraftforge.gradle.common.util.MappingFile.Format.SRG, output_srg)
-				
-			output_srg.withInputStream { ins ->
+        doLast {
+            net.minecraftforge.gradle.common.util.MappingFile.load(extractObf2Srg.output)
+                .write(net.minecraftforge.gradle.common.util.MappingFile.Format.SRG, output_srg)
+                
+            output_srg.withInputStream { ins ->
                 output.withOutputStream { outs ->
                     def lz = new lzma.streams.LzmaOutputStream.Builder(outs).useEndMarkerMode(true).build()
                     
@@ -613,9 +613,9 @@ project(':forge') {
                     lz.close()
                 }
             }
-		}
-	}
-	
+        }
+    }
+
     universalJar {
         from(extraTxts)
         dependsOn(deobfDataLzma)
@@ -652,8 +652,8 @@ project(':forge') {
         }
         from(rootProject.file('/src/main/resources/url.png'))
         from(universalJar) {
-			into("/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/")
-			rename{"${project.name}-${project.version}.jar"}
+            into("/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/")
+            rename{"${project.name}-${project.version}.jar"}
         }
         from(installerJson.output)
         from(launcherJson.output)
@@ -752,14 +752,14 @@ project(':forge') {
         header = file("$rootDir/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
-		/*
+        /*
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
         exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
         exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
         exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
         exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
-		*/
+        */
 
         tasks {
             main {
@@ -792,7 +792,7 @@ project(':forge') {
         from (sourceSets.userdev.output.resourcesDir) {
             into '/inject/'
         }
-		classifier 'userdev3'
+        classifier 'userdev3'
     }
 
     /*
