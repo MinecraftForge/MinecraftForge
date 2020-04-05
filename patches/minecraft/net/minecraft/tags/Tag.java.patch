@@ -34,7 +34,7 @@
 -      jsonobject.addProperty("replace", false);
 +      jsonobject.addProperty("replace", replace);
        jsonobject.add("values", jsonarray);
-+      jsonobject.add("optional", optional);
++      if (optional.size() > 0) jsonobject.add("optional", optional);
        return jsonobject;
     }
  
