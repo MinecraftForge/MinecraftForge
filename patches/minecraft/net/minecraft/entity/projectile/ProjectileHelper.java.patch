@@ -9,19 +9,12 @@
                    if (d0 == 0.0D) {
                       entity = entity1;
                       vec3d = vec3d1;
-@@ -153,10 +153,15 @@
-       p_188803_0_.field_70177_z = MathHelper.func_219799_g(p_188803_1_, p_188803_0_.field_70126_B, p_188803_0_.field_70177_z);
-    }
- 
-+   @Deprecated
+@@ -156,7 +156,7 @@
     public static Hand func_221274_a(LivingEntity p_221274_0_, Item p_221274_1_) {
        return p_221274_0_.func_184614_ca().func_77973_b() == p_221274_1_ ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
- 
-+   public static Hand getHandWith(LivingEntity living, Predicate<Item> itemPredicate) {
-+      return itemPredicate.test(living.func_184614_ca().func_77973_b()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
-+   }
-+
+-
++   public static Hand getHandWith(LivingEntity living, Predicate<Item> itemPredicate) { return itemPredicate.test(living.func_184614_ca().func_77973_b()) ? Hand.MAIN_HAND : Hand.OFF_HAND; }
     public static AbstractArrowEntity func_221272_a(LivingEntity p_221272_0_, ItemStack p_221272_1_, float p_221272_2_) {
        ArrowItem arrowitem = (ArrowItem)(p_221272_1_.func_77973_b() instanceof ArrowItem ? p_221272_1_.func_77973_b() : Items.field_151032_g);
        AbstractArrowEntity abstractarrowentity = arrowitem.func_200887_a(p_221272_0_.field_70170_p, p_221272_1_, p_221272_0_);

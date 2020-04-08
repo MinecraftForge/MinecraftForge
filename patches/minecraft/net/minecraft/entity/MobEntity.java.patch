@@ -63,16 +63,12 @@
                    this.field_70170_p.func_72960_a(playerentity, (byte)30);
                 }
              }
-@@ -1215,7 +1226,12 @@
+@@ -1214,7 +1225,7 @@
+       }
  
     }
- 
-+   @Deprecated
+-
++   public boolean isHolding(java.util.function.Predicate<Item> itemPredicate) { return itemPredicate.test(this.func_184614_ca().func_77973_b()) || itemPredicate.test(this.func_184592_cb().func_77973_b()); }
     public boolean func_213382_a(Item p_213382_1_) {
        return this.func_184614_ca().func_77973_b() == p_213382_1_ || this.func_184592_cb().func_77973_b() == p_213382_1_;
     }
-+
-+   public boolean isHolding(java.util.function.Predicate<Item> itemPredicate) {
-+      return itemPredicate.test(this.func_184614_ca().func_77973_b()) || itemPredicate.test(this.func_184592_cb().func_77973_b());
-+   }
- }
