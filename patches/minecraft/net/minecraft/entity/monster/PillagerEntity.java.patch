@@ -1,0 +1,23 @@
+--- a/net/minecraft/entity/monster/PillagerEntity.java
++++ b/net/minecraft/entity/monster/PillagerEntity.java
+@@ -122,7 +122,7 @@
+    public AbstractIllagerEntity.ArmPose func_193077_p() {
+       if (this.func_213675_dX()) {
+          return AbstractIllagerEntity.ArmPose.CROSSBOW_CHARGE;
+-      } else if (this.func_213382_a(Items.field_222114_py)) {
++      } else if (this.isHolding(item -> item instanceof CrossbowItem)) {
+          return AbstractIllagerEntity.ArmPose.CROSSBOW_HOLD;
+       } else {
+          return this.func_213398_dR() ? AbstractIllagerEntity.ArmPose.ATTACKING : AbstractIllagerEntity.ArmPose.NEUTRAL;
+@@ -193,9 +193,9 @@
+    }
+ 
+    public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
+-      Hand hand = ProjectileHelper.func_221274_a(this, Items.field_222114_py);
++      Hand hand = ProjectileHelper.getHandWith(this, item -> item instanceof CrossbowItem);
+       ItemStack itemstack = this.func_184586_b(hand);
+-      if (this.func_213382_a(Items.field_222114_py)) {
++      if (this.isHolding(item -> item instanceof CrossbowItem)) {
+          CrossbowItem.func_220014_a(this.field_70170_p, this, hand, itemstack, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
+       }
+ 

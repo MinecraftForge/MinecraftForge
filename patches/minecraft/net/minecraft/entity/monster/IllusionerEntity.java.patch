@@ -1,8 +1,11 @@
 --- a/net/minecraft/entity/monster/IllusionerEntity.java
 +++ b/net/minecraft/entity/monster/IllusionerEntity.java
-@@ -185,6 +185,8 @@
+@@ -183,8 +183,10 @@
+    }
+ 
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
-       ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
+-      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
++      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.getHandWith(this, item -> item instanceof net.minecraft.item.BowItem)));
        AbstractArrowEntity abstractarrowentity = ProjectileHelper.func_221272_a(this, itemstack, p_82196_2_);
 +      if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.BowItem)
 +         abstractarrowentity = ((net.minecraft.item.BowItem)this.func_184614_ca().func_77973_b()).customeArrow(abstractarrowentity);

@@ -1,17 +1,22 @@
 --- a/net/minecraft/entity/monster/AbstractSkeletonEntity.java
 +++ b/net/minecraft/entity/monster/AbstractSkeletonEntity.java
-@@ -154,7 +154,7 @@
+@@ -153,8 +153,8 @@
+       if (this.field_70170_p != null && !this.field_70170_p.field_72995_K) {
           this.field_70714_bg.func_85156_a(this.field_85038_e);
           this.field_70714_bg.func_85156_a(this.field_85037_d);
-          ItemStack itemstack = this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f));
+-         ItemStack itemstack = this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f));
 -         if (itemstack.func_77973_b() == Items.field_151031_f) {
++         ItemStack itemstack = this.func_184586_b(ProjectileHelper.getHandWith(this, item -> item instanceof net.minecraft.item.BowItem));
 +         if (itemstack.func_77973_b() instanceof net.minecraft.item.BowItem) {
              int i = 20;
              if (this.field_70170_p.func_175659_aa() != Difficulty.HARD) {
                 i = 40;
-@@ -172,6 +172,8 @@
+@@ -170,8 +170,10 @@
+    }
+ 
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
-       ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
+-      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
++      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.getHandWith(this, item -> item instanceof net.minecraft.item.BowItem)));
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);
 +      if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.BowItem)
 +         abstractarrowentity = ((net.minecraft.item.BowItem)this.func_184614_ca().func_77973_b()).customeArrow(abstractarrowentity);
