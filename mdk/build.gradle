@@ -60,8 +60,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    //minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2849'
+    minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
