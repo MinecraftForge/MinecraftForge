@@ -253,11 +253,7 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName(),
-                "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
-                "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-                "Class-Path": getServerClasspath(file("${rootDir}/jsons/${MC_VERSION}-rel.json"))
-
+                'Git-Branch': grgit.branch.current().getName()
             ] as LinkedHashMap,
             'net/minecraftforge/common/': [
                 'Specification-Title':      'Forge',
@@ -633,9 +629,19 @@ project(':forge') {
             rename{'binpatches.pack.lzma'}
         }
         doFirst {
+            def classpath = new StringBuilder()
+            def artifacts = getArtifacts(project, project.configurations.installer, false)
+            artifacts.each { key, lib ->
+                classpath.append("libraries/${lib.downloads.artifact.path} ")
+            }
+            classpath += "minecraft_server-${MC_VERSION}.jar"
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
-                    manifest.attributes(values)
+                    manifest.attributes(values += [
+                        'Main-Class': 'net.minecraftforge.fml.relauncher.ServerLaunchWrapper',
+                        'Class-Path': classpath.toString(),
+                        'Tweak-Class': 'net.minecraftforge.fml.common.launcher.FMLTweaker'
+                    ])
                 } else {
                     manifest.attributes(values, pkg)
                 }
@@ -965,26 +971,6 @@ def getClasspath(project, libs, artifact) {
             ret.add(lib.name)
     }
     return ret
-}
-
-String getServerClasspath(File file)
-{
-    def node = new JsonSlurper().parse(file);
-    def out = new StringBuilder()
-    node.versionInfo.libraries.each { lib ->
-        if (lib.serverreq)
-        {
-            // group : artifact : version
-            def split = lib.name.split(':')
-            def group = split[0].replace('.', '/')
-            def artifact = split[1]
-            def version = split[2]
-            out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
-        }
-    }
-    out += "minecraft_server.${MC_VERSION}.jar"
-
-    return out.toString();
 }
 
 task ciWriteBuildNumber << {
