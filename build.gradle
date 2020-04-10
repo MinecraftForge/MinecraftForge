@@ -285,8 +285,7 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        implementation 'org.ow2.asm:asm-debug-all:5.2'
-        installer 'org.ow2.asm:asm-all:5.2'
+        installer 'org.ow2.asm:asm-debug-all:5.2'
         installer 'net.minecraft:launchwrapper:1.12'
         installer 'org.jline:jline:3.5.1'
         installer 'com.typesafe.akka:akka-actor_2.11:2.3.3'
