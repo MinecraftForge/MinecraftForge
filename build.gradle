@@ -633,7 +633,7 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath.append("libraries/${lib.downloads.artifact.path} ")
             }
-            classpath += "minecraft_server-${MC_VERSION}.jar"
+            classpath += "minecraft_server.${MC_VERSION}.jar"
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
