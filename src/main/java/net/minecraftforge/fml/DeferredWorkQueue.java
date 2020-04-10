@@ -53,7 +53,13 @@ import net.minecraftforge.forgespi.language.IModInfo;
  * Exceptions from tasks will be handled gracefully, causing a mod loading
  * error. Tasks that take egregiously long times to run will be logged.
  *
- * This is being deprecated in favour of a new interface on loading events, to remove confusion about how it operates. #TODO
+ * <br>
+ * This is being deprecated in favour of a new interface on loading events, to remove confusion about how it operates.
+ * Use the following methods supplied by the event instead: <br>
+ * {@link net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent#enqueueSynchronousWork(Runnable)}
+ * {@link net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent#enqueueSynchronousWork(CheckedRunnable)}
+ * {@link net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent#enqueueSynchronousWork(Supplier)}
+ * {@link net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent#enqueueSynchronousWork(Callable)}
  */
 @Deprecated
 public class DeferredWorkQueue
@@ -167,13 +173,13 @@ public class DeferredWorkQueue
      * variant allows the task to throw a checked exception.
      * <p>
      * If the task does not throw a checked exception, use
-     * {@link #getLater(Callable)}.
+     * {@link #getLater(Supplier)}.
      * <p>
      * If the task does not have a result, use {@link #runLater(Runnable)} or
      * {@link #runLaterChecked(CheckedRunnable)}.
      *
      * @param               <T> The result type of the task
-     * @param workToEnqueue A {@link Supplier} to execute later, on the loading
+     * @param workToEnqueue A {@link Callable} to execute later, on the loading
      *                      thread
      * @return A {@link CompletableFuture} that completes at said time
      */

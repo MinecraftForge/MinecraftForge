@@ -20,11 +20,15 @@
 package net.minecraftforge.fml.event.lifecycle;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModContainer;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -52,6 +56,86 @@ public class ModLifecycleEvent extends Event
 
     public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
+    }
+
+    /**
+     * Run a task on the loading thread at the next available opportunity, i.e.
+     * after the current lifecycle event has completed.
+     * <p>
+     * If the task must throw a checked exception, use
+     * {@link #enqueueSynchronousWork(DeferredWorkQueue.CheckedRunnable)}.
+     * <p>
+     * If the task has a result, use {@link #enqueueSynchronousWork(Supplier)} or
+     * {@link #enqueueSynchronousWork(Callable)}.
+     *
+     * @param workToEnqueue A {@link Runnable} to execute later, on the loading
+     *                      thread
+     * @return A {@link CompletableFuture} that completes at said time
+     */
+    @SuppressWarnings("deprecation")
+    public CompletableFuture<Void> enqueueSynchronousWork(Runnable workToEnqueue) {
+        return DeferredWorkQueue.runLater(workToEnqueue);
+    }
+
+    /**
+     * Run a task on the loading thread at the next available opportunity, i.e.
+     * after the current lifecycle event has completed. This variant allows the task
+     * to throw a checked exception.
+     * <p>
+     * If the task does not throw a checked exception, use
+     * {@link #enqueueSynchronousWork(Runnable)}.
+     * <p>
+     * If the task has a result, use {@link #enqueueSynchronousWork(Supplier)} or
+     * {@link #enqueueSynchronousWork(Callable)}.
+     *
+     * @param workToEnqueue A {@link DeferredWorkQueue.CheckedRunnable} to execute later, on the
+     *                      loading thread
+     * @return A {@link CompletableFuture} that completes at said time
+     */
+    @SuppressWarnings("deprecation")
+    public CompletableFuture<Void> enqueueSynchronousWork(DeferredWorkQueue.CheckedRunnable workToEnqueue) { //TODO 1.16: Move CheckRunnable out of deprecated DeferredWorkQueue
+        return DeferredWorkQueue.runLaterChecked(workToEnqueue);
+    }
+
+    /**
+     * Run a task computing a result on the loading thread at the next available
+     * opportunity, i.e. after the current lifecycle event has completed.
+     * <p>
+     * If the task throws a checked exception, use
+     * {@link #enqueueSynchronousWork(Callable)}.
+     * <p>
+     * If the task does not have a result, use {@link #enqueueSynchronousWork(Runnable)} or
+     * {@link #enqueueSynchronousWork(DeferredWorkQueue.CheckedRunnable)}.
+     *
+     * @param               <T> The result type of the task
+     * @param workToEnqueue A {@link Supplier} to execute later, on the loading
+     *                      thread
+     * @return A {@link CompletableFuture} that completes at said time
+     */
+    @SuppressWarnings("deprecation")
+    public <T> CompletableFuture<T> enqueueSynchronousWork(Supplier<T> workToEnqueue) {
+        return DeferredWorkQueue.getLater(workToEnqueue);
+    }
+
+    /**
+     * Run a task computing a result on the loading thread at the next available
+     * opportunity, i.e. after the current lifecycle event has completed. This
+     * variant allows the task to throw a checked exception.
+     * <p>
+     * If the task does not throw a checked exception, use
+     * {@link #enqueueSynchronousWork(Supplier)}.
+     * <p>
+     * If the task does not have a result, use {@link #enqueueSynchronousWork(Runnable)} or
+     * {@link #enqueueSynchronousWork(DeferredWorkQueue.CheckedRunnable)}.
+     *
+     * @param               <T> The result type of the task
+     * @param workToEnqueue A {@link Callable} to execute later, on the loading
+     *                      thread
+     * @return A {@link CompletableFuture} that completes at said time
+     */
+    @SuppressWarnings("deprecation")
+    public <T> CompletableFuture<T> enqueueSynchronousWork(Callable<T> workToEnqueue) {
+        return DeferredWorkQueue.getLaterChecked(workToEnqueue);
     }
 
     @Override
