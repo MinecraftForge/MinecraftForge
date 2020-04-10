@@ -253,7 +253,11 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName()
+                'Git-Branch': grgit.branch.current().getName(),
+                "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
+                "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
+                "Class-Path": getServerClasspath(file("${rootDir}/jsons/${MC_VERSION}-rel.json"))
+
             ] as LinkedHashMap,
             'net/minecraftforge/common/': [
                 'Specification-Title':      'Forge',
@@ -285,7 +289,8 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        installer 'org.ow2.asm:asm-debug-all:5.2'
+        implementation 'org.ow2.asm:asm-debug-all:5.2'
+        installer 'org.ow2.asm:asm-all:5.2'
         installer 'net.minecraft:launchwrapper:1.12'
         installer 'org.jline:jline:3.5.1'
         installer 'com.typesafe.akka:akka-actor_2.11:2.3.3'
@@ -303,6 +308,7 @@ project(':forge') {
         installer 'java3d:vecmath:1.5.2'
         installer 'net.sf.trove4j:trove4j:3.0.3'
         installer 'org.apache.maven:maven-artifact:3.5.3'
+        installer 'net.sf.jopt-simple:jopt-simple:5.0.3'
         
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
@@ -959,6 +965,26 @@ def getClasspath(project, libs, artifact) {
             ret.add(lib.name)
     }
     return ret
+}
+
+String getServerClasspath(File file)
+{
+    def node = new JsonSlurper().parse(file);
+    def out = new StringBuilder()
+    node.versionInfo.libraries.each { lib ->
+        if (lib.serverreq)
+        {
+            // group : artifact : version
+            def split = lib.name.split(':')
+            def group = split[0].replace('.', '/')
+            def artifact = split[1]
+            def version = split[2]
+            out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
+        }
+    }
+    out += "minecraft_server.${MC_VERSION}.jar"
+
+    return out.toString();
 }
 
 task ciWriteBuildNumber << {
