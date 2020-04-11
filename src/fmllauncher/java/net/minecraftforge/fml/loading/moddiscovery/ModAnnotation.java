@@ -132,7 +132,7 @@ public class ModAnnotation
     }
     public ModAnnotation addChildAnnotation(String name, String desc)
     {
-        ModAnnotation child = new ModAnnotation(ElementType.PARAMETER, Type.getType(desc), this);
+        ModAnnotation child = new ModAnnotation(type, Type.getType(desc), this);
         addProperty(name, child.getValues());
         return child;
     }
