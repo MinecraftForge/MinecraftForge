@@ -57,10 +57,10 @@ public class ModAnnotation
             return value;
         }
     }
-    ElementType type;
-    Type asmType;
-    String member;
-    Map<String,Object> values = Maps.newHashMap();
+    private final ElementType type;
+    private final Type asmType;
+    private final String member;
+    private final Map<String,Object> values = Maps.newHashMap();
 
     private ArrayList<Object> arrayList;
     private String arrayName;
@@ -71,10 +71,17 @@ public class ModAnnotation
         this.member = member;
     }
 
+    @Deprecated // TODO 1.16 remove this
     public ModAnnotation(ElementType type, Type asmType, ModAnnotation parent)
     {
-        this.type = type;
+        this(asmType, parent);
+    }
+    
+    public ModAnnotation(Type asmType, ModAnnotation parent)
+    {
+        this.type = parent.type;
         this.asmType = asmType;
+        this.member = parent.member;
     }
     @Override
     public String toString()
@@ -132,7 +139,7 @@ public class ModAnnotation
     }
     public ModAnnotation addChildAnnotation(String name, String desc)
     {
-        ModAnnotation child = new ModAnnotation(type, Type.getType(desc), this);
+        ModAnnotation child = new ModAnnotation(Type.getType(desc), this);
         addProperty(name, child.getValues());
         return child;
     }
