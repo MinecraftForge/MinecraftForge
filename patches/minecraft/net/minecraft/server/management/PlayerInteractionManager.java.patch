@@ -126,7 +126,7 @@
     public ActionResultType func_219441_a(PlayerEntity p_219441_1_, World p_219441_2_, ItemStack p_219441_3_, Hand p_219441_4_, BlockRayTraceResult p_219441_5_) {
        BlockPos blockpos = p_219441_5_.func_216350_a();
        BlockState blockstate = p_219441_2_.func_180495_p(blockpos);
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_.func_216354_b());
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_);
 +      if (event.isCanceled()) return event.getCancellationResult();
        if (this.field_73091_c == GameType.SPECTATOR) {
           INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
@@ -148,12 +148,14 @@
              ActionResultType actionresulttype = blockstate.func_227031_a_(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_);
              if (actionresulttype.func_226246_a_()) {
                 return actionresulttype;
-@@ -306,7 +338,7 @@
+@@ -306,7 +338,9 @@
           }
  
           if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
 -            ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return ActionResultType.PASS;
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.OnItemUse event2 = net.minecraftforge.common.ForgeHooks.onItemUse(p_219441_1_, p_219441_4_, blockpos, p_219441_5_);
++            if (event2.isCanceled()) return event2.getCancellationResult();
              if (this.func_73083_d()) {
                 int i = p_219441_3_.func_190916_E();
                 ActionResultType actionresulttype1 = p_219441_3_.func_196084_a(itemusecontext);

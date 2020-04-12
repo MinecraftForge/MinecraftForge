@@ -27,6 +27,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -145,9 +146,17 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
+        private final BlockRayTraceResult res;
 
+        @Deprecated //TODO: Remove, Superseded by the BlockRayTraceResult version.
         public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
             super(player, hand, pos, face);
+            this.res = null;
+        }
+
+        public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult res) {
+            super(player, hand, pos, res.getFace());
+            this.res = res;
         }
 
         /**
@@ -164,6 +173,17 @@ public class PlayerInteractEvent extends PlayerEvent
         public Result getUseItem()
         {
             return useItem;
+        }
+        
+        /**
+         * This result *should* not be null.  It as marked as such for compatibility reasons.
+         * @return The ray trace result from clicking on this block.  May be null, if called from mod code using the old constructor.
+         * Mods should be phasing away from the old constructor, and the nullable annotation will be removed in a future version.
+         */
+        @Nullable
+        public BlockRayTraceResult getRayTraceResult()
+        {
+            return res;
         }
 
         /**
@@ -196,6 +216,35 @@ public class PlayerInteractEvent extends PlayerEvent
                 useItem = DENY;
             }
         }
+    }
+
+    /**
+     * This event is fired on both sides whenever the player would be able to use an item, after clicking on a block.
+     * This event is called when {@link net.minecraft.item.Item#onItemUse} would be called.
+     * Canceling the event will cause the item to not be used.
+     *
+     * Note that handling things differently on the client vs server may cause desynchronizations!
+     */
+    @Cancelable
+    public static class OnItemUse extends PlayerInteractEvent
+    {
+        private final BlockRayTraceResult res;
+
+        public OnItemUse(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult res) {
+            super(player, hand, pos, res.getFace());
+            this.res = res;
+        }
+
+        /**
+         * @return The ray trace result from clicking on this block.  May be null, if called from mod code using the old constructor.
+         * Mods should be phasing away from the old constructor, and the nullable annotation will be removed in a future version.
+         */
+        @Nullable
+        public BlockRayTraceResult getRayTraceResult()
+        {
+            return res;
+        }
+
     }
 
     /**

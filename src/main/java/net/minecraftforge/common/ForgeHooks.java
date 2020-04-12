@@ -779,9 +779,24 @@ public class ForgeHooks
         return evt;
     }
 
+    @Deprecated //TODO Remove, superseded by BlockRayTraceResult version.
     public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face)
     {
         PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult res)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, res);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.OnItemUse onItemUse(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult res)
+    {
+        PlayerInteractEvent.OnItemUse evt = new PlayerInteractEvent.OnItemUse(player, hand, pos, res);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
