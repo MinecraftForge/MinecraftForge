@@ -303,6 +303,7 @@ project(':forge') {
         installer 'java3d:vecmath:1.5.2'
         installer 'net.sf.trove4j:trove4j:3.0.3'
         installer 'org.apache.maven:maven-artifact:3.5.3'
+        installer 'net.sf.jopt-simple:jopt-simple:5.0.3'
         
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
@@ -627,9 +628,19 @@ project(':forge') {
             rename{'binpatches.pack.lzma'}
         }
         doFirst {
+            def classpath = new StringBuilder()
+            def artifacts = getArtifacts(project, project.configurations.installer, false)
+            artifacts.each { key, lib ->
+                classpath.append("libraries/${lib.downloads.artifact.path} ")
+            }
+            classpath += "minecraft_server.${MC_VERSION}.jar"
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
-                    manifest.attributes(values)
+                    manifest.attributes(values += [
+                        'Main-Class': 'net.minecraftforge.fml.relauncher.ServerLaunchWrapper',
+                        'Class-Path': classpath.toString(),
+                        'Tweak-Class': 'net.minecraftforge.fml.common.launcher.FMLTweaker'
+                    ])
                 } else {
                     manifest.attributes(values, pkg)
                 }
