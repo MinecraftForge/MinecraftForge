@@ -1,4 +1,5 @@
 {
+  "type": "global_loot_test:wheat_harvest",
   "conditions": [
     {
       "condition": "minecraft:match_tool",
@@ -11,7 +12,6 @@
       "block":"minecraft:wheat"
     }
   ],
-  "function": "global_loot_test:wheat_seeds_test",
   "seedItem": "minecraft:wheat_seeds",
   "numSeeds": 3,
   "replacement": "minecraft:wheat"
