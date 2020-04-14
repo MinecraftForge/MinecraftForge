@@ -82,6 +82,15 @@ public class Tags
         public static final Tag<Block> GLASS_PANES_YELLOW = tag("glass_panes/yellow");
 
         public static final Tag<Block> GRAVEL = tag("gravel");
+        public static final Tag<Block> MUSHROOM_CAPS = tag("mushroom_caps");
+        public static final Tag<Block> MUSHROOM_CAPS_BROWN = tag("mushroom_caps/brown");
+        public static final Tag<Block> MUSHROOM_CAPS_RED = tag("mushroom_caps/red");
+        public static final Tag<Block> MUSHROOM_STEMS = tag("mushroom_stems");
+        public static final Tag<Block> MUSHROOM_STEMS_COLORLESS = tag("mushroom_stems/colorless");
+        public static final Tag<Block> MUSHROOMS = tag("mushrooms");
+        public static final Tag<Block> MUSHROOMS_BROWN = tag("mushrooms/brown");
+        public static final Tag<Block> MUSHROOMS_EDIBLE = tag("mushrooms/edible");
+        public static final Tag<Block> MUSHROOMS_RED = tag("mushrooms/red");
         public static final Tag<Block> NETHERRACK = tag("netherrack");
         public static final Tag<Block> OBSIDIAN = tag("obsidian");
         public static final Tag<Block> ORES = tag("ores");
@@ -221,7 +230,15 @@ public class Tags
         public static final Tag<Item> INGOTS_IRON = tag("ingots/iron");
         public static final Tag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
         public static final Tag<Item> LEATHER = tag("leather");
+        public static final Tag<Item> MUSHROOM_CAPS = tag("mushroom_caps");
+        public static final Tag<Item> MUSHROOM_CAPS_BROWN = tag("mushroom_caps/brown");
+        public static final Tag<Item> MUSHROOM_CAPS_RED = tag("mushroom_caps/red");
+        public static final Tag<Item> MUSHROOM_STEMS = tag("mushroom_stems");
+        public static final Tag<Item> MUSHROOM_STEMS_COLORLESS = tag("mushroom_stems/colorless");
         public static final Tag<Item> MUSHROOMS = tag("mushrooms");
+        public static final Tag<Item> MUSHROOMS_BROWN = tag("mushrooms/brown");
+        public static final Tag<Item> MUSHROOMS_EDIBLE = tag("mushrooms/edible");
+        public static final Tag<Item> MUSHROOMS_RED = tag("mushrooms/red");
         public static final Tag<Item> MUSIC_DISCS = tag("music_discs");
         public static final Tag<Item> NETHER_STARS = tag("nether_stars");
         public static final Tag<Item> NETHERRACK = tag("netherrack");

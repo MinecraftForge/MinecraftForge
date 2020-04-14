@@ -99,7 +99,15 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.INGOTS_IRON).add(Items.IRON_INGOT);
         getBuilder(Tags.Items.INGOTS_NETHER_BRICK).add(Items.NETHER_BRICK);
         getBuilder(Tags.Items.LEATHER).add(Items.LEATHER);
-        getBuilder(Tags.Items.MUSHROOMS).add(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
+        copy(Tags.Blocks.MUSHROOM_CAPS, Tags.Items.MUSHROOM_CAPS);
+        copy(Tags.Blocks.MUSHROOM_CAPS_BROWN, Tags.Items.MUSHROOM_CAPS_BROWN);
+        copy(Tags.Blocks.MUSHROOM_CAPS_RED, Tags.Items.MUSHROOM_CAPS_RED);
+        copy(Tags.Blocks.MUSHROOM_STEMS, Tags.Items.MUSHROOM_STEMS);
+        copy(Tags.Blocks.MUSHROOM_STEMS_COLORLESS, Tags.Items.MUSHROOM_STEMS_COLORLESS);
+        copy(Tags.Blocks.MUSHROOMS, Tags.Items.MUSHROOMS);
+        copy(Tags.Blocks.MUSHROOMS_BROWN, Tags.Items.MUSHROOMS_BROWN);
+        copy(Tags.Blocks.MUSHROOMS_EDIBLE, Tags.Items.MUSHROOMS_EDIBLE);
+        copy(Tags.Blocks.MUSHROOMS_RED, Tags.Items.MUSHROOMS_RED);
         getBuilder(Tags.Items.MUSIC_DISCS).add(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP, Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD, Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT);
         getBuilder(Tags.Items.NETHER_STARS).add(Items.NETHER_STAR);
         copy(Tags.Blocks.NETHERRACK, Tags.Items.NETHERRACK);

@@ -71,6 +71,15 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getBuilder(GLASS_PANES_COLORLESS).add(Blocks.GLASS_PANE);
         addColored(getBuilder(STAINED_GLASS_PANES)::add, GLASS_PANES, "{color}_stained_glass_pane");
         getBuilder(GRAVEL).add(Blocks.GRAVEL);
+        getBuilder(MUSHROOM_CAPS).add(MUSHROOM_CAPS_BROWN, MUSHROOM_CAPS_RED);
+        getBuilder(MUSHROOM_CAPS_BROWN).add(Blocks.BROWN_MUSHROOM_BLOCK);
+        getBuilder(MUSHROOM_CAPS_RED).add(Blocks.RED_MUSHROOM_BLOCK);
+        getBuilder(MUSHROOM_STEMS).add(MUSHROOM_STEMS_COLORLESS);
+        getBuilder(MUSHROOM_STEMS_COLORLESS).add(Blocks.MUSHROOM_STEM);
+        getBuilder(MUSHROOMS).add(MUSHROOMS_BROWN, MUSHROOMS_RED);
+        getBuilder(MUSHROOMS_BROWN).add(Blocks.BROWN_MUSHROOM);
+        getBuilder(MUSHROOMS_EDIBLE).add(Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM);
+        getBuilder(MUSHROOMS_RED).add(Blocks.RED_MUSHROOM);
         getBuilder(NETHERRACK).add(Blocks.NETHERRACK);
         getBuilder(OBSIDIAN).add(Blocks.OBSIDIAN);
         getBuilder(ORES).add(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ);
