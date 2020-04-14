@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -32,7 +32,7 @@
+    public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_) {
+       this.field_175028_a = p_i46577_1_;
+       this.field_228790_e_ = p_i46577_2_;
+-      this.field_175027_c = new BlockModelRenderer(this.field_228790_e_);
++      this.field_175027_c = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer(this.field_228790_e_);
+       this.field_175025_e = new FluidBlockRenderer();
+    }
+ 
 @@ -40,18 +40,26 @@
        return this.field_175028_a;
     }

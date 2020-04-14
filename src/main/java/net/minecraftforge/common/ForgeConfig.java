@@ -127,6 +127,7 @@ public class ForgeConfig
         public final BooleanValue alwaysSetupTerrainOffThread;
 
         public final BooleanValue forgeLightPipelineEnabled;
+        public final BooleanValue experimentalForgeLightPipelineEnabled;
 
         public final BooleanValue selectiveResourceReloadEnabled;
 
@@ -162,6 +163,10 @@ public class ForgeConfig
                 .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
                 .define("forgeLightPipelineEnabled", true);
+            experimentalForgeLightPipelineEnabled = builder
+                .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                .translation("forge.configgui.forgeLightPipelineEnabled")
+                .define("experimentalForgeLightPipelineEnabled", false);
 
             selectiveResourceReloadEnabled = builder
                 .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")

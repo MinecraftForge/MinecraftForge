@@ -46,8 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.model.Material;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.fluid.*;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
@@ -115,8 +113,11 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1084,6 +1085,7 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
+    @SuppressWarnings("deprecation")
     public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Function<ResourceLocation, Optional<T>> valueGetter, JsonObject json)
     {
         if (json.has("optional"))
@@ -1092,12 +1094,9 @@ public class ForgeHooks
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                {
-                    T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
-                    if (value != null)
-                        builder.add(value);
-                } else
-                    builder.add(new OptionalTagEntry<>(new ResourceLocation(s.substring(1))));
+                    builder.addOptional(valueGetter, Collections.singleton(new ResourceLocation(s)));
+                else
+                    builder.addOptionalTag(new ResourceLocation(s.substring(1)));
             }
         }
 
@@ -1111,7 +1110,7 @@ public class ForgeHooks
                     T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
                     if (value != null)
                     {
-                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singletonList(value));
+                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singleton(value));
                         builder.remove(dummyEntry);
                     }
                 } else
@@ -1119,35 +1118,6 @@ public class ForgeHooks
                     Tag.ITagEntry<T> dummyEntry = new Tag.TagEntry<>(new ResourceLocation(s.substring(1)));
                     builder.remove(dummyEntry);
                 }
-            }
-        }
-    }
-
-    private static class OptionalTagEntry<T> extends Tag.TagEntry<T>
-    {
-        private Tag<T> resolvedTag = null;
-
-        OptionalTagEntry(ResourceLocation referent)
-        {
-            super(referent);
-        }
-
-        @Override
-        public boolean resolve(@Nonnull Function<ResourceLocation, Tag<T>> resolver)
-        {
-            if (this.resolvedTag == null)
-            {
-                this.resolvedTag = resolver.apply(this.getSerializedId());
-            }
-            return true; // never fail if resolver returns null
-        }
-
-        @Override
-        public void populate(@Nonnull Collection<T> items)
-        {
-            if (this.resolvedTag != null)
-            {
-                items.addAll(this.resolvedTag.getAllElements());
             }
         }
     }
@@ -1204,10 +1174,26 @@ public class ForgeHooks
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static synchronized void updateBurns()
     {
         VANILLA_BURNS.clear();
         FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
+
+    /**
+     * All loot table drops should be passed to this function so that mod added effects
+     * (e.g. smelting enchantments) can be processed.
+     * @param list The loot generated
+     * @param context The loot context that generated that loot
+     * @return The modified list
+     */
+    public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
+        LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
+        for(IGlobalLootModifier mod : man.getAllLootMods()) {
+            list = mod.apply(list, context);
+        }
+        return list;
     }
 
 }

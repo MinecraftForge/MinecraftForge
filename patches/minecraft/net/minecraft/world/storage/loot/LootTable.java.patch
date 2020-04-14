@@ -16,7 +16,23 @@
        this.field_216128_f = p_i51265_3_;
        this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
     }
-@@ -90,8 +90,8 @@
+@@ -75,6 +75,7 @@
+ 
+    }
+ 
++   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
+    public void func_216120_b(LootContext p_216120_1_, Consumer<ItemStack> p_216120_2_) {
+       this.func_216114_a(p_216120_1_, func_216124_a(p_216120_2_));
+    }
+@@ -82,6 +83,7 @@
+    public List<ItemStack> func_216113_a(LootContext p_216113_1_) {
+       List<ItemStack> list = Lists.newArrayList();
+       this.func_216120_b(p_216113_1_, list::add);
++      list = net.minecraftforge.common.ForgeHooks.modifyLoot(list, p_216113_1_);
+       return list;
+    }
+ 
+@@ -90,8 +92,8 @@
     }
  
     public void func_227506_a_(ValidationTracker p_227506_1_) {
@@ -27,7 +43,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -202,6 +202,41 @@
+@@ -202,6 +204,41 @@
        }
     }
  
@@ -69,7 +85,7 @@
     public static class Serializer implements JsonDeserializer<LootTable>, JsonSerializer<LootTable> {
        public LootTable deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
           JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot table");
-@@ -227,7 +262,7 @@
+@@ -227,7 +264,7 @@
              }
           }
  

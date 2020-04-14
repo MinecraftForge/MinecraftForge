@@ -45,7 +45,17 @@ public class EarlyLoaderGUI {
         this.window = window;
         RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        window.update();
+        window.flipFrame();
+    }
+
+    private void setupMatrix() {
+        RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.matrixMode(5889);
+        RenderSystem.loadIdentity();
+        RenderSystem.ortho(0.0D, window.getFramebufferWidth() / window.getGuiScaleFactor(), window.getFramebufferHeight() / window.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
+        RenderSystem.matrixMode(5888);
+        RenderSystem.loadIdentity();
+        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
     }
 
     public void handleElsewhere() {
@@ -63,8 +73,11 @@ public class EarlyLoaderGUI {
 
         RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.pushMatrix();
+        setupMatrix();
         renderMessages();
-        window.update();
+        window.flipFrame();
+        RenderSystem.popMatrix();
     }
 
     private void renderMessages() {
@@ -101,6 +114,7 @@ public class EarlyLoaderGUI {
         GL14.glVertexPointer(2, GL11.GL_FLOAT, 16, charBuffer);
 
         RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         RenderSystem.color3f(colour[0],colour[1],colour[2]);
@@ -110,6 +124,7 @@ public class EarlyLoaderGUI {
         RenderSystem.drawArrays(GL11.GL_QUADS, 0, quads * 4);
         RenderSystem.popMatrix();
 
+        GlStateManager.disableClientState(GL11.GL_VERTEX_ARRAY);
         MemoryUtil.memFree(charBuffer);
     }
 }

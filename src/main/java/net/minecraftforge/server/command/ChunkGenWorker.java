@@ -19,7 +19,6 @@
 
 package net.minecraftforge.server.command;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -28,11 +27,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.SessionLockException;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
@@ -146,17 +143,18 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            IChunk chunk = world.getChunk(x, z, ChunkStatus.FULL, false);
-            /* TODO: Mark things to unload
-            PlayerChunkMapEntry watchers = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
-            if (watchers == null) //If there are no players watching this, this will be null, so we can unload.
-                world.getChunkProvider().queueUnload(chunk);
-            */
+            if (!world.chunkExists(x, z)) { //Chunk is unloaded
+                IChunk chunk = world.getChunk(x, z, ChunkStatus.EMPTY, true);
+                if (!chunk.getStatus().isAtLeast(ChunkStatus.FULL)) {
+                    chunk = world.getChunk(x, z, ChunkStatus.FULL);
+                    genned++; //There isn't a way to check if the chunk is actually created just if it was loaded
+                }
+            }
         }
 
         if (queue.size() == 0)
         {
-            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim), true);
+            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, DimensionType.getKey(dim)), true);
             if (keepingLoaded != null && !keepingLoaded)
             {
                 DimensionManager.keepLoaded(dim, false);

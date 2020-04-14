@@ -54,6 +54,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
@@ -172,9 +173,15 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
+    @Deprecated // TODO: Remove in 1.16
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
+    }
+
+    public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
@@ -184,6 +191,7 @@ public class ForgeHooksClient
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
     {
+        StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.getTextureLocation().toString()));
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
     }

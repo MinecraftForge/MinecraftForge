@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:diamond_block",
+    "#minecraft:stone_bricks"
+  ],
+  "optional": [
+    "chisel:marble/raw",
+    "#forge:storage_blocks/ruby"
+  ]
+}
