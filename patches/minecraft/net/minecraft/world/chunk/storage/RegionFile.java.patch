@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/storage/RegionFile.java
 +++ b/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -32,6 +32,7 @@
+@@ -33,6 +33,7 @@
     private final IntBuffer field_76716_d;
     private final IntBuffer field_227127_h_;
     private final RegionBitmap field_227128_i_ = new RegionBitmap();
@@ -8,7 +8,7 @@
  
     public RegionFile(File p_i225784_1_, File p_i225784_2_) throws IOException {
        this(p_i225784_1_.toPath(), p_i225784_2_.toPath(), RegionFileVersion.field_227159_b_);
-@@ -39,6 +40,7 @@
+@@ -40,6 +41,7 @@
  
     public RegionFile(Path p_i225785_1_, Path p_i225785_2_, RegionFileVersion p_i225785_3_) throws IOException {
        this.field_227125_e_ = p_i225785_3_;
@@ -16,7 +16,7 @@
        if (!Files.isDirectory(p_i225785_2_)) {
           throw new IllegalArgumentException("Expected directory, got " + p_i225785_2_.toAbsolutePath());
        } else {
-@@ -61,6 +63,8 @@
+@@ -62,6 +64,8 @@
                 if (k != 0) {
                    int l = func_227142_b_(k);
                    int i1 = func_227131_a_(k);
@@ -25,7 +25,7 @@
                    this.field_227128_i_.func_227120_a_(l, i1);
                 }
              }
-@@ -69,6 +73,66 @@
+@@ -70,6 +74,66 @@
        }
     }
  
@@ -35,7 +35,7 @@
 +
 +       ByteBuffer header = ByteBuffer.allocate(5);
 +       this.field_76719_c.read(header, offset * 4096);
-+       header.flip();
++       ((Buffer)header).flip();
 +
 +       if (header.remaining() < 5) {
 +          field_227122_a_.error("Chunk {},{} in {} header is truncated: expected 5 but read {}", chunkX, chunkZ, this.filePath.getFileName(), header.remaining());
@@ -63,7 +63,7 @@
 +
 +          ByteBuffer header = ByteBuffer.allocate(5);
 +          this.field_76719_c.read(header, offset * 4096);
-+          header.flip();
++          ((Buffer)header).flip();
 +
 +          if (header.remaining() < 5) {
 +             field_227122_a_.error("Chunk {} in {} header is truncated: expected 5 but read {}", chunk, this.filePath.getFileName(), header.remaining());
@@ -78,7 +78,7 @@
 +
 +          ByteBuffer data = ByteBuffer.allocate(length + 4);
 +          this.field_76719_c.read(data, offset * 4096);
-+          data.flip();
++          ((Buffer)data).flip();
 +
 +          if (data.remaining() < length + 4) {
 +              field_227122_a_.error("Chunk {} in {} is truncated: expected {} but read {}", chunk, this.filePath.getFileName(), length + 4, data.remaining());
@@ -92,7 +92,7 @@
     private Path func_227145_e_(ChunkPos p_227145_1_) {
        String s = "c." + p_227145_1_.field_77276_a + "." + p_227145_1_.field_77275_b + ".mcc";
        return this.field_227124_d_.resolve(s);
-@@ -224,6 +288,7 @@
+@@ -225,6 +289,7 @@
        int j = this.field_76716_d.get(i);
        int k = func_227142_b_(j);
        int l = func_227131_a_(j);

@@ -34,6 +34,7 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -71,7 +72,7 @@ public interface IForgeVertexBuilder
             IntBuffer intbuffer = bytebuffer.asIntBuffer();
 
             for(int v = 0; v < vertexCount; ++v) {
-                intbuffer.clear();
+                ((Buffer)intbuffer).clear();
                 intbuffer.put(aint, v * 8, 8);
                 float f = bytebuffer.getFloat(0);
                 float f1 = bytebuffer.getFloat(4);
@@ -106,7 +107,7 @@ public interface IForgeVertexBuilder
             }
         }
     }
-    
+
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
         int bl = LightTexture.getLightBlock(lightmapCoord);
         int sl = LightTexture.getLightSky(lightmapCoord);
@@ -117,7 +118,7 @@ public interface IForgeVertexBuilder
         sl = Math.max(sl, slBaked);
         return LightTexture.packLight(bl, sl);
     }
-    
+
     default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
         byte nx = data.get(28);
         byte ny = data.get(29);
