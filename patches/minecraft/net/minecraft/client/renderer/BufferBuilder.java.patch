@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BufferBuilder.java
 +++ b/net/minecraft/client/renderer/BufferBuilder.java
-@@ -121,7 +121,6 @@
+@@ -122,7 +122,6 @@
  
           bitset.set(l);
        }
@@ -8,22 +8,22 @@
     }
  
     private void func_227829_a_(FloatBuffer p_227829_1_, int p_227829_2_) {
-@@ -297,6 +296,7 @@
+@@ -298,6 +297,7 @@
        }
  
        ByteBuffer bytebuffer = this.field_179001_a.slice();
 +      bytebuffer.order(this.field_179001_a.order()); // FORGE: Fix incorrect byte order
-       this.field_179001_a.clear();
+       ((Buffer)this.field_179001_a).clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
     }
-@@ -364,4 +364,15 @@
+@@ -365,4 +365,15 @@
           this.field_179018_e = p_i225907_2_;
        }
     }
 +
 +   public void putBulkData(ByteBuffer buffer) {
 +      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
-+      this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
++      ((Buffer)this.field_179001_a).position(this.field_178997_d * this.field_179011_q.func_177338_f());
 +      this.field_179001_a.put(buffer);
 +      this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +      this.field_227824_l_ += buffer.limit();
