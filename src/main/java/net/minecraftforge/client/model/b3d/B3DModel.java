@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.b3d;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -41,7 +42,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -100,11 +100,11 @@ public class B3DModel
                 int l = ByteBuffer.wrap(tmp).order(ByteOrder.LITTLE_ENDIAN).getInt();
                 if(l < 0 || l + 8 < 0) throw new IOException("File is too large");
                 buf = ByteBuffer.allocate(l + 8).order(ByteOrder.LITTLE_ENDIAN);
-                buf.clear();
+                ((Buffer)buf).clear();
                 buf.put(tag);
                 buf.put(tmp);
                 buf.put(IOUtils.toByteArray(in, l));
-                buf.flip();
+                ((Buffer)buf).flip();
             }
         }
 
@@ -193,7 +193,7 @@ public class B3DModel
             while(buf.get() != 0);
             int end = buf.position();
             byte[] tmp = new byte[end - start - 1];
-            buf.position(start);
+            ((Buffer)buf).position(start);
             buf.get(tmp);
             buf.get();
             return new String(tmp, "UTF8");
@@ -204,12 +204,12 @@ public class B3DModel
         private void pushLimit()
         {
             limitStack.push(buf.limit());
-            buf.limit(buf.position() + length);
+            ((Buffer)buf).limit(buf.position() + length);
         }
 
         private void popLimit()
         {
-            buf.limit(limitStack.pop());
+            ((Buffer)buf).limit(limitStack.pop());
         }
 
         private B3DModel bb3d() throws IOException
@@ -501,7 +501,7 @@ public class B3DModel
 
         private void skip()
         {
-            buf.position(buf.position() + length);
+            ((Buffer)buf).position(buf.position() + length);
         }
     }
 
