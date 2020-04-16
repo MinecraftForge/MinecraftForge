@@ -63,3 +63,5 @@ loaderVersion="[28,)"
     modId="global_loot_test"
 [[mods]]
     modId="custom_plant_type_test"
+[[mods]]
+    modId="chunk_data_event_save_null_world_test"
