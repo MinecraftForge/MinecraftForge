@@ -239,7 +239,6 @@ public class PlayerInteractEvent extends PlayerEvent
          * @return The ray trace result from clicking on this block.  May be null, if called from mod code using the old constructor.
          * Mods should be phasing away from the old constructor, and the nullable annotation will be removed in a future version.
          */
-        @Nullable
         public BlockRayTraceResult getRayTraceResult()
         {
             return res;
