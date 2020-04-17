@@ -19,6 +19,8 @@
 
 package net.minecraftforge.event.world;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -67,12 +69,19 @@ public class ChunkDataEvent extends ChunkEvent
     {
         private ChunkStatus.Type status;
 
+        @Deprecated
+        public Load(IChunk chunk, CompoundNBT data)
+        {
+            super(chunk, data);
+        }
+
         public Load(IChunk chunk, CompoundNBT data, ChunkStatus.Type status)
         {
             super(chunk, data);
             this.status = status;
         }
 
+        @Nullable
         public ChunkStatus.Type getStatus()
         {
             return this.status;
