@@ -193,7 +193,7 @@ public class ForgeHooks
             return player.canHarvestBlock(state);
         }
 
-        return toolLevel >= state.getHarvestLevel();
+        return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
     }
 
     public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
