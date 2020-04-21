@@ -23,10 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.crafting.IRecipe;
@@ -91,6 +88,11 @@ public class ConditionalRecipe
                     return (T)RecipeManager.deserializeRecipe(recipeId, JSONUtils.getJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }
+            if (JSONUtils.hasField(json, "optional"))
+                if (!JSONUtils.isBoolean(json, "optional"))
+                    throw new JsonSyntaxException("Invalid contitional recipe, the 'optional' field value must be Boolean (true/false).");
+                else if (JSONUtils.isBoolean(json, "optional"))
+                    throw new UnmatchedOptionalRecipeException();
             return null;
         }
 
@@ -105,6 +107,7 @@ public class ConditionalRecipe
         private List<IFinishedRecipe> recipes = new ArrayList<>();
         private ResourceLocation advId;
         private ConditionalAdvancement.Builder adv;
+        private boolean optional = false;
 
         private List<ICondition> currentConditions = new ArrayList<>();
 
@@ -144,6 +147,17 @@ public class ConditionalRecipe
             return this;
         }
 
+        public Builder setOptional(boolean optional)
+        {
+            this.optional = optional;
+            return this;
+        }
+
+        public Builder setOptional()
+        {
+            return setOptional(true);
+        }
+
         public void build(Consumer<IFinishedRecipe> consumer, String namespace, String path)
         {
             build(consumer, new ResourceLocation(namespace, path));
@@ -156,7 +170,7 @@ public class ConditionalRecipe
             if (recipes.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
-            consumer.accept(new Finished(id, conditions, recipes, advId, adv));
+            consumer.accept(new Finished(id, conditions, recipes, advId, adv, optional));
         }
     }
 
@@ -167,18 +181,23 @@ public class ConditionalRecipe
         private final List<IFinishedRecipe> recipes;
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
+        private final boolean optional;
 
-        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, ResourceLocation advId, ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, ResourceLocation advId, ConditionalAdvancement.Builder adv, boolean optional)
         {
             this.id = id;
             this.conditions = conditions;
             this.recipes = recipes;
             this.advId = advId;
             this.adv = adv;
+            this.optional = optional;
         }
 
         @Override
         public void serialize(JsonObject json) {
+            if(optional)
+                json.add("optional", new JsonPrimitive(true));
+
             JsonArray array = new JsonArray();
             json.add("recipes", array);
             for (int x = 0; x < conditions.size(); x++)
@@ -214,6 +233,14 @@ public class ConditionalRecipe
         @Override
         public ResourceLocation getAdvancementID() {
             return advId;
+        }
+    }
+
+    public static class UnmatchedOptionalRecipeException extends JsonParseException
+    {
+        private UnmatchedOptionalRecipeException()
+        {
+            super("Unmatched optional ConditionalRecipe");
         }
     }
 }

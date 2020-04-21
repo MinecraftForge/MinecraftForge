@@ -1,0 +1,28 @@
+{
+  "type": "forge:conditional",
+  "optional": true,
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "item": "minecraft:dirt",
+          "type": "forge:item_exists"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "XXX"
+        ],
+        "key": {
+          "X": {
+            "item": "minecraft:arrow"
+          }
+        },
+        "result": {
+          "item": "minecraft:black_bed"
+        }
+      }
+    }
+  ]
+}

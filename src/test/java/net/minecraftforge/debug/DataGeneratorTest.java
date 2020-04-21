@@ -184,6 +184,24 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+
+            // Matched conditional recipe
+            ResourceLocation OPTIONAL_RECIPE_ID = new ResourceLocation("data_gen_test", "conditional_optional");
+
+            ConditionalRecipe.builder()
+              .addCondition(
+                itemExists("minecraft", "dirt") // existing
+              )
+              .setOptional()
+              .addRecipe(
+                ShapedRecipeBuilder.shapedRecipe(Blocks.BLACK_BED)
+                  .patternLine("XXX")
+                  .key('X', Items.ARROW)
+                  .setGroup("")
+                  .addCriterion("has_dirt", hasItem(Blocks.DIRT))
+                  ::build
+              )
+              .build(consumer, OPTIONAL_RECIPE_ID);
         }
     }
     

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -50,9 +50,18 @@
+@@ -50,12 +50,23 @@
  
        for(Entry<ResourceLocation, JsonObject> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -8,7 +8,7 @@
  
           try {
 +            if (!net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue(), "conditions")) {
-+               field_199521_c.info("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               field_199521_c.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, entry.getValue());
@@ -19,3 +19,8 @@
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
++         } catch (net.minecraftforge.common.crafting.ConditionalRecipe.UnmatchedOptionalRecipeException unmatchedoptionalexception) {
++            field_199521_c.debug("Ignoring unmatched conditional recipe {}", resourcelocation);
+          } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
+             field_199521_c.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+          }
