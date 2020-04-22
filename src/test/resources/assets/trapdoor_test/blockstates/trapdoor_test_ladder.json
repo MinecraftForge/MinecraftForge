@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "minecraft:block/ladder" },
+    "facing=east":  { "model": "minecraft:block/ladder", "y": 90 },
+    "facing=south": { "model": "minecraft:block/ladder", "y": 180 },
+    "facing=west":  { "model": "minecraft:block/ladder", "y": 270 }
+  }
+}

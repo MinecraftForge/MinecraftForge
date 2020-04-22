@@ -63,3 +63,5 @@ loaderVersion="[28,)"
     modId="new_model_loader_test"
 [[mods]]
     modId="global_loot_test"
+[[mods]]
+    modId="trapdoor_test"
