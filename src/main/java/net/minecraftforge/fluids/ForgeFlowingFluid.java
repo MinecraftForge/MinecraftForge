@@ -259,5 +259,11 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             this.renderLayer = layer;
             return this;
         }
+
+        public Properties tickRate(int tickRate)
+        {
+            this.tickRate = tickRate;
+            return this;
+        }
     }
 }
