@@ -108,10 +108,12 @@ public class ConfigTracker {
     }
 
     private void closeConfig(final ModConfig config, final Path configBasePath) {
-        LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
-        config.save();
-        config.getHandler().unload(configBasePath, config);
-        config.setConfigData(null);
+        if (config.getConfigData() != null) {
+            LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+            config.save();
+            config.getHandler().unload(configBasePath, config);
+            config.setConfigData(null);
+        }
     }
 
     public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {

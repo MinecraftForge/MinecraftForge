@@ -67,7 +67,12 @@ public class ConfigFileTypeHandler {
     }
 
     public void unload(Path configBasePath, ModConfig config) {
-        FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
+        Path configPath = configBasePath.resolve(config.getFileName());
+        try {
+            FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
+        } catch (RuntimeException e) {
+            LOGGER.error("Failed to remove config {} from tracker!", configPath.toString(), e);
+        }
     }
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
