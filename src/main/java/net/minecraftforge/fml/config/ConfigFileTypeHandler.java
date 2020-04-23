@@ -40,26 +40,34 @@ public class ConfigFileTypeHandler {
     static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
     private static final Path defaultConfigPath = FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath());
 
+    @Deprecated //TODO remove in 1.16
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
-        return (c) -> {
-            final Path configPath = configBasePath.resolve(c.getFileName());
-            final CommentedFileConfig configData = CommentedFileConfig.builder(configPath).sync().
-                    preserveInsertionOrder().
-                    autosave().
-                    onFileNotFound((newfile, configFormat)-> setupConfigFile(c, newfile, configFormat)).
-                    writingMode(WritingMode.REPLACE).
-                    build();
-            LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
-            configData.load();
-            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
-            try {
-                FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
-                LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
-            } catch (IOException e) {
-                throw new RuntimeException("Couldn't watch config file", e);
-            }
-            return configData;
-        };
+        return (c) -> reader(configBasePath, c);
+    }
+
+    public CommentedFileConfig reader(Path configBasePath, ModConfig config) {
+        final Path configPath = configBasePath.resolve(config.getFileName());
+        final CommentedFileConfig configData = CommentedFileConfig.builder(configPath).sync().
+                preserveInsertionOrder().
+                autosave().
+                onFileNotFound((newfile, configFormat) -> setupConfigFile(config, newfile, configFormat)).
+                writingMode(WritingMode.REPLACE).
+                build();
+        LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
+        configData.load();
+        LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
+        try {
+            FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(config, configData, Thread.currentThread().getContextClassLoader()));
+
+            LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't watch config file", e);
+        }
+        return configData;
+    }
+
+    public void unload(Path configBasePath, ModConfig config) {
+        FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
     }
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {

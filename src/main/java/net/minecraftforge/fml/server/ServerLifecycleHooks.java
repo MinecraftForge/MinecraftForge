@@ -73,13 +73,18 @@ public class ServerLifecycleHooks
     private static volatile CountDownLatch exitLatch = null;
     private static MinecraftServer currentServer;
 
+    private static Path getServerConfigPath(final MinecraftServer server)
+    {
+        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
+        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+        return serverConfig;
+    }
+
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
         LogicalSidedProvider.setServer(()->server);
-        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
-        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
-        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, serverConfig);
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
         ResourcePackLoader.loadResourcePacks(currentServer.getResourcePacks(), ServerLifecycleHooks::buildPackFinder);
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
@@ -120,6 +125,7 @@ public class ServerLifecycleHooks
             latch.countDown();
             exitLatch = null;
         }
+        ConfigTracker.INSTANCE.unloadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
     }
 
     public static MinecraftServer getCurrentServer()

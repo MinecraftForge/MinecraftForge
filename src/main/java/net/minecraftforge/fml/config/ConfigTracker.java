@@ -83,6 +83,11 @@ public class ConfigTracker {
         this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
     }
 
+    public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
+        LOGGER.debug(CONFIG, "Unloading configs type {}", type);
+        this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
+    }
+
     public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs(boolean isLocal) {
         final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
             try {
@@ -95,11 +100,18 @@ public class ConfigTracker {
     }
 
     private void openConfig(final ModConfig config, final Path configBasePath) {
-        LOGGER.debug(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
-        final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
+        LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+        final CommentedFileConfig configData = config.getHandler().reader(configBasePath, config);
         config.setConfigData(configData);
         config.fireEvent(new ModConfig.Loading(config));
         config.save();
+    }
+
+    private void closeConfig(final ModConfig config, final Path configBasePath) {
+        LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+        config.save();
+        config.getHandler().unload(configBasePath, config);
+        config.setConfigData(null);
     }
 
     public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
