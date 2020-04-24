@@ -1,0 +1,13 @@
+--- a/net/minecraft/tileentity/LecternTileEntity.java
++++ b/net/minecraft/tileentity/LecternTileEntity.java
+@@ -109,6 +109,10 @@
+    private int field_214051_g;
+    private int field_214052_h;
+ 
++   public LecternTileEntity(TileEntityType<?> type) {
++      super(type);
++   }
++
+    public LecternTileEntity() {
+       super(TileEntityType.field_222485_C);
+    }
