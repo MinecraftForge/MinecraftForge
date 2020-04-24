@@ -101,7 +101,7 @@ public class ConfigTracker {
 
     private void openConfig(final ModConfig config, final Path configBasePath) {
         LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
-        final CommentedFileConfig configData = config.getHandler().reader(configBasePath, config);
+        final CommentedFileConfig configData = config.getHandler().readConfig(configBasePath, config);
         config.setConfigData(configData);
         config.fireEvent(new ModConfig.Loading(config));
         config.save();

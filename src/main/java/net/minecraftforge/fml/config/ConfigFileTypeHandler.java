@@ -42,10 +42,10 @@ public class ConfigFileTypeHandler {
 
     @Deprecated //TODO remove in 1.16
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
-        return (c) -> reader(configBasePath, c);
+        return (c) -> readConfig(configBasePath, c);
     }
 
-    public CommentedFileConfig reader(Path configBasePath, ModConfig config) {
+    public CommentedFileConfig readConfig(Path configBasePath, ModConfig config) {
         final Path configPath = configBasePath.resolve(config.getFileName());
         final CommentedFileConfig configData = CommentedFileConfig.builder(configPath).sync().
                 preserveInsertionOrder().
