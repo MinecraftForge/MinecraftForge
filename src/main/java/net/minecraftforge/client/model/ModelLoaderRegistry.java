@@ -249,7 +249,7 @@ public class ModelLoaderRegistry
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
-            modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
+            modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isUvLock());
 
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
