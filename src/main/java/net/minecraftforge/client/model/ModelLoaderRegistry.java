@@ -227,7 +227,6 @@ public class ModelLoaderRegistry
             if(!transform.entrySet().isEmpty())
             {
                 base = context.deserialize(transform, TransformationMatrix.class);
-                base = base.blockCenterToCorner();
             }
             IModelTransform state = new SimpleModelTransform(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
