@@ -63,3 +63,9 @@ loaderVersion="[28,)"
     modId="global_loot_test"
 [[mods]]
     modId="custom_plant_type_test"
+[[dependencies.global_loot_test]]
+    modId="forge"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"

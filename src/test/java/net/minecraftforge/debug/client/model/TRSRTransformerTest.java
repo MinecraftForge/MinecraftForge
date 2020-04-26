@@ -41,43 +41,47 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.QuadTransformer;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(TRSRTransformerTest.MODID)
 public class TRSRTransformerTest {
     public static final String MODID = "trsr_transformer_test";
+    private static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
+    private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
+
+    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.create(Material.ROCK)));
+    @SuppressWarnings("unused")
+    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
 
     public TRSRTransformerTest() {
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModelBake);
+        final IEventBus mod = FMLJavaModLoadingContext.get().getModEventBus();
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> mod.addListener(this::onModelBake));
+        BLOCKS.register(mod);
+        ITEMS.register(mod);
     }
 
-    @SubscribeEvent
     public void onModelBake(ModelBakeEvent e) {
         for (ResourceLocation id : e.getModelRegistry().keySet()) {
-            if ("trsr_transformer_test".equals(id.getNamespace()) && "test".equals(id.getPath())) {
+            if (MODID.equals(id.getNamespace()) && "test".equals(id.getPath())) {
                 e.getModelRegistry().put(id, new MyBakedModel(e.getModelRegistry().get(id)));
             }
         }
     }
 
-    public class MyBakedModel implements IDynamicBakedModel
-    {
+    public class MyBakedModel implements IDynamicBakedModel {
         private final IBakedModel base;
 
         public MyBakedModel(IBakedModel base) {
@@ -95,7 +99,7 @@ public class TRSRTransformerTest {
 
             for (BakedQuad quad : base.getQuads(state, side, rand, data)) {
 
-                if(true)
+                if (true)
                 {
                     BakedQuadBuilder builder = new BakedQuadBuilder();
 
@@ -104,12 +108,10 @@ public class TRSRTransformerTest {
                     quad.pipe(transformer);
 
                     quads.add(builder.build());
-                }
-                else
-                {
+                } /* else {
                     QuadTransformer qt = new QuadTransformer(trans);
                     quads.add(qt.processOne(quad));
-                }
+                }*/
             }
 
             return quads.build();
@@ -143,22 +145,6 @@ public class TRSRTransformerTest {
         @Override
         public ItemOverrideList getOverrides() {
             return base.getOverrides();
-        }
-    }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @ObjectHolder("trsr_transformer_test:test")
-        public static Block testblock;
-
-        @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            blockRegistryEvent.getRegistry().register(new Block(Block.Properties.create(Material.ROCK)).setRegistryName("trsr_transformer_test", "test"));
-        }
-
-        @SubscribeEvent
-        public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegistryEvent) {
-            itemRegistryEvent.getRegistry().register(new BlockItem(testblock, new Item.Properties().group(ItemGroup.MISC)).setRegistryName("trsr_transformer_test", "test"));
         }
     }
 }

@@ -32,6 +32,7 @@ import org.objectweb.asm.Type;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,7 @@ public class AutomaticEventSubscriber
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
+    private static final Type MOD_TYPE = Type.getType(Mod.class);
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
@@ -53,6 +55,9 @@ public class AutomaticEventSubscriber
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
                 filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.getAnnotationType())).
                 collect(Collectors.toList());
+        Map<String, String> modids = scanData.getAnnotations().stream().
+                filter(annotationData -> MOD_TYPE.equals(annotationData.getAnnotationType())).
+                collect(Collectors.toMap(a -> a.getClassType().getClassName(), a -> (String)a.getAnnotationData().get("value")));
 
         ebsTargets.forEach(ad -> {
             @SuppressWarnings("unchecked")
@@ -60,7 +65,7 @@ public class AutomaticEventSubscriber
                     getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
             final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
-            final String modId = (String)ad.getAnnotationData().getOrDefault("modid", mod.getModId());
+            final String modId = (String)ad.getAnnotationData().getOrDefault("modid", modids.getOrDefault(ad.getClassType().getClassName(), mod.getModId()));
             final ModAnnotation.EnumHolder busTargetHolder = (ModAnnotation.EnumHolder)ad.getAnnotationData().getOrDefault("bus", new ModAnnotation.EnumHolder(null, "FORGE"));
             final Mod.EventBusSubscriber.Bus busTarget = Mod.EventBusSubscriber.Bus.valueOf(busTargetHolder.getValue());
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
