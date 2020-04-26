@@ -22,36 +22,47 @@ package net.minecraftforge.fml.loading.progress;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Locale;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 public enum EarlyProgressVisualization {
     INSTANCE;
 
     private Visualization visualization;
 
-    public void accept(final Dist dist) {
-        if (visualization != null) return;
-        // We don't show the window on Mac because mac is super mega triple shit and can't handle anything out of the ordinary
-        final boolean ismac = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac");
-        visualization = dist.isClient() && !ismac && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
-        visualization.start();
+    public Runnable accept(final Dist dist) {
+        visualization = dist.isClient() && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
+        return visualization.start();
     }
 
-    public void join() {
-        visualization.join();
+    public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitor) {
+        return visualization.handOffWindow(width, height, title, monitor);
+    }
+
+    public boolean replacedWindow() {
+        return visualization.replacedWindow();
     }
 
     interface Visualization {
-        void start();
-        void join();
+        Runnable start();
+
+        default long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, LongSupplier monitorSupplier) {
+            return new LongSupplier() {
+                @Override
+                public long getAsLong() {
+                    return org.lwjgl.glfw.GLFW.glfwCreateWindow(width.getAsInt(), height.getAsInt(), title.get(), monitorSupplier.getAsLong(), 0L);
+                }
+            }.getAsLong();
+        }
+
+        default boolean replacedWindow() { return false; }
     }
 
     private static class NoVisualization implements Visualization {
         @Override
-        public void start() {
-        }
-
-        @Override
-        public void join() {
+        public Runnable start() {
+            return () -> {};
         }
     }
 
