@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading.progress;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -42,7 +43,6 @@ import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.opengl.GL11.*;
@@ -828,6 +828,10 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             "QTBWCfsDUEnrRM79TlpTxdiRQqPUZ1K6oljEemiV2jpI30rdTl9fXLusM3GdWC9nWqlgPepH7LDH" +
             "hqHbz9XSh0ldQFRIedowVo+o7cFPaWv+t4KwgVHL/w+K90N4AQIYnQAAAABJRU5ErkJggg==";
 
+    private Thread renderThread = new Thread(this::renderThreadFunc);
+
+    private boolean running = true;
+
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -879,7 +883,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             iconBuf.put(icon);
             iconBuf.position(0);
             final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
-            System.out.println(" BIG FARTS     " +STBImage.stbi_failure_reason());
+            if (imgBuffer == null) {
+                throw new RuntimeException("Failed to load window icon"); // ignore it and make the icon optional?
+            }
             glfwImages.position(0);
             glfwImages.width(iconWidth.get(0));
             glfwImages.height(iconHeight.get(0));
@@ -888,12 +894,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             glfwImages.position(0);
             glfwSetWindowIcon(window, glfwImages);
         }
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
         glfwShowWindow(window);
-        GL.createCapabilities();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glfwPollEvents();
     }
 
     private void renderProgress() {
@@ -908,7 +910,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glEnable(GL_BLEND);
         renderMessages();
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     private static float clamp(float num, float min, float max) {
@@ -1021,18 +1022,43 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         MemoryUtil.memFree(charBuffer);
     }
 
+    private void renderThreadFunc() {
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+        GL.createCapabilities();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        while (running) {
+            renderProgress();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+                break;
+            }
+        }
+        glfwMakeContextCurrent(0);
+    }
+
     @Override
     public Runnable start() {
         initWindow();
-        return this::renderProgress;
+        renderThread.start();
+        return org.lwjgl.glfw.GLFW::glfwPollEvents;
     }
 
     @Override
     public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
+        running = false;
+        try {
+            renderThread.join();
+        } catch (InterruptedException ignored) {
+        }
         glfwSetWindowTitle(window, title.get());
         glfwSetWindowSize(window, width.getAsInt(), height.getAsInt());
-        if (monitorSupplier.getAsLong()!=0L)
-            glfwSetWindowMonitor(window, monitorSupplier.getAsLong(),0, 0, width.getAsInt(), height.getAsInt(), GLFW_DONT_CARE);
+        if (monitorSupplier.getAsLong() != 0L)
+            glfwSetWindowMonitor(window, monitorSupplier.getAsLong(), 0, 0, width.getAsInt(), height.getAsInt(), GLFW_DONT_CARE);
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities();
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         renderProgress();
