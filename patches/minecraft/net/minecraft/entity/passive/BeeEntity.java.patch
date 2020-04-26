@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/passive/BeeEntity.java
++++ b/net/minecraft/entity/passive/BeeEntity.java
+@@ -437,8 +437,8 @@
+       if (!this.func_226409_eA_()) {
+          return false;
+       } else {
+-         TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
+-         return tileentity != null && tileentity.func_200662_C() == TileEntityType.field_226985_G_;
++         BlockState state = this.field_70170_p.func_180495_p(this.field_226369_bI_);
++         return state.func_203425_a(BlockTags.field_226151_aa_);
+       }
+    }
+ 
