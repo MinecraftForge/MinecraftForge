@@ -1,0 +1,11 @@
+--- a/net/minecraft/resources/ResourcePackList.java
++++ b/net/minecraft/resources/ResourcePackList.java
+@@ -48,7 +48,7 @@
+    private void func_198986_e() {
+       List<Entry<String, T>> list = Lists.newArrayList(this.field_198988_b.entrySet());
+       this.field_198988_b.clear();
+-      list.stream().sorted(Entry.comparingByKey()).forEachOrdered((p_198984_1_) -> {
++      list.stream().sorted(net.minecraftforge.fml.packs.ResourcePackLoader.getSorter()).forEachOrdered((p_198984_1_) -> {
+          ResourcePackInfo resourcepackinfo = (ResourcePackInfo)this.field_198988_b.put(p_198984_1_.getKey(), p_198984_1_.getValue());
+       });
+    }
