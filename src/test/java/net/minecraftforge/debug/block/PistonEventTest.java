@@ -37,10 +37,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.PistonEvent.PistonMoveType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 
 /**
@@ -77,9 +79,9 @@ public class PistonEventTest
         {
             World world = (World) event.getWorld();
             PistonBlockStructureHelper pistonHelper = event.getStructureHelper();
-            if (world.isRemote)
+            PlayerEntity player = DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            if (world.isRemote && player != null)
             {
-                PlayerEntity player = Minecraft.getInstance().player;
                 if (pistonHelper.canMove())
                 {
                     player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())));
@@ -118,9 +120,10 @@ public class PistonEventTest
         else
         {
             boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
-            if (event.getWorld().isRemote())
+
+            PlayerEntity player = DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            if (event.getWorld().isRemote() && player != null)
             {
-                PlayerEntity player = Minecraft.getInstance().player;
                 if (isSticky)
                 {
                     BlockPos targetPos = event.getFaceOffsetPos().offset(event.getDirection());
