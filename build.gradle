@@ -232,6 +232,7 @@ project(':forge') {
     }
 
     version = getVersion()
+    println('Forge Version: ' + version)
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
