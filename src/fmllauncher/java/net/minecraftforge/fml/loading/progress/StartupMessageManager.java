@@ -39,6 +39,7 @@ public class StartupMessageManager {
         return messages.values().stream().flatMap(Collection::stream).
                 sorted(Comparator.comparingLong(Message::getTimestamp).thenComparing(Message::getText).reversed()).
                 map(m -> Pair.of((int) ((ts - m.timestamp) / 1e6), m)).
+                limit(5).
                 collect(Collectors.toList());
     }
 
