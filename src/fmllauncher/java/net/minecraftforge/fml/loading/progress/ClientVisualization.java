@@ -911,21 +911,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwPollEvents();
     }
 
-    @Override
-    public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
-        glfwSetWindowTitle(window, title.get());
-        glfwSetWindowSize(window, width.getAsInt(), height.getAsInt());
-        if (monitorSupplier.getAsLong()!=0L)
-            glfwSetWindowMonitor(window, monitorSupplier.getAsLong(),0, 0, width.getAsInt(), height.getAsInt(), GLFW_DONT_CARE);
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        renderProgress();
-        glfwSwapInterval(0);
-        glfwSwapBuffers(window);
-        glfwSwapInterval(1);
-        return window;
-    }
-
     private static float clamp(float num, float min, float max) {
         if (num < min) {
             return min;
@@ -1040,6 +1025,21 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     public Runnable start() {
         initWindow();
         return this::renderProgress;
+    }
+
+    @Override
+    public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
+        glfwSetWindowTitle(window, title.get());
+        glfwSetWindowSize(window, width.getAsInt(), height.getAsInt());
+        if (monitorSupplier.getAsLong()!=0L)
+            glfwSetWindowMonitor(window, monitorSupplier.getAsLong(),0, 0, width.getAsInt(), height.getAsInt(), GLFW_DONT_CARE);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        renderProgress();
+        glfwSwapInterval(0);
+        glfwSwapBuffers(window);
+        glfwSwapInterval(1);
+        return window;
     }
 
     @Override
