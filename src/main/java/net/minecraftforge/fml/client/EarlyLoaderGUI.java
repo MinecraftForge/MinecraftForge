@@ -43,9 +43,6 @@ public class EarlyLoaderGUI {
 
     public EarlyLoaderGUI(final MainWindow window) {
         this.window = window;
-        RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        window.flipFrame();
     }
 
     private void setupMatrix() {
@@ -83,11 +80,12 @@ public class EarlyLoaderGUI {
     private void renderMessages() {
         List<Pair<Integer, StartupMessageManager.Message>> messages = StartupMessageManager.getMessages();
         for (int i = 0; i < messages.size(); i++) {
+            boolean nofade = i == 0;
             final Pair<Integer, StartupMessageManager.Message> pair = messages.get(i);
             final float fade = MathHelper.clamp((4000.0f - (float) pair.getLeft() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
-            if (fade <0.01f) continue;
+            if (fade <0.01f && !nofade) continue;
             StartupMessageManager.Message msg = pair.getRight();
-            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, fade);
+            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, nofade ? 1.0f : fade);
         }
         renderMemoryInfo();
     }
