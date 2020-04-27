@@ -83,6 +83,7 @@ public class FMLLoader
     private static String launchHandlerName;
     private static FMLCommonLaunchHandler commonLaunchHandler;
     public static Runnable progressWindowTick;
+    public static BackgroundScanHandler backgroundScanHandler;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -207,7 +208,7 @@ public class FMLLoader
     {
         LOGGER.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer(arguments);
-        final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
+        backgroundScanHandler = modDiscoverer.discoverMods();
         loadingModList = backgroundScanHandler.getLoadingModList();
         commonLaunchHandler.addLibraries(backgroundScanHandler.getModFiles().getOrDefault(IModFile.Type.LIBRARY, Collections.emptyList()));
         progressWindowTick.run();
