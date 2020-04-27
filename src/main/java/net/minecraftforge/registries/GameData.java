@@ -74,6 +74,7 @@ import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -896,7 +897,9 @@ public class GameData
     }
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {
+        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remapping mod data"));
         MinecraftForge.EVENT_BUS.post(new FMLModIdMappingEvent(remaps, isFreezing));
+        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remap complete"));
     }
 
     //Has to be split because of generics, Yay!
@@ -960,6 +963,7 @@ public class GameData
             if (!filter.test(rl)) continue;
             ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
             reg.unfreeze();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
             final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
             lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
             lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);

@@ -81,21 +81,6 @@ public class BackgroundScanHandler
         scannedFiles.add(file);
     }
 
-    public List<ModFile> getScannedFiles() {
-        if (!pendingFiles.isEmpty()) {
-            modContentScanner.shutdown();
-            try {
-                modContentScanner.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-            }
-        }
-        return scannedFiles;
-    }
-
-    public List<ModFile> getAllFiles() {
-        return allFiles;
-    }
-
     public void setLoadingModList(LoadingModList loadingModList)
     {
         this.loadingModList = loadingModList;
@@ -104,5 +89,17 @@ public class BackgroundScanHandler
     public LoadingModList getLoadingModList()
     {
         return loadingModList;
+    }
+
+    public void waitForScanToComplete(final Runnable ticker) {
+        modContentScanner.shutdown();
+        do {
+            ticker.run();
+            try {
+                modContentScanner.awaitTermination(50, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+        } while (!modContentScanner.isShutdown());
     }
 }
