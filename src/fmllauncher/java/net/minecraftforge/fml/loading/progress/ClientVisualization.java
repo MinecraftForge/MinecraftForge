@@ -20,10 +20,8 @@
 package net.minecraftforge.fml.loading.progress;
 
 import com.google.common.io.ByteStreams;
-import com.google.common.primitives.Bytes;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -36,13 +34,11 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Base64;
 import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -53,6 +49,7 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
 
 class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private final int screenWidth = 854;
@@ -109,7 +106,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
             byte[] icon;
             try {
-                icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_logo.png"));
+                icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
                 final ByteBuffer iconBuf = stack.malloc(icon.length);
                 iconBuf.put(icon);
                 ((Buffer)iconBuf).position(0);
@@ -305,6 +302,6 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 
     @Override
     public boolean replacedWindow() {
-        return true;
+        return running; // TODO is this method necessary? it's only used to prevent the vanilla icon set, which we do want as it only occurs after handoff
     }
 }
