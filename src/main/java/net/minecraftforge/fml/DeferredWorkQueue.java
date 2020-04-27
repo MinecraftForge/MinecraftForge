@@ -191,12 +191,14 @@ public class DeferredWorkQueue
         taskQueue.clear();
     }
 
-    static void runTasks(ModLoadingStage fromStage, Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
+    static Executor workExecutor = Runnable::run;
+
+    static void runTasks(ModLoadingStage fromStage, Consumer<List<ModLoadingException>> errorHandler) {
         raisedExceptions.clear();
         if (taskQueue.isEmpty()) return; // Don't log unnecessarily
         LOGGER.info(LOADING, "Dispatching synchronous work after {}: {} jobs", fromStage, taskQueue.size());
         StopWatch globalTimer = StopWatch.createStarted();
-        final CompletableFuture<Void> tasks = CompletableFuture.allOf(taskQueue.stream().map(ti -> makeRunnable(ti, executor)).toArray(CompletableFuture[]::new));
+        final CompletableFuture<Void> tasks = CompletableFuture.allOf(taskQueue.stream().map(ti -> makeRunnable(ti, workExecutor)).toArray(CompletableFuture[]::new));
         tasks.join();
         LOGGER.info(LOADING, "Synchronous work queue completed in {}", globalTimer);
         errorHandler.accept(raisedExceptions);
