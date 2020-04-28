@@ -200,7 +200,7 @@
        LootContext.Builder lootcontext$builder = this.func_213363_a(p_213354_2_, p_213354_1_);
 -      loottable.func_216120_b(lootcontext$builder.func_216022_a(LootParameterSets.field_216263_d), this::func_199701_a_);
 +      LootContext ctx = lootcontext$builder.func_216022_a(LootParameterSets.field_216263_d);
-+      net.minecraftforge.common.ForgeHooks.modifyLoot(loottable.func_216113_a(ctx), ctx).forEach(this::func_199701_a_);
++      loottable.func_216113_a(ctx).forEach(this::func_199701_a_);
     }
  
     protected LootContext.Builder func_213363_a(boolean p_213363_1_, DamageSource p_213363_2_) {
