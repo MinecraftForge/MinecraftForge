@@ -274,6 +274,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     @Override
     public Runnable start() {
         initWindow();
+        renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
         renderThread.start();
         return org.lwjgl.glfw.GLFW::glfwPollEvents;
     }

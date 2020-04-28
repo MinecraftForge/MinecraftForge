@@ -9,7 +9,15 @@
     }
  
     public Collection<Path> func_200389_a() {
-@@ -53,6 +53,10 @@
+@@ -38,6 +38,7 @@
+ 
+       for(IDataProvider idataprovider : this.field_200396_d) {
+          field_200393_a.info("Starting provider: {}", (Object)idataprovider.func_200397_b());
++         net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + idataprovider.func_200397_b());
+          stopwatch1.start();
+          idataprovider.func_200398_a(directorycache);
+          stopwatch1.stop();
+@@ -53,6 +54,10 @@
        this.field_200396_d.add(p_200390_1_);
     }
  
