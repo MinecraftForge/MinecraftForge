@@ -292,7 +292,7 @@ public class ModLoader
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
         gatherAndInitializeMods(() -> {});
-        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, null);
+        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
         dataGeneratorConfig.runAll();
     }
 
