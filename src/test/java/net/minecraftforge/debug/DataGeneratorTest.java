@@ -109,15 +109,17 @@ public class DataGeneratorTest
 {
     static final String MODID = "data_gen_test";
 
-    private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Variant.class, new Variant.Deserializer())
-            .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
-            .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
-            .create();
+    private static Gson GSON = null;
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
+        GSON = new GsonBuilder()
+        .registerTypeAdapter(Variant.class, new Variant.Deserializer())
+        .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
+        .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
+        .create();
+
         DataGenerator gen = event.getGenerator();
 
         if (event.includeClient())
@@ -186,7 +188,7 @@ public class DataGeneratorTest
             .build(consumer, ID);
         }
     }
-    
+
     public static class Tags extends BlockTagsProvider
     {
 
@@ -194,7 +196,7 @@ public class DataGeneratorTest
         {
             super(gen);
         }
-        
+
         @Override
         protected void registerTags()
         {
@@ -205,14 +207,14 @@ public class DataGeneratorTest
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
         }
     }
-    
+
     public static class Lang extends LanguageProvider
     {
         public Lang(DataGenerator gen)
         {
             super(gen, MODID, "en_us");
-        }    
-     
+        }
+
         @Override
         protected void addTranslations()
         {
@@ -376,7 +378,7 @@ public class DataGeneratorTest
                     .transform(Perspective.FIXED)
                         .scale(0.5f)
                         .end()
-                    .transform(Perspective.THIRDPERSON_RIGHT)                   
+                    .transform(Perspective.THIRDPERSON_RIGHT)
                         .rotation(75, 45, 0)
                         .translation(0, 2.5f, 0)
                         .scale(0.375f)

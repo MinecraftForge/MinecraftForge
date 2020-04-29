@@ -93,7 +93,7 @@ public class ModList
         return INSTANCE;
     }
 
-    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> inlineDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchSynchronousEvent(event, errors, executor);
+    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> inlineDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchSynchronousEvent(event, errors, executor, ticker);
 
     static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> parallelDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchParallelEvent(event, errors, executor, ticker);
 
@@ -119,10 +119,11 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
+    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
         LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
+        executor.execute(ticker);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
-        this.mods.forEach(m->m.transitionState(lifecycleEvent, errorHandler));
+        this.mods.stream().forEach(m->m.transitionState(lifecycleEvent, errorHandler));
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
     private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
@@ -148,7 +149,7 @@ public class ModList
                 throw new RuntimeException("Forge played \"STOP IT NOW MODS!\" - it was \"NOT VERY EFFECTIVE\"");
             }
         }
-        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler, executor);
+        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 

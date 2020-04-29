@@ -19,7 +19,11 @@
 
 package net.minecraftforge.fml.packs;
 
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,11 +32,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.fml.ModList;
@@ -55,8 +57,38 @@ public class ResourcePackLoader
         modResourcePacks = ModList.get().getModFiles().stream().
                 filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).
                 map(mf -> new ModFileResourcePack(mf.getFile())).
-                collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
+                collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
+    }
+
+    public static <V> Comparator<Map.Entry<String,V>> getSorter() {
+        List<String> order = new ArrayList<>();
+        order.add("vanilla");
+        order.add("mod_resources");
+
+        ModList.get().getModFiles().stream().
+        filter(mf -> !Objects.equals(mf.getModLoader(), "minecraft")).
+        map(e -> e.getMods().get(0).getModId()).
+        filter(e -> !"minecraft".equals(e)).
+        map(e -> "mod:" + e).
+        forEach(order::add);
+
+        final Object2IntMap<String> order_f = new Object2IntOpenHashMap<>(order.size());
+        for (int x = 0; x < order.size(); x++)
+            order_f.put(order.get(x), x);
+
+        return (e1, e2) -> {
+            final String s1 = e1.getKey();
+            final String s2 = e2.getKey();
+            final int i1 = order_f.getOrDefault(s1, -1);
+            final int i2 = order_f.getOrDefault(s2, -1);
+
+            if (i1 == i2 && i1 == -1)
+                return s1.compareTo(s2);
+            if (i1 == -1) return 1;
+            if (i2 == -1) return -1;
+            return i2 - i1;
+        };
     }
 
     public interface IPackInfoFinder<T extends ResourcePackInfo> {

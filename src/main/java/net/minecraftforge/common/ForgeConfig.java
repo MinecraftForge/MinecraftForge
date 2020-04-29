@@ -50,6 +50,8 @@ public class ForgeConfig
 
         public final BooleanValue treatEmptyTagsAsAir;
 
+        public final BooleanValue fixAdvancementLoading;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -110,6 +112,10 @@ public class ForgeConfig
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
 
+            fixAdvancementLoading = builder
+                    .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
+                    .translation("forge.configgui.fixAdvancementLoading")
+                    .define("fixAdvancementLoading", true);
             builder.pop();
         }
     }
