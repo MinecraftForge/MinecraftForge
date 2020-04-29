@@ -194,15 +194,13 @@ public class VanillaInventoryCodeHooks
                     if (!destinationHopper.mayTransfer())
                     {
                         int k = 0;
-/* TODO TileEntityHopper patches
-                        if (source instanceof TileEntityHopper)
+                        if (source instanceof HopperTileEntity)
                         {
-                            if (destinationHopper.getLastUpdateTime() >= ((TileEntityHopper) source).getLastUpdateTime())
+                            if (destinationHopper.getLastUpdateTime() >= ((HopperTileEntity) source).getLastUpdateTime())
                             {
                                 k = 1;
                             }
                         }
-*/
                         destinationHopper.setTransferCooldown(8 - k);
                     }
                 }
