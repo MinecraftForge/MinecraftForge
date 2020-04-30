@@ -145,7 +145,7 @@ public interface IForgeItem
     @Nullable
     default CompoundNBT getShareTag(ItemStack stack)
     {
-        return stack.getTag();
+        return stack.serializeNBT();
     }
 
     /**
@@ -157,7 +157,7 @@ public interface IForgeItem
      */
     default void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt)
     {
-        stack.setTag(nbt);
+        stack.deserializeNBT(nbt);
     }
 
     /**
