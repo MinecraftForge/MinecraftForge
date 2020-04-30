@@ -21,7 +21,7 @@ package net.minecraftforge.registries;
 
 import net.minecraft.network.datasync.IDataSerializer;
 
-public final class DataSerializerEntry<T> extends ForgeRegistryEntry<DataSerializerEntry<T>>
+public final class DataSerializerEntry<T> extends ForgeRegistryEntry<DataSerializerEntry<?>>
 {
     private final IDataSerializer<T> serializer;
 
