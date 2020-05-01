@@ -1,14 +1,16 @@
 --- a/net/minecraft/item/crafting/IRecipeSerializer.java
 +++ b/net/minecraft/item/crafting/IRecipeSerializer.java
-@@ -5,7 +5,7 @@
+@@ -5,8 +5,8 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  
 -public interface IRecipeSerializer<T extends IRecipe<?>> {
+-   IRecipeSerializer<ShapedRecipe> field_222157_a = func_222156_a("crafting_shaped", new ShapedRecipe.Serializer());
 +public interface IRecipeSerializer<T extends IRecipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipeSerializer<?>> {
-    IRecipeSerializer<ShapedRecipe> field_222157_a = func_222156_a("crafting_shaped", new ShapedRecipe.Serializer());
++   IRecipeSerializer<ShapedRecipe> field_222157_a = func_222156_a("crafting_shaped", new ShapedRecipe.Serializer<ShapedRecipe>());
     IRecipeSerializer<ShapelessRecipe> field_222158_b = func_222156_a("crafting_shapeless", new ShapelessRecipe.Serializer());
     SpecialRecipeSerializer<ArmorDyeRecipe> field_222159_c = func_222156_a("crafting_special_armordye", new SpecialRecipeSerializer<>(ArmorDyeRecipe::new));
+    SpecialRecipeSerializer<BookCloningRecipe> field_222160_d = func_222156_a("crafting_special_bookcloning", new SpecialRecipeSerializer<>(BookCloningRecipe::new));
 @@ -29,6 +29,7 @@
  
     T func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_);

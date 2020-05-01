@@ -1,0 +1,15 @@
+{
+  "type": "testmod:crafting_test",
+  "pattern": [
+    "# #",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "result": {
+    "item": "testmod:test_item"
+  }
+}

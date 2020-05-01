@@ -1,0 +1,82 @@
+--- a/net/minecraft/client/util/RecipeBookCategories.java
++++ b/net/minecraft/client/util/RecipeBookCategories.java
+@@ -1,39 +1,61 @@
+ package net.minecraft.client.util;
+ 
+ import com.google.common.collect.ImmutableList;
++
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Map;
++import java.util.function.Function;
++
+ import net.minecraft.block.Blocks;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
++import net.minecraft.item.crafting.IRecipe;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public enum RecipeBookCategories {
+-   SEARCH(new ItemStack(Items.field_151111_aL)),
+-   BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
+-   REDSTONE(new ItemStack(Items.field_151137_ax)),
+-   EQUIPMENT(new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151010_B)),
+-   MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e)),
+-   FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
+-   FURNACE_FOOD(new ItemStack(Items.field_151147_al)),
+-   FURNACE_BLOCKS(new ItemStack(Blocks.field_150348_b)),
+-   FURNACE_MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC)),
+-   BLAST_FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
+-   BLAST_FURNACE_BLOCKS(new ItemStack(Blocks.field_150450_ax)),
+-   BLAST_FURNACE_MISC(new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
+-   SMOKER_SEARCH(new ItemStack(Items.field_151111_aL)),
+-   SMOKER_FOOD(new ItemStack(Items.field_151147_al)),
+-   STONECUTTER(new ItemStack(Items.field_221782_da)),
+-   CAMPFIRE(new ItemStack(Items.field_151147_al));
++public class RecipeBookCategories {
++   public static final RecipeBookCategories SEARCH = new RecipeBookCategories(new ItemStack(Items.field_151111_aL));
++   public static final RecipeBookCategories BUILDING_BLOCKS = new RecipeBookCategories(new ItemStack(Items.field_151111_aL));
++   public static final RecipeBookCategories REDSTONE = new RecipeBookCategories(new ItemStack(Items.field_151137_ax));
++   public static final RecipeBookCategories EQUIPMENT = new RecipeBookCategories(new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151011_C));
++   public static final RecipeBookCategories MISC = new RecipeBookCategories(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e));
++   public static final RecipeBookCategories FURNACE_SEARCH = new RecipeBookCategories(new ItemStack(Items.field_151111_aL));
++   public static final RecipeBookCategories FURNACE_FOOD = new RecipeBookCategories(new ItemStack(Items.field_151147_al));
++   public static final RecipeBookCategories FURNACE_BLOCKS = new RecipeBookCategories(new ItemStack(Blocks.field_150348_b));
++   public static final RecipeBookCategories FURNACE_MISC = new RecipeBookCategories(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC));
++   public static final RecipeBookCategories BLAST_FURNACE_SEARCH = new RecipeBookCategories(new ItemStack(Items.field_151111_aL));
++   public static final RecipeBookCategories BLAST_FURNACE_BLOCKS = new RecipeBookCategories(new ItemStack(Blocks.field_150450_ax));
++   public static final RecipeBookCategories BLAST_FURNACE_MISC = new RecipeBookCategories(new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai));
++   public static final RecipeBookCategories SMOKER_SEARCH = new RecipeBookCategories(new ItemStack(Items.field_151111_aL));
++   public static final RecipeBookCategories SMOKER_FOOD = new RecipeBookCategories(new ItemStack(Items.field_151147_al));
++   public static final RecipeBookCategories STONECUTTER = new RecipeBookCategories(new ItemStack(Items.field_221782_da));
++   public static final RecipeBookCategories CAMPFIRE = new RecipeBookCategories(new ItemStack(Items.field_151147_al));
+ 
+    private final List<ItemStack> field_202904_j;
+ 
+-   private RecipeBookCategories(ItemStack... p_i48836_3_) {
++   public RecipeBookCategories(ItemStack... p_i48836_3_) {
+       this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
+    }
+ 
+    public List<ItemStack> func_202903_a() {
+       return this.field_202904_j;
+    }
++
++   protected static final Map<Function<IRecipe<?>, Boolean>, RecipeBookCategories> additionalCategoriesMap = new HashMap<>();
++
++   /**
++    * this method should be called in the FMLClintSetupEvent
++    *
++    * @param category category to add
++    * @param condition condition returns true if recipe belongs to the category
++    */
++   public static void addAdditionalCategory(RecipeBookCategories category, Function<IRecipe<?>, Boolean> condition)
++   {
++      /*
++       * maybe check if map contains condition and throw an exception if it does
++       */
++      additionalCategoriesMap.put(condition, category);
++   }
+ }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "testmod:test_recipe"
+    ]
+  },
+  "criteria": {
+    "dirt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:dirt"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "testmod:test_recipe"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dirt",
+      "has_the_recipe"
+    ]
+  ]
+}

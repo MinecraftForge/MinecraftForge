@@ -1,0 +1,80 @@
+--- a/net/minecraft/client/util/ClientRecipeBook.java
++++ b/net/minecraft/client/util/ClientRecipeBook.java
+@@ -7,6 +7,8 @@
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Map;
++import java.util.function.Function;
++
+ import net.minecraft.client.gui.recipebook.RecipeList;
+ import net.minecraft.inventory.container.BlastFurnaceContainer;
+ import net.minecraft.inventory.container.FurnaceContainer;
+@@ -66,34 +68,53 @@
+       this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
+          return Lists.newArrayList();
+       }).add(recipelist);
+-      if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
+-         if (p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_MISC) {
+-            if (p_202889_1_ == RecipeBookCategories.SMOKER_FOOD) {
+-               this.func_216767_a(RecipeBookCategories.SMOKER_SEARCH, recipelist);
+-            } else if (p_202889_1_ == RecipeBookCategories.STONECUTTER) {
+-               this.func_216767_a(RecipeBookCategories.STONECUTTER, recipelist);
+-            } else if (p_202889_1_ == RecipeBookCategories.CAMPFIRE) {
+-               this.func_216767_a(RecipeBookCategories.CAMPFIRE, recipelist);
++
++      boolean flag = false;
++      for(RecipeBookCategories c : RecipeBookCategories.additionalCategoriesMap.values()) {
++         if(c == p_202889_1_) {
++            this.computeIfAbsentAndAdd(c, recipelist);
++            flag = true;
++         }
++      }
++
++      if(!flag) {
++         if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
++            if (p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_MISC) {
++               if (p_202889_1_ == RecipeBookCategories.SMOKER_FOOD) {
++                  this.computeIfAbsentAndAdd(RecipeBookCategories.SMOKER_SEARCH, recipelist);
++               } else if (p_202889_1_ == RecipeBookCategories.STONECUTTER) {
++                  this.computeIfAbsentAndAdd(RecipeBookCategories.STONECUTTER, recipelist);
++               } else if (p_202889_1_ == RecipeBookCategories.CAMPFIRE) {
++                  this.computeIfAbsentAndAdd(RecipeBookCategories.CAMPFIRE, recipelist);
++               } else {
++                  this.computeIfAbsentAndAdd(RecipeBookCategories.SEARCH, recipelist);
++               }
+             } else {
+-               this.func_216767_a(RecipeBookCategories.SEARCH, recipelist);
++               this.computeIfAbsentAndAdd(RecipeBookCategories.BLAST_FURNACE_SEARCH, recipelist);
+             }
+          } else {
+-            this.func_216767_a(RecipeBookCategories.BLAST_FURNACE_SEARCH, recipelist);
++            this.computeIfAbsentAndAdd(RecipeBookCategories.FURNACE_SEARCH, recipelist);
+          }
+-      } else {
+-         this.func_216767_a(RecipeBookCategories.FURNACE_SEARCH, recipelist);
+       }
+ 
+       return recipelist;
+    }
+ 
+-   private void func_216767_a(RecipeBookCategories p_216767_1_, RecipeList p_216767_2_) {
+-      this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
++   private void computeIfAbsentAndAdd(RecipeBookCategories categories, RecipeList recipeList) {
++      this.field_197931_e.computeIfAbsent(categories, (cat) -> {
+          return Lists.newArrayList();
+-      }).add(p_216767_2_);
++      }).add(recipeList);
+    }
+ 
+    private static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
++      for(Function<IRecipe<?>, Boolean> condition : RecipeBookCategories.additionalCategoriesMap.keySet())
++      {
++         if(condition.apply(p_202887_0_))
++         {
++            return RecipeBookCategories.additionalCategoriesMap.get(condition);
++         }
++      }
++
+       IRecipeType<?> irecipetype = p_202887_0_.func_222127_g();
+       if (irecipetype == IRecipeType.field_222150_b) {
+          if (p_202887_0_.func_77571_b().func_77973_b().func_219971_r()) {
