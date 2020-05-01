@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/util/ClientRecipeBook.java
 +++ b/net/minecraft/client/util/ClientRecipeBook.java
-@@ -7,6 +7,8 @@
- import java.util.Collections;
- import java.util.List;
- import java.util.Map;
-+import java.util.function.Function;
-+
- import net.minecraft.client.gui.recipebook.RecipeList;
- import net.minecraft.inventory.container.BlastFurnaceContainer;
- import net.minecraft.inventory.container.FurnaceContainer;
-@@ -63,37 +65,50 @@
+@@ -63,37 +63,42 @@
     private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
        RecipeList recipelist = new RecipeList();
        this.field_197932_f.add(recipelist);
@@ -17,13 +8,9 @@
 -         return Lists.newArrayList();
 -      }).add(recipelist);
 +      this.computeIfAbsentAndAdd(p_202889_1_, recipelist);
-+
 +      for (RecipeBookCategories c : RecipeBookCategories.additionalCategoriesMap.values()) {
-+         if (c == p_202889_1_) {
-+            return recipelist;
-+         }
++         if (c == p_202889_1_) return recipelist;
 +      }
-+
        if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
           if (p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_MISC) {
              if (p_202889_1_ == RecipeBookCategories.SMOKER_FOOD) {
@@ -59,16 +46,13 @@
 -      }).add(p_216767_2_);
 +      }).add(recipeList);
     }
- 
+-
     private static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
-+      for(Function<IRecipe<?>, Boolean> condition : RecipeBookCategories.additionalCategoriesMap.keySet())
-+      {
-+         if(condition.apply(p_202887_0_))
-+         {
++      for(java.util.function.Function<IRecipe<?>, Boolean> condition : RecipeBookCategories.additionalCategoriesMap.keySet()) {
++         if(condition.apply(p_202887_0_)) {
 +            return RecipeBookCategories.additionalCategoriesMap.get(condition);
 +         }
 +      }
-+
        IRecipeType<?> irecipetype = p_202887_0_.func_222127_g();
        if (irecipetype == IRecipeType.field_222150_b) {
           if (p_202887_0_.func_77571_b().func_77973_b().func_219971_r()) {

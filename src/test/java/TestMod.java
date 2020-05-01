@@ -12,7 +12,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("testmod")
 @Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.MOD)
 public class TestMod {
-    public static RecipeBookCategories test_category = new RecipeBookCategories(new ItemStack(Items.BELL));
+    public static RecipeBookCategories test_category = null; //don't know how to get access to the builder
 
     public TestMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
