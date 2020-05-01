@@ -25,7 +25,7 @@
           RenderSystem.disableRescaleNormal();
           RenderSystem.disableDepthTest();
           int i = 0;
-@@ -308,9 +315,12 @@
+@@ -308,6 +315,8 @@
     }
  
     public void sendMessage(String p_sendMessage_1_, boolean p_sendMessage_2_) {
@@ -34,11 +34,7 @@
        if (p_sendMessage_2_) {
           this.minecraft.field_71456_v.func_146158_b().func_146239_a(p_sendMessage_1_);
        }
-+      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
- 
-       this.minecraft.field_71439_g.func_71165_d(p_sendMessage_1_);
-    }
-@@ -321,10 +331,14 @@
+@@ -321,10 +330,14 @@
        this.font = p_init_1_.field_71466_p;
        this.width = p_init_2_;
        this.height = p_init_3_;
@@ -53,7 +49,7 @@
     }
  
     public void setSize(int p_setSize_1_, int p_setSize_2_) {
-@@ -352,6 +366,7 @@
+@@ -352,6 +365,7 @@
     public void renderBackground(int p_renderBackground_1_) {
        if (this.minecraft.field_71441_e != null) {
           this.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
@@ -61,7 +57,7 @@
        } else {
           this.renderDirtBackground(p_renderBackground_1_);
        }
-@@ -370,6 +385,7 @@
+@@ -370,6 +384,7 @@
        bufferbuilder.func_225582_a_((double)this.width, 0.0D, 0.0D).func_225583_a_((float)this.width / 32.0F, (float)p_renderDirtBackground_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        bufferbuilder.func_225582_a_(0.0D, 0.0D, 0.0D).func_225583_a_(0.0F, (float)p_renderDirtBackground_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        tessellator.func_78381_a();
@@ -69,7 +65,7 @@
     }
  
     public boolean isPauseScreen() {
-@@ -453,4 +469,8 @@
+@@ -453,4 +468,8 @@
     public boolean isMouseOver(double p_isMouseOver_1_, double p_isMouseOver_3_) {
        return true;
     }

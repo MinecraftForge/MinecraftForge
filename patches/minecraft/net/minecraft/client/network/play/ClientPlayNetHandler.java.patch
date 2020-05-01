@@ -60,7 +60,15 @@
           }
  
           if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
-@@ -1276,6 +1288,7 @@
+@@ -1255,6 +1267,7 @@
+    public void func_195511_a(SCommandListPacket p_195511_1_) {
+       PacketThreadUtil.func_218797_a(p_195511_1_, this, this.field_147299_f);
+       this.field_195517_n = new CommandDispatcher<>(p_195511_1_.func_197693_a());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.CommandRegistryEvent(this.field_195517_n));
+    }
+ 
+    public void func_195512_a(SStopSoundPacket p_195512_1_) {
+@@ -1276,6 +1289,7 @@
        clientrecipebook.func_199644_c();
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -68,7 +76,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1356,7 +1369,7 @@
+@@ -1356,7 +1370,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -77,7 +85,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1376,6 +1389,7 @@
+@@ -1376,6 +1390,7 @@
        }
  
        this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
@@ -85,7 +93,7 @@
     }
  
     public void func_175098_a(SCombatPacket p_175098_1_) {
-@@ -1851,10 +1865,12 @@
+@@ -1851,10 +1866,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos7, l3, s10, l5);
           } else {
@@ -99,7 +107,7 @@
              packetbuffer.release();
           }
  
-@@ -1994,7 +2010,7 @@
+@@ -1994,7 +2011,7 @@
              for(SEntityPropertiesPacket.Snapshot sentitypropertiespacket$snapshot : p_147290_1_.func_149441_d()) {
                 IAttributeInstance iattributeinstance = abstractattributemap.func_111152_a(sentitypropertiespacket$snapshot.func_151409_a());
                 if (iattributeinstance == null) {

@@ -61,13 +61,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
 import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -98,6 +98,8 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -115,23 +117,17 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.ILightReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.DrawHighlightEvent;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.ScreenshotEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
@@ -814,5 +810,53 @@ public class ForgeHooksClient
         InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    // Execute the cached parsing of client message as a command. See net.minecraft.command.Commands for reference
+    // Return true leaves the message alone, false means it is supposed to be caught in net.minecraft.client.gui.screen.ChatScreen
+    public static boolean sendMessage(ParseResults<ISuggestionProvider> currentParse)
+    {
+        if(currentParse == null || currentParse.getReader().canRead()) return true;//Return only if parser fails
+        try
+        {
+            currentParse.getContext().getDispatcher().execute(currentParse);
+        }
+        catch (CommandException execution)
+        {
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").appendSibling(execution.getComponent()).applyTextStyle(TextFormatting.RED));
+        }
+        catch (CommandSyntaxException syntax)
+        {
+            if(syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())
+            {
+                return true;
+            }
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").appendSibling(TextComponentUtils.toTextComponent(syntax.getRawMessage())).applyTextStyle(TextFormatting.RED));
+            if (syntax.getInput() != null && syntax.getCursor() >= 0)
+            {
+                int position = Math.min(syntax.getInput().length(), syntax.getCursor());
+                ITextComponent details = new StringTextComponent("").applyTextStyle(TextFormatting.GRAY);
+                details.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, currentParse.getReader().getString()));
+                if (position > 10)
+                {
+                    details.appendText("...");
+                }
+                details.appendText(syntax.getInput().substring(Math.max(0, position - 10), position));
+                if (position < syntax.getInput().length())
+                {
+                    details.appendSibling(new StringTextComponent(syntax.getInput().substring(position)).applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE));
+                }
+                details.appendSibling(new TranslationTextComponent("command.context.here").applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent("").appendSibling(details).applyTextStyle(TextFormatting.RED));
+            }
+        }
+        catch (Exception generic)
+        {
+            StringTextComponent message = new StringTextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
+            ITextComponent component = new TranslationTextComponent("command.failed");
+            component.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").appendSibling(component).applyTextStyle(TextFormatting.RED));
+        }
+        return false;
     }
 }

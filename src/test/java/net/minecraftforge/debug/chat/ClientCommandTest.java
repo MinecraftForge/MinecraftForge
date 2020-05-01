@@ -19,72 +19,44 @@
 
 package net.minecraftforge.debug.chat;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.ResourceLocationArgument;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.event.CommandRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-//@Mod("client_command_test")
+@Mod("client_command_test")
 public class ClientCommandTest
 {
-    /*
-    @EventHandler
-    public void init(FMLInitializationEvent event)
+    public ClientCommandTest()
     {
-        ClientCommandHandler.instance.registerCommand(new TestCommand());
+        MinecraftForge.EVENT_BUS.addListener(this::init);
     }
 
-    private class TestCommand extends CommandBase
+    private void init(CommandRegistryEvent event)
+    {
+        LiteralArgumentBuilder<ISuggestionProvider> cmd = LiteralArgumentBuilder.literal("clientcommandtest");
+        RequiredArgumentBuilder<ISuggestionProvider, ResourceLocation> arg = RequiredArgumentBuilder.argument("block", ResourceLocationArgument.resourceLocation());
+        SuggestionProvider<ISuggestionProvider> suggestions = (c,b)->ISuggestionProvider.suggestIterable(ForgeRegistries.BLOCKS.getKeys(), b);
+        event.getDispatcher().register(cmd.requires(c->true).then(arg.suggests(suggestions).executes(new TestCommand())));
+    }
+
+    private static class TestCommand implements Command<ISuggestionProvider>
     {
         @Override
-        public String getName()
+        public int run(CommandContext<ISuggestionProvider> commandContext)
         {
-            return "clientCommandTest";
-        }
-
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return "clientCommandTest <block>";
-        }
-
-        @Override
-        public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-        {
-            return true;
-        }
-
-        @Override
-        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
-        {
-            if (args.length > 0)
-            {
-                return getListOfStringsMatchingLastWord(args, ForgeRegistries.BLOCKS.getKeys());
-            }
-
-            return Collections.emptyList();
-        }
-
-        @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
-            if (args.length > 0)
-            {
-                sender.sendMessage(new StringTextComponent("Input: " + Arrays.toString(args)));
-            }
-            else
-            {
-                sender.sendMessage(new StringTextComponent("No arguments."));
-            }
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Input: " + commandContext.getArgument("block", ResourceLocation.class).toString()));
+            return 0;
         }
     }
-    */
 }

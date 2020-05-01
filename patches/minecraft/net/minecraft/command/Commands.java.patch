@@ -17,3 +17,11 @@
              return lvt_4_3_;
           } catch (CommandException commandexception) {
              p_197059_1_.func_197021_a(commandexception.func_197003_a());
+@@ -269,6 +277,7 @@
+                argumentbuilder.executes((p_197053_0_) -> {
+                   return 0;
+                });
++               argumentbuilder.executes(null);// FORGE Client Commands support
+             }
+ 
+             if (argumentbuilder instanceof RequiredArgumentBuilder) {

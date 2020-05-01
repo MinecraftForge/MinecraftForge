@@ -29,8 +29,8 @@ loaderVersion="[28,)"
     modId="custom_slime_block_test"
 [[mods]]
     modId="client_chat_event_test"
-##[[mods]] # Client Command System doesn't exist yet
-##    modId="client_command_test"
+[[mods]]
+    modId="client_command_test"
 [[mods]]
     modId="command_event_test"
 [[mods]]
