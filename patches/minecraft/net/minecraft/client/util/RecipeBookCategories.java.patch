@@ -1,25 +1,90 @@
 --- a/net/minecraft/client/util/RecipeBookCategories.java
 +++ b/net/minecraft/client/util/RecipeBookCategories.java
-@@ -9,7 +9,7 @@
+@@ -9,31 +9,77 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public enum RecipeBookCategories {
 +public enum RecipeBookCategories implements net.minecraftforge.common.IExtensibleEnum {
     SEARCH(new ItemStack(Items.field_151111_aL)),
-    BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
-    REDSTONE(new ItemStack(Items.field_151137_ax)),
-@@ -36,4 +36,13 @@
+-   BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
+-   REDSTONE(new ItemStack(Items.field_151137_ax)),
+-   EQUIPMENT(new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151010_B)),
+-   MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e)),
++   BUILDING_BLOCKS(SEARCH, new ItemStack(Blocks.field_196584_bK)),
++   REDSTONE(SEARCH, new ItemStack(Items.field_151137_ax)),
++   EQUIPMENT(SEARCH, new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151010_B)),
++   MISC(SEARCH, new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e)),
+    FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
+-   FURNACE_FOOD(new ItemStack(Items.field_151147_al)),
+-   FURNACE_BLOCKS(new ItemStack(Blocks.field_150348_b)),
+-   FURNACE_MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC)),
++   FURNACE_FOOD(FURNACE_SEARCH, new ItemStack(Items.field_151147_al)),
++   FURNACE_BLOCKS(FURNACE_SEARCH, new ItemStack(Blocks.field_150348_b)),
++   FURNACE_MISC(FURNACE_SEARCH, new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC)),
+    BLAST_FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
+-   BLAST_FURNACE_BLOCKS(new ItemStack(Blocks.field_150450_ax)),
+-   BLAST_FURNACE_MISC(new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
++   BLAST_FURNACE_BLOCKS(BLAST_FURNACE_SEARCH, new ItemStack(Blocks.field_150450_ax)),
++   BLAST_FURNACE_MISC(BLAST_FURNACE_SEARCH, new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
+    SMOKER_SEARCH(new ItemStack(Items.field_151111_aL)),
+    SMOKER_FOOD(new ItemStack(Items.field_151147_al)),
+    STONECUTTER(new ItemStack(Items.field_221782_da)),
+    CAMPFIRE(new ItemStack(Items.field_151147_al));
+ 
++   protected static final java.util.Map<java.util.function.Function<net.minecraft.item.crafting.IRecipe<?>, Boolean>, RecipeBookCategories> additionalCategoriesMap = new java.util.HashMap<>();
++
++   private final RecipeBookCategories searchCategory;
+    private final List<ItemStack> field_202904_j;
+ 
+    private RecipeBookCategories(ItemStack... p_i48836_3_) {
+       this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
++      this.searchCategory = null;
+    }
+ 
++   private RecipeBookCategories(RecipeBookCategories searchCategory, ItemStack... icons) {
++      this.field_202904_j = ImmutableList.copyOf(icons);
++      if(!searchCategory.isSearch()) throw new IllegalArgumentException("search category can not have a search category!");
++      this.searchCategory = searchCategory;
++   }
++
     public List<ItemStack> func_202903_a() {
        return this.field_202904_j;
     }
-+   protected static final java.util.Map<java.util.function.Function<net.minecraft.item.crafting.IRecipe<?>, Boolean>, RecipeBookCategories> additionalCategoriesMap = new java.util.HashMap<>();
++
++   public RecipeBookCategories getSearchCategory() {
++      return this.searchCategory;
++   }
++
++   public boolean isSearch() { return this.searchCategory == null; }
++
 +   /**
 +    * this method should be called in the FMLClintSetupEvent
++    *
 +    * @param category category to add
 +    * @param condition condition returns true if recipe belongs to the category
 +    */
++
 +   public static void addAdditionalCategory(RecipeBookCategories category, java.util.function.Function<net.minecraft.item.crafting.IRecipe<?>, Boolean> condition) {
 +      additionalCategoriesMap.put(condition, category);
++   }
++
++   /**
++    * @param name name of category
++    * @param icons icons of category
++    * @return new category
++    */
++   public static RecipeBookCategories create(String name, ItemStack... icons) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   /**
++    * @param name name of Category
++    * @param searchCategory searchCategory of category (here all Recipes are also added)
++    * @param icons icons of category
++    * @return new sub-category of search-category
++    */
++   public static RecipeBookCategories create(String name, RecipeBookCategories searchCategory, ItemStack... icons) {
++      throw new IllegalStateException("Enum not extended");
 +   }
  }

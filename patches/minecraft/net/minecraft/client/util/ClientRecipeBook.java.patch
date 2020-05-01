@@ -1,38 +1,34 @@
 --- a/net/minecraft/client/util/ClientRecipeBook.java
 +++ b/net/minecraft/client/util/ClientRecipeBook.java
-@@ -63,37 +63,42 @@
+@@ -63,37 +63,30 @@
     private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
        RecipeList recipelist = new RecipeList();
        this.field_197932_f.add(recipelist);
 -      this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
 -         return Lists.newArrayList();
 -      }).add(recipelist);
+-      if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
+-         if (p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_MISC) {
+-            if (p_202889_1_ == RecipeBookCategories.SMOKER_FOOD) {
+-               this.func_216767_a(RecipeBookCategories.SMOKER_SEARCH, recipelist);
+-            } else if (p_202889_1_ == RecipeBookCategories.STONECUTTER) {
+-               this.func_216767_a(RecipeBookCategories.STONECUTTER, recipelist);
+-            } else if (p_202889_1_ == RecipeBookCategories.CAMPFIRE) {
+-               this.func_216767_a(RecipeBookCategories.CAMPFIRE, recipelist);
+-            } else {
+-               this.func_216767_a(RecipeBookCategories.SEARCH, recipelist);
 +      this.computeIfAbsentAndAdd(p_202889_1_, recipelist);
 +      for (RecipeBookCategories c : RecipeBookCategories.additionalCategoriesMap.values()) {
-+         if (c == p_202889_1_) return recipelist;
-+      }
-       if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
-          if (p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.BLAST_FURNACE_MISC) {
-             if (p_202889_1_ == RecipeBookCategories.SMOKER_FOOD) {
--               this.func_216767_a(RecipeBookCategories.SMOKER_SEARCH, recipelist);
-+               this.computeIfAbsentAndAdd(RecipeBookCategories.SMOKER_SEARCH, recipelist);
-             } else if (p_202889_1_ == RecipeBookCategories.STONECUTTER) {
--               this.func_216767_a(RecipeBookCategories.STONECUTTER, recipelist);
-+               this.computeIfAbsentAndAdd(RecipeBookCategories.STONECUTTER, recipelist);
-             } else if (p_202889_1_ == RecipeBookCategories.CAMPFIRE) {
--               this.func_216767_a(RecipeBookCategories.CAMPFIRE, recipelist);
-+               this.computeIfAbsentAndAdd(RecipeBookCategories.CAMPFIRE, recipelist);
-             } else {
--               this.func_216767_a(RecipeBookCategories.SEARCH, recipelist);
-+               this.computeIfAbsentAndAdd(RecipeBookCategories.SEARCH, recipelist);
++         if (c == p_202889_1_) {
++            if(!c.isSearch()) {
++               computeIfAbsentAndAdd(c.getSearchCategory(), recipelist);
              }
-          } else {
+-         } else {
 -            this.func_216767_a(RecipeBookCategories.BLAST_FURNACE_SEARCH, recipelist);
-+            this.computeIfAbsentAndAdd(RecipeBookCategories.BLAST_FURNACE_SEARCH, recipelist);
++            return recipelist;
           }
-       } else {
+-      } else {
 -         this.func_216767_a(RecipeBookCategories.FURNACE_SEARCH, recipelist);
-+         this.computeIfAbsentAndAdd(RecipeBookCategories.FURNACE_SEARCH, recipelist);
        }
  
        return recipelist;
