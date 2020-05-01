@@ -28,7 +28,8 @@
 +   BLAST_FURNACE_BLOCKS(BLAST_FURNACE_SEARCH, new ItemStack(Blocks.field_150450_ax)),
 +   BLAST_FURNACE_MISC(BLAST_FURNACE_SEARCH, new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
     SMOKER_SEARCH(new ItemStack(Items.field_151111_aL)),
-    SMOKER_FOOD(new ItemStack(Items.field_151147_al)),
+-   SMOKER_FOOD(new ItemStack(Items.field_151147_al)),
++   SMOKER_FOOD(SMOKER_SEARCH, new ItemStack(Items.field_151147_al)),
     STONECUTTER(new ItemStack(Items.field_221782_da)),
     CAMPFIRE(new ItemStack(Items.field_151147_al));
  
