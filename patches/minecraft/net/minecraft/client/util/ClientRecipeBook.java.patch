@@ -42,7 +42,6 @@
 -      }).add(p_216767_2_);
 +      }).add(recipeList);
     }
--
     private static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
 +      for(java.util.function.Function<IRecipe<?>, Boolean> condition : RecipeBookCategories.additionalCategoriesMap.keySet()) {
 +         if(condition.apply(p_202887_0_)) {
