@@ -1,5 +1,6 @@
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.recipebook.RecipeList;
+import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

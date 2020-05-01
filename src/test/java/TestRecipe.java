@@ -36,7 +36,7 @@ public class TestRecipe extends ShapedRecipe {
         return super.toString() + " output: {" + this.getRecipeOutput() + "}";
     }
 
-    public static class Serializer extends ShapedRecipe.Serializer<TestRecipe>
+    public static class Serializer extends ShapedRecipe.Serializer
     {
         @Override
         public @Nonnull TestRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {

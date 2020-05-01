@@ -9,7 +9,7 @@
  import net.minecraft.client.gui.recipebook.RecipeList;
  import net.minecraft.inventory.container.BlastFurnaceContainer;
  import net.minecraft.inventory.container.FurnaceContainer;
-@@ -66,34 +68,53 @@
+@@ -66,34 +68,54 @@
        this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
           return Lists.newArrayList();
        }).add(recipelist);
@@ -27,6 +27,7 @@
 +         if(c == p_202889_1_) {
 +            this.computeIfAbsentAndAdd(c, recipelist);
 +            flag = true;
++            break;
 +         }
 +      }
 +
