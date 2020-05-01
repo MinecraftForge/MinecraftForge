@@ -42,11 +42,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.ICapabilityShareTag;
+import net.minecraftforge.common.util.Constants;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
+public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, ICapabilityShareTag<CompoundNBT>
 {
     // Helpers for accessing Item data
     default ItemStack getStack()
@@ -379,7 +381,17 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     @Nullable
     default CompoundNBT getShareTag()
     {
-        return getStack().getItem().getShareTag(getStack());
+	    CompoundNBT shareTag = getStack().getItem().getShareTag(getStack());
+        CompoundNBT capabilityShareTags = this.serializeShareTag();
+        if(capabilityShareTags != null)
+        {
+            if(shareTag == null)
+            {
+                shareTag = new CompoundNBT();
+            }
+            shareTag.put("ForgeCaps", capabilityShareTags);
+        }
+        return shareTag;
     }
 
     /**
@@ -391,6 +403,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default void readShareTag(@Nullable CompoundNBT nbt)
     {
+        if(nbt != null && nbt.contains("ForgeCaps", Constants.NBT.TAG_COMPOUND))
+        {
+            this.deserializeShareTag(nbt.getCompound("ForgeCaps"));
+            nbt.remove("ForgeCaps");
+            if(nbt.size() == 0)
+            {
+                return;
+            }
+        }
         getStack().getItem().readShareTag(getStack(), nbt);
     }
 

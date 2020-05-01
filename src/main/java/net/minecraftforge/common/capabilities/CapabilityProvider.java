@@ -96,6 +96,25 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
             disp.deserializeNBT(tag);
         }
     }
+    
+    protected final CompoundNBT serializeShareTags() 
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            return disp.serializeShareTag();
+        }
+        return null;
+    }
+
+    protected final void deserializeShareTags(CompoundNBT nbt) 
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.deserializeShareTag(nbt);
+        }
+    }
 
     protected void invalidateCaps()
     {

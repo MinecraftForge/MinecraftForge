@@ -243,3 +243,16 @@
     public SoundEvent func_226629_F_() {
        return this.func_77973_b().func_225520_U__();
     }
+@@ -922,4 +975,12 @@
+    public SoundEvent func_226630_G_() {
+       return this.func_77973_b().func_225519_S__();
+    }
++
++   public CompoundNBT serializeShareTag() {
++      return this.serializeShareTags();
++   }
++
++   public void deserializeShareTag(CompoundNBT nbt) {
++	  this.deserializeShareTags(nbt);
++   }
+ }

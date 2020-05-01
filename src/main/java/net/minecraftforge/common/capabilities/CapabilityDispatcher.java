@@ -19,17 +19,17 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import com.google.common.collect.Lists;
 
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -47,12 +47,14 @@ import net.minecraftforge.common.util.LazyOptional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>, ICapabilityProvider
+public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>, ICapabilityProvider, ICapabilityShareTag<CompoundNBT>
 {
     private ICapabilityProvider[] caps;
     private INBTSerializable<INBT>[] writers;
-    private String[] names;
+    private String[] writerNames;
     private final List<Runnable> listeners;
+    private ICapabilityShareTag<INBT>[] shareTags;
+    private String[] shareTagNames;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
     {
@@ -66,6 +68,8 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
         List<INBTSerializable<INBT>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
         this.listeners = listeners;
+        List<ICapabilityShareTag<INBT>> lstShareTags = Lists.newArrayList();
+        List<String> lstShareTagNames = Lists.newArrayList();
 
         if (parent != null) // Parents go first!
         {
@@ -86,11 +90,19 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
                 lstWriters.add((INBTSerializable<INBT>)prov);
                 lstNames.add(entry.getKey().toString());
             }
+            if (prov instanceof ICapabilityShareTag)
+            {
+                lstShareTags.add((ICapabilityShareTag<INBT>)prov);
+                lstShareTagNames.add(entry.getKey().toString());
+            }
         }
 
         caps = lstCaps.toArray(new ICapabilityProvider[lstCaps.size()]);
         writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
-        names = lstNames.toArray(new String[lstNames.size()]);
+        writerNames = lstNames.toArray(new String[lstNames.size()]);
+        
+        shareTags = lstShareTags.toArray(new ICapabilityShareTag[lstShareTags.size()]);
+        shareTagNames = lstShareTagNames.toArray(new String[lstShareTagNames.size()]);
     }
 
 
@@ -124,7 +136,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
         CompoundNBT nbt = new CompoundNBT();
         for (int x = 0; x < writers.length; x++)
         {
-            nbt.put(names[x], writers[x].serializeNBT());
+            nbt.put(writerNames[x], writers[x].serializeNBT());
         }
         return nbt;
     }
@@ -134,9 +146,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     {
         for (int x = 0; x < writers.length; x++)
         {
-            if (nbt.contains(names[x]))
+            if (nbt.contains(writerNames[x]))
             {
-                writers[x].deserializeNBT(nbt.get(names[x]));
+                writers[x].deserializeNBT(nbt.get(writerNames[x]));
             }
         }
     }
@@ -151,5 +163,31 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     public void invalidate()
     {
         this.listeners.forEach(Runnable::run);
+    }
+    
+    @Override
+    @Nullable
+    public CompoundNBT serializeShareTag()
+    {
+        if (shareTags.length == 0)
+            return null;
+        CompoundNBT nbt = new CompoundNBT();
+        for (int x = 0; x < shareTags.length; x++)
+        {
+            nbt.put(shareTagNames[x], shareTags[x].serializeShareTag());
+        }
+        return nbt;
+    }
+
+    @Override
+    public void deserializeShareTag(CompoundNBT nbt)
+    {
+        for (int x = 0; x < shareTags.length; x++)
+        {
+            if (nbt.contains(shareTagNames[x]))
+            {
+            	shareTags[x].deserializeShareTag(nbt.get(shareTagNames[x]));
+            }
+        }
     }
 }
