@@ -76,7 +76,7 @@
     }
  
     public List<RecipeList> func_199642_d() {
-@@ -143,4 +122,29 @@
+@@ -143,4 +122,43 @@
     public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
        return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
     }
@@ -86,8 +86,7 @@
 +    * @param type categories type of the container
 +    * @param categories categories to add to the type of the container
 +    */
-+   public static void addCategoriesToType(RecipeBookCategories.Type type, RecipeBookCategories... categories)
-+   {
++   public static void addCategoriesToType(RecipeBookCategories.Type type, RecipeBookCategories... categories) {
 +      categoriesByType.computeIfAbsent(type, (cats) -> Lists.newArrayList());
 +      List<RecipeBookCategories> categoriesList = categoriesByType.get(type);
 +      for (RecipeBookCategories category : categories) {
@@ -95,6 +94,21 @@
 +            categoriesList.add(category);
 +         }
 +      }
++   }
++
++   /**
++    * this method should be called int the FMLClientSetupEvent
++    * @param type categories type of the container
++    * @param categories new categories of container
++    */
++   public static void setCategoriesOfType(RecipeBookCategories.Type type, RecipeBookCategories... categories) {
++      List<RecipeBookCategories> newCategories = Lists.newArrayList();
++      for (RecipeBookCategories category : categories) {
++         if(!newCategories.contains(category) && category != null) {
++            newCategories.add(category);
++         }
++      }
++      categoriesByType.put(type, newCategories);
 +   }
 +
 +   static {
