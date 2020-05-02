@@ -28,8 +28,8 @@ public class TestMod {
         RecipeBookCategories.addAdditionalCategory(test_category2, (recipe) -> {
             return recipe.getRecipeOutput().getItem() == Items.REDSTONE;
         });
-        ClientRecipeBook.addCategoriesToType(RecipeBookCategories.Type.CRAFTING, test_category);
-        ClientRecipeBook.addCategoriesToType(RecipeBookCategories.Type.CRAFTING, test_category2);
+        ClientRecipeBook.addCategoriesToType(RecipeBookCategories.Type.CRAFTING, test_category, test_category2);
+        ClientRecipeBook.addCategoriesToType(RecipeBookCategories.Type.STONECUTTER, test_category2, test_category, RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.CAMPFIRE, RecipeBookCategories.SEARCH, RecipeBookCategories.SMOKER_SEARCH);
     }
 
     @SubscribeEvent

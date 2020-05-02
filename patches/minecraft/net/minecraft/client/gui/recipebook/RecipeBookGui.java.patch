@@ -1,34 +1,45 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -52,7 +52,11 @@
+@@ -35,7 +35,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class RecipeBookGui extends AbstractGui implements IRenderable, IGuiEventListener, IRecipeUpdateListener, IRecipePlacer<Ingredient> {
+-   protected static final ResourceLocation field_191894_a = new ResourceLocation("textures/gui/recipe_book.png");
++   protected static final ResourceLocation field_191894_a = new ResourceLocation("forge:textures/gui/recipe_book.png");
+    private int field_191903_n;
+    private int field_191904_o;
+    private int field_191905_p;
+@@ -52,7 +52,20 @@
     protected final RecipeItemHelper field_193965_u = new RecipeItemHelper();
     private int field_193966_v;
     private boolean field_199738_u;
-+   private ToggleWidget upwardsButton;
-+   private ToggleWidget downwardsButton;
++   private final ToggleWidget upwardsButton;
++   private final ToggleWidget downwardsButton;
 +   private int tabIndex = 0;
  
++
++   public RecipeBookGui() {
++      upwardsButton = new ToggleWidget(0, 0, 17, 13, false);
++      upwardsButton.func_191751_a(228, 40, 17, 13, field_191894_a);
++      upwardsButton.visible = false;
++      downwardsButton = new ToggleWidget(0, 0, 17, 13, false);
++      downwardsButton.func_191751_a(210, 40, 17, 13, field_191894_a);
++      downwardsButton.visible = false;
++   }
 +
     public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
        this.field_191888_F = p_201520_3_;
        this.field_191904_o = p_201520_1_;
-@@ -87,8 +91,14 @@
-       this.field_193960_m = new ToggleWidget(i + 110, j + 12, 26, 16, this.field_193964_s.func_203432_a(this.field_201522_g));
+@@ -88,7 +101,7 @@
        this.func_205702_a();
        this.field_193018_j.clear();
-+      upwardsButton = new ToggleWidget(0, 0, 19, 13, false);
-+      upwardsButton.func_191751_a(31, 208, 13, 19, field_191894_a);
-+      upwardsButton.visible = false;
-+      downwardsButton = new ToggleWidget(0, 0, 19, 13, false);
-+      downwardsButton.func_191751_a(31, 208, 13, 19, field_191894_a);
-+      downwardsButton.visible = false;
  
 -      for(RecipeBookCategories recipebookcategories : ClientRecipeBook.func_216769_b(this.field_201522_g)) {
 +      for(RecipeBookCategories recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -189,24 +199,68 @@
+@@ -189,24 +202,68 @@
     }
  
     private void func_193949_f() {
@@ -108,7 +119,7 @@
     }
  
     public void func_193957_d() {
-@@ -241,6 +295,8 @@
+@@ -241,6 +298,8 @@
              recipetabtogglewidget.render(p_render_1_, p_render_2_, p_render_3_);
           }
  
@@ -117,7 +128,7 @@
           this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
           this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
           RenderSystem.popMatrix();
-@@ -313,6 +369,16 @@
+@@ -313,6 +372,16 @@
              this.func_193956_j();
              this.func_193003_g(false);
              return true;
@@ -134,7 +145,7 @@
           } else {
              for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
                 if (recipetabtogglewidget.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-@@ -417,7 +483,7 @@
+@@ -417,7 +486,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
