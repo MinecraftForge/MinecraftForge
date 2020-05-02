@@ -38,7 +38,21 @@
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -192,21 +204,7 @@
+@@ -160,11 +172,8 @@
+    }
+ 
+    private void func_193003_g(boolean p_193003_1_) {
+-      List<RecipeList> list = this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d());
+-      list.forEach((p_193944_1_) -> {
+-         p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
+-      });
+-      List<RecipeList> list1 = Lists.newArrayList(list);
++      this.field_193018_j.forEach((recipeTab) -> this.field_193964_s.func_202891_a(recipeTab.func_201503_d()).forEach(((recipeList) -> recipeList.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s))));
++      List<RecipeList> list1 = Lists.newArrayList(this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d()));
+       list1.removeIf((p_193952_0_) -> {
+          return !p_193952_0_.func_194209_a();
+       });
+@@ -192,21 +201,7 @@
        int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
        int j = (this.field_191905_p - 166) / 2 + 3;
        int k = 27;
@@ -61,7 +75,7 @@
     }
  
     public void func_193957_d() {
-@@ -241,6 +239,8 @@
+@@ -241,6 +236,8 @@
              recipetabtogglewidget.render(p_render_1_, p_render_2_, p_render_3_);
           }
  
@@ -70,7 +84,7 @@
           this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
           this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
           RenderSystem.popMatrix();
-@@ -313,6 +313,14 @@
+@@ -313,6 +310,14 @@
              this.func_193956_j();
              this.func_193003_g(false);
              return true;
@@ -85,7 +99,7 @@
           } else {
              for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
                 if (recipetabtogglewidget.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-@@ -417,7 +425,7 @@
+@@ -417,7 +422,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
@@ -94,7 +108,7 @@
           this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
           this.field_191888_F.field_71474_y.func_74303_b();
        }
-@@ -465,4 +473,73 @@
+@@ -465,4 +470,73 @@
        }
  
     }
