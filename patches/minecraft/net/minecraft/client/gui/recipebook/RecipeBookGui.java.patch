@@ -9,7 +9,7 @@
     private int field_191903_n;
     private int field_191904_o;
     private int field_191905_p;
-@@ -52,7 +52,20 @@
+@@ -52,7 +52,19 @@
     protected final RecipeItemHelper field_193965_u = new RecipeItemHelper();
     private int field_193966_v;
     private boolean field_199738_u;
@@ -17,7 +17,6 @@
 +   private final ToggleWidget downwardsButton;
 +   private int tabIndex = 0;
  
-+
 +   public RecipeBookGui() {
 +      upwardsButton = new ToggleWidget(0, 0, 17, 13, false);
 +      upwardsButton.func_191751_a(228, 40, 17, 13, field_191894_a);
@@ -30,7 +29,7 @@
     public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
        this.field_191888_F = p_201520_3_;
        this.field_191904_o = p_201520_1_;
-@@ -88,7 +101,7 @@
+@@ -88,7 +100,7 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
@@ -39,87 +38,30 @@
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -189,24 +202,68 @@
-    }
- 
-    private void func_193949_f() {
--      int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
--      int j = (this.field_191905_p - 166) / 2 + 3;
-+      int x = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
-+      int y = (this.field_191905_p - 166) / 2 + 3;
+@@ -192,21 +204,7 @@
+       int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
+       int j = (this.field_191905_p - 166) / 2 + 3;
        int k = 27;
-       int l = 0;
-+      int b = 7;
- 
+-      int l = 0;
+-
 -      for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
 -         RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
 -         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
 -            if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
 -               recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
 -               recipetabtogglewidget.func_193918_a(this.field_191888_F);
-+      if(this.field_193018_j.size() <= 6) {
-+         for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
-+            RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
-+            if (recipebookcategories.isSearch()) { //TODO check
-+               if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
-+                  recipetabtogglewidget.func_191752_c(x, y + 27 * l++);
-+                  recipetabtogglewidget.func_193918_a(this.field_191888_F);
-+               }
-+            } else {
-+               recipetabtogglewidget.visible = true;
-+               recipetabtogglewidget.func_191752_c(x, y + 27 * l++);
-             }
-+         }
-+      } else {
-+         for (RecipeTabToggleWidget recipeTab : field_193018_j) {
-+            recipeTab.visible = false;
-+         }
-+         if(field_193018_j.get(0).func_201503_d().isSearch()) {
-+            field_193018_j.get(0).visible = true;
-+            field_193018_j.get(0).func_191752_c(x, y + 27 * l++);
-+            if(tabIndex > 0) {
-+               upwardsButton.visible = true;
-+               upwardsButton.func_191752_c(x + b, y + 27);
-+            } else {
-+               upwardsButton.visible = false;
-+            }
-+            for(int i = 1 + tabIndex; i < 5 + tabIndex; i++) {
-+               field_193018_j.get(i).func_191752_c(x, 13 + y + 27 * l++);
-+               field_193018_j.get(i).visible = true; //TODO
-+            }
-+            if(tabIndex < field_193018_j.size() - 5) {
-+               downwardsButton.visible = true;
-+               downwardsButton.func_191752_c(x + b, y + 13 + 27 * l);
-+            } else {
-+               downwardsButton.visible = false;
-+            }
-          } else {
+-            }
+-         } else {
 -            recipetabtogglewidget.visible = true;
 -            recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
-+            if(tabIndex > 0) {
-+               upwardsButton.visible = true;
-+               upwardsButton.func_191752_c(x + b, y);
-+            } else {
-+               upwardsButton.visible = false;
-+            }
-+            for(int i = tabIndex; i < tabIndex +  5; i++)
-+            {
-+               field_193018_j.get(i).func_191752_c(x, 13 + y + 27 * l++);
-+               field_193018_j.get(i).visible = true; //TODO
-+            }
-+            if(tabIndex < field_193018_j.size() - 5) {
-+               downwardsButton.visible = true;
-+               downwardsButton.func_191752_c(x + b, y + 13 + 27 * l);
-+            } else {
-+               downwardsButton.visible = false;
-+            }
-          }
-       }
+-         }
+-      }
 -
++      this.tabUpdate(i, j, k);
     }
  
     public void func_193957_d() {
-@@ -241,6 +298,8 @@
+@@ -241,6 +239,8 @@
              recipetabtogglewidget.render(p_render_1_, p_render_2_, p_render_3_);
           }
  
@@ -128,24 +70,22 @@
           this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
           this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
           RenderSystem.popMatrix();
-@@ -313,6 +372,16 @@
+@@ -313,6 +313,14 @@
              this.func_193956_j();
              this.func_193003_g(false);
              return true;
 +         } else if (this.upwardsButton.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-+            System.out.println("jej");
 +            --this.tabIndex;
 +            this.func_193949_f();
 +            return true;
 +         } else if (this.downwardsButton.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-+            System.out.println("sdfsdfsdf");
 +            ++this.tabIndex;
 +            this.func_193949_f();
 +            return true;
           } else {
              for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
                 if (recipetabtogglewidget.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-@@ -417,7 +486,7 @@
+@@ -417,7 +425,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
@@ -154,3 +94,77 @@
           this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
           this.field_191888_F.field_71474_y.func_74303_b();
        }
+@@ -465,4 +473,73 @@
+       }
+ 
+    }
++
++   protected void tabUpdate(int x, int y, int k) {
++      int l = 0;
++      int b = 7;
++      List<RecipeTabToggleWidget> visibleTabs = this.getVisibleTabs();
++
++      if (visibleTabs.size() <= 6) {
++         for (RecipeTabToggleWidget recipeTab : visibleTabs) {
++            l = this.placeTab(x, y, k, l, recipeTab);
++         }
++      } else {
++         for (RecipeTabToggleWidget recipeTab : visibleTabs) {
++            recipeTab.visible = false;
++         }
++         if (visibleTabs.get(0).func_201503_d().isSearch()) {
++            visibleTabs.get(0).func_191752_c(x, y + k * l++);
++            visibleTabs.get(0).visible = true;
++            if(tabIndex > 0) {
++               upwardsButton.visible = true;
++               upwardsButton.func_191752_c(x + b, y + k);
++            } else {
++               upwardsButton.visible = false;
++            }
++            for(int i = 1 + tabIndex; i < 5 + tabIndex; i++) {
++               l = this.placeTab(x, y + 13, k, l, field_193018_j.get(i));
++            }
++         } else {
++            if (tabIndex > 0) {
++               upwardsButton.visible = true;
++               upwardsButton.func_191752_c(x + b, y);
++            } else {
++               upwardsButton.visible = false;
++            }
++            for (int i = tabIndex; i < tabIndex +  5; i++)
++            {
++               l = this.placeTab(x, y + 13, k, l, visibleTabs.get(i));
++            }
++         }
++         if (tabIndex < visibleTabs.size() - 5) {
++            downwardsButton.visible = true;
++            downwardsButton.func_191752_c(x + b, y + 13 + k * l);
++         } else {
++            downwardsButton.visible = false;
++         }
++      }
++   }
++
++   private int placeTab(int x, int y, int k, int l, RecipeTabToggleWidget recipeTab) {
++      if (l > 0 || !recipeTab.func_201503_d().isSearch()) {
++         if (recipeTab.func_199500_a(this.field_193964_s)) {
++            recipeTab.func_191752_c(x, y + k * l++);
++            recipeTab.func_193918_a(this.field_191888_F);
++            recipeTab.visible = true;
++         }
++      } else {
++         recipeTab.func_191752_c(x, y + k * l++);
++         recipeTab.visible = true;
++      }
++
++      return l;
++   }
++
++   private List<RecipeTabToggleWidget> getVisibleTabs() {
++      List<RecipeTabToggleWidget> tabs = Lists.newArrayList();
++      for(int i = 0; i < this.field_193018_j.size(); i++) {
++         if(i == 0 && field_193018_j.get(0).func_201503_d().isSearch() || field_193018_j.get(i).func_199500_a(this.field_193964_s)) tabs.add(field_193018_j.get(i));
++      }
++      return tabs;
++   }
+ }
