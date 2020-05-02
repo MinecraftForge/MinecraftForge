@@ -1,6 +1,16 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -88,7 +88,7 @@
+@@ -52,6 +52,9 @@
+    protected final RecipeItemHelper field_193965_u = new RecipeItemHelper();
+    private int field_193966_v;
+    private boolean field_199738_u;
++   private ToggleWidget upwardsButton;
++   private ToggleWidget downwardsButton;
++   private int tabIndex = 0;
+ 
+    public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
+       this.field_191888_F = p_201520_3_;
+@@ -88,7 +91,7 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
@@ -9,7 +19,65 @@
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -417,7 +417,7 @@
+@@ -189,24 +192,46 @@
+    }
+ 
+    private void func_193949_f() {
+-      int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
+-      int j = (this.field_191905_p - 166) / 2 + 3;
++      int x = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
++      int y = (this.field_191905_p - 166) / 2 + 3;
+       int k = 27;
+       int l = 0;
+ 
+-      for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
+-         RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
+-         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
+-            if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
+-               recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+-               recipetabtogglewidget.func_193918_a(this.field_191888_F);
++      if(this.field_193018_j.size() <= 6) {
++         for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
++            RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
++            if (recipebookcategories.isSearch()) { //TODO check
++               if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
++                  recipetabtogglewidget.func_191752_c(x, y + 27 * l++);
++                  recipetabtogglewidget.func_193918_a(this.field_191888_F);
++               }
++            } else {
++               recipetabtogglewidget.visible = true;
++               recipetabtogglewidget.func_191752_c(x, y + 27 * l++);
+             }
++         }
++      } else {
++         for (RecipeTabToggleWidget recipeTab : field_193018_j) {
++            recipeTab.visible = false;
++         }
++         if(field_193018_j.get(0).func_201503_d().isSearch()) {
++            field_193018_j.get(0).visible = true;
++            field_193018_j.get(0).func_191752_c(x, y + 27 * l++);
++            //TODO add arrow upwards height 13
++            for(int i = 1 + tabIndex; i < 5 + tabIndex; i++) {
++               field_193018_j.get(i).func_191752_c(x, 13 + y + 27 * l++);
++               field_193018_j.get(i).visible = true;
++            }
++            //TODO add arrow downwards height 13
+          } else {
+-            recipetabtogglewidget.visible = true;
+-            recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
++            //TODO add arrow upwards height 13
++            for(int i = tabIndex; i < tabIndex +  5; i++)
++            {
++               field_193018_j.get(i).func_191752_c(x, 13 + y + 27 * l++);
++            }
++            //TODO add arrow downwards height 13
+          }
+       }
+-
+    }
+ 
+    public void func_193957_d() {
+@@ -417,7 +442,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();

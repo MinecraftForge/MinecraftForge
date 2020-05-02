@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/util/RecipeBookCategories.java
 +++ b/net/minecraft/client/util/RecipeBookCategories.java
-@@ -9,31 +9,77 @@
+@@ -9,31 +9,91 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -87,5 +87,19 @@
 +    */
 +   public static RecipeBookCategories create(String name, RecipeBookCategories searchCategory, ItemStack... icons) {
 +      throw new IllegalStateException("Enum not extended");
++   }
++
++   public enum Type implements net.minecraftforge.common.IExtensibleEnum
++   {
++      CRAFTING,
++      FURNACE,
++      BLAST_FURNACE,
++      SMOKER,
++      STONECUTTER,
++      CAMPFIRE;
++
++      public static Type create(String name) {
++         throw new IllegalStateException("Enum not extended");
++      }
 +   }
  }

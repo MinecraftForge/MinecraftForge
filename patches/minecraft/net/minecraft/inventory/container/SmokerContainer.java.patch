@@ -1,0 +1,12 @@
+--- a/net/minecraft/inventory/container/SmokerContainer.java
++++ b/net/minecraft/inventory/container/SmokerContainer.java
+@@ -13,4 +13,9 @@
+    public SmokerContainer(int p_i50062_1_, PlayerInventory p_i50062_2_, IInventory p_i50062_3_, IIntArray p_i50062_4_) {
+       super(ContainerType.field_221527_u, IRecipeType.field_222152_d, p_i50062_1_, p_i50062_2_, p_i50062_3_, p_i50062_4_);
+    }
++
++   @Override
++   public net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType() {
++      return net.minecraft.client.util.RecipeBookCategories.Type.SMOKER;
++   }
+ }

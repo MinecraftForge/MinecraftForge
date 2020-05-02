@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -31,4 +31,8 @@
+@@ -31,4 +31,11 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
@@ -8,4 +8,7 @@
 +   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
 +      return net.minecraft.client.util.ClientRecipeBook.func_216769_b(this);
 +   }
++
++   @OnlyIn(Dist.CLIENT)
++   public abstract net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType();
  }

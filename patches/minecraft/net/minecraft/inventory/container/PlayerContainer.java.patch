@@ -9,3 +9,13 @@
              }
  
              public boolean func_82869_a(PlayerEntity p_82869_1_) {
+@@ -193,4 +193,9 @@
+    public int func_203721_h() {
+       return 5;
+    }
++
++   @Override
++   public net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType() {
++      return net.minecraft.client.util.RecipeBookCategories.Type.CRAFTING;
++   }
+ }

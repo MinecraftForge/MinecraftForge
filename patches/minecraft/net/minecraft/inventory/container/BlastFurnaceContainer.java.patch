@@ -1,0 +1,12 @@
+--- a/net/minecraft/inventory/container/BlastFurnaceContainer.java
++++ b/net/minecraft/inventory/container/BlastFurnaceContainer.java
+@@ -13,4 +13,9 @@
+    public BlastFurnaceContainer(int p_i50098_1_, PlayerInventory p_i50098_2_, IInventory p_i50098_3_, IIntArray p_i50098_4_) {
+       super(ContainerType.field_221516_j, IRecipeType.field_222151_c, p_i50098_1_, p_i50098_2_, p_i50098_3_, p_i50098_4_);
+    }
++
++   @Override
++   public net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType() {
++      return net.minecraft.client.util.RecipeBookCategories.Type.BLAST_FURNACE;
++   }
+ }

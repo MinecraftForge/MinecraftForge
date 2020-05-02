@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/util/ClientRecipeBook.java
 +++ b/net/minecraft/client/util/ClientRecipeBook.java
-@@ -63,37 +63,30 @@
+@@ -28,6 +28,7 @@
+ public class ClientRecipeBook extends RecipeBook {
+    private final RecipeManager field_199645_e;
+    private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
++   private static final Map<RecipeBookCategories.Type, List<RecipeBookCategories>> categoriesByType = Maps.newHashMap();
+    private final List<RecipeList> field_197932_f = Lists.newArrayList();
+ 
+    public ClientRecipeBook(RecipeManager p_i48186_1_) {
+@@ -63,37 +64,25 @@
     private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
        RecipeList recipelist = new RecipeList();
        this.field_197932_f.add(recipelist);
@@ -17,18 +25,15 @@
 -               this.func_216767_a(RecipeBookCategories.CAMPFIRE, recipelist);
 -            } else {
 -               this.func_216767_a(RecipeBookCategories.SEARCH, recipelist);
-+      this.computeIfAbsentAndAdd(p_202889_1_, recipelist);
-+      for (RecipeBookCategories c : RecipeBookCategories.additionalCategoriesMap.values()) {
-+         if (c == p_202889_1_) {
-+            if(!c.isSearch()) {
-+               computeIfAbsentAndAdd(c.getSearchCategory(), recipelist);
-             }
+-            }
 -         } else {
 -            this.func_216767_a(RecipeBookCategories.BLAST_FURNACE_SEARCH, recipelist);
-+            return recipelist;
-          }
+-         }
 -      } else {
 -         this.func_216767_a(RecipeBookCategories.FURNACE_SEARCH, recipelist);
++      this.computeIfAbsentAndAdd(p_202889_1_, recipelist);
++      if(!p_202889_1_.isSearch()) {
++         this.computeIfAbsentAndAdd(p_202889_1_.getSearchCategory(), recipelist);
        }
  
        return recipelist;
@@ -52,3 +57,52 @@
        IRecipeType<?> irecipetype = p_202887_0_.func_222127_g();
        if (irecipetype == IRecipeType.field_222150_b) {
           if (p_202887_0_.func_77571_b().func_77973_b().func_219971_r()) {
+@@ -123,17 +112,7 @@
+    }
+ 
+    public static List<RecipeBookCategories> func_216769_b(RecipeBookContainer<?> p_216769_0_) {
+-      if (!(p_216769_0_ instanceof WorkbenchContainer) && !(p_216769_0_ instanceof PlayerContainer)) {
+-         if (p_216769_0_ instanceof FurnaceContainer) {
+-            return Lists.newArrayList(RecipeBookCategories.FURNACE_SEARCH, RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC);
+-         } else if (p_216769_0_ instanceof BlastFurnaceContainer) {
+-            return Lists.newArrayList(RecipeBookCategories.BLAST_FURNACE_SEARCH, RecipeBookCategories.BLAST_FURNACE_BLOCKS, RecipeBookCategories.BLAST_FURNACE_MISC);
+-         } else {
+-            return p_216769_0_ instanceof SmokerContainer ? Lists.newArrayList(RecipeBookCategories.SMOKER_SEARCH, RecipeBookCategories.SMOKER_FOOD) : Lists.newArrayList();
+-         }
+-      } else {
+-         return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.EQUIPMENT, RecipeBookCategories.BUILDING_BLOCKS, RecipeBookCategories.MISC, RecipeBookCategories.REDSTONE);
+-      }
++      return categoriesByType.getOrDefault(p_216769_0_.getRecipeBookCategoriesType(), Lists.newArrayList());
+    }
+ 
+    public List<RecipeList> func_199642_d() {
+@@ -143,4 +122,29 @@
+    public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
+       return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
+    }
++
++   /**
++    * this method should be called in the FMLClientSetupEvent
++    * @param type categories type of the container
++    * @param categories categories to add to the type of the container
++    */
++   public static void addCategoriesToType(RecipeBookCategories.Type type, RecipeBookCategories... categories)
++   {
++      categoriesByType.computeIfAbsent(type, (cats) -> Lists.newArrayList());
++      List<RecipeBookCategories> categoriesList = categoriesByType.get(type);
++      for (RecipeBookCategories category : categories) {
++         if(!categoriesList.contains(category) && category != null) {
++            categoriesList.add(category);
++         }
++      }
++   }
++
++   static {
++      addCategoriesToType(RecipeBookCategories.Type.CRAFTING, RecipeBookCategories.SEARCH, RecipeBookCategories.EQUIPMENT, RecipeBookCategories.BUILDING_BLOCKS, RecipeBookCategories.MISC, RecipeBookCategories.REDSTONE);
++      addCategoriesToType(RecipeBookCategories.Type.FURNACE, RecipeBookCategories.FURNACE_SEARCH, RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC);
++      addCategoriesToType(RecipeBookCategories.Type.BLAST_FURNACE, RecipeBookCategories.BLAST_FURNACE_SEARCH, RecipeBookCategories.BLAST_FURNACE_BLOCKS, RecipeBookCategories.BLAST_FURNACE_MISC);
++      addCategoriesToType(RecipeBookCategories.Type.CAMPFIRE, RecipeBookCategories.CAMPFIRE);
++      addCategoriesToType(RecipeBookCategories.Type.SMOKER, RecipeBookCategories.SMOKER_SEARCH, RecipeBookCategories.SMOKER_FOOD);
++      addCategoriesToType(RecipeBookCategories.Type.STONECUTTER, RecipeBookCategories.STONECUTTER);
++   }
+ }

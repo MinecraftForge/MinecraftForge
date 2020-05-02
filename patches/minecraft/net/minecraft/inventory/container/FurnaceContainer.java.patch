@@ -1,0 +1,12 @@
+--- a/net/minecraft/inventory/container/FurnaceContainer.java
++++ b/net/minecraft/inventory/container/FurnaceContainer.java
+@@ -13,4 +13,9 @@
+    public FurnaceContainer(int p_i50083_1_, PlayerInventory p_i50083_2_, IInventory p_i50083_3_, IIntArray p_i50083_4_) {
+       super(ContainerType.field_221520_n, IRecipeType.field_222150_b, p_i50083_1_, p_i50083_2_, p_i50083_3_, p_i50083_4_);
+    }
++
++   @Override
++   public net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType() {
++      return net.minecraft.client.util.RecipeBookCategories.Type.FURNACE;
++   }
+ }

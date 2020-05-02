@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/recipebook/RecipeTabToggleWidget.java
++++ b/net/minecraft/client/gui/recipebook/RecipeTabToggleWidget.java
+@@ -106,11 +106,13 @@
+    }
+ 
+    public boolean func_199500_a(ClientRecipeBook p_199500_1_) {
+-      List<RecipeList> list = p_199500_1_.func_202891_a(this.field_193921_u);
++      return true;
++      /* TODO
++      List<RecipeList> list = p_199500_1_.getRecipes(this.category);
+       this.visible = false;
+       if (list != null) {
+          for(RecipeList recipelist : list) {
+-            if (recipelist.func_194209_a() && recipelist.func_194212_c()) {
++            if (recipelist.isNotEmpty() && recipelist.containsValidRecipes()) {
+                this.visible = true;
+                break;
+             }
+@@ -118,5 +120,7 @@
+       }
+ 
+       return this.visible;
++
++       */
+    }
+ }

@@ -1,0 +1,12 @@
+--- a/net/minecraft/inventory/container/WorkbenchContainer.java
++++ b/net/minecraft/inventory/container/WorkbenchContainer.java
+@@ -168,4 +168,9 @@
+    public int func_203721_h() {
+       return 10;
+    }
++
++   @Override
++   public net.minecraft.client.util.RecipeBookCategories.Type getRecipeBookCategoriesType() {
++      return net.minecraft.client.util.RecipeBookCategories.Type.CRAFTING;
++   }
+ }
