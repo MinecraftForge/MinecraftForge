@@ -9,7 +9,18 @@
        if (p_77654_3_ instanceof ServerPlayerEntity) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_77654_3_;
           CriteriaTriggers.field_193138_y.func_193148_a(serverplayerentity, p_77654_1_);
-@@ -44,4 +46,9 @@
+@@ -25,10 +27,6 @@
+          p_77654_1_.func_190918_g(1);
+       }
+ 
+-      if (!p_77654_2_.field_72995_K) {
+-         p_77654_3_.func_195061_cb();
+-      }
+-
+       return p_77654_1_.func_190926_b() ? new ItemStack(Items.field_151133_ar) : p_77654_1_;
+    }
+ 
+@@ -44,4 +42,9 @@
        p_77659_2_.func_184598_c(p_77659_3_);
        return ActionResult.func_226248_a_(p_77659_2_.func_184586_b(p_77659_3_));
     }
