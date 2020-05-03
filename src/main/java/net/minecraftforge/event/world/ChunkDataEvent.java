@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -44,6 +45,12 @@ public class ChunkDataEvent extends ChunkEvent
     public ChunkDataEvent(IChunk chunk, CompoundNBT data)
     {
         super(chunk);
+        this.data = data;
+    }
+
+    public ChunkDataEvent(IChunk chunk, IWorld world, CompoundNBT data)
+    {
+        super(chunk, world);
         this.data = data;
     }
 
@@ -92,9 +99,15 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
+        @Deprecated // remove in 1.16
         public Save(IChunk chunk, CompoundNBT data)
         {
             super(chunk, data);
+        }
+
+        public Save(IChunk chunk, IWorld world, CompoundNBT data)
+        {
+            super(chunk, world, data);
         }
     }
 }
