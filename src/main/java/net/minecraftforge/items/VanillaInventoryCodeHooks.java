@@ -194,15 +194,13 @@ public class VanillaInventoryCodeHooks
                     if (!destinationHopper.mayTransfer())
                     {
                         int k = 0;
-/* TODO TileEntityHopper patches
-                        if (source instanceof TileEntityHopper)
+                        if (source instanceof HopperTileEntity)
                         {
-                            if (destinationHopper.getLastUpdateTime() >= ((TileEntityHopper) source).getLastUpdateTime())
+                            if (destinationHopper.getLastUpdateTime() >= ((HopperTileEntity) source).getLastUpdateTime())
                             {
                                 k = 1;
                             }
                         }
-*/
                         destinationHopper.setTransferCooldown(8 - k);
                     }
                 }
@@ -225,7 +223,7 @@ public class VanillaInventoryCodeHooks
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (stackInSlot.isEmpty() || stackInSlot.getCount() != stackInSlot.getMaxStackSize())
+            if (stackInSlot.isEmpty() || stackInSlot.getCount() < itemHandler.getSlotLimit(slot))
             {
                 return false;
             }
