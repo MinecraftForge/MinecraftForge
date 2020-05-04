@@ -109,14 +109,14 @@ public interface IForgeVertexBuilder
     }
 
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
-        int bl = LightTexture.getLightBlock(lightmapCoord);
-        int sl = LightTexture.getLightSky(lightmapCoord);
+        int bl = lightmapCoord&0xFFFF;
+        int sl = (lightmapCoord>>16)&0xFFFF;
         int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
-        int blBaked = Short.toUnsignedInt(data.getShort(offset)) >> 4;
-        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2)) >> 4;
+        int blBaked = Short.toUnsignedInt(data.getShort(offset));
+        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2));
         bl = Math.max(bl, blBaked);
         sl = Math.max(sl, slBaked);
-        return LightTexture.packLight(bl, sl);
+        return bl | (sl<<16);
     }
 
     default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
