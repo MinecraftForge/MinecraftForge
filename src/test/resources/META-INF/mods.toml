@@ -66,7 +66,7 @@ loaderVersion="[28,)"
 [[mods]]
     modId="chunk_data_event_save_null_world_test"
 [[mods]]
-    modId="testmod"
+    modId="recipe_book_categories_test"
 [[dependencies.global_loot_test]]
     modId="forge"
     mandatory=true

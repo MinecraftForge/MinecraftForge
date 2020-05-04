@@ -1,20 +1,20 @@
+package net.minecraftforge.debug.client.util;
+
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class TestRecipe extends ShapedRecipe {
-    public static final IRecipeType<TestRecipe> TYPE = new IRecipeType<TestRecipe>() {};
+public class RecipeBookCategoriesTestRecipe extends ShapedRecipe {
+    public static final IRecipeType<RecipeBookCategoriesTestRecipe> TYPE = new IRecipeType<RecipeBookCategoriesTestRecipe>() {};
 
-    public TestRecipe(ShapedRecipe recipe)
+    public RecipeBookCategoriesTestRecipe(ShapedRecipe recipe)
     {
         super(recipe.getId(), recipe.getGroup(), recipe.getRecipeWidth(), recipe.getRecipeHeight(), recipe.getIngredients(), recipe.getRecipeOutput());
     }
@@ -39,13 +39,14 @@ public class TestRecipe extends ShapedRecipe {
     public static class Serializer extends ShapedRecipe.Serializer
     {
         @Override
-        public @Nonnull TestRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-            return new TestRecipe(super.read(recipeId, json));
+        public @Nonnull
+        RecipeBookCategoriesTestRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+            return new RecipeBookCategoriesTestRecipe(super.read(recipeId, json));
         }
 
         @Override
-        public TestRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
-            return new TestRecipe(Objects.requireNonNull(super.read(recipeId, buffer)));
+        public RecipeBookCategoriesTestRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
+            return new RecipeBookCategoriesTestRecipe(Objects.requireNonNull(super.read(recipeId, buffer)));
         }
 
         @Override
