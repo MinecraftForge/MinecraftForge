@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -38,6 +39,12 @@ public class ChunkEvent extends WorldEvent
     public ChunkEvent(IChunk chunk)
     {
         super(chunk.getWorldForge());
+        this.chunk = chunk;
+    }
+
+    public ChunkEvent(IChunk chunk, IWorld world)
+    {
+        super(world);
         this.chunk = chunk;
     }
 

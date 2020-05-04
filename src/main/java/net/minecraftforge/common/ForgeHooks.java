@@ -193,7 +193,7 @@ public class ForgeHooks
             return player.canHarvestBlock(state);
         }
 
-        return toolLevel >= state.getHarvestLevel();
+        return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
     }
 
     public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
@@ -606,7 +606,7 @@ public class ForgeHooks
         if (!(itemstack.getItem() instanceof BucketItem)) // if not bucket
             world.captureBlockSnapshots = true;
 
-        ItemStack copy = itemstack.isDamageable() ? itemstack.copy() : null;
+        ItemStack copy = itemstack.copy();
         ActionResultType ret = itemstack.getItem().onItemUse(context);
         if (itemstack.isEmpty())
             ForgeEventFactory.onPlayerDestroyItem(player, copy, context.getHand());
