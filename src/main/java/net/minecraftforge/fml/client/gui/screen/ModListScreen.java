@@ -98,7 +98,7 @@ public class ModListScreen extends Screen
 
     private static final int PADDING = 6;
 
-    private Screen mainMenu;
+    private Screen parentScreen;
 
     private ModListWidget modList;
     private InfoPanel modInfo;
@@ -118,12 +118,12 @@ public class ModListScreen extends Screen
     private SortType sortType = SortType.NORMAL;
 
     /**
-     * @param mainMenu
+     * @param parentScreen
      */
-    public ModListScreen(Screen mainMenu)
+    public ModListScreen(Screen parentScreen)
     {
         super(new TranslationTextComponent("fml.menu.mods.title"));
-        this.mainMenu = mainMenu;
+        this.parentScreen = parentScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
@@ -279,7 +279,7 @@ public class ModListScreen extends Screen
         int doneButtonWidth = Math.min(modInfoWidth, 200);
         int y = this.height - 20 - PADDING;
         this.addButton(new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20,
-                I18n.format("gui.done"), b -> ModListScreen.this.minecraft.displayGuiScreen(ModListScreen.this.mainMenu)));
+                I18n.format("gui.done"), b -> ModListScreen.this.onClose()));
         this.addButton(this.openModsFolderButton = new Button(6, y, this.listWidth, 20,
                 I18n.format("fml.menu.mods.openmodsfolder"), b -> Util.getOSType().openFile(FMLPaths.MODSDIR.get().toFile())));
         y -= 20 + PADDING;
@@ -500,5 +500,11 @@ public class ModListScreen extends Screen
         if (sort != SortType.NORMAL)
             resortMods(sort);
         updateCache();
+    }
+
+    @Override
+    public void onClose()
+    {
+        this.minecraft.displayGuiScreen(this.parentScreen);
     }
 }
