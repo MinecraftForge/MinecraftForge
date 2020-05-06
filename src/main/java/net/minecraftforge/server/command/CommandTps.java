@@ -46,7 +46,7 @@ class CommandTps
 
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
-                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
+                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
 
                 return 0;
             }
@@ -57,12 +57,12 @@ class CommandTps
     {
         long[] times = cs.getServer().getTickTime(dim);
 
-        if (times == null) /// Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
+        if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
             times = UNLOADED;
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }
