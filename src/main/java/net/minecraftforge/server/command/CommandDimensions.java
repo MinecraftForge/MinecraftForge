@@ -47,7 +47,7 @@ public class CommandDimensions
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), true);
+                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), false);
                 });
                 return 0;
             });
