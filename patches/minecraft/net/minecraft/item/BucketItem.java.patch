@@ -41,7 +41,35 @@
                       ItemStack itemstack1 = this.func_150910_a(itemstack, p_77659_2_, fluid.func_204524_b());
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-@@ -147,7 +164,19 @@
+@@ -65,7 +82,7 @@
+                return new ActionResult<>(ActionResultType.FAIL, itemstack);
+             } else {
+                BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
+-               BlockPos blockpos1 = blockstate.func_177230_c() instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a ? blockpos : blockraytraceresult.func_216350_a().func_177972_a(blockraytraceresult.func_216354_b());
++               BlockPos blockpos1 = canBlockContainFluid(p_77659_1_, blockpos, blockstate) ? blockpos : blockraytraceresult.func_216350_a().func_177972_a(blockraytraceresult.func_216354_b());
+                if (this.func_180616_a(p_77659_2_, p_77659_1_, blockpos1, blockraytraceresult)) {
+                   this.func_203792_a(p_77659_1_, itemstack, blockpos1);
+                   if (p_77659_2_ instanceof ServerPlayerEntity) {
+@@ -116,7 +133,8 @@
+          Material material = blockstate.func_185904_a();
+          boolean flag = !material.func_76220_a();
+          boolean flag1 = material.func_76222_j();
+-         if (p_180616_2_.func_175623_d(p_180616_3_) || flag || flag1 || blockstate.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)blockstate.func_177230_c()).func_204510_a(p_180616_2_, p_180616_3_, blockstate, this.field_77876_a)) {
++         boolean canContainFluid = canBlockContainFluid(p_180616_2_, p_180616_3_, blockstate);
++         if (p_180616_2_.func_175623_d(p_180616_3_) || flag || flag1 || canContainFluid) {
+             if (p_180616_2_.field_73011_w.func_177500_n() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
+                int i = p_180616_3_.func_177958_n();
+                int j = p_180616_3_.func_177956_o();
+@@ -126,7 +144,7 @@
+                for(int l = 0; l < 8; ++l) {
+                   p_180616_2_.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
+                }
+-            } else if (blockstate.func_177230_c() instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a) {
++            } else if (canContainFluid) {
+                if (((ILiquidContainer)blockstate.func_177230_c()).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false))) {
+                   this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
+                }
+@@ -147,7 +165,24 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {
@@ -61,4 +89,9 @@
 +
 +   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
 +   public Fluid getFluid() { return fluidSupplier.get(); }
++
++   private boolean canBlockContainFluid(World worldIn, BlockPos posIn, BlockState blockstate)
++   {
++      return blockstate.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)blockstate.func_177230_c()).func_204510_a(worldIn, posIn, blockstate, this.field_77876_a);
++   }
  }
