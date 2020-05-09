@@ -232,9 +232,7 @@ public final class TransformationHelper
             JsonElement originElement = obj.get("origin");
             if (originElement.isJsonArray())
             {
-                float[] originValues = parseFloatArray(originElement, 3, "Origin");
-                // Normalize from 0..16 range to 0..1
-                origin = new Vector3f(originValues[0] / 16f, originValues[1] / 16f, originValues[2] / 16f);
+                origin = new Vector3f(parseFloatArray(originElement, 3, "Origin"));
             }
             else if (originElement.isJsonPrimitive())
             {
