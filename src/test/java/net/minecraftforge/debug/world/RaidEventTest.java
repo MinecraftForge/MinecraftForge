@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class RaidEventTest 
 {
-	public static final boolean ENABLE = true;
+	public static final boolean ENABLE = false;
 	private static Logger LOGGER = LogManager.getLogger(RaidEventTest.class);
 	
     public RaidEventTest()
@@ -29,7 +29,7 @@ public class RaidEventTest
     {
        if (event.getRaid().isActive() && ENABLE)
        {
-    	   LOGGER.info("if you see this, this means the event works");
+    	   LOGGER.info("if you see this, it probably means the event works");
        }
     }
 }
