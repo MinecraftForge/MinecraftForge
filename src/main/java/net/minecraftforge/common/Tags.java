@@ -173,6 +173,7 @@ public class Tags
         public static final Tag<Item> GEMS_LAPIS = tag("gems/lapis");
         public static final Tag<Item> GEMS_PRISMARINE = tag("gems/prismarine");
         public static final Tag<Item> GEMS_QUARTZ = tag("gems/quartz");
+        public static final Tag<Item> GEMS_COAL = tag("gems/coal");
 
         public static final Tag<Item> GLASS = tag("glass");
         public static final Tag<Item> GLASS_BLACK = tag("glass/black");

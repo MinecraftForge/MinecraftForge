@@ -80,12 +80,14 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.FENCES, Tags.Items.FENCES);
         copy(Tags.Blocks.FENCES_NETHER_BRICK, Tags.Items.FENCES_NETHER_BRICK);
         copy(Tags.Blocks.FENCES_WOODEN, Tags.Items.FENCES_WOODEN);
-        getBuilder(Tags.Items.GEMS).add(Tags.Items.GEMS_DIAMOND, Tags.Items.GEMS_EMERALD, Tags.Items.GEMS_LAPIS, Tags.Items.GEMS_PRISMARINE, Tags.Items.GEMS_QUARTZ);
+        getBuilder(Tags.Items.GEMS).add(Tags.Items.GEMS_DIAMOND, Tags.Items.GEMS_EMERALD, Tags.Items.GEMS_LAPIS, Tags.Items.GEMS_PRISMARINE, Tags.Items.GEMS_QUARTZ, Tags.Items.GEMS_COAL);
         getBuilder(Tags.Items.GEMS_DIAMOND).add(Items.DIAMOND);
         getBuilder(Tags.Items.GEMS_EMERALD).add(Items.EMERALD);
         getBuilder(Tags.Items.GEMS_LAPIS).add(Items.LAPIS_LAZULI);
         getBuilder(Tags.Items.GEMS_PRISMARINE).add(Items.PRISMARINE_CRYSTALS);
         getBuilder(Tags.Items.GEMS_QUARTZ).add(Items.QUARTZ);
+        getBuilder(Tags.Items.GEMS_COAL).add(Items.COAL);
+        getBuilder(Tags.Items.GEMS_COAL).add(Items.CHARCOAL);
         copy(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copyColored(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copy(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
