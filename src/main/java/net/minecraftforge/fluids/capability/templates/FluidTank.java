@@ -148,7 +148,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         if (fluid.isEmpty())
         {
             fluid = new FluidStack(resource, Math.min(capacity, resource.getAmount()));
-            onContentsChanged();
+            onContentsChanged(action);
             return fluid.getAmount();
         }
         if (!fluid.isFluidEqual(resource))
@@ -167,7 +167,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
             fluid.setAmount(capacity);
         }
         if (filled > 0)
-            onContentsChanged();
+            onContentsChanged(action);
         return filled;
     }
 
@@ -197,10 +197,16 @@ public class FluidTank implements IFluidHandler, IFluidTank {
             fluid.shrink(drained);
         }
         if (drained > 0)
-            onContentsChanged();
+            onContentsChanged(action);
         return stack;
     }
+    
+    protected void onContentsChanged(FluidAction action)
+    {
+        onContentsChanged();
+    }
 
+    @Deprecated // Use the action sensitive version.
     protected void onContentsChanged()
     {
 
