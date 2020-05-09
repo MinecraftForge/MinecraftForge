@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/raid/Raid.java
++++ b/net/minecraft/world/raid/Raid.java
+@@ -207,6 +207,7 @@
+ 
+    public void func_221307_p() {
+       if (!this.func_221310_d()) {
++    	 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent(this))) return;
+          if (this.field_221360_x == Raid.Status.ONGOING) {
+             boolean flag = this.field_221353_q;
+             this.field_221353_q = this.field_221348_l.func_175667_e(this.field_221347_k);
+@@ -770,7 +771,7 @@
+       }
+    }
+ 
+-   static enum WaveMember {
++   public static enum WaveMember implements net.minecraftforge.common.IExtensibleEnum {
+       VINDICATOR(EntityType.field_200758_ax, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
+       EVOKER(EntityType.field_200806_t, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
+       PILLAGER(EntityType.field_220350_aJ, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
+@@ -785,5 +786,14 @@
+          this.field_221285_g = p_i50602_3_;
+          this.field_221286_h = p_i50602_4_;
+       }
++      
++      public static WaveMember create(String name, EntityType<? extends AbstractRaiderEntity> p_i50602_3_, int[] p_i50602_4_) {
++          throw new IllegalStateException("Enum not extended");
++       }
++      
++      public void init()
++      {
++    	  field_221284_f = values();
++      }
+    }
+ }
