@@ -219,9 +219,10 @@ public class ModelLoaderRegistry
             if(transform.has("rotation")) k--;
             if(transform.has("scale")) k--;
             if(transform.has("post-rotation")) k--;
+            if(transform.has("origin")) k--;
             if(k > 0)
             {
-                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
+                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
             }
             TransformationMatrix base = TransformationMatrix.identity();
             if(!transform.entrySet().isEmpty())
