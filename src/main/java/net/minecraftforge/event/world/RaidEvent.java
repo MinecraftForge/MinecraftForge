@@ -20,5 +20,4 @@ public class RaidEvent extends Event
    {
 	   return raid;
    }
-   
 }

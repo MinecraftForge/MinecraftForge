@@ -17,7 +17,7 @@
        VINDICATOR(EntityType.field_200758_ax, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
        EVOKER(EntityType.field_200806_t, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
        PILLAGER(EntityType.field_220350_aJ, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -785,5 +786,14 @@
+@@ -785,5 +786,13 @@
           this.field_221285_g = p_i50602_3_;
           this.field_221286_h = p_i50602_4_;
        }
@@ -26,8 +26,7 @@
 +          throw new IllegalStateException("Enum not extended");
 +       }
 +      
-+      public void init()
-+      {
++      public void init() {
 +    	  field_221284_f = values();
 +      }
     }
