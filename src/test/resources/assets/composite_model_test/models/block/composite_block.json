@@ -11,7 +11,7 @@
       }
     },
     "offset_from_opposing_corner_with_post_rotation": {
-      "_comment": "Translation from opposing corner origin and post-rotation",
+      "_comment": "Post-rotation and translation from opposing corner origin",
       "parent": "minecraft:block/stone",
       "transform": {
         "post-rotation": [{"y": 180}],
@@ -48,11 +48,11 @@
       }
     },
     "offset_and_post_rotation_from_manual_center": {
-      "_comment": "Translation from a manually-defined center origin followed by a rotation",
-      "parent": "minecraft:block/anvil",
+      "_comment": "Post-rotation and translation from a manually-defined center origin",
+      "parent": "minecraft:block/ice",
       "transform": {
         "scale": [0.3, 0.3, 0.3],
-        "translation": [0.35, 0.35, 0.35],
+        "translation": [-0.35, 0.35, 0.35],
         "post-rotation": [{"y": 270}],
         "origin": [0.5, 0.5, 0.5]
       }
