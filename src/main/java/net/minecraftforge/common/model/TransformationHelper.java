@@ -129,6 +129,7 @@ public final class TransformationHelper
     public static class Deserializer implements JsonDeserializer<TransformationMatrix>
     {
         private static final Vector3f ORIGIN_CORNER = new Vector3f();
+        private static final Vector3f ORIGIN_OPPOSING_CORNER = new Vector3f(1f, 1f, 1f);
         private static final Vector3f ORIGIN_CENTER = new Vector3f(.5f, .5f, .5f);
 
         @Override
@@ -169,9 +170,9 @@ public final class TransformationHelper
             Quaternion leftRot = null;
             Vector3f scale = null;
             Quaternion rightRot = null;
-            // Default origin is corner.
+            // Default origin is opposing corner, due to a mistake.
             // This should probably be replaced with center in future versions.
-            Vector3f origin = ORIGIN_CORNER;
+            Vector3f origin = ORIGIN_OPPOSING_CORNER;
             if (obj.has("translation"))
             {
                 translation = new Vector3f(parseFloatArray(obj.get("translation"), 3, "Translation"));
@@ -245,14 +246,19 @@ public final class TransformationHelper
                 {
                     origin = ORIGIN_CORNER;
                 }
+                else if ("opposing-corner".equals(originString))
+                {
+                    // This option can be used to not break models that were written with this origin once the default is changed
+                    origin = ORIGIN_OPPOSING_CORNER;
+                }
                 else
                 {
-                    throw new JsonParseException("Origin: expected one of 'center', 'corner'");
+                    throw new JsonParseException("Origin: expected one of 'center', 'corner', 'opposing-corner'");
                 }
             }
             else
             {
-                throw new JsonParseException("Origin: expected an array or one of 'center', 'corner'");
+                throw new JsonParseException("Origin: expected an array or one of 'center', 'corner', 'opposing_corner'");
             }
             return origin;
         }

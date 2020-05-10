@@ -1,0 +1,86 @@
+{
+  "loader": "forge:composite",
+  "_comment": "This should show a block with 9 different small blocks in it (8 in the corners, 1 in the center)",
+  "parts": {
+    "offset_from_opposing_corner": {
+      "_comment": "No rotation, using offset from opposing corner (default) origin",
+      "parent": "minecraft:block/dirt",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [0, -0.7, 0]
+      }
+    },
+    "offset_from_opposing_corner_with_post_rotation": {
+      "_comment": "Translation from opposing corner origin and post-rotation",
+      "parent": "minecraft:block/stone",
+      "transform": {
+        "post-rotation": [{"y": 180}],
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [-1, -0.7, -0.3],
+        "origin": "opposing-corner"
+      }
+    },
+    "corner": {
+      "_comment": "Scale with corner origin",
+      "parent": "minecraft:block/obsidian",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3],
+        "origin": "corner"
+      }
+    },
+    "rotation_and_offset_from_corner": {
+      "_comment": "Rotation over corner origin and translation",
+      "parent": "minecraft:block/diamond_block",
+      "transform": {
+        "rotation": [{"y": 270}],
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [1, 0, 0],
+        "origin": "corner"
+      }
+    },
+    "offset_from_manual_corner": {
+      "_comment": "Translation from a manually-defined corner origin",
+      "parent": "minecraft:block/end_stone",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [0, 0.7, 0],
+        "origin": [0, 0, 0]
+      }
+    },
+    "offset_and_post_rotation_from_manual_center": {
+      "_comment": "Translation from a manually-defined center origin followed by a rotation",
+      "parent": "minecraft:block/anvil",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [0.35, 0.35, 0.35],
+        "post-rotation": [{"y": 270}],
+        "origin": [0.5, 0.5, 0.5]
+      }
+    },
+    "offset_from_custom_origin": {
+      "_comment": "Translation from a manually-defined custom origin",
+      "parent": "minecraft:block/gold_ore",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3],
+        "translation": [0, 0.7, 0],
+        "origin": [1, 0, 0]
+      }
+    },
+    "only_scale": {
+      "_comment": "No custom translations, rotations, or origins",
+      "parent": "minecraft:block/prismarine_bricks",
+      "transform": {
+        "scale": [0.3, 0.3, 0.3]
+      }
+    },
+    "upside_down_anvil": {
+      "_comment": "Rotation and no translation, over center origin",
+      "parent": "minecraft:block/anvil",
+      "transform": {
+        "rotation": [{"x":  180}],
+        "scale": [0.3, 0.3, 0.3],
+        "origin": "center"
+      }
+    }
+  }
+}

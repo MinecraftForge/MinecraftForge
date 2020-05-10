@@ -89,19 +89,19 @@ public interface IForgeTransformationMatrix
     }
 
     /**
-     * convert transformation from assuming center-block system to corner-block system
+     * convert transformation from assuming center-block system to opposing-corner-block system
      */
     default TransformationMatrix blockCenterToCorner()
     {
-        return applyOrigin(new Vector3f(-.5f, -.5f, -.5f));
+        return applyOrigin(new Vector3f(.5f, .5f, .5f));
     }
 
     /**
-     * convert transformation from assuming corner-block system to center-block system
+     * convert transformation from assuming opposing-corner-block system to center-block system
      */
     default TransformationMatrix blockCornerToCenter()
     {
-        return applyOrigin(new Vector3f(.5f, .5f, .5f));
+        return applyOrigin(new Vector3f(-.5f, -.5f, -.5f));
     }
 
     /**
@@ -114,10 +114,10 @@ public interface IForgeTransformationMatrix
         if (transform.isIdentity()) return TransformationMatrix.identity();
 
         Matrix4f ret = transform.getMatrix();
-        Matrix4f tmp = Matrix4f.makeTranslate(-origin.getX(), -origin.getY(), -origin.getZ());
+        Matrix4f tmp = Matrix4f.makeTranslate(origin.getX(), origin.getY(), origin.getZ());
         ret.multiplyBackward(tmp);
         tmp.setIdentity();
-        tmp.setTranslation(origin.getX(), origin.getY(), origin.getZ());
+        tmp.setTranslation(-origin.getX(), -origin.getY(), -origin.getZ());
         ret.mul(tmp);
         return new TransformationMatrix(ret);
     }
