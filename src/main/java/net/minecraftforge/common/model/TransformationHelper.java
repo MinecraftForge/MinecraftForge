@@ -258,7 +258,7 @@ public final class TransformationHelper
             }
             else
             {
-                throw new JsonParseException("Origin: expected an array or one of 'center', 'corner', 'opposing_corner'");
+                throw new JsonParseException("Origin: expected an array or one of 'center', 'corner', 'opposing-corner'");
             }
             return origin;
         }
