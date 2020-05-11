@@ -18,3 +18,28 @@
     }
  
     public void func_148833_a(IServerPlayNetHandler p_148833_1_) {
+@@ -45,4 +45,24 @@
+       }
+ 
+    }
++
++	@Override
++	public PacketBuffer getInternalData() {
++		return field_149561_c;
++	}
++
++	@Override
++	public void setData(PacketBuffer data) {
++		this.field_149561_c = data;
++	}
++
++	@Override
++	public ResourceLocation getName() {
++		return field_149562_a;
++	}
++
++	@Override
++	public void setName(ResourceLocation name) {
++		this.field_149562_a = name;
++	}
+ }

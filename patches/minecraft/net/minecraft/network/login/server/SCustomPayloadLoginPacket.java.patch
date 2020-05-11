@@ -9,3 +9,38 @@
     private int field_209919_a;
     private ResourceLocation field_209920_b;
     private PacketBuffer field_209921_c;
+@@ -38,4 +38,34 @@
+    public int func_209918_a() {
+       return this.field_209919_a;
+    }
++
++	@Override
++	public PacketBuffer getInternalData() {
++		return field_209921_c;
++	}
++
++	@Override
++	public void setData(PacketBuffer data) {
++		this.field_209921_c = data;
++	}
++
++	@Override
++	public ResourceLocation getName() {
++		return field_209920_b;
++	}
++
++	@Override
++	public void setName(ResourceLocation name) {
++		this.field_209920_b = name;
++	}
++
++	@Override
++	public int getIndex() {
++		return field_209919_a;
++	}
++
++	@Override
++	public void setIndex(int index) {
++		this.field_209919_a = index;
++	}
+ }

@@ -9,3 +9,28 @@
     private int field_209922_a;
     private PacketBuffer field_209923_b;
  
+@@ -50,4 +50,24 @@
+    public void func_148833_a(IServerLoginNetHandler p_148833_1_) {
+       p_148833_1_.func_209526_a(this);
+    }
++
++	@Override
++	public PacketBuffer getInternalData() {
++		return field_209923_b;
++	}
++
++	@Override
++	public void setData(PacketBuffer data) {
++		this.field_209923_b = data;
++	}
++
++	@Override
++	public int getIndex() {
++		return field_209922_a;
++	}
++
++	@Override
++	public void setIndex(int index) {
++		this.field_209922_a = index;
++	}
+ }

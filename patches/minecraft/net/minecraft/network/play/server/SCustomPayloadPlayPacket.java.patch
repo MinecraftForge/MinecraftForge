@@ -9,3 +9,28 @@
     public static final ResourceLocation field_209911_b = new ResourceLocation("brand");
     public static final ResourceLocation field_209913_d = new ResourceLocation("debug/path");
     public static final ResourceLocation field_209914_e = new ResourceLocation("debug/neighbors_update");
+@@ -68,4 +68,24 @@
+    public PacketBuffer func_180735_b() {
+       return new PacketBuffer(this.field_149171_b.copy());
+    }
++
++	@Override
++	public PacketBuffer getInternalData() {
++		return field_149171_b;
++	}
++
++	@Override
++	public void setData(PacketBuffer data) {
++		this.field_149171_b = data;
++	}
++
++	@Override
++	public ResourceLocation getName() {
++		return field_149172_a;
++	}
++
++	@Override
++	public void setName(ResourceLocation name) {
++		this.field_149172_a = name;
++	}
+ }
