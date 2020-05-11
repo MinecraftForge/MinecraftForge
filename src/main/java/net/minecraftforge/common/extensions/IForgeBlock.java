@@ -215,7 +215,7 @@ public interface IForgeBlock
     default boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
     {
         getBlock().onBlockHarvested(world, pos, state, player);
-        return world.removeBlock(pos, false);
+        return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ? 11 : 3);
     }
 
     /**
