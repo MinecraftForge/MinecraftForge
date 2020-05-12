@@ -1,0 +1,10 @@
+--- a/net/minecraft/advancements/AdvancementList.java
++++ b/net/minecraft/advancements/AdvancementList.java
+@@ -96,6 +96,7 @@
+          }
+       }
+ 
++      net.minecraftforge.common.AdvancementLoadFix.buildSortedTrees(this.field_192093_c);
+       field_192091_a.info("Loaded {} advancements", (int)this.field_192092_b.size());
+    }
+ 
