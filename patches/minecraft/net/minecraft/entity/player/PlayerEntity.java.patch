@@ -253,7 +253,13 @@
                 }
  
                 f = f + f1;
-@@ -1134,8 +1195,10 @@
+@@ -1129,13 +1190,16 @@
+                   EnchantmentHelper.func_151385_b(this, p_71059_1_);
+                   ItemStack itemstack1 = this.func_184614_ca();
+                   Entity entity = p_71059_1_;
++                  if (p_71059_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent()) { entity = ((net.minecraftforge.entity.IPartEntity)p_71059_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART)).getParent(); } else
+                   if (p_71059_1_ instanceof EnderDragonPartEntity) {
+                      entity = ((EnderDragonPartEntity)p_71059_1_).field_213852_b;
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {
@@ -264,7 +270,7 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1177,7 +1240,7 @@
+@@ -1177,7 +1241,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -273,7 +279,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1203,8 +1266,9 @@
+@@ -1203,8 +1267,9 @@
     public void func_71004_bE() {
     }
  
@@ -285,7 +291,7 @@
        this.field_71069_bz.func_75134_a(this);
        if (this.field_71070_bA != null) {
           this.field_71070_bA.func_75134_a(this);
-@@ -1221,6 +1285,9 @@
+@@ -1221,6 +1286,9 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
@@ -295,7 +301,7 @@
        Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.field_70170_p.field_72995_K) {
           if (this.func_70608_bn() || !this.func_70089_S()) {
-@@ -1231,7 +1298,7 @@
+@@ -1231,7 +1299,7 @@
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
           }
  
@@ -304,7 +310,7 @@
              this.func_226560_a_(p_213819_1_, false, true);
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
           }
-@@ -1273,6 +1340,7 @@
+@@ -1273,6 +1341,7 @@
     }
  
     private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
@@ -312,7 +318,7 @@
        return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
     }
  
-@@ -1287,6 +1355,7 @@
+@@ -1287,6 +1356,7 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
@@ -320,7 +326,7 @@
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1300,17 +1369,17 @@
+@@ -1300,17 +1370,17 @@
     }
  
     public static Optional<Vec3d> func_213822_a(IWorldReader p_213822_0_, BlockPos p_213822_1_, boolean p_213822_2_) {
@@ -342,7 +348,7 @@
        }
     }
  
-@@ -1325,15 +1394,62 @@
+@@ -1325,15 +1395,62 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -407,7 +413,7 @@
        if (p_226560_1_ != null) {
           if (p_226560_3_ && !p_226560_1_.equals(this.field_71077_c)) {
              this.func_145747_a(new TranslationTextComponent("block.minecraft.bed.set_spawn"));
-@@ -1506,6 +1622,7 @@
+@@ -1506,6 +1623,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -415,7 +421,7 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1560,6 +1677,10 @@
+@@ -1560,6 +1678,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -426,7 +432,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1599,6 +1720,10 @@
+@@ -1599,6 +1721,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -437,7 +443,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1789,7 +1914,10 @@
+@@ -1789,7 +1915,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -449,7 +455,7 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -2029,4 +2157,45 @@
+@@ -2029,4 +2158,45 @@
           return this.field_221260_g;
        }
     }

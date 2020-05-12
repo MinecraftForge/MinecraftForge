@@ -17,7 +17,15 @@
     }
  
     public <T extends Entity> EntityRenderer<? super T> func_78713_a(T p_78713_1_) {
-@@ -445,4 +447,8 @@
+@@ -275,6 +277,7 @@
+    private void func_229093_a_(MatrixStack p_229093_1_, IVertexBuilder p_229093_2_, Entity p_229093_3_, float p_229093_4_) {
+       float f = p_229093_3_.func_213311_cf() / 2.0F;
+       this.func_229094_a_(p_229093_1_, p_229093_2_, p_229093_3_, 1.0F, 1.0F, 1.0F);
++      if(p_229093_3_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_229093_3_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).renderDebugBoundingBoxes(p_229093_1_,p_229093_2_,p_229093_3_,p_229093_4_); } else
+       if (p_229093_3_ instanceof EnderDragonEntity) {
+          double d0 = p_229093_3_.func_226277_ct_() - MathHelper.func_219803_d((double)p_229093_4_, p_229093_3_.field_70142_S, p_229093_3_.func_226277_ct_());
+          double d1 = p_229093_3_.func_226278_cu_() - MathHelper.func_219803_d((double)p_229093_4_, p_229093_3_.field_70137_T, p_229093_3_.func_226278_cu_());
+@@ -445,4 +448,8 @@
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
     }

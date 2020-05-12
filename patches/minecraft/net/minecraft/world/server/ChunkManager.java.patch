@@ -48,3 +48,11 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
+@@ -919,6 +925,7 @@
+    }
+ 
+    protected void func_219210_a(Entity p_219210_1_) {
++      if (!p_219210_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent())
+       if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
+          if (!(p_219210_1_ instanceof LightningBoltEntity)) {
+             EntityType<?> entitytype = p_219210_1_.func_200600_R();

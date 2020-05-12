@@ -143,6 +143,15 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
+@@ -466,7 +476,7 @@
+                   if (p_177414_4_ == null || p_177414_4_.test(entity)) {
+                      p_177414_3_.add(entity);
+                   }
+-
++                  if(entity.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_177414_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).collideWithParts(p_177414_1_,p_177414_2_,p_177414_3_,p_177414_4_); } else
+                   if (entity instanceof EnderDragonEntity) {
+                      for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entity).func_213404_dT()) {
+                         if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
 @@ -482,8 +492,8 @@
     }
  

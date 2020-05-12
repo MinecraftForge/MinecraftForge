@@ -8,7 +8,7 @@
 +public class ServerWorld extends World implements net.minecraftforge.common.extensions.IForgeWorldServer {
     private static final Logger field_147491_a = LogManager.getLogger();
     private final List<Entity> field_217497_w = Lists.newArrayList();
-    private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
+    public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
 @@ -163,10 +163,13 @@
     private boolean field_211159_Q;
     @Nullable
@@ -91,7 +91,15 @@
                 p_229858_0_.func_70071_h_();
              }, entity);
              if (entity.field_70128_L) {
-@@ -395,7 +406,7 @@
+@@ -386,6 +397,7 @@
+             }
+ 
+             iprofiler.func_76320_a("tick");
++            if (!entity2.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent())
+             if (!entity2.field_70128_L && !(entity2 instanceof EnderDragonPartEntity)) {
+                this.func_217390_a(this::func_217479_a, entity2);
+             }
+@@ -395,7 +407,7 @@
              if (entity2.field_70128_L) {
                 this.func_217454_n(entity2);
                 objectiterator.remove();
@@ -100,7 +108,7 @@
              }
  
              iprofiler.func_76319_b();
-@@ -418,7 +429,7 @@
+@@ -418,7 +430,7 @@
        int j = chunkpos.func_180333_d();
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("thunder");
@@ -109,7 +117,7 @@
           BlockPos blockpos = this.func_175736_a(this.func_217383_a(i, 0, j, 15));
           if (this.func_175727_C(blockpos)) {
              DifficultyInstance difficultyinstance = this.func_175649_E(blockpos);
-@@ -436,10 +447,11 @@
+@@ -436,10 +448,11 @@
        }
  
        iprofiler.func_219895_b("iceandsnow");
@@ -122,7 +130,7 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
-@@ -526,10 +538,7 @@
+@@ -526,10 +539,7 @@
     }
  
     private void func_73051_P() {
@@ -134,7 +142,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -542,7 +551,7 @@
+@@ -542,7 +552,7 @@
        int j = this.field_72986_A.func_76074_e();
        int k = 0;
  
@@ -143,7 +151,7 @@
           i += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           j += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           ++k;
-@@ -584,8 +593,9 @@
+@@ -584,8 +594,9 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -154,7 +162,7 @@
              iprofiler.func_230035_c_("tickNonPassenger");
              p_217479_1_.func_70071_h_();
              iprofiler.func_76319_b();
-@@ -652,6 +662,11 @@
+@@ -652,6 +663,11 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
@@ -166,7 +174,7 @@
        return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
     }
  
-@@ -661,6 +676,7 @@
+@@ -661,6 +677,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -174,7 +182,7 @@
           BiomeProvider biomeprovider = this.func_72863_F().func_201711_g().func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(this.func_72905_C());
-@@ -734,6 +750,7 @@
+@@ -734,6 +751,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -182,7 +190,7 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -809,7 +826,7 @@
+@@ -809,7 +827,7 @@
              }
           }
  
@@ -191,7 +199,7 @@
           if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
              object2intmap.mergeInt(entityclassification, 1, Integer::sum);
           }
-@@ -851,6 +868,7 @@
+@@ -851,6 +869,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -199,7 +207,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -875,6 +893,7 @@
+@@ -875,6 +894,7 @@
        } else if (this.func_217478_l(p_72838_1_)) {
           return false;
        } else {
@@ -207,7 +215,7 @@
           IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
-@@ -890,6 +909,7 @@
+@@ -890,6 +910,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -215,7 +223,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -925,12 +945,17 @@
+@@ -925,12 +946,18 @@
  
     }
  
@@ -224,6 +232,7 @@
 +      removeEntityComplete(p_217484_1_, false);
 +   }
 +   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
++      if(p_217484_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_217484_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).removeParts(keepData); } else
        if (p_217484_1_ instanceof EnderDragonEntity) {
           for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
 -            enderdragonpartentity.func_70106_y();
@@ -234,7 +243,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -944,6 +969,7 @@
+@@ -944,6 +971,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -242,7 +251,15 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -964,15 +990,19 @@
+@@ -951,6 +979,7 @@
+          this.field_217499_z.add(p_217465_1_);
+       } else {
+          this.field_217498_x.put(p_217465_1_.func_145782_y(), p_217465_1_);
++         if(p_217465_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_217465_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).spawnPartsServer(this); } else
+          if (p_217465_1_ instanceof EnderDragonEntity) {
+             for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217465_1_).func_213404_dT()) {
+                this.field_217498_x.put(enderdragonpartentity.func_145782_y(), enderdragonpartentity);
+@@ -964,15 +993,19 @@
           }
        }
  
@@ -263,7 +280,7 @@
        }
     }
  
-@@ -985,8 +1015,11 @@
+@@ -985,8 +1018,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -277,7 +294,7 @@
        this.func_72854_c();
     }
  
-@@ -1010,10 +1043,20 @@
+@@ -1010,10 +1046,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -298,7 +315,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1049,6 +1092,7 @@
+@@ -1049,6 +1095,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, @Nullable DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -306,7 +323,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1377,4 +1421,15 @@
+@@ -1377,4 +1424,15 @@
           return p_229854_1_.func_175898_b(p_229855_1_.func_180328_a());
        });
     }
