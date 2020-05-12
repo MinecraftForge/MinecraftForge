@@ -1,0 +1,18 @@
+--- a/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
++++ b/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
+@@ -64,6 +64,15 @@
+       super.tick();
+    }
+ 
++   @Override
++   public boolean keyPressed(int key, int scanCode, int modifiers) {
++      if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
++         Realms.setScreen(this.field_224228_a);
++         return true;
++      }
++      return super.keyPressed(key, scanCode, modifiers);
++   }
++
+    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+       this.renderBackground();
+       this.drawCenteredString(this.field_224229_b, this.width() / 2, 80, 16777215);

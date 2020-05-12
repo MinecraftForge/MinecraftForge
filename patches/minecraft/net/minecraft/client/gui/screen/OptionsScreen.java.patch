@@ -1,0 +1,15 @@
+--- a/net/minecraft/client/gui/screen/OptionsScreen.java
++++ b/net/minecraft/client/gui/screen/OptionsScreen.java
+@@ -118,4 +118,12 @@
+       this.drawCenteredString(this.font, this.title.func_150254_d(), this.width / 2, 15, 16777215);
+       super.render(p_render_1_, p_render_2_, p_render_3_);
+    }
++
++   @Override
++   public void onClose() {
++      // We need to consider 2 potential parent screens here:
++      // 1. From the main menu, in which case display the main menu
++      // 2. From the pause menu, in which case exit back to game
++      this.minecraft.func_147108_a(this.field_146441_g instanceof IngameMenuScreen ? null : this.field_146441_g);
++   }
+ }
