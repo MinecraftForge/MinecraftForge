@@ -58,7 +58,7 @@
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
 -      if (this.func_149716_u() && p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c()) {
-+      if (p_196243_1_.hasTileEntity() && p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c()) {
++      if (p_196243_1_.hasTileEntity() && (p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c() || !p_196243_4_.hasTileEntity())) {
           p_196243_2_.func_175713_t(p_196243_3_);
        }
 -
