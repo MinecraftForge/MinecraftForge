@@ -81,7 +81,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public void setConfig(CommentedConfig config) {
         this.childConfig = config;
-        if (!isCorrect(config)) {
+        if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
