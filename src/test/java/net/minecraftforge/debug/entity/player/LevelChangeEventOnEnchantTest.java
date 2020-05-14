@@ -15,7 +15,7 @@ public class LevelChangeEventOnEnchantTest {
    @SubscribeEvent
    public static void onPlayerLevelChange(PlayerXpEvent.LevelChange event)
    {
-      if (!ENABLE) return;
-      logger.info("{} has changed {} levels", event.getPlayer().getName().getString(), event.getLevels());
+      if (ENABLE)
+         logger.info("{} has changed {} levels", event.getPlayer().getName().getString(), event.getLevels());
    }
 }
