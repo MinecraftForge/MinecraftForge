@@ -426,6 +426,15 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
+@@ -1588,7 +1709,7 @@
+    }
+ 
+    public void func_192024_a(ItemStack p_192024_1_, int p_192024_2_) {
+-      this.field_71068_ca -= p_192024_2_;
++      func_82242_a(-p_192024_2_);
+       if (this.field_71068_ca < 0) {
+          this.field_71068_ca = 0;
+          this.field_71106_cc = 0.0F;
 @@ -1599,6 +1720,10 @@
     }
  
