@@ -40,11 +40,11 @@
              this.func_219100_a(chunkpos, compoundnbt1);
              return true;
           } catch (Exception exception) {
-@@ -804,6 +809,7 @@
-       for(int l = i - this.field_219247_A; l <= i + this.field_219247_A; ++l) {
-          for(int k = j - this.field_219247_A; k <= j + this.field_219247_A; ++k) {
-             ChunkPos chunkpos = new ChunkPos(l, k);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_219234_2_, p_219234_1_, chunkpos, field_219255_i);
-             this.func_219199_a(p_219234_1_, chunkpos, new IPacket[2], !p_219234_2_, p_219234_2_);
-          }
-       }
+@@ -700,6 +705,7 @@
+ 
+    protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
+       if (p_219199_1_.field_70170_p == this.field_219255_i) {
++         if (p_219199_4_ != p_219199_5_) net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_219199_5_, p_219199_1_, p_219199_2_, field_219255_i);
+          if (p_219199_5_ && !p_219199_4_) {
+             ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
+             if (chunkholder != null) {

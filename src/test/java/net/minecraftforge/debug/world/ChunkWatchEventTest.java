@@ -17,31 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/*
-
-
 package net.minecraftforge.debug.world;
 
-import org.apache.logging.log4j.Logger;
-
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-//@Mod(modid = ChunkWatchEventTest.MODID, name = "Chunk Watch Event Test", version = "1.0", acceptableRemoteVersions = "*")
+import javax.annotation.Nullable;
+import java.util.UUID;
+
+@Mod(ChunkWatchEventTest.MODID)
 public class ChunkWatchEventTest
 {
     public static final String MODID = "chunkwatchworldtest";
 
     private static final boolean ENABLED = false;
     private static Logger logger;
+    private static Object2IntMap<UUID> watchedByPlayer = new Object2IntOpenHashMap<>();
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    public ChunkWatchEventTest()
     {
-        logger = event.getModLog();
+        logger = LogManager.getLogger();
 
         if (ENABLED)
         {
@@ -52,13 +55,28 @@ public class ChunkWatchEventTest
     @SubscribeEvent
     public static void onUnwatch(ChunkWatchEvent.UnWatch event)
     {
-        logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getChunkInstance().getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
+        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        --watched;
+        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
+                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                watched);
     }
 
     @SubscribeEvent
     public static void onWatch(ChunkWatchEvent.Watch event)
     {
-        logger.info("Watching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getChunkInstance().getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
+        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        ++watched;
+        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        logger.info("Watching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
+                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                watched);
+    }
+
+    @Nullable
+    private static ResourceLocation getDimensionName(World w) {
+        return w.getDimension().getType().getRegistryName();
     }
 }
-*/
+

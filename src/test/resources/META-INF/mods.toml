@@ -58,6 +58,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgeblockstatesloader"
 [[mods]]
+    modId="chunkwatchworldtest"
+[[mods]]
     modId="custom_tnt_test"
 [[mods]]
     modId="new_model_loader_test"
