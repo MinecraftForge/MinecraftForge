@@ -30,7 +30,7 @@
           if (!this.field_76637_e.field_72995_K) {
              blockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
 -         } else if (block1 != block && block1 instanceof ITileEntityProvider) {
-+         } else if (block1 != block && blockstate.hasTileEntity()) {
++         } else if ((block1 != block || !p_177436_2_.hasTileEntity()) && blockstate.hasTileEntity()) {
              this.field_76637_e.func_175713_t(p_177436_1_);
           }
  
