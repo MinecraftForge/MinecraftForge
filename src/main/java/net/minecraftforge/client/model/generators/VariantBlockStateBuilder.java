@@ -307,7 +307,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
                 }
                 ret.append(entry.getKey().getName())
                         .append('=')
-                        .append(entry.getValue());
+                        .append(((IProperty) entry.getKey()).getName(entry.getValue()));
             }
             return ret.toString();
         }

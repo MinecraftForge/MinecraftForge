@@ -144,7 +144,7 @@ public class BlockInfo
             BlockState thisStateShape = this.state.isSolid() && this.state.isTransparent() ? this.state : Blocks.AIR.getDefaultState();
             BlockState otherStateShape = state.isSolid() && state.isTransparent() ? state : Blocks.AIR.getDefaultState();
 
-            if(state.getOpacity(world, blockPos) == 15 || VoxelShapes.faceShapeCovers(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
+            if(state.getOpacity(world, pos) == 15 || VoxelShapes.faceShapeCovers(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
             {
                 int x = side.getXOffset() + 1;
                 int y = side.getYOffset() + 1;

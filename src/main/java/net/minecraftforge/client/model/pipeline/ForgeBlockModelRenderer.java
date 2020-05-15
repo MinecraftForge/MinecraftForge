@@ -51,7 +51,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelFlat(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228806_11_, IModelData modelData)
+    public boolean renderModelFlat(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -66,12 +66,12 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.renderModelFlat(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, p_228806_11_, modelData);
+            return super.renderModelFlat(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
         }
     }
 
     @Override
-    public boolean renderModelSmooth(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228805_11_, IModelData modelData)
+    public boolean renderModelSmooth(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -86,7 +86,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.renderModelSmooth(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, p_228805_11_, modelData);
+            return super.renderModelSmooth(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
         }
     }
 

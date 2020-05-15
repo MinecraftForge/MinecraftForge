@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east": { "model": "composite_model_test:block/composite_block", "y": 90 },
+    "facing=west": { "model": "composite_model_test:block/composite_block", "y": 270 },
+    "facing=north": { "model": "composite_model_test:block/composite_block", "y": 0 },
+    "facing=south": { "model": "composite_model_test:block/composite_block", "y": 180 }
+  }
+}

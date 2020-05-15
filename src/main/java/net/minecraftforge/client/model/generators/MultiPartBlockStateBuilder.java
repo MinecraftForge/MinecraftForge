@@ -119,10 +119,10 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
                 JsonObject when = new JsonObject();
                 for (Entry<IProperty<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet()) {
                     StringBuilder activeString = new StringBuilder();
-                    for (Object val : e.getValue()) {
+                    for (Comparable<?> val : e.getValue()) {
                         if (activeString.length() > 0)
                             activeString.append("|");
-                        activeString.append(val.toString());
+                        activeString.append(((IProperty) e.getKey()).getName(val));
                     }
                     when.addProperty(e.getKey().getName(), activeString.toString());
                 }

@@ -1,0 +1,16 @@
+--- a/net/minecraft/block/BambooBlock.java
++++ b/net/minecraft/block/BambooBlock.java
+@@ -91,10 +91,11 @@
+       if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
+          p_225534_2_.func_175655_b(p_225534_3_, true);
+       } else if (p_225534_1_.func_177229_b(field_220266_f) == 0) {
+-         if (p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9) {
++         if (true) {
+             int i = this.func_220260_b(p_225534_2_, p_225534_3_) + 1;
+-            if (i < 16) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) {
+                this.func_220258_a(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_, i);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
+             }
+          }
+ 
