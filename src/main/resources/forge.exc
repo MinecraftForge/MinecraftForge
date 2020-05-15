@@ -23,6 +23,8 @@ net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$ChunkRender$SortTransp
 
 net/minecraft/client/renderer/entity/layers/ArmorLayer.renderArmor(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V=|p_229128_1_,p_229128_2_,p_229128_3_,p_229128_5_,p_229128_6_,p_229128_8_,p_229128_9_,p_229128_10_,armorResource
 
+net/minecraft/client/renderer/WorldRenderer.playRecord(Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/MusicDiscItem;)V=|p_184377_1_,p_184377_2_,musicDiscItem
+
 net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Z)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting
 net/minecraft/client/renderer/model/BlockModel.bake(Lnet/minecraft/client/renderer/model/ModelBakery;Lnet/minecraft/client/renderer/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/IModelTransform;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217644_1_,p_217644_2_,p_217644_3_,p_217644_4_,format
 net/minecraft/client/renderer/model/BlockModel.bakeVanilla(Lnet/minecraft/client/renderer/model/ModelBakery;Lnet/minecraft/client/renderer/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/renderer/model/IModelTransform;Lnet/minecraft/util/ResourceLocation;Z)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_228813_1_,p_228813_2_,p_228813_3_,p_228813_4_,p_228813_5_,p_228813_6_
