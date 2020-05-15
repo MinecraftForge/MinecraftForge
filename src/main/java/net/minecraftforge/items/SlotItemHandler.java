@@ -63,7 +63,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_)
+    public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn)
     {
 
     }

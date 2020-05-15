@@ -91,7 +91,7 @@ final class FancyMissingModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
+    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
     {
         return ImmutableList.of(font2);
     }
