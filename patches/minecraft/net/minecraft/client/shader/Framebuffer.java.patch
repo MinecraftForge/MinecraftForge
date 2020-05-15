@@ -15,7 +15,7 @@
        }
  
        this.func_147611_b();
-@@ -254,4 +260,28 @@
+@@ -254,4 +260,29 @@
        GlStateManager.func_227658_a_(i, p_216493_1_);
        this.func_147609_e();
     }
@@ -26,6 +26,7 @@
 +     * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
 +     * Modders must call this directly to set things up.
 +     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * <b>Make sure to call this on the main render thread!</b>
 +     */
 +    public void enableStencil()
 +    {
