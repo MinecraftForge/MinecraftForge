@@ -373,6 +373,10 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             uv2 = new Vec2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
             builder.setApplyDiffuseLighting(fakeLight == 0);
         }
+        else
+        {
+            builder.setApplyDiffuseLighting(diffuseLighting);
+        }
 
         boolean hasTransform = !transform.isIdentity();
         // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
