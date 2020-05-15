@@ -66,6 +66,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="chunk_data_event_save_null_world_test"
 [[mods]]
+    modId="composite_model_test"
+[[mods]]
     modId="music_disc_test"
 [[dependencies.global_loot_test]]
     modId="forge"

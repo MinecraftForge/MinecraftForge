@@ -8,7 +8,7 @@
        if (this.field_78776_a.field_71439_g.func_223729_a(this.field_78776_a.field_71441_e, p_187103_1_, this.field_78779_k)) {
           return false;
        } else {
-@@ -103,7 +104,7 @@
+@@ -103,12 +104,11 @@
              Block block = blockstate.func_177230_c();
              if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_78776_a.field_71439_g.func_195070_dx()) {
                 return false;
@@ -16,8 +16,14 @@
 +            } else if (blockstate.isAir(world, p_187103_1_)) {
                 return false;
              } else {
-                block.func_176208_a(world, p_187103_1_, blockstate, this.field_78776_a.field_71439_g);
-@@ -129,21 +130,25 @@
+-               block.func_176208_a(world, p_187103_1_, blockstate, this.field_78776_a.field_71439_g);
+                IFluidState ifluidstate = world.func_204610_c(p_187103_1_);
+-               boolean flag = world.func_180501_a(p_187103_1_, ifluidstate.func_206883_i(), 11);
++               boolean flag = blockstate.removedByPlayer(world, p_187103_1_, field_78776_a.field_71439_g, false, ifluidstate);
+                if (flag) {
+                   block.func_176206_d(world, p_187103_1_, blockstate);
+                }
+@@ -129,21 +129,25 @@
              BlockState blockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_);
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180511_1_, blockstate, 1.0F);
              this.func_225324_a(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_);
@@ -44,7 +50,7 @@
              if (flag && blockstate1.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F) {
                 this.func_187103_a(p_180511_1_);
              } else {
-@@ -183,22 +188,24 @@
+@@ -183,22 +187,24 @@
           BlockState blockstate1 = this.field_78776_a.field_71441_e.func_180495_p(p_180512_1_);
           this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180512_1_, blockstate1, 1.0F);
           this.func_225324_a(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
@@ -71,7 +77,7 @@
              if (this.field_78770_f >= 1.0F) {
                 this.field_78778_j = false;
                 this.func_225324_a(CPlayerDiggingPacket.Action.STOP_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
-@@ -217,7 +224,8 @@
+@@ -217,7 +223,8 @@
     }
  
     public float func_78757_d() {
@@ -81,7 +87,7 @@
     }
  
     public void func_78765_e() {
-@@ -234,7 +242,7 @@
+@@ -234,7 +241,7 @@
        ItemStack itemstack = this.field_78776_a.field_71439_g.func_184614_ca();
        boolean flag = this.field_85183_f.func_190926_b() && itemstack.func_190926_b();
        if (!this.field_85183_f.func_190926_b() && !itemstack.func_190926_b()) {
@@ -90,7 +96,7 @@
        }
  
        return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -256,13 +264,27 @@
+@@ -256,13 +263,27 @@
           return ActionResultType.FAIL;
        } else {
           ItemStack itemstack = p_217292_1_.func_184586_b(p_217292_3_);
@@ -120,7 +126,7 @@
                 ActionResultType actionresulttype = p_217292_2_.func_180495_p(blockpos).func_227031_a_(p_217292_2_, p_217292_1_, p_217292_3_, p_217292_4_);
                 if (actionresulttype.func_226246_a_()) {
                    this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
-@@ -271,8 +293,8 @@
+@@ -271,8 +292,8 @@
              }
  
              this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
@@ -130,7 +136,7 @@
                 ActionResultType actionresulttype1;
                 if (this.field_78779_k.func_77145_d()) {
                    int i = itemstack.func_190916_E();
-@@ -300,11 +322,14 @@
+@@ -300,11 +321,14 @@
           if (p_187101_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
              return ActionResultType.PASS;
           } else {
@@ -145,7 +151,7 @@
              }
  
              return actionresult.func_188397_a();
-@@ -329,6 +354,9 @@
+@@ -329,6 +353,9 @@
     public ActionResultType func_187097_a(PlayerEntity p_187097_1_, Entity p_187097_2_, Hand p_187097_3_) {
        this.func_78750_j();
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187097_2_, p_187097_3_));
@@ -155,7 +161,7 @@
        return this.field_78779_k == GameType.SPECTATOR ? ActionResultType.PASS : p_187097_1_.func_190775_a(p_187097_2_, p_187097_3_);
     }
  
-@@ -336,6 +364,9 @@
+@@ -336,6 +363,9 @@
        this.func_78750_j();
        Vec3d vec3d = p_187102_3_.func_216347_e().func_178786_a(p_187102_2_.func_226277_ct_(), p_187102_2_.func_226278_cu_(), p_187102_2_.func_226281_cx_());
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187102_2_, p_187102_4_, vec3d));
