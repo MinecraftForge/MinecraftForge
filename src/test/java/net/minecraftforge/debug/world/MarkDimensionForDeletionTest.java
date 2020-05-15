@@ -61,7 +61,7 @@ public class MarkDimensionForDeletionTest
         {
             if (!worldIn.isRemote)
             {
-                if (playerIn.func_225608_bj_())
+                if (playerIn.isShiftKeyDown())
                 {
                     playerIn.sendMessage(new StringTextComponent("You are in dimension " + worldIn.dimension.getType().getRegistryName()));
                 }
@@ -94,7 +94,7 @@ public class MarkDimensionForDeletionTest
                     }
                 }
             }
-            return ActionResult.func_226248_a_(playerIn.getHeldItem(handIn));
+            return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
         }
     });
 

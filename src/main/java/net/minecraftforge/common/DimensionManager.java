@@ -402,7 +402,7 @@ public class DimensionManager
         data.put("entries", lst);
 
         ListNBT deleteLst = new ListNBT();
-        foldersScheduledForDeletion.forEach(folder -> deleteLst.add(StringNBT.func_229705_a_(folder)));
+        foldersScheduledForDeletion.forEach(folder -> deleteLst.add(StringNBT.valueOf(folder)));
         data.put("delete_dirs", deleteLst);
     }
 
@@ -468,7 +468,23 @@ public class DimensionManager
 
     public static void processScheduledDeletions(SaveHandler saveHandler)
     {
-        for (String folderName : foldersScheduledForDeletion)
+        List<String> toDelete = new ArrayList<>(foldersScheduledForDeletion);
+        foldersScheduledForDeletion.clear();
+        if (!toDelete.isEmpty())
+        {
+            StringBuilder text = new StringBuilder();
+            text.append("The following dimensions are marked for deletion by their owning mod. Proceed?\n\n");
+            for (String folder : toDelete)
+            {
+                text.append(folder).append('\n');
+            }
+            if (!StartupQuery.confirm(text.toString()))
+            {
+                StartupQuery.abort();
+                return;
+            }
+        }
+        for (String folderName : toDelete)
         {
             File folder = new File(saveHandler.getWorldDirectory(), folderName);
             try
@@ -481,7 +497,6 @@ public class DimensionManager
                 LOGGER.error(DIMMGR, "Failed to delete modded dimension directory {} that was scheduled for deletion.", folderName, e);
             }
         }
-        foldersScheduledForDeletion.clear();
     }
 
     public static void fireRegister()
