@@ -63,6 +63,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
@@ -73,6 +74,7 @@ import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -141,6 +143,7 @@ public class GameData
     // Custom forge registries
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
+    public static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
@@ -207,6 +210,7 @@ public class GameData
         // Custom forge registries
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
+        makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
@@ -461,7 +465,7 @@ public class GameData
                 for (BlockState state : block.getStateContainer().getValidStates())
                 {
                     blockstateMap.add(state);
-                    state.func_215692_c();
+                    state.cacheState();
                 }
 
                 block.getLootTable();
@@ -893,7 +897,9 @@ public class GameData
     }
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {
+        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remapping mod data"));
         MinecraftForge.EVENT_BUS.post(new FMLModIdMappingEvent(remaps, isFreezing));
+        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remap complete"));
     }
 
     //Has to be split because of generics, Yay!
@@ -957,6 +963,7 @@ public class GameData
             if (!filter.test(rl)) continue;
             ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
             reg.unfreeze();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
             final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
             lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
             lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);

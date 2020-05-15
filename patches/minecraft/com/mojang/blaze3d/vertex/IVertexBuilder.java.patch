@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/vertex/IVertexBuilder.java
 +++ b/com/mojang/blaze3d/vertex/IVertexBuilder.java
-@@ -17,7 +17,7 @@
+@@ -18,7 +18,7 @@
  import org.lwjgl.system.MemoryStack;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     Logger field_227884_f_ = LogManager.getLogger();
  
     IVertexBuilder func_225582_a_(double p_225582_1_, double p_225582_3_, double p_225582_5_);
-@@ -95,11 +95,12 @@
+@@ -96,11 +96,12 @@
                 f5 = p_227890_3_[k] * p_227890_6_;
              }
  

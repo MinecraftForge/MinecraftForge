@@ -34,6 +34,7 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -43,7 +44,7 @@ public interface IForgeVertexBuilder
 
     // Copy of func_227889_a_, but enables tinting
     default void addVertexData(MatrixStack.Entry matrixStack, BakedQuad bakedQuad, float red, float green, float blue, int lightmapCoord, int overlayColor, boolean readExistingColor) {
-        getVertexBuilder().func_227890_a_(matrixStack, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
+        getVertexBuilder().addQuad(matrixStack, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
     }
 
     // Copy of func_227889_a_ with alpha support
@@ -56,13 +57,13 @@ public interface IForgeVertexBuilder
         addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
     }
 
-    // Copy of func_227890_a_ with alpha support
+    // Copy of addQuad with alpha support
     default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean readExistingColor) {
         int[] aint = bakedQuad.getVertexData();
         Vec3i faceNormal = bakedQuad.getFace().getDirectionVec();
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
-        Matrix4f matrix4f = matrixEntry.func_227870_a_();
-        normal.func_229188_a_(matrixEntry.func_227872_b_());
+        Matrix4f matrix4f = matrixEntry.getMatrix();
+        normal.transform(matrixEntry.getNormal());
         int intSize = DefaultVertexFormats.BLOCK.getIntegerSize();
         int vertexCount = aint.length / intSize;
 
@@ -71,7 +72,7 @@ public interface IForgeVertexBuilder
             IntBuffer intbuffer = bytebuffer.asIntBuffer();
 
             for(int v = 0; v < vertexCount; ++v) {
-                intbuffer.clear();
+                ((Buffer)intbuffer).clear();
                 intbuffer.put(aint, v * 8, 8);
                 float f = bytebuffer.getFloat(0);
                 float f1 = bytebuffer.getFloat(4);
@@ -100,31 +101,31 @@ public interface IForgeVertexBuilder
                 float f9 = bytebuffer.getFloat(16);
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
-                pos.func_229372_a_(matrix4f);
-                applyBakedNormals(normal, bytebuffer, matrixEntry.func_227872_b_());
-                ((IVertexBuilder)this).func_225588_a_(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
+                pos.transform(matrix4f);
+                applyBakedNormals(normal, bytebuffer, matrixEntry.getNormal());
+                ((IVertexBuilder)this).addVertex(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
             }
         }
     }
-    
+
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
-        int bl = LightTexture.func_228450_a_(lightmapCoord);
-        int sl = LightTexture.func_228454_b_(lightmapCoord);
+        int bl = lightmapCoord&0xFFFF;
+        int sl = (lightmapCoord>>16)&0xFFFF;
         int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
-        int blBaked = Short.toUnsignedInt(data.getShort(offset)) >> 4;
-        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2)) >> 4;
+        int blBaked = Short.toUnsignedInt(data.getShort(offset));
+        int slBaked = Short.toUnsignedInt(data.getShort(offset + 2));
         bl = Math.max(bl, blBaked);
         sl = Math.max(sl, slBaked);
-        return LightTexture.func_228451_a_(bl, sl);
+        return bl | (sl<<16);
     }
-    
+
     default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
         byte nx = data.get(28);
         byte ny = data.get(29);
         byte nz = data.get(30);
         if (nx != 0 || ny != 0 || nz != 0) {
             generated.set(nx / 127f, ny / 127f, nz / 127f);
-            generated.func_229188_a_(normalTransform);
+            generated.transform(normalTransform);
         }
     }
 }

@@ -97,25 +97,25 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         Material particleLocation = owner.resolveTexture("particle");
-        if (MissingTextureSprite.getLocation().equals(particleLocation.func_229313_b_()))
+        if (MissingTextureSprite.getLocation().equals(particleLocation.getTextureLocation()))
         {
             particleLocation = null;
         }
 
         Material baseLocation = owner.resolveTexture("base");
-        if (MissingTextureSprite.getLocation().equals(baseLocation.func_229313_b_()))
+        if (MissingTextureSprite.getLocation().equals(baseLocation.getTextureLocation()))
         {
             baseLocation = null;
         }
 
         Material fluidMaskLocation = owner.resolveTexture("fluid");
-        if (MissingTextureSprite.getLocation().equals(fluidMaskLocation.func_229313_b_()))
+        if (MissingTextureSprite.getLocation().equals(fluidMaskLocation.getTextureLocation()))
         {
             fluidMaskLocation = null;
         }
 
         Material coverLocation = owner.resolveTexture("cover");
-        if (!MissingTextureSprite.getLocation().equals(coverLocation.func_229313_b_()))
+        if (!MissingTextureSprite.getLocation().equals(coverLocation.getTextureLocation()))
         {
             // cover (the actual item around the other two)
             coverLocation = null;
@@ -135,7 +135,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             modelTransform = new ModelTransformComposition(modelTransform, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)));
         }
 
-        TransformationMatrix transform = modelTransform.func_225615_b_();
+        TransformationMatrix transform = modelTransform.getRotation();
 
         TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(fluid.getAttributes().getStillTexture())) : null;
 

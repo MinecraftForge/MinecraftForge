@@ -408,8 +408,8 @@ public class ModelBlockAnimation
                 }
                 Quaternion rot = new Quaternion(rotation_axis, rotation_angle, false);
                 TransformationMatrix base = new TransformationMatrix(translation, rot, scale, null);
-                Vector3f negOrigin = origin.func_229195_e_();
-                negOrigin.func_229192_b_(-1,-1,-1);
+                Vector3f negOrigin = origin.copy();
+                negOrigin.mul(-1,-1,-1);
                 base = new TransformationMatrix(origin, null, null, null).compose(base).compose(new TransformationMatrix(negOrigin, null, null, null));
                 return base.blockCenterToCorner();
             }
@@ -428,7 +428,7 @@ public class ModelBlockAnimation
         @Override
         public TransformationMatrix getInvBindPose()
         {
-            return TransformationMatrix.func_227983_a_();
+            return TransformationMatrix.identity();
         }
 
         @Override
@@ -537,8 +537,8 @@ public class ModelBlockAnimation
                     if(!trOp.isIdentity())
                     {
                         float w = info.getWeights().get(i)[0];
-                        tmp = trOp.func_227988_c_();
-                        tmp.func_226592_a_(w);
+                        tmp = trOp.getMatrix();
+                        tmp.mul(w);
                         m.add(tmp);
                         weight += w;
                     }
@@ -546,7 +546,7 @@ public class ModelBlockAnimation
             }
             if(weight > 1e-5)
             {
-                m.func_226592_a_(1f / weight);
+                m.mul(1f / weight);
                 return new TransformationMatrix(m);
             }
         }

@@ -83,7 +83,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
     {
         FluidAttributes attrs = fluid.getAttributes();
         return new CachingBakedFluid(
-                modelTransform.func_225615_b_(),
+                modelTransform.getRotation(),
                 PerspectiveMapWrapper.getTransforms(modelTransform),
                 modelLocation,
                 attrs.getColor(),
@@ -389,7 +389,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         private void putVertex(IVertexConsumer consumer, Direction side, boolean offset, float x, float y, float z, float u, float v)
         {
             VertexFormat format = DefaultVertexFormats.BLOCK;
-            ImmutableList<VertexFormatElement> elements = format.func_227894_c_();
+            ImmutableList<VertexFormatElement> elements = format.getElements();
             for(int e = 0; e < elements.size(); e++)
             {
                 switch(elements.get(e).getUsage())

@@ -162,7 +162,7 @@ public final class ModelLoader extends ModelBakery
         {
             if (instance == null)
             {
-                instance = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, LOCATION).func_229314_c_();
+                instance = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, LOCATION).getSprite();
             }
             return instance;
         }
@@ -264,7 +264,7 @@ public final class ModelLoader extends ModelBakery
      */
     public static Function<Material, TextureAtlasSprite> defaultTextureGetter()
     {
-        return Material::func_229314_c_;
+        return Material::getSprite;
     }
 
     public static Function<ResourceLocation, IUnbakedModel> defaultModelGetter()

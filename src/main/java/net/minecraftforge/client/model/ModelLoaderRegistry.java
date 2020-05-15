@@ -219,15 +219,15 @@ public class ModelLoaderRegistry
             if(transform.has("rotation")) k--;
             if(transform.has("scale")) k--;
             if(transform.has("post-rotation")) k--;
+            if(transform.has("origin")) k--;
             if(k > 0)
             {
-                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
+                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
             }
-            TransformationMatrix base = TransformationMatrix.func_227983_a_();
+            TransformationMatrix base = TransformationMatrix.identity();
             if(!transform.entrySet().isEmpty())
             {
                 base = context.deserialize(transform, TransformationMatrix.class);
-                base = base.blockCenterToCorner();
             }
             IModelTransform state = new SimpleModelTransform(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
@@ -249,7 +249,7 @@ public class ModelLoaderRegistry
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
-            modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
+            modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isUvLock());
 
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
@@ -282,7 +282,7 @@ public class ModelLoaderRegistry
                         modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     } else {
                         modelBuilder.addFaceQuad(
-                                modelTransform.func_225615_b_().rotateTransform(blockpartface.cullFace),
+                                modelTransform.getRotation().rotateTransform(blockpartface.cullFace),
                                 BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     }
                 }

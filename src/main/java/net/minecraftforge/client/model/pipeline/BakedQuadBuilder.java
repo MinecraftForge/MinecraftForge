@@ -34,7 +34,7 @@ import net.minecraft.util.Direction;
  */
 public class BakedQuadBuilder implements IVertexConsumer
 {
-    private static final int SIZE = DefaultVertexFormats.BLOCK.func_227894_c_().size();
+    private static final int SIZE = DefaultVertexFormats.BLOCK.getElements().size();
     
     private final float[][][] unpackedData = new float[4][SIZE][4];
     private int tint = -1;
@@ -134,7 +134,7 @@ public class BakedQuadBuilder implements IVertexConsumer
             float tS = tX > tY ? tX : tY;
             float ep = 1f / (tS * 0x100);
             int uve = 0;
-            ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.func_227894_c_();
+            ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.getElements();
             while(uve < elements.size())
             {
                 VertexFormatElement e = elements.get(uve);

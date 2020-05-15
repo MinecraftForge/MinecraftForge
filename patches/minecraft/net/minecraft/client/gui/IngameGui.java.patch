@@ -40,3 +40,12 @@
              RenderSystem.disableBlend();
              RenderSystem.popMatrix();
           }
+@@ -1045,7 +1056,7 @@
+          ItemStack itemstack = this.field_73839_d.field_71439_g.field_71071_by.func_70448_g();
+          if (itemstack.func_190926_b()) {
+             this.field_92017_k = 0;
+-         } else if (!this.field_92016_l.func_190926_b() && itemstack.func_77973_b() == this.field_92016_l.func_77973_b() && itemstack.func_200301_q().equals(this.field_92016_l.func_200301_q())) {
++         } else if (!this.field_92016_l.func_190926_b() && itemstack.func_77973_b() == this.field_92016_l.func_77973_b() && (itemstack.func_200301_q().equals(this.field_92016_l.func_200301_q()) && itemstack.getHighlightTip(itemstack.func_200301_q().func_150261_e()).equals(field_92016_l.getHighlightTip(field_92016_l.func_200301_q().func_150261_e())))) {
+             if (this.field_92017_k > 0) {
+                --this.field_92017_k;
+             }

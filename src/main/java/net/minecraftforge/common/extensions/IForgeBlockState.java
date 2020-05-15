@@ -496,6 +496,19 @@ public interface IForgeBlockState
     }
 
     /**
+     * Determines if this block can be used as the frame of a conduit.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param conduit Conduit position in world
+     * @return True, to support the conduit, and make it active with this block.
+     */
+    default boolean isConduitFrame(IWorldReader world, BlockPos pos, BlockPos conduit)
+    {
+        return getBlockState().getBlock().isConduitFrame(getBlockState(), world, pos, conduit);
+    }
+
+    /**
      * Determines if this block can be used as part of a frame of a nether portal.
      *
      * @param world The current world

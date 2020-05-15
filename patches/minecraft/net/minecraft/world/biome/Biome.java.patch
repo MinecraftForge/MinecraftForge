@@ -41,7 +41,7 @@
                 return true;
              }
           }
-@@ -375,6 +375,12 @@
+@@ -375,6 +375,17 @@
        return this.field_185364_H;
     }
  
@@ -51,10 +51,15 @@
 +      return Biomes.field_76781_i;
 +   }
 +
++   @Nullable
++   public Biome getHill(net.minecraft.world.gen.INoiseRandom rand) {
++      return null;
++   }
++
     public static class Builder {
        @Nullable
        private ConfiguredSurfaceBuilder<?> field_205422_a;
-@@ -526,6 +532,18 @@
+@@ -526,6 +537,18 @@
        }
     }
  

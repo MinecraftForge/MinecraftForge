@@ -425,7 +425,7 @@ public class ForgeEventFactory
 
         if(isCanceled)
         {
-            entityMounting.setPositionAndRotation(entityMounting.func_226277_ct_(), entityMounting.func_226278_cu_(), entityMounting.func_226281_cx_(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            entityMounting.setPositionAndRotation(entityMounting.getPosX(), entityMounting.getPosY(), entityMounting.getPosZ(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
             return false;
         }
         else
@@ -692,6 +692,12 @@ public class ForgeEventFactory
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
         else
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+    }
+
+    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
+    {
+        if (wasLoaded != load)
+            fireChunkWatch(load, entity, chunkpos, world);
     }
 
     public static boolean onPistonMovePre(World world, BlockPos pos, Direction direction, boolean extending)

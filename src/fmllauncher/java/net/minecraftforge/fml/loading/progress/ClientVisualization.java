@@ -19,36 +19,45 @@
 
 package net.minecraftforge.fml.loading.progress;
 
+import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.stb.STBEasyFont;
+import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+
 class ClientVisualization implements EarlyProgressVisualization.Visualization {
-    private final int screenWidth = 800;
-    private final int screenHeight = 400;
+    private final int screenWidth = 854;
+    private final int screenHeight = 480;
     private long window;
-    private Thread thread;
-    private boolean running;
+    private Thread renderThread = new Thread(this::renderThreadFunc);
+
+    private boolean running = true;
 
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
@@ -64,8 +73,13 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         }
 
         glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(screenWidth, screenHeight, "FML early loading progress", NULL, NULL);
         if (window == NULL) {
@@ -86,13 +100,34 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
                     (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
                     (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
             );
+            IntBuffer iconWidth = stack.mallocInt(1);
+            IntBuffer iconHeight = stack.mallocInt(1);
+            IntBuffer iconChannels = stack.mallocInt(1);
+            final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
+            byte[] icon;
+            try {
+                icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
+                final ByteBuffer iconBuf = stack.malloc(icon.length);
+                iconBuf.put(icon);
+                ((Buffer)iconBuf).position(0);
+                final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
+                if (imgBuffer == null) {
+                    throw new NullPointerException("Failed to load window icon"); // fall down to catch block
+                }
+                glfwImages.position(0);
+                glfwImages.width(iconWidth.get(0));
+                glfwImages.height(iconHeight.get(0));
+                ((Buffer)imgBuffer).position(0);
+                glfwImages.pixels(imgBuffer);
+                glfwImages.position(0);
+                glfwSetWindowIcon(window, glfwImages);
+                STBImage.stbi_image_free(imgBuffer);
+            } catch (NullPointerException | IOException e) {
+                System.err.println("Failed to load forge logo");
+            }
         }
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
         glfwShowWindow(window);
-        GL.createCapabilities();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glfwPollEvents();
     }
 
     private void renderProgress() {
@@ -103,20 +138,10 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-//            // replace with more modern opengl?
-//            glBegin(GL_QUADS);
-//            glColor3f(0.1f, 0.1f, 0.9f);
-//            glVertex2f(0, 0);
-//            glVertex2f(0, screenHeight);
-//            glVertex2f(screenWidth * progress, screenHeight);
-//            glVertex2f(screenWidth * progress, 0);
-//            glEnd();
-
         glEnableClientState(GL11.GL_VERTEX_ARRAY);
         glEnable(GL_BLEND);
         renderMessages();
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     private static float clamp(float num, float min, float max) {
@@ -229,39 +254,55 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         MemoryUtil.memFree(charBuffer);
     }
 
-    private void closeWindow() {
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        glfwSetErrorCallback(null).free();
-    }
-
-    @Override
-    public void start() {
-        thread = new Thread(this::run);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private void run() {
-        running = true;
-        initWindow();
+    private void renderThreadFunc() {
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+        GL.createCapabilities();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         while (running) {
             renderProgress();
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
+                break;
             }
         }
-        closeWindow();
+        glfwMakeContextCurrent(0);
     }
 
     @Override
-    public void join() {
+    public Runnable start() {
+        initWindow();
+        renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
+        renderThread.start();
+        return org.lwjgl.glfw.GLFW::glfwPollEvents;
+    }
+
+    @Override
+    public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
         running = false;
         try {
-            thread.join();
-        } catch (InterruptedException e) {
+            renderThread.join();
+        } catch (InterruptedException ignored) {
         }
+        glfwSetWindowTitle(window, title.get());
+        glfwSetWindowSize(window, width.getAsInt(), height.getAsInt());
+        if (monitorSupplier.getAsLong() != 0L)
+            glfwSetWindowMonitor(window, monitorSupplier.getAsLong(), 0, 0, width.getAsInt(), height.getAsInt(), GLFW_DONT_CARE);
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        renderProgress();
+        glfwSwapInterval(0);
+        glfwSwapBuffers(window);
+        glfwSwapInterval(1);
+        return window;
+    }
+
+    @Override
+    public boolean replacedWindow() {
+        return running; // TODO is this method necessary? it's only used to prevent the vanilla icon set, which we do want as it only occurs after handoff
     }
 }

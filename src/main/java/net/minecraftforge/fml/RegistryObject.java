@@ -82,13 +82,14 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 
     /**
      * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
+     * Will throw NPE if the value is null, use isPresent to check first. Or use any of the other guarded functions.
      */
     @Override
     @Nonnull
     public T get()
     {
         T ret = this.value;
-        Objects.requireNonNull(ret, "Registry Object not present");
+        Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);
         return ret;
     }
 
@@ -97,7 +98,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         this.value = registry.getValue(getId());
     }
 
-    public ResourceLocation getId() 
+    public ResourceLocation getId()
     {
         return this.name;
     }
@@ -112,7 +113,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * @return {@code true} if there is a mod object present, otherwise {@code false}
      */
     public boolean isPresent() {
-        return get() != null;
+        return this.value != null;
     }
 
     /**
@@ -124,7 +125,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * null
      */
     public void ifPresent(Consumer<? super T> consumer) {
-        if (get() != null)
+        if (isPresent())
             consumer.accept(get());
     }
 
@@ -196,7 +197,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
             return Objects.requireNonNull(mapper.apply(get()));
         }
     }
-    
+
     /**
      * If a mod object is present, lazily apply the provided mapping function to it,
      * returning a supplier for the transformed result. If this object is empty, or the
@@ -259,7 +260,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * {@code exceptionSupplier} is null
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (get() != null) {
+        if (isPresent()) {
             return get();
         } else {
             throw exceptionSupplier.get();

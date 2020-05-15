@@ -52,6 +52,8 @@ plugins {
 }
 apply plugin: 'eclipse'
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version'))
+
 ext {
     JAR_SIGNER = null
     if (project.hasProperty('keystore')) {
@@ -62,9 +64,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20190719-1.14.3'
+    MAPPING_VERSION = '20200225-1.15.1'
     MC_VERSION = '1.15.2'
-    MCP_VERSION = '20200122.131323'
+    MCP_VERSION = '20200515.085601'
 }
 
 project(':mcp') {
@@ -230,6 +232,7 @@ project(':forge') {
     }
 
     version = getVersion()
+    println('Forge Version: ' + version)
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
@@ -429,18 +432,18 @@ project(':forge') {
         installer 'org.ow2.asm:asm:7.2'
         installer 'org.ow2.asm:asm-commons:7.2'
         installer 'org.ow2.asm:asm-tree:7.2'
-        installer 'cpw.mods:modlauncher:5.0.+'
-        installer 'cpw.mods:grossjava9hacks:1.1.+'
-        installer 'net.minecraftforge:accesstransformers:2.0.+:shadowed'
-        installer 'net.minecraftforge:eventbus:2.0.+:service'
-        installer 'net.minecraftforge:forgespi:2.0.+'
+        installer 'cpw.mods:modlauncher:5.1.+'
+        installer 'cpw.mods:grossjava9hacks:1.3.+'
+        installer 'net.minecraftforge:accesstransformers:2.1.+:shadowed'
+        installer 'net.minecraftforge:eventbus:2.2.+:service'
+        installer 'net.minecraftforge:forgespi:2.1.+'
         installer 'net.minecraftforge:coremods:2.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.2'
         installer 'com.electronwill.night-config:toml:3.6.2'
         installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
-        installer 'net.jodah:typetools:0.6.1'
+        installer 'net.jodah:typetools:0.8.+'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
@@ -1316,12 +1319,18 @@ def getArtifacts(project, config, classifiers) {
 }
 
 def checkExists(url) {
-    def code = new URL(url).openConnection().with {
-        requestMethod = 'HEAD'
-        connect()
-        responseCode
+    try {
+        def code = new URL(url).openConnection().with {
+            requestMethod = 'HEAD'
+            connect()
+            responseCode
+        }
+        return code == 200
+    } catch (Exception e) {
+        if (e.toString().contains('unable to find valid certification path to requested target'))
+            throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+        throw e
     }
-    return code == 200
 }
 
 def getClasspath(project, libs, artifact) {

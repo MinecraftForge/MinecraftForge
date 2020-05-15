@@ -83,7 +83,7 @@
   "commands.forge.gen.usage": "Use /forge gen <x> <y> <z> <chunkCount> [dimension] [interval]",
   "commands.forge.gen.dim_fail": "Failed to load world for dimension {0}, Task terminated.",
   "commands.forge.gen.progress": "Generation Progress: {0}/{1}",
-  "commands.forge.gen.complete": "Finished generating {0} new chunks (out of {2}) for dimension {3}.",
+  "commands.forge.gen.complete": "Finished generating {0} new chunks (out of {1}) for dimension {2}.",
   "commands.forge.gen.start": "Starting to generate {0} chunks in a spiral around {1}, {2} in dimension {3}.",
   "commands.forge.setdim.invalid.entity": "The entity selected ({0}) is not valid.",
   "commands.forge.setdim.invalid.dim": "The dimension ID specified ({0}) is not valid.",
@@ -153,5 +153,7 @@
   "forge.controlsgui.control.mac": "CMD + %s",
   "forge.controlsgui.alt": "ALT + %s",
 
-  "forge.container.enchant.limitedEnchantability": "Limited Enchantability"
+  "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
+  "attribute.name.generic.reachDistance": "Reach Distance",
+  "attribute.name.forge.swimSpeed": "Swim Speed"
 }

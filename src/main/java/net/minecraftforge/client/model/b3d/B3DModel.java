@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.b3d;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -41,7 +42,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -100,11 +100,11 @@ public class B3DModel
                 int l = ByteBuffer.wrap(tmp).order(ByteOrder.LITTLE_ENDIAN).getInt();
                 if(l < 0 || l + 8 < 0) throw new IOException("File is too large");
                 buf = ByteBuffer.allocate(l + 8).order(ByteOrder.LITTLE_ENDIAN);
-                buf.clear();
+                ((Buffer)buf).clear();
                 buf.put(tag);
                 buf.put(tmp);
                 buf.put(IOUtils.toByteArray(in, l));
-                buf.flip();
+                ((Buffer)buf).flip();
             }
         }
 
@@ -193,7 +193,7 @@ public class B3DModel
             while(buf.get() != 0);
             int end = buf.position();
             byte[] tmp = new byte[end - start - 1];
-            buf.position(start);
+            ((Buffer)buf).position(start);
             buf.get(tmp);
             buf.get();
             return new String(tmp, "UTF8");
@@ -204,12 +204,12 @@ public class B3DModel
         private void pushLimit()
         {
             limitStack.push(buf.limit());
-            buf.limit(buf.position() + length);
+            ((Buffer)buf).limit(buf.position() + length);
         }
 
         private void popLimit()
         {
-            buf.limit(limitStack.pop());
+            ((Buffer)buf).limit(limitStack.pop());
         }
 
         private B3DModel bb3d() throws IOException
@@ -501,7 +501,7 @@ public class B3DModel
 
         private void skip()
         {
-            buf.position(buf.position() + length);
+            ((Buffer)buf).position(buf.position() + length);
         }
     }
 
@@ -663,7 +663,7 @@ public class B3DModel
             Matrix4f t = new Matrix4f();
             if(mesh.getWeightMap().get(this).isEmpty())
             {
-                t.func_226591_a_();
+                t.setIdentity();
             }
             else
             {
@@ -671,11 +671,11 @@ public class B3DModel
                 {
                     totalWeight += bone.getLeft();
                     Matrix4f bm = animator.apply(bone.getRight());
-                    bm.func_226592_a_(bone.getLeft());
+                    bm.mul(bone.getLeft());
                     t.add(bm);
                 }
-                if(Math.abs(totalWeight) > 1e-4) t.func_226592_a_(1f / totalWeight);
-                else t.func_226591_a_();
+                if(Math.abs(totalWeight) > 1e-4) t.mul(1f / totalWeight);
+                else t.setIdentity();
             }
 
             TransformationMatrix trsr = new TransformationMatrix(t);
@@ -684,7 +684,7 @@ public class B3DModel
             Vector4f pos = new Vector4f(this.pos);
             pos.setW(1);
             trsr.transformPosition(pos);
-            pos.func_229374_e_();
+            pos.normalize();
             Vector3f rPos = new Vector3f(pos.getX(), pos.getY(), pos.getZ());
 
             // normal
@@ -692,7 +692,7 @@ public class B3DModel
 
             if(this.normal != null)
             {
-                rNormal = this.normal.func_229195_e_();
+                rNormal = this.normal.copy();
                 trsr.transformNormal(rNormal);
             }
 
@@ -784,13 +784,13 @@ public class B3DModel
 
         public static Vector3f getNormal(Vertex v1, Vertex v2, Vertex v3)
         {
-            Vector3f a = v2.getPos().func_229195_e_();
+            Vector3f a = v2.getPos().copy();
             a.sub(v1.getPos());
-            Vector3f b = v3.getPos().func_229195_e_();
+            Vector3f b = v3.getPos().copy();
             b.sub(v1.getPos());
-            Vector3f c = a.func_229195_e_();
+            Vector3f c = a.copy();
             c.cross(b);
-            c.func_229194_d_();
+            c.normalize();
             return c;
         }
     }

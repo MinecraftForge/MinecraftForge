@@ -183,14 +183,14 @@ public class ItemHandlerHelper
         // play sound if something got picked up
         if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
-            world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(),
+            world.playSound(null, player.getPosX(), player.getPosY() + 0.5, player.getPosZ(),
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
         if (!remainder.isEmpty() && !world.isRemote)
         {
-            ItemEntity entityitem = new ItemEntity(world, player.func_226277_ct_(), player.func_226278_cu_() + 0.5, player.func_226281_cx_(), remainder);
+            ItemEntity entityitem = new ItemEntity(world, player.getPosX(), player.getPosY() + 0.5, player.getPosZ(), remainder);
             entityitem.setPickupDelay(40);
             entityitem.setMotion(entityitem.getMotion().mul(0, 1, 0));
 

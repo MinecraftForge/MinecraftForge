@@ -36,7 +36,6 @@ import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeConfig;
 
-/*
 public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
     private final ThreadLocal<VertexLighterFlat> lighterFlat;
@@ -54,16 +53,16 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     @Override
     public boolean renderModelFlat(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228806_11_, IModelData modelData)
     {
-        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
+        if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerFlat.get();
             consumer.setBuffer(buffer);
-            consumer.setOffset(pos);
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
+            lighter.setTransform(matrixStack.getLast());
 
-            return render(lighter, world, model, state, pos, checkSides, rand, seed, modelData);
+            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
         }
         else
         {
@@ -74,16 +73,16 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     @Override
     public boolean renderModelSmooth(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int p_228805_11_, IModelData modelData)
     {
-        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
+        if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerSmooth.get();
             consumer.setBuffer(buffer);
-            consumer.setOffset(pos);
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
+            lighter.setTransform(matrixStack.getLast());
 
-            return render(lighter, world, model, state, pos, checkSides, rand, seed, modelData);
+            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
         }
         else
         {
@@ -91,7 +90,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, ILightReader world, IBakedModel model, BlockState state, BlockPos pos, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         lighter.setWorld(world);
         lighter.setState(state);
@@ -129,4 +128,3 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         return !empty;
     }
 }
-*/

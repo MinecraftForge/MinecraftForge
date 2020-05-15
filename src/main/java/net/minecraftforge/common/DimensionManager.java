@@ -567,7 +567,7 @@ public class DimensionManager
                 this.type = data.getModType().getRegistryName();
             if (data.getData() != null)
                 this.data = data.getData().array();
-            this.skyLight = data.func_218272_d();
+            this.skyLight = data.hasSkyLight();
             this.markedForDeletion = markedForDeletion;
         }
 

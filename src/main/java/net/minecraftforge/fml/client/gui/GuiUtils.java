@@ -49,6 +49,9 @@ import javax.annotation.Nonnull;
  */
 public class GuiUtils
 {
+    public static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
+    public static final int DEFAULT_BORDER_COLOR_START = 0x505000FF;
+    public static final int DEFAULT_BORDER_COLOR_END = (DEFAULT_BORDER_COLOR_START & 0xFEFEFE) >> 1 | DEFAULT_BORDER_COLOR_START & 0xFF000000;
     public static final String UNDO_CHAR  = "\u21B6";
     public static final String RESET_CHAR = "\u2604";
     public static final String VALID      = "\u2714";
@@ -208,10 +211,10 @@ public class GuiUtils
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        wr.func_225582_a_(x        , y + height, zLevel).func_225583_a_( u          * uScale, ((v + height) * vScale)).endVertex();
-        wr.func_225582_a_(x + width, y + height, zLevel).func_225583_a_((u + width) * uScale, ((v + height) * vScale)).endVertex();
-        wr.func_225582_a_(x + width, y         , zLevel).func_225583_a_((u + width) * uScale, ( v           * vScale)).endVertex();
-        wr.func_225582_a_(x        , y         , zLevel).func_225583_a_( u          * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y         , zLevel).tex((u + width) * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x        , y         , zLevel).tex( u          * uScale, ( v           * vScale)).endVertex();
         tessellator.draw();
     }
 
@@ -236,6 +239,11 @@ public class GuiUtils
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    {
+        drawHoveringText(textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
+    }
+
     /**
      *  Draws a tooltip box on the screen with text in it.
      *  Automatically positions the box relative to the mouse to match Mojang's implementation.
@@ -249,19 +257,31 @@ public class GuiUtils
      * @param screenHeight the available  screen height for the tooltip to drawn in
      * @param maxTextWidth the maximum width of the text in the tooltip box.
      *                     Set to a negative number to have no max width.
+     * @param backgroundColor The background color of the box
+     * @param borderColorStart The starting color of the box border
+     * @param borderColorEnd The ending color of the box border. The border color will be smoothly interpolated
+     *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
      */
-    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
+                                        int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
-        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
+    }
+
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    {
+        drawHoveringText(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
     /**
      * Use this version if calling from somewhere where ItemStack context is available.
      *
-     * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
+     * @see #drawHoveringText(List, int, int, int, int, int, int, int, int, FontRenderer)
      */
-    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY,
+                                        int screenWidth, int screenHeight, int maxTextWidth,
+                                        int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {
@@ -353,9 +373,6 @@ public class GuiUtils
                 tooltipY = screenHeight - tooltipHeight - 4;
 
             final int zLevel = 300;
-            int backgroundColor = 0xF0100010;
-            int borderColorStart = 0x505000FF;
-            int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
             RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
             MinecraftForge.EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
@@ -374,10 +391,10 @@ public class GuiUtils
 
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
 
-            IRenderTypeBuffer.Impl renderType = IRenderTypeBuffer.func_228455_a_(Tessellator.getInstance().getBuffer());
+            IRenderTypeBuffer.Impl renderType = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
             MatrixStack textStack = new MatrixStack();
-            textStack.func_227861_a_(0.0D, 0.0D, (double)zLevel);
-            Matrix4f textLocation = textStack.func_227866_c_().func_227870_a_();
+            textStack.translate(0.0D, 0.0D, (double)zLevel);
+            Matrix4f textLocation = textStack.getLast().getMatrix();
 
             int tooltipTop = tooltipY;
 
@@ -385,7 +402,7 @@ public class GuiUtils
             {
                 String line = textLines.get(lineNumber);
                 if (line != null)
-                    font.func_228079_a_(line, (float)tooltipX, (float)tooltipY, -1, true, textLocation, renderType, false, 0, 15728880);
+                    font.renderString(line, (float)tooltipX, (float)tooltipY, -1, true, textLocation, renderType, false, 0, 15728880);
 
                 if (lineNumber + 1 == titleLinesCount)
                     tooltipY += 2;
@@ -393,7 +410,7 @@ public class GuiUtils
                 tooltipY += 10;
             }
 
-            renderType.func_228461_a_();
+            renderType.finish();
 
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
 
@@ -422,10 +439,10 @@ public class GuiUtils
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        buffer.func_225582_a_(right,    top, zLevel).func_227885_a_(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.func_225582_a_( left,    top, zLevel).func_227885_a_(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.func_225582_a_( left, bottom, zLevel).func_227885_a_(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
-        buffer.func_225582_a_(right, bottom, zLevel).func_227885_a_(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.pos(right,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos( left,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos( left, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.pos(right, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
         tessellator.draw();
 
         RenderSystem.shadeModel(GL11.GL_FLAT);

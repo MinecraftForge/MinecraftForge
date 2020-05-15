@@ -20,12 +20,8 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.DimensionArgument;
@@ -34,15 +30,15 @@ import net.minecraft.world.dimension.DimensionType;
 
 class CommandTps
 {
-    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.tps.invalid", dim, StreamSupport.stream(DimensionType.getAll().spliterator(), false).map(d -> DimensionType.getKey(d).toString()).sorted().collect(Collectors.joining(", "))));
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
+    private static final long[] UNLOADED = new long[] {0};
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("tps")
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .then(Commands.argument("dim", DimensionArgument.getDimension())
-                .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.func_212592_a(ctx, "dim")))
+                .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.getDimensionArgument(ctx, "dim")))
             )
             .executes(ctx -> {
                 for (DimensionType dim : DimensionType.getAll())
@@ -50,7 +46,7 @@ class CommandTps
 
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
-                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
+                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
 
                 return 0;
             }
@@ -61,12 +57,12 @@ class CommandTps
     {
         long[] times = cs.getServer().getTickTime(dim);
 
-        if (times == null)
-            throw INVALID_DIMENSION.create(DimensionType.getKey(dim));
+        if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
+            times = UNLOADED;
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }

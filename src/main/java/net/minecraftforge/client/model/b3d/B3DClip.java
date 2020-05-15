@@ -65,7 +65,7 @@ public enum B3DClip implements IClip
         @Override
         public TransformationMatrix apply(float time)
         {
-            TransformationMatrix ret = TransformationMatrix.func_227983_a_();
+            TransformationMatrix ret = TransformationMatrix.identity();
             if(node.getAnimation() == null)
             {
                 return ret.compose(new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null));

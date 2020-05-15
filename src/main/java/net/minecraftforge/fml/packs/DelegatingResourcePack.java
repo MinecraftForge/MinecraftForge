@@ -82,12 +82,12 @@ public class DelegatingResourcePack extends ResourcePack
     }
 
     @Override
-    public Collection<ResourceLocation> func_225637_a_(ResourcePackType type, String pathIn, String pathIn2, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, String pathIn2, int maxDepth, Predicate<String> filter)
     {
         synchronized(delegates)
         {
             return delegates.stream()
-                    .flatMap(r -> r.func_225637_a_(type, pathIn, pathIn2, maxDepth, filter).stream())
+                    .flatMap(r -> r.getAllResourceLocations(type, pathIn, pathIn2, maxDepth, filter).stream())
                     .collect(Collectors.toList());
         }
     }

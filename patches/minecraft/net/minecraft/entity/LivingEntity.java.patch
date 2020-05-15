@@ -205,7 +205,17 @@
     }
  
     protected void func_213333_a(DamageSource p_213333_1_, int p_213333_2_, boolean p_213333_3_) {
-@@ -1161,6 +1186,9 @@
+@@ -1148,7 +1173,8 @@
+       ResourceLocation resourcelocation = this.func_213346_cF();
+       LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
+       LootContext.Builder lootcontext$builder = this.func_213363_a(p_213354_2_, p_213354_1_);
+-      loottable.func_216120_b(lootcontext$builder.func_216022_a(LootParameterSets.field_216263_d), this::func_199701_a_);
++      LootContext ctx = lootcontext$builder.func_216022_a(LootParameterSets.field_216263_d);
++      loottable.func_216113_a(ctx).forEach(this::func_199701_a_);
+    }
+ 
+    protected LootContext.Builder func_213363_a(boolean p_213363_1_, DamageSource p_213363_2_) {
+@@ -1161,6 +1187,9 @@
     }
  
     public void func_70653_a(Entity p_70653_1_, float p_70653_2_, double p_70653_3_, double p_70653_5_) {
@@ -215,7 +225,7 @@
        if (!(this.field_70146_Z.nextDouble() < this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e())) {
           this.field_70160_al = true;
           Vec3d vec3d = this.func_213322_ci();
-@@ -1196,12 +1224,7 @@
+@@ -1196,12 +1225,7 @@
           return false;
        } else {
           BlockState blockstate = this.func_213339_cH();
@@ -229,7 +239,7 @@
        }
     }
  
-@@ -1225,6 +1248,11 @@
+@@ -1225,6 +1249,11 @@
     }
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
@@ -241,7 +251,7 @@
        boolean flag = super.func_225503_b_(p_225503_1_, p_225503_2_);
        int i = this.func_225508_e_(p_225503_1_, p_225503_2_);
        if (i > 0) {
-@@ -1248,9 +1276,10 @@
+@@ -1248,9 +1277,10 @@
           int i = MathHelper.func_76128_c(this.func_226277_ct_());
           int j = MathHelper.func_76128_c(this.func_226278_cu_() - (double)0.2F);
           int k = MathHelper.func_76128_c(this.func_226281_cx_());
@@ -255,7 +265,7 @@
              this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
           }
  
-@@ -1319,6 +1348,8 @@
+@@ -1319,6 +1349,8 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
@@ -264,7 +274,7 @@
           p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
           p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
           float f2 = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-@@ -1328,10 +1359,11 @@
+@@ -1328,10 +1360,11 @@
              ((ServerPlayerEntity)p_70665_1_.func_76346_g()).func_195067_a(Stats.field_212735_F, Math.round(f * 10.0F));
           }
  
@@ -277,7 +287,7 @@
              this.func_110149_m(this.func_110139_bj() - f2);
           }
        }
-@@ -1385,6 +1417,8 @@
+@@ -1385,6 +1418,8 @@
     }
  
     public void func_226292_a_(Hand p_226292_1_, boolean p_226292_2_) {
@@ -286,7 +296,7 @@
        if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0) {
           this.field_110158_av = -1;
           this.field_82175_bq = true;
-@@ -1771,15 +1805,16 @@
+@@ -1771,15 +1806,16 @@
        }
  
        this.field_70160_al = true;
@@ -305,7 +315,7 @@
     }
  
     protected float func_189749_co() {
-@@ -1789,11 +1824,15 @@
+@@ -1789,11 +1825,15 @@
     public void func_213352_e(Vec3d p_213352_1_) {
        if (this.func_70613_aW() || this.func_184186_bw()) {
           double d0 = 0.08D;
@@ -322,7 +332,7 @@
  
           if (!this.func_70090_H() || this instanceof PlayerEntity && ((PlayerEntity)this).field_71075_bZ.field_75100_b) {
              if (!this.func_180799_ab() || this instanceof PlayerEntity && ((PlayerEntity)this).field_71075_bZ.field_75100_b) {
-@@ -1842,7 +1881,7 @@
+@@ -1842,7 +1882,7 @@
                    }
                 } else {
                    BlockPos blockpos = this.func_226270_aj_();
@@ -331,7 +341,7 @@
                    float f7 = this.field_70122_E ? f5 * 0.91F : 0.91F;
                    this.func_213309_a(this.func_213335_r(f5), p_213352_1_);
                    this.func_213317_d(this.func_213362_f(this.func_213322_ci()));
-@@ -1904,6 +1943,7 @@
+@@ -1904,6 +1944,7 @@
                 f = 0.96F;
              }
  
@@ -339,7 +349,7 @@
              this.func_213309_a(f1, p_213352_1_);
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              Vec3d vec3d1 = this.func_213322_ci();
-@@ -1979,6 +2019,7 @@
+@@ -1979,6 +2020,7 @@
     }
  
     public void func_70071_h_() {
@@ -347,7 +357,7 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2022,7 +2063,9 @@
+@@ -2022,7 +2064,9 @@
  
              ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
              if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -357,7 +367,7 @@
                 if (!itemstack.func_190926_b()) {
                    this.func_110140_aT().func_111148_a(itemstack.func_111283_C(equipmentslottype));
                 }
-@@ -2474,13 +2517,22 @@
+@@ -2474,13 +2518,22 @@
  
     private void func_184608_ct() {
        if (this.func_184587_cr()) {
@@ -382,7 +392,7 @@
                 this.func_71036_o();
              }
           } else {
-@@ -2522,8 +2574,10 @@
+@@ -2522,8 +2575,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -394,7 +404,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
-@@ -2583,6 +2637,9 @@
+@@ -2583,6 +2638,9 @@
           vec3d1 = vec3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vec3d1 = vec3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vec3d1 = vec3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
@@ -404,7 +414,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c);
        }
  
-@@ -2594,7 +2651,9 @@
+@@ -2594,7 +2652,9 @@
        } else {
           if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
              this.func_226293_b_(this.field_184627_bm, 16);
@@ -415,7 +425,7 @@
              this.func_184602_cy();
           }
  
-@@ -2615,7 +2674,11 @@
+@@ -2615,7 +2675,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -427,7 +437,7 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2772,16 +2835,16 @@
+@@ -2772,16 +2836,16 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_213347_1_) -> {
@@ -448,7 +458,7 @@
                 BlockPos blockpos = p_213368_1_.func_177984_a();
                 return new Vec3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
              });
-@@ -2797,7 +2860,9 @@
+@@ -2797,7 +2861,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
        BlockPos blockpos = this.func_213374_dv().orElse((BlockPos)null);
@@ -459,7 +469,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -2866,4 +2931,58 @@
+@@ -2866,4 +2932,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

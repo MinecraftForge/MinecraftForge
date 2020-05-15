@@ -53,7 +53,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     private final int slopeFindDistance;
     private final int levelDecreasePerBlock;
     private final float explosionResistance;
-    //private final BlockRenderLayer renderLayer; // TODO: reimplement
     private final int tickRate;
 
     protected ForgeFlowingFluid(Properties properties)
@@ -67,7 +66,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         this.slopeFindDistance = properties.slopeFindDistance;
         this.levelDecreasePerBlock = properties.levelDecreasePerBlock;
         this.explosionResistance = properties.explosionResistance;
-        //this.renderLayer = properties.renderLayer;
         this.tickRate = properties.tickRate;
     }
 
@@ -108,12 +106,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         return levelDecreasePerBlock;
     }
 
-    /*@Override
-    public BlockRenderLayer getRenderLayer()
-    {
-        return renderLayer;
-    }*/
-
     @Override
     public Item getFilledBucket()
     {
@@ -121,7 +113,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean func_215665_a(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canDisplace(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
         return direction == Direction.DOWN && !isEquivalentTo(fluidIn);
@@ -207,7 +199,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private int slopeFindDistance = 4;
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
-        //private BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
         private int tickRate = 5;
 
         public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
@@ -253,10 +244,10 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             return this;
         }
 
-        /*public Properties renderLayer(BlockRenderLayer layer)
+        public Properties tickRate(int tickRate)
         {
-            this.renderLayer = layer;
+            this.tickRate = tickRate;
             return this;
-        }*/
+        }
     }
 }

@@ -33,7 +33,7 @@ public final class JointClips
         @Override
         public TransformationMatrix apply(float time)
         {
-            return TransformationMatrix.func_227983_a_();
+            return TransformationMatrix.identity();
         }
     }
 

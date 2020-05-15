@@ -81,7 +81,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public void setConfig(CommentedConfig config) {
         this.childConfig = config;
-        if (!isCorrect(config)) {
+        if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
@@ -404,7 +404,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
-            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).map(Enum::name).collect(Collectors.joining(", "))));
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
             return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 

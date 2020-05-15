@@ -93,7 +93,7 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.func_228018_at_());
+        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.getMainWindow());
         createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);

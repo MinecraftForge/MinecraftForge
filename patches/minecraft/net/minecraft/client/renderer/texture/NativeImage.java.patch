@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/NativeImage.java
 +++ b/net/minecraft/client/renderer/texture/NativeImage.java
-@@ -179,7 +179,7 @@
+@@ -180,7 +180,7 @@
     public int func_195709_a(int p_195709_1_, int p_195709_2_) {
        if (this.field_211680_b != NativeImage.PixelFormat.RGBA) {
           throw new IllegalArgumentException(String.format("getPixelRGBA only works on RGBA images; have %s", this.field_211680_b));
@@ -9,7 +9,7 @@
           this.func_195696_g();
           long i = (long)((p_195709_1_ + p_195709_2_ * this.field_195719_a) * 4);
           return MemoryUtil.memGetInt(this.field_195722_d + i);
-@@ -191,7 +191,7 @@
+@@ -192,7 +192,7 @@
     public void func_195700_a(int p_195700_1_, int p_195700_2_, int p_195700_3_) {
        if (this.field_211680_b != NativeImage.PixelFormat.RGBA) {
           throw new IllegalArgumentException(String.format("getPixelRGBA only works on RGBA images; have %s", this.field_211680_b));
@@ -18,7 +18,7 @@
           this.func_195696_g();
           long i = (long)((p_195700_1_ + p_195700_2_ * this.field_195719_a) * 4);
           MemoryUtil.memPutInt(this.field_195722_d + i, p_195700_3_);
-@@ -203,7 +203,7 @@
+@@ -204,7 +204,7 @@
     public byte func_211675_e(int p_211675_1_, int p_211675_2_) {
        if (!this.field_211680_b.func_211653_r()) {
           throw new IllegalArgumentException(String.format("no luminance or alpha in %s", this.field_211680_b));

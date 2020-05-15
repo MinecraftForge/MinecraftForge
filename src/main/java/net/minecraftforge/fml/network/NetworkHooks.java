@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.network;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -28,7 +29,9 @@ import java.util.stream.Collectors;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.registries.ClearableRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,9 +74,24 @@ public class NetworkHooks
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
         return NetworkRegistry.findTarget(packet.getName()).
+                filter(ni->validateSideForProcessing(packet, ni, manager)).
                 map(ni->ni.dispatch(packet.getDirection(), packet, manager)).orElse(Boolean.FALSE);
     }
 
+    private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final NetworkManager manager) {
+        if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
+            manager.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            return false;
+        }
+        return true;
+    }
+
+    public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final NetworkManager connection) {
+        if (packetDirection != expectedDirection.orElse(packetDirection)) {
+            connection.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            throw new IllegalStateException("Invalid packet received, aborting connection");
+        }
+    }
     public static void registerServerLoginChannel(NetworkManager manager, CHandshakePacket packet)
     {
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());

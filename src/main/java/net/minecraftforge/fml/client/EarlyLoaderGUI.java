@@ -43,9 +43,16 @@ public class EarlyLoaderGUI {
 
     public EarlyLoaderGUI(final MainWindow window) {
         this.window = window;
-        RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        window.update();
+    }
+
+    private void setupMatrix() {
+        RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.matrixMode(5889);
+        RenderSystem.loadIdentity();
+        RenderSystem.ortho(0.0D, window.getFramebufferWidth() / window.getGuiScaleFactor(), window.getFramebufferHeight() / window.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
+        RenderSystem.matrixMode(5888);
+        RenderSystem.loadIdentity();
+        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
     }
 
     public void handleElsewhere() {
@@ -63,18 +70,22 @@ public class EarlyLoaderGUI {
 
         RenderSystem.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+        RenderSystem.pushMatrix();
+        setupMatrix();
         renderMessages();
-        window.update();
+        window.flipFrame();
+        RenderSystem.popMatrix();
     }
 
     private void renderMessages() {
         List<Pair<Integer, StartupMessageManager.Message>> messages = StartupMessageManager.getMessages();
         for (int i = 0; i < messages.size(); i++) {
+            boolean nofade = i == 0;
             final Pair<Integer, StartupMessageManager.Message> pair = messages.get(i);
             final float fade = MathHelper.clamp((4000.0f - (float) pair.getLeft() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
-            if (fade <0.01f) continue;
+            if (fade <0.01f && !nofade) continue;
             StartupMessageManager.Message msg = pair.getRight();
-            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, fade);
+            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, nofade ? 1.0f : fade);
         }
         renderMemoryInfo();
     }
@@ -95,12 +106,13 @@ public class EarlyLoaderGUI {
     }
 
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
-        GlStateManager.func_227770_y_(GL11.GL_VERTEX_ARRAY);
+        GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
         ByteBuffer charBuffer = MemoryUtil.memAlloc(message.length() * 270);
         int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, charBuffer);
         GL14.glVertexPointer(2, GL11.GL_FLOAT, 16, charBuffer);
 
         RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         RenderSystem.color3f(colour[0],colour[1],colour[2]);
@@ -110,6 +122,7 @@ public class EarlyLoaderGUI {
         RenderSystem.drawArrays(GL11.GL_QUADS, 0, quads * 4);
         RenderSystem.popMatrix();
 
+        GlStateManager.disableClientState(GL11.GL_VERTEX_ARRAY);
         MemoryUtil.memFree(charBuffer);
     }
 }
