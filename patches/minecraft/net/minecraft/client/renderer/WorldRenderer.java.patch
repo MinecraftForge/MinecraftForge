@@ -85,7 +85,38 @@
        if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.field_223229_c_) {
           this.func_228444_b_(p_228424_1_);
        } else if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
-@@ -2283,8 +2298,8 @@
+@@ -1977,7 +1992,12 @@
+       this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
+    }
+ 
++   @Deprecated // Forge: use item aware function below
+    public void func_184377_a(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_) {
++      this.playRecord(p_184377_1_, p_184377_2_, p_184377_1_ == null? null : MusicDiscItem.func_185074_a(p_184377_1_));
++   }
++
++   public void playRecord(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_, @Nullable MusicDiscItem musicDiscItem) {
+       ISound isound = this.field_147593_P.get(p_184377_2_);
+       if (isound != null) {
+          this.field_72777_q.func_147118_V().func_147683_b(isound);
+@@ -1985,7 +2005,7 @@
+       }
+ 
+       if (p_184377_1_ != null) {
+-         MusicDiscItem musicdiscitem = MusicDiscItem.func_185074_a(p_184377_1_);
++         MusicDiscItem musicdiscitem = musicDiscItem;
+          if (musicdiscitem != null) {
+             this.field_72777_q.field_71456_v.func_73833_a(musicdiscitem.func_200299_h().func_150254_d());
+          }
+@@ -2133,7 +2153,7 @@
+          break;
+       case 1010:
+          if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
+-            this.func_184377_a(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_);
++            this.playRecord(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_, (MusicDiscItem) Item.func_150899_d(p_180439_4_));
+          } else {
+             this.func_184377_a((SoundEvent)null, p_180439_3_);
+          }
+@@ -2283,8 +2303,8 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
@@ -96,7 +127,7 @@
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
  
-@@ -2432,7 +2447,7 @@
+@@ -2432,7 +2452,7 @@
        } else {
           int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
           int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
@@ -105,7 +136,7 @@
           if (j < k) {
              j = k;
           }
-@@ -2445,6 +2460,11 @@
+@@ -2445,6 +2465,11 @@
        return this.field_175015_z;
     }
  
