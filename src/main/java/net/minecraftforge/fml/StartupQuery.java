@@ -66,7 +66,6 @@ public class StartupQuery {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null) server.initiateShutdown(false);
 
-        aborted = true; // to abort loading and go back to the main menu
         throw new AbortedException(); // to halt the server
     }
 
@@ -76,7 +75,6 @@ public class StartupQuery {
     public static void reset()
     {
         pending = null;
-        aborted = false;
     }
 
     public static boolean check()
@@ -104,7 +102,7 @@ public class StartupQuery {
             pending = null;
         }
 
-        return !aborted;
+        return true;
     }
 
     private void throwException() throws InterruptedException
@@ -113,7 +111,6 @@ public class StartupQuery {
     }
 
     private static volatile StartupQuery pending;
-    private static volatile boolean aborted = false;
 
 
     private StartupQuery(String text, @Nullable AtomicBoolean result)
