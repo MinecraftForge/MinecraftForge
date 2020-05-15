@@ -109,7 +109,7 @@
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
 -            i = Math.max(this.func_220275_r(blockstate), i);
-+            i = Math.max(blockstate.getFlammability(p_176538_1_, p_176538_2_.func_177972_a(direction), direction.func_176734_d()), i);
++            i = Math.max(blockstate.getFireSpreadSpeed(p_176538_1_, p_176538_2_.func_177972_a(direction), direction.func_176734_d()), i);
           }
  
           return i;
