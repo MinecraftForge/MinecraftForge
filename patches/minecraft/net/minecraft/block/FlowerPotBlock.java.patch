@@ -22,7 +22,7 @@
 +    *
 +    * @param emptyPot    The empty pot for this pot, or null for self.
 +    * @param p_i48395_1_ The flower block.
-+    * @param p_i48395_2_
++    * @param properties
 +    */
 +   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, Block.Properties p_i48395_2_) {
        super(p_i48395_2_);

@@ -446,7 +446,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         }
 
         @Override
-        public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<com.mojang.datafixers.util.Pair<String, String>> p_225614_2_)
+        public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return textures.values().stream().filter(loc -> !loc.startsWith("#"))
                     .map(t -> new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(t)))
