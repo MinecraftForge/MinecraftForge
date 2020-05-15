@@ -1,5 +1,6 @@
 net/minecraft/block/FireBlock.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/Direction;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 net/minecraft/block/FlowerPotBlock.<init>(Lnet/minecraft/block/FlowerPotBlock;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
+net/minecraft/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
 net/minecraft/block/PoweredRailBlock.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
 net/minecraft/block/RedstoneWireBlock.canConnectTo(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/Direction;)Z=|p_176343_0_,world,pos,p_176343_1_
 

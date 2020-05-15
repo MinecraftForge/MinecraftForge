@@ -510,7 +510,7 @@ public class DimensionManager
     private static class NoopChunkStatusListener implements IChunkStatusListener
     {
         @Override public void start(ChunkPos center) { }
-        @Override public void statusChanged(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
+        @Override public void statusChanged(ChunkPos chunkPosition, ChunkStatus newStatus) { }
         @Override public void stop() { }
     }
 
