@@ -3,7 +3,7 @@
 @@ -8,7 +8,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
- 
+
 -public class SCustomPayloadLoginPacket implements IPacket<IClientLoginNetHandler> {
 +public class SCustomPayloadLoginPacket implements IPacket<IClientLoginNetHandler>, net.minecraftforge.fml.network.ICustomPacket<SCustomPayloadLoginPacket> {
     private int field_209919_a;
@@ -14,33 +14,33 @@
        return this.field_209919_a;
     }
 +
-+	@Override
-+	public PacketBuffer getInternalData() {
-+		return field_209921_c;
-+	}
++    @Override
++    public PacketBuffer getInternalData() {
++        return field_209921_c;
++    }
 +
-+	@Override
-+	public void setData(PacketBuffer data) {
-+		this.field_209921_c = data;
-+	}
++    @Override
++    public void setData(PacketBuffer data) {
++        this.field_209921_c = data;
++    }
 +
-+	@Override
-+	public ResourceLocation getName() {
-+		return field_209920_b;
-+	}
++    @Override
++    public ResourceLocation getName() {
++        return field_209920_b;
++    }
 +
-+	@Override
-+	public void setName(ResourceLocation name) {
-+		this.field_209920_b = name;
-+	}
++    @Override
++    public void setName(ResourceLocation name) {
++        this.field_209920_b = name;
++    }
 +
-+	@Override
-+	public int getIndex() {
-+		return field_209919_a;
-+	}
++    @Override
++    public int getIndex() {
++        return field_209919_a;
++    }
 +
-+	@Override
-+	public void setIndex(int index) {
-+		this.field_209919_a = index;
-+	}
++    @Override
++    public void setIndex(int index) {
++        this.field_209919_a = index;
++    }
  }

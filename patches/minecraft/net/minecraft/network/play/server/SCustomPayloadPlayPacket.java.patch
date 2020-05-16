@@ -3,7 +3,7 @@
 @@ -8,7 +8,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
- 
+
 -public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler> {
 +public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler>, net.minecraftforge.fml.network.ICustomPacket<SCustomPayloadPlayPacket> {
     public static final ResourceLocation field_209911_b = new ResourceLocation("brand");
@@ -14,23 +14,23 @@
        return new PacketBuffer(this.field_149171_b.copy());
     }
 +
-+	@Override
-+	public PacketBuffer getInternalData() {
-+		return field_149171_b;
-+	}
++    @Override
++    public PacketBuffer getInternalData() {
++        return field_149171_b;
++    }
 +
-+	@Override
-+	public void setData(PacketBuffer data) {
-+		this.field_149171_b = data;
-+	}
++    @Override
++    public void setData(PacketBuffer data) {
++        this.field_149171_b = data;
++    }
 +
-+	@Override
-+	public ResourceLocation getName() {
-+		return field_149172_a;
-+	}
++    @Override
++    public ResourceLocation getName() {
++    return field_149172_a;
++    }
 +
-+	@Override
-+	public void setName(ResourceLocation name) {
-+		this.field_149172_a = name;
-+	}
++    @Override
++    public void setName(ResourceLocation name) {
++    this.field_149172_a = name;
++    }
  }
