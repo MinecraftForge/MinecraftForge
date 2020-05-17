@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/raid/Raid.java
 +++ b/net/minecraft/world/raid/Raid.java
-@@ -149,7 +149,7 @@
-       return this.field_221348_l;
-    }
- 
--   public boolean func_221301_k() {
-+	public boolean func_221301_k() {
-       return this.field_221349_m;
-    }
- 
 @@ -201,12 +201,14 @@
  
     public void func_221295_o() {
