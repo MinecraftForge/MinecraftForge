@@ -1,14 +1,46 @@
 --- a/net/minecraft/world/raid/Raid.java
 +++ b/net/minecraft/world/raid/Raid.java
-@@ -207,6 +207,7 @@
+@@ -149,7 +149,7 @@
+       return this.field_221348_l;
+    }
+ 
+-   public boolean func_221301_k() {
++	public boolean func_221301_k() {
+       return this.field_221349_m;
+    }
+ 
+@@ -201,12 +201,14 @@
+ 
+    public void func_221295_o() {
+       this.field_221353_q = false;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidStopEvent(this))) return;
+       this.field_221355_s.func_201360_b();
+       this.field_221360_x = Raid.Status.STOPPED;
+    }
  
     public void func_221307_p() {
        if (!this.func_221310_d()) {
-+    	 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent(this))) return;
++    	 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidTickEvent(this))) return;
           if (this.field_221360_x == Raid.Status.ONGOING) {
              boolean flag = this.field_221353_q;
              this.field_221353_q = this.field_221348_l.func_175667_e(this.field_221347_k);
-@@ -770,7 +771,7 @@
+@@ -296,6 +298,7 @@
+             while(this.func_221318_F()) {
+                BlockPos blockpos = this.field_221362_z.isPresent() ? this.field_221362_z.get() : this.func_221298_a(k, 20);
+                if (blockpos != null) {
++            	  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidStart(this)));
+                   this.field_221349_m = true;
+                   this.func_221294_b(blockpos);
+                   if (!flag3) {
+@@ -462,6 +465,7 @@
+ 
+          for(int l = 0; l < j; ++l) {
+             AbstractRaiderEntity abstractraiderentity = raid$wavemember.field_221285_g.func_200721_a(this.field_221348_l);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidSpawnRaidersEvent(this))) return;
+             if (!flag && abstractraiderentity.func_213637_dY()) {
+                abstractraiderentity.func_213635_r(true);
+                this.func_221324_a(i, abstractraiderentity);
+@@ -770,7 +774,7 @@
        }
     }
  
@@ -17,7 +49,7 @@
        VINDICATOR(EntityType.field_200758_ax, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
        EVOKER(EntityType.field_200806_t, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
        PILLAGER(EntityType.field_220350_aJ, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -785,5 +786,13 @@
+@@ -785,5 +789,13 @@
           this.field_221285_g = p_i50602_3_;
           this.field_221286_h = p_i50602_4_;
        }
