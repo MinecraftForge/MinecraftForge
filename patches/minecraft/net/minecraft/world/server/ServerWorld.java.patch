@@ -8,7 +8,7 @@
 +public class ServerWorld extends World implements net.minecraftforge.common.extensions.IForgeWorldServer {
     private static final Logger field_147491_a = LogManager.getLogger();
     private final List<Entity> field_217497_w = Lists.newArrayList();
-    public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
+    private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
 @@ -163,10 +163,13 @@
     private boolean field_211159_Q;
     @Nullable
@@ -95,7 +95,7 @@
              }
  
              iprofiler.func_76320_a("tick");
-+            if (!entity2.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent())
++            if (!(entity2 instanceof net.minecraftforge.entity.MultiPartEntity))
              if (!entity2.field_70128_L && !(entity2 instanceof EnderDragonPartEntity)) {
                 this.func_217390_a(this::func_217479_a, entity2);
              }
@@ -232,7 +232,7 @@
 +      removeEntityComplete(p_217484_1_, false);
 +   }
 +   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
-+      if(p_217484_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_217484_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).removeParts(keepData); } else
++      if(p_217484_1_ instanceof net.minecraftforge.entity.MultiPartEntity){ net.minecraftforge.entity.MultiPartEntityUtil.removeParts((net.minecraftforge.entity.MultiPartEntity)p_217484_1_,keepData); } else
        if (p_217484_1_ instanceof EnderDragonEntity) {
           for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
 -            enderdragonpartentity.func_70106_y();
@@ -255,7 +255,7 @@
           this.field_217499_z.add(p_217465_1_);
        } else {
           this.field_217498_x.put(p_217465_1_.func_145782_y(), p_217465_1_);
-+         if(p_217465_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_217465_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).spawnPartsServer(this); } else
++         if(p_217465_1_ instanceof net.minecraftforge.entity.MultiPartEntity){ net.minecraftforge.entity.MultiPartEntityUtil.spawnPartsServer((net.minecraftforge.entity.MultiPartEntity)p_217465_1_, this.field_217498_x); } else
           if (p_217465_1_ instanceof EnderDragonEntity) {
              for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217465_1_).func_213404_dT()) {
                 this.field_217498_x.put(enderdragonpartentity.func_145782_y(), enderdragonpartentity);

@@ -52,7 +52,7 @@
     }
  
     protected void func_219210_a(Entity p_219210_1_) {
-+      if (!p_219210_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent())
++      if (!(p_219210_1_ instanceof net.minecraftforge.entity.MultiPartEntity))
        if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
           if (!(p_219210_1_ instanceof LightningBoltEntity)) {
              EntityType<?> entitytype = p_219210_1_.func_200600_R();

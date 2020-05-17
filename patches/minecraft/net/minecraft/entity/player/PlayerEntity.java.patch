@@ -257,7 +257,7 @@
                    EnchantmentHelper.func_151385_b(this, p_71059_1_);
                    ItemStack itemstack1 = this.func_184614_ca();
                    Entity entity = p_71059_1_;
-+                  if (p_71059_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART).isPresent()) { entity = ((net.minecraftforge.entity.IPartEntity)p_71059_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_PART)).getParent(); } else
++                  if (p_71059_1_ instanceof net.minecraftforge.entity.PartEntity) { entity = ((net.minecraftforge.entity.PartEntity)p_71059_1_).getParent(); } else
                    if (p_71059_1_ instanceof EnderDragonPartEntity) {
                       entity = ((EnderDragonPartEntity)p_71059_1_).field_213852_b;
                    }

@@ -148,7 +148,7 @@
                       p_177414_3_.add(entity);
                    }
 -
-+                  if(entity.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER).isPresent()){ ((net.minecraftforge.entity.IMultiPartEntity)p_177414_1_.getCapability(net.minecraftforge.entity.CapabilityMultiPartContainer.MULTI_PART_CONTAINER)).collideWithParts(p_177414_1_,p_177414_2_,p_177414_3_,p_177414_4_); } else
++                  if(entity instanceof  net.minecraftforge.entity.MultiPartEntity){ net.minecraftforge.entity.MultiPartEntityUtil.collideWithParts((net.minecraftforge.entity.MultiPartEntity)p_177414_1_,p_177414_2_,p_177414_3_,p_177414_4_); } else
                    if (entity instanceof EnderDragonEntity) {
                       for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entity).func_213404_dT()) {
                          if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
