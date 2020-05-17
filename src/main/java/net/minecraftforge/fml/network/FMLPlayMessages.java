@@ -37,7 +37,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.FuzzedBiomeMagnifier;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.entity.MultiPartEntity;
 import net.minecraftforge.entity.MultiPartEntityUtil;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
@@ -173,9 +172,9 @@ public class FMLPlayMessages
                 {
                     ((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
                 }
-                if(e instanceof MultiPartEntity)
+                if(e.getParts().length > 0)
                 {
-                    MultiPartEntityUtil.spawnPartsClient((MultiPartEntity)e, msg.entityId);
+                    MultiPartEntityUtil.spawnPartsClient(e, msg.entityId);
                 }
             });
             ctx.get().setPacketHandled(true);

@@ -7,9 +7,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 
 public abstract class PartEntity extends Entity {
-    private final MultiPartEntity parent;
+    private final Entity parent;
 
-    public PartEntity(MultiPartEntity parent, World worldIn) {
+    public PartEntity(Entity parent, World worldIn) {
         super(parent.getType(), worldIn);
         this.parent = parent;
     }

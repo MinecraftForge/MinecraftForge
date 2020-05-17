@@ -20,6 +20,7 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -40,6 +41,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.entity.PartEntity;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
 {
@@ -192,4 +194,13 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      * the entity to react to being revived.
      */
     void revive();
+
+    /**
+     * Allows an entity to have multiple child entities
+     * meant to enable an enderdragon like entity
+     */
+    @Nonnull
+    default PartEntity[] getParts(){
+        return new PartEntity[0];
+    }
 }
