@@ -1,0 +1,38 @@
+--- a/net/minecraft/block/material/Material.java
++++ b/net/minecraft/block/material/Material.java
+@@ -131,17 +131,17 @@
+          return this;
+       }
+ 
+-      private Material.Builder func_200505_j() {
++		public Material.Builder func_200505_j() {
+          this.field_200520_i = false;
+          return this;
+       }
+ 
+-      protected Material.Builder func_200510_d() {
++		public Material.Builder func_200510_d() {
+          this.field_200515_d = false;
+          return this;
+       }
+ 
+-      protected Material.Builder func_200504_e() {
++		public Material.Builder func_200504_e() {
+          this.field_200514_c = true;
+          return this;
+       }
+@@ -151,12 +151,12 @@
+          return this;
+       }
+ 
+-      protected Material.Builder func_200511_g() {
++		public Material.Builder func_200511_g() {
+          this.field_200512_a = PushReaction.DESTROY;
+          return this;
+       }
+ 
+-      protected Material.Builder func_200503_h() {
++		public Material.Builder func_200503_h() {
+          this.field_200512_a = PushReaction.BLOCK;
+          return this;
+       }
