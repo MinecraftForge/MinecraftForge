@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraftforge.common.data.SoundsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -125,6 +126,7 @@ public class DataGeneratorTest
         if (event.includeClient())
         {
             gen.addProvider(new Lang(gen));
+            gen.addProvider(new Sound(gen));
             gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
             gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
         }
@@ -225,6 +227,23 @@ public class DataGeneratorTest
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
             add(MODID + ".test.unicode", "\u0287s\u01DD\u2534 \u01DDpo\u0254\u1D09u\u2229");
+        }
+    }
+
+    public static class Sound extends SoundsProvider
+    {
+        public Sound(DataGenerator gen)
+        {
+            super(gen, MODID);
+        }
+
+
+        @Override
+        protected void addSounds()
+        {
+
+            addSound("sound.test", "sound.subtitles.test", new SoundsFile().setName("test/test_sound").setStream(true).setVolume(0.8f));
+
         }
     }
 
