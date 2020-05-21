@@ -38,12 +38,11 @@ public abstract class SoundsProvider implements IDataProvider {
 
     @Override
     public String getName() {
-        return "Sounds.json";
+        return "Sounds";
     }
 
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
         String data = GSON.toJson(object);
-        System.out.println(data);
         data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
         String hash = IDataProvider.HASH_FUNCTION.hashUnencodedChars(data).toString();
         if (!Objects.equals(cache.getPreviousHash(target), hash) || !Files.exists(target)) {
