@@ -67,7 +67,7 @@ public abstract class SoundsProvider implements IDataProvider {
 
     public void add(String key, Sounds value) {
         if (data.put(key, value) != null)
-            throw new IllegalStateException("Duplicate translation key " + key);
+            throw new IllegalStateException("Duplicate key " + key);
     }
 
     public class Sounds{
