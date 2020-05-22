@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.data.SoundsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -242,7 +243,7 @@ public class DataGeneratorTest
         protected void addSounds()
         {
 
-            addSound("sound.test", "sound.subtitles.test", new SoundsFile().setName("test/test_sound").setStream(true).setVolume(0.8f));
+            addSoundEvent(SoundEventBuilder.create(SoundEvents.ENTITY_FOX_AGGRO).addSounds(new SoundBuilder(new ResourceLocation("mob/test/ambient")).attenuationDistance(32)));
 
         }
     }
