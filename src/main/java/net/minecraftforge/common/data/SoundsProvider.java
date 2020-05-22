@@ -101,7 +101,7 @@ public abstract class SoundsProvider implements IDataProvider {
             for (SoundBuilder soundBuilder : soundBuilders) {
                 ResourceLocation location = soundBuilder.getFileLocation();
                 if (this.soundBuilders.containsKey(location)) {
-                    throw new RuntimeException("Sound '" + location + "' has already been added to this sound event (" + path + "). Increase the weight on the sound instead.");
+                    throw new RuntimeException("Sound '" + location + "' has already been added to this sound event.");
                 }
                 this.soundBuilders.put(location, soundBuilder);
             }
@@ -151,7 +151,7 @@ public abstract class SoundsProvider implements IDataProvider {
 
         public SoundBuilder volume(float volume) {
             if (volume < 0 || volume > 1) {
-                throw new RuntimeException("Error volume for sound: '" + serializeLocation() + "' must be between 0.0 and 1.0 inclusive.");
+                throw new RuntimeException("Error volume for sound: '" + serializeLocation() + "' ,sound must be between 0.0 and 1.0 inclusive.");
             }
             this.volume = volume;
             return this;
@@ -164,7 +164,7 @@ public abstract class SoundsProvider implements IDataProvider {
 
         public SoundBuilder weight(int weight) {
             if (weight < 1) {
-                throw new RuntimeException("Error weight for sound: '" + serializeLocation() + "' must be at least 1.");
+                throw new RuntimeException("Error weight for sound: '" + serializeLocation() + "' ,weight must be at least 1.");
             }
             this.weight = weight;
             return this;
@@ -177,7 +177,7 @@ public abstract class SoundsProvider implements IDataProvider {
 
         public SoundBuilder attenuationDistance(int attenuationDistance) {
             if (attenuationDistance < 1) {
-                throw new RuntimeException("Error attenuation distance for sound: '" + serializeLocation() + "' must be at least 1.");
+                throw new RuntimeException("Error attenuation distance for sound: '" + serializeLocation() + "' ,attenuation_distance must be at least 1.");
             }
             this.attenuationDistance = attenuationDistance;
             return this;
