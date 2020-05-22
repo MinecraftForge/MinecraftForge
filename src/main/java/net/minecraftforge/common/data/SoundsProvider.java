@@ -134,9 +134,9 @@ public abstract class SoundsProvider implements IDataProvider {
         private float volume = 1;
         private float pitch = 1;
         private int weight = 1;
-        private boolean stream;
+        private boolean stream = false;
         private int attenuationDistance = 16;
-        private boolean preload;
+        private boolean preload = false;
         private SoundType type = SoundType.SOUND;
 
         public SoundBuilder(ResourceLocation fileLocation){
