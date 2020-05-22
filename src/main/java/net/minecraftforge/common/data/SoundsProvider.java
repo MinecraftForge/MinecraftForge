@@ -57,19 +57,19 @@ public abstract class SoundsProvider implements IDataProvider {
         return "Sounds";
     }
 
-    protected void addSoundEvent(SoundEventBuilder soundEventBuilder) {
-        String path = soundEventBuilder.getPath();
+    protected void addSoundEvent(SoundEventBuilder soundEvent) {
+        String path = soundEvent.getPath();
         if (data.containsKey(path)) {
             throw new RuntimeException("Sound event '" + path + "' has already been added.");
         }
-        data.put(path, soundEventBuilder);
+        data.put(path, soundEvent);
     }
 
 
     public static class SoundEventBuilder{
 
-        public static SoundEventBuilder create(SoundEvent soundEventRO) {
-            return new SoundEventBuilder(soundEventRO);
+        public static SoundEventBuilder create(SoundEvent soundEvent) {
+            return new SoundEventBuilder(soundEvent);
         }
 
         private final String path;
