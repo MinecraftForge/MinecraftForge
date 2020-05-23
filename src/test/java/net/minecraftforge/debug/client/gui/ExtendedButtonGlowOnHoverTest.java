@@ -25,13 +25,11 @@ public class ExtendedButtonGlowOnHoverTest {
          List<Widget> widgets = event.getWidgetList();
          Screen screen = event.getGui();
          event.removeWidget(widgets.get(5));
-         ExtendedButton extButton = new ExtendedButton(
+         event.addWidget(new ExtendedButton(
                  screen.width / 2 - 100,
                  screen.height / 4 + 48 + 72 + 12,
                  98, 20, I18n.format("menu.options"),
-                 (button) -> Minecraft.getInstance().displayGuiScreen(new OptionsScreen(screen, Minecraft.getInstance().gameSettings)));
-         event.addWidget(extButton);
-         extButton.active = false;
+                 (button) -> Minecraft.getInstance().displayGuiScreen(new OptionsScreen(screen, Minecraft.getInstance().gameSettings))));
       }
    }
 }
