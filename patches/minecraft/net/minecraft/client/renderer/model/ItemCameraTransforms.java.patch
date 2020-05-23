@@ -1,17 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ItemCameraTransforms.java
 +++ b/net/minecraft/client/renderer/model/ItemCameraTransforms.java
-@@ -9,6 +9,10 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
-+/**
-+ * @deprecated use {@link net.minecraft.client.renderer.model.IBakedModel#handlePerspective(TransformType)} instead
-+ */
-+@Deprecated
- @OnlyIn(Dist.CLIENT)
- public class ItemCameraTransforms {
-    public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms();
-@@ -25,6 +29,7 @@
+@@ -25,6 +25,7 @@
        this(ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a);
     }
  
@@ -19,7 +8,7 @@
     public ItemCameraTransforms(ItemCameraTransforms p_i46443_1_) {
        this.field_188036_k = p_i46443_1_.field_188036_k;
        this.field_188037_l = p_i46443_1_.field_188037_l;
-@@ -36,6 +41,7 @@
+@@ -36,6 +37,7 @@
        this.field_181700_p = p_i46443_1_.field_181700_p;
     }
  
@@ -27,7 +16,7 @@
     public ItemCameraTransforms(ItemTransformVec3f p_i46569_1_, ItemTransformVec3f p_i46569_2_, ItemTransformVec3f p_i46569_3_, ItemTransformVec3f p_i46569_4_, ItemTransformVec3f p_i46569_5_, ItemTransformVec3f p_i46569_6_, ItemTransformVec3f p_i46569_7_, ItemTransformVec3f p_i46569_8_) {
        this.field_188036_k = p_i46569_1_;
        this.field_188037_l = p_i46569_2_;
-@@ -47,6 +53,7 @@
+@@ -47,6 +49,7 @@
        this.field_181700_p = p_i46569_8_;
     }
  
