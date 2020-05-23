@@ -55,6 +55,10 @@ public class ExtendedButton extends Button
             int k = this.getYImage(this.isHovered);
             GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset(), this.alpha);
             this.renderBg(mc, mouseX, mouseY);
+            int color = getFGColor();
+
+            if(this.isHovered && this.packedFGColor == Widget.UNSET_FG_COLOR)
+                color = 0xFFFFA0; // Slightly Yellow
 
             String buttonText = this.getMessage();
             int strWidth = mc.fontRenderer.getStringWidth(buttonText);
@@ -63,7 +67,7 @@ public class ExtendedButton extends Button
             if (strWidth > width - 6 && strWidth > ellipsisWidth)
                 buttonText = mc.fontRenderer.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
 
-            this.drawCenteredString(mc.fontRenderer, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | MathHelper.ceil(this.alpha * 255.0F) << 24);
+            this.drawCenteredString(mc.fontRenderer, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, color | MathHelper.ceil(this.alpha * 255.0F) << 24);
         }
     }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 @Mod("fixing_button_tests")
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "fixing_button_tests")
 public class FixingButtonTests {
-   private static final boolean ENABLED = true;
+   private static final boolean ENABLED = false;
 
    @SubscribeEvent
    public static void replaceButton(GuiScreenEvent.InitGuiEvent.Post event){
