@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/widget/button/ImageButton.java
++++ b/net/minecraft/client/gui/widget/button/ImageButton.java
+@@ -47,6 +47,10 @@
+          i += this.field_191749_r;
+       }
+ 
++      RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
++      RenderSystem.enableBlend();
++      RenderSystem.defaultBlendFunc();
++      RenderSystem.blendFunc(com.mojang.blaze3d.platform.GlStateManager.SourceFactor.SRC_ALPHA, com.mojang.blaze3d.platform.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+       blit(this.x, this.y, (float)this.field_191747_p, (float)i, this.width, this.height, this.field_212935_e, this.field_212936_f);
+       RenderSystem.enableDepthTest();
+    }

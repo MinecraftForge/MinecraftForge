@@ -5,7 +5,12 @@ import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.OptionsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,9 +19,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-@Mod("extended_button_glow_on_hover_test")
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "extended_button_glow_on_hover_test")
-public class ExtendedButtonGlowOnHoverTest {
+@Mod("fixing_button_tests")
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "fixing_button_tests")
+public class FixingButtonTests {
    private static final boolean ENABLED = true;
 
    @SubscribeEvent
