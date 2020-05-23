@@ -1,11 +1,11 @@
 package net.minecraftforge.event.world;
 
+import net.minecraft.entity.monster.AbstractRaiderEntity;
 import net.minecraft.world.raid.Raid;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.*;
 
 /**
- *  RaidEvent along with its subevents gets fired whenever a {@link Raid} occurs.
+ *  RaidEvent is the base of all Raid events.
  */
 @Cancelable
 public class RaidEvent extends Event
@@ -23,13 +23,11 @@ public class RaidEvent extends Event
    }
    
    /**
-    * This event is fired for every {@link Raid} tick.
-    * This event is {@link Cancelable}.
-    */
-   @Cancelable
-   public static class RaidTickEvent extends RaidEvent
+    * This event is fired for every {@link Raid} tick. 
+   */
+   public static class Tick extends RaidEvent
    {
-	  public RaidTickEvent(Raid raid) 
+	  public Tick(Raid raid) 
 	  {
 		super(raid);
 	  }
@@ -38,9 +36,9 @@ public class RaidEvent extends Event
    /**
     * This event is fired when a {@link Raid} is stopped.
     */
-   public static class RaidStopEvent extends RaidEvent
+   public static class Stop extends RaidEvent
    {
-	  public RaidStopEvent(Raid raid)
+	  public Stop(Raid raid)
 	  {
 		super(raid);
 	  }
@@ -49,20 +47,29 @@ public class RaidEvent extends Event
    /**
     * This event is fired when a {@link Raid} spawns a raider.
     */
-   public static class RaidSpawnRaidersEvent extends RaidEvent
-   {
-	  public RaidSpawnRaidersEvent(Raid raid) 
+   public static class RaidersSpawn extends RaidEvent
+   {  
+	  private final AbstractRaiderEntity raider;
+	  
+	  public RaidersSpawn(Raid raid, AbstractRaiderEntity raider)
 	  {
 		super(raid);
+		this.raider = raider;
+	  }
+	  
+	  public AbstractRaiderEntity getRaider()
+	  {
+		  return raider;
 	  }
    }
    
    /**
     * This event is fired when a {@link Raid} is started.
     */
-   public static class RaidStart extends RaidEvent
+   @Cancelable
+   public static class Start extends RaidEvent
    {
-	  public RaidStart(Raid raid) 
+	  public Start(Raid raid) 
 	  {
 		super(raid);
 	  }

@@ -4,14 +4,14 @@
  
     public void func_221295_o() {
        this.field_221353_q = false;
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidStopEvent(this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.Stop(this))) return;
        this.field_221355_s.func_201360_b();
        this.field_221360_x = Raid.Status.STOPPED;
     }
  
     public void func_221307_p() {
        if (!this.func_221310_d()) {
-+    	 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidTickEvent(this))) return;
++    	 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.Tick(this))) return;
           if (this.field_221360_x == Raid.Status.ONGOING) {
              boolean flag = this.field_221353_q;
              this.field_221353_q = this.field_221348_l.func_175667_e(this.field_221347_k);
@@ -19,18 +19,34 @@
              while(this.func_221318_F()) {
                 BlockPos blockpos = this.field_221362_z.isPresent() ? this.field_221362_z.get() : this.func_221298_a(k, 20);
                 if (blockpos != null) {
-+            	  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidStart(this)));
++            	  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.Start(this))) return;
                    this.field_221349_m = true;
                    this.func_221294_b(blockpos);
                    if (!flag3) {
-@@ -462,6 +465,7 @@
+@@ -469,6 +472,7 @@
+             }
  
-          for(int l = 0; l < j; ++l) {
-             AbstractRaiderEntity abstractraiderentity = raid$wavemember.field_221285_g.func_200721_a(this.field_221348_l);
-+            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidSpawnRaidersEvent(this))) return;
-             if (!flag && abstractraiderentity.func_213637_dY()) {
-                abstractraiderentity.func_213635_r(true);
-                this.func_221324_a(i, abstractraiderentity);
+             this.func_221317_a(i, abstractraiderentity, p_221294_1_, false);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidersSpawn(this, abstractraiderentity))) return;
+             if (raid$wavemember.field_221285_g == EntityType.field_220352_aU) {
+                AbstractRaiderEntity abstractraiderentity1 = null;
+                if (i == this.func_221306_a(Difficulty.NORMAL)) {
+@@ -655,6 +659,7 @@
+ 
+    private int func_221335_a(Raid.WaveMember p_221335_1_, Random p_221335_2_, int p_221335_3_, DifficultyInstance p_221335_4_, boolean p_221335_5_) {
+       Difficulty difficulty = p_221335_4_.func_203095_a();
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RaidEvent.RaidersSpawn(this, p_221335_1_.field_221285_g.func_200721_a(field_221348_l)))) return 0;
+       boolean flag = difficulty == Difficulty.EASY;
+       boolean flag1 = difficulty == Difficulty.NORMAL;
+       int i;
+@@ -682,7 +687,6 @@
+       default:
+          return 0;
+       }
+-
+       return i > 0 ? p_221335_2_.nextInt(i + 1) : 0;
+    }
+ 
 @@ -770,7 +774,7 @@
        }
     }
@@ -45,9 +61,9 @@
           this.field_221286_h = p_i50602_4_;
        }
 +      
-+      public static WaveMember create(String name, EntityType<? extends AbstractRaiderEntity> p_i50602_3_, int[] p_i50602_4_) {
-+          throw new IllegalStateException("Enum not extended");
-+       }
++      public static WaveMember create(String name, EntityType<? extends AbstractRaiderEntity> typeIn, int[] waveCountsIn) {
++         throw new IllegalStateException("Enum not extended");
++      }
 +      
 +      public void init() {
 +    	  field_221284_f = values();

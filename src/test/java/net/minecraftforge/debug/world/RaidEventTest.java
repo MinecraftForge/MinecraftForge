@@ -5,6 +5,10 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.monster.PillagerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
 import net.minecraft.world.raid.Raid.WaveMember;
 import net.minecraftforge.event.world.RaidEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class RaidEventTest 
 {
-	public static final boolean ENABLE = false;
+	public static final boolean ENABLE = true;
 	private static Logger LOGGER = LogManager.getLogger(RaidEventTest.class);
 	
     public RaidEventTest()
@@ -26,16 +30,18 @@ public class RaidEventTest
     }
     
     @SubscribeEvent
-    public static void onRaidSpawnRaiders(RaidEvent.RaidSpawnRaidersEvent event)
+    public static void onRaidSpawnRaiders(RaidEvent.RaidersSpawn event)
     {
-       if (ENABLE)
+       if (ENABLE && event.getRaider() instanceof PillagerEntity)
        {
-    	   Minecraft.getInstance().player.sendChatMessage(event.getRaid().getRaiderCount() + " Raiders spawned");
+    	   PillagerEntity pillager = (PillagerEntity)event.getRaider();
+    	   Minecraft.getInstance().player.sendChatMessage(event.getRaider() + " Raiders spawned");
+    	   pillager.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.DIAMOND_AXE));
        }
     }
     
     @SubscribeEvent
-    public static void onRaidStart(RaidEvent.RaidStart event)
+    public static void onRaidStart(RaidEvent.Start event)
     {
        if (ENABLE)
        {
@@ -44,7 +50,7 @@ public class RaidEventTest
     }
     
     @SubscribeEvent
-    public static void onRaidStop(RaidEvent.RaidStopEvent event)
+    public static void onRaidStop(RaidEvent.Stop event)
     {
        if (ENABLE)
        {
@@ -53,7 +59,7 @@ public class RaidEventTest
     }
     
     @SubscribeEvent
-    public static void onRaidTick(RaidEvent.RaidTickEvent event)
+    public static void onRaidTick(RaidEvent.Tick event)
     {
        if (ENABLE)
        {
