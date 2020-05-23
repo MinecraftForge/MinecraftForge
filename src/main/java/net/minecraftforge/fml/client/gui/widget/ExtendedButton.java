@@ -57,7 +57,7 @@ public class ExtendedButton extends Button
             this.renderBg(mc, mouseX, mouseY);
             int color = getFGColor();
 
-            if(this.isHovered && this.packedFGColor == Widget.UNSET_FG_COLOR)
+            if (this.isHovered && this.packedFGColor == Widget.UNSET_FG_COLOR)
                 color = 0xFFFFA0; // Slightly Yellow
 
             String buttonText = this.getMessage();
