@@ -115,7 +115,7 @@ public class Slider extends ExtendedButton
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset(), this.alpha);
         }
     }
 
