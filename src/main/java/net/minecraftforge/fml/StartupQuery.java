@@ -316,14 +316,29 @@ public class StartupQuery {
                 DedicatedServer server = serverSupplier.get();
                 if (query.getResult() == null)
                 {
-                    LOGGER.warn(SQ, query.getText());
+                    if (!query.getHeader().isEmpty())
+                    {
+                        LOGGER.warn(SQ, "\n" + query.getHeader() + "\n");
+                    }
+                    LOGGER.warn(SQ, "\n" + query.getText());
+                    if (!query.getAction().isEmpty())
+                    {
+                        LOGGER.warn(SQ, "\n\n" + query.getAction());
+                    }
                     query.finish();
                 }
                 else
                 {
-                    String text = query.getText() +
-                            "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
-                            "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
+                    StringBuilder text = new StringBuilder("\n");
+                    if (!query.getHeader().isEmpty()) {
+                        text.append(query.getHeader()).append("\n\n");
+                    }
+                    text.append(query.getText()).append("\n");
+                    if (!query.getAction().isEmpty()) {
+                        text.append("\n").append(query.getAction());
+                    }
+                    text.append("\nConfirm with '/fml confirm' or cancel with '/fml cancel'.")
+                        .append("\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.");
                     LOGGER.warn(SQ, text);
 
                     if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
