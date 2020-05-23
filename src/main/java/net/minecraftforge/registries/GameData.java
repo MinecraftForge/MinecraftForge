@@ -99,8 +99,6 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -728,16 +726,23 @@ public class GameData
             List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
             if (missingRegs.size() > 0)
             {
-                String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                String header = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
                         "There are " + missingRegs.size() + " missing registries in this save.\n" +
                         "If you continue the missing registries will get removed.\n" +
-                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
-                        "Missing Registries:\n";
+                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n";
+
+                StringBuilder text = new StringBuilder("Missing Registries:\n");
 
                 for (ResourceLocation s : missingRegs)
-                    text += s.toString() + "\n";
+                    text.append(s).append("\n");
 
-                if (!StartupQuery.confirm(text))
+                boolean confirmed = StartupQuery.builder()
+                        .header(header)
+                        .text(text.toString())
+                        .action("Continue anyway?")
+                        .confirm();
+
+                if (!confirmed)
                     StartupQuery.abort();
             }
         }
@@ -816,19 +821,24 @@ public class GameData
 
             if (!defaulted.isEmpty())
             {
-                StringBuilder buf = new StringBuilder();
-                buf.append("Forge Mod Loader detected missing registry entries.\n\n")
-                   .append("There are ").append(defaulted.size()).append(" missing entries in this save.\n")
-                   .append("If you continue the missing entries will get removed.\n")
-                   .append("A world backup will be automatically created in your saves directory.\n\n");
+                String header = "Forge Mod Loader detected missing registry entries.\n\n" +
+                   "There are " + defaulted.size() + " missing entries in this save.\n" +
+                   "If you continue the missing entries will get removed.\n" +
+                   "A world backup will be automatically created in your saves directory.\n\n";
 
+                StringBuilder buf = new StringBuilder();
                 defaulted.asMap().forEach((name, entries) ->
                 {
                     buf.append("Missing ").append(name).append(":\n");
                     entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+                    buf.append("\n");
                 });
 
-                boolean confirmed = StartupQuery.confirm(buf.toString());
+                boolean confirmed = StartupQuery.builder()
+                        .header(header)
+                        .text(buf.toString())
+                        .action("Remove entries and continue?")
+                        .confirm();
                 if (!confirmed)
                     StartupQuery.abort();
 
