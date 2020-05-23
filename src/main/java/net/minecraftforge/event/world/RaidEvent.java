@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.*;
 @Cancelable
 public class RaidEvent extends Event
 {
-   public final Raid raid;
+   private final Raid raid;
    
    public RaidEvent(Raid raid)
    {
@@ -24,7 +24,10 @@ public class RaidEvent extends Event
    
    /**
     * This event is fired for every {@link Raid} tick. 
-   */
+    * This event is {@link Cancelable}.
+    * If this event is cancelled, each tick will be skipped.
+    */
+   @Cancelable
    public static class Tick extends RaidEvent
    {
 	  public Tick(Raid raid) 
