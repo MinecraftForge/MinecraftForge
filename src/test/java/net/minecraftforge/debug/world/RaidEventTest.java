@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class RaidEventTest 
 {
-	public static final boolean ENABLE = true;
+	public static final boolean ENABLE = false;
 	private static Logger LOGGER = LogManager.getLogger(RaidEventTest.class);
 	
     public RaidEventTest()
@@ -35,7 +35,7 @@ public class RaidEventTest
        if (ENABLE && event.getRaider() instanceof PillagerEntity)
        {
     	   PillagerEntity pillager = (PillagerEntity)event.getRaider();
-    	   Minecraft.getInstance().player.sendChatMessage(event.getRaider() + " Raiders spawned");
+    	   Minecraft.getInstance().player.sendChatMessage(event.getRaider() + "has spawned.");
     	   pillager.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.DIAMOND_AXE));
        }
     }

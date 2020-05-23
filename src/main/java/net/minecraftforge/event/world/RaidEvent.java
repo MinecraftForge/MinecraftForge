@@ -5,7 +5,7 @@ import net.minecraft.world.raid.Raid;
 import net.minecraftforge.eventbus.api.*;
 
 /**
- *  RaidEvent is the base of all Raid events.
+ *  RaidEvent is the base class of all Raid events.
  */
 @Cancelable
 public class RaidEvent extends Event
@@ -65,6 +65,7 @@ public class RaidEvent extends Event
    
    /**
     * This event is fired when a {@link Raid} is started.
+    * This event is {@link Cancelable}.
     */
    @Cancelable
    public static class Start extends RaidEvent
