@@ -9,6 +9,8 @@ loaderVersion="[28,)"
     modId="base_block_place_event_test"
 [[mods]]
     modId="farmland_trample_test"
+[[mods]]
+    modId="extended_button_glow_on_hover_test"
 #[[mods]]
 #    modId="farmland_water_test"
 ##[[mods]] # Fluid System needs implementing
