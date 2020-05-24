@@ -83,4 +83,9 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
     public Path[] getPaths() {
         return FMLLoader.getMCPaths();
     }
+
+    @Override
+    public boolean isProduction() {
+        return true;
+    }
 }
