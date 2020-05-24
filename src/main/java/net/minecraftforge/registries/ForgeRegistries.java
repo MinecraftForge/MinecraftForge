@@ -99,8 +99,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<ChunkGeneratorType<?, ?>> CHUNK_GENERATOR_TYPES = RegistryManager.ACTIVE.getRegistry(ChunkGeneratorType.class);
     public static final IForgeRegistry<ChunkStatus> CHUNK_STATUS = RegistryManager.ACTIVE.getRegistry(ChunkStatus.class);
     public static final IForgeRegistry<BlockStateProviderType<?>> BLOCK_STATE_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockStateProviderType.class);
-    public static final IForgeRegistry<BlockPlacerType<?>> BLOCK_PLAYER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockPlacerType.class);
-    public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLAYER_TYPES = RegistryManager.ACTIVE.getRegistry(FoliagePlacerType.class);
+    public static final IForgeRegistry<BlockPlacerType<?>> BLOCK_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockPlacerType.class);
+    public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(FoliagePlacerType.class);
     public static final IForgeRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPES = RegistryManager.ACTIVE.getRegistry(TreeDecoratorType.class);
 
     // Custom forge registries
