@@ -150,4 +150,8 @@ public abstract class FMLCommonLaunchHandler
                 .peek(p->LOGGER.debug(LOADING, "Adding {} as a library to the transforming classloader", p))
                 .forEach(additionalLibraries::add);
     }
+
+    public boolean isProduction() {
+        return false;
+    }
 }
