@@ -25,7 +25,7 @@ public class RaidEvent extends Event
    /**
     * This event is fired for every {@link Raid} tick. 
     * This event is {@link Cancelable}.
-    * If this event is cancelled, each tick will be skipped.
+    * If this event is cancelled, that tick gets skipped.
     */
    @Cancelable
    public static class Tick extends RaidEvent
