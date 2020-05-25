@@ -33,7 +33,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event has a result. {@link HasResult}<br>
  *
  * setResult(ALLOW) informs game that player is still "in bed"<br>
- * setResult(DEFAULT) causes game to check {@link Block#isBed(IBlockState, net.minecraft.world.IWorldReader, BlockPos, Entity)} instead
+ * setResult(DEFAULT) causes game to check {@link Block#isBed(BlockState, net.minecraft.world.IWorldReader, BlockPos, Entity)} instead
  */
 @HasResult
 public class SleepingLocationCheckEvent extends LivingEvent

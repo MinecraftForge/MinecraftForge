@@ -28,7 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * Fired when the ender dragon or wither attempts to destroy a block and when ever a zombie attempts to break a door. Basically a event version of {@link Block#canEntityDestroy(IBlockState, IBlockAccess, BlockPos, Entity)}<br>
+ * Fired when the ender dragon or wither attempts to destroy a block and when ever a zombie attempts to break a door.<br>
  * <br>
  * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * If this event is canceled, the block will not be destroyed.<br>
@@ -42,7 +42,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
 {
     private final BlockPos pos;
     private final BlockState state;
-    
+
     public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state)
     {
         super(entity);
@@ -54,7 +54,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
     {
         return state;
     }
-    
+
     public BlockPos getPos()
     {
         return pos;

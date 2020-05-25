@@ -541,7 +541,7 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
+     * ItemStack sensitive version of {@link PlayerEntity#canHarvestBlock(BlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest

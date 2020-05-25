@@ -39,7 +39,7 @@ public enum PlantType implements IExtensibleEnum
      *
      * <p>If your new plant grows on blocks like any one of them above, never create a new {@link PlantType}.
      * This enumeration is only functioning in
-     * {@link net.minecraft.block.Block#canSustainPlant(IBlockState, IWorldReader, BlockPos, EnumFacing, IPlantable)},
+     * {@link net.minecraft.block.Block#canSustainPlant(net.minecraft.block.BlockState, IWorldReader, BlockPos, net.minecraft.util.Direction, net.minecraftforge.common.IPlantable)},
      * which you are supposed to override this function in your new block and create a new plant type to grow on that block.
      *
      * <p>You can create an instance of your plant type in your API and let your/others mods access it. It will be faster than calling this method.
@@ -51,4 +51,3 @@ public enum PlantType implements IExtensibleEnum
         throw new IllegalStateException("Enum not extended");
     }
 }
-

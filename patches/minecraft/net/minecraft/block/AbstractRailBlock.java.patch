@@ -2,15 +2,15 @@
 +++ b/net/minecraft/block/AbstractRailBlock.java
 @@ -36,7 +36,7 @@
     }
- 
+
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
 -      RailShape railshape = p_220053_1_.func_177230_c() == this ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
 +      RailShape railshape = p_220053_1_.func_177230_c() == this ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
- 
+
 @@ -56,7 +56,7 @@
- 
+
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
        if (!p_220069_2_.field_72995_K) {
 -         RailShape railshape = p_220069_1_.func_177229_b(this.func_176560_l());
@@ -26,12 +26,12 @@
 +         if (getRailDirection(p_196243_1_, p_196243_2_, p_196243_3_, null).func_208092_c()) {
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
- 
+
 @@ -134,5 +134,66 @@
        return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
- 
-+   //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
+
++   //Forge: Use getRailDirection(BlockState, IBlockReader, BlockPos, net.minecraft.entity.item.minecart.AbstractMinecartEntity) for enhanced ability
     public abstract IProperty<RailShape> func_176560_l();
 +
 +   /* ======================================== FORGE START =====================================*/

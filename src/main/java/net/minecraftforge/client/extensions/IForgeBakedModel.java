@@ -57,7 +57,7 @@ public interface IForgeBakedModel
      */
     default boolean doesHandlePerspectives() { return false; }
 
-    /*
+    /**
      * Returns the pair of the model for the given perspective, and the matrix that
      * should be applied to the GL state before rendering it (matrix may be null).
      */

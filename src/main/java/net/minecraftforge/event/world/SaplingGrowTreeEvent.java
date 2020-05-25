@@ -30,7 +30,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 /**
  * SaplingGrowTreeEvent is fired when a sapling grows into a tree.<br>
  * This event is fired during sapling growth in
- * {@link BlockSapling#generateTree(World, BlockPos, IBlockState, Random)}.<br>
+ * {@link SaplingBlock#func_226942_a_(World, BlockPos, BlockState, Random)}.<br>
  * <br>
  * {@link #pos} contains the coordinates of the growing sapling. <br>
  * {@link #rand} contains an instance of Random for use. <br>

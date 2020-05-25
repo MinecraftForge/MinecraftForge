@@ -694,7 +694,7 @@ public interface IForgeBlockState
     }
 
     /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
+     * Gets the {@link BlockState} to place
      * @param world The world the block is being placed in
      * @param pos The position the block is being placed at
      * @param facing The side the block is being placed on

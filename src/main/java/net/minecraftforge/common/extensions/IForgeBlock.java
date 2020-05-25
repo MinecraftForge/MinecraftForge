@@ -843,7 +843,7 @@ public interface IForgeBlock
     }
 
     /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
+     * Gets the {@link BlockState} to place
      * @param world The world the block is being placed in
      * @param pos The position the block is being placed at
      * @param facing The side the block is being placed on
@@ -1025,7 +1025,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param start The start vector
      * @param end The end vector
-     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
+     * @param original The original result from {@link Block#collisionRayTrace(BlockState, World, BlockPos, Vec3d, Vec3d)}
      * @return A result that suits your block
      */
     @Nullable
