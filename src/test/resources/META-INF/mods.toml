@@ -2,6 +2,10 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+    modId="custom_deferred_testing"
+[[mods]]
+    modId="custom_deferred_addon_testing"
+[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
@@ -15,8 +19,6 @@ loaderVersion="[28,)"
 ##    modId="fog_color_in_material_test"
 [[mods]]
     modId="neighbor_notify_event_test"
-[[mods]]
-    modId="custom_deferred_testing"
 #[[mods]]
 #    modId="block_particle_effects_test"
 [[mods]]
@@ -79,3 +81,11 @@ loaderVersion="[28,)"
     versionRange="[1,)"
     ordering="AFTER"
     side="BOTH"
+[[dependencies.custom_deferred_addon_testing]]
+    modId="custom_deferred_testing"
+    mandatory=true
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+
+

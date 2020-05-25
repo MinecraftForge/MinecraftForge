@@ -20,8 +20,7 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -31,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -67,16 +67,17 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("DeferredRegister");
     private IForgeRegistry<T> type;
-    private Supplier<IForgeRegistry<T>> typeSup;
+    private NonNullSupplier<IForgeRegistry<T>> typeSup;
     private final String modid;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
     private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
     private final Map<LazyRegistryObject<T>, Supplier<? extends T>> lazyEntries = new LinkedHashMap<>();
-    private final Set<LazyRegistryObject<T>> lazyEntriesView = Collections.unmodifiableSet(lazyEntries.keySet());
+    //private final Set<LazyRegistryObject<T>> lazyEntriesView = Collections.unmodifiableSet(lazyEntries.keySet());
 
     public DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
+        Objects.requireNonNull(reg, "The registry must not be null! For custom registries use the supplier version instead.");
         this.type = reg;
         this.modid = modid;
     }
@@ -86,10 +87,11 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * To solve this, the {@link IForgeRegistry} and {@link RegistryObject}s must be evaluated only when registry events are fired.
      * The passed in supplier will only be called once {@link #addEntries} is invoked.
      * When it is invoked, it is guaranteed that the registry is created since the {@link RegistryEvent.NewRegistry} event is fired beforehand.
-     * @param supReg supplier of an IForgeRegistry of the desired type.
+     * @param supReg A nonnull supplier of an IForgeRegistry of the desired type.
      */
-    public DeferredRegister(Supplier<IForgeRegistry<T>> supReg, String modid)
+    public DeferredRegister(NonNullSupplier<IForgeRegistry<T>> supReg, String modid)
     {
+        Objects.requireNonNull(supReg);
         this.typeSup = supReg;
         this.modid = modid;
     }
@@ -107,16 +109,12 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
-        RegistryObject<I> ret;
-        try
-        {
-            ret = RegistryObject.of(key, this.type);
-        }
-        catch (IllegalArgumentException e)
+        if(this.type == null)
         {
             LOGGER.error("Errored while trying to register an entry. This likely happened due to registering for a custom registry, use lazyRegister instead.");
             throw new IllegalArgumentException("Null registry used in DeferredRegister");
         }
+        RegistryObject<I> ret = RegistryObject.of(key, this.type);
         if (entries.putIfAbsent((RegistryObject<T>) ret, () -> sup.get().setRegistryName(key)) != null) {
             throw new IllegalArgumentException("Duplicate registration " + name);
         }
@@ -136,8 +134,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
-        LazyRegistryObject<I> lazyRet = new LazyRegistryObject<>(()->RegistryObject.of(key, this.type));
-        if (lazyEntries.putIfAbsent(lazyRet.cast(), () -> sup.get().setRegistryName(key)) != null)
+        LazyRegistryObject<I> lazyRet = new LazyRegistryObject<>(()->RegistryObject.of(key, this.getType()));
+        if (lazyEntries.putIfAbsent((LazyRegistryObject<T>)lazyRet, () -> sup.get().setRegistryName(key)) != null)
         {
             throw new IllegalArgumentException("Duplicate registration " + name);
         }
@@ -156,7 +154,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Since the view is unmodifiable, can't cache it really. Gotta stream and collect each time
+     * Stream and collect each time, since can't really cache in the same {@link #entriesView} does
      * This should not be a costly operation however, since the {@link RegistryObject} is cached.
      * The modders can also cache the entries themselves.
      * @return The unmodifiable view of registered entries. Useful for bulk operations on all values.
@@ -165,14 +163,14 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     {
         if(entriesView.isEmpty())
         {
-            return lazyEntriesView.stream().map(LazyRegistryObject::getRegistryObject).collect(Collectors.toSet());
+            return Collections.unmodifiableSet(lazyEntries.keySet().stream().map(LazyRegistryObject::getRegistryObject).collect(Collectors.toSet()));
         }
         return entriesView;
     }
 
     private void addEntries(RegistryEvent.Register<?> event)
     {
-        if (event.getGenericType() == this.getFromSupplier().getRegistrySuperType())
+        if (event.getGenericType() == this.getType().getRegistrySuperType())
         {
             @SuppressWarnings("unchecked")
             IForgeRegistry<T> reg = (IForgeRegistry<T>)event.getRegistry();
@@ -202,7 +200,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      *
      * This is only useful for custom registries, when the {@link IForgeRegistry} does not exist when static init happens
      */
-    private IForgeRegistry<T> getFromSupplier(){
+    private IForgeRegistry<T> getType()
+    {
         if(type == null)
         {
             type = typeSup.get();
@@ -211,25 +210,21 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * A way of lazily evaluating registry objects but in a nicer way than using {@link LazyOptional<RegistryObject>}
+     * A way of lazily evaluating registry objects but in slightly nicer way than using {@link NonNullLazy<RegistryObject>} directly
      *
-     * Also a supplier, to mimic {@link RegistryObject} as best as possible
+     * Also a nonnull supplier, to mimic {@link RegistryObject} as best as possible
      */
-    public static class LazyRegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T>
+    public static class LazyRegistryObject<T extends IForgeRegistryEntry<? super T>> implements NonNullSupplier<T>
     {
-        private final LazyOptional<RegistryObject<T>> lazyRet;
+        private final NonNullLazy<RegistryObject<T>> lazyRet;
         private RegistryObject<T> ret;
         private LazyRegistryObject(NonNullSupplier<RegistryObject<T>> supplier)
         {
-            if(supplier == null)
-            {
-                throw new IllegalStateException("Supplier should not be null");
-            }
-            lazyRet = LazyOptional.of(supplier);
+            Objects.requireNonNull(supplier);
+            lazyRet = NonNullLazy.of(supplier);
         }
 
         /**
-         * The interest of the LazyOptional is mostly for the lazy part.
          * This is only called in {@link #addEntries} when the IForgeRegistry is definitely assigned.
          * The RegistryObject is created using {@link RegistryObject#of(ResourceLocation, IForgeRegistry)}
          * It is only created once from the passed in supplier, to not evaluate it each time with {@link #get()}
@@ -238,7 +233,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         {
             if(ret == null)
             {
-                ret = lazyRet.orElseThrow(()->new IllegalStateException("This deserves a better error message."));
+                ret = lazyRet.get();
             }
             return ret;
         }
@@ -246,21 +241,11 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         /**
          * Mostly for convenience, so that there is no need to do get().get(), but also to act as a Supplier just like RegistryObject
          */
+        @Nonnull
         @Override
         public T get()
         {
             return getRegistryObject().get();
-        }
-
-        /**
-         * Helper function to cast, since it is needed in {@link #lazyRegister} to work with
-         * objects not directly implementing the type of this registry
-         * But now that i think about it, pretty useless...
-         */
-        @SuppressWarnings("unchecked")
-        private  <X extends IForgeRegistryEntry<? super X>> LazyRegistryObject<X> cast()
-        {
-            return (LazyRegistryObject<X>) this;
         }
     }
 }
