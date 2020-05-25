@@ -20,11 +20,16 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,6 +64,8 @@ import java.util.stream.Collectors;
  */
 public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker MARKER = MarkerManager.getMarker("DeferredRegister");
     private IForgeRegistry<T> type;
     private Supplier<IForgeRegistry<T>> typeSup;
     private final String modid;
@@ -100,7 +107,16 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
-        RegistryObject<I> ret = RegistryObject.of(key, this.type);
+        RegistryObject<I> ret;
+        try
+        {
+            ret = RegistryObject.of(key, this.type);
+        }
+        catch (IllegalArgumentException e)
+        {
+            LOGGER.error("Errored while trying to register an entry. This likely happened due to registering for a custom registry, use lazyRegister instead.");
+            throw new IllegalArgumentException("Null registry used in DeferredRegister");
+        }
         if (entries.putIfAbsent((RegistryObject<T>) ret, () -> sup.get().setRegistryName(key)) != null) {
             throw new IllegalArgumentException("Duplicate registration " + name);
         }
@@ -121,7 +137,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
         LazyRegistryObject<I> lazyRet = new LazyRegistryObject<>(()->RegistryObject.of(key, this.type));
-        if (lazyEntries.putIfAbsent(lazyRet.cast(), () -> sup.get().setRegistryName(key)) != null) {
+        if (lazyEntries.putIfAbsent(lazyRet.cast(), () -> sup.get().setRegistryName(key)) != null)
+        {
             throw new IllegalArgumentException("Duplicate registration " + name);
         }
         return lazyRet;
