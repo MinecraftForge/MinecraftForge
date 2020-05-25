@@ -85,8 +85,12 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     /**
      * Custom registries are only created after the {@link DeferredRegister} constructor is called due to static init.
      * To solve this, the {@link IForgeRegistry} and {@link RegistryObject}s must be evaluated only when registry events are fired.
-     * The passed in supplier will only be called once {@link #addEntries} is invoked.
-     * When it is invoked, it is guaranteed that the registry is created since the {@link RegistryEvent.NewRegistry} event is fired beforehand.
+     * The passed in supplier will be called automatically when {@link #addEntries} is invoked.
+     * When that happens, it is guaranteed that the registry is created since the {@link RegistryEvent.NewRegistry} event is fired beforehand.
+     *
+     * However, this can mess up if modders call {@link #getEntries()} too quickly. It can be called only after the NewRegistry has fired.
+     * Calling it then won't crash, but will result in empty RegistryObject that will update when the appropriate RegistryEvent is fired.
+     *
      * @param supReg A nonnull supplier of an IForgeRegistry of the desired type.
      */
     public DeferredRegister(NonNullSupplier<IForgeRegistry<T>> supReg, String modid)
@@ -101,7 +105,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      *
      * @param name The new entry's name, it will automatically have the modid prefixed.
      * @param sup A factory for the new entry, it should return a new instance every time it is called.
-     * @return A RegistryObject that will be updated with when the entries in the registry change.
+     * @return A RegistryObject that will be updated when the entries in the registry change.
      */
     @SuppressWarnings("unchecked")
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
@@ -127,7 +131,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      *
      * @param name The new entry's name, it will automatically have the modid prefixed.
      * @param sup A factory for the new entry, it should return a new instance every time it is called.
-     * @return A {@link LazyRegistryObject} that will be lazily updated with when the entries in the registry change.
+     * @return A {@link LazyRegistryObject} that will be lazily updated when the entries in the registry change.
      */
     public <I extends T> LazyRegistryObject<I> lazyRegister(final String name, final Supplier<? extends I> sup)
     {
@@ -194,11 +198,13 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * If the IForgeRegistry is null, gets it from the supplier. This is sure to be called from a classic register event.
-     * It is even guaranteed to be called from the Register Block event, since it is the first one called.
+     * If the IForgeRegistry is null, gets it from the supplier. This is almost certain to be called from a classic register event.
+     * If it is, it is even guaranteed to be called from the Register Block event, since it is the first one called.
+     * The only way it is not called from the event, is by calling {@link #getEntries()} too early. See {@link #DeferredRegister(NonNullSupplier, String)}
+     *
      * This also makes sure that the IForgeRegistry is correct when updating the RegistryObjects.
      *
-     * This is only useful for custom registries, when the {@link IForgeRegistry} does not exist when static init happens
+     * Only useful for custom registries, when the {@link IForgeRegistry} does not exist when static init happens
      */
     private IForgeRegistry<T> getType()
     {
