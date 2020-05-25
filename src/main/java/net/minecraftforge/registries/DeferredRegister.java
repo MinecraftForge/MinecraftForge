@@ -108,7 +108,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Adds a new supplier to the list of entries to be registered, and returns a {@link DeferredCustomRegistry.LazyRegistryObject}
+     * Adds a new supplier to the list of entries to be registered, and returns a {@link LazyRegistryObject}
      * that will be populated with the created entry automatically and lazily.
      *
      * @param name The new entry's name, it will automatically have the modid prefixed.

@@ -1,7 +1,6 @@
 package net.minecraftforge.fml.common.registry.customdeferred;
 
 
-import net.minecraftforge.registries.DeferredCustomRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 
