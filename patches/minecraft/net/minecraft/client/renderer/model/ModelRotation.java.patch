@@ -1,0 +1,63 @@
+--- a/net/minecraft/client/renderer/model/ModelRotation.java
++++ b/net/minecraft/client/renderer/model/ModelRotation.java
+@@ -27,7 +27,8 @@
+    X270_Y0(270, 0),
+    X270_Y90(270, 90),
+    X270_Y180(270, 180),
+-   X270_Y270(270, 270);
++   X270_Y270(270, 270),
++   X0_Y0_Z90(0, 0, 90), X0_Y90_Z90(0, 90, 90), X0_Y180_Z90(0, 180, 90), X0_Y270_Z90(0, 270, 90), X90_Y0_Z90(90, 0, 90), X90_Y90_Z90(90, 90, 90), X90_Y180_Z90(90, 180, 90), X90_Y270_Z90(90, 270, 90), X180_Y0_Z90(180, 0, 90), X180_Y90_Z90(180, 90, 90), X180_Y180_Z90(180, 180, 90), X180_Y270_Z90(180, 270, 90), X270_Y0_Z90(270, 0, 90), X270_Y90_Z90(270, 90, 90), X270_Y180_Z90(270, 180, 90), X270_Y270_Z90(270, 270, 90), X0_Y0_Z180(0, 0, 180), X0_Y90_Z180(0, 90, 180), X0_Y180_Z180(0, 180, 180), X0_Y270_Z180(0, 270, 180), X90_Y0_Z180(90, 0, 180), X90_Y90_Z180(90, 90, 180), X90_Y180_Z180(90, 180, 180), X90_Y270_Z180(90, 270, 180), X180_Y0_Z180(180, 0, 180), X180_Y90_Z180(180, 90, 180), X180_Y180_Z180(180, 180, 180), X180_Y270_Z180(180, 270, 180), X270_Y0_Z180(270, 0, 180), X270_Y90_Z180(270, 90, 180), X270_Y180_Z180(270, 180, 180), X270_Y270_Z180(270, 270, 180), X0_Y0_Z270(0, 0, 270), X0_Y90_Z270(0, 90, 270), X0_Y180_Z270(0, 180, 270), X0_Y270_Z270(0, 270, 270), X90_Y0_Z270(90, 0, 270), X90_Y90_Z270(90, 90, 270), X90_Y180_Z270(90, 180, 270), X90_Y270_Z270(90, 270, 270), X180_Y0_Z270(180, 0, 270), X180_Y90_Z270(180, 90, 270), X180_Y180_Z270(180, 180, 270), X180_Y270_Z270(180, 270, 270), X270_Y0_Z270(270, 0, 270), X270_Y90_Z270(270, 90, 270), X270_Y180_Z270(270, 180, 270), X270_Y270_Z270(270, 270, 270);
+ 
+    private static final Map<Integer, ModelRotation> field_177546_q = Arrays.stream(values()).collect(Collectors.toMap((p_229306_0_) -> {
+       return p_229306_0_.field_177545_r;
+@@ -38,25 +39,38 @@
+    private final Quaternion field_177544_s;
+    private final int field_177543_t;
+    private final int field_177542_u;
++   private final int quartersZ;
++   
++   // Forge: use method with Z parameter
++   @Deprecated
++   private static int func_177521_b(int p_177521_0_, int p_177521_1_) { return combineXYZ(p_177521_0_, p_177521_1_, 0); }
++   
++   private static int combineXYZ(int x, int y, int z) { return x * 360 * 360 + y * 360 + z; }
+ 
+-   private static int func_177521_b(int p_177521_0_, int p_177521_1_) {
+-      return p_177521_0_ * 360 + p_177521_1_;
+-   }
+-
+-   private ModelRotation(int p_i46087_3_, int p_i46087_4_) {
+-      this.field_177545_r = func_177521_b(p_i46087_3_, p_i46087_4_);
+-      Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float)(-p_i46087_4_), true);
+-      quaternion.func_195890_a(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float)(-p_i46087_3_), true));
++   // Forge: use constructor with Z parameter
++   @Deprecated
++   private ModelRotation(int p_i46087_3_, int p_i46087_4_) { this(p_i46087_3_, p_i46087_4_, 0); }
++   
++   private ModelRotation(int x, int y, int z) {
++      this.field_177545_r = combineXYZ(x, y, z);
++      Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float)(-y), true);
++      quaternion.func_195890_a(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float)(-x), true));
++      quaternion.func_195890_a(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float)(-z), true));
+       this.field_177544_s = quaternion;
+-      this.field_177543_t = MathHelper.func_76130_a(p_i46087_3_ / 90);
+-      this.field_177542_u = MathHelper.func_76130_a(p_i46087_4_ / 90);
++      this.field_177543_t = MathHelper.func_76130_a(x / 90);
++      this.field_177542_u = MathHelper.func_76130_a(y / 90);
++      this.quartersZ = MathHelper.func_76130_a(z / 90);
+    }
+ 
+    public TransformationMatrix func_225615_b_() {
+       return new TransformationMatrix((Vector3f)null, this.field_177544_s, (Vector3f)null, (Quaternion)null);
+    }
+ 
+-   public static ModelRotation func_177524_a(int p_177524_0_, int p_177524_1_) {
+-      return field_177546_q.get(func_177521_b(MathHelper.func_180184_b(p_177524_0_, 360), MathHelper.func_180184_b(p_177524_1_, 360)));
++   // Forge: use method with Z parameter
++   @Deprecated
++   public static ModelRotation func_177524_a(int p_177524_0_, int p_177524_1_) { return getModelRotation(p_177524_0_, p_177524_1_, 0); }
++   
++   public static ModelRotation getModelRotation(int x, int y, int z) {
++      return field_177546_q.get(combineXYZ(MathHelper.func_180184_b(x, 360), MathHelper.func_180184_b(y, 360), MathHelper.func_180184_b(z, 360)));
+    }
+ }

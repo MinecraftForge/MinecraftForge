@@ -1,0 +1,15 @@
+--- a/net/minecraft/client/renderer/model/Variant.java
++++ b/net/minecraft/client/renderer/model/Variant.java
+@@ -84,9 +84,10 @@
+       protected ModelRotation func_188042_a(JsonObject p_188042_1_) {
+          int i = JSONUtils.func_151208_a(p_188042_1_, "x", 0);
+          int j = JSONUtils.func_151208_a(p_188042_1_, "y", 0);
+-         ModelRotation modelrotation = ModelRotation.func_177524_a(i, j);
++         int k = JSONUtils.func_151208_a(p_188042_1_, "z", 0);
++         ModelRotation modelrotation = ModelRotation.getModelRotation(i, j, k);
+          if (modelrotation == null) {
+-            throw new JsonParseException("Invalid BlockModelRotation x: " + i + ", y: " + j);
++            throw new JsonParseException("Invalid BlockModelRotation x: " + i + ", y: " + j + ", z: " + k);
+          } else {
+             return modelrotation;
+          }
