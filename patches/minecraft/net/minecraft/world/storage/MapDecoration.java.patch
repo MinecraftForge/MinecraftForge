@@ -1,17 +1,23 @@
 --- a/net/minecraft/world/storage/MapDecoration.java
 +++ b/net/minecraft/world/storage/MapDecoration.java
-@@ -83,6 +83,16 @@
+@@ -83,6 +83,22 @@
        return i;
     }
  
++   @Deprecated // Use overload with matrix stack and buffers. TODO 1.15 remove this
++   @OnlyIn(Dist.CLIENT)
++   public boolean render(int index) {
++      return false;
++   }
++
 +   /**
-+    * Renders this decoration, useful for custom sprite sheets.
++    * Renders this decoration into the provided buffers.
 +    * @param index The index of this icon in the MapData's list. Used by vanilla to offset the Z-coordinate to prevent Z-fighting
 +    * @return false to run vanilla logic for this decoration, true to skip it
 +    */
 +   @OnlyIn(Dist.CLIENT)
-+   public boolean render(int index) {
-+      return false;
++   public boolean render(com.mojang.blaze3d.matrix.MatrixStack ms, net.minecraft.client.renderer.IRenderTypeBuffer buffers, int light, int index) {
++      return render(index);
 +   }
 +
     public static enum Type {
