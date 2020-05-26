@@ -86,7 +86,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -125,7 +124,6 @@ import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -388,13 +386,6 @@ public class ForgeEventFactory
             return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
         }
         return null;
-    }
-
-    public static boolean canEntityUpdate(Entity entity)
-    {
-        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getCanUpdate();
     }
 
     public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
@@ -662,12 +653,6 @@ public class ForgeEventFactory
     public static boolean onEntityDestroyBlock(LivingEntity entity, BlockPos pos, BlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
-    }
-
-    public static boolean gatherCollisionBoxes(World world, Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> outList)
-    {
-        MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
-        return outList.isEmpty();
     }
 
     public static boolean getMobGriefingEvent(World world, Entity entity)
