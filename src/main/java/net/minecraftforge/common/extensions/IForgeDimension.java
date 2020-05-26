@@ -21,8 +21,10 @@ package net.minecraftforge.common.extensions;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +36,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.NetherDimension;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -49,7 +52,7 @@ public interface IForgeDimension
     World getWorld();
 
     /**
-     * Called from {@link World#initCapabilities()}, to gather capabilities for this
+     * Called from {@link ServerWorld#initCapabilities()} and {@link ClientWorld#ClientWorld}, to gather capabilities for this
      * world. It's safe to access world here since this is called after world is
      * registered.
      *
@@ -114,7 +117,7 @@ public interface IForgeDimension
      * @param blockLight Block light brightness factor.
      * @param colors The color values that will be used: [r, g, b].
      *
-     * @see net.minecraft.client.renderer.GameRenderer#updateLightmap(float)
+     * @see net.minecraft.client.renderer.LightTexture#updateLightmap(float)
      */
     default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f colors) {}
 
