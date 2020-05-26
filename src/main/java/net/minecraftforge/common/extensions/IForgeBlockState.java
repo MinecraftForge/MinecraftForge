@@ -67,9 +67,8 @@ public interface IForgeBlockState
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
-     * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
-     * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
+     * for {@link net.minecraft.entity.LivingEntity}, this is {@code .91}.
+     * {@link net.minecraft.entity.item.ItemEntity} uses {@code .98}, and
      *
      * @param world the world
      * @param pos the position in the world
@@ -288,7 +287,6 @@ public interface IForgeBlockState
     /**
      * Used during tree growth to determine if newly generated logs can replace this block.
      *
-     * @param state The current state
      * @param world The current world
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
@@ -578,7 +576,6 @@ public interface IForgeBlockState
    /**
     * Called on an Observer block whenever an update for an Observer is received.
     *
-    * @param observerState The Observer block's state.
     * @param world The current world.
     * @param pos The Observer block's position.
     * @param changed The updated block.
@@ -653,7 +650,7 @@ public interface IForgeBlockState
     /**
      * @param world The world
      * @param pos The position of this state
-     * @param beaconPos The position of the beacon
+     * @param beacon The position of the beacon
      * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
      */
     @Nullable
@@ -680,7 +677,7 @@ public interface IForgeBlockState
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+     * {@link net.minecraft.client.renderer.ActiveRenderInfo#getBlockAtCamera}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param world     the world
@@ -694,14 +691,13 @@ public interface IForgeBlockState
     }
 
     /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
+     * Gets the {@link BlockState} to place
      * @param world The world the block is being placed in
      * @param pos The position the block is being placed at
      * @param facing The side the block is being placed on
      * @param hitX The X coordinate of the hit vector
      * @param hitY The Y coordinate of the hit vector
      * @param hitZ The Z coordinate of the hit vector
-     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
      * @param placer The entity placing the block
      * @param hand The player hand used to place this block
      * @return The state to be placed in the world
@@ -725,7 +721,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
     default boolean isSlimeBlock()
@@ -734,7 +729,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
     default boolean isStickyBlock()

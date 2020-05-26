@@ -20,11 +20,15 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.village.PointOfInterestManager;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.feature.template.TemplateManager;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -62,7 +66,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
-     * {@link net.minecraft.world.chunk.storage.ChunkSerializer.read(ServerWorld, TemplateManager, PointOfInterestManager, ChunkPos, CompoundNBT)} which means it is async, so be careful.<br>
+     * {@link net.minecraft.world.chunk.storage.ChunkSerializer#read(ServerWorld, TemplateManager, PointOfInterestManager, ChunkPos, CompoundNBT)} which means it is async, so be careful.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -89,7 +93,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Save is fired when vanilla Minecraft attempts to save Chunk data.<br>
      * This event is fired during chunk saving in
-     * {@link AnvilChunkLoader#saveChunk(World, Chunk)}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#func_219229_a(IChunk)} )}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

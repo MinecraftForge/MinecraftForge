@@ -520,7 +520,7 @@ public class FluidUtil
      * Honors the amount of fluid contained by the used container.
      * Checks if water-like fluids should vaporize like in the nether.
      *
-     * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Modeled after {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
      * @param world       World to place the fluid in
@@ -587,8 +587,8 @@ public class FluidUtil
     /**
      * Internal method for getting a fluid block handler for placing a fluid.
      *
-     * Modders: Instead of this method, use {@link #tryPlaceFluid(PlayerEntity, World, BlockPos, ItemStack, FluidStack)}
-     * or {@link #tryPlaceFluid(PlayerEntity, World, BlockPos, IFluidHandler, FluidStack)}
+     * Modders: Instead of this method, use {@link #tryPlaceFluid(PlayerEntity, World, Hand, BlockPos, ItemStack, FluidStack)}
+     * or {@link #tryPlaceFluid(PlayerEntity, World, Hand, BlockPos, IFluidHandler, FluidStack)}
      */
     private static IFluidHandler getFluidBlockHandler(Fluid fluid, World world, BlockPos pos)
     {
@@ -598,9 +598,9 @@ public class FluidUtil
 
     /**
      * Destroys a block when a fluid is placed in the same position.
-     * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Modeled after {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
-     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, boolean)}.
+     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, IFluidHandler.FluidAction)}.
      *
      * @param world the world that the fluid will be placed in
      * @param pos   the location that the fluid will be placed

@@ -34,7 +34,7 @@ public class RecipeWrapper implements IInventory {
     }
 
     /**
-     * Returns the size of this inventory.  Must be equivalent to {@link #getHeight()} * {@link #getWidth()}.
+     * Returns the size of this inventory.  Must be equivalent to {@link net.minecraft.inventory.CraftingInventory#getHeight()} * {@link net.minecraft.inventory.CraftingInventory#getWidth()}.
      */
     @Override
     public int getSizeInventory()

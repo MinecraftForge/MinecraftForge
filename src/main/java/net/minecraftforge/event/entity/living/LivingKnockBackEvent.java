@@ -29,12 +29,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
 /**
  * LivingKnockBackEvent is fired when a living entity is about to be knocked back. <br>
  * This event is fired whenever an Entity is knocked back in
- * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)},
- * {@link EntityLivingBase#blockWithShield(EntityLivingBase)},
- * {@link EntityMob#attackEntityAsMob(Entity)} and
- * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)} <br>
+ * {@link LivingEntity#attackEntityFrom(DamageSource, float)},
+ * {@link LivingEntity#blockUsingShield(LivingEntity)},
+ * {@link net.minecraft.entity.MobEntity#attackEntityAsMob(Entity)} and
+ * {@link net.minecraft.entity.player.PlayerEntity#attackTargetEntityWithCurrentItem(Entity)} <br>
  * <br>
- * This event is fired via {@link ForgeHooks#onLivingKnockBack(EntityLivingBase, Entity, float, double, double)}.<br>
+ * This event is fired via {@link ForgeHooks#onLivingKnockBack(LivingEntity, Entity, float, double, double)}.<br>
  * <br>
  * {@link #attacker} contains the Entity that caused the knock back. <br>
  * {@link #strength} contains the strength of the knock back. <br>

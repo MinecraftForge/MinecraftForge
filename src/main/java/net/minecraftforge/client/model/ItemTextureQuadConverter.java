@@ -47,7 +47,6 @@ public final class ItemTextureQuadConverter
      * The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,
      * depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.
      *
-     * @param format
      * @param template The input texture to convert
      * @param sprite   The texture whose UVs shall be used
      * @return The generated quads.

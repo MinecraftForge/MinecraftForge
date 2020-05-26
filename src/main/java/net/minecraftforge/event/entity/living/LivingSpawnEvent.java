@@ -117,7 +117,7 @@ public class LivingSpawnEvent extends LivingEvent
      * SpecialSpawn is fired when an Entity is to be spawned.<br>
      * This allows you to do special inializers in the new entity.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(MobEntity, World, float, float, float, AbstractSpawner, SpawnReason)}.<br>
      * <br>
      * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
@@ -163,7 +163,7 @@ public class LivingSpawnEvent extends LivingEvent
      * This is fired every tick for every despawnable entity. Be efficient in your handlers.
      *
      * Note: this is not fired <em>if</em> the mob is definitely going to otherwise despawn. It is fired to check if
-     * the mob can be allowed to despawn. See {@link EntityLiving#despawnEntity}
+     * the mob can be allowed to despawn. See {@link net.minecraft.entity.LivingEntity#checkDespawn()}
      *
      * @author cpw
      *

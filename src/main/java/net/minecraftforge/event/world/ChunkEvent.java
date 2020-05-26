@@ -19,7 +19,10 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -56,8 +59,8 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
-     * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
-     * Chunk.onChunkLoad(). <br>
+     * {@link net.minecraft.client.multiplayer.ClientChunkProvider#loadChunk(int, int, BiomeContainer, PacketBuffer, CompoundNBT, int)}, <br>
+     * {@link net.minecraft.world.server.ChunkManager#func_219229_a(IChunk)}<br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

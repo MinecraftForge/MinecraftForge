@@ -58,7 +58,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
      * instance of the result.
      *
-     * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
     default ItemStack getContainerItem()
@@ -69,7 +68,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * ItemStack sensitive version of hasContainerItem
      *
-     * @param stack The current item stack
      * @return True if this item has a 'container'
      */
     default boolean hasContainerItem()
@@ -91,8 +89,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Queries the harvest level of this item stack for the specified tool class,
      * Returns -1 if this tool is not of the specified type
      *
-     * @param stack      This item stack instance
-     * @param toolClass  Tool Class
+     * @param tool  Tool Type
      * @param player     The player trying to harvest the given blockstate
      * @param state The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
@@ -166,7 +163,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * check the individual implementation for reference. By default this will check
      * if the enchantment type is valid for this item type.
      *
-     * @param stack       the item stack to be enchanted
      * @param enchantment the enchantment to be applied
      * @return true if the enchantment can be applied to this item
      */
@@ -188,7 +184,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.entity.MobEntity#getSlotForItemStack(ItemStack)}.</em>
      *
      * @return the armor slot of the ItemStack, or {@code null} to let the default
      *         vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
@@ -290,7 +286,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
-     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * Called every tick from {@link net.minecraft.entity.passive.horse.HorseEntity#tick()} on the item in the
      * armor slot.
      *
      * @param world the world the horse is in
@@ -327,7 +323,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * Allow or forbid the specific book/item combination as an anvil enchant
      *
-     * @param stack The item
      * @param book  The book
      * @return if the enchantment is allowed
      */
@@ -343,7 +338,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * spawning in the world
      *
      * @param player The player that dropped the item
-     * @param item   The item stack, before the item is removed.
      */
     default boolean onDroppedByPlayer(PlayerEntity player)
     {
@@ -386,7 +380,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Override this method to decide what to do with the NBT data received from
      * getNBTShareTag().
      *
-     * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
     default void readShareTag(@Nullable CompoundNBT nbt)

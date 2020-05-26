@@ -24,11 +24,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * Fired when the ender dragon or wither attempts to destroy a block and when ever a zombie attempts to break a door. Basically a event version of {@link Block#canEntityDestroy(IBlockState, IBlockAccess, BlockPos, Entity)}<br>
+ * Fired when the ender dragon or wither attempts to destroy a block and when ever a zombie attempts to break a door. Basically a event version of {@link Block#canEntityDestroy(BlockState, IBlockReader, BlockPos, Entity)}<br>
  * <br>
  * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * If this event is canceled, the block will not be destroyed.<br>

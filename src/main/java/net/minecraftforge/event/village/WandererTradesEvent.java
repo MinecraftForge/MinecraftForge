@@ -30,7 +30,8 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 /**
  * WandererTradesEvent is fired during the {@link FMLServerAboutToStartEvent}.  It is used to gather the trade lists for the wandering merchant.
  * It is fired on the {@link MinecraftForge#EVENT_BUS}.
- * The wandering merchant picks a few trades from {@link TradeType#GENERIC} and a single trade from {@link TradeType#RARE}.
+ * The wandering merchant picks trades from {@link net.minecraft.entity.merchant.villager.VillagerTrades#field_221240_b}
+ * It has generic and rare trades that are exposed in the event. A few trades are taken from the generic ones, 1 is taken from the rare ones.
  * To add trades to the merchant, simply add new trades to the list. {@link BasicTrade} provides a default implementation.
 */
 public class WandererTradesEvent extends Event
