@@ -31,7 +31,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 
 /**
- * Convenience interface with default implementation of {@link IBakedModel#getQuads(net.minecraft.block.state.IBlockState, net.minecraft.util.EnumFacing, java.util.Random)}.
+ * Convenience interface with default implementation of {@link IBakedModel#getQuads(BlockState, Direction, Random, IModelData)}.
  */
 public interface IDynamicBakedModel extends IBakedModel
 {

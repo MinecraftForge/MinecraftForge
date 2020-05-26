@@ -22,6 +22,7 @@ package net.minecraftforge.common.util;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.nbt.INBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -35,8 +36,7 @@ import net.minecraft.world.World;
 public class Constants
 {
     /**
-     * NBT Tag type IDS, used when storing the nbt to disc, Should align with {@link net.minecraft.nbt.INBT#create}
-     * and {@link net.minecraft.nbt.INBT#getTypeName}
+     * NBT Tag type IDS, used when storing the nbt to disc, Should align with {@link INBT#getId()}
      *
      * Main use is checking tag type in {@link net.minecraft.nbt.CompoundNBT#contains(String, int)}
      *

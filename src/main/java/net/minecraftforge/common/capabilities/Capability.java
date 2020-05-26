@@ -97,7 +97,7 @@ public class Capability<T>
     
     /**
      * Quick access to the IStorage's readNBT. 
-     * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
+     * See {@link IStorage#readNBT(Capability, Object, Direction, INBT)}  for documentation.
      */
     public void readNBT(T instance, Direction side, INBT nbt)
     {
@@ -106,7 +106,7 @@ public class Capability<T>
     
     /**
      * Quick access to the IStorage's writeNBT. 
-     * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
+     * See {@link IStorage#writeNBT(Capability, Object, Direction)} for documentation.
      */
     @Nullable
     public INBT writeNBT(T instance, Direction side)

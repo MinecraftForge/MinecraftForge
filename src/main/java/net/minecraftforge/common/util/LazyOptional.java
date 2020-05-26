@@ -41,7 +41,7 @@ import net.minecraftforge.common.capabilities.Capability;
  * (map/ifPresent) available, much like {@link Optional}.
  * <p>
  * It also provides the ability to listen for invalidation, via
- * {@link #addListener(Consumer)}. This method is invoked when the provider of
+ * {@link #addListener(NonNullConsumer)}. This method is invoked when the provider of
  * this object calls {@link #invalidate()}.
  * <p>
  * To create an instance of this class, use {@link #of(NonNullSupplier)}. Note
@@ -150,7 +150,7 @@ public class LazyOptional<T>
      * If non-empty, invoke the specified {@link NonNullConsumer} with the object,
      * otherwise do nothing.
      *
-     * @param The {@link NonNullConsumer} to run if this optional is non-empty.
+     * @param consumer the {@link NonNullConsumer} to run if this optional is non-empty.
      * @throws NullPointerException if {@code consumer} is null and this {@link LazyOptional} is non-empty
      */
     public void ifPresent(NonNullConsumer<? super T> consumer)

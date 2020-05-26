@@ -97,7 +97,6 @@ public class DimensionManager
      * @param type ModDimension type data
      * @param data Extra data for the ModDimension
      * @param hasSkyLight does this dimension have a skylight?
-     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight) {
@@ -113,7 +112,6 @@ public class DimensionManager
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
      * @param hasSkyLight skylight for this dimension
-     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
