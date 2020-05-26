@@ -134,49 +134,6 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * NameFormat is fired when a player's display name is retrieved.<br>
-     * This event is fired whenever a player's name is retrieved in
-     * {@link EntityPlayer#getDisplayName()} or {@link EntityPlayer#refreshDisplayName()}.<br>
-     * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
-     * <br>
-     * {@link #username} contains the username of the player.
-     * {@link #displayname} contains the display name of the player.
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-     **/
-    public static class NameFormat extends PlayerEvent
-    {
-        private final String username;
-        private String displayname;
-
-        public NameFormat(PlayerEntity player, String username) {
-            super(player);
-            this.username = username;
-            this.setDisplayname(username);
-        }
-
-        public String getUsername()
-        {
-            return username;
-        }
-
-        public String getDisplayname()
-        {
-            return displayname;
-        }
-
-        public void setDisplayname(String displayname)
-        {
-            this.displayname = displayname;
-        }
-    }
-
-    /**
      * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
