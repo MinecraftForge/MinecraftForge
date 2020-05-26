@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 /**
  * ArrowLooseEvent is fired when a player stops using a bow.<br>
  * This event is fired whenever a player stops using a bow in
- * {@link ItemBow#onPlayerStoppedUsing(ItemStack, World, EntityLivingBase, int)}.<br>
+ * {@link net.minecraft.item.BowItem#onPlayerStoppedUsing}.<br>
  * <br>
  * {@link #bow} contains the ItemBow ItemStack that was used in this event.<br>
  * {@link #charge} contains the value for how much the player had charged before stopping the shot.<br>

@@ -19,13 +19,11 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,7 +32,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,16 +39,14 @@ import javax.annotation.Nullable;
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
  * This event is fired whenever a player destroys an item in
- * {@link PlayerController#onPlayerDestroyBlock(BlockPos)},
  * {@link PlayerController#processRightClick(PlayerEntity, World, Hand)},
- * {@link PlayerController#processRightClickBlock(ClientPlayerEntity, ClientWorld, BlockPos, Direction, Vec3d, Hand)},
- * {@link PlayerEntity#attackTargetEntityWithCurrentItem(Entity)},
+ * {@link LivingEntity#stopActiveHand()},
  * {@link PlayerEntity#damageShield(float)},
  * {@link PlayerEntity#interactOn(Entity, Hand)},
+ * {@link PlayerEntity#attackTargetEntityWithCurrentItem(Entity)},
+ * {@link PlayerInteractionManager#tryHarvestBlock(BlockPos)}
  * {@link ForgeHooks#getContainerItem(ItemStack)},
- * {@link PlayerInteractionManager#processRightClick(PlayerEntity, World, ItemStack, Hand)},
- * {@link PlayerInteractionManager#processRightClickBlock(PlayerEntity, World, ItemStack, Hand, BlockPos, Direction, float, float, float)}
- * and {@link PlayerInteractionManager#tryHarvestBlock(BlockPos)}.<br>
+ * and {@link ForgeHooks#getContainerItem(ItemStack)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
  * (@link #hand) contains the hand that the current item was held in.<br>
