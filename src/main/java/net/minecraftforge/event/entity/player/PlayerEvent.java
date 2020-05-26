@@ -60,11 +60,11 @@ public class PlayerEvent extends LivingEvent
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
+     * {@link PlayerEntity#canHarvestBlock(BlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(EntityPlayer, IBlockState, boolean)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(PlayerEntity, BlockState, boolean)}.<br>
      * <br>
-     * {@link #state} contains the {@link IBlockState} that is being checked for harvesting. <br>
+     * {@link #state} contains the {@link BlockState} that is being checked for harvesting. <br>
      * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
@@ -93,9 +93,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * BreakSpeed is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
+     * {@link PlayerEntity#canHarvestBlock(BlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, IBlockState, float, BlockPos)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(PlayerEntity, BlockState, float, BlockPos)}.<br>
      * <br>
      * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>

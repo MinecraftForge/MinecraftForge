@@ -39,7 +39,7 @@ import net.minecraftforge.eventbus.api.Event;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * Event classes for GuiScreen events.
+ * Event classes for Screen events.
  *
  * @author bspkrs
  */
@@ -54,7 +54,7 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * The GuiScreen object generating this event.
+     * The Screen object generating this event.
      */
     public Screen getGui()
     {
@@ -95,13 +95,14 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
-         * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
+         * This event fires in {@link Screen#init(Minecraft, int, int)} just after initializing:
+         * {@link Screen#minecraft}, {@link Screen#itemRenderer},{@link Screen#font}, {@link Screen#width}, and {@link Screen#height}.<br/><br/>
          *
-         * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
+         * If canceled the following lines are skipped in {@link Screen#init()}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.children.clear();}<br/>
-         * {@code this.initGui();}<br/>
+         * {@code this.setFocused(null);}
+         * {@code this.init();}<br/>
          */
         @Cancelable
         public static class Pre extends InitGuiEvent
@@ -113,7 +114,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires right after {@link GuiScreen#initGui()}.
+         * This event fires right after {@link Screen#init()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
          */
         public static class Post extends InitGuiEvent
@@ -164,8 +165,8 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just before {@link GuiScreen#render(int, int, float)} is called.
-         * Cancel this event to skip {@link GuiScreen#render(int, int, float)}.
+         * This event fires just before {@link Screen#render(int, int, float)} is called.
+         * Cancel this event to skip {@link Screen#render(int, int, float)}.
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -177,7 +178,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after {@link GuiScreen#render(int, int, float)} is called.
+         * This event fires just after {@link Screen#render(int, int, float)} is called.
          */
         public static class Post extends DrawScreenEvent
         {
@@ -189,8 +190,8 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires at the end of {@link GuiScreen#drawBackground(int)} and before the rest of the Gui draws.
-     * This allows drawing next to Guis, above the background but below any tooltips.
+     * This event fires at the end of {@link Screen#renderBackground(int)} and before the rest of the Screen draws.
+     * This allows drawing next to Screen, above the background but below any tooltips.
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
@@ -201,9 +202,9 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires in {@link InventoryEffectRenderer#updateActivePotionEffects()}
-     * when potion effects are active and the gui wants to move over.
-     * Cancel this event to prevent the Gui from being moved.
+     * This event fires in {@link net.minecraft.client.gui.DisplayEffectsScreen#updateActivePotionEffects()}
+     * when potion effects are active and the Screen wants to move over.
+     * Cancel this event to prevent the Screen from being moved.
      */
     @Cancelable
     public static class PotionShiftEvent extends GuiScreenEvent
