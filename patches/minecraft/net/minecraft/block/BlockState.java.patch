@@ -13,13 +13,13 @@
        return this.field_215708_d;
     }
  
-+   /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos) */
++   /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos)} */
 +   @Deprecated
     public boolean func_196958_f() {
        return this.func_177230_c().func_196261_e(this);
     }
  
-+   /** @deprecated use {@link BlockState#rotate(IWorld, BlockPos, Rotation) */
++   /** @deprecated use {@link BlockState#rotate(IWorld, BlockPos, Rotation)} */
 +   @Deprecated
     public MaterialColor func_185909_g(IBlockReader p_185909_1_, BlockPos p_185909_2_) {
        return this.func_177230_c().func_180659_g(this, p_185909_1_, p_185909_2_);
