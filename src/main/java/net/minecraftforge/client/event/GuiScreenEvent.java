@@ -96,13 +96,13 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires in {@link Screen#init(Minecraft, int, int)} just after initializing:
-         * {@link Screen#minecraft}, {@link Screen#itemRenderer},{@link Screen#font}, {@link Screen#width}, and {@link Screen#height}.<br/><br/>
+         * {@link Screen#minecraft}, {@link Screen#itemRenderer},{@link Screen#font}, {@link Screen#width}, and {@link Screen#height}.<br><br>
          *
-         * If canceled the following lines are skipped in {@link Screen#init()}:<br/>
-         * {@code this.buttonList.clear();}<br/>
-         * {@code this.children.clear();}<br/>
-         * {@code this.setFocused(null);}
-         * {@code this.init();}<br/>
+         * If canceled the following lines are skipped in {@link Screen#init()}:<br>
+         * {@code this.buttonList.clear();}<br>
+         * {@code this.children.clear();}<br>
+         * {@code this.setFocused(null);}<br>
+         * {@code this.init();}<br>
          */
         @Cancelable
         public static class Pre extends InitGuiEvent
@@ -460,7 +460,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double)}.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double, double, double)}.
          */
         @Cancelable
         public static class Pre extends MouseScrollEvent
@@ -472,7 +472,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseScrolled(double)} if the scroll was not already handled.
+         * This event fires after {@link IGuiEventListener#mouseScrolled(double, double, double)} if the scroll was not already handled.
          * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
          */
         @Cancelable

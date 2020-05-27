@@ -43,7 +43,7 @@ public final class ItemTextureQuadConverter
      * Takes a texture and converts it into BakedQuads.
      * The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.
      * Strips that are of the same size and follow each other are converted into one bigger quad.
-     * </br>
+     * <br>
      * The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,
      * depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.
      *

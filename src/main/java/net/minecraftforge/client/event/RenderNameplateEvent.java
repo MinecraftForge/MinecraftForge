@@ -45,7 +45,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event has a result. {@link HasResult}. <br>
  * ALLOW will force-render name plate/tag, DEFAULT will ignore the hook and continue using the vanilla check
- * & DENY will prevent name plate/tag from rendering<br>
+ * and DENY will prevent name plate/tag from rendering<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/

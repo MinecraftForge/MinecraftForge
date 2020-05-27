@@ -199,7 +199,7 @@ public class FluidUtil
     /**
      * Takes an Fluid Container Item and tries to fill it from the given tank.
      * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
+     * If the input itemstack has a {@literal stacksize > 1} it will stow the filled container in the given inventory.
      * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
      *
@@ -268,7 +268,7 @@ public class FluidUtil
     /**
      * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
      * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
+     * If the input itemstack has a {@literal stacksize > 1} it will stow the emptied container in the given inventory.
      * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
      *
@@ -492,12 +492,12 @@ public class FluidUtil
     }
 
     /**
-     * ItemStack version of {@link #tryPlaceFluid(PlayerEntity, World, BlockPos, IFluidHandler, FluidStack)}.
+     * ItemStack version of {@link #tryPlaceFluid(PlayerEntity, World, Hand, BlockPos, IFluidHandler, FluidStack)} (PlayerEntity, World, BlockPos, IFluidHandler, FluidStack)}.
      * Use the returned {@link FluidActionResult} to update the container ItemStack.
      *
      * @param player    Player who places the fluid. May be null for blocks like dispensers.
      * @param world     World to place the fluid in
-     * @param hand
+     * @param hand      The hand with the stack
      * @param pos       The position in the world to place the fluid block
      * @param container The fluid container holding the fluidStack to place
      * @param resource  The fluidStack to place

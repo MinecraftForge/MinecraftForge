@@ -43,6 +43,7 @@ import java.util.stream.StreamSupport;
 import static net.minecraftforge.fml.network.FMLNetworkConstants.NETWORK;
 
 /**
+ * {@code
  * {
  *      "fmlNetworkVersion" : FMLNETVERSION,
  *      "channels": [
@@ -59,7 +60,7 @@ import static net.minecraftforge.fml.network.FMLNetworkConstants.NETWORK;
  *          }
  *     ]
  * }
- *
+ * }
  */
 public class FMLStatusPing {
     private static final Logger LOGGER = LogManager.getLogger();

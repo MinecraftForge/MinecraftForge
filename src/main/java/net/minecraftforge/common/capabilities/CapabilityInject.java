@@ -29,8 +29,8 @@ import java.lang.annotation.*;
  *
  * Example:
  * <pre>
- * {@literal @}CapabilityInject(IExampleCapability.class)
- * private static final Capability<IExampleCapability> TEST_CAP = null;
+ * {@code @CapabilityInject(IExampleCapability.class)}
+ * {@code private static final Capability<IExampleCapability> TEST_CAP = null;}
  * </pre>
  *
  * When placed on a METHOD, the method will be invoked once the
@@ -39,8 +39,8 @@ import java.lang.annotation.*;
  *
  * Example:
  * <pre>
- * {@literal @}CapabilityInject(IExampleCapability.class)
- * private static void capRegistered(Capability<IExampleCapability> cap) {}
+ * {@code @CapabilityInject(IExampleCapability.class)}
+ * {@code private static void capRegistered(Capability<IExampleCapability> cap) {}}
  * </pre>
  *
  * <b>Warning</b>: Capability injections are run in the thread that the capablity is registered.

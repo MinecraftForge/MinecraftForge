@@ -27,7 +27,7 @@ import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
- * Abstract base deserializer for LootModifiers. Takes care of Forge registry things.<br/>
+ * Abstract base deserializer for LootModifiers. Takes care of Forge registry things.<br>
  * Modders should extend this class to return their modifier and implement the abstract
  * <code>read</code> method to deserialize from json.
  * @param <T> the Type to deserialize
@@ -55,8 +55,8 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
     }
     
     /**
-     * Most mods will likely not need more than<br/>
-     * <code>return new MyModifier(conditionsIn)</code><br/>
+     * Most mods will likely not need more than<br>
+     * {@code return new MyModifier(conditionsIn)}<br>
      * but any additional properties that are needed will need to be deserialized here.
      * @param location The resource location (if needed)
      * @param object The full json object (including ILootConditions)

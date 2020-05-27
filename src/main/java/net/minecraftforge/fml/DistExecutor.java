@@ -141,7 +141,7 @@ public final class DistExecutor
      * Executes one of the two suppliers, based on which side is active.
      *
      * <p>
-     *     Example (replacement for old SidedProxy):<br/>
+     *     Example (replacement for old SidedProxy):<br>
      * {@code Proxy p = DistExecutor.runForDist(()->ClientProxy::new, ()->ServerProxy::new);}
      *
      * NOTE: the double supplier is required to avoid classloading the secondary target.
@@ -182,7 +182,7 @@ public final class DistExecutor
      * Executes one of the two suppliers, based on which side is active.
      *
      * <p>
-     *     Example (replacement for old SidedProxy):<br/>
+     *     Example (replacement for old SidedProxy):<br>
      * {@code Proxy p = DistExecutor.safeRunForDist(()->ClientProxy::new, ()->ServerProxy::new);}
      *
      * NOTE: the double supplier is required to avoid classloading the secondary target.
@@ -216,12 +216,12 @@ public final class DistExecutor
      * visibility to be accessible at the callsite (generally, avoid private methods).</strong>
      *
      * <p>
-     * Valid:<br/>
+     * Valid:<br>
      *
      * {@code DistExecutor.safeCallWhenOn(Dist.CLIENT, ()->AnotherClass::clientOnlyMethod);}
      *
      * <p>
-     * Invalid:<br/>
+     * Invalid:<br>
      *
      * {@code DistExecutor.safeCallWhenOn(Dist.CLIENT, ()->()->Minecraft.getInstance().world);}
      */

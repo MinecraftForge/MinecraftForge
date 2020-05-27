@@ -61,7 +61,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      *   Drinking Potions/Milk
      *   Guarding with a sword
      *
-     * Cancel the event, or set the duration or <= 0 to prevent it from processing.
+     * Cancel the event, or set the duration or {@literal <= 0} to prevent it from processing.
      *
      */
     @Cancelable
@@ -76,7 +76,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     /**
      * Fired every tick that a player is 'using' an item, see {@link Start} for info.
      *
-     * Cancel the event, or set the duration or <= 0 to cause the player to stop using the item.
+     * Cancel the event, or set the duration or {@literal <= 0} to cause the player to stop using the item.
      *
      */
     @Cancelable

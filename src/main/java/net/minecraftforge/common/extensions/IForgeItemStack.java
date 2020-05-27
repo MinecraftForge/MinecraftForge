@@ -202,7 +202,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param shield   The shield in question
      * @param entity   The EntityLivingBase holding the shield
      * @param attacker The EntityLivingBase holding the ItemStack
-     * @retrun True if this ItemStack can disable the shield in question.
+     * @return True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
