@@ -29,7 +29,7 @@ import net.minecraft.client.gui.widget.button.Button.IPressable;
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
  * The gist of it is that it allows buttons of any size without gaps in the graphics and with the
  * borders drawn properly. It also prevents button text from extending out of the sides of the button by
- * trimming the end of the string and adding an ellipsis.<br/><br/>
+ * trimming the end of the string and adding an ellipsis.<br><br>
  *
  * The code that handles drawing the button is in GuiUtils.
  *

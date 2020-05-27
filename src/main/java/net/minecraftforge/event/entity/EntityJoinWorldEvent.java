@@ -29,8 +29,10 @@ import java.util.Collection;
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
  * This event is fired whenever an Entity is added to the world in 
- * {@link World#loadEntities(Collection)}, {@link net.minecraft.world.ServerWorld#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntity(Entity)}. <br>
- * <br>
+ * {@link net.minecraft.client.world.ClientWorld#addEntityImpl}
+ * {@link net.minecraft.world.server.ServerWorld#addEntity0}
+ * {@link net.minecraft.world.server.ServerWorld#addPlayer}
+ * {@link net.minecraft.world.server.ServerWorld#addEntityIfNotDuplicate} * <br>
  * {@link #world} contains the world in which the entity is to join.<br>
  * <br>
  * This event is {@link Cancelable}.<br>

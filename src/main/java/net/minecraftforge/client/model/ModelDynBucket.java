@@ -159,7 +159,7 @@ public final class ModelDynBucket implements IUnbakedModel, IModelGeometry<Model
      * "fluid" - Name of the fluid in the fluid registry.
      * "flipGas" - If "true" the model will be flipped upside down if the fluid is lighter than air. If "false" it won't.
      * "applyTint" - If "true" the model will tint the fluid quads according to the fluid's base color.
-     * <p/>
+     * <p>
      * If the fluid can't be found, water is used.
      */
     @Deprecated
@@ -203,7 +203,7 @@ public final class ModelDynBucket implements IUnbakedModel, IModelGeometry<Model
      * base - The empty bucket/container
      * fluid - A texture representing the liquid portion. Non-transparent = liquid
      * cover - An overlay that's put over the liquid (optional)
-     * <p/>
+     * <p>
      * If no liquid is given a hardcoded variant for the bucket is used.
      */
     @Deprecated

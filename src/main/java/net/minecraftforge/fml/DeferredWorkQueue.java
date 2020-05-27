@@ -167,7 +167,7 @@ public class DeferredWorkQueue
      * variant allows the task to throw a checked exception.
      * <p>
      * If the task does not throw a checked exception, use
-     * {@link #getLater(Callable)}.
+     * {@link #getLater(Supplier)}.
      * <p>
      * If the task does not have a result, use {@link #runLater(Runnable)} or
      * {@link #runLaterChecked(CheckedRunnable)}.

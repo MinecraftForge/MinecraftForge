@@ -53,9 +53,9 @@ public class ZombieEvent extends EntityEvent {
     /**
      * SummonAidEvent is fired when a Zombie Entity is summoned.
      * This event is fired whenever a Zombie Entity is summoned in 
-     * {@link EntityZombie#attackEntityFrom(DamageSource, float)}.
+     * {@link ZombieEntity#attackEntityFrom(DamageSource, float)}.
      * 
-     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(EntityZombie, World, int, int, int, EntityLivingBase, double)}.
+     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(ZombieEntity, World, int, int, int, LivingEntity, double)}.
      * 
      * {@link #customSummonedAid} remains null, but can be populated with a custom EntityZombie which will be spawned.
      * {@link #world} contains the world that this summoning is occurring in.

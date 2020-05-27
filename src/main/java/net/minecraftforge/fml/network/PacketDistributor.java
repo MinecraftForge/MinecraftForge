@@ -46,55 +46,55 @@ import java.util.function.Supplier;
 public class PacketDistributor<T> {
     /**
      * Send to the player specified in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} Player
      */
     public static final PacketDistributor<ServerPlayerEntity> PLAYER = new PacketDistributor<>(PacketDistributor::playerConsumer, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to everyone in the dimension specified in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} DimensionType
      */
     public static final PacketDistributor<DimensionType> DIMENSION = new PacketDistributor<>(PacketDistributor::playerListDimConsumer, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to everyone near the {@link TargetPoint} specified in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} TargetPoint
      */
     public static final PacketDistributor<TargetPoint> NEAR = new PacketDistributor<>(PacketDistributor::playerListPointConsumer, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to everyone
-     * <br/>
+     * <br>
      * {@link #noArg()}
      */
     public static final PacketDistributor<Void> ALL = new PacketDistributor<>(PacketDistributor::playerListAll, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to the server (CLIENT to SERVER)
-     * <br/>
+     * <br>
      * {@link #noArg()}
      */
     public static final PacketDistributor<Void> SERVER = new PacketDistributor<>(PacketDistributor::clientToServer, NetworkDirection.PLAY_TO_SERVER);
     /**
      * Send to all tracking the Entity in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} Entity
      */
     public static final PacketDistributor<Entity> TRACKING_ENTITY = new PacketDistributor<>(PacketDistributor::trackingEntity, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to all tracking the Entity and Player in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} Entity
      */
     public static final PacketDistributor<Entity> TRACKING_ENTITY_AND_SELF = new PacketDistributor<>(PacketDistributor::trackingEntityAndSelf, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to all tracking the Chunk in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} Chunk
      */
     public static final PacketDistributor<Chunk> TRACKING_CHUNK = new PacketDistributor<>(PacketDistributor::trackingChunk, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to the supplied list of NetworkManager instances in the Supplier
-     * <br/>
+     * <br>
      * {@link #with(Supplier)} List of NetworkManager
      */
     public static final PacketDistributor<List<NetworkManager>> NMLIST = new PacketDistributor<>(PacketDistributor::networkManagerList, NetworkDirection.PLAY_TO_CLIENT);

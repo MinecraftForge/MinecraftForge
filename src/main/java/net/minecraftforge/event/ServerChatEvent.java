@@ -20,6 +20,8 @@
 package net.minecraftforge.event;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.ServerPlayNetHandler;
+import net.minecraft.network.play.client.CChatMessagePacket;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,8 +29,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
- * This event is fired via {@link ForgeHooks#onServerChatEvent(NetHandlerPlayServer, String, ITextComponent)},
- * which is executed by the {@link NetHandlerPlayServer#processChatMessage(CPacketChatMessage)}<br>
+ * This event is fired via {@link ForgeHooks#onServerChatEvent(ServerPlayNetHandler, String, ITextComponent)},
+ * which is executed by the {@link ServerPlayNetHandler#processChatMessage(CChatMessagePacket)}<br>
  * <br>
  * {@link #username} contains the username of the player sending the chat message.<br>
  * {@link #message} contains the message being sent.<br>

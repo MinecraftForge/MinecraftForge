@@ -27,6 +27,7 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IEnviromentBlockReader;
@@ -183,7 +184,7 @@ public class FluidAttributes
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
@@ -197,9 +198,9 @@ public class FluidAttributes
     }
 
     /**
-     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(IEnviromentBlockReader, BlockPos, FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
      * @param worldIn    World to vaporize the fluid in.

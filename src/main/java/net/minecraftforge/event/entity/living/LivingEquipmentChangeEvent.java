@@ -29,11 +29,11 @@ import javax.annotation.Nonnull;
 
 /**
  * {@link LivingEquipmentChangeEvent} is fired when the Equipment of a Entity changes. <br>
- * This event is fired whenever changes in Equipment are detected in {@link EntityLivingBase#onUpdate()}. <br>
+ * This event is fired whenever changes in Equipment are detected in {@link LivingEntity#tick()}. <br>
  * This also includes entities joining the World, as well as being cloned. <br>
  * This event is fired on server-side only. <br>
  * <br>
- * {@link #slot} contains the affected {@link EntityEquipmentSlot}. <br>
+ * {@link #slot} contains the affected {@link EquipmentSlotType}. <br>
  * {@link #from} contains the {@link ItemStack} that was equipped previously. <br>
  * {@link #to} contains the {@link ItemStack} that is equipped now. <br>
  * <br>

@@ -42,7 +42,7 @@ public enum KeyConflictContext implements IKeyConflictContext
     },
 
     /**
-     * Gui key bindings are only used when a {@link GuiScreen} is open.
+     * Gui key bindings are only used when a {@link net.minecraft.client.gui.screen.Screen} is open.
      */
     GUI {
         @Override
@@ -59,7 +59,7 @@ public enum KeyConflictContext implements IKeyConflictContext
     },
 
     /**
-     * In-game key bindings are only used when a {@link GuiScreen} is not open.
+     * In-game key bindings are only used when a {@link net.minecraft.client.gui.screen.Screen} is not open.
      */
     IN_GAME {
         @Override

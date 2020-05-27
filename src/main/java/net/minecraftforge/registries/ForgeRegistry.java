@@ -634,7 +634,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     /**
      * Used to control the times where people can modify this registry.
-     * Users should only ever register things in the Register<?> events!
+     * Users should only ever register things in the {@code Register<?>} events!
      */
     public void freeze()
     {

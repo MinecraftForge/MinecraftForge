@@ -28,11 +28,11 @@ import net.minecraft.entity.LivingEntity;
 /**
  * LivingDeathEvent is fired when an Entity dies. <br>
  * This event is fired whenever an Entity dies in
- * {@link EntityLivingBase#onDeath(DamageSource)},
- * {@link EntityPlayer#onDeath(DamageSource)}, and
- * {@link EntityPlayerMP#onDeath(DamageSource)}. <br>
+ * {@link LivingEntity#onDeath(DamageSource)},
+ * {@link net.minecraft.entity.player.PlayerEntity#onDeath(DamageSource)}, and
+ * {@link net.minecraft.entity.player.ServerPlayerEntity#onDeath(DamageSource)}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingDeath(EntityLivingBase, DamageSource)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingDeath(LivingEntity, DamageSource)}.<br>
  * <br>
  * {@link #source} contains the DamageSource that caused the entity to die. <br>
  * <br>

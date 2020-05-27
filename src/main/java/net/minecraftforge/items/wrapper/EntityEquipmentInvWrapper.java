@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Exposes the armor or hands inventory of an {@link EntityLivingBase} as an {@link IItemHandler} using {@link EntityLivingBase#getItemStackFromSlot} and
- * {@link EntityLivingBase#setItemStackToSlot}.
+ * Exposes the armor or hands inventory of an {@link LivingEntity} as an {@link IItemHandler} using {@link LivingEntity#getItemStackFromSlot} and
+ * {@link LivingEntity#setItemStackToSlot}.
  */
 public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiable
 {
@@ -48,7 +48,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     protected final LivingEntity entity;
 
     /**
-     * The slots exposed by this wrapper, with {@link EntityEquipmentSlot#index} as the index.
+     * The slots exposed by this wrapper, with {@link EquipmentSlotType#index} as the index.
      */
     protected final List<EquipmentSlotType> slots;
 

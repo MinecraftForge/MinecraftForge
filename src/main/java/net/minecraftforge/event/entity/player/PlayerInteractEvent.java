@@ -69,7 +69,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * The state of this event affects whether {@link Entity#applyPlayerInteraction} is called.
      *
      * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
+     * If we are on the client and result is not {@link ActionResultType#SUCCESS}, the client will then try {@link EntityInteract}.
      */
     @Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
@@ -105,12 +105,12 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event is fired on both sides when the player right clicks an entity.
      * It is responsible for all general entity interactions.
      *
-     * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link EnumActionResult#SUCCESS}.
+     * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link ActionResultType#SUCCESS}.
      * This event's state affects whether {@link Entity#processInitialInteract} and {@link net.minecraft.item.Item#itemInteractionForEntity} are called.
      *
-     * Let result be {@link EnumActionResult#SUCCESS} if {@link Entity#processInitialInteract} or {@link net.minecraft.item.Item#itemInteractionForEntity} return true,
+     * Let result be {@link ActionResultType#SUCCESS} if {@link Entity#processInitialInteract} or {@link net.minecraft.item.Item#itemInteractionForEntity} return true,
      * or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+     * If we are on the client and result is not {@link ActionResultType#SUCCESS}, the client will then try {@link RightClickItem}.
      */
     @Cancelable
     public static class EntityInteract extends PlayerInteractEvent
@@ -136,7 +136,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Canceling the event will cause none of the above three to be called
      *
      * Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+     * If we are on the client and result is not {@link ActionResultType#SUCCESS}, the client will then try {@link RightClickItem}.
      *
      * There are various results to this event, see the getters below.
      * Note that handling things differently on the client vs server may cause desynchronizations!
@@ -204,7 +204,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Note that this is NOT fired if the player is targeting a block {@link RightClickBlock} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
      *
      * Let result be the return value of {@link net.minecraft.item.Item#onItemRightClick}, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then continue to other hands.
+     * If we are on the client and result is not {@link ActionResultType#SUCCESS}, the client will then continue to other hands.
      */
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
@@ -359,8 +359,8 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * @return The EnumActionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
-     * method of the event. By default, this is {@link EnumActionResult#PASS}, meaning cancelled events will cause
+     * @return The ActionResultType that will be returned to vanilla if the event is cancelled, instead of calling the relevant
+     * method of the event. By default, this is {@link ActionResultType#PASS}, meaning cancelled events will cause
      * the client to keep trying more interactions until something works.
      */
     public ActionResultType getCancellationResult()
@@ -369,7 +369,7 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * Set the EnumActionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
+     * Set the ActionResultType that will be returned to vanilla if the event is cancelled, instead of calling the relevant
      * method of the event.
      * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
      */

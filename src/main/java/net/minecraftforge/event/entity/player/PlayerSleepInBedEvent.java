@@ -31,7 +31,7 @@ import java.util.Optional;
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
  * <br>
  * This event is fired whenever a player sleeps in a bed in
- * {@link EntityPlayer#trySleep(BlockPos)}.<br>
+ * {@link PlayerEntity#trySleep(BlockPos)}.<br>
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>

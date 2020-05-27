@@ -21,6 +21,7 @@ package net.minecraftforge.event.terraingen;
 
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.layer.Layer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -34,7 +35,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * <br>
  * {@link #worldType} contains the WorldType of the world this event is occurring in.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 public class WorldTypeEvent extends Event
 {
@@ -53,7 +54,7 @@ public class WorldTypeEvent extends Event
     /**
      * BiomeSize is fired when vanilla Minecraft attempts to generate biomes.<br>
      * This event is fired during biome generation in
-     * {@link GenLayer#initializeAllBiomeGenerators(long, WorldType, ChunkProviderSettings)}. <br>
+     * {@link net.minecraft.world.gen.layer.LayerUtil#buildOverworldProcedure(long, WorldType, OverworldGenSettings)}. <br>
      * <br>
      * {@link #originalSize} the original size of the Biome. <br>
      * {@link #newSize} the new size of the biome. Initially set to the {@link #originalSize}. <br>
@@ -63,7 +64,7 @@ public class WorldTypeEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class BiomeSize extends WorldTypeEvent
     {

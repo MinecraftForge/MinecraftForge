@@ -287,7 +287,7 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a liquid places a block. Use {@link #setNewState(IBlockState)} to change the result of
+     * Fired when a liquid places a block. Use {@link #setNewState(BlockState)} to change the result of
      * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
      * arbitrary code when lava sets blocks on fire, even preventing it.
      *

@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}
  * unless stated otherwise in their Javadocs.
  **/
 public class BiomeEvent extends Event

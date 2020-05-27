@@ -49,7 +49,7 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
-     * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
+     * {@link net.minecraft.client.multiplayer.ClientChunkProvider#func_225313_a(int, int)}, <br>
      * Chunk.onChunkLoad(). <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>

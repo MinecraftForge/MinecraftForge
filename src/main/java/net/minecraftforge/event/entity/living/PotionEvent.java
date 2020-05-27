@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
- * This Event and its subevents gets fired from  {@link EntityLivingBase} on the  {@link MinecraftForge#EVENT_BUS}.<br>
+ * This Event and its subevents gets fired from  {@link LivingEntity} on the  {@link MinecraftForge#EVENT_BUS}.<br>
  */
 public class PotionEvent extends LivingEvent
 {
@@ -75,7 +75,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the Potion which is tried to remove from the Entity.
+         * @return the Effect which is tried to remove from the Entity.
          */
         public Effect getPotion()
         {
@@ -83,7 +83,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the PotionEffect. In the remove event this can be null if the Entity does not have a {@link Potion} of the right type active.
+         * @return the EffectInstance. In the remove event this can be null if the Entity does not have a {@link Effect} of the right type active.
          */
         @Override
         @Nullable

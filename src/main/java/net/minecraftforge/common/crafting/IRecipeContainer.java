@@ -31,15 +31,15 @@ public interface IRecipeContainer
 {
     /**
      * The crafting result slot of your container, where you take out the crafted item.
-     * The equivalent for {@link ContainerWorkbench} is {@link ContainerWorkbench#craftResult}.
-     * The equivalent for {@link ContainerPlayer} is {@link ContainerPlayer#craftResult}.
+     * The equivalent for {@link net.minecraft.inventory.container.WorkbenchContainer} is {@link net.minecraft.inventory.container.WorkbenchContainer#field_75160_f}.
+     * The equivalent for {@link net.minecraft.inventory.container.PlayerContainer} is {@link net.minecraft.inventory.container.PlayerContainer#field_75179_f}.
      */
     CraftResultInventory getCraftResult();
 
     /**
      * The crafting matrix of your container, where ingredients go for crafting.
-     * The equivalent for {@link ContainerWorkbench} is {@link ContainerWorkbench#craftMatrix}.
-     * The equivalent for {@link ContainerPlayer} is {@link ContainerPlayer#craftMatrix}.
+     * The equivalent for {@link net.minecraft.inventory.container.WorkbenchContainer} is {@link net.minecraft.inventory.container.WorkbenchContainer#field_75162_e}.
+     * The equivalent for {@link net.minecraft.inventory.container.PlayerContainer} is {@link net.minecraft.inventory.container.PlayerContainer#field_75181_e}.
      */
     CraftingInventory getCraftMatrix();
 }

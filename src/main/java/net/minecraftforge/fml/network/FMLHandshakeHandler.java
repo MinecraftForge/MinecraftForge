@@ -58,7 +58,7 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
  * <p>The {@link #loginWrapper} transforms these messages into {@link net.minecraft.network.login.client.CCustomPayloadLoginPacket}
  * and {@link net.minecraft.network.login.server.SCustomPayloadLoginPacket} compatible messages, by means of wrapping.
  *
- * <p>The handshake is ticked {@link #tickLogin(NetworkManager)} from the {@link ServerLoginNetHandler#update()} method,
+ * <p>The handshake is ticked {@link #tickLogin(NetworkManager)} from the {@link ServerLoginNetHandler#tick()} method,
  * utilizing the {@link ServerLoginNetHandler.State#NEGOTIATING} state, which is otherwise unused in vanilla code.
  *
  * <p>During client to server initiation, on the <em>server</em>, the {@link NetworkEvent.GatherLoginPayloadsEvent} is fired,
@@ -144,7 +144,7 @@ public class FMLHandshakeHandler {
     }
 
     /**
-     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(FMLHandshakeMessages.LoginIndexedMessage, Supplier)}
+     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(IntSupplier, Supplier)}
      * method to handle index tracking. Used for client to server replies.
      *
      * This should only be used for login messages.

@@ -353,7 +353,7 @@ public interface IForgeItem
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.entity.LivingEntity#getItemStackFromSlot(EquipmentSlotType)}.</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
@@ -444,8 +444,8 @@ public interface IForgeItem
      *
      * @param stack        The ItemStack that is equipped
      * @param player       Reference to the current client entity
-     * @param resolution   Resolution information about the current viewport and
-     *                     configured GUI Scale
+     * @param width        Scaled width of the HUD
+     * @param height        Scaled width of the HUD
      * @param partialTicks Partial ticks for the renderer, useful for interpolation
      */
     @OnlyIn(Dist.CLIENT)
@@ -518,7 +518,7 @@ public interface IForgeItem
 
     /**
      * Return if this itemstack is damaged. Note only called if
-     * {@link #isDamageable()} is true.
+     * {@link Item#isDamageable()} is true.
      *
      * @param stack the stack
      * @return if the stack is damaged
@@ -541,7 +541,7 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
+     * ItemStack sensitive version of {@link Item#canHarvestBlock(BlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest
@@ -572,7 +572,7 @@ public interface IForgeItem
      * Returns -1 if this tool is not of the specified type
      *
      * @param stack      This item stack instance
-     * @param toolClass  Tool Class
+     * @param tool  Tool Class
      * @param player     The player trying to harvest the given blockstate
      * @param blockState The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
@@ -675,7 +675,7 @@ public interface IForgeItem
      *
      * @param itemStack the ItemStack to check
      * @return the Mod ID for the ItemStack, or null when there is no specially
-     *         associated mod and {@link #getRegistryName()} would return null.
+     *         associated mod and {@link Item#getRegistryName()} would return null.
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack)
@@ -717,7 +717,7 @@ public interface IForgeItem
      * @param shield   The shield in question
      * @param entity   The EntityLivingBase holding the shield
      * @param attacker The EntityLivingBase holding the ItemStack
-     * @retrun True if this ItemStack can disable the shield in question.
+     * @return True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
@@ -747,7 +747,7 @@ public interface IForgeItem
     }
 
     /**
-     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * Called every tick from {@link net.minecraft.entity.passive.horse.HorseEntity#tick()} on the item in the
      * armor slot.
      *
      * @param stack the armor itemstack

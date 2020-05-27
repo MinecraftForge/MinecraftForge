@@ -49,9 +49,9 @@ public class LivingEvent extends EntityEvent
     /**
      * LivingUpdateEvent is fired when an Entity is updated. <br>
      * This event is fired whenever an Entity is updated in
-     * {@link EntityLivingBase#onUpdate()}. <br>
+     * {@link LivingEntity#tick()}. <br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingUpdate(EntityLivingBase)}.<br>
+     * This event is fired via the {@link ForgeHooks#onLivingUpdate(LivingEntity)}.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If this event is canceled, the Entity does not update.<br>
@@ -69,10 +69,10 @@ public class LivingEvent extends EntityEvent
     /**
      * LivingJumpEvent is fired when an Entity jumps.<br>
      * This event is fired whenever an Entity jumps in
-     * {@link EntityLivingBase#jump()}, {@link EntityMagmaCube#jump()},
-     * and {@link EntityHorse#jump()}.<br>
+     * {@link LivingEntity#jump()}, {@link net.minecraft.entity.monster.MagmaCubeEntity#jump()},
+     * and {@link net.minecraft.entity.passive.horse.HorseEntity#jump()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingJump(EntityLivingBase)}.<br>
+     * This event is fired via the {@link ForgeHooks#onLivingJump(LivingEntity)}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

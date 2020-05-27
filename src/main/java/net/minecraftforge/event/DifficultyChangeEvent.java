@@ -29,7 +29,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 /**
  * DifficultyChangeEvent is fired when difficulty is changing. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onDifficultyChange(EnumDifficulty, EnumDifficulty)}.<br>
+ * This event is fired via the {@link ForgeHooks#onDifficultyChange(Difficulty, Difficulty)}.<br>
  * <br>
  * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * <br>

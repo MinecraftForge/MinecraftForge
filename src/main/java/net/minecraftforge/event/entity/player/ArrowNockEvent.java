@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
  * This event is fired whenever a player begins using a bow in
- * {@link ItemBow#onItemRightClick(World, EntityPlayer, EnumHand)}.<br>
+ * {@link net.minecraft.item.BowItem#onItemRightClick(World, PlayerEntity, Hand)}.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/

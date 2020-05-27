@@ -26,9 +26,9 @@ import net.minecraft.entity.LivingEntity;
 
 /**
  * LivingHealEvent is fired when an Entity is set to be healed. <br>
- * This event is fired whenever an Entity is healed in {@link EntityLivingBase#heal(float)}<br>
+ * This event is fired whenever an Entity is healed in {@link LivingEntity#heal(float)}<br>
  * <br>
- * This event is fired via the {@link ForgeEventFactory#onLivingHeal(EntityLivingBase, float)}.<br>
+ * This event is fired via the {@link ForgeEventFactory#onLivingHeal(LivingEntity, float)}.<br>
  * <br>
  * {@link #amount} contains the amount of healing done to the Entity that was healed. <br>
  * <br>

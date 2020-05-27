@@ -106,9 +106,9 @@ public class SimpleChannel
     /**
      * Send a message to the {@link PacketDistributor.PacketTarget} from a {@link PacketDistributor} instance.
      *
-     * <pre>
+     * <pre>{@code
      *     channel.send(PacketDistributor.PLAYER.with(()->player), message)
-     * </pre>
+     * }</pre>
      *
      * @param target The curried target from a PacketDistributor
      * @param message The message to send

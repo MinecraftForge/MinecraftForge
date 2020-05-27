@@ -29,9 +29,9 @@ import javax.annotation.Nullable;
 
 /**
  * BabyEntitySpawnEvent is fired just before a baby entity is about to be spawned. <br>
- * Parents will have disengaged their relationship. {@link @Cancelable} <br>
- * It is possible to change the child completely by using {@link #setChild(EntityAgeable)} <br>
- * This event is fired from {@link EntityAIMate#spawnBaby()} and {@link EntityAIVillagerMate#giveBirth()} <br>
+ * Parents will have disengaged their relationship. {@link Cancelable} <br>
+ * It is possible to change the child completely by using {@link #setChild(AgeableEntity)} <br>
+ * This event is fired from {@link net.minecraft.entity.ai.goal.BreedGoal#spawnBaby()}<br>
  * <br>
  * {@link #parentA} contains the initiating parent entity.<br>
  * {@link #parentB} contains the secondary parent entity.<br>
