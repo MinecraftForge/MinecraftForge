@@ -306,7 +306,6 @@ public interface IForgeBlockState
     /**
      * Used during tree growth to determine if newly generated logs can replace this block.
      *
-     * @param state The current state
      * @param world The current world
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
@@ -558,7 +557,6 @@ public interface IForgeBlockState
      * //TODO: Re-Evaluate
      * Gathers how much experience this block drops when broken.
      *
-     * @param state The current state
      * @param world The world
      * @param pos Block position
      * @param fortune
@@ -583,7 +581,6 @@ public interface IForgeBlockState
    /**
     * Called on an Observer block whenever an update for an Observer is received.
     *
-    * @param observerState The Observer block's state.
     * @param world The current world.
     * @param pos The Observer block's position.
     * @param changed The updated block.
@@ -675,7 +672,7 @@ public interface IForgeBlockState
     /**
      * @param world The world
      * @param pos The position of this state
-     * @param beaconPos The position of the beacon
+     * @param beacon The position of the beacon
      * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
      */
     @Nullable
@@ -746,7 +743,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
     default boolean isStickyBlock()
