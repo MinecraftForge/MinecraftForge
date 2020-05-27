@@ -28,6 +28,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -66,11 +67,11 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
     default void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SUpdateTileEntityPacket pkt){ }
 
     /**
-     * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
+     * Called when the chunk's TE update tag, gotten from {@link TileEntity#getUpdateTag()}, is received on the client.
      * <p>
-     * Used to handle this tag in a special way. By default this simply calls {@link #readFromNBT(NBTTagCompound)}.
+     * Used to handle this tag in a special way. By default this simply calls {@link TileEntity#read(CompoundNBT)}.
      *
-     * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
+     * @param tag The {@link CompoundNBT} sent from {@link TileEntity#getUpdateTag()}
      */
      default void handleUpdateTag(CompoundNBT tag)
      {
@@ -78,7 +79,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      }
 
     /**
-     * Gets a {@link NBTTagCompound} that can be used to store custom data for this tile entity.
+     * Gets a {@link CompoundNBT} that can be used to store custom data for this tile entity.
      * It will be written, and read from disc, so it persists over world saves.
      *
      * @return A compound tag for custom data
@@ -97,13 +98,13 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      }
 
      /**
-      * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
+      * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link net.minecraft.client.renderer.tileentity.TileEntityRenderer}.
       */
      public static final AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.math.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
      /**
-      * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
-      * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
+      * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link net.minecraft.client.renderer.tileentity.TileEntityRenderer} associated with this {@link TileEntity}
+      * Defaults to the collision bounding box {@link BlockState#getCollisionShape(IBlockReader, BlockPos)} and {@link net.minecraft.util.math.shapes.VoxelShape#getBoundingBox} associated with the block
       * at this location.
       *
       * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
@@ -138,7 +139,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
              {
                  // We have to capture any exceptions that may occur here because BUKKIT servers like to send
                  // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
-                 // So we can not GARENTEE that the world state is the real state for the block...
+                 // So we can not GUARANTEE that the world state is the real state for the block...
                  // So, once again in the long line of US having to accommodate BUKKIT breaking things,
                  // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
                  // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.

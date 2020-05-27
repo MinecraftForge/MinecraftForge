@@ -27,7 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
  * This event is fired whenever a player attacks an Entity in
- * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)}.<br>
+ * {@link PlayerEntity#attackTargetEntityWithCurrentItem(Entity)}.<br>
  * <br>
  * {@link #target} contains the Entity that was damaged by the player. <br>
  * <br>

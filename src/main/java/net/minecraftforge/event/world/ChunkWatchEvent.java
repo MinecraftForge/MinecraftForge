@@ -36,7 +36,7 @@ import net.minecraftforge.eventbus.api.Event;
  * The {@link #player}'s world may not be the same as the world of the chunk
  * when the player is teleporting to another dimension.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class ChunkWatchEvent extends Event
 {
@@ -75,7 +75,7 @@ public class ChunkWatchEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Watch extends ChunkWatchEvent
     {
@@ -91,7 +91,7 @@ public class ChunkWatchEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class UnWatch extends ChunkWatchEvent
     {

@@ -29,10 +29,10 @@ import net.minecraft.entity.LivingEntity;
  * At this point armor, potion and absorption modifiers have already been applied to damage - this is FINAL value.<br>
  * Also note that appropriate resources (like armor durability and absorption extra hearths) have already been consumed.<br>
  * This event is fired whenever an Entity is damaged in
- * {@link EntityLivingBase#damageEntity(DamageSource, float)} and
- * {@link EntityPlayer#damageEntity(DamageSource, float)}.<br>
+ * {@link LivingEntity#damageEntity(DamageSource, float)} and
+ * {@link net.minecraft.entity.player.PlayerEntity#damageEntity(DamageSource, float)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingDamage(EntityLivingBase, DamageSource, float)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingDamage(LivingEntity, DamageSource, float)}.<br>
  * <br>
  * {@link #source} contains the DamageSource that caused this Entity to be hurt. <br>
  * {@link #amount} contains the final amount of damage that will be dealt to entity. <br>

@@ -278,7 +278,7 @@ public class FluidStack
      * Determines if the Fluids are equal and this stack is larger.
      *
      * @param other
-     * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
+     * @return true if this FluidStack contains the other FluidStack {@literal (same fluid and >= amount)}
      */
     public boolean containsFluid(@Nonnull FluidStack other)
     {

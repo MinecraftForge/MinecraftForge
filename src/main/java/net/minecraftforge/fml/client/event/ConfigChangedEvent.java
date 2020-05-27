@@ -87,11 +87,11 @@ public class ConfigChangedEvent extends net.minecraftforge.eventbus.api.Event
 
     /**
      * This event is intended to be consumed by the mod whose config has been changed. It fires when the Done button
-     * has been clicked on a GuiConfig screen and the following conditions are met:<br/>
-     * - at least one config element has been changed<br/>
-     * - one of these 2 conditions are met:<br/>
-     *      1) the parent screen is null or is not an instance of GuiConfig<br/>
-     *      2) the configID field has been set to a non-null value for the GuiConfig screen<br/><br/>
+     * has been clicked on a GuiConfig screen and the following conditions are met:<br>
+     * - at least one config element has been changed<br>
+     * - one of these 2 conditions are met:<br>
+     *      1) the parent screen is null or is not an instance of GuiConfig<br>
+     *      2) the configID field has been set to a non-null value for the GuiConfig screen<br><br>
      * Modders should check the modID field of the event to ensure they are only acting on their own config screen's event!
      */
     public static class OnConfigChangedEvent extends ConfigChangedEvent

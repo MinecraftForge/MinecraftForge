@@ -199,7 +199,7 @@ public class FluidUtil
     /**
      * Takes an Fluid Container Item and tries to fill it from the given tank.
      * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
+     * If the input itemstack has a {@literal stacksize > 1} it will stow the filled container in the given inventory.
      * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
      *
@@ -268,7 +268,7 @@ public class FluidUtil
     /**
      * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
      * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
+     * If the input itemstack has a {@literal stacksize > 1} it will stow the emptied container in the given inventory.
      * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
      *
@@ -492,7 +492,7 @@ public class FluidUtil
     }
 
     /**
-     * ItemStack version of {@link #tryPlaceFluid(PlayerEntity, World, BlockPos, IFluidHandler, FluidStack)}.
+     * ItemStack version of {@link #tryPlaceFluid(PlayerEntity, World, Hand, BlockPos, IFluidHandler, FluidStack)}.
      * Use the returned {@link FluidActionResult} to update the container ItemStack.
      *
      * @param player    Player who places the fluid. May be null for blocks like dispensers.
@@ -520,7 +520,7 @@ public class FluidUtil
      * Honors the amount of fluid contained by the used container.
      * Checks if water-like fluids should vaporize like in the nether.
      *
-     * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Modeled after {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
      * @param world       World to place the fluid in
@@ -598,9 +598,9 @@ public class FluidUtil
 
     /**
      * Destroys a block when a fluid is placed in the same position.
-     * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Modeled after {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
-     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, boolean)}.
+     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, IFluidHandler.FluidAction)}.
      *
      * @param world the world that the fluid will be placed in
      * @param pos   the location that the fluid will be placed

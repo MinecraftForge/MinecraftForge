@@ -121,7 +121,7 @@ public class RenderGameOverlayEvent extends Event
         }
 
         /**
-         * @return The {@link BossInfoClient} currently being rendered
+         * @return The {@link ClientBossInfo} currently being rendered
          */
         public ClientBossInfo getBossInfo()
         {

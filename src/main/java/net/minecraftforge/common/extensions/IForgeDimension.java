@@ -47,7 +47,7 @@ public interface IForgeDimension
     World getWorld();
 
     /**
-     * Called from {@link World#initCapabilities()}, to gather capabilities for this
+     * Called from {@link net.minecraft.world.server.ServerWorld#initCapabilities()} and {@link net.minecraft.client.world.ClientWorld#ClientWorld} to gather capabilities for this
      * world. It's safe to access world here since this is called after world is
      * registered.
      *
@@ -112,7 +112,7 @@ public interface IForgeDimension
      * @param blockLight Block light brightness factor.
      * @param colors The color values that will be used: [r, g, b].
      *
-     * @see net.minecraft.client.renderer.GameRenderer#updateLightmap(float)
+     * @see net.minecraft.client.renderer.LightTexture#updateLightmap(float)
      */
     default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 

@@ -28,10 +28,10 @@ import net.minecraft.entity.LivingEntity;
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>
  * This event is fired whenever an Entity is hurt in
- * {@link EntityLivingBase#damageEntity(DamageSource, float)} and
- * {@link EntityPlayer#damageEntity(DamageSource, float)}.<br>
+ * {@link LivingEntity#damageEntity(DamageSource, float)} and
+ * {@link net.minecraft.entity.player.PlayerEntity#damageEntity(DamageSource, float)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingHurt(EntityLivingBase, DamageSource, float)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingHurt(LivingEntity, DamageSource, float)}.<br>
  * <br>
  * {@link #source} contains the DamageSource that caused this Entity to be hurt. <br>
  * {@link #amount} contains the amount of damage dealt to the Entity that was hurt. <br>

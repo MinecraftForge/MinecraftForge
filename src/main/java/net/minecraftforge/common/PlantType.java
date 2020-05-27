@@ -19,7 +19,10 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 
 // TODO 1.16: This should not be an enum. Change it to something that functions similarly to ToolType
@@ -35,11 +38,11 @@ public enum PlantType implements IExtensibleEnum
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
-     * and return this custom type in {@link IPlantable#getPlantType(IBlockAccess, BlockPos)}.
+     * and return this custom type in {@link IPlantable#getPlantType(IBlockReader, BlockPos)}.
      *
      * <p>If your new plant grows on blocks like any one of them above, never create a new {@link PlantType}.
      * This enumeration is only functioning in
-     * {@link net.minecraft.block.Block#canSustainPlant(IBlockState, IWorldReader, BlockPos, EnumFacing, IPlantable)},
+     * {@link net.minecraft.block.Block#canSustainPlant(BlockState, IBlockReader, BlockPos, Direction, IPlantable)},
      * which you are supposed to override this function in your new block and create a new plant type to grow on that block.
      *
      * <p>You can create an instance of your plant type in your API and let your/others mods access it. It will be faster than calling this method.

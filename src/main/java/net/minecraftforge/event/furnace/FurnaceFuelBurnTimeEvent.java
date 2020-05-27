@@ -33,7 +33,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * To set the burn time of your own item, use {@link Item#getBurnTime(ItemStack)} instead.<br>
  * <br>
- * This event is fired from {@link ForgeEventFactory#getItemBurnTime(ItemStack)}.<br>
+ * This event is fired from {@link ForgeEventFactory#getItemBurnTime(ItemStack, int)}.<br>
  * <br>
  * This event is {@link Cancelable} to prevent later handlers from changing the value.<br>
  * <br>

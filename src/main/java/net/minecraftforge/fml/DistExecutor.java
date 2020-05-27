@@ -30,7 +30,7 @@ public final class DistExecutor
     private DistExecutor() {}
 
     /**
-     * Run the callable in the supplier only on the specified {@link Side}
+     * Run the callable in the supplier only on the specified {@link Dist}
      *
      * @param dist The dist to run on
      * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate dist)

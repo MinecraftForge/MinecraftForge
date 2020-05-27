@@ -28,7 +28,7 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 /**
  * EntityStruckByLightningEvent is fired when an Entity is about to be struck by lightening.<br>
  * This event is fired whenever an EntityLightningBolt is updated to strike an Entity in
- * {@link EntityLightningBolt#onUpdate()} via {@link ForgeEventFactory#onEntityStruckByLightning(Entity, EntityLightningBolt)}.<br>
+ * {@link LightningBoltEntity#tick()} via {@link ForgeEventFactory#onEntityStruckByLightning(Entity, LightningBoltEntity)}.<br>
  * <br>
  * {@link #lightning} contains the instance of EntityLightningBolt attempting to strike an entity.<br>
  * <br>

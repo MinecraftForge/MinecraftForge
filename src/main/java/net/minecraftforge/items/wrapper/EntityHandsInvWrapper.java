@@ -24,8 +24,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Exposes the hands inventory of an {@link EntityLivingBase} as an {@link IItemHandler} using {@link EntityLivingBase#getItemStackFromSlot} and
- * {@link EntityLivingBase#setItemStackToSlot}.
+ * Exposes the hands inventory of an {@link LivingEntity} as an {@link IItemHandler} using {@link LivingEntity#getItemStackFromSlot} and
+ * {@link LivingEntity#setItemStackToSlot}.
  */
 public class EntityHandsInvWrapper extends EntityEquipmentInvWrapper
 {

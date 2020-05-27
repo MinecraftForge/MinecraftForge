@@ -144,7 +144,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
-     * Checks if this {@link Entity} can trample a {@link Block}.
+     * Checks if this {@link Entity} can trample a {@link net.minecraft.block.Block}.
      *
      * @param pos The block pos
      * @param fallDistance The fall distance
@@ -165,8 +165,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
     /**
      * Gets whether this entity has been added to a world (for tracking). Specifically
      * between the times when an entity is added to a world and the entity being removed
-     * from the world's tracked lists. See {@link World#onEntityAdded(Entity)} and
-     * {@link World#onEntityRemoved(Entity)}.
+     * from the world's tracked lists.
+     * {@link net.minecraft.world.server.ServerWorld#onEntityAdded(Entity)}
+     * {@link net.minecraft.client.world.ClientWorld#addEntityImpl(int, Entity)}
+     *
+     * and
+     *
+     * {@link net.minecraft.world.server.ServerWorld#removeEntityComplete(Entity, boolean)}
+     * {@link net.minecraft.client.world.ClientWorld#removeEntity(Entity)}
      *
      * @return True if this entity is being tracked by a world
      */

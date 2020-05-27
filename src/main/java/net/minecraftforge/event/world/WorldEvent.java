@@ -22,8 +22,13 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonElement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.profiler.IProfiler;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -31,7 +36,10 @@ import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -61,11 +69,10 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Load is fired when Minecraft loads a world.<br>
      * This event is fired when a world is loaded in
-     * {@link WorldClient#WorldClient(NetHandlerPlayClient, WorldSettings, int, EnumDifficulty, Profiler)},
-     * {@link MinecraftServer#loadAllWorlds(String, String, long, WorldType, String)},
-     * {@link IntegratedServer#loadAllWorlds(String, String, long, WorldType, String)}
-     * {@link DimensionManager#initDimension(int)},
-     * and {@link ForgeInternalHandler#onDimensionLoad(Load)}. <br>
+     * {@link net.minecraft.client.world.ClientWorld#ClientWorld(ClientPlayNetHandler, WorldSettings, DimensionType, int, IProfiler, WorldRenderer)},
+     * {@link MinecraftServer#loadAllWorlds(String, String, long, WorldType, JsonElement)},
+     * {@link IntegratedServer#loadAllWorlds(String, String, long, WorldType, JsonElement)}
+     * {@link net.minecraftforge.common.DimensionManager#initWorld(MinecraftServer, DimensionType)}<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -81,10 +88,10 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Unload is fired when Minecraft unloads a world.<br>
      * This event is fired when a world is unloaded in
-     * {@link Minecraft#loadWorld(WorldClient, String)},
+     * {@link Minecraft#loadWorld(ClientWorld)},
      * {@link MinecraftServer#stopServer()},
-     * {@link DimensionManager#unloadWorlds()},
-     * {@link ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
+     * {@link net.minecraftforge.common.DimensionManager#unloadWorlds(MinecraftServer, boolean)},
+     * {@link net.minecraftforge.common.ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -100,8 +107,7 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Save is fired when Minecraft saves a world.<br>
      * This event is fired when a world is saved in
-     * {@link WorldServer#saveAllChunks(boolean, IProgressUpdate)},
-     * {@link ForgeInternalHandler#onDimensionSave(Save)}. <br>
+     * {@link net.minecraft.world.server.ServerWorld#save(IProgressUpdate, boolean, boolean)}<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -117,8 +123,7 @@ public class WorldEvent extends Event
     /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
      * If an entry is added to the list, it needs to be a globally unique instance.
-     * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
-     * {@link WorldServer#canCreatureTypeSpawnHere(EnumCreatureType, SpawnListEntry, BlockPos)}
+     * The event is called in {@link net.minecraft.world.spawner.WorldEntitySpawner#getSpawnList}
      * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */

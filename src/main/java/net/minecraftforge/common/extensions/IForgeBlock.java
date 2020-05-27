@@ -98,9 +98,8 @@ public interface IForgeBlock
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
-     * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
-     * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
+     * for {@link net.minecraft.entity.LivingEntity}, this is {@code .91}.
+     * {@link net.minecraft.entity.item.ItemEntity} uses {@code .98}, and
      *
      * @param state state of the block
      * @param world the world
@@ -495,7 +494,7 @@ public interface IForgeBlock
      * texture sheets for different sides/locations in the world.
      *
      * @param state The current state
-     * @param world The current world
+     * @param worldObj The current world
      * @param target The target the player is looking at {x/y/z/side/sub}
      * @param manager A reference to the current particle manager.
      * @return True to prevent vanilla digging particles form spawning.
@@ -841,7 +840,7 @@ public interface IForgeBlock
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+     * {@link ActiveRenderInfo#getBlockAtCamera()}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param state     the state
@@ -856,14 +855,13 @@ public interface IForgeBlock
     }
 
     /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
+     * Gets the {@link BlockState} to place
      * @param world The world the block is being placed in
      * @param pos The position the block is being placed at
      * @param facing The side the block is being placed on
      * @param hitX The X coordinate of the hit vector
      * @param hitY The Y coordinate of the hit vector
      * @param hitZ The Z coordinate of the hit vector
-     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
      * @param placer The entity placing the block
      * @param hand The player hand used to place this block
      * @return The state to be placed in the world
@@ -1016,7 +1014,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param start The start vector
      * @param end The end vector
-     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
+     * @param original The original result from {@link Block#collisionRayTrace(BlockState, World, BlockPos, Vec3d, Vec3d)}
      * @return A result that suits your block
      */
     @Nullable

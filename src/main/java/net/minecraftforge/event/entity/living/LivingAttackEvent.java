@@ -28,10 +28,11 @@ import net.minecraft.entity.LivingEntity;
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
  * This event is fired whenever an Entity is attacked in
- * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} and
- * {@link EntityPlayer#attackEntityFrom(DamageSource, float)}. <br>
+ * {@link LivingEntity#attackEntityFrom(DamageSource, float)} and
+ * {@link net.minecraft.entity.player.PlayerEntity#attackEntityFrom(DamageSource, float)}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
+ * This event is fired via {@link ForgeHooks#onLivingAttack(LivingEntity, DamageSource, float)} and
+ * {@link ForgeHooks#onPlayerAttack(LivingEntity, DamageSource, float)}<br>
  * <br>
  * {@link #source} contains the DamageSource of the attack. <br>
  * {@link #amount} contains the amount of damage dealt to the entity. <br>

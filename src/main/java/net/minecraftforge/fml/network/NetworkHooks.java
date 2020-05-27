@@ -120,10 +120,9 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
      * these GUI requests on the client.
      *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
      *
@@ -138,10 +137,9 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
      * these GUI requests on the client.
      *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
      *
@@ -156,10 +154,9 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
      * these GUI requests on the client.
      *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
      * The maximum size for #extraDataWriter is 32600 bytes.

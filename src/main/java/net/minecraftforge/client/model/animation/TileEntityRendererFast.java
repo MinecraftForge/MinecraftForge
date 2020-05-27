@@ -34,7 +34,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * A special case {@link TileGameRenderer} which can be batched with other
+ * A special case {@link TileEntityRenderer} which can be batched with other
  * renderers that are also instances of this class.
  * <p>
  * Advantages:

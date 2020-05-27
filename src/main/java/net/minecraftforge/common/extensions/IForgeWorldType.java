@@ -106,15 +106,15 @@ public interface IForgeWorldType
      * generation.
      *
      * @param                <T> The type of {@link IArea}.
-     * @param                <C> The type of {@link IContextExtended}.
+     * @param                <C> The type of {@link IExtendedNoiseRandom}.
      *
      * @param parentLayer    The parent layer to feed into any layer you return
      * @param chunkSettings  The {@link OverworldGenSettings} used to create the
-     *                       {@link GenLayerBiome}.
+     *                       {@link BiomeLayer}.
      * @param contextFactory A {@link LongFunction} factory to create contexts of
      *                       the supplied size.
      * @return An {@link IAreaFactory} that representing the Biomes to be generated.
-     * @see {@link GenLayerBiome}
+     * @see BiomeLayer
      */
     default <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer,
             OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)

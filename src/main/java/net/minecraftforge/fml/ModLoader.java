@@ -61,7 +61,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 /**
  * Loads mods.
  *
- * Dispatch cycle is seen in {@link #loadMods()} and {@link #finishMods()}
+ * Dispatch cycle is seen in {@link #loadMods} and {@link #finishMods}
  *
  * Overall sequence for loadMods is:
  * <dl>

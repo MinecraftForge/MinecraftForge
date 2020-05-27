@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.*;
 /**
  * Implement this interface as a capability which should handle fluids, generally storing them in
  * one or more internal {@link IFluidTank} objects.
- * <p/>
+ * <p>
  * A reference implementation is provided {@link TileFluidHandler}.
  */
 public interface IFluidHandler
@@ -111,7 +111,7 @@ public interface IFluidHandler
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
-     * <p/>
+     * <p>
      * This method is not Fluid-sensitive.
      *
      * @param maxDrain Maximum amount of fluid to drain.
