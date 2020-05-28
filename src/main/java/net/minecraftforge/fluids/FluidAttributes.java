@@ -82,7 +82,7 @@ public class FluidAttributes
      * Density of the fluid - completely arbitrary; negative density indicates that the fluid is
      * lighter than air.
      *
-     * Default value is approximately the real-life density of water in kg/m^3.
+     * Default value is approximately the real-life density of water at 20 degrees Celsius in kilograms per meter cubed (kg/m^3).
      */
     private final int density;
 
@@ -98,7 +98,7 @@ public class FluidAttributes
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
      * permissible.
      *
-     * Default value is approximately the real-life density of water in m/s^2 (x10^-3).
+     * Default value is approximately the real-life dynamic viscosity at 20 degrees Celsius of water in micropascal seconds (µPa·s).
      *
      * Higher viscosity means that a fluid flows more slowly, like molasses.
      * Lower viscosity means that a fluid flows more quickly, like helium.
