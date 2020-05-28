@@ -71,6 +71,7 @@ public class ModelLoaderRegistry2
         registerLoader(new ResourceLocation("forge","obj"), OBJLoader2.INSTANCE);
         registerLoader(new ResourceLocation("forge","bucket"), ModelDynBucket.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","new-multi-layer"), NewMultiLayerModel.Loader.INSTANCE);
 
         // Model adapters from the old loading system
         registerLoader(new ResourceLocation("forge","b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));

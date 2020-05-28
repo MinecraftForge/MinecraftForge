@@ -58,6 +58,7 @@ import com.google.gson.JsonParser;
 /**
  * A model that can be rendered in multiple {@link BlockRenderLayer}.
  */
+@Deprecated // Switch to the NewMultiLayerModel, which is what becomes MultiLayerModel in 1.15+
 public final class MultiLayerModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();

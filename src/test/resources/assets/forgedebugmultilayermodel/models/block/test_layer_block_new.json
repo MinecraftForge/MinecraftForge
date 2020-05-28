@@ -1,0 +1,16 @@
+{
+  "parent": "block/block",
+  "loader": "forge:new-multi-layer",
+  "layers": {
+    "Solid": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/slime_block" },
+      "transform": { "scale": 0.5, "translation": [ -0.25, -0.25, -0.25 ] }
+    },
+    "Translucent": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/slime_block" }
+    }
+  },
+  "textures": { "particle": "block/slime_block" }
+}

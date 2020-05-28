@@ -67,3 +67,5 @@ loaderVersion="[28,)"
     modId="global_loot_test"
 [[mods]]
     modId="custom_plant_type_test"
+[[mods]]
+    modId="forgedebugmultilayermodel"
