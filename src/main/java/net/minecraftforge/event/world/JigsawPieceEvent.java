@@ -1,5 +1,6 @@
 package net.minecraftforge.event.world;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,8 +36,12 @@ import java.util.List;
  */
 public class JigsawPieceEvent extends Event
 {
+   //These can be looked at under data/minecraft/structures/village (or /pillager_outpost). All correspond to the folder name except
+   // "empty", which indicates an empty pattern, and "modded", which indicates the path was not found.
+   public static final List<String> STRUCTURE_TYPES = ImmutableList.of("plains", "desert", "snowy", "taiga", "savanna", "decays", "common", "pillager_outpost", "empty", "modded");
+
    public List<JigsawPiece> pieces;
-   public final StructureType generalType;
+   public final String generalType;
    public final String specificType;
    public final boolean isZombie;
    public final int currentDepth;
@@ -57,33 +62,20 @@ public class JigsawPieceEvent extends Event
       String pool = patternLocation.getPath();
       pool = pool.replace("village/", "");
       this.generalType = fromString(pool);
-      pool = pool.replace(this.generalType.name().toLowerCase()+"/", "");
-      this.isZombie = pool.contains("zombie/");
+      pool = pool.replace(this.generalType+"/", "");
       this.specificType = pool.replace("zombie/", "");;
+      this.isZombie = pool.contains("zombie/");
    }
 
-   public enum StructureType
+   private static String fromString(String name)
    {
-      PLAINS,
-      DESERT,
-      SNOWY,
-      TAIGA,
-      SAVANNA,
-      GRASS,   //grass grounds.
-      COMMON,  //animals, decor, golems, wells. Mostly used in plains
-      PILLAGER_OUTPOST, //the only jigsaw structure with a max depth of 7 see PillagerOutpostPieces for pools.
-      MODDED   //If cant find the path, it is due to a mod using the JigsawManager
-   }
-
-   private static StructureType fromString(String name)
-   {
-      for(StructureType type : StructureType.values())
+      for(String type : STRUCTURE_TYPES)
       {
-         if(name.startsWith(type.name().toLowerCase()))
+         if(name.startsWith(type))
          {
             return type;
          }
       }
-      return StructureType.MODDED;
+      return "modded";
    }
 }

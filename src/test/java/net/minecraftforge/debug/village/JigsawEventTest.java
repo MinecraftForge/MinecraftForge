@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 public class JigsawEventTest {
    @SubscribeEvent
    public static void jigsawEvent(JigsawPieceEvent event){
-      if(event.generalType == JigsawPieceEvent.StructureType.COMMON){
+      if(event.generalType.equals("common")){
          if(event.specificType.equals("iron_golem")){
             event.pieces.clear();
             event.pieces.add(new SingleJigsawPiece("jigsaw_event_test:wither"));
