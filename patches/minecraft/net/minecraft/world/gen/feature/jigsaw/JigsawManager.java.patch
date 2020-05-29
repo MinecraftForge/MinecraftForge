@@ -4,7 +4,7 @@
                 List<JigsawPiece> list = Lists.newArrayList();
                 if (p_214881_4_ != this.field_214882_a) {
                    list.addAll(jigsawpattern.func_214943_b(this.field_214887_f));
-+                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.JigsawPieceEvent(list, jigsawpattern.func_214947_b()));
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.JigsawPieceEvent(list, p_214881_4_, jigsawpattern.func_214947_b()));
                 }
  
                 list.addAll(jigsawpattern1.func_214943_b(this.field_214887_f));
