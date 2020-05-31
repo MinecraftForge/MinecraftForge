@@ -326,7 +326,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         int height = sprite.getHeight();
 
         float x0 = (float) u / width;
-        float y0 = (float) v / height;
+        float y0 = 1f - (float) v / height;
         float x1 = x0, y1 = y0;
         float z0 = 7.5f / 16f, z1 = 8.5f / 16f;
 
@@ -336,7 +336,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
             z0 = 8.5f / 16f;
             z1 = 7.5f / 16f;
         case EAST:
-            y1 = (float) (v + size) / height;
+            y1 = 1f - (float) (v + size) / height;
             break;
         case DOWN:
             z0 = 8.5f / 16f;
@@ -353,15 +353,15 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
 
         float u0 = 16f * (x0 - dx);
         float u1 = 16f * (x1 - dx);
-        float v0 = 16f * (1f - y0 - dy);
-        float v1 = 16f * (1f - y1 - dy);
+        float v0 = 16f * (1f - (y0 - dy));
+        float v1 = 16f * (1f - (y1 - dy));
 
         return buildQuad(
             transform, remap(side), sprite, tint,
-            x0, y0, z0, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
-            x1, y1, z0, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
+            x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
-            x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
+            x1, y1, z0, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
+            x0, y0, z0, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
         );
     }
 
