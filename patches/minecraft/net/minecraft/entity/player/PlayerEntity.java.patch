@@ -453,7 +453,7 @@
 -      ITextComponent itextcomponent = ScorePlayerTeam.func_200541_a(this.func_96124_cp(), this.func_200200_C_());
 +      ITextComponent itextcomponent = new StringTextComponent("");
 +      prefixes.forEach(e -> itextcomponent.func_150257_a(e));
-+      itextcomponent.func_150257_a(ScorePlayerTeam.func_200541_a(this.func_96124_cp(), this.func_200200_C_()));
++      itextcomponent.func_150257_a(ScorePlayerTeam.func_200541_a(this.func_96124_cp(), this.func_200201_e() == null ? this.func_200200_C_() : this.func_200201_e()));
 +      suffixes.forEach(e -> itextcomponent.func_150257_a(e));
        return this.func_208016_c(itextcomponent);
     }
