@@ -1,0 +1,20 @@
+--- a/net/minecraft/data/AdvancementProvider.java
++++ b/net/minecraft/data/AdvancementProvider.java
+@@ -47,12 +47,16 @@
+          }
+       };
+ 
+-      for(Consumer<Consumer<Advancement>> consumer1 : this.field_204283_d) {
++      for(Consumer<Consumer<Advancement>> consumer1 : this.getAdvancements()) {
+          consumer1.accept(consumer);
+       }
+ 
+    }
+ 
++   protected List<Consumer<Consumer<Advancement>>> getAdvancements() {
++      return field_204283_d;
++   }
++
+    private static Path func_218428_a(Path p_218428_0_, Advancement p_218428_1_) {
+       return p_218428_0_.resolve("data/" + p_218428_1_.func_192067_g().func_110624_b() + "/advancements/" + p_218428_1_.func_192067_g().func_110623_a() + ".json");
+    }
