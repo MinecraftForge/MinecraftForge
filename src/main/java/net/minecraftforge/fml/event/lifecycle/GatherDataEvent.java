@@ -28,8 +28,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class GatherDataEvent extends ModLifecycleEvent
 {
@@ -61,9 +63,14 @@ public class GatherDataEvent extends ModLifecycleEvent
         private final boolean dev;
         private final boolean reports;
         private final boolean validate;
+        private final boolean flat;
         private List<DataGenerator> generators = new ArrayList<>();
 
+        @Deprecated //Remove in 1.16
         public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate) {
+            this(mods, path, inputs, server, client, dev, reports, validate, false);
+        }
+        public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate, final boolean flat) {
             this.mods = mods;
             this.path = path;
             this.inputs = inputs;
@@ -72,20 +79,34 @@ public class GatherDataEvent extends ModLifecycleEvent
             this.dev = dev;
             this.reports = reports;
             this.validate = validate;
+            this.flat = flat;
+
         }
 
         public Set<String> getMods() {
             return mods;
         }
 
+        public boolean isFlat() {
+            return flat || getMods().size() == 1;
+        }
+
         public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
             final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
-            if (shouldExecute) generators.add(generator);
+            if (shouldExecute)
+                generators.add(generator);
             return generator;
         }
 
         public void runAll() {
-            generators.forEach(LamdbaExceptionUtils.rethrowConsumer(DataGenerator::run));
+            Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder));
+
+            paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
+                DataGenerator parent = lst.get(0);
+                for (int x = 1; x < lst.size(); x++)
+                    lst.get(x).getProviders().forEach(parent::addProvider);
+                parent.run();
+            }));
         }
     }
 }
