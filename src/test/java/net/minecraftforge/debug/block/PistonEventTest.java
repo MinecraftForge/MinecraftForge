@@ -28,22 +28,31 @@ import net.minecraft.block.PistonBlock;
 import net.minecraft.block.PistonBlockStructureHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.PistonEvent.PistonMoveType;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * This test mod blocks pistons from moving cobblestone at all except indirectly
@@ -55,21 +64,22 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(value = PistonEventTest.MODID)
 public class PistonEventTest
 {
-
     public static final String MODID = "piston_event_test";
+    public static String blockName = "shiftonmove";
+    private static DeferredRegister<Block> BLOCKS = new DeferredRegister<Block>(ForgeRegistries.BLOCKS, MODID);
+    private static DeferredRegister<Item>  ITEMS  = new DeferredRegister<Item> (ForgeRegistries.ITEMS,  MODID);
 
-    private static Block shiftOnMove = new BlockShiftOnMove();
-
-    @SubscribeEvent
-    public static void regItem(RegistryEvent.Register<Item> event)
-    {
-        event.getRegistry().register(new BlockItem(shiftOnMove, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(shiftOnMove.getRegistryName()));
+    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.create(Material.ROCK)));
+    static {
+        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
     }
 
-    @SubscribeEvent
-    public static void regBlock(RegistryEvent.Register<Block> event)
+    public PistonEventTest()
     {
-        event.getRegistry().register(shiftOnMove);
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        BLOCKS.register(modBus);
+        ITEMS.register(modBus);
+        modBus.addListener(this::gatherData);
     }
 
     @SubscribeEvent
@@ -79,7 +89,7 @@ public class PistonEventTest
         {
             World world = (World) event.getWorld();
             PistonBlockStructureHelper pistonHelper = event.getStructureHelper();
-            PlayerEntity player = DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (world.isRemote && player != null)
             {
                 if (pistonHelper.canMove())
@@ -108,10 +118,10 @@ public class PistonEventTest
 
             // Make the block move up and out of the way so long as it won't replace the piston
             BlockPos pushedBlockPos = event.getFaceOffsetPos();
-            if (world.getBlockState(pushedBlockPos).getBlock() == shiftOnMove && event.getDirection() != Direction.DOWN)
+            if (world.getBlockState(pushedBlockPos).getBlock() == shiftOnMove.get() && event.getDirection() != Direction.DOWN)
             {
                 world.setBlockState(pushedBlockPos, Blocks.AIR.getDefaultState());
-                world.setBlockState(pushedBlockPos.up(), shiftOnMove.getDefaultState());
+                world.setBlockState(pushedBlockPos.up(), shiftOnMove.get().getDefaultState());
             }
 
             // Block pushing cobblestone (directly, indirectly works)
@@ -121,7 +131,7 @@ public class PistonEventTest
         {
             boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
-            PlayerEntity player = DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (event.getWorld().isRemote() && player != null)
             {
                 if (isSticky)
@@ -141,17 +151,30 @@ public class PistonEventTest
         }
     }
 
-    public static class BlockShiftOnMove extends Block
+    public void gatherData(GatherDataEvent event)
     {
-        public static String blockName = "shiftonmove";
-        public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+        DataGenerator gen = event.getGenerator();
 
-        public BlockShiftOnMove()
+        if (event.includeClient())
         {
-            super(Block.Properties.create(Material.ROCK));
-            this.setRegistryName(blockId);
+            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
+        }
+    }
+
+    private class BlockStates extends BlockStateProvider
+    {
+        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        {
+            super(gen, MODID, exFileHelper);
         }
 
+        @Override
+        protected void registerStatesAndModels()
+        {
+            ModelFile model = models().cubeAll(shiftOnMove.get().getRegistryName().getPath(), mcLoc("block/furnace_top"));
+            simpleBlock(shiftOnMove.get(), model);
+            simpleBlockItem(shiftOnMove.get(), model);
+        }
     }
 
 }

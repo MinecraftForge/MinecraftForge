@@ -14,3 +14,10 @@
 *.cfg text eol=lf
 *.py text eol=lf
 *.jks binary
+
+# Disable autocrlf on generated files, they always generate with LF
+src/generated/**/.cache/cache text eol=lf
+src/generated/**/*.json text eol=lf
+src/generated_test/**/.cache/cache text eol=lf
+src/generated_test/**/*.json text eol=lf
+

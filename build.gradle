@@ -352,8 +352,11 @@ project(':forge') {
                     tests { sources  sourceSets.test }
                 }
                 
-                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/'), '--validate',
-                        '--existing', sourceSets.main.resources.srcDirs[0]
+                args '--flat', '--all', '--validate',
+                    '--mod', 'data_gen_test', 
+                    '--mod', 'piston_event_test', 
+                    '--output', rootProject.file('src/generated_test/resources/'),
+                    '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }
@@ -1074,6 +1077,7 @@ project(':forge') {
                 MAPPING_VERSION: MAPPING_VERSION
             ])
             rename 'gitignore\\.txt', '.gitignore'
+            rename 'gitattributes\\.txt', '.gitattributes'
         }
     }
     
