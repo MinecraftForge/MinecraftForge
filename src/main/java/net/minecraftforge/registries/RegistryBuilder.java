@@ -108,10 +108,20 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> onAdd(AddCallback<T> add)
+    {
+        return this.add(add);
+    }
+
     public RegistryBuilder<T> add(ClearCallback<T> clear)
     {
         this.clearCallback.add(clear);
         return this;
+    }
+
+    public RegistryBuilder<T> onClear(ClearCallback<T> clear)
+    {
+        return this.add(clear);
     }
 
     public RegistryBuilder<T> add(CreateCallback<T> create)
@@ -120,10 +130,20 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> onCreate(CreateCallback<T> create)
+    {
+        return this.add(create);
+    }
+
     public RegistryBuilder<T> add(ValidateCallback<T> validate)
     {
         this.validateCallback.add(validate);
         return this;
+    }
+
+    public RegistryBuilder<T> onValidate(ValidateCallback<T> validate)
+    {
+        return this.add(validate);
     }
 
     public RegistryBuilder<T> add(BakeCallback<T> bake)
@@ -132,10 +152,20 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> onBake(BakeCallback<T> bake)
+    {
+        return this.add(bake);
+    }
+
     public RegistryBuilder<T> set(DummyFactory<T> factory)
     {
         this.dummyFactory = factory;
         return this;
+    }
+
+    public RegistryBuilder<T> dummy(DummyFactory<T> factory)
+    {
+        return this.set(factory);
     }
 
     public RegistryBuilder<T> set(MissingFactory<T> missing)
@@ -144,12 +174,17 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> missing(MissingFactory<T> missing)
+    {
+        return this.set(missing);
+    }
+
     public RegistryBuilder<T> disableSaving()
     {
         this.saveToDisc = false;
         return this;
     }
-    
+
     public RegistryBuilder<T> disableSync()
     {
         this.sync = false;
@@ -167,12 +202,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         this.allowModifications = true;
         return this;
     }
-    
+
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
     }
-    
+
     public RegistryBuilder<T> legacyName(ResourceLocation name)
     {
         this.legacyNames.add(name);
@@ -306,12 +341,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     {
         return saveToDisc;
     }
-    
+
     public boolean getSync()
     {
         return sync;
     }
-    
+
     public Set<ResourceLocation> getLegacyNames()
     {
         return legacyNames;
