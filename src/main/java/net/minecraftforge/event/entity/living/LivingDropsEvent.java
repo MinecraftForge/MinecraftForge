@@ -31,7 +31,7 @@ import net.minecraft.entity.LivingEntity;
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
  * This event is fired whenever an Entity dies and drops items in
- * {@link LivingEntity#onDeath(DamageSource)}.<br>
+ * {@link LivingEntity#spawnDrops(DamageSource)}.<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingDrops(LivingEntity, DamageSource, Collection, int, boolean)}.<br>
  * <br>

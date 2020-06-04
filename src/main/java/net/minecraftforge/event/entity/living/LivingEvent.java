@@ -69,8 +69,7 @@ public class LivingEvent extends EntityEvent
     /**
      * LivingJumpEvent is fired when an Entity jumps.<br>
      * This event is fired whenever an Entity jumps in
-     * {@link LivingEntity#jump()}, {@link net.minecraft.entity.monster.MagmaCubeEntity#jump()},
-     * and {@link net.minecraft.entity.passive.horse.HorseEntity#jump()}.<br>
+     * {@link LivingEntity#jump()} and the override {@link net.minecraft.entity.monster.MagmaCubeEntity#jump()} .<br>
      * <br>
      * This event is fired via the {@link ForgeHooks#onLivingJump(LivingEntity)}.<br>
      * <br>

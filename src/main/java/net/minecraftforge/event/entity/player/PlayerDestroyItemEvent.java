@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
  * and {@link ForgeHooks#getContainerItem(ItemStack)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
- * (@link #hand) contains the hand that the current item was held in.<br>
+ * {@link #hand} contains the hand that the current item was held in.<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>

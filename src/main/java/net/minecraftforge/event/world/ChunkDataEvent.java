@@ -93,7 +93,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Save is fired when vanilla Minecraft attempts to save Chunk data.<br>
      * This event is fired during chunk saving in
-     * {@link net.minecraft.world.server.ChunkManager#func_219229_a(IChunk)} )}. <br>
+     * {@link net.minecraft.world.server.ChunkManager#func_219229_a(IChunk)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

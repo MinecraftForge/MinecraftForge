@@ -91,9 +91,9 @@ public class WorldEvent extends Event
      * WorldEvent.Unload is fired when Minecraft unloads a world.<br>
      * This event is fired when a world is unloaded in
      * {@link Minecraft#loadWorld(ClientWorld)},
+     * {@link Minecraft#unloadWorld}
      * {@link MinecraftServer#stopServer()},
-     * {@link net.minecraftforge.common.DimensionManager#unloadWorlds},
-     * {@link net.minecraftforge.common.ForgeInternalHandler#onDimensionUnload}. <br>
+     * {@link net.minecraftforge.common.DimensionManager#unloadWorlds}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

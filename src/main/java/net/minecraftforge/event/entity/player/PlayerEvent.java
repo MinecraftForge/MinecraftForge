@@ -93,7 +93,7 @@ public class PlayerEvent extends LivingEvent
     /**
      * BreakSpeed is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * {@link PlayerEntity#canHarvestBlock(BlockState)}.<br>
+     * {@link PlayerEntity#getDigSpeed(BlockState, BlockPos)}.<br>
      * <br>
      * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(PlayerEntity, BlockState, float, BlockPos)}.<br>
      * <br>
