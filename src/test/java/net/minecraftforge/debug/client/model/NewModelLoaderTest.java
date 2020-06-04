@@ -118,6 +118,10 @@ public class NewModelLoaderTest
             new Item(new Item.Properties().group(ItemGroup.MISC))
     );
 
+    public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
+            new Item(new Item.Properties().group(ItemGroup.MISC))
+    );
+
     public NewModelLoaderTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
