@@ -9,3 +9,14 @@
     private static final Logger field_206866_A = LogManager.getLogger();
     public static final TileEntityType<FurnaceTileEntity> field_200971_b = func_200966_a("furnace", TileEntityType.Builder.func_223042_a(FurnaceTileEntity::new, Blocks.field_150460_al));
     public static final TileEntityType<ChestTileEntity> field_200972_c = func_200966_a("chest", TileEntityType.Builder.func_223042_a(ChestTileEntity::new, Blocks.field_150486_ae));
+@@ -115,6 +115,10 @@
+          return new TileEntityType.Builder<>(p_223042_0_, ImmutableSet.copyOf(p_223042_1_));
+       }
+ 
++      public static <T extends TileEntity> TileEntityType.Builder<T> create(Supplier<? extends T> factoryIn, ImmutableSet<Block> validBlocks) {
++         return new TileEntityType.Builder<>(factoryIn, validBlocks);
++      }
++
+       public TileEntityType<T> func_206865_a(Type<?> p_206865_1_) {
+          return new TileEntityType<>(this.field_200965_a, this.field_223044_b, p_206865_1_);
+       }
