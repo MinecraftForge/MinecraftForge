@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/gen/layer/DeepOceanLayer.java
++++ b/net/minecraft/world/gen/layer/DeepOceanLayer.java
+@@ -26,27 +26,8 @@
+          }
+ 
+          if (i > 3) {
+-            if (p_202748_6_ == LayerUtil.field_203632_a) {
+-               return LayerUtil.field_203635_f;
+-            }
+-
+-            if (p_202748_6_ == LayerUtil.field_203633_b) {
+-               return LayerUtil.field_203636_g;
+-            }
+-
+-            if (p_202748_6_ == LayerUtil.field_202832_c) {
+-               return LayerUtil.field_202830_a;
+-            }
+-
+-            if (p_202748_6_ == LayerUtil.field_203634_d) {
+-               return LayerUtil.field_203637_i;
+-            }
+-
+-            if (p_202748_6_ == LayerUtil.field_202831_b) {
+-               return LayerUtil.field_203638_j;
+-            }
+-
+-            return LayerUtil.field_202830_a;
++            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> oceanBiomes = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_202748_6_), null, false);
++            return oceanBiomes != null ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b((net.minecraft.util.WeightedRandom.func_180166_a(oceanBiomes, p_202748_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(oceanBiomes))).biome)) : LayerUtil.field_202830_a;
+          }
+       }
+ 

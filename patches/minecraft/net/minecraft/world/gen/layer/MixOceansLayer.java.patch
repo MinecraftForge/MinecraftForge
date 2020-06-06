@@ -1,0 +1,50 @@
+--- a/net/minecraft/world/gen/layer/MixOceansLayer.java
++++ b/net/minecraft/world/gen/layer/MixOceansLayer.java
+@@ -17,37 +17,29 @@
+          int k = 8;
+          int l = 4;
+ 
++         net.minecraft.world.biome.Biome jBiome = net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(j);
+          for(int i1 = -8; i1 <= 8; i1 += 4) {
+             for(int j1 = -8; j1 <= 8; j1 += 4) {
+                int k1 = p_215723_2_.func_202678_a(this.func_215721_a(p_215723_4_ + i1), this.func_215722_b(p_215723_5_ + j1));
+                if (!LayerUtil.func_202827_a(k1)) {
+-                  if (j == LayerUtil.field_203632_a) {
+-                     return LayerUtil.field_203633_b;
++                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> warmEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.WARM, false);
++                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> frozenEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.FROZEN, false);
++                  if (warmEntries != null) {
++                     return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(net.minecraft.util.WeightedRandom.func_180166_a(warmEntries, p_215723_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(warmEntries))).mixOcean);
+                   }
+ 
+-                  if (j == LayerUtil.field_202831_b) {
+-                     return LayerUtil.field_203634_d;
++                  if (frozenEntries != null) {
++                     return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(net.minecraft.util.WeightedRandom.func_180166_a(frozenEntries, p_215723_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(frozenEntries))).mixOcean);
+                   }
+                }
+             }
+          }
+ 
+          if (i == LayerUtil.field_202830_a) {
+-            if (j == LayerUtil.field_203633_b) {
+-               return LayerUtil.field_203636_g;
++            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> entries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, null, true);
++            if (entries != null) {
++               return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(net.minecraft.util.WeightedRandom.func_180166_a(entries, p_215723_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(entries))).mixOcean);
+             }
+-
+-            if (j == LayerUtil.field_202832_c) {
+-               return LayerUtil.field_202830_a;
+-            }
+-
+-            if (j == LayerUtil.field_203634_d) {
+-               return LayerUtil.field_203637_i;
+-            }
+-
+-            if (j == LayerUtil.field_202831_b) {
+-               return LayerUtil.field_203638_j;
+-            }
+          }
+ 
+          return j;

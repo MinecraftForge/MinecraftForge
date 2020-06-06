@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/layer/IslandLayer.java
++++ b/net/minecraft/world/gen/layer/IslandLayer.java
+@@ -10,7 +10,7 @@
+       if (p_215735_2_ == 0 && p_215735_3_ == 0) {
+          return 1;
+       } else {
+-         return p_215735_1_.func_202696_a(10) == 0 ? 1 : LayerUtil.field_202832_c;
++         return p_215735_1_.func_202696_a(10) == 0 ? 1 : net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(OceanLayer.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.NORMAL, p_215735_1_).biome);
+       }
+    }
+ }

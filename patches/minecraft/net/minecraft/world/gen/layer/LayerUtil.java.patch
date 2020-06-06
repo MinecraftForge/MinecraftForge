@@ -16,7 +16,7 @@
        IAreaFactory<T> lvt_9_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_227475_2_);
        lvt_8_1_ = HillsLayer.INSTANCE.func_202707_a((IExtendedNoiseRandom)p_227475_2_.apply(1000L), lvt_8_1_, lvt_9_1_);
        lvt_7_1_ = func_202829_a(1000L, ZoomLayer.NORMAL, lvt_7_1_, 2, p_227475_2_);
-@@ -120,6 +118,15 @@
+@@ -120,11 +118,20 @@
        }
     }
  
@@ -30,5 +30,12 @@
 +   /* ========================================= FORGE END ======================================*/
 +
     protected static boolean func_202827_a(int p_202827_0_) {
-       return p_202827_0_ == field_203632_a || p_202827_0_ == field_203633_b || p_202827_0_ == field_202832_c || p_202827_0_ == field_203634_d || p_202827_0_ == field_202831_b || p_202827_0_ == field_203635_f || p_202827_0_ == field_203636_g || p_202827_0_ == field_202830_a || p_202827_0_ == field_203637_i || p_202827_0_ == field_203638_j;
+-      return p_202827_0_ == field_203632_a || p_202827_0_ == field_203633_b || p_202827_0_ == field_202832_c || p_202827_0_ == field_203634_d || p_202827_0_ == field_202831_b || p_202827_0_ == field_203635_f || p_202827_0_ == field_203636_g || p_202827_0_ == field_202830_a || p_202827_0_ == field_203637_i || p_202827_0_ == field_203638_j;
++      return net.minecraftforge.common.BiomeManager.isOceanBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_202827_0_), false);
     }
+ 
+    protected static boolean func_203631_b(int p_203631_0_) {
+-      return p_203631_0_ == field_203632_a || p_203631_0_ == field_203633_b || p_203631_0_ == field_202832_c || p_203631_0_ == field_203634_d || p_203631_0_ == field_202831_b;
++      return net.minecraftforge.common.BiomeManager.isOceanBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_203631_0_), true);
+    }
+ }

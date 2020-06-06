@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.google.common.collect.Lists;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
@@ -36,14 +37,8 @@ public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
-    public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-
-    static
-    {
-        oceanBiomes.add(Biomes.OCEAN);
-        oceanBiomes.add(Biomes.DEEP_OCEAN);
-        oceanBiomes.add(Biomes.FROZEN_OCEAN);
-    }
+    private static List<Biome> deepOceanBiomes = new ArrayList<Biome>();
+    private static List<OceanBiomeEntry>[] oceanBiomes = setupOceanBiomes();
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -77,6 +72,17 @@ public class BiomeManager
 
         currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
 
+        return currentBiomes;
+    }
+
+    private static List<OceanBiomeEntry>[] setupOceanBiomes()
+    {
+        List<OceanBiomeEntry>[] currentBiomes = new List[OceanType.values().length];
+        currentBiomes[OceanType.WARM.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.LUKEWARM_OCEAN, 10));
+        currentBiomes[OceanType.LUKEWARM.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, 10));
+        currentBiomes[OceanType.FROZEN.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN, Biomes.COLD_OCEAN, 10));
+        currentBiomes[OceanType.COLD.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, 10));
+        currentBiomes[OceanType.NORMAL.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.OCEAN, Biomes.DEEP_OCEAN, Biomes.DEEP_OCEAN, 10));
         return currentBiomes;
     }
 
@@ -114,6 +120,24 @@ public class BiomeManager
         }
     }
 
+    public static void addOceanBiome(OceanType type, OceanBiomeEntry entry)
+    {
+        int idx = type.ordinal();
+        List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
+        if (list != null) list.add(entry);
+    }
+
+    public static void removeOceanBiome(OceanType type, OceanBiomeEntry entry)
+    {
+        int idx = type.ordinal();
+        List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
+
+        if (list != null && list.contains(entry))
+        {
+            list.remove(entry);
+        }
+    }
+
     @Nullable
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
@@ -121,6 +145,53 @@ public class BiomeManager
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
+    }
+
+    @Nullable
+    public static ImmutableList<OceanBiomeEntry> getOceanBiomes(OceanType type)
+    {
+        int idx = type.ordinal();
+        List<OceanBiomeEntry> list = idx >= oceanBiomes.length ? null : oceanBiomes[idx];
+
+        return list != null ? ImmutableList.copyOf(list) : null;
+    }
+
+    @Nullable
+    public static ImmutableList<OceanBiomeEntry> getOceanBiomesForBiome(Biome biome, @Nullable OceanType type, boolean excludeWarm)
+    {
+        OceanType[] values = type != null ? new OceanType[] {type} : OceanType.values();
+        List<OceanBiomeEntry> list = new ArrayList<>();
+        for(OceanType types : values)
+        {
+            for(OceanBiomeEntry entry : getOceanBiomes(types))
+            {
+                if(entry.biome == biome && (excludeWarm ? type != OceanType.WARM : true))
+                {
+                    list.add(entry);
+                }
+            }
+        }
+        return list.isEmpty() ? null : ImmutableList.copyOf(list);
+    }
+
+    public static List<Biome> getDeepOceanBiomes()
+    {
+        return deepOceanBiomes;
+    }
+
+    public static boolean isOceanBiome(Biome biome, boolean shallow)
+    {
+        for(OceanType type : OceanType.values())
+        {
+            for(OceanBiomeEntry entry : getOceanBiomes(type))
+            {
+                if((shallow && entry.biome == biome) || (!shallow && (entry.biome == biome || entry.deepOcean == biome)))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean isTypeListModded(BiomeType type)
@@ -142,6 +213,11 @@ public class BiomeManager
         }
     }
 
+    public static enum OceanType
+    {
+        WARM, LUKEWARM, FROZEN, COLD, NORMAL;
+    }
+
     public static class BiomeEntry extends WeightedRandom.Item
     {
         public final Biome biome;
@@ -151,6 +227,23 @@ public class BiomeManager
             super(weight);
 
             this.biome = biome;
+        }
+    }
+
+    public static class OceanBiomeEntry extends BiomeEntry
+    {
+        public final Biome deepOcean;
+        public final Biome mixOcean;
+
+        public OceanBiomeEntry(Biome ocean, Biome deepOcean, Biome mixOcean, int weight)
+        {
+            super(ocean, weight);
+            if(!deepOceanBiomes.contains(deepOcean))
+            {
+                deepOceanBiomes.add(deepOcean);
+            }
+            this.deepOcean = deepOcean;
+            this.mixOcean = mixOcean;
         }
     }
 

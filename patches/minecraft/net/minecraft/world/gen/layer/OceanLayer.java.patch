@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/gen/layer/OceanLayer.java
++++ b/net/minecraft/world/gen/layer/OceanLayer.java
+@@ -11,13 +11,18 @@
+       ImprovedNoiseGenerator improvednoisegenerator = p_215735_1_.func_205589_a();
+       double d0 = improvednoisegenerator.func_215456_a((double)p_215735_2_ / 8.0D, (double)p_215735_3_ / 8.0D, 0.0D, 0.0D, 0.0D);
+       if (d0 > 0.4D) {
+-         return LayerUtil.field_203632_a;
++         return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.WARM, p_215735_1_).biome);
+       } else if (d0 > 0.2D) {
+-         return LayerUtil.field_203633_b;
++         return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.LUKEWARM, p_215735_1_).biome);
+       } else if (d0 < -0.4D) {
+-         return LayerUtil.field_202831_b;
++         return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.FROZEN, p_215735_1_).biome);
+       } else {
+-         return d0 < -0.2D ? LayerUtil.field_203634_d : LayerUtil.field_202832_c;
++         return d0 < -0.2D ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.COLD, p_215735_1_).biome) : net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(this.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.NORMAL, p_215735_1_).biome);
+       }
+    }
++
++   public static net.minecraftforge.common.BiomeManager.OceanBiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType type, INoiseRandom context) {
++      java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> biomeList = net.minecraftforge.common.BiomeManager.getOceanBiomes(type);
++      return net.minecraft.util.WeightedRandom.func_180166_a(biomeList, context.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(biomeList)));
++   }
+ }
