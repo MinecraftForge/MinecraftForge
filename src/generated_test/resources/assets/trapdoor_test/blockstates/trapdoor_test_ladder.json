@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,waterlogged=false": {
+      "model": "minecraft:block/ladder"
+    },
+    "facing=south,waterlogged=false": {
+      "model": "minecraft:block/ladder",
+      "y": 180
+    },
+    "facing=west,waterlogged=false": {
+      "model": "minecraft:block/ladder",
+      "y": 270
+    },
+    "facing=east,waterlogged=false": {
+      "model": "minecraft:block/ladder",
+      "y": 90
+    },
+    "facing=north,waterlogged=true": {
+      "model": "minecraft:block/ladder"
+    },
+    "facing=south,waterlogged=true": {
+      "model": "minecraft:block/ladder",
+      "y": 180
+    },
+    "facing=west,waterlogged=true": {
+      "model": "minecraft:block/ladder",
+      "y": 270
+    },
+    "facing=east,waterlogged=true": {
+      "model": "minecraft:block/ladder",
+      "y": 90
+    }
+  }
+}
