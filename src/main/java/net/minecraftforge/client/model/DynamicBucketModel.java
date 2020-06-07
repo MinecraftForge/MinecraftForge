@@ -39,6 +39,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.IResourceType;
@@ -112,7 +113,9 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
         if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
         {
-            modelTransform = new ModelTransformComposition(modelTransform, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)));
+            modelTransform = new SimpleModelTransform(
+                    modelTransform.getRotation().blockCornerToCenter().composeVanilla(
+                            new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)).blockCenterToCorner());
         }
 
         TransformationMatrix transform = modelTransform.getRotation();
