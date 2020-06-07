@@ -2,11 +2,14 @@ package net.minecraftforge.debug;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.List;
@@ -33,7 +36,7 @@ public class ConfigSupportsStringAndListTest
         testStringValue = builder
                 .defineString("string", "test123");
         testListValue = builder
-                .define("list", configList, Object::toString);
+                .defineList("list", configList, Object::toString);
 
         builder.pop();
 
@@ -42,12 +45,21 @@ public class ConfigSupportsStringAndListTest
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, spec);
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::preInitClient);
+        modEventBus.addListener(this::initClient);
+        MinecraftForge.EVENT_BUS.addListener(this::loadConfig);
     }
 
-    public void preInitClient(FMLClientSetupEvent event)
+    @SubscribeEvent
+    public void initClient(FMLClientSetupEvent event)
     {
-        LOGGER.info("PRE-STRING VALUE: " + testStringValue.get());
-        LOGGER.info("PRE-LIST VALUE: " + testListValue.get().toString());
+        LOGGER.info("CLIENT TEST-STRING VALUE: " + testStringValue.get());
+        LOGGER.info("CLIENT TEST-LIST VALUE: " + testListValue.get().toString());
+    }
+
+    @SubscribeEvent
+    public void loadConfig(FMLServerAboutToStartEvent event)
+    {
+        LOGGER.info("SERVER TEST STRING VALUE: " + testStringValue.get());
+        LOGGER.info("SERVER TEST LIST VALUE: " + testListValue.get().toString());
     }
 }

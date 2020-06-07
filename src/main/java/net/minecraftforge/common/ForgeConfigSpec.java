@@ -330,22 +330,22 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(path, defaultSupplier, acceptableValues::contains);
         }
         //List
-        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        /** @deprecated use {@link #defineList(List, Supplier, Predicate, Function)} instead for correct types */
         @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
-        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        /** @deprecated use {@link #defineList(List, Supplier, Predicate, Function)} instead for correct types */
         @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(String path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultSupplier, elementValidator);
         }
-        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        /** @deprecated use {@link #defineList(List, Supplier, Predicate, Function)} instead for correct types */
         @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(path, () -> defaultValue, elementValidator);
         }
-        /** @deprecated use {@link #define(List, Supplier, Predicate, Function)} instead for correct types */
+        /** @deprecated use {@link #defineList(List, Supplier, Predicate, Function)} instead for correct types */
         @Deprecated
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
@@ -364,13 +364,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }
             }, defaultSupplier);
         }
-        /** @see #define(List, Supplier, Predicate, Function) **/
-        public <T> ListValue<T> define(String path, List<T> defaultValue, Function<Object, T> elementConverter) {
-            return define(split(path), () -> defaultValue, Objects::nonNull, elementConverter);
+        /** @see #defineList(List, Supplier, Predicate, Function) **/
+        public <T> ListValue<T> defineList(String path, List<T> defaultValue, Function<Object, T> elementConverter) {
+            return defineList(split(path), () -> defaultValue, Objects::nonNull, elementConverter);
         }
-        /** @see #define(List, Supplier, Predicate, Function) **/
-        public <T> ListValue<T> define(String path, List<T> defaultValue, Predicate<Object> elementValidator, Function<Object, T> elementConverter) {
-            return define(split(path), () -> defaultValue, elementValidator, elementConverter);
+        /** @see #defineList(List, Supplier, Predicate, Function) **/
+        public <T> ListValue<T> defineList(String path, List<T> defaultValue, Predicate<Object> elementValidator, Function<Object, T> elementConverter) {
+            return defineList(split(path), () -> defaultValue, elementValidator, elementConverter);
         }
         /**
          * Define a new list/array entry in the config. The list is retrieved via {@link ListValue#get()}
@@ -382,7 +382,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
          * @param elementConverter the function that will convert each element of the list to its appropriate type
          * @return a new {@link ListValue}
          */
-        public <T> ListValue<T> define(List<String> path, Supplier<List<T>> defaultSupplier, Predicate<Object> elementValidator, Function<Object, T> elementConverter)
+        public <T> ListValue<T> defineList(List<String> path, Supplier<List<T>> defaultSupplier, Predicate<Object> elementValidator, Function<Object, T> elementConverter)
         {
             context.setClazz(List.class);
             Predicate<Object> configValidator = x -> x instanceof List && ((List<?>)x).stream().allMatch(elementValidator);
