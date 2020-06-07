@@ -815,4 +815,17 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
+
+    public static void drawItemLayered(ItemRenderer renderer, IBakedModel modelIn, ItemStack itemStackIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
+    {
+        for(com.mojang.datafixers.util.Pair<IBakedModel,RenderType> layerModel : modelIn.getLayerModels(itemStackIn)) {
+            modelIn = layerModel.getFirst();
+            RenderType rendertype = layerModel.getSecond();
+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype); // neded for compatibility with MultiLayerModels
+
+            IVertexBuilder ivertexbuilder = ItemRenderer.getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
+            renderer.renderModel(modelIn, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
+        }
+        net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+    }
 }
