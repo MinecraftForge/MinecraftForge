@@ -37,6 +37,8 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -130,5 +132,80 @@ public class ItemMultiLayerBakedModel implements IBakedModel
     public List<Pair<IBakedModel, RenderType>> getLayerModels(ItemStack itemStack)
     {
         return layerModels;
+    }
+
+    public static Builder builder(IModelConfiguration owner, TextureAtlasSprite particle, ItemOverrideList overrides,
+                                  ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> cameraTransforms)
+    {
+        return new Builder(owner, particle, overrides, cameraTransforms);
+    }
+
+    public static class Builder
+    {
+        private final ImmutableList.Builder<Pair<IBakedModel, RenderType>> builder = ImmutableList.builder();
+        private final List<BakedQuad> quads = Lists.newArrayList();
+        private final ItemOverrideList overrides;
+        private final ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> cameraTransforms;
+        private final IModelConfiguration owner;
+        private TextureAtlasSprite particle;
+        private RenderType lastRt = null;
+
+        private Builder(IModelConfiguration owner, TextureAtlasSprite particle, ItemOverrideList overrides,
+                        ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> cameraTransforms)
+        {
+            this.owner = owner;
+            this.particle = particle;
+            this.overrides = overrides;
+            this.cameraTransforms = cameraTransforms;
+        }
+
+        private void addLayer(ImmutableList.Builder<Pair<IBakedModel, RenderType>> builder, List<BakedQuad> quads, RenderType rt)
+        {
+            IBakedModel model = new BakedItemModel(ImmutableList.copyOf(quads), particle, ImmutableMap.of(), ItemOverrideList.EMPTY, true, owner.isSideLit());
+            builder.add(Pair.of(model, rt));
+        }
+
+        private void flushQuads(RenderType rt)
+        {
+            if (rt != lastRt)
+            {
+                if (quads.size() > 0)
+                {
+                    addLayer(builder, quads, lastRt);
+                    quads.clear();
+                }
+                lastRt = rt;
+            }
+        }
+
+        public Builder setParticle(TextureAtlasSprite particleSprite)
+        {
+            this.particle = particleSprite;
+            return this;
+        }
+
+        public Builder addQuads(RenderType rt, BakedQuad... quadsToAdd)
+        {
+            flushQuads(rt);
+            Collections.addAll(quads, quadsToAdd);
+            return this;
+        }
+
+        public Builder addQuads(RenderType rt, Collection<BakedQuad> quadsToAdd)
+        {
+            flushQuads(rt);
+            quads.addAll(quadsToAdd);
+            return this;
+        }
+
+        public IBakedModel build()
+        {
+            if (quads.size() > 0)
+            {
+                addLayer(builder, quads, lastRt);
+            }
+            return new ItemMultiLayerBakedModel(owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
+                    particle, overrides, cameraTransforms, builder.build());
+        }
     }
 }

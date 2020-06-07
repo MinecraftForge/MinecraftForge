@@ -94,42 +94,27 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
                             Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform,
                             ItemOverrideList overrides, ResourceLocation modelLocation)
     {
+        ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transformMap =
+                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform));
         TransformationMatrix transform = modelTransform.getRotation();
         TextureAtlasSprite particle = spriteGetter.apply(
                 owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : textures.get(0)
         );
 
-        ImmutableList.Builder<Pair<IBakedModel,RenderType>> builder = ImmutableList.builder();
-        List<BakedQuad> quads = Lists.newArrayList();
-        boolean lastFullbright = false;
+        ItemMultiLayerBakedModel.Builder builder = ItemMultiLayerBakedModel.builder(owner, particle, overrides, transformMap);
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
-            boolean isFullbright = fullbrightLayers.contains(i);
-            if (isFullbright != lastFullbright && quads.size() > 0)
-            {
-                addLayer(owner, particle, builder, quads, lastFullbright);
-                quads.clear();
-                lastFullbright = isFullbright;
-            }
-            quads.addAll(getQuadsForSprite(i, tas, transform, true));
-        }
-        if (quads.size() > 0)
-        {
-            addLayer(owner, particle, builder, quads, lastFullbright);
+            RenderType rt = getLayerRenderType(fullbrightLayers.contains(i));
+            builder.addQuads(rt, getQuadsForSprite(i, tas, transform, true));
         }
 
-        ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> cameraTransforms =
-                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform));
-        return new ItemMultiLayerBakedModel(owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
-                particle, overrides, cameraTransforms, builder.build());
+        return builder.build();
     }
 
-    private void addLayer(IModelConfiguration owner, TextureAtlasSprite particle, ImmutableList.Builder<Pair<IBakedModel, RenderType>> builder, List<BakedQuad> quads, boolean lastFullbright)
+    public static RenderType getLayerRenderType(boolean isFullbright)
     {
-        IBakedModel model = new BakedItemModel(ImmutableList.copyOf(quads), particle, ImmutableMap.of(), ItemOverrideList.EMPTY, true, owner.isSideLit());
-        RenderType rt = lastFullbright ? ForgeRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get() : ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get();
-        builder.add(Pair.of(model, rt));
+        return isFullbright ? ForgeRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get() : ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get();
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter)
