@@ -27,7 +27,6 @@ import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
@@ -39,7 +38,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.IResourceType;
@@ -71,13 +69,21 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     private final boolean flipGas;
     private final boolean tint;
     private final boolean coverIsMask;
+    private final boolean applyFluidLuminosity;
 
+    @Deprecated
     public DynamicBucketModel(Fluid fluid, boolean flipGas, boolean tint, boolean coverIsMask)
+    {
+        this(fluid, flipGas, tint, coverIsMask, true);
+    }
+
+    public DynamicBucketModel(Fluid fluid, boolean flipGas, boolean tint, boolean coverIsMask, boolean applyFluidLuminosity)
     {
         this.fluid = fluid;
         this.flipGas = flipGas;
         this.tint = tint;
         this.coverIsMask = coverIsMask;
+        this.applyFluidLuminosity = applyFluidLuminosity;
     }
 
     /**
@@ -86,7 +92,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
      */
     public DynamicBucketModel withFluid(Fluid newFluid)
     {
-        return new DynamicBucketModel(newFluid, flipGas, tint, coverIsMask);
+        return new DynamicBucketModel(newFluid, flipGas, tint, coverIsMask, applyFluidLuminosity);
     }
 
     @Override
@@ -120,7 +126,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 
         TransformationMatrix transform = modelTransform.getRotation();
 
-        ItemMultiLayerBakedModel.Builder builder = ItemMultiLayerBakedModel.builder(owner, particleSprite, new ContainedFluidOverrideHandler(overrides, bakery, owner, this, transformsFromModel), transformMap);
+        ItemMultiLayerBakedModel.Builder builder = ItemMultiLayerBakedModel.builder(owner, particleSprite, new ContainedFluidOverrideHandler(overrides, bakery, owner, this), transformMap);
 
         if (baseLocation != null)
         {
@@ -134,7 +140,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             if (templateSprite != null)
             {
                 // build liquid layer (inside)
-                int luminosity = fluid.getAttributes().getLuminosity();
+                int luminosity = applyFluidLuminosity ? fluid.getAttributes().getLuminosity() : 0;
                 int color = tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF;
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, color, 1, luminosity));
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, color, 1, luminosity));
@@ -227,8 +233,14 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
                 coverIsMask = modelContents.get("coverIsMask").getAsBoolean();
             }
 
+            boolean applyFluidLuminosity = true;
+            if (modelContents.has("applyFluidLuminosity"))
+            {
+                applyFluidLuminosity = modelContents.get("applyFluidLuminosity").getAsBoolean();
+            }
+
             // create new model with correct liquid
-            return new DynamicBucketModel(fluid, flip, tint, coverIsMask);
+            return new DynamicBucketModel(fluid, flip, tint, coverIsMask, applyFluidLuminosity);
         }
     }
 
@@ -239,15 +251,13 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         private final ModelBakery bakery;
         private final IModelConfiguration owner;
         private final DynamicBucketModel parent;
-        private final IModelTransform originalTransform;
 
-        private ContainedFluidOverrideHandler(ItemOverrideList nested, ModelBakery bakery, IModelConfiguration owner, DynamicBucketModel parent, IModelTransform originalTransform)
+        private ContainedFluidOverrideHandler(ItemOverrideList nested, ModelBakery bakery, IModelConfiguration owner, DynamicBucketModel parent)
         {
             this.nested = nested;
             this.bakery = bakery;
             this.owner = owner;
             this.parent = parent;
-            this.originalTransform = originalTransform;
         }
 
         @Override
