@@ -38,6 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class VanillaInventoryCodeHooks
 {
@@ -210,7 +211,7 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
-    private static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
+    private static Optional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
     {
         double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
         double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
@@ -244,7 +245,7 @@ public class VanillaInventoryCodeHooks
         return true;
     }
 
-    public static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final Direction side)
+    public static Optional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final Direction side)
     {
         int i = MathHelper.floor(x);
         int j = MathHelper.floor(y);
@@ -262,6 +263,6 @@ public class VanillaInventoryCodeHooks
             }
         }
 
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 }
