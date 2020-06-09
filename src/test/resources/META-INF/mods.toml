@@ -69,3 +69,5 @@ loaderVersion="[28,)"
     modId="custom_plant_type_test"
 [[mods]]
     modId="forgedebugmultilayermodel"
+[[mods]]
+    modId="stencil_backport_test"
