@@ -42,6 +42,7 @@ public class Tags
         public static final Tag<Block> FENCES = tag("fences");
         public static final Tag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final Tag<Block> FENCES_WOODEN = tag("fences/wooden");
+        public static final Tag<Block> MUSHROMM_FLOOR = tag("mushroom_floor");
 
         public static final Tag<Block> GLASS = tag("glass");
         public static final Tag<Block> GLASS_BLACK = tag("glass/black");

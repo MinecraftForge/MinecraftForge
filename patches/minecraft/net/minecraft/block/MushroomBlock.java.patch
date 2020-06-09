@@ -1,10 +1,20 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -64,7 +64,7 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.world.gen.feature.ConfiguredFeature;
+ import net.minecraft.world.gen.feature.Feature;
+ import net.minecraft.world.server.ServerWorld;
++import net.minecraftforge.common.Tags;
+ 
+ public class MushroomBlock extends BushBlock implements IGrowable {
+    protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+@@ -63,8 +64,8 @@
+       BlockPos blockpos = p_196260_3_.func_177977_b();
        BlockState blockstate = p_196260_2_.func_180495_p(blockpos);
        Block block = blockstate.func_177230_c();
-       if (block != Blocks.field_150391_bh && block != Blocks.field_196661_l) {
+-      if (block != Blocks.field_150391_bh && block != Blocks.field_196661_l) {
 -         return p_196260_2_.func_226659_b_(p_196260_3_, 0) < 13 && this.func_200014_a_(blockstate, p_196260_2_, blockpos);
++      if (!Tags.Blocks.MUSHROMM_FLOOR.func_199685_a_(block)) {
 +         return p_196260_2_.func_226659_b_(p_196260_3_, 0) < 13 && blockstate.canSustainPlant(p_196260_2_, blockpos, net.minecraft.util.Direction.UP, this);
        } else {
           return true;
