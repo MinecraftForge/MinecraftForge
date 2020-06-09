@@ -39,8 +39,8 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
 
     public final V setRegistryName(String name)
     {
-        if (getRegistryName() != null)
-            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
+        if (getRegistryNameNullable() != null)
+            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryNameNullable());
 
         this.registryName = GameData.checkPrefix(name, true);
         return (V)this;
@@ -52,7 +52,7 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     public final V setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
 
     @Nullable
-    public final ResourceLocation getRegistryName()
+    public final ResourceLocation getRegistryNameNullable()
     {
         if (delegate.name() != null) return delegate.name();
         return registryName != null ? registryName : null;

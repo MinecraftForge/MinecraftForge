@@ -60,7 +60,7 @@ public class ConditionalRecipe
         }
 
         @Override
-        public ResourceLocation getRegistryName()
+        public ResourceLocation getRegistryNameNullable()
         {
             return name;
         }

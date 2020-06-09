@@ -20,6 +20,7 @@
 package net.minecraftforge.registries;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface IForgeRegistryEntry<V>
@@ -41,7 +42,7 @@ public interface IForgeRegistryEntry<V>
      */
     V setRegistryName(ResourceLocation name);
 
-    /**
+     /**
      * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
      * Otherwise it will return the name set in setRegistryName().
      * If neither are valid null is returned.
@@ -49,7 +50,23 @@ public interface IForgeRegistryEntry<V>
      * @return Unique identifier or null.
      */
     @Nullable
-    ResourceLocation getRegistryName();
+    ResourceLocation getRegistryNameNullable();
+
+    /**
+     * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
+     * Otherwise it will return the name set in setRegistryName().
+     * If neither a {@link IllegalStateException} will be thrown
+     *
+     * @return Unique identifier
+     * @throws IllegalStateException when no name is available yet
+     */
+    @Nonnull
+    default ResourceLocation getRegistryName() {
+        ResourceLocation regName = getRegistryNameNullable();
+        if (regName == null)
+            throw new IllegalStateException("No registy name available!");
+        return regName;
+    }
 
     /**
      * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one

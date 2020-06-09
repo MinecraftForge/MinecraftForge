@@ -74,7 +74,6 @@ public class ChunkWatchEventTest
                 watched);
     }
 
-    @Nullable
     private static ResourceLocation getDimensionName(World w) {
         return w.getDimension().getType().getRegistryName();
     }

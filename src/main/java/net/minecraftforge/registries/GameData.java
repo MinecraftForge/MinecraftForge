@@ -288,16 +288,6 @@ public class GameData
         return (BiMap<String, Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURES, BiMap.class);
     }
 
-    public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
-    {
-        Validate.notNull(value, "Attempted to register a null object");
-        Validate.notNull(value.getRegistryName(), String.format("Attempt to register object without having set a registry name %s (type %s)", value, value.getClass().getName()));
-        final IForgeRegistry<K> registry = RegistryManager.ACTIVE.getRegistry(value.getRegistryType());
-        Validate.notNull(registry, "Attempted to registry object without creating registry first: " + value.getRegistryType().getName());
-        registry.register(value);
-        return value;
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
@@ -422,7 +412,7 @@ public class GameData
                             .collect(Collectors.joining(";"));
 
                     LOGGER.error(REGISTRIES,()-> new AdvancedLogMessageAdapter(sb-> {
-                        sb.append("Registry replacements for vanilla block '").append(block.getRegistryName()).
+                        sb.append("Registry replacements for vanilla block '").append(block.getRegistryNameNullable()).
                                 append("' must not change the number or order of blockstates.\n");
                         sb.append("\tOld: ").append(oldSequence).append('\n');
                         sb.append("\tNew: ").append(newSequence);

@@ -50,7 +50,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
         Validate.notNull(value);
 
-        if (value.getRegistryName() == null)
+        if (value.getRegistryNameNullable() == null)
             value.setRegistryName(key);
 
         int realId = this.delegate.add(id, value);

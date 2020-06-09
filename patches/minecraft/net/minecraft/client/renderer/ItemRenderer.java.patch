@@ -40,7 +40,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
-+            crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_184391_2_.func_77973_b().getRegistryName()));
++            crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_184391_2_.func_77973_b().getRegistryNameNullable()));
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });

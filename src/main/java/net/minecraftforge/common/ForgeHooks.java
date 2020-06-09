@@ -982,7 +982,7 @@ public class ForgeHooks
     public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
     {
         Item item = itemStack.getItem();
-        ResourceLocation registryName = item.getRegistryName();
+        ResourceLocation registryName = item.getRegistryNameNullable();
         String modId = registryName == null ? null : registryName.getNamespace();
         if ("minecraft".equals(modId))
         {
@@ -1010,7 +1010,7 @@ public class ForgeHooks
             }
             else if (item instanceof SpawnEggItem)
             {
-                ResourceLocation resourceLocation = ((SpawnEggItem)item).getType(null).getRegistryName();
+                ResourceLocation resourceLocation = ((SpawnEggItem)item).getType(null).getRegistryNameNullable();
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();

@@ -158,7 +158,7 @@
  
     public String toString() {
 -      return "Block{" + Registry.field_212618_g.func_177774_c(this) + "}";
-+      return "Block{" + getRegistryName() + "}";
++      return "Block{" + getRegistryNameNullable() + "}";
     }
  
     @OnlyIn(Dist.CLIENT)

@@ -36,8 +36,8 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
     private ResourceLocation registryName = null;
     
     public final GlobalLootModifierSerializer<T> setRegistryName(String name) {
-        if (getRegistryName() != null)
-            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
+        if (getRegistryNameNullable() != null)
+            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryNameNullable());
 
         this.registryName = GameData.checkPrefix(name, true);
         return this;
@@ -50,7 +50,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
     public final GlobalLootModifierSerializer<T> setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
 
     @Override
-    public final ResourceLocation getRegistryName() {
+    public final ResourceLocation getRegistryNameNullable() {
         return registryName;
     }
     

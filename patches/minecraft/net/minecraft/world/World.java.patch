@@ -134,10 +134,10 @@
              crashreportcategory.func_189529_a("Source block type", () -> {
                 try {
 -                  return String.format("ID #%s (%s // %s)", Registry.field_212618_g.func_177774_c(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
-+                  return String.format("ID #%s (%s // %s)", p_190524_2_.getRegistryName(), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
++                  return String.format("ID #%s (%s // %s)", p_190524_2_.getRegistryNameNullable(), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
                 } catch (Throwable var2) {
 -                  return "ID #" + Registry.field_212618_g.func_177774_c(p_190524_2_);
-+                  return "ID #" + p_190524_2_.getRegistryName();
++                  return "ID #" + p_190524_2_.getRegistryNameNullable();
                 }
              });
              CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, blockstate);
@@ -203,7 +203,7 @@
 +                  net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
                    iprofiler.func_194340_a(() -> {
 -                     return String.valueOf((Object)TileEntityType.func_200969_a(tileentity.func_200662_C()));
-+                     return String.valueOf(tileentity.func_200662_C().getRegistryName());
++                     return String.valueOf(tileentity.func_200662_C().getRegistryNameNullable());
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();

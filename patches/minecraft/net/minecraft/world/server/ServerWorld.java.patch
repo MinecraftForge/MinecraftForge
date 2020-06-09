@@ -148,7 +148,7 @@
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
 -               return Registry.field_212629_r.func_177774_c(p_217479_1_.func_200600_R()).toString();
-+               return p_217479_1_.func_200600_R().getRegistryName() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
++               return p_217479_1_.func_200600_R().getRegistryNameNullable() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
              });
 +            if (p_217479_1_.canUpdate())
              iprofiler.func_230035_c_("tickNonPassenger");

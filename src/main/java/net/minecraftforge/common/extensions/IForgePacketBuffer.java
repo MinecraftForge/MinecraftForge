@@ -95,7 +95,7 @@ public interface IForgePacketBuffer
         IForgeRegistry<T> retrievedRegistry = RegistryManager.ACTIVE.getRegistry(regType);
         Preconditions.checkArgument(retrievedRegistry!=null,"Cannot write registry id for an unknown registry type: %s",regType.getName());
         ResourceLocation name = retrievedRegistry.getRegistryName();
-        Preconditions.checkArgument(retrievedRegistry.containsValue(entry),"Cannot find %s in %s",entry.getRegistryName()!=null?entry.getRegistryName():entry,name);
+        Preconditions.checkArgument(retrievedRegistry.containsValue(entry),"Cannot find %s in %s",entry.getRegistryNameNullable()!=null?entry.getRegistryNameNullable():entry,name);
         ForgeRegistry<T> reg = (ForgeRegistry<T>)retrievedRegistry;
         getBuffer().writeResourceLocation(name); //TODO change to writing a varInt once registries use id's
         getBuffer().writeVarInt(reg.getID(entry));

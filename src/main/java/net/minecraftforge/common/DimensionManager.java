@@ -52,7 +52,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.IBiomeMagnifier;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.listener.IChunkStatusListener;
 import net.minecraft.world.server.ServerMultiWorld;

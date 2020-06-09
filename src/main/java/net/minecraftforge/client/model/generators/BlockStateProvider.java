@@ -531,7 +531,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     private void saveBlockState(DirectoryCache cache, JsonObject stateJson, Block owner) {
-        ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
+        ResourceLocation blockName = owner.getRegistryName();
         Path mainOutput = generator.getOutputFolder();
         String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
         Path outputPath = mainOutput.resolve(pathSuffix);

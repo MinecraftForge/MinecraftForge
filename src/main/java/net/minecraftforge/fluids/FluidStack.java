@@ -31,7 +31,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +63,7 @@ public class FluidStack
         }
         else if (ForgeRegistries.FLUIDS.getKey(fluid) == null)
         {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryName(), fluid.getClass().getName());
+            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryNameNullable(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
         this.fluidDelegate = fluid.delegate;

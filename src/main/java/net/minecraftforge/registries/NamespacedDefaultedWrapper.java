@@ -53,7 +53,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
         Validate.notNull(value);
 
-        if (value.getRegistryName() == null)
+        if (value.getRegistryNameNullable() == null)
             value.setRegistryName(key);
 
         int realId = this.delegate.add(id, value);
