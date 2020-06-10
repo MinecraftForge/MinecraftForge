@@ -58,7 +58,8 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getBuilder(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
         getBuilder(COBBLESTONE).add(Blocks.COBBLESTONE, Blocks.INFESTED_COBBLESTONE, Blocks.MOSSY_COBBLESTONE);
         getBuilder(DIRT).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM);
-        getBuilder(MUSHROMM_FLOOR).add(Blocks.MYCELIUM, Blocks.PODZOL);
+        getBuilder(MUSHROOM_FLOOR).add(Blocks.MYCELIUM, Blocks.PODZOL);
+        getBuilder(BUSH_FLOOR).add(Blocks.GRASS_BLOCK, Blocks.DIRT,Blocks.COARSE_DIRT,Blocks.PODZOL,Blocks.FARMLAND);
         getBuilder(END_STONES).add(Blocks.END_STONE);
         getBuilder(FENCE_GATES).add(FENCE_GATES_WOODEN);
         getBuilder(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE);

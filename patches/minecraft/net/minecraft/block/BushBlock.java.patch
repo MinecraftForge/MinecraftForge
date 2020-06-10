@@ -1,15 +1,25 @@
 --- a/net/minecraft/block/BushBlock.java
 +++ b/net/minecraft/block/BushBlock.java
-@@ -7,7 +7,7 @@
+@@ -6,15 +6,16 @@
+ import net.minecraft.world.IBlockReader;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
++import net.minecraftforge.common.Tags;
  
 -public class BushBlock extends Block {
 +public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
     protected BushBlock(Block.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
-@@ -23,6 +23,8 @@
+ 
+    protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+       Block block = p_200014_1_.func_177230_c();
+-      return block == Blocks.field_196658_i || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_150458_ak;
++      return Tags.Blocks.BUSH_FLOOR.func_199685_a_(block);
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+@@ -23,6 +24,8 @@
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockPos blockpos = p_196260_3_.func_177977_b();
@@ -18,7 +28,7 @@
        return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
     }
  
-@@ -33,4 +35,11 @@
+@@ -33,4 +36,11 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return p_196266_4_ == PathType.AIR && !this.field_196274_w ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
     }
