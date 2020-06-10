@@ -57,6 +57,8 @@ loaderVersion="[28,)"
     modId="music_disc_test"
 [[mods]]
     modId="stencil_enable_test"
+[[mods]]
+    modId="entity_event_test"
 [[dependencies.global_loot_test]]
     modId="forge"
     mandatory=true
