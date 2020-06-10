@@ -20,6 +20,7 @@
 package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.FireworkRocketEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
@@ -102,6 +103,23 @@ public class ProjectileImpactEvent extends EntityEvent
         public ThrowableEntity getThrowable()
         {
             return throwable;
+        }
+    }
+
+    @Cancelable
+    public static class FireworkRocket extends ProjectileImpactEvent
+    {
+        private final FireworkRocketEntity fireworkRocket;
+
+        public FireworkRocket(FireworkRocketEntity fireworkRocket, RayTraceResult ray)
+        {
+            super(fireworkRocket, ray);
+            this.fireworkRocket = fireworkRocket;
+        }
+
+        public FireworkRocketEntity getFireworkRocket()
+        {
+            return fireworkRocket;
         }
     }
 }
