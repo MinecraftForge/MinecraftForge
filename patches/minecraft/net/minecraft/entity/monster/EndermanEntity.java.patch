@@ -16,7 +16,17 @@
     }
  
     protected void func_70088_a() {
-@@ -234,7 +234,9 @@
+@@ -167,7 +167,8 @@
+          double d0 = vec3d1.func_72433_c();
+          vec3d1 = vec3d1.func_72432_b();
+          double d1 = vec3d.func_72430_b(vec3d1);
+-         return d1 > 1.0D - 0.025D / d0 ? p_70821_1_.func_70685_l(this) : false;
++         net.minecraftforge.event.entity.EndermanAttackEvent event = new net.minecraftforge.event.entity.EndermanAttackEvent(this, p_70821_1_);
++         return d1 > 1.0D - 0.025D / d0 && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)? p_70821_1_.func_70685_l(this) : false;
+       }
+    }
+ 
+@@ -234,7 +235,9 @@
        boolean flag = blockstate.func_185904_a().func_76230_c();
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
        if (flag && !flag1) {
@@ -27,7 +37,7 @@
           if (flag2) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -390,7 +392,7 @@
+@@ -390,7 +393,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -36,7 +46,7 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -408,7 +410,7 @@
+@@ -408,7 +411,7 @@
           BlockPos blockpos1 = blockpos.func_177977_b();
           BlockState blockstate1 = iworld.func_180495_p(blockpos1);
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
@@ -45,7 +55,7 @@
              iworld.func_180501_a(blockpos, blockstate2, 3);
              this.field_179475_a.func_195406_b((BlockState)null);
           }
-@@ -416,7 +418,7 @@
+@@ -416,7 +419,7 @@
        }
  
        private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
@@ -54,7 +64,7 @@
        }
     }
  
-@@ -458,7 +460,7 @@
+@@ -458,7 +461,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;
