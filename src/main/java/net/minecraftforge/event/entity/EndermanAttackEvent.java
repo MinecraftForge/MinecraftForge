@@ -30,7 +30,7 @@ public class EndermanAttackEvent extends LivingEvent {
         this.entity = entity;
     }
 
-    @Override
+
     public EndermanEntity getEntity() {
         return entity;
     }
