@@ -47,7 +47,7 @@ public class ModFileInfo implements IModFileInfo
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
 
-    ModFileInfo(final ModFile modFile, final UnmodifiableConfig config)
+    public ModFileInfo(final ModFile modFile, final UnmodifiableConfig config)
     {
         this.modFile = modFile;
         this.config = config;
