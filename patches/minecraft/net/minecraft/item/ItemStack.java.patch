@@ -177,7 +177,7 @@
              return false;
           } else {
 -            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
-+            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d) && p_77970_0_.areCapsCompatible(p_77970_1_);
++            return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
           }
        } else {
           return false;
@@ -186,7 +186,7 @@
           return false;
        } else {
 -         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
-+         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d) && this.areCapsCompatible(p_77959_1_);
++         return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
        }
     }
  
