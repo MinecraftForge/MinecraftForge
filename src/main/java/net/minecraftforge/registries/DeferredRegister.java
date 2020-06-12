@@ -59,6 +59,9 @@ import com.google.common.reflect.TypeToken;
  */
 public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 {
+    /**
+     * Use for vanilla/forge registries. See example above.
+     */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(IForgeRegistry<B> reg, String modid)
     {
         return new DeferredRegister<B>(reg, modid);
