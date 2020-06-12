@@ -106,6 +106,9 @@ public class ProjectileImpactEvent extends EntityEvent
         }
     }
 
+    /**
+     * Event is cancellable, causes firework to ignore the current hit and continue on its journey.
+     */
     @Cancelable
     public static class FireworkRocket extends ProjectileImpactEvent
     {
