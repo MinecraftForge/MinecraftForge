@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -383,16 +383,9 @@
+@@ -383,15 +383,11 @@
              for(int j = -1; j <= 1; ++j) {
                 for(int k = -1; k <= 1; ++k) {
                    if (i != 0 || k != 0) {
@@ -12,15 +12,15 @@
 -                           p_193578_4_ = PathNodeType.DANGER_OTHER;
 -                        }
 -                     } else {
--                        p_193578_4_ = PathNodeType.DANGER_FIRE;
--                     }
-+                     PathNodeType type = func_189553_b(p_193578_0_, p_193578_1_, p_193578_2_, p_193578_3_);
-+                     if (type == PathNodeType.DANGER_CACTUS || type == PathNodeType.DANGER_FIRE || type == PathNodeType.DANGER_OTHER)
++                     PathNodeType type = func_189553_b(p_193578_0_, i + p_193578_1_, j + p_193578_2_, k + p_193578_3_);
++                     if (type == PathNodeType.LAVA) { // Forge: Match vanilla behaviour #6755
+                         p_193578_4_ = PathNodeType.DANGER_FIRE;
++                     } else if (type == PathNodeType.DANGER_CACTUS || type == PathNodeType.DANGER_FIRE || type == PathNodeType.DANGER_OTHER) {
 +                        p_193578_4_ = type;
+                      }
                    }
                 }
-             }
-@@ -405,9 +398,11 @@
+@@ -405,9 +401,11 @@
     protected static PathNodeType func_189553_b(IBlockReader p_189553_0_, int p_189553_1_, int p_189553_2_, int p_189553_3_) {
        BlockPos blockpos = new BlockPos(p_189553_1_, p_189553_2_, p_189553_3_);
        BlockState blockstate = p_189553_0_.func_180495_p(blockpos);
