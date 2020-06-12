@@ -119,6 +119,15 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         return ret;
     }
 
+    /**
+     * For custom registries only, fills the {@link #registryFactory} to be called later see {@link #register(IEventBus)}
+     *
+     * Calls {@link RegistryBuilder#setName} and {@link RegistryBuilder#setType} automatically.
+     *
+     * @param name  Path of the registry's {@link ResourceLocation}
+     * @param sup   Supplier of the RegistryBuilder that is called to fill {@link #type} during the NewRegistry event
+     * @return      A supplier of the {@link IForgeRegistry} created by the builder.
+     */
     public Supplier<IForgeRegistry<T>> makeRegistry(final String name, final Supplier<RegistryBuilder<T>> sup) {
         if (this.superType == null)
             throw new IllegalStateException("Cannot create a registry without specifying a base type");
