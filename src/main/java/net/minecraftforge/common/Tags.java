@@ -252,6 +252,7 @@ public class Tags
         public static final Tag<Item> SEEDS_MELON = tag("seeds/melon");
         public static final Tag<Item> SEEDS_PUMPKIN = tag("seeds/pumpkin");
         public static final Tag<Item> SEEDS_WHEAT = tag("seeds/wheat");
+        public static final Tag<Item> SHEARS = tag("shears");
         public static final Tag<Item> SLIMEBALLS = tag("slimeballs");
         public static final Tag<Item> STAINED_GLASS = tag("stained_glass");
         public static final Tag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
