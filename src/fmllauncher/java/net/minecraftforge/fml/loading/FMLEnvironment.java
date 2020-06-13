@@ -30,6 +30,7 @@ public class FMLEnvironment
 {
     public static final Dist dist = FMLLoader.getDist();
     public static final String naming = FMLLoader.getNaming();
+    public static final boolean production = FMLLoader.isProduction() || System.getProperties().containsKey("production");
 
     static void setupInteropEnvironment(IEnvironment environment) {
         environment.computePropertyIfAbsent(IEnvironment.Keys.NAMING.get(), v->naming);

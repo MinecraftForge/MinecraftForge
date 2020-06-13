@@ -80,32 +80,31 @@ public abstract class BlockStateProvider implements IDataProvider {
 
     @VisibleForTesting
     protected final Map<Block, IGeneratedBlockstate> registeredBlocks = new LinkedHashMap<>();
-    
+
     private final DataGenerator generator;
     private final String modid;
     private final BlockModelProvider blockModels;
+    private final ItemModelProvider itemModels;
 
     public BlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
         this.generator = gen;
         this.modid = modid;
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
-
-            @Override
-            public String getName() {
-                return BlockStateProvider.this.getName();
-            }
-            
-            @Override
-            protected void registerModels() {}
+            @Override protected void registerModels() {}
+        };
+        this.itemModels = new ItemModelProvider(gen, modid, exFileHelper) {
+            @Override protected void registerModels() {}
         };
     }
 
     @Override
     public void act(DirectoryCache cache) throws IOException {
         models().clear();
+        itemModels().clear();
         registeredBlocks.clear();
         registerStatesAndModels();
         models().generateAll(cache);
+        itemModels().generateAll(cache);
         for (Map.Entry<Block, IGeneratedBlockstate> entry : registeredBlocks.entrySet()) {
             saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
         }
@@ -136,11 +135,15 @@ public abstract class BlockStateProvider implements IDataProvider {
             return ret;
         }
     }
-    
+
     public BlockModelProvider models() {
         return blockModels;
     }
-    
+
+    public ItemModelProvider itemModels() {
+        return itemModels;
+    }
+
     public ResourceLocation modLoc(String name) {
         return new ResourceLocation(modid, name);
     }
@@ -176,6 +179,10 @@ public abstract class BlockStateProvider implements IDataProvider {
 
     public void simpleBlock(Block block, ModelFile model) {
         simpleBlock(block, new ConfiguredModel(model));
+    }
+
+    public void simpleBlockItem(Block block, ModelFile model) {
+        itemModels().getBuilder(block.getRegistryName().getPath()).parent(model);
     }
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
@@ -538,7 +545,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     @Nonnull
     @Override
     public String getName() {
-        return "Block States";
+        return "Block States: " + modid;
     }
 
     public static class ConfiguredModelList {
