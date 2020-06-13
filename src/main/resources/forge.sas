@@ -25,6 +25,11 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/StemBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/SweetBerryBushBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+# Vanilla blocks calling these sided methods in getItem
+net/minecraft/tileentity/BannerTileEntity func_190615_l(Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/AttachedStemBlock func_196279_O_()Lnet/minecraft/item/Item;
+net/minecraft/block/StemBlock func_176481_j()Lnet/minecraft/item/Item;
+#=====================================
 net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider; # getSeedsItem
 	net/minecraft/block/BeetrootBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/CarrotBlock func_199772_f()Lnet/minecraft/util/IItemProvider;

@@ -50,6 +50,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         return new RegistryObject<>(name, registry);
     }
 
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
+        return new RegistryObject<>(name, baseType, modid);
+    }
+
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
 
     private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
@@ -77,6 +81,30 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         {
             if (pred.test(registry.getRegistryName()))
                 this.value = registry.containsKey(this.name) ? (T)registry.getValue(this.name) : null;
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final Class<V> baseType, final String modid)
+    {
+        this.name = name;
+        final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
+        ObjectHolderRegistry.addHandler(new Consumer<Predicate<ResourceLocation>>()
+        {
+            private IForgeRegistry<V> registry;
+
+            @Override
+            public void accept(Predicate<ResourceLocation> pred)
+            {
+                if (registry == null)
+                {
+                    this.registry = RegistryManager.ACTIVE.getRegistry(baseType);
+                    if (registry == null)
+                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
+                }
+                if (pred.test(registry.getRegistryName()))
+                    RegistryObject.this.value = registry.containsKey(RegistryObject.this.name) ? (T)registry.getValue(RegistryObject.this.name) : null;
+            }
         });
     }
 
