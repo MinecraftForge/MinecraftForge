@@ -47,6 +47,12 @@ loaderVersion="[28,)"
     modId="nameplate_render_test"
 [[mods]]
     modId="global_loot_test"
+[[dependencies.global_loot_test]]
+    modId="forge"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
 [[mods]]
     modId="custom_plant_type_test"
 [[mods]]
@@ -59,6 +65,8 @@ loaderVersion="[28,)"
     modId="stencil_enable_test"
 [[mods]]
     modId="entity_event_test"
+[[mods]]
+    modId="deferred_registry_test"
 [[dependencies.global_loot_test]]
     modId="forge"
     mandatory=true

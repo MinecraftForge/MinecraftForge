@@ -40,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.PistonEvent.PistonMoveType;
@@ -66,8 +65,8 @@ public class PistonEventTest
 {
     public static final String MODID = "piston_event_test";
     public static String blockName = "shiftonmove";
-    private static DeferredRegister<Block> BLOCKS = new DeferredRegister<Block>(ForgeRegistries.BLOCKS, MODID);
-    private static DeferredRegister<Item>  ITEMS  = new DeferredRegister<Item> (ForgeRegistries.ITEMS,  MODID);
+    private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    private static DeferredRegister<Item>  ITEMS  = DeferredRegister.create(ForgeRegistries.ITEMS,  MODID);
 
     private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.create(Material.ROCK)));
     static {

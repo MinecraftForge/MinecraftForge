@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/item/FireworkRocketEntity.java
++++ b/net/minecraft/entity/item/FireworkRocketEntity.java
+@@ -187,6 +187,7 @@
+    }
+ 
+    protected void func_213892_a(RayTraceResult p_213892_1_) {
++      if(p_213892_1_.func_216346_c() != RayTraceResult.Type.MISS && net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, p_213892_1_)) return;
+       if (p_213892_1_.func_216346_c() == RayTraceResult.Type.ENTITY && !this.field_70170_p.field_72995_K) {
+          this.func_213893_k();
+       } else if (this.field_70132_H) {
