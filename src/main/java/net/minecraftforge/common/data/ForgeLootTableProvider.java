@@ -81,8 +81,15 @@ public class ForgeLootTableProvider extends LootTableProvider {
             if (lootCondition instanceof MatchTool && checkMatchTool((MatchTool) lootCondition, from)) {
                 lootConditions.set(i, MatchTool.builder(ItemPredicate.Builder.create().tag(to)).build());
                 found = true;
-            } else if (lootCondition instanceof Inverted && findAndReplaceInInverted((Inverted) lootCondition, from, to)) {
-                found = true;
+            } else if (lootCondition instanceof Inverted) {
+                ILootCondition invLootCondition = getField(Inverted.class, (Inverted) lootCondition, 0);
+
+                if (invLootCondition instanceof MatchTool && checkMatchTool((MatchTool) invLootCondition, from)) {
+                    lootConditions.set(i, Inverted.builder(MatchTool.builder(ItemPredicate.Builder.create().tag(to))).build());
+                    found = true;
+                } else if (invLootCondition instanceof Alternative && findAndReplaceInAlternative((Alternative) invLootCondition, from, to)) {
+                    found = true;
+                }
             }
         }
 
@@ -132,33 +139,10 @@ public class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInInverted(Inverted inverted, Item from, Tag<Item> to) {
-        ILootCondition lootCondition = getField(Inverted.class, inverted, 0);
-
-        if (lootCondition instanceof MatchTool && checkMatchTool((MatchTool) lootCondition, from)) {
-            setField(Inverted.class, inverted, 0, MatchTool.builder(ItemPredicate.Builder.create().tag(to)).build());
-            return true;
-        } else if (lootCondition instanceof Alternative && findAndReplaceInAlternative((Alternative) lootCondition, from, to)) {
-            return true;
-        }
-
-        return false;
-    }
-
     private boolean checkMatchTool(MatchTool lootCondition, Item expected) {
         ItemPredicate predicate = getField(MatchTool.class, lootCondition, 0);
         Item item = getField(ItemPredicate.class, predicate, 4);
         return item != null && item.equals(expected);
-    }
-
-    private <T, R> void setField(Class<T> clz, T inst, int index, R value) {
-        Field fld = clz.getDeclaredFields()[index];
-        fld.setAccessible(true);
-        try {
-            fld.set(inst, value);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @SuppressWarnings("unchecked")
