@@ -65,3 +65,5 @@ loaderVersion="[28,)"
     modId="stencil_enable_test"
 [[mods]]
     modId="deferred_registry_test"
+[[mods]]
+    modId="pre_translucent_render_test"
