@@ -96,6 +96,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getBuilder(STORAGE_BLOCKS_LAPIS).add(Blocks.LAPIS_BLOCK);
         getBuilder(STORAGE_BLOCKS_QUARTZ).add(Blocks.QUARTZ_BLOCK);
         getBuilder(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
+        getBuilder(FIRE_SOURCE).add(Blocks.NETHERRACK, Blocks.MAGMA_BLOCK);
     }
 
     private void addColored(Consumer<Block> consumer, Tag<Block> group, String pattern)

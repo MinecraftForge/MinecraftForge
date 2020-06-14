@@ -80,6 +80,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -987,7 +988,7 @@ public interface IForgeBlock
     {
         if (side != Direction.UP)
             return false;
-        if (getBlock() == Blocks.NETHERRACK || getBlock() == Blocks.MAGMA_BLOCK)
+        if (Tags.Blocks.FIRE_SOURCE.contains(getBlock()))
             return true;
         if (world instanceof IWorldReader && ((IWorldReader)world).getDimension() instanceof EndDimension && getBlock() == Blocks.BEDROCK)
             return true;

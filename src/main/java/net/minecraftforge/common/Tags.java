@@ -111,6 +111,7 @@ public class Tags
         public static final Tag<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
         public static final Tag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final Tag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+        public static final Tag<Block> FIRE_SOURCE = tag("fire_source");
 
         private static Tag<Block> tag(String name)
         {
