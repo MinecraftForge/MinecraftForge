@@ -44,7 +44,7 @@ public class PotionEvent extends LivingEvent
         this.effect = effect;
     }
     /**
-     * Retuns the PotionEffect.
+     * Retuns the EffectInstance.
      */
     @Nullable
     public EffectInstance getPotionEffect()
@@ -83,7 +83,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the PotionEffect. In the remove event this can be null if the Entity does not have a {@link Potion} of the right type active.
+         * @return the EffectInstance. In the remove event this can be null if the Entity does not have a {@link Potion} of the right type active.
          */
         @Override
         @Nullable
@@ -110,7 +110,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the PotionEffect.
+         * @return the EffectInstance.
          */
         @Override
         @Nonnull
@@ -136,7 +136,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the added PotionEffect. This is the umerged PotionEffect if the old PotionEffect is not null.
+         * @return the added EffectInstance. This is the umerged EffectInstance if the old EffectInstance is not null.
          */
         @Override
         @Nonnull
@@ -146,7 +146,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the old PotionEffect. THis can be null if the entity did not have an effect of this kind before.
+         * @return the old EffectInstance. THis can be null if the entity did not have an effect of this kind before.
          */
         @Nullable
         public EffectInstance getOldPotionEffect()

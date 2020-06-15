@@ -54,7 +54,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
 
     /**
      * Code copied from TileEntityBrewingStand.brewPotions()
-     * It brews the potion by doing the bit-shifting magic and then checking if the new PotionEffect list is different to the old one,
+     * It brews the potion by doing the bit-shifting magic and then checking if the new EffectInstance list is different to the old one,
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override

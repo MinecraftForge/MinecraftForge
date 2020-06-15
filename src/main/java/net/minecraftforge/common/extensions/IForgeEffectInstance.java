@@ -46,7 +46,7 @@ public interface IForgeEffectInstance {
     }
 
     /**
-     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
+     * If the standard EffectInstance text (name and duration) should be drawn when this potion is active.
      * @return true to draw the standard text
      */
     default boolean shouldRenderInvText() {
@@ -100,8 +100,8 @@ public interface IForgeEffectInstance {
 
     /***
      * Checks the given ItemStack to see if it is in the list of curative items for the potion effect
-     * @param stack The ItemStack being checked against the list of curative items for this PotionEffect
-     * @return true if the given ItemStack is in the list of curative items for this PotionEffect, false otherwise
+     * @param stack The ItemStack being checked against the list of curative items for this EffectInstance
+     * @return true if the given ItemStack is in the list of curative items for this EffectInstance, false otherwise
      */
     default boolean isCurativeItem(ItemStack stack) {
        return this.getCurativeItems().stream().anyMatch(e -> e.isItemEqual(stack));
@@ -114,7 +114,7 @@ public interface IForgeEffectInstance {
     void setCurativeItems(List<ItemStack> curativeItems);
 
     /***
-     * Adds the given stack to the list of curative items for this PotionEffect
+     * Adds the given stack to the list of curative items for this EffectInstance
      * @param stack The ItemStack being added to the curative item list
      */
     default void addCurativeItem(ItemStack stack) {

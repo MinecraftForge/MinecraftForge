@@ -39,21 +39,21 @@ public interface IForgeEffect {
 
     /**
      * If the Potion effect should be displayed in the players inventory
-     * @param effect the active PotionEffect
+     * @param effect the active EffectInstance
      * @return true to display it (default), false to hide it.
      */
     default boolean shouldRender(EffectInstance effect) { return true; }
 
     /**
-     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
-     * @param effect the active PotionEffect
+     * If the standard EffectInstance text (name and duration) should be drawn when this potion is active.
+     * @param effect the active EffectInstance
      * @return true to draw the standard text
      */
     default boolean shouldRenderInvText(EffectInstance effect) { return true; }
 
     /**
      * If the Potion effect should be displayed in the player's ingame HUD
-     * @param effect the active PotionEffect
+     * @param effect the active EffectInstance
      * @return true to display it (default), false to hide it.
      */
     default boolean shouldRenderHUD(EffectInstance effect) { return true; }
@@ -62,7 +62,7 @@ public interface IForgeEffect {
      * Called to draw the this Potion onto the player's inventory when it's active.
      * This can be used to e.g. render Potion icons from your own texture.
      *
-     * @param effect the active PotionEffect
+     * @param effect the active EffectInstance
      * @param gui the gui instance
      * @param x the x coordinate
      * @param y the y coordinate
@@ -74,7 +74,7 @@ public interface IForgeEffect {
     /**
      * Called to draw the this Potion onto the player's ingame HUD when it's active.
      * This can be used to e.g. render Potion icons from your own texture.
-     * @param effect the active PotionEffect
+     * @param effect the active EffectInstance
      * @param gui the gui instance
      * @param x the x coordinate
      * @param y the y coordinate
@@ -86,8 +86,8 @@ public interface IForgeEffect {
 
     /**
      * Get a fresh list of items that can cure this Potion.
-     * All new PotionEffects created from this Potion will call this to initialize the default curative items
-     * @see PotionEffect#getCurativeItems
+     * All new EffectInstances created from this Potion will call this to initialize the default curative items
+     * @see EffectInstance#getCurativeItems
      * @return A list of items that can cure this Potion
      */
     default List<ItemStack> getCurativeItems() {
@@ -97,10 +97,10 @@ public interface IForgeEffect {
     }
 
     /**
-     * Used for determining {@code PotionEffect} sort order in GUIs.
-     * Defaults to the {@code PotionEffect}'s liquid color.
-     * @param potionEffect the {@code PotionEffect} instance containing the potion
-     * @return a value used to sort {@code PotionEffect}s in GUIs
+     * Used for determining {@code EffectInstance} sort order in GUIs.
+     * Defaults to the {@code EffectInstance}'s liquid color.
+     * @param EffectInstance the {@code EffectInstance} instance containing the potion
+     * @return a value used to sort {@code EffectInstance}s in GUIs
      */
     default int getGuiSortColor(EffectInstance potionEffect) {
        return getEffect().getLiquidColor();
