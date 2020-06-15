@@ -158,6 +158,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         if (tag.contains("dims", 10))
             DimensionManager.readRegistry(tag.getCompound("dims"));
+        DimensionManager.processScheduledDeletions(handler);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)

@@ -2,6 +2,8 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+    modId="mark_dimension_for_deletion_test"
+[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
@@ -10,6 +12,7 @@ loaderVersion="[28,)"
 [[mods]]
     modId="farmland_trample_test"
 [[mods]]
+
     modId="neighbor_notify_event_test"
 [[mods]]
     modId="block_place_event_test"
