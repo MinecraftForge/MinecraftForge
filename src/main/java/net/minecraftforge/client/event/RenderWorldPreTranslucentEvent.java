@@ -21,8 +21,10 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * This event is called immediately before translucent blocks are rendered in the WorldRenderer class.
@@ -33,18 +35,20 @@ import net.minecraft.client.renderer.WorldRenderer;
  * will be invisible behind anything translucent rendered from this event.
  */
 
-public class RenderWorldPreTranslucentEvent extends net.minecraftforge.eventbus.api.Event
+public class RenderWorldPreTranslucentEvent extends Event
 {
     private final WorldRenderer context;
     private final MatrixStack mat;
+    private final Impl buffers;
     private final float partialTicks;
     private final Matrix4f projectionMatrix;
     private final long finishTimeNano;
 
-    public RenderWorldPreTranslucentEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    public RenderWorldPreTranslucentEvent(WorldRenderer context, MatrixStack mat, Impl buffers, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         this.context = context;
         this.mat = mat;
+        this.buffers = buffers;
         this.partialTicks = partialTicks;
         this.projectionMatrix = projectionMatrix;
         this.finishTimeNano = finishTimeNano;
@@ -58,6 +62,11 @@ public class RenderWorldPreTranslucentEvent extends net.minecraftforge.eventbus.
     public MatrixStack getMatrixStack()
     {
         return mat;
+    }
+    
+    public Impl getRenderTypeBuffers()
+    {
+        return buffers;
     }
 
     public float getPartialTicks()

@@ -70,6 +70,7 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.TransformationMatrix;
@@ -178,9 +179,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
     }
     
-    public static void dispatchRenderPreTranslucent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    public static void dispatchRenderPreTranslucent(WorldRenderer context, MatrixStack mat, Impl buffers, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderWorldPreTranslucentEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
+        MinecraftForge.EVENT_BUS.post(new RenderWorldPreTranslucentEvent(context, mat, buffers, partialTicks, projectionMatrix, finishTimeNano));
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)

@@ -78,7 +78,7 @@
        irendertypebuffer$impl.func_228462_a_(RenderType.func_228659_m_());
        irendertypebuffer$impl.func_228461_a_();
 +      iprofiler.func_219895_b("forge_render_pre_translucent");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderPreTranslucent(this.field_72777_q.field_71438_f, p_228426_1_, p_228426_2_, matrix4f, p_228426_3_);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderPreTranslucent(this.field_72777_q.field_71438_f, p_228426_1_, irendertypebuffer$impl, p_228426_2_, matrix4f, p_228426_3_);
        iprofiler.func_219895_b("translucent");
        this.func_228441_a_(RenderType.func_228645_f_(), p_228426_1_, d0, d1, d2);
        iprofiler.func_219895_b("particles");
