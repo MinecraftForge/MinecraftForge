@@ -56,11 +56,15 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.ChunkGeneratorType;
+import net.minecraft.world.gen.blockplacer.BlockPlacerType;
+import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
+import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -139,7 +143,11 @@ public class GameData
     public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
     public static final ResourceLocation CHUNK_GENERATOR_TYPES = new ResourceLocation("chunk_generator_type");
     public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
-    
+    public static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
+    public static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
+    public static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
+    public static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
+
     // Custom forge registries
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
@@ -206,7 +214,11 @@ public class GameData
         makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
-        
+        makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
+        makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
+        makeRegistry(FOLIAGE_PLACER_TYPES, FoliagePlacerType.class).disableSaving().disableSync().create();
+        makeRegistry(TREE_DECORATOR_TYPES, TreeDecoratorType.class).disableSaving().disableSync().create();
+
         // Custom forge registries
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
@@ -714,16 +726,23 @@ public class GameData
             List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
             if (missingRegs.size() > 0)
             {
-                String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                String header = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
                         "There are " + missingRegs.size() + " missing registries in this save.\n" +
                         "If you continue the missing registries will get removed.\n" +
-                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
-                        "Missing Registries:\n";
+                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n";
+
+                StringBuilder text = new StringBuilder("Missing Registries:\n");
 
                 for (ResourceLocation s : missingRegs)
-                    text += s.toString() + "\n";
+                    text.append(s).append("\n");
 
-                if (!StartupQuery.confirm(text))
+                boolean confirmed = StartupQuery.builder()
+                        .header(header)
+                        .text(text.toString())
+                        .action("Continue anyway?")
+                        .confirm();
+
+                if (!confirmed)
                     StartupQuery.abort();
             }
         }
@@ -802,19 +821,24 @@ public class GameData
 
             if (!defaulted.isEmpty())
             {
-                StringBuilder buf = new StringBuilder();
-                buf.append("Forge Mod Loader detected missing registry entries.\n\n")
-                   .append("There are ").append(defaulted.size()).append(" missing entries in this save.\n")
-                   .append("If you continue the missing entries will get removed.\n")
-                   .append("A world backup will be automatically created in your saves directory.\n\n");
+                String header = "Forge Mod Loader detected missing registry entries.\n\n" +
+                   "There are " + defaulted.size() + " missing entries in this save.\n" +
+                   "If you continue the missing entries will get removed.\n" +
+                   "A world backup will be automatically created in your saves directory.\n\n";
 
+                StringBuilder buf = new StringBuilder();
                 defaulted.asMap().forEach((name, entries) ->
                 {
                     buf.append("Missing ").append(name).append(":\n");
                     entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+                    buf.append("\n");
                 });
 
-                boolean confirmed = StartupQuery.confirm(buf.toString());
+                boolean confirmed = StartupQuery.builder()
+                        .header(header)
+                        .text(buf.toString())
+                        .action("Remove entries and continue?")
+                        .confirm();
                 if (!confirmed)
                     StartupQuery.abort();
 

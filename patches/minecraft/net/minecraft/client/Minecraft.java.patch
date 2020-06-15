@@ -88,6 +88,15 @@
              });
           }, false));
        }
+@@ -505,7 +514,7 @@
+    }
+ 
+    private void func_229988_a_(Throwable p_229988_1_) {
+-      if (this.field_110448_aq.func_198980_d().size() > 1) {
++      if (this.field_110448_aq.func_198980_d().stream().anyMatch(e -> !e.func_195797_g())) { //Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
+          ITextComponent itextcomponent;
+          if (p_229988_1_ instanceof SimpleReloadableResourceManager.FailedPackException) {
+             itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_230028_a().func_195762_a());
 @@ -579,7 +588,7 @@
           return Stream.of(Registry.field_212630_s.func_177774_c(p_213251_0_.func_77973_b()));
        });

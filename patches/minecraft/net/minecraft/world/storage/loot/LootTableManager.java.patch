@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/storage/loot/LootTableManager.java
 +++ b/net/minecraft/world/storage/loot/LootTableManager.java
-@@ -43,7 +43,8 @@
+@@ -42,8 +42,8 @@
+       }
  
        p_212853_1_.forEach((p_223385_1_, p_223385_2_) -> {
-          try {
+-         try {
 -            LootTable loottable = field_186526_b.fromJson(p_223385_2_, LootTable.class);
-+            net.minecraft.resources.IResource res = p_212853_2_.func_199002_a(getPreparedPath(p_223385_1_));
++         try (net.minecraft.resources.IResource res = p_212853_2_.func_199002_a(getPreparedPath(p_223385_1_));){
 +            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(field_186526_b, p_223385_1_, p_223385_2_, res == null || !res.func_199026_d().equals("Default"), this);
              builder.put(p_223385_1_, loottable);
           } catch (Exception exception) {

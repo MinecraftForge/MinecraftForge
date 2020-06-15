@@ -68,7 +68,7 @@ class CommandEntity
             return Commands.literal("list")
                 .requires(cs->cs.hasPermissionLevel(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
-                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
+                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString), builder))
                     .then(Commands.argument("dim", DimensionArgument.getDimension())
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim")))
                     )
@@ -105,7 +105,7 @@ class CommandEntity
                 if (info == null)
                     throw NO_ENTITIES.create();
 
-                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.single.header", name, info.getLeft()), true);
+                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.single.header", name, info.getLeft()), false);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
@@ -119,7 +119,7 @@ class CommandEntity
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), true);
+                    sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
                 }
                 return toSort.size();
             }
@@ -145,8 +145,8 @@ class CommandEntity
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.multiple.header", count), true);
-                info.forEach(e -> sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey()), true));
+                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.multiple.header", count), false);
+                info.forEach(e -> sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey()), false));
                 return info.size();
             }
         }

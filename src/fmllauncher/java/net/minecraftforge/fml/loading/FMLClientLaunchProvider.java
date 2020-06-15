@@ -22,20 +22,15 @@ package net.minecraftforge.fml.loading;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
@@ -87,5 +82,10 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     @Override
     public Path[] getPaths() {
         return FMLLoader.getMCPaths();
+    }
+
+    @Override
+    public boolean isProduction() {
+        return true;
     }
 }

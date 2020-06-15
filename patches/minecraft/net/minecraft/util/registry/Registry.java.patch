@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/Registry.java
 +++ b/net/minecraft/util/registry/Registry.java
-@@ -70,47 +70,51 @@
+@@ -70,88 +70,90 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -64,9 +64,20 @@
 +   @Deprecated public static final Registry<Biome> field_212624_m = forge("biome", Biome.class, () -> {
        return Biomes.field_180279_ad;
     });
-    public static final Registry<BlockStateProviderType<?>> field_229387_t_ = func_222935_a("block_state_provider_type", () -> {
-@@ -125,33 +129,31 @@
-    public static final Registry<TreeDecoratorType<?>> field_229390_w_ = func_222935_a("tree_decorator_type", () -> {
+-   public static final Registry<BlockStateProviderType<?>> field_229387_t_ = func_222935_a("block_state_provider_type", () -> {
++   @Deprecated public static final Registry<BlockStateProviderType<?>> field_229387_t_ = forge("block_state_provider_type", BlockStateProviderType.class, () -> {
+       return BlockStateProviderType.field_227394_a_;
+    });
+-   public static final Registry<BlockPlacerType<?>> field_229388_u_ = func_222935_a("block_placer_type", () -> {
++   @Deprecated public static final Registry<BlockPlacerType<?>> field_229388_u_ = forge("block_placer_type", BlockPlacerType.class, () -> {
+       return BlockPlacerType.field_227259_a_;
+    });
+-   public static final Registry<FoliagePlacerType<?>> field_229389_v_ = func_222935_a("foliage_placer_type", () -> {
++   @Deprecated public static final Registry<FoliagePlacerType<?>> field_229389_v_ = forge("foliage_placer_type", FoliagePlacerType.class, () -> {
+       return FoliagePlacerType.field_227386_a_;
+    });
+-   public static final Registry<TreeDecoratorType<?>> field_229390_w_ = func_222935_a("tree_decorator_type", () -> {
++   @Deprecated public static final Registry<TreeDecoratorType<?>> field_229390_w_ = forge("tree_decorator_type", TreeDecoratorType.class, () -> {
        return TreeDecoratorType.field_227426_b_;
     });
 -   public static final Registry<ParticleType<? extends IParticleData>> field_212632_u = func_222935_a("particle_type", () -> {

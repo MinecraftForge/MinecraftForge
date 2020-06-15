@@ -30,16 +30,16 @@ public class ConfirmationScreen extends NotificationScreen
     }
 
     @Override
-    public void init()
+    protected void addConfirmationButtons()
     {
-        this.addButton(new Button(this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"), b ->
+        this.addButton(new Button(this.width / 2 - 104, this.height - PADDING - 20, 100, 20, ForgeI18n.parseMessage("gui.yes"), b ->
             {
                 ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(true);
                 query.finish();
             }
         ));
-        this.addButton(new Button(this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), b ->
+        this.addButton(new Button(this.width / 2 + 4, this.height - PADDING - 20, 100, 20, ForgeI18n.parseMessage("gui.no"), b ->
             {
                 ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(false);

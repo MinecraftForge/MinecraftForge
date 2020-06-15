@@ -1,5 +1,6 @@
 net/minecraft/block/FireBlock.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/Direction;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 net/minecraft/block/FlowerPotBlock.<init>(Lnet/minecraft/block/FlowerPotBlock;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
+net/minecraft/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
 net/minecraft/block/PoweredRailBlock.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
 net/minecraft/block/RedstoneWireBlock.canConnectTo(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/Direction;)Z=|p_176343_0_,world,pos,p_176343_1_
 
@@ -22,6 +23,8 @@ net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$ChunkRender$RebuildTas
 net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$ChunkRender$SortTransparencyTask.<init>(Lnet/minecraft/util/math/ChunkPos;DLnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher$CompiledChunk;)V=|pos,p_i226025_2_,p_i226025_4_
 
 net/minecraft/client/renderer/entity/layers/ArmorLayer.renderArmor(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V=|p_229128_1_,p_229128_2_,p_229128_3_,p_229128_5_,p_229128_6_,p_229128_8_,p_229128_9_,p_229128_10_,armorResource
+
+net/minecraft/client/renderer/WorldRenderer.playRecord(Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/MusicDiscItem;)V=|p_184377_1_,p_184377_2_,musicDiscItem
 
 net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Z)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting
 net/minecraft/client/renderer/model/BlockModel.bake(Lnet/minecraft/client/renderer/model/ModelBakery;Lnet/minecraft/client/renderer/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/IModelTransform;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217644_1_,p_217644_2_,p_217644_3_,p_217644_4_,format
