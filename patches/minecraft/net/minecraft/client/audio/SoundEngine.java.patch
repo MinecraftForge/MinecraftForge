@@ -12,7 +12,7 @@
  
        this.func_148613_b();
        this.func_148608_i();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
     }
  
     private synchronized void func_148608_i() {
