@@ -25,11 +25,11 @@
 + /*================================ FORGE START ================================================*/
 + private boolean stencilEnabled = false;
 + /**
-+	 * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
-+	 * Modders must call this directly to set things up.
-+	 * This is to prevent the default cause where graphics cards do not support stencil bits.
-+	 * <b>Make sure to call this on the main render thread!</b>
-+	 */
++ * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
++ * Modders must call this directly to set things up.
++ * This is to prevent the default cause where graphics cards do not support stencil bits.
++ * <b>Make sure to call this on the main render thread!</b>
++ */
 + public void enableStencil()
 + {
 +  if(stencilEnabled) return;
