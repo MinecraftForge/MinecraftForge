@@ -58,7 +58,7 @@ import net.minecraft.world.biome.BiomeColors;
  */
 public class FluidAttributes
 {
-    public static final int BUCKET_VOLUME = 1000;
+    public static final int BUCKET_VOLUME = 1296;
 
     private String translationKey;
 
