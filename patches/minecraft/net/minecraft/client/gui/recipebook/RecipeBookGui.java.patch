@@ -1,6 +1,54 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -89,7 +89,7 @@
+@@ -4,10 +4,6 @@
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.ObjectSet;
+-import java.util.Iterator;
+-import java.util.List;
+-import java.util.Locale;
+-import javax.annotation.Nullable;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.AbstractGui;
+ import net.minecraft.client.gui.IGuiEventListener;
+@@ -15,7 +11,11 @@
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.widget.TextFieldWidget;
+ import net.minecraft.client.gui.widget.ToggleWidget;
++import net.minecraft.client.gui.widget.button.Button;
++import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.RenderHelper;
++import net.minecraft.client.renderer.Tessellator;
++import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+ import net.minecraft.client.resources.I18n;
+ import net.minecraft.client.resources.Language;
+ import net.minecraft.client.resources.LanguageManager;
+@@ -34,6 +34,13 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++import javax.annotation.Nullable;
++import java.util.Iterator;
++import java.util.List;
++import java.util.Locale;
++
++import net.minecraft.client.gui.widget.button.Button.IPressable;
++
+ @OnlyIn(Dist.CLIENT)
+ public class RecipeBookGui extends AbstractGui implements IRenderable, IGuiEventListener, IRecipeUpdateListener, IRecipePlacer<Ingredient> {
+    protected static final ResourceLocation field_191894_a = new ResourceLocation("textures/gui/recipe_book.png");
+@@ -54,6 +61,10 @@
+    private int field_193966_v;
+    private boolean field_199738_u;
+ 
++   private UpDownButton up;
++   private UpDownButton down;
++   private int offset;
++
+    public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
+       this.field_191888_F = p_201520_3_;
+       this.field_191904_o = p_201520_1_;
+@@ -89,10 +100,20 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
@@ -9,7 +57,78 @@
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -421,7 +421,7 @@
++      this.up = new UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
++         this.offset = Math.max(0, this.offset - 1);
++         this.updateButtons();
++      });
++      this.down = new UpDownButton(i - 23, j + 154, 17, 11, true, p_onPress_1_ -> {
++         this.offset = Math.min(this.field_193018_j.size() - 5, this.offset + 1);
++         this.updateButtons();
++      });
++      this.updateButtons();
++
+       if (this.field_191913_x != null) {
+          this.field_191913_x = this.field_193018_j.stream().filter((p_209505_1_) -> {
+             return p_209505_1_.func_201503_d().equals(this.field_191913_x.func_201503_d());
+@@ -120,6 +141,8 @@
+       this.field_193962_q = null;
+       this.field_191913_x = null;
+       this.field_191888_F.field_195559_v.func_197967_a(false);
++      this.up = null;
++      this.down = null;
+    }
+ 
+    public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
+@@ -191,13 +214,15 @@
+ 
+    private void func_193949_f() {
+       int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
+-      int j = (this.field_191905_p - 166) / 2 + 3;
++      int j = (this.field_191905_p - 166) / 2 + (this.field_193018_j.size() > 5 ? 16 : 3);
+       int k = 27;
+       int l = 0;
+ 
++      int x = 0;
+       for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
++         if (x >= this.offset && x < Math.min(this.field_193018_j.size(), this.offset + 5)) {
+          RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
+-         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
++         if (!recipebookcategories.isSearch()) {
+             if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
+                recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+                recipetabtogglewidget.func_193918_a(this.field_191888_F);
+@@ -206,6 +231,10 @@
+             recipetabtogglewidget.visible = true;
+             recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+          }
++         } else {
++            recipetabtogglewidget.visible = false;
++         }
++         x++;
+       }
+ 
+    }
+@@ -245,6 +274,9 @@
+             recipetabtogglewidget.render(p_render_1_, p_render_2_, p_render_3_);
+          }
+ 
++         this.up.render(p_render_1_, p_render_2_, p_render_3_);
++         this.down.render(p_render_1_, p_render_2_, p_render_3_);
++
+          this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
+          this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
+          GlStateManager.popMatrix();
+@@ -317,6 +349,9 @@
+             this.func_193956_j();
+             this.func_193003_g(false);
+             return true;
++         } else if (this.up.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_) || this.down.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
++            this.func_193949_f();
++            return true;
+          } else {
+             for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
+                if (recipetabtogglewidget.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
+@@ -421,7 +456,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
@@ -18,3 +137,63 @@
           this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
           this.field_191888_F.field_71474_y.func_74303_b();
        }
+@@ -469,4 +504,59 @@
+       }
+ 
+    }
++
++   private void updateButtons() {
++      this.up.visible = this.offset > 0 && this.field_193018_j.size() > 5;
++      this.down.visible = this.field_193018_j.size() > 5 && this.offset < this.field_193018_j.size() - 5;
++   }
++
++   private static class UpDownButton extends Button {
++      public static final ResourceLocation STATS_ICON_LOCATION = new ResourceLocation("textures/gui/recipe_book.png");
++      private final boolean isDown;
++
++      public UpDownButton(int x, int y, int width, int height, boolean isDown, IPressable onPress) {
++         super(x, y, width, height, "", onPress);
++         this.isDown = isDown;
++      }
++
++      @Override
++      public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
++         Minecraft minecraft = Minecraft.func_71410_x();
++         minecraft.func_110434_K().func_110577_a(STATS_ICON_LOCATION);
++         GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
++         int i = (isHovered) ? 1 : 0;
++         GlStateManager.enableBlend();
++         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
++         if (isDown) {
++            blit(this.x, this.y, 1, 208 + i * 18, 11, 17);
++         } else {
++            blit(this.x, this.y, 15, 208 + i * 18, 11, 17);
++         }
++         this.renderBg(minecraft, p_renderButton_1_, p_renderButton_2_);
++      }
++
++      public void blit(int p_blit_1_, int p_blit_2_, int p_blit_3_, int p_blit_4_, int p_blit_5_, int p_blit_6_) {
++         blit(p_blit_1_, p_blit_2_, this.blitOffset, (float)p_blit_3_, (float)p_blit_4_, p_blit_5_, p_blit_6_, 256, 256);
++      }
++
++      public static void blit(int p_blit_0_, int p_blit_1_, int p_blit_2_, float p_blit_3_, float p_blit_4_, int p_blit_5_, int p_blit_6_, int p_blit_7_, int p_blit_8_) {
++         innerBlit(p_blit_0_, p_blit_0_ + p_blit_6_, p_blit_1_, p_blit_1_ + p_blit_5_, p_blit_2_, p_blit_5_, p_blit_6_, p_blit_3_, p_blit_4_, p_blit_8_, p_blit_7_);
++      }
++
++      private static void innerBlit(int p_innerBlit_0_, int p_innerBlit_1_, int p_innerBlit_2_, int p_innerBlit_3_, int p_innerBlit_4_, int p_innerBlit_5_, int p_innerBlit_6_, float p_innerBlit_7_, float p_innerBlit_8_, int p_innerBlit_9_, int p_innerBlit_10_) {
++         innerBlit(p_innerBlit_0_, p_innerBlit_1_, p_innerBlit_2_, p_innerBlit_3_, p_innerBlit_4_, (p_innerBlit_7_ + 0.0F) / (float)p_innerBlit_9_, (p_innerBlit_7_ + (float)p_innerBlit_5_) / (float)p_innerBlit_9_, (p_innerBlit_8_ + 0.0F) / (float)p_innerBlit_10_, (p_innerBlit_8_ + (float)p_innerBlit_6_) / (float)p_innerBlit_10_);
++      }
++
++      protected static void innerBlit(int p_innerBlit_0_, int p_innerBlit_1_, int p_innerBlit_2_, int p_innerBlit_3_, int p_innerBlit_4_, float p_innerBlit_5_, float p_innerBlit_6_, float p_innerBlit_7_, float p_innerBlit_8_) {
++         Tessellator tessellator = Tessellator.func_178181_a();
++         BufferBuilder bufferbuilder = tessellator.func_178180_c();
++         bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181707_g);
++         bufferbuilder.func_181662_b((double)p_innerBlit_0_, (double)p_innerBlit_3_, (double)p_innerBlit_4_).func_187315_a((double)p_innerBlit_6_, (double)p_innerBlit_7_).func_181675_d();
++         bufferbuilder.func_181662_b((double)p_innerBlit_1_, (double)p_innerBlit_3_, (double)p_innerBlit_4_).func_187315_a((double)p_innerBlit_6_, (double)p_innerBlit_8_).func_181675_d();
++         bufferbuilder.func_181662_b((double)p_innerBlit_1_, (double)p_innerBlit_2_, (double)p_innerBlit_4_).func_187315_a((double)p_innerBlit_5_, (double)p_innerBlit_8_).func_181675_d();
++         bufferbuilder.func_181662_b((double)p_innerBlit_0_, (double)p_innerBlit_2_, (double)p_innerBlit_4_).func_187315_a((double)p_innerBlit_5_, (double)p_innerBlit_7_).func_181675_d();
++         tessellator.func_78381_a();
++      }
++   }
+ }

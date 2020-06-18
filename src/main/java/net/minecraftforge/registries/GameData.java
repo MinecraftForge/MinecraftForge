@@ -121,6 +121,7 @@ public class GameData
     public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
     public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
     public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
+    public static final ResourceLocation RECIPE_BOOK_CATEGORIES = new ResourceLocation("recipe_book_categories");
     
     // Villages
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
@@ -188,6 +189,7 @@ public class GameData
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
+        makeRegistry(RECIPE_BOOK_CATEGORIES, net.minecraft.client.util.RecipeBookCategories.class).disableSaving().disableSync().create();
         
         // Villagers
         makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();

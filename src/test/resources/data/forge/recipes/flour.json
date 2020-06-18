@@ -1,0 +1,18 @@
+{
+  "type": "base_crafting_book_test:millstone_recipe",
+  "ingredient": {
+    "type": "forge:nbt",
+    "item": "minecraft:wheat",
+    "count": 1
+  },
+  "activateCount": 2,
+  "result": {
+    "item": "minecraft:sugar",
+    "count": 2
+  },
+  "secondResult": {
+    "item": "minecraft:sugar",
+    "count": 1
+  },
+  "secondChance": 0.1
+}

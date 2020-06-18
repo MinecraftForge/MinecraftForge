@@ -20,6 +20,7 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -77,6 +78,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<PaintingType> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(PaintingType.class);
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
+    public static final IForgeRegistry<RecipeBookCategories> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(RecipeBookCategories.class);
     
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);

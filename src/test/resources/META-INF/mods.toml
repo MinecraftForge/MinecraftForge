@@ -2,6 +2,8 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+    modId="base_crafting_book_test"
+[[mods]]
 	modId="testobjmodelmod"
 #[[mods]]
 #	modId="forgedebugmodeldata"
