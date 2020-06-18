@@ -1,80 +1,28 @@
 --- a/net/minecraft/client/util/ClientRecipeBook.java
 +++ b/net/minecraft/client/util/ClientRecipeBook.java
-@@ -7,6 +7,8 @@
- import java.util.Collections;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
-+
- import net.minecraft.client.gui.recipebook.RecipeList;
- import net.minecraft.inventory.container.BlastFurnaceContainer;
- import net.minecraft.inventory.container.FurnaceContainer;
-@@ -41,29 +43,36 @@
- 
-       for(IRecipe<?> irecipe : this.field_199645_e.func_199510_b()) {
-          if (!irecipe.func_192399_d()) {
--            RecipeBookCategories recipebookcategories = func_202887_g(irecipe);
-+            Optional<RecipeBookCategories> recipeCategory = RecipeBookCategories.getSearchCategory(irecipe);
-+            if (!recipeCategory.isPresent()) {
-+               System.out.println(irecipe.func_199560_c().toString() + " does not have recipe category");
-+            }
-+            recipeCategory.ifPresent(recipebookcategories -> {
+@@ -45,11 +45,11 @@
              String s = irecipe.func_193358_e();
              RecipeList recipelist;
              if (s.isEmpty()) {
 -               recipelist = this.func_202889_b(recipebookcategories);
-+               recipelist = this.newRecipeList(recipebookcategories, irecipe);
++               recipelist = this.newRecipeList(irecipe);
              } else {
                 recipelist = table.get(recipebookcategories, s);
                 if (recipelist == null) {
 -                  recipelist = this.func_202889_b(recipebookcategories);
-+                  recipelist = this.newRecipeList(recipebookcategories, irecipe);
++                  recipelist = this.newRecipeList(irecipe);
                    table.put(recipebookcategories, s, recipelist);
                 }
              }
- 
-             recipelist.func_192709_a(irecipe);
-+            });
-          }
-       }
- 
+@@ -143,4 +143,11 @@
+    public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
+       return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
     }
- 
--   private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
-+   private RecipeList newRecipeList(RecipeBookCategories p_202889_1_, IRecipe<?> recipe) {
-       RecipeList recipelist = new RecipeList();
-       this.field_197932_f.add(recipelist);
--      this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
-+      RecipeBookCategories.getValidCategories(recipe).forEach(category -> func_216767_a(category, recipelist));
-+      /*
-+      this.recipesByCategory.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
-          return Lists.newArrayList();
-       }).add(recipelist);
-       if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
-@@ -83,7 +92,7 @@
-       } else {
-          this.func_216767_a(RecipeBookCategories.FURNACE_SEARCH, recipelist);
-       }
--
-+      */
-       return recipelist;
-    }
- 
-@@ -93,7 +102,7 @@
-       }).add(p_216767_2_);
-    }
- 
--   private static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
-+   protected static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
-       IRecipeType<?> irecipetype = p_202887_0_.func_222127_g();
-       if (irecipetype == IRecipeType.field_222150_b) {
-          if (p_202887_0_.func_77571_b().func_77973_b().func_219971_r()) {
-@@ -134,6 +143,8 @@
-       } else {
-          return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.EQUIPMENT, RecipeBookCategories.BUILDING_BLOCKS, RecipeBookCategories.MISC, RecipeBookCategories.REDSTONE);
-       }
 +
-+      //TODO add valid containers???
-    }
- 
-    public List<RecipeList> func_199642_d() {
++   private RecipeList newRecipeList(IRecipe<?> recipe) {
++      RecipeList recipelist = new RecipeList();
++      this.field_197932_f.add(recipelist);
++      RecipeBookCategories.getValidCategories(recipe).forEach(category -> func_216767_a(category, recipelist));
++      return recipelist;
++   }
+ }

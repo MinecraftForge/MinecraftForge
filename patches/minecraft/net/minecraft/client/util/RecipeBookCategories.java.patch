@@ -1,16 +1,6 @@
 --- a/net/minecraft/client/util/RecipeBookCategories.java
 +++ b/net/minecraft/client/util/RecipeBookCategories.java
-@@ -2,32 +2,36 @@
- 
- import com.google.common.collect.ImmutableList;
- import java.util.List;
-+import java.util.Optional;
-+import java.util.stream.Collectors;
- import net.minecraft.block.Blocks;
-+import net.minecraft.item.BlockItem;
- import net.minecraft.item.ItemStack;
- import net.minecraft.item.Items;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -9,23 +9,24 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -50,12 +40,9 @@
 +   public static final RecipeBookCategories STONECUTTER = register(new RecipeBookCategories(net.minecraft.item.crafting.IRecipeType.field_222154_f).setIcon(new ItemStack(Items.field_221782_da)), "stonecutter");
 +   public static final RecipeBookCategories CAMPFIRE = register(new RecipeBookCategories(net.minecraft.item.crafting.IRecipeType.field_222153_e).setIcon(new ItemStack(Items.field_151147_al)), "campfire");
  
--   private final List<ItemStack> field_202904_j;
-+   private List<ItemStack> field_202904_j; //TODO final can be removed by accesstransformers.cfg
+    private List<ItemStack> field_202904_j;
  
-    private RecipeBookCategories(ItemStack... p_i48836_3_) {
-       this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
-@@ -36,4 +40,106 @@
+@@ -36,4 +37,106 @@
     public List<ItemStack> func_202903_a() {
        return this.field_202904_j;
     }
@@ -100,7 +87,7 @@
 +      return this;
 +   }
 +
-+   public static Optional<RecipeBookCategories> getSearchCategory(net.minecraft.item.crafting.IRecipe<?> recipe) {
++   public static java.util.Optional<RecipeBookCategories> getSearchCategory(net.minecraft.item.crafting.IRecipe<?> recipe) {
 +      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
 +         return recipe.func_222127_g().equals(category.recipeType) && category.isSearch;
 +      }).findFirst();
@@ -109,7 +96,7 @@
 +   public static List<RecipeBookCategories> getValidCategories(net.minecraft.item.crafting.IRecipe<?> recipe) {
 +      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
 +         return recipe.func_222127_g().equals(category.recipeType) && category.predicate.test(recipe);
-+      }).collect(Collectors.toList());
++      }).collect(java.util.stream.Collectors.toList());
 +   }
 +
 +   private static RecipeBookCategories register(RecipeBookCategories category, String resourceName) {
@@ -147,18 +134,18 @@
 +   }
 +
 +   private static boolean furnaceBlocksPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
-+      return !recipe.func_77571_b().func_77973_b().func_219971_r() && recipe.func_77571_b().func_77973_b() instanceof BlockItem;
++      return !recipe.func_77571_b().func_77973_b().func_219971_r() && recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem;
 +   }
 +
 +   private static boolean furnaceMiscPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
-+      return !recipe.func_77571_b().func_77973_b().func_219971_r() && !(recipe.func_77571_b().func_77973_b() instanceof BlockItem);
++      return !recipe.func_77571_b().func_77973_b().func_219971_r() && !(recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem);
 +   }
 +
 +   private static boolean blastFurnaceBlocksPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
-+      return recipe.func_77571_b().func_77973_b() instanceof BlockItem;
++      return recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem;
 +   }
 +
 +   private static boolean blastFurnaceMiscPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
-+      return !(recipe.func_77571_b().func_77973_b() instanceof BlockItem);
++      return !(recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem);
 +   }
  }
