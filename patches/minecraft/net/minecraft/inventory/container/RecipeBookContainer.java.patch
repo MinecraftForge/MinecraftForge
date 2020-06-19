@@ -1,11 +1,23 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -31,4 +31,10 @@
+@@ -31,4 +31,22 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
 +
-+   public abstract net.minecraft.item.crafting.IRecipeType<?> getRecipeType();
++   public net.minecraft.item.crafting.IRecipeType<?> getRecipeType() {
++      if (this instanceof FurnaceContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222150_b;
++      } else if (this instanceof SmokerContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222152_d;
++      } else if (this instanceof BlastFurnaceContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222151_c;
++      } else if (this instanceof PlayerContainer || this instanceof WorkbenchContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222149_a;
++      } else {
++         throw new IllegalStateException("Unexpected RecipeBookContainer override, please override this method in your own class!");
++      }
++   }
 +
 +   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
 +      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> category.getRecipeType().equals(this.getRecipeType())).sorted(net.minecraft.client.util.RecipeBookCategories::compareTo).collect(java.util.stream.Collectors.toList());

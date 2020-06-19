@@ -9,13 +9,3 @@
              }
  
              public boolean func_82869_a(PlayerEntity p_82869_1_) {
-@@ -188,4 +188,9 @@
-    public int func_203721_h() {
-       return 5;
-    }
-+
-+   @Override
-+   public net.minecraft.item.crafting.IRecipeType<?> getRecipeType() {
-+      return net.minecraft.item.crafting.IRecipeType.field_222149_a;
-+   }
- }
