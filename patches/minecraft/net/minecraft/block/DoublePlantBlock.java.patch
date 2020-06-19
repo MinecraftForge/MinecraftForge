@@ -5,7 +5,7 @@
     public BlockState func_196258_a(BlockItemUseContext p_196258_1_) {
        BlockPos blockpos = p_196258_1_.func_195995_a();
 -      return blockpos.func_177956_o() < 255 && p_196258_1_.func_195991_k().func_180495_p(blockpos.func_177984_a()).func_196953_a(p_196258_1_) ? super.func_196258_a(p_196258_1_) : null;
-+      return blockpos.func_177956_o() < p_196258_1_.func_195991_k().func_201675_m().getHeight() - 1 && p_196258_1_.func_195991_k().func_180495_p(blockpos.func_177984_a()).func_196953_a(p_196258_1_) ? super.func_196258_a(p_196258_1_) : null;
++      return blockpos.func_177956_o() < 255 /*TODO context.getWorld().getDimension().getHeight() - 1*/ && p_196258_1_.func_195991_k().func_180495_p(blockpos.func_177984_a()).func_196953_a(p_196258_1_) ? super.func_196258_a(p_196258_1_) : null;
     }
  
     public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, BlockState p_180633_3_, LivingEntity p_180633_4_, ItemStack p_180633_5_) {
@@ -14,6 +14,6 @@
        } else {
           BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
 +         if (p_196260_1_.func_177230_c() != this) return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-          return blockstate.func_177230_c() == this && blockstate.func_177229_b(field_176492_b) == DoubleBlockHalf.LOWER;
+          return blockstate.func_203425_a(this) && blockstate.func_177229_b(field_176492_b) == DoubleBlockHalf.LOWER;
        }
     }

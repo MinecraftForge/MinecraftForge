@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -322,6 +322,7 @@
+@@ -358,6 +358,7 @@
     public Minecraft(GameConfiguration p_i45547_1_) {
        super("Client");
        field_71432_P = this;
@@ -8,74 +8,34 @@
        this.field_71412_D = p_i45547_1_.field_178744_c.field_178760_a;
        File file1 = p_i45547_1_.field_178744_c.field_178759_c;
        this.field_130070_K = p_i45547_1_.field_178744_c.field_178758_b;
-@@ -336,7 +337,6 @@
+@@ -370,7 +371,6 @@
        this.field_152355_az = (new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString())).createMinecraftSessionService();
        this.field_71449_j = p_i45547_1_.field_178745_a.field_178752_a;
        field_147123_G.info("Setting user: {}", (Object)this.field_71449_j.func_111285_a());
 -      field_147123_G.debug("(Session ID is {})", (Object)this.field_71449_j.func_111286_b());
        this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
-       this.field_147129_ai = func_147122_X();
-       this.field_71437_Z = null;
-@@ -350,7 +350,7 @@
-          i = 0;
-       }
- 
--      Bootstrap.func_151354_b();
-+      net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(()->Bootstrap.func_151354_b(), net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
-       Bootstrap.func_218821_c();
-       KeybindTextComponent.field_193637_b = KeyBinding::func_193626_b;
-       this.field_184131_U = DataFixesManager.func_210901_a();
-@@ -383,13 +383,13 @@
- 
-       this.field_195558_d.func_216526_a(this.field_71474_y.field_74350_i);
-       this.field_71417_B = new MouseHelper(this);
--      this.field_71417_B.func_198029_a(this.field_195558_d.func_198092_i());
-       this.field_195559_v = new KeyboardListener(this);
-       this.field_195559_v.func_197968_a(this.field_195558_d.func_198092_i());
-       RenderSystem.initRenderer(this.field_71474_y.field_209231_W, false);
-       this.field_147124_at = new Framebuffer(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), true, field_142025_a);
-       this.field_147124_at.func_147604_a(0.0F, 0.0F, 0.0F, 0.0F);
-       this.field_110451_am = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES, this.field_152352_aC);
-+      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
-       this.field_71474_y.func_198017_a(this.field_110448_aq);
-       this.field_110448_aq.func_198983_a();
-       this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
-@@ -434,12 +434,14 @@
-          this.func_193986_ar();
-          this.field_110451_am.func_219534_a(this.field_193995_ae);
-          this.field_71452_i = new ParticleManager(this.field_71441_e, this.field_71446_o);
-+         net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ParticleFactoryRegisterEvent());
-          this.field_110451_am.func_219534_a(this.field_71452_i);
-          this.field_213272_aL = new PaintingSpriteUploader(this.field_71446_o);
-          this.field_110451_am.func_219534_a(this.field_213272_aL);
-          this.field_213273_aM = new PotionSpriteUploader(this.field_71446_o);
-          this.field_110451_am.func_219534_a(this.field_213273_aM);
--         this.field_71456_v = new IngameGui(this);
-+         this.field_71456_v = new net.minecraftforge.client.gui.ForgeIngameGui(this);
-+         this.field_71417_B.func_198029_a(this.field_195558_d.func_198092_i()); //Forge: Moved below ingameGUI setting to prevent NPEs in handeler.
-          this.field_184132_p = new DebugRenderer(this);
-          RenderSystem.setErrorCallback(this::func_195545_a);
-          if (this.field_71474_y.field_74353_u && !this.field_195558_d.func_198113_j()) {
-@@ -451,12 +453,11 @@
-          this.field_195558_d.func_224798_d(this.field_71474_y.field_225307_E);
-          this.field_195558_d.func_227801_c_();
-          this.func_213226_a();
--         if (s != null) {
--            this.func_147108_a(new ConnectingScreen(new MainMenuScreen(), this, s, i));
--         } else {
--            this.func_147108_a(new MainMenuScreen(true));
--         }
+       this.field_238175_ae_ = !p_i45547_1_.field_178741_d.field_239099_d_;
+       this.field_238176_af_ = !p_i45547_1_.field_178741_d.field_239100_e_;
+@@ -482,12 +482,11 @@
+       this.field_195558_d.func_224798_d(this.field_71474_y.field_225307_E);
+       this.field_195558_d.func_227801_c_();
+       this.func_213226_a();
+-      if (s != null) {
+-         this.func_147108_a(new ConnectingScreen(new MainMenuScreen(), this, s, i));
+-      } else {
+-         this.func_147108_a(new MainMenuScreen(true));
+-      }
  
 +         //Final needed so we can move into lambda below.
 +         final String autoServerName = s;
 +         final int autoServerPort = i;
 +
-          ResourceLoadProgressGui.func_212970_a(this);
-          List<IResourcePack> list = this.field_110448_aq.func_198980_d().stream().map(ResourcePackInfo::func_195796_e).collect(Collectors.toList());
-          this.func_213268_a(new ResourceLoadProgressGui(this, this.field_110451_am.func_219537_a(Util.func_215072_e(), this, field_223714_G, list), (p_229990_2_) -> {
-@@ -466,6 +467,14 @@
-                   this.func_213256_aB();
-                }
+       ResourceLoadProgressGui.func_212970_a(this);
+       List<IResourcePack> list = this.field_110448_aq.func_232623_f_();
+       this.func_213268_a(new ResourceLoadProgressGui(this, this.field_110451_am.func_219537_a(Util.func_215072_e(), this, field_223714_G, list), (p_238197_1_) -> {
+@@ -496,6 +495,14 @@
+                this.func_213256_aB();
+             }
  
 +               if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
 +               // FORGE: Move opening initial screen to after startup and events are enabled.
@@ -85,19 +45,19 @@
 +               } else {
 +                  this.func_147108_a(new MainMenuScreen(true));
 +               }
-             });
-          }, false));
-       }
-@@ -505,7 +514,7 @@
+          });
+       }, false));
+    }
+@@ -534,7 +541,7 @@
     }
  
     private void func_229988_a_(Throwable p_229988_1_) {
--      if (this.field_110448_aq.func_198980_d().size() > 1) {
+-      if (this.field_110448_aq.func_232621_d_().size() > 1) {
 +      if (this.field_110448_aq.func_198980_d().stream().anyMatch(e -> !e.func_195797_g())) { //Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
           ITextComponent itextcomponent;
           if (p_229988_1_ instanceof SimpleReloadableResourceManager.FailedPackException) {
-             itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_230028_a().func_195762_a());
-@@ -579,7 +588,7 @@
+             itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_241203_a().func_195762_a());
+@@ -618,7 +625,7 @@
           return Stream.of(Registry.field_212630_s.func_177774_c(p_213251_0_.func_77973_b()));
        });
        SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) -> {
@@ -106,7 +66,7 @@
        });
        NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
-@@ -667,13 +676,13 @@
+@@ -688,13 +695,13 @@
        Bootstrap.func_179870_a(p_71377_0_.func_71502_e());
        if (p_71377_0_.func_71497_f() != null) {
           Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + p_71377_0_.func_71497_f());
@@ -123,7 +83,7 @@
        }
  
     }
-@@ -682,6 +691,7 @@
+@@ -703,6 +710,7 @@
        return this.field_71474_y.field_211842_aO;
     }
  
@@ -131,18 +91,18 @@
     public CompletableFuture<Void> func_213237_g() {
        if (this.field_213276_aV != null) {
           return this.field_213276_aV;
-@@ -760,10 +770,6 @@
+@@ -791,10 +799,6 @@
     }
  
     public void func_147108_a(@Nullable Screen p_147108_1_) {
 -      if (this.field_71462_r != null) {
--         this.field_71462_r.removed();
+-         this.field_71462_r.func_231164_f_();
 -      }
 -
        if (p_147108_1_ == null && this.field_71441_e == null) {
           p_147108_1_ = new MainMenuScreen();
-       } else if (p_147108_1_ == null && this.field_71439_g.func_110143_aJ() <= 0.0F) {
-@@ -774,6 +780,14 @@
+       } else if (p_147108_1_ == null && this.field_71439_g.func_233643_dh_()) {
+@@ -805,6 +809,14 @@
           }
        }
  
@@ -152,26 +112,26 @@
 +
 +      p_147108_1_ = event.getGui();
 +      if (old != null && p_147108_1_ != old)
-+         old.removed();
++         old.func_231164_f_();
 +
        if (p_147108_1_ instanceof MainMenuScreen || p_147108_1_ instanceof MultiplayerScreen) {
           this.field_71474_y.field_74330_P = false;
           this.field_71456_v.func_146158_b().func_146231_a(true);
-@@ -905,11 +919,13 @@
-       RenderSystem.enableTexture();
+@@ -936,11 +948,13 @@
+       RenderSystem.enableCull();
        this.field_71424_I.func_76319_b();
        if (!this.field_71454_w) {
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickStart(this.field_71428_T.field_194147_b);
           this.field_71424_I.func_219895_b("gameRenderer");
           this.field_71460_t.func_195458_a(this.field_71445_n ? this.field_193996_ah : this.field_71428_T.field_194147_b, i, p_195542_1_);
           this.field_71424_I.func_219895_b("toasts");
-          this.field_193034_aS.func_195625_a();
+          this.field_193034_aS.func_238541_a_(new MatrixStack());
           this.field_71424_I.func_76319_b();
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onRenderTickEnd(this.field_71428_T.field_194147_b);
        }
  
-       this.field_71424_I.func_219897_b();
-@@ -976,7 +992,7 @@
+       if (this.field_238174_aV_ != null) {
+@@ -1039,7 +1053,7 @@
  
        Framebuffer framebuffer = this.func_147110_a();
        framebuffer.func_216491_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), field_142025_a);
@@ -180,7 +140,7 @@
        this.field_71417_B.func_198021_g();
     }
  
-@@ -1164,11 +1180,21 @@
+@@ -1227,11 +1241,21 @@
           if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.func_216346_c() == RayTraceResult.Type.BLOCK) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
              BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -204,7 +164,7 @@
                 }
              }
  
-@@ -1187,6 +1213,8 @@
+@@ -1250,6 +1274,8 @@
              }
  
           } else if (!this.field_71439_g.func_184838_M()) {
@@ -213,7 +173,7 @@
              switch(this.field_71476_x.func_216346_c()) {
              case ENTITY:
                 this.field_71442_b.func_78764_a(this.field_71439_g, ((EntityRayTraceResult)this.field_71476_x).func_216348_a());
-@@ -1194,7 +1222,7 @@
+@@ -1257,7 +1283,7 @@
              case BLOCK:
                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
                 BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -222,7 +182,7 @@
                    this.field_71442_b.func_180511_b(blockpos, blockraytraceresult.func_216354_b());
                    break;
                 }
-@@ -1204,8 +1232,10 @@
+@@ -1267,8 +1293,10 @@
                 }
  
                 this.field_71439_g.func_184821_cY();
@@ -233,7 +193,7 @@
              this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
           }
        }
-@@ -1220,6 +1250,11 @@
+@@ -1283,6 +1311,11 @@
              }
  
              for(Hand hand : Hand.values()) {
@@ -245,7 +205,7 @@
                 ItemStack itemstack = this.field_71439_g.func_184586_b(hand);
                 if (this.field_71476_x != null) {
                    switch(this.field_71476_x.func_216346_c()) {
-@@ -1233,6 +1268,7 @@
+@@ -1296,6 +1329,7 @@
  
                       if (actionresulttype.func_226246_a_()) {
                          if (actionresulttype.func_226247_b_()) {
@@ -253,7 +213,7 @@
                             this.field_71439_g.func_184609_a(hand);
                          }
  
-@@ -1245,6 +1281,7 @@
+@@ -1308,6 +1342,7 @@
                       ActionResultType actionresulttype1 = this.field_71442_b.func_217292_a(this.field_71439_g, this.field_71441_e, hand, blockraytraceresult);
                       if (actionresulttype1.func_226246_a_()) {
                          if (actionresulttype1.func_226247_b_()) {
@@ -261,7 +221,7 @@
                             this.field_71439_g.func_184609_a(hand);
                             if (!itemstack.func_190926_b() && (itemstack.func_190916_E() != i || this.field_71442_b.func_78758_h())) {
                                this.field_71460_t.field_78516_c.func_187460_a(hand);
-@@ -1260,6 +1297,9 @@
+@@ -1323,6 +1358,9 @@
                    }
                 }
  
@@ -271,7 +231,7 @@
                 if (!itemstack.func_190926_b()) {
                    ActionResultType actionresulttype2 = this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, hand);
                    if (actionresulttype2.func_226246_a_()) {
-@@ -1286,6 +1326,8 @@
+@@ -1349,6 +1387,8 @@
           --this.field_71467_ac;
        }
  
@@ -280,7 +240,7 @@
        this.field_71424_I.func_76320_a("gui");
        if (!this.field_71445_n) {
           this.field_71456_v.func_73831_a();
-@@ -1403,6 +1445,8 @@
+@@ -1465,6 +1505,8 @@
        this.field_71424_I.func_219895_b("keyboard");
        this.field_195559_v.func_204870_b();
        this.field_71424_I.func_76319_b();
@@ -289,31 +249,20 @@
     }
  
     private void func_184117_aA() {
-@@ -1557,6 +1601,12 @@
-       this.func_147108_a(worldloadprogressscreen);
- 
-       while(!this.field_71437_Z.func_71200_ad()) {
-+         if (!net.minecraftforge.fml.StartupQuery.check() || this.field_71437_Z.func_71241_aa()) {
-+            this.func_147108_a(null);
-+            return;
-+         } else if (this.field_71462_r == null) // if we're showing nothing, put the working screen back again
-+           this.func_147108_a(worldloadprogressscreen);
-+
-          worldloadprogressscreen.tick();
-          this.func_195542_b(false);
- 
-@@ -1577,11 +1627,17 @@
-       networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
-       }));
-       networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
--      networkmanager.func_179290_a(new CLoginStartPacket(this.func_110432_I().func_148256_e()));
-+      com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
-+      if (!this.func_110432_I().hasCachedProperties()) {
-+         gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
-+         this.func_110432_I().setProperties(gameProfile.getProperties());
-+      }
-+      networkmanager.func_179290_a(new CLoginStartPacket(gameProfile));
-       this.field_71453_ak = networkmanager;
+@@ -1697,6 +1739,12 @@
+          }));
+          networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
+          networkmanager.func_179290_a(new CLoginStartPacket(this.func_110432_I().func_148256_e()));
++         com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
++         if (!this.func_110432_I().hasCachedProperties()) {
++             gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
++             this.func_110432_I().setProperties(gameProfile.getProperties());
++         }
++         networkmanager.func_179290_a(new CLoginStartPacket(gameProfile));
+          this.field_71453_ak = networkmanager;
+       } else {
+          this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
+@@ -1770,6 +1818,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -321,7 +270,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1613,10 +1669,12 @@
+@@ -1801,10 +1850,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -332,9 +281,9 @@
        if (this.field_71441_e != null) {
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
           if (integratedserver != null) {
-             while(!integratedserver.func_213201_w()) {
-                this.func_195542_b(false);
-@@ -1627,6 +1685,7 @@
+             this.field_71424_I.func_76320_a("waitForServer");
+ 
+@@ -1819,6 +1870,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -342,131 +291,15 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1649,6 +1708,7 @@
+@@ -1849,6 +1901,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
 +      net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
     }
  
-    public final boolean func_71355_q() {
-@@ -1674,112 +1734,9 @@
- 
-    private void func_147112_ai() {
-       if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
--         boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
--         TileEntity tileentity = null;
--         RayTraceResult.Type raytraceresult$type = this.field_71476_x.func_216346_c();
--         ItemStack itemstack;
--         if (raytraceresult$type == RayTraceResult.Type.BLOCK) {
--            BlockPos blockpos = ((BlockRayTraceResult)this.field_71476_x).func_216350_a();
--            BlockState blockstate = this.field_71441_e.func_180495_p(blockpos);
--            Block block = blockstate.func_177230_c();
--            if (blockstate.func_196958_f()) {
--               return;
--            }
--
--            itemstack = block.func_185473_a(this.field_71441_e, blockpos, blockstate);
--            if (itemstack.func_190926_b()) {
--               return;
--            }
--
--            if (flag && Screen.hasControlDown() && block.func_149716_u()) {
--               tileentity = this.field_71441_e.func_175625_s(blockpos);
--            }
--         } else {
--            if (raytraceresult$type != RayTraceResult.Type.ENTITY || !flag) {
--               return;
--            }
--
--            Entity entity = ((EntityRayTraceResult)this.field_71476_x).func_216348_a();
--            if (entity instanceof PaintingEntity) {
--               itemstack = new ItemStack(Items.field_151159_an);
--            } else if (entity instanceof LeashKnotEntity) {
--               itemstack = new ItemStack(Items.field_151058_ca);
--            } else if (entity instanceof ItemFrameEntity) {
--               ItemFrameEntity itemframeentity = (ItemFrameEntity)entity;
--               ItemStack itemstack1 = itemframeentity.func_82335_i();
--               if (itemstack1.func_190926_b()) {
--                  itemstack = new ItemStack(Items.field_151160_bD);
--               } else {
--                  itemstack = itemstack1.func_77946_l();
--               }
--            } else if (entity instanceof AbstractMinecartEntity) {
--               AbstractMinecartEntity abstractminecartentity = (AbstractMinecartEntity)entity;
--               Item item;
--               switch(abstractminecartentity.func_184264_v()) {
--               case FURNACE:
--                  item = Items.field_151109_aJ;
--                  break;
--               case CHEST:
--                  item = Items.field_151108_aI;
--                  break;
--               case TNT:
--                  item = Items.field_151142_bV;
--                  break;
--               case HOPPER:
--                  item = Items.field_151140_bW;
--                  break;
--               case COMMAND_BLOCK:
--                  item = Items.field_151095_cc;
--                  break;
--               default:
--                  item = Items.field_151143_au;
--               }
--
--               itemstack = new ItemStack(item);
--            } else if (entity instanceof BoatEntity) {
--               itemstack = new ItemStack(((BoatEntity)entity).func_184455_j());
--            } else if (entity instanceof ArmorStandEntity) {
--               itemstack = new ItemStack(Items.field_179565_cj);
--            } else if (entity instanceof EnderCrystalEntity) {
--               itemstack = new ItemStack(Items.field_185158_cP);
--            } else {
--               SpawnEggItem spawneggitem = SpawnEggItem.func_200889_b(entity.func_200600_R());
--               if (spawneggitem == null) {
--                  return;
--               }
--
--               itemstack = new ItemStack(spawneggitem);
--            }
--         }
--
--         if (itemstack.func_190926_b()) {
--            String s = "";
--            if (raytraceresult$type == RayTraceResult.Type.BLOCK) {
--               s = Registry.field_212618_g.func_177774_c(this.field_71441_e.func_180495_p(((BlockRayTraceResult)this.field_71476_x).func_216350_a()).func_177230_c()).toString();
--            } else if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
--               s = Registry.field_212629_r.func_177774_c(((EntityRayTraceResult)this.field_71476_x).func_216348_a().func_200600_R()).toString();
--            }
--
--            field_147123_G.warn("Picking on: [{}] {} gave null item", raytraceresult$type, s);
--         } else {
--            PlayerInventory playerinventory = this.field_71439_g.field_71071_by;
--            if (tileentity != null) {
--               this.func_184119_a(itemstack, tileentity);
--            }
--
--            int i = playerinventory.func_184429_b(itemstack);
--            if (flag) {
--               playerinventory.func_184434_a(itemstack);
--               this.field_71442_b.func_78761_a(this.field_71439_g.func_184586_b(Hand.MAIN_HAND), 36 + playerinventory.field_70461_c);
--            } else if (i != -1) {
--               if (PlayerInventory.func_184435_e(i)) {
--                  playerinventory.field_70461_c = i;
--               } else {
--                  this.field_71442_b.func_187100_a(i);
--               }
--            }
--
--         }
-+         if (!net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.field_71474_y.field_74322_I, Hand.MAIN_HAND).isCanceled())
-+         net.minecraftforge.common.ForgeHooks.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e);
-+         // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
-       }
-    }
- 
-@@ -1861,6 +1818,7 @@
+    public boolean func_238216_r_() {
+@@ -2081,6 +2134,7 @@
        return field_71432_P;
     }
  
@@ -474,29 +307,10 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -1988,6 +1946,8 @@
-    }
- 
-    public MusicTicker.MusicType func_147109_W() {
-+      MusicTicker.MusicType type = this.field_71441_e == null || this.field_71441_e.field_73011_w == null ? null : this.field_71441_e.field_73011_w.getMusicType();
-+      if (type != null) return type;
-       if (this.field_71462_r instanceof WinGameScreen) {
-          return MusicTicker.MusicType.CREDITS;
-       } else if (this.field_71439_g == null) {
-@@ -2164,7 +2124,7 @@
-          supplier = func_228022_c_(supplier);
-       }
- 
--      return new ClientResourcePackInfo(p_228011_0_, p_228011_1_, supplier, p_228011_3_, p_228011_4_, p_228011_5_);
-+      return new ClientResourcePackInfo(p_228011_0_, p_228011_1_, supplier, p_228011_3_, p_228011_4_, p_228011_5_, p_228011_3_.isHidden());
-    }
- 
-    private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2182,4 +2142,12 @@
-    public void func_228020_b_(int p_228020_1_) {
+@@ -2407,6 +2461,14 @@
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
-+
+ 
 +   public ItemColors getItemColors() {
 +      return this.field_184128_aI;
 +   }
@@ -504,4 +318,7 @@
 +   public SearchTreeManager getSearchTreeManager() {
 +      return this.field_193995_ae;
 +   }
- }
++
+    @OnlyIn(Dist.CLIENT)
+    public static final class PackManager implements AutoCloseable {
+       private final ResourcePackList<ResourcePackInfo> field_238221_a_;

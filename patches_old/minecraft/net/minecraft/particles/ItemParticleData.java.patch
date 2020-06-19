@@ -1,0 +1,11 @@
+--- a/net/minecraft/particles/ItemParticleData.java
++++ b/net/minecraft/particles/ItemParticleData.java
+@@ -28,7 +28,7 @@
+ 
+    public ItemParticleData(ParticleType<ItemParticleData> p_i47952_1_, ItemStack p_i47952_2_) {
+       this.field_197558_b = p_i47952_1_;
+-      this.field_197559_c = p_i47952_2_;
++      this.field_197559_c = p_i47952_2_.func_77946_l(); //Forge: Fix stack updating after the fact causing particle changes.
+    }
+ 
+    public void func_197553_a(PacketBuffer p_197553_1_) {

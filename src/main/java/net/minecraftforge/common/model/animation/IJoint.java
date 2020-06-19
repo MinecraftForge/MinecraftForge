@@ -19,9 +19,9 @@
 
 package net.minecraftforge.common.model.animation;
 
-import java.util.Optional;
+import net.minecraft.util.math.vector.TransformationMatrix;
 
-import net.minecraft.client.renderer.TransformationMatrix;
+import java.util.Optional;
 
 /**
  * Model part that's a part of the hierarchical skeleton.

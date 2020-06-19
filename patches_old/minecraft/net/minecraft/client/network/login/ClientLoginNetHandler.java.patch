@@ -1,0 +1,18 @@
+--- a/net/minecraft/client/network/login/ClientLoginNetHandler.java
++++ b/net/minecraft/client/network/login/ClientLoginNetHandler.java
+@@ -98,6 +98,7 @@
+       this.field_209525_d.accept(new TranslationTextComponent("connect.joining"));
+       this.field_175091_e = p_147390_1_.func_179730_a();
+       this.field_147393_d.func_150723_a(ProtocolType.PLAY);
++      net.minecraftforge.fml.network.NetworkHooks.handleClientLoginSuccess(this.field_147393_d);
+       this.field_147393_d.func_150719_a(new ClientPlayNetHandler(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e));
+    }
+ 
+@@ -126,6 +127,7 @@
+    }
+ 
+    public void func_209521_a(SCustomPayloadLoginPacket p_209521_1_) {
++      if (net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209521_1_, this.field_147393_d)) return;
+       this.field_209525_d.accept(new TranslationTextComponent("connect.negotiating"));
+       this.field_147393_d.func_179290_a(new CCustomPayloadLoginPacket(p_209521_1_.func_209918_a(), (PacketBuffer)null));
+    }

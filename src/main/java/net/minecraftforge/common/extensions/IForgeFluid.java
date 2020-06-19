@@ -27,7 +27,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -54,7 +54,7 @@ public interface IForgeFluid
      * @param tag Fluid category
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(IFluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
         return state.isTagged(tag) && yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
     }
@@ -70,7 +70,7 @@ public interface IForgeFluid
      * @return null for default behavior, true if the box is within the material, false if it was not.
      */
     @Nullable
-    default Boolean isAABBInsideMaterial(IFluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
+    default Boolean isAABBInsideMaterial(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
     {
         return null;
     }
@@ -84,7 +84,7 @@ public interface IForgeFluid
      * @return null for default behavior, true if the box is within the material, false if it was not.
      */
     @Nullable
-    default Boolean isAABBInsideLiquid(IFluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
+    default Boolean isAABBInsideLiquid(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
     {
         return null;
     }
@@ -98,7 +98,7 @@ public interface IForgeFluid
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
-    default float getExplosionResistance(IFluidState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
+    default float getExplosionResistance(FluidState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
     {
         return state.getExplosionResistance();
     }

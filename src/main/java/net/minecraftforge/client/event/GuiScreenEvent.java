@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraftforge.api.distmarker.Dist;
@@ -127,16 +128,26 @@ public class GuiScreenEvent extends Event
 
     public static class DrawScreenEvent extends GuiScreenEvent
     {
+        private final MatrixStack mStack;
         private final int mouseX;
         private final int mouseY;
         private final float renderPartialTicks;
 
-        public DrawScreenEvent(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+        public DrawScreenEvent(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
         {
             super(gui);
+            this.mStack = mStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
             this.renderPartialTicks = renderPartialTicks;
+        }
+
+        /**
+         * The MatrixStack to render with.
+         */
+        public MatrixStack getMatrixStack()
+        {
+            return mStack;
         }
 
         /**
@@ -170,9 +181,9 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
-                super(gui, mouseX, mouseY, renderPartialTicks);
+                super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
         }
 
@@ -181,9 +192,9 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
-                super(gui, mouseX, mouseY, renderPartialTicks);
+                super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
         }
     }

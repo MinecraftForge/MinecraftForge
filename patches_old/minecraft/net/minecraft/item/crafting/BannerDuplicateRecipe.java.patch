@@ -1,0 +1,13 @@
+--- a/net/minecraft/item/crafting/BannerDuplicateRecipe.java
++++ b/net/minecraft/item/crafting/BannerDuplicateRecipe.java
+@@ -77,8 +77,8 @@
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+          ItemStack itemstack = p_179532_1_.func_70301_a(i);
+          if (!itemstack.func_190926_b()) {
+-            if (itemstack.func_77973_b().func_77634_r()) {
+-               nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
++            if (itemstack.hasContainerItem()) {
++               nonnulllist.set(i, itemstack.getContainerItem());
+             } else if (itemstack.func_77942_o() && BannerTileEntity.func_175113_c(itemstack) > 0) {
+                ItemStack itemstack1 = itemstack.func_77946_l();
+                itemstack1.func_190920_e(1);

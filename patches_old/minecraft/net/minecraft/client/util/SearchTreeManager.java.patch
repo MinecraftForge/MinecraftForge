@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/util/SearchTreeManager.java
++++ b/net/minecraft/client/util/SearchTreeManager.java
+@@ -31,6 +31,11 @@
+       return (IMutableSearchTree<T>) this.field_194013_c.get(p_215358_1_);
+    }
+ 
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.LANGUAGES;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class Key<T> {
+    }

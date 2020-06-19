@@ -8,10 +8,10 @@
 -               world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
 +               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
 +               world.func_184133_a(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, p_195942_1_.func_195999_j()), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
-                itemstack.func_190918_g(1);
-                return ActionResultType.SUCCESS;
-             }
-@@ -78,10 +78,16 @@
+                if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
+                   itemstack.func_190918_g(1);
+                }
+@@ -81,10 +81,16 @@
        }
     }
  
@@ -28,7 +28,7 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -189,10 +195,18 @@
+@@ -192,10 +198,18 @@
     }
  
     public Block func_179223_d() {

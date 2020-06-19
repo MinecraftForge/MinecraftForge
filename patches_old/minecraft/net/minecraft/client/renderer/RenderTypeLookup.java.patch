@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/RenderTypeLookup.java
++++ b/net/minecraft/client/renderer/RenderTypeLookup.java
+@@ -256,8 +259,7 @@
+    }
+ 
+    public static RenderType func_228394_b_(BlockState p_228394_0_) {
+-      RenderType rendertype = func_228390_a_(p_228394_0_);
+-      return rendertype == RenderType.func_228645_f_() ? Atlases.func_228784_i_() : Atlases.func_228783_h_();
++      return canRenderInLayer(p_228394_0_, RenderType.func_228645_f_()) ? Atlases.func_228784_i_() : Atlases.func_228783_h_();
+    }
+ 
+    public static RenderType func_228389_a_(ItemStack p_228389_0_) {

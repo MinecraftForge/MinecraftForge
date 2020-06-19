@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/SpiderEntity.java
 +++ b/net/minecraft/entity/monster/SpiderEntity.java
-@@ -119,7 +119,12 @@
+@@ -118,7 +118,12 @@
     }
  
     public boolean func_70687_e(EffectInstance p_70687_1_) {

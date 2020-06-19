@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * func_240521_a_right (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
+ * You should have received a func_240521_a_ of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
@@ -26,11 +26,13 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -40,16 +42,16 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
 {
     private Set<ResourceLocation> filter = null;
 
-    public ForgeItemTagsProvider(DataGenerator gen)
+    public ForgeItemTagsProvider(DataGenerator gen, BlockTagsProvider blockTagProvider)
     {
-        super(gen);
+        super(gen, blockTagProvider);
     }
 
     @Override
     public void registerTags()
     {
         super.registerTags();
-        filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey().getId()).collect(Collectors.toSet());
+        filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toSet());
 
         func_240522_a_(Tags.Items.ARROWS).func_240534_a_(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
         func_240522_a_(Tags.Items.BEACON_PAYMENT).func_240534_a_(Items.EMERALD, Items.DIAMOND, Items.GOLD_INGOT, Items.IRON_INGOT);
@@ -128,7 +130,6 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240522_a_(Tags.Items.SEEDS_MELON).func_240534_a_(Items.MELON_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_PUMPKIN).func_240534_a_(Items.PUMPKIN_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_WHEAT).func_240534_a_(Items.WHEAT_SEEDS);
-        func_240522_a_(Tags.Items.SHEARS).func_240534_a_(Items.SHEARS);
         func_240522_a_(Tags.Items.SLIMEBALLS).func_240534_a_(Items.SLIME_BALL);
         func_240521_a_(Tags.Blocks.STAINED_GLASS, Tags.Items.STAINED_GLASS);
         func_240521_a_(Tags.Blocks.STAINED_GLASS_PANES, Tags.Items.STAINED_GLASS_PANES);
@@ -145,41 +146,41 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240522_a_(Tags.Items.STRING).func_240534_a_(Items.STRING);
     }
 
-    private void addColored(Consumer<Tag<Item>> consumer, Tag<Item> group, String pattern)
+    private void addColored(Consumer<ITag.INamedTag<Item>> consumer, ITag.INamedTag<Item> group, String pattern)
     {
-        String prefix = group.getId().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String prefix = group.func_230234_a_().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
             ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getTranslationKey()));
-            Tag<Item> tag = getForgeItemTag(prefix + color.getTranslationKey());
+            ITag.INamedTag<Item> tag = getForgeItemTag(prefix + color.getTranslationKey());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());
-            getBuilder(tag).add(item);
+            func_240522_a_(tag).func_240534_a_(item);
             consumer.accept(tag);
         }
     }
 
-    private void copyColored(Tag<Block> blockGroup, Tag<Item> itemGroup)
+    private void func_240521_a_Colored(ITag.INamedTag<Block> blockGroup, ITag.INamedTag<Item> itemGroup)
     {
-        String blockPre = blockGroup.getId().getPath().toUpperCase(Locale.ENGLISH) + '_';
-        String itemPre = itemGroup.getId().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String blockPre = blockGroup.func_230234_a_().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String itemPre = itemGroup.func_230234_a_().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
-            Tag<Block> from = getForgeBlockTag(blockPre + color.getTranslationKey());
-            Tag<Item> to = getForgeItemTag(itemPre + color.getTranslationKey());
-            copy(from, to);
+            ITag.INamedTag<Block> from = getForgeBlockTag(blockPre + color.getTranslationKey());
+            ITag.INamedTag<Item> to = getForgeItemTag(itemPre + color.getTranslationKey());
+            func_240521_a_(from, to);
         }
-        copy(getForgeBlockTag(blockPre + "colorless"), getForgeItemTag(itemPre + "colorless"));
+        func_240521_a_(getForgeBlockTag(blockPre + "colorless"), getForgeItemTag(itemPre + "colorless"));
     }
 
     @SuppressWarnings("unchecked")
-    private Tag<Block> getForgeBlockTag(String name)
+    private ITag.INamedTag<Block> getForgeBlockTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (Tag<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
+            return (ITag.INamedTag<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {
@@ -188,12 +189,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private Tag<Item> getForgeItemTag(String name)
+    private ITag.INamedTag<Item> getForgeItemTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (Tag<Item>)Tags.Items.class.getDeclaredField(name).get(null);
+            return (ITag.INamedTag<Item>)Tags.Items.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {

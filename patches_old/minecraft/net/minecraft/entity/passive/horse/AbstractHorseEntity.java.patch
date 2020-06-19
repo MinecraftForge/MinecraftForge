@@ -1,0 +1,45 @@
+--- a/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
++++ b/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
+@@ -263,6 +263,7 @@
+ 
+       this.field_110296_bG.func_110134_a(this);
+       this.func_110232_cE();
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
+    }
+ 
+    protected void func_110232_cE() {
+@@ -324,9 +325,9 @@
+    protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
+       if (!p_180429_2_.func_185904_a().func_76224_d()) {
+          BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
+-         SoundType soundtype = p_180429_2_.func_215695_r();
++         SoundType soundtype = p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
+          if (blockstate.func_177230_c() == Blocks.field_150433_aE) {
+-            soundtype = blockstate.func_215695_r();
++            soundtype = blockstate.getSoundType(field_70170_p, p_180429_1_, this);
+          }
+ 
+          if (this.func_184207_aI() && this.field_190688_bE) {
+@@ -947,4 +948,22 @@
+ 
+       return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
+    }
++
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.Direction facing) {
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void remove(boolean keepData) {
++      super.remove(keepData);
++      if (!keepData && itemHandler != null) {
++         itemHandler.invalidate();
++         itemHandler = null;
++      }
++   }
+ }

@@ -25,9 +25,9 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraft.world.storage.loot.conditions.LootConditionManager;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.loot.conditions.LootConditionManager;
 
 /**
  * A base implementation of a Global Loot Modifier for modders to extend.

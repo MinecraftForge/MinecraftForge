@@ -1,0 +1,33 @@
+--- a/net/minecraft/block/FarmlandBlock.java
++++ b/net/minecraft/block/FarmlandBlock.java
+@@ -76,7 +76,7 @@
+    }
+ 
+    public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_) {
+-      if (!p_180658_1_.field_72995_K && p_180658_1_.field_73012_v.nextFloat() < p_180658_4_ - 0.5F && p_180658_3_ instanceof LivingEntity && (p_180658_3_ instanceof PlayerEntity || p_180658_1_.func_82736_K().func_223586_b(GameRules.field_223599_b)) && p_180658_3_.func_213311_cf() * p_180658_3_.func_213311_cf() * p_180658_3_.func_213302_cg() > 0.512F) {
++      if (!p_180658_1_.field_72995_K && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, Blocks.field_150346_d.func_176223_P(), p_180658_4_, p_180658_3_)) { // Forge: Move logic to Entity#canTrample
+          func_199610_d(p_180658_1_.func_180495_p(p_180658_2_), p_180658_1_, p_180658_2_);
+       }
+ 
+@@ -87,9 +87,9 @@
+       p_199610_1_.func_175656_a(p_199610_2_, func_199601_a(p_199610_0_, Blocks.field_150346_d.func_176223_P(), p_199610_1_, p_199610_2_));
+    }
+ 
+-   private static boolean func_176529_d(IBlockReader p_176529_0_, BlockPos p_176529_1_) {
+-      Block block = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a()).func_177230_c();
+-      return block instanceof CropsBlock || block instanceof StemBlock || block instanceof AttachedStemBlock;
++   private boolean func_176529_d(IBlockReader p_176529_0_, BlockPos p_176529_1_) {
++      BlockState state = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a());
++      return state.func_177230_c() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, p_176529_0_, p_176529_1_, Direction.UP, (net.minecraftforge.common.IPlantable)state.func_177230_c());
+    }
+ 
+    private static boolean func_176530_e(IWorldReader p_176530_0_, BlockPos p_176530_1_) {
+@@ -99,7 +99,7 @@
+          }
+       }
+ 
+-      return false;
++      return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_176530_0_, p_176530_1_);
+    }
+ 
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {

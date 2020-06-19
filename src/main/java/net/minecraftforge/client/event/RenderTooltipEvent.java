@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -46,12 +47,12 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 {
     @Nonnull
     protected final ItemStack stack;
-    protected final List<String> lines;
+    protected final List<? extends ITextProperties> lines;
     protected int x;
     protected int y;
     protected FontRenderer fr;
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<String> lines, int x, int y, @Nonnull FontRenderer fr)
+    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, int x, int y, @Nonnull FontRenderer fr)
     {
         this.stack = stack;
         this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
@@ -75,7 +76,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * @return An <i>unmodifiable</i> list of strings. Use {@link ItemTooltipEvent} to modify tooltip text.
      */
     @Nonnull
-    public List<String> getLines()
+    public List<? extends ITextProperties> getLines()
     {
         return lines;
     }
@@ -117,7 +118,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenHeight;
         private int maxWidth;
 
-        public Pre(@Nonnull ItemStack stack, @Nonnull List<String> lines, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
+        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
         {
             super(stack, lines, x, y, fr);
             this.screenWidth = screenWidth;
@@ -200,7 +201,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final int width;
         private final int height;
         
-        public Post(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
         {
             super(stack, textLines, x, y, fr);
             this.width = width;
@@ -229,7 +230,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostBackground extends Post 
     {
-        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, x, y, fr, width, height); }
     }
 
@@ -238,7 +239,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostText extends Post
     {
-        public PostText(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, x, y, fr, width, height); }
     }
     
@@ -254,7 +255,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
+        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
                 int borderEnd)
         {
             super(stack, textLines, x, y, fr);

@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/Items.java
++++ b/net/minecraft/item/Items.java
+@@ -12,6 +12,7 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.registry.Registry;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Items {
+    public static final Item field_190931_a = func_221546_a(Blocks.field_150350_a, new AirItem(Blocks.field_150350_a, new Item.Properties()));
+    public static final Item field_221574_b = func_221542_a(Blocks.field_150348_b, ItemGroup.field_78030_b);

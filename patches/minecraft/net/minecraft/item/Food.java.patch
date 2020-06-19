@@ -25,7 +25,7 @@
        this.field_221473_d = p_i50106_4_;
        this.field_221474_e = p_i50106_5_;
 -      this.field_221475_f = p_i50106_6_;
-+      this.field_221475_f = p_i50106_6_.stream().map(pair -> Pair.<java.util.function.Supplier<EffectInstance>, Float>of(pair::getLeft, pair.getRight())).collect(java.util.stream.Collectors.toList());
++      this.field_221475_f = p_i50106_6_.stream().map(pair -> Pair.<java.util.function.Supplier<EffectInstance>, Float>of(pair::getFirst, pair.getSecond())).collect(java.util.stream.Collectors.toList());
     }
  
     public int func_221466_a() {
@@ -34,7 +34,7 @@
  
     public List<Pair<EffectInstance, Float>> func_221464_f() {
 -      return this.field_221475_f;
-+      return this.field_221475_f.stream().map(pair -> Pair.of(pair.getLeft() != null ? pair.getLeft().get() : null, pair.getRight())).collect(java.util.stream.Collectors.toList());
++      return this.field_221475_f.stream().map(pair -> Pair.of(pair.getFirst() != null ? pair.getFirst().get() : null, pair.getSecond())).collect(java.util.stream.Collectors.toList());
     }
  
     public static class Builder {

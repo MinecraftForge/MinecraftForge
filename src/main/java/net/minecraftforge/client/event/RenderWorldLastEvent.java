@@ -21,8 +21,8 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.util.math.vector.Matrix4f;
 
 public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
 {
@@ -31,16 +31,6 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
     private final float partialTicks;
     private final Matrix4f projectionMatrix;
     private final long finishTimeNano;
-
-    @Deprecated // TODO: Remove in 1.16
-    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks)
-    {
-        this.context = context;
-        this.mat = mat;
-        this.partialTicks = partialTicks;
-        this.projectionMatrix = null;
-        this.finishTimeNano = 0;
-    }
 
     public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {

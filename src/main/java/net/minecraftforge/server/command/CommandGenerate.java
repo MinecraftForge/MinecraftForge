@@ -29,7 +29,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.WorldWorkerManager;
 
 class CommandGenerate
@@ -46,7 +46,7 @@ class CommandGenerate
                         )
                         .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.getDimensionArgument(ctx, "dim"), -1))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld().dimension.getType(), -1))
+                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld(), -1))
                 )
             );
     }
@@ -56,7 +56,7 @@ class CommandGenerate
         return IntegerArgumentType.getInteger(ctx, name);
     }
 
-    private static int execute(CommandSource source, BlockPos pos, int count, DimensionType dim, int interval) throws CommandException
+    private static int execute(CommandSource source, BlockPos pos, int count, ServerWorld dim, int interval) throws CommandException
     {
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 

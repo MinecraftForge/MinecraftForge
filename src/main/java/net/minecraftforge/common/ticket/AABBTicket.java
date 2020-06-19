@@ -20,11 +20,11 @@
 package net.minecraftforge.common.ticket;
 
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nonnull;
 
-public class AABBTicket extends SimpleTicket<Vec3d>
+public class AABBTicket extends SimpleTicket<Vector3d>
 {
     @Nonnull
     public final AxisAlignedBB axisAlignedBB;
@@ -35,7 +35,7 @@ public class AABBTicket extends SimpleTicket<Vec3d>
     }
 
     @Override
-    public boolean matches(Vec3d toMatch)
+    public boolean matches(Vector3d toMatch)
     {
         return this.axisAlignedBB.contains(toMatch);
     }

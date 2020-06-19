@@ -29,7 +29,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -66,7 +65,7 @@ public class BlockSnapshot
     public BlockSnapshot(IWorld world, BlockPos pos, BlockState state, @Nullable CompoundNBT nbt)
     {
         this.setWorld(world);
-        this.dimId = world.getDimension().getType().getId();
+        this.dimId = 0; //world.getDimension().getType().getId(); //TODO
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = state.getBlock().getRegistryName();
@@ -74,7 +73,7 @@ public class BlockSnapshot
         this.nbt = nbt;
         if (DEBUG)
         {
-            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), getRegistryName(), getMeta());
+            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo()/*TODO .getWorldName()*/, pos.getX(), pos.getY(), pos.getZ(), getRegistryName(), getMeta());
         }
     }
 
@@ -136,7 +135,8 @@ public class BlockSnapshot
         IWorld world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimId()));
+            //TODO
+            //world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimId()));
             this.world = new WeakReference<IWorld>(world);
         }
         return world;
@@ -154,7 +154,7 @@ public class BlockSnapshot
     @Nullable
     public TileEntity getTileEntity()
     {
-        return getNbt() != null ? TileEntity.create(getNbt()) : null;
+        return getNbt() != null ? TileEntity.func_235657_b_(getReplacedBlock(), getNbt()) : null;
     }
 
     public boolean restore()
@@ -201,14 +201,14 @@ public class BlockSnapshot
             te = world.getTileEntity(pos);
             if (te != null)
             {
-                te.read(getNbt());
+                te.func_230337_a_(getReplacedBlock(), getNbt());
                 te.markDirty();
             }
         }
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][State: %s ][Block: %s ][TileEntity: %s ][force: %s ][notifyNeighbors: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced, replaced.getBlock().delegate.name(), te, force, notifyNeighbors);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][State: %s ][Block: %s ][TileEntity: %s ][force: %s ][notifyNeighbors: %s]", world.getWorldInfo()/*TODO .getWorldName()*/, pos.getX(), pos.getY(), pos.getZ(), replaced, replaced.getBlock().delegate.name(), te, force, notifyNeighbors);
         }
         return true;
     }

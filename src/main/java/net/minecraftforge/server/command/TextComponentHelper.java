@@ -41,7 +41,7 @@ public class TextComponentHelper
     {
         if (isVanillaClient(source))
         {
-            return new StringTextComponent(String.format(LanguageMap.getInstance().translateKey(translation), args));
+            return new StringTextComponent(String.format(LanguageMap.getInstance().func_230503_a_(translation), args));
         }
         return new TranslationTextComponent(translation, args);
     }

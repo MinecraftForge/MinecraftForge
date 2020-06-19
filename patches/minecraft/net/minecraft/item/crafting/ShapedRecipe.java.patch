@@ -43,7 +43,7 @@
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -194,15 +217,15 @@
+@@ -192,15 +215,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -63,7 +63,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -244,11 +267,12 @@
+@@ -242,11 +265,12 @@
           throw new JsonParseException("Disallowed data tag found");
        } else {
           int i = JSONUtils.func_151208_a(p_199798_0_, "count", 1);

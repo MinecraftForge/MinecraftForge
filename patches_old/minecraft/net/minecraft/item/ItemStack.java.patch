@@ -1,0 +1,245 @@
+--- a/net/minecraft/item/ItemStack.java
++++ b/net/minecraft/item/ItemStack.java
+@@ -66,7 +66,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public final class ItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
+    private static final Logger field_199558_c = LogManager.getLogger();
+    public static final ItemStack field_190927_a = new ItemStack((Item)null);
+    public static final DecimalFormat field_111284_a = func_208306_D();
+@@ -82,6 +82,9 @@
+    private CachedBlockInfo field_179550_j;
+    private boolean field_179551_k;
+ 
++   private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
++   private CompoundNBT capNBT;
++
+    private static DecimalFormat func_208306_D() {
+       DecimalFormat decimalformat = new DecimalFormat("#.##");
+       decimalformat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT));
+@@ -92,7 +95,10 @@
+       this(p_i48203_1_, 1);
+    }
+ 
+-   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) { this(p_i48204_1_, p_i48204_2_, null); }
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable CompoundNBT capNBT) {
++      super(ItemStack.class);
++      this.capNBT = capNBT;
+       this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
+       this.field_77994_a = p_i48204_2_;
+       if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
+@@ -100,6 +106,7 @@
+       }
+ 
+       this.func_190923_F();
++      this.forgeInit();
+    }
+ 
+    private void func_190923_F() {
+@@ -108,6 +115,8 @@
+    }
+ 
+    private ItemStack(CompoundNBT p_i47263_1_) {
++      super(ItemStack.class);
++      this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
+       this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
+       this.field_77994_a = p_i47263_1_.func_74771_c("Count");
+       if (p_i47263_1_.func_150297_b("tag", 10)) {
+@@ -120,6 +129,7 @@
+       }
+ 
+       this.func_190923_F();
++      this.forgeInit();
+    }
+ 
+    public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
+@@ -134,7 +144,7 @@
+    public boolean func_190926_b() {
+       if (this == field_190927_a) {
+          return true;
+-      } else if (this.func_77973_b() != null && this.func_77973_b() != Items.field_190931_a) {
++      } else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a) {
+          return this.field_77994_a <= 0;
+       } else {
+          return true;
+@@ -150,10 +160,19 @@
+    }
+ 
+    public Item func_77973_b() {
+-      return this.field_190928_g ? Items.field_190931_a : this.field_151002_e;
++      return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
+    }
+ 
+    public ActionResultType func_196084_a(ItemUseContext p_196084_1_) {
++      if (!p_196084_1_.field_196006_g.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_));
++   }
++
++   public ActionResultType onItemUseFirst(ItemUseContext context) {
++      return onItemUse(context, (c) -> func_77973_b().onItemUseFirst(this, context));
++   }
++
++   private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback) {
+       PlayerEntity playerentity = p_196084_1_.func_195999_j();
+       BlockPos blockpos = p_196084_1_.func_195995_a();
+       CachedBlockInfo cachedblockinfo = new CachedBlockInfo(p_196084_1_.func_195991_k(), blockpos, false);
+@@ -161,7 +180,7 @@
+          return ActionResultType.PASS;
+       } else {
+          Item item = this.func_77973_b();
+-         ActionResultType actionresulttype = item.func_195939_a(p_196084_1_);
++         ActionResultType actionresulttype = callback.apply(p_196084_1_);
+          if (playerentity != null && actionresulttype == ActionResultType.SUCCESS) {
+             playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(item));
+          }
+@@ -189,12 +208,15 @@
+       if (this.field_77990_d != null) {
+          p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
+       }
+-
++      CompoundNBT cnbt = this.serializeCaps();
++      if (cnbt != null && !cnbt.isEmpty()) {
++         p_77955_1_.func_218657_a("ForgeCaps", cnbt);
++      }
+       return p_77955_1_;
+    }
+ 
+    public int func_77976_d() {
+-      return this.func_77973_b().func_77639_j();
++      return this.func_77973_b().getItemStackLimit(this);
+    }
+ 
+    public boolean func_77985_e() {
+@@ -202,7 +224,7 @@
+    }
+ 
+    public boolean func_77984_f() {
+-      if (!this.field_190928_g && this.func_77973_b().func_77612_l() > 0) {
++      if (!this.field_190928_g && this.func_77973_b().getMaxDamage(this) > 0) {
+          CompoundNBT compoundnbt = this.func_77978_p();
+          return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
+       } else {
+@@ -211,19 +233,19 @@
+    }
+ 
+    public boolean func_77951_h() {
+-      return this.func_77984_f() && this.func_77952_i() > 0;
++      return this.func_77984_f() && func_77973_b().isDamaged(this);
+    }
+ 
+    public int func_77952_i() {
+-      return this.field_77990_d == null ? 0 : this.field_77990_d.func_74762_e("Damage");
++      return this.func_77973_b().getDamage(this);
+    }
+ 
+    public void func_196085_b(int p_196085_1_) {
+-      this.func_196082_o().func_74768_a("Damage", Math.max(0, p_196085_1_));
++      this.func_77973_b().setDamage(this, p_196085_1_);
+    }
+ 
+    public int func_77958_k() {
+-      return this.func_77973_b().func_77612_l();
++      return this.func_77973_b().getMaxDamage(this);
+    }
+ 
+    public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
+@@ -259,6 +281,7 @@
+    public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
+       if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
+          if (this.func_77984_f()) {
++            p_222118_1_ = this.func_77973_b().damageItem(this, p_222118_1_, p_222118_2_, p_222118_3_);
+             if (this.func_96631_a(p_222118_1_, p_222118_2_.func_70681_au(), p_222118_2_ instanceof ServerPlayerEntity ? (ServerPlayerEntity)p_222118_2_ : null)) {
+                p_222118_3_.accept(p_222118_2_);
+                Item item = this.func_77973_b();
+@@ -291,7 +314,7 @@
+    }
+ 
+    public boolean func_150998_b(BlockState p_150998_1_) {
+-      return this.func_77973_b().func_150897_b(p_150998_1_);
++      return this.func_77973_b().canHarvestBlock(this, p_150998_1_);
+    }
+ 
+    public boolean func_111282_a(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
+@@ -302,7 +325,7 @@
+       if (this.func_190926_b()) {
+          return field_190927_a;
+       } else {
+-         ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a);
++         ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a, this.serializeCaps());
+          itemstack.func_190915_d(this.func_190921_D());
+          if (this.field_77990_d != null) {
+             itemstack.field_77990_d = this.field_77990_d.func_74737_b();
+@@ -319,7 +342,7 @@
+          if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
+             return false;
+          } else {
+-            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
++            return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
+          }
+       } else {
+          return false;
+@@ -342,7 +365,7 @@
+       } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
+          return false;
+       } else {
+-         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
++         return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
+       }
+    }
+ 
+@@ -652,6 +675,7 @@
+          }
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
+       return list;
+    }
+ 
+@@ -772,7 +796,7 @@
+             }
+          }
+       } else {
+-         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
++         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
+       }
+ 
+       multimap.values().forEach((p_226631_0_) -> {
+@@ -915,6 +939,35 @@
+       return this.func_77973_b().func_219971_r();
+    }
+ 
++   // FORGE START
++   public void deserializeNBT(CompoundNBT nbt) {
++      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
++      getStack().func_77982_d(itemStack.func_77978_p());
++      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++   }
++
++   /**
++    * Set up forge's ItemStack additions.
++    */
++   private void forgeInit() {
++      Item item = getItemRaw();
++      if (item != null) {
++         this.delegate = item.delegate;
++         net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++         this.gatherCapabilities(provider);
++         if (this.capNBT != null) deserializeCaps(this.capNBT);
++      }
++   }
++
++   /**
++    * Internal call to get the actual item, not the delegate.
++    * In all other methods, FML replaces calls to this.item with the item delegate.
++    */
++   @Nullable
++   private Item getItemRaw() {
++       return this.field_151002_e;
++   }
++
+    public SoundEvent func_226629_F_() {
+       return this.func_77973_b().func_225520_U__();
+    }

@@ -32,7 +32,7 @@
        return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
     }
  
-+   public ItemOverrideList getOverrides(ModelBakery p_217646_1_, BlockModel p_217646_2_, Function<Material, TextureAtlasSprite> textureGetter) {
++   public ItemOverrideList getOverrides(ModelBakery p_217646_1_, BlockModel p_217646_2_, Function<RenderMaterial, TextureAtlasSprite> textureGetter) {
 +      return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, textureGetter, this.field_187968_k);
 +   }
 +
@@ -41,29 +41,29 @@
  
 @@ -143,6 +153,9 @@
  
-       Set<Material> set1 = Sets.newHashSet(this.func_228816_c_("particle"));
+       Set<RenderMaterial> set1 = Sets.newHashSet(this.func_228816_c_("particle"));
  
 +      if(customData.hasCustomGeometry())
 +         set1.addAll(customData.getTextureDependencies(p_225614_1_, p_225614_2_));
 +      else
        for(BlockPart blockpart : this.func_178298_a()) {
           for(BlockPartFace blockpartface : blockpart.field_178240_c.values()) {
-             Material material = this.func_228816_c_(blockpartface.field_178242_d);
+             RenderMaterial rendermaterial = this.func_228816_c_(blockpartface.field_178242_d);
 @@ -169,11 +182,17 @@
        return set1;
     }
  
 +   @Deprecated //Forge: Use Boolean variant
-    public IBakedModel func_225613_a_(ModelBakery p_225613_1_, Function<Material, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
+    public IBakedModel func_225613_a_(ModelBakery p_225613_1_, Function<RenderMaterial, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
        return this.func_228813_a_(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_, true);
     }
  
-    public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
-+      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
+    public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
++       return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
 +   }
 +
 +   @Deprecated //Forge: exposed for our callbacks only. Use the above function.
-+   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<Material, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
++   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
        TextureAtlasSprite textureatlassprite = p_228813_3_.apply(this.func_228816_c_("particle"));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {
           return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_228813_1_, p_228813_2_), textureatlassprite, this.func_230176_c_().func_230178_a_());

@@ -52,7 +52,16 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
@@ -82,13 +91,6 @@ import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.BlockFaceUV;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.Material;
-import net.minecraft.client.renderer.model.ModelManager;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -102,7 +104,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
@@ -116,7 +117,6 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ILightReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -172,12 +172,6 @@ public class ForgeHooksClient
                 return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
         }
         return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
-    }
-
-    @Deprecated // TODO: Remove in 1.16
-    public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
-    {
-        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
@@ -280,10 +274,11 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getInstance().gameSettings;
         int[] ranges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         int distance = 0;
-        if (settings.fancyGraphics && ranges.length > 0)
-        {
-            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
-        }
+        //TODO, GraphicsFanciness changed, and is getSkyBlendColour used still?
+//        if (settings.fancyGraphics && ranges.length > 0)
+//        {
+//            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
+//        }
 
         int r = 0;
         int g = 0;
@@ -320,16 +315,16 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    public static void renderMainMenu(MainMenuScreen gui, FontRenderer font, int width, int height)
+    public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
-            line = I18n.format("forge.update.beta.2");
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
+            gui.func_238472_a_(mStack, font, line, (width - font.func_238414_a_(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            line = new TranslationTextComponent("forge.update.beta.2");
+            gui.func_238472_a_(mStack, font, line, (width - font.func_238414_a_(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;
@@ -362,11 +357,11 @@ public class ForgeHooksClient
         return worldRenderPass;
     }
 
-    public static void drawScreen(Screen screen, int mouseX, int mouseY, float partialTicks)
+    public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mouseX, mouseY, partialTicks)))
-            screen.render(mouseX, mouseY, partialTicks);
-        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
+        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
+            screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
     }
 
     public static float getFogDensity(FogType type, ActiveRenderInfo info, float partial, float density)
@@ -394,11 +389,11 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    private static final net.minecraft.client.renderer.Matrix4f flipX;
-    private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
+    private static final Matrix4f flipX;
+    private static final Matrix3f flipXNormal;
     static {
         flipX = Matrix4f.makeScale(-1,1,1);
-        flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
+        flipXNormal = new Matrix3f(flipX);
     }
 
     public static IBakedModel handleCameraTransforms(MatrixStack matrixStack, IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
@@ -410,8 +405,8 @@ public class ForgeHooksClient
         if (!stack.clear())
         {
             // Apply the transformation to the real matrix stack, flipping for left hand
-            net.minecraft.client.renderer.Matrix4f tMat = stack.getLast().getMatrix();
-            net.minecraft.client.renderer.Matrix3f nMat = stack.getLast().getNormal();
+            Matrix4f tMat = stack.getLast().getMatrix();
+            Matrix3f nMat = stack.getLast().getNormal();
             if (leftHandHackery)
             {
                 tMat.multiplyBackward(flipX);
@@ -532,7 +527,7 @@ public class ForgeHooksClient
     }*/
 
     @SuppressWarnings("deprecation")
-    public static TextureAtlasSprite[] getFluidSprites(ILightReader world, BlockPos pos, IFluidState fluidStateIn)
+    public static TextureAtlasSprite[] getFluidSprites(IBlockDisplayReader world, BlockPos pos, FluidState fluidStateIn)
     {
         ResourceLocation overlayTexture = fluidStateIn.getFluid().getAttributes().getOverlayTexture();
         return new TextureAtlasSprite[] {
@@ -542,14 +537,14 @@ public class ForgeHooksClient
         };
     }
 
-    public static void gatherFluidTextures(Set<Material> textures)
+    public static void gatherFluidTextures(Set<RenderMaterial> textures)
     {
         ForgeRegistries.FLUIDS.getValues().stream()
                 .flatMap(ForgeHooksClient::getFluidMaterials)
                 .forEach(textures::add);
     }
 
-    public static Stream<Material> getFluidMaterials(Fluid fluid)
+    public static Stream<RenderMaterial> getFluidMaterials(Fluid fluid)
     {
         return fluid.getAttributes().getTextures()
                 .filter(Objects::nonNull)
@@ -557,9 +552,9 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Material getBlockMaterial(ResourceLocation loc)
+    public static RenderMaterial getBlockMaterial(ResourceLocation loc)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
     /**
@@ -631,17 +626,17 @@ public class ForgeHooksClient
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
-    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)
+    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MatrixStack mStack, MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)
     {
-        RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res),
+        RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(mStack, new RenderGameOverlayEvent(mStack, Animation.getPartialTickTime(), res),
                 BOSSINFO, bossInfo, x, y, increment);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
 
-    public static void bossBarRenderPost(MainWindow res)
+    public static void bossBarRenderPost(MatrixStack mStack, MainWindow res)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
+        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(mStack, new RenderGameOverlayEvent(mStack, Animation.getPartialTickTime(), res), BOSSINFO));
     }
 
     public static ScreenshotEvent onScreenshot(NativeImage image, File screenshotFile)

@@ -25,9 +25,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
+import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -176,7 +176,7 @@ public class QuadTransformer
         int[] outData = Arrays.copyOf(inData, inData.length);
         processVertices(inData, outData);
 
-        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.shouldApplyDiffuseLighting());
+        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.func_239287_f_());
     }
 
     /**
@@ -208,7 +208,7 @@ public class QuadTransformer
             int[] outData = Arrays.copyOf(inData, inData.length);
             processVertices(inData, outData);
 
-            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.shouldApplyDiffuseLighting()));
+            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.func_187508_a(), input.func_239287_f_()));
         }
         return outputs;
     }

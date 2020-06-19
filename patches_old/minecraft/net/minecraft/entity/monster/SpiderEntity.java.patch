@@ -1,0 +1,16 @@
+--- a/net/minecraft/entity/monster/SpiderEntity.java
++++ b/net/minecraft/entity/monster/SpiderEntity.java
+@@ -119,7 +119,12 @@
+    }
+ 
+    public boolean func_70687_e(EffectInstance p_70687_1_) {
+-      return p_70687_1_.func_188419_a() == Effects.field_76436_u ? false : super.func_70687_e(p_70687_1_);
++      if (p_70687_1_.func_188419_a() == Effects.field_76436_u) {
++         net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_70687_1_);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++         return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++      }
++      return super.func_70687_e(p_70687_1_);
+    }
+ 
+    public boolean func_70841_p() {

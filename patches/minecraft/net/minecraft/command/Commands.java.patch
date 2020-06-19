@@ -1,11 +1,10 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -194,7 +194,15 @@
+@@ -202,6 +202,14 @@
  
        try {
           try {
--            int lvt_4_3_ = this.field_197062_b.execute(stringreader, p_197059_1_);
-+            com.mojang.brigadier.ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
++            ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() != null) {
@@ -13,7 +12,6 @@
 +               }
 +               return 1;
 +            }
-+            int lvt_4_3_ = this.field_197062_b.execute(event.getParseResults());
-             return lvt_4_3_;
+             return this.field_197062_b.execute(stringreader, p_197059_1_);
           } catch (CommandException commandexception) {
              p_197059_1_.func_197021_a(commandexception.func_197003_a());

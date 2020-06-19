@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common;
+/*package net.minecraftforge.common;
 
 import java.util.function.BiFunction;
 
@@ -34,7 +34,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * We used to be able to create custom Dimensions separate from DimensionType.
  * But now that they are hard linked to a single instance, this is the new class that
  * defines the 'template' for new dimensions.
- */
+ * /
 public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
 {
     public abstract BiFunction<World, DimensionType, ? extends Dimension> getFactory();
@@ -45,7 +45,7 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
      *
      * @param buffer The data buffer to write to.
      * @param network true when sent over the network, so you can only data needed by the client.
-     */
+     * /
     public void write(PacketBuffer buffer, boolean network){}
 
     /**
@@ -54,7 +54,7 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
      *
      * @param buffer The data buffer to write to.
      * @param network true when sent over the network, so you can only data needed by the client.
-     */
+     * /
     public void read(PacketBuffer buffer, boolean network){}
 
     public IBiomeMagnifier getMagnifier() {
@@ -67,7 +67,7 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
      *
      * @param factory Factory for creating {@link Dimension} instances from DimType and World.
      * @return A custom ModDimension with that factory.
-     */
+     * /
     public static ModDimension withFactory(BiFunction<World, DimensionType, ? extends Dimension> factory) {
         return new ModDimension() {
             @Override
@@ -76,4 +76,4 @@ public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
             }
         };
     }
-}
+}*/

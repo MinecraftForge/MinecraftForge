@@ -1,0 +1,58 @@
+--- a/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
++++ b/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
+@@ -17,6 +17,7 @@
+    public final List<TreeDecorator> field_227370_o_;
+    public final int field_227371_p_;
+    public transient boolean field_227372_q_;
++   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196674_t;
+ 
+    protected BaseTreeFeatureConfig(BlockStateProvider p_i225842_1_, BlockStateProvider p_i225842_2_, List<TreeDecorator> p_i225842_3_, int p_i225842_4_) {
+       this.field_227368_m_ = p_i225842_1_;
+@@ -37,6 +38,15 @@
+       return new Dynamic<>(p_214634_1_, p_214634_1_.createMap(builder.build()));
+    }
+ 
++   protected BaseTreeFeatureConfig setSapling(net.minecraftforge.common.IPlantable value) {
++      this.sapling = value;
++      return this;
++   }
++
++   public net.minecraftforge.common.IPlantable getSapling() {
++       return this.sapling;
++   }
++
+    public static <T> BaseTreeFeatureConfig func_227376_b_(Dynamic<T> p_227376_0_) {
+       BlockStateProviderType<?> blockstateprovidertype = Registry.field_229387_t_.func_82594_a(new ResourceLocation(p_227376_0_.get("trunk_provider").get("type").asString().orElseThrow(RuntimeException::new)));
+       BlockStateProviderType<?> blockstateprovidertype1 = Registry.field_229387_t_.func_82594_a(new ResourceLocation(p_227376_0_.get("leaves_provider").get("type").asString().orElseThrow(RuntimeException::new)));
+@@ -45,11 +55,16 @@
+       }), p_227376_0_.get("base_height").asInt(0));
+    }
+ 
++   public static <T> BaseTreeFeatureConfig deserializeJungle(Dynamic<T> data) {
++      return func_227376_b_(data).setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196678_w);
++   }
++
+    public static class Builder {
+       public final BlockStateProvider field_227377_a_;
+       public final BlockStateProvider field_227378_b_;
+       private List<TreeDecorator> field_227379_c_ = Lists.newArrayList();
+       private int field_227380_d_ = 0;
++      protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196674_t;
+ 
+       public Builder(BlockStateProvider p_i225843_1_, BlockStateProvider p_i225843_2_) {
+          this.field_227377_a_ = p_i225843_1_;
+@@ -61,8 +76,13 @@
+          return this;
+       }
+ 
++      public BaseTreeFeatureConfig.Builder setSapling(net.minecraftforge.common.IPlantable value) {
++         this.sapling = value;
++         return this;
++      }
++
+       public BaseTreeFeatureConfig func_225568_b_() {
+-         return new BaseTreeFeatureConfig(this.field_227377_a_, this.field_227378_b_, this.field_227379_c_, this.field_227380_d_);
++         return new BaseTreeFeatureConfig(this.field_227377_a_, this.field_227378_b_, this.field_227379_c_, this.field_227380_d_).setSapling(sapling);
+       }
+    }
+ }

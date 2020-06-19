@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.extensions;
+/*package net.minecraftforge.common.extensions;
 
 import javax.annotation.Nullable;
 
@@ -59,7 +59,7 @@ public interface IForgeDimension
      * always called before the world load event.
      *
      * @return initial holder for capabilities on the world
-     */
+     * /
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities()
     {
         return null;
@@ -73,7 +73,7 @@ public interface IForgeDimension
      * to nether multiplies coordinates by 1/8.
      *
      * @return The movement factor
-     */
+     * /
     default double getMovementFactor()
     {
         if (getDimension() instanceof NetherDimension)
@@ -115,7 +115,7 @@ public interface IForgeDimension
      * @param colors The color values that will be used: [r, g, b].
      *
      * @see net.minecraft.client.renderer.GameRenderer#updateLightmap(float)
-     */
+     * /
     default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f colors) {}
 
     void resetRainAndThunder();
@@ -134,7 +134,7 @@ public interface IForgeDimension
      * Called on the client to get the music type to play when in this world type.
      * At the time of calling, the client player and world are guaranteed to be non-null
      * @return null to use vanilla logic, otherwise a MusicType to play in this world
-     */
+     * /
     @Nullable
     @OnlyIn(Dist.CLIENT)
     default MusicTicker.MusicType getMusicType()
@@ -148,7 +148,7 @@ public interface IForgeDimension
      * @param player The player that is attempting to sleep
      * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
      * @return the result of a player trying to sleep at the given location
-     */
+     * /
     default SleepResult canSleepAt(net.minecraft.entity.player.PlayerEntity player, BlockPos pos)
     {
         return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
@@ -170,7 +170,7 @@ public interface IForgeDimension
      * Calculates the current moon phase factor.
      * This factor is effective for slimes.
      * (This method do not affect the moon rendering)
-     * */
+     * * /
     default float getCurrentMoonPhaseFactor(long time)
     {
         return Dimension.MOON_PHASE_FACTORS[this.getDimension().getMoonPhase(time)];
@@ -247,7 +247,7 @@ public interface IForgeDimension
      * @param z Z Position
      * @param rotation the regular rotation of the marker
      * @return True to 'spin' the cursor
-     */
+     * /
     default boolean shouldMapSpin(String entity, double x, double z, double rotation)
     {
         return getDimension().getType() == DimensionType.THE_NETHER;
@@ -258,9 +258,9 @@ public interface IForgeDimension
      *
      * @param player The player that is respawning
      * @return The dimension to respawn the player in
-     */
+     * /
     default DimensionType getRespawnDimension(ServerPlayerEntity player)
     {
         return player.getSpawnDimension();
     }
-}
+}*/

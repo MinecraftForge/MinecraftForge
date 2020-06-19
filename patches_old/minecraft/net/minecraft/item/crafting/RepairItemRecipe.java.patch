@@ -1,0 +1,38 @@
+--- a/net/minecraft/item/crafting/RepairItemRecipe.java
++++ b/net/minecraft/item/crafting/RepairItemRecipe.java
+@@ -22,7 +22,7 @@
+             list.add(itemstack);
+             if (list.size() > 1) {
+                ItemStack itemstack1 = list.get(0);
+-               if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.func_190916_E() != 1 || itemstack.func_190916_E() != 1 || !itemstack1.func_77973_b().func_77645_m()) {
++               if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.func_190916_E() != 1 || itemstack.func_190916_E() != 1 || !itemstack1.isRepairable()) {
+                   return false;
+                }
+             }
+@@ -41,7 +41,7 @@
+             list.add(itemstack);
+             if (list.size() > 1) {
+                ItemStack itemstack1 = list.get(0);
+-               if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.func_190916_E() != 1 || itemstack.func_190916_E() != 1 || !itemstack1.func_77973_b().func_77645_m()) {
++               if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.func_190916_E() != 1 || itemstack.func_190916_E() != 1 || !itemstack1.isRepairable()) {
+                   return ItemStack.field_190927_a;
+                }
+             }
+@@ -51,12 +51,12 @@
+       if (list.size() == 2) {
+          ItemStack itemstack3 = list.get(0);
+          ItemStack itemstack4 = list.get(1);
+-         if (itemstack3.func_77973_b() == itemstack4.func_77973_b() && itemstack3.func_190916_E() == 1 && itemstack4.func_190916_E() == 1 && itemstack3.func_77973_b().func_77645_m()) {
++         if (itemstack3.func_77973_b() == itemstack4.func_77973_b() && itemstack3.func_190916_E() == 1 && itemstack4.func_190916_E() == 1 && itemstack3.isRepairable()) {
+             Item item = itemstack3.func_77973_b();
+-            int j = item.func_77612_l() - itemstack3.func_77952_i();
+-            int k = item.func_77612_l() - itemstack4.func_77952_i();
+-            int l = j + k + item.func_77612_l() * 5 / 100;
+-            int i1 = item.func_77612_l() - l;
++            int j = itemstack3.func_77958_k() - itemstack3.func_77952_i();
++            int k = itemstack3.func_77958_k() - itemstack4.func_77952_i();
++            int l = j + k + itemstack3.func_77958_k() * 5 / 100;
++            int i1 = itemstack3.func_77958_k() - l;
+             if (i1 < 0) {
+                i1 = 0;
+             }

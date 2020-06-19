@@ -22,6 +22,7 @@ package net.minecraftforge.common.crafting.conditions;
 import com.google.gson.JsonObject;
 
 import net.minecraft.item.Item;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.JSONUtils;
@@ -56,8 +57,8 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        Tag<Item> tag = ItemTags.getCollection().get(tag_name);
-        return tag == null || tag.getAllElements().isEmpty();
+        ITag<Item> tag = ItemTags.getCollection().get(tag_name);
+        return tag == null || tag.func_230236_b_().isEmpty();
     }
 
     @Override

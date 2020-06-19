@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/brain/sensor/SensorType.java
++++ b/net/minecraft/entity/ai/brain/sensor/SensorType.java
+@@ -4,7 +4,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class SensorType<U extends Sensor<?>> {
++public class SensorType<U extends Sensor<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<SensorType<?>> {
+    public static final SensorType<DummySensor> field_220997_a = func_220996_a("dummy", DummySensor::new);
+    public static final SensorType<NearestLivingEntitiesSensor> field_220998_b = func_220996_a("nearest_living_entities", NearestLivingEntitiesSensor::new);
+    public static final SensorType<NearestPlayersSensor> field_220999_c = func_220996_a("nearest_players", NearestPlayersSensor::new);

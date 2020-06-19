@@ -26,14 +26,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
 import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,13 +41,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -162,7 +156,7 @@ public interface IForgeBlockState
      * @param fluid The current fluid and block state for the position in the world.
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
+    default boolean removedByPlayer(World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid)
     {
         return getBlockState().getBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest, fluid);
     }
@@ -204,7 +198,7 @@ public interface IForgeBlockState
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vec3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
     {
         return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, sleeper);
     }
@@ -673,7 +667,7 @@ public interface IForgeBlockState
      * @return The new fog color.
      */
     @OnlyIn(Dist.CLIENT)
-    default Vec3d getFogColor(IWorldReader world, BlockPos pos, Entity entity, Vec3d originalColor, float partialTicks)
+    default Vector3d getFogColor(IWorldReader world, BlockPos pos, Entity entity, Vector3d originalColor, float partialTicks)
     {
         return getBlockState().getBlock().getFogColor(getBlockState(), world, pos, entity, originalColor, partialTicks);
     }
@@ -688,7 +682,7 @@ public interface IForgeBlockState
      * @param viewpoint the viewpoint
      * @return the block state that should be 'seen'
      */
-    default BlockState getStateAtViewpoint(IBlockReader world, BlockPos pos, Vec3d viewpoint)
+    default BlockState getStateAtViewpoint(IBlockReader world, BlockPos pos, Vector3d viewpoint)
     {
         return getBlockState().getBlock().getStateAtViewpoint(getBlockState(), world, pos, viewpoint);
     }
@@ -816,7 +810,7 @@ public interface IForgeBlockState
      * @param side The face that the fire is coming from
      * @return True if this block sustains fire, meaning it will never go out.
      */
-    default boolean isFireSource(IBlockReader world, BlockPos pos, Direction side)
+    default boolean isFireSource(IWorldReader world, BlockPos pos, Direction side)
     {
         return getBlockState().getBlock().isFireSource(getBlockState(), world, pos, side);
     }
@@ -920,7 +914,7 @@ public interface IForgeBlockState
      * @param fluidState The state of the fluid
      * @return Whether the fluid overlay texture should be used
      */
-    default boolean shouldDisplayFluidOverlay(ILightReader world, BlockPos pos, IFluidState fluidState)
+    default boolean shouldDisplayFluidOverlay(IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
         return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
     }

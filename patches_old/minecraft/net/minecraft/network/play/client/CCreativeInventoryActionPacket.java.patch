@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/client/CCreativeInventoryActionPacket.java
++++ b/net/minecraft/network/play/client/CCreativeInventoryActionPacket.java
+@@ -32,7 +32,7 @@
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.writeShort(this.field_149629_a);
+-      p_148840_1_.func_150788_a(this.field_149628_b);
++      p_148840_1_.writeItemStack(this.field_149628_b, false); //Forge: Include full tag for C->S
+    }
+ 
+    public int func_149627_c() {

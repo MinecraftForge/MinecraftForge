@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/HoeItem.java
 +++ b/net/minecraft/item/HoeItem.java
-@@ -31,7 +31,9 @@
+@@ -27,7 +27,9 @@
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();

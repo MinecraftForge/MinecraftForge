@@ -1,0 +1,59 @@
+--- a/net/minecraft/world/chunk/storage/ChunkSerializer.java
++++ b/net/minecraft/world/chunk/storage/ChunkSerializer.java
+@@ -131,6 +131,7 @@
+          ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
+             func_222650_a(compoundnbt, p_222648_1_);
+          });
++         if (compoundnbt.func_74764_b("ForgeCaps")) ((Chunk)ichunk).readCapsFromNBT(compoundnbt.func_74775_l("ForgeCaps"));
+       } else {
+          ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist, chunkprimerticklist1);
+          chunkprimer.func_225548_a_(biomecontainer);
+@@ -143,7 +144,7 @@
+ 
+          if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
+             for(BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
+-               if (ichunk.func_180495_p(blockpos).func_185906_d() != 0) {
++               if (ichunk.func_180495_p(blockpos).getLightValue(ichunk, blockpos) != 0) {
+                   chunkprimer.func_201637_h(blockpos);
+                }
+             }
+@@ -182,6 +183,7 @@
+       }
+ 
+       if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
+          return new ChunkPrimerWrapper((Chunk)ichunk);
+       } else {
+          ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
+@@ -215,6 +217,8 @@
+             chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
++
+          return chunkprimer1;
+       }
+    }
+@@ -294,12 +298,22 @@
+          for(int k = 0; k < chunk.func_177429_s().length; ++k) {
+             for(Entity entity : chunk.func_177429_s()[k]) {
+                CompoundNBT compoundnbt3 = new CompoundNBT();
++               try {
+                if (entity.func_70039_c(compoundnbt3)) {
+                   chunk.func_177409_g(true);
+                   listnbt2.add(compoundnbt3);
+                }
++               } catch (Exception e) {
++                  LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
++               }
+             }
+          }
++         try {
++             final CompoundNBT capTag = chunk.writeCapsToNBT();
++             if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
++         } catch (Exception exception) {
++             LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++         }
+       } else {
+          ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
+          listnbt2.addAll(chunkprimer.func_201652_l());

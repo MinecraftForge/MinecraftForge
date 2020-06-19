@@ -1,14 +1,14 @@
 --- a/net/minecraft/item/ShearsItem.java
 +++ b/net/minecraft/item/ShearsItem.java
-@@ -38,4 +38,26 @@
+@@ -34,4 +34,26 @@
           return 15.0F;
        }
     }
 +
 +   @SuppressWarnings("deprecation")
 +   @Override
-+   public boolean func_111207_a(ItemStack stack, net.minecraft.entity.player.PlayerEntity playerIn, LivingEntity entity, net.minecraft.util.Hand hand) {
-+      if (entity.field_70170_p.field_72995_K) return false;
++   public net.minecraft.util.ActionResultType func_111207_a(ItemStack stack, net.minecraft.entity.player.PlayerEntity playerIn, LivingEntity entity, net.minecraft.util.Hand hand) {
++      if (entity.field_70170_p.field_72995_K) return net.minecraft.util.ActionResultType.PASS;
 +      if (entity instanceof net.minecraftforge.common.IShearable) {
 +         net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)entity;
 +         BlockPos pos = new BlockPos(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_());
@@ -22,8 +22,8 @@
 +            });
 +            stack.func_222118_a(1, entity, e -> e.func_213334_d(hand));
 +         }
-+         return true;
++         return net.minecraft.util.ActionResultType.SUCCESS;
 +      }
-+      return false;
++      return net.minecraft.util.ActionResultType.PASS;
 +   }
  }

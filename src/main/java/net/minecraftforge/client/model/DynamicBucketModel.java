@@ -26,8 +26,9 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.Quaternion;
-import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
@@ -94,27 +95,27 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
-        Material particleLocation = owner.resolveTexture("particle");
+        RenderMaterial particleLocation = owner.resolveTexture("particle");
         if (MissingTextureSprite.getLocation().equals(particleLocation.getTextureLocation()))
         {
             particleLocation = null;
         }
 
-        Material baseLocation = owner.resolveTexture("base");
+        RenderMaterial baseLocation = owner.resolveTexture("base");
         if (MissingTextureSprite.getLocation().equals(baseLocation.getTextureLocation()))
         {
             baseLocation = null;
         }
 
-        Material fluidMaskLocation = owner.resolveTexture("fluid");
+        RenderMaterial fluidMaskLocation = owner.resolveTexture("fluid");
         if (MissingTextureSprite.getLocation().equals(fluidMaskLocation.getTextureLocation()))
         {
             fluidMaskLocation = null;
         }
 
-        Material coverLocation = owner.resolveTexture("cover");
+        RenderMaterial coverLocation = owner.resolveTexture("cover");
         if (!MissingTextureSprite.getLocation().equals(coverLocation.getTextureLocation()))
         {
             // cover (the actual item around the other two)
@@ -188,9 +189,9 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
-        Set<Material> texs = Sets.newHashSet();
+        Set<RenderMaterial> texs = Sets.newHashSet();
 
         texs.add(owner.resolveTexture("particle"));
         texs.add(owner.resolveTexture("base"));
@@ -265,7 +266,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         }
 
         @Override
-        public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
+        public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
         {
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {

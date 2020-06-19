@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/shapes/ISelectionContext.java
 +++ b/net/minecraft/util/math/shapes/ISelectionContext.java
-@@ -4,7 +4,7 @@
+@@ -6,7 +6,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.util.math.BlockPos;
  

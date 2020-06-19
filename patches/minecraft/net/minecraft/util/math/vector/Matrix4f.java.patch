@@ -1,0 +1,81 @@
+--- a/net/minecraft/util/math/vector/Matrix4f.java
++++ b/net/minecraft/util/math/vector/Matrix4f.java
+@@ -386,4 +386,78 @@
+       matrix4f.field_226586_l_ = p_226599_2_;
+       return matrix4f;
+    }
++
++    // Forge start
++    public Matrix4f(float[] values) {
++        field_226575_a_ = values[0];
++        field_226576_b_ = values[1];
++        field_226577_c_ = values[2];
++        field_226578_d_ = values[3];
++        field_226579_e_ = values[4];
++        field_226580_f_ = values[5];
++        field_226581_g_ = values[6];
++        field_226582_h_ = values[7];
++        field_226583_i_ = values[8];
++        field_226584_j_ = values[9];
++        field_226585_k_ = values[10];
++        field_226586_l_ = values[11];
++        field_226587_m_ = values[12];
++        field_226588_n_ = values[13];
++        field_226589_o_ = values[14];
++        field_226590_p_ = values[15];
++    }
++
++    public void set(Matrix4f mat) {
++        this.field_226575_a_ = mat.field_226575_a_;
++        this.field_226576_b_ = mat.field_226576_b_;
++        this.field_226577_c_ = mat.field_226577_c_;
++        this.field_226578_d_ = mat.field_226578_d_;
++        this.field_226579_e_ = mat.field_226579_e_;
++        this.field_226580_f_ = mat.field_226580_f_;
++        this.field_226581_g_ = mat.field_226581_g_;
++        this.field_226582_h_ = mat.field_226582_h_;
++        this.field_226583_i_ = mat.field_226583_i_;
++        this.field_226584_j_ = mat.field_226584_j_;
++        this.field_226585_k_ = mat.field_226585_k_;
++        this.field_226586_l_ = mat.field_226586_l_;
++        this.field_226587_m_ = mat.field_226587_m_;
++        this.field_226588_n_ = mat.field_226588_n_;
++        this.field_226589_o_ = mat.field_226589_o_;
++        this.field_226590_p_ = mat.field_226590_p_;
++    }
++
++    public void add(Matrix4f other) {
++        field_226575_a_ += other.field_226575_a_;
++        field_226576_b_ += other.field_226576_b_;
++        field_226577_c_ += other.field_226577_c_;
++        field_226578_d_ += other.field_226578_d_;
++        field_226579_e_ += other.field_226579_e_;
++        field_226580_f_ += other.field_226580_f_;
++        field_226581_g_ += other.field_226581_g_;
++        field_226582_h_ += other.field_226582_h_;
++        field_226583_i_ += other.field_226583_i_;
++        field_226584_j_ += other.field_226584_j_;
++        field_226585_k_ += other.field_226585_k_;
++        field_226586_l_ += other.field_226586_l_;
++        field_226587_m_ += other.field_226587_m_;
++        field_226588_n_ += other.field_226588_n_;
++        field_226589_o_ += other.field_226589_o_;
++        field_226590_p_ += other.field_226590_p_;
++    }
++
++    public void multiplyBackward(Matrix4f other) {
++        Matrix4f copy = other.func_226601_d_();
++        copy.func_226595_a_(this);
++        this.set(copy);
++    }
++
++    public void setTranslation(float x, float y, float z) {
++        this.field_226575_a_ = 1.0F;
++        this.field_226580_f_ = 1.0F;
++        this.field_226585_k_ = 1.0F;
++        this.field_226590_p_ = 1.0F;
++        this.field_226578_d_ = x;
++        this.field_226582_h_ = y;
++        this.field_226586_l_ = z;
++    }
+ }

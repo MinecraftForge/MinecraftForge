@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/IChestLid.java
++++ b/net/minecraft/tileentity/IChestLid.java
+@@ -3,7 +3,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-@OnlyIn(Dist.CLIENT)
+ public interface IChestLid {
++   @OnlyIn(Dist.CLIENT)
+    float func_195480_a(float p_195480_1_);
+ }

@@ -20,6 +20,9 @@
 package net.minecraftforge.common;
 
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.IWorldInfo;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
@@ -44,8 +47,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.SaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -144,22 +145,24 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo)
     {
         CompoundNBT forgeData = new CompoundNBT();
         CompoundNBT dims = new CompoundNBT();
-        DimensionManager.writeRegistry(dims);
+        //TODO Dimensions
+//        DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
             forgeData.put("dims", dims);
         return forgeData;
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
+    public void readData(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo, CompoundNBT tag)
     {
-        if (tag.contains("dims", 10))
-            DimensionManager.readRegistry(tag.getCompound("dims"));
-        DimensionManager.processScheduledDeletions(handler);
+        //TODO Dimensions
+//        if (tag.contains("dims", 10))
+//            DimensionManager.readRegistry(tag.getCompound("dims"));
+//        DimensionManager.processScheduledDeletions(levelSave);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)
@@ -178,8 +181,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeServer())
         {
+            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen);
             gen.addProvider(new ForgeBlockTagsProvider(gen));
-            gen.addProvider(new ForgeItemTagsProvider(gen));
+            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
         }

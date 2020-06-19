@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 @@ -68,12 +68,15 @@
-    private Vec3d field_217672_l = Vec3d.field_186680_a;
+    private Vector3d field_217672_l = Vector3d.field_186680_a;
  
     public ChunkRenderDispatcher(World p_i226020_1_, WorldRenderer p_i226020_2_, Executor p_i226020_3_, boolean p_i226020_4_, RegionRenderCacheBuilder p_i226020_5_) {
 +      this(p_i226020_1_, p_i226020_2_, p_i226020_3_, p_i226020_4_, p_i226020_5_, -1);
@@ -96,7 +96,7 @@
                       visgraph.func_178606_a(blockpos2);
                    }
  
--                  if (block.func_149716_u()) {
+-                  if (block.func_235695_q_()) {
 +                  if (blockstate.hasTileEntity()) {
                       TileEntity tileentity = chunkrendercache.func_212399_a(blockpos2, Chunk.CreateEntityType.CHECK);
                       if (tileentity != null) {
@@ -104,13 +104,13 @@
 @@ -478,8 +500,10 @@
                    }
  
-                   IFluidState ifluidstate = chunkrendercache.func_204610_c(blockpos2);
--                  if (!ifluidstate.func_206888_e()) {
--                     RenderType rendertype = RenderTypeLookup.func_228391_a_(ifluidstate);
-+                  net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
+                   FluidState fluidstate = chunkrendercache.func_204610_c(blockpos2);
+-                  if (!fluidstate.func_206888_e()) {
+-                     RenderType rendertype = RenderTypeLookup.func_228391_a_(fluidstate);
++                   net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
 +                  for (RenderType rendertype : RenderType.func_228661_n_()) {
 +                      net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
-+                  if (!ifluidstate.func_206888_e() && RenderTypeLookup.canRenderInLayer(ifluidstate, rendertype)) {
++                  if (!fluidstate.func_206888_e() && RenderTypeLookup.canRenderInLayer(fluidstate, rendertype)) {
                       BufferBuilder bufferbuilder = p_228940_5_.func_228366_a_(rendertype);
                       if (p_228940_4_.field_178501_c.add(rendertype)) {
                          ChunkRender.this.func_228923_a_(bufferbuilder);

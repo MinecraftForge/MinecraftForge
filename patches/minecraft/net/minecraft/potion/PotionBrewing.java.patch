@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/PotionBrewing.java
 +++ b/net/minecraft/potion/PotionBrewing.java
-@@ -57,7 +57,7 @@
+@@ -56,7 +56,7 @@
        int i = 0;
  
        for(int j = field_185213_a.size(); i < j; ++i) {
@@ -9,7 +9,7 @@
              return true;
           }
        }
-@@ -79,7 +79,7 @@
+@@ -78,7 +78,7 @@
  
        for(int j = field_185214_b.size(); i < j; ++i) {
           PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
@@ -18,7 +18,7 @@
              return true;
           }
        }
-@@ -93,7 +93,7 @@
+@@ -92,7 +92,7 @@
  
        for(int j = field_185213_a.size(); i < j; ++i) {
           PotionBrewing.MixPredicate<Potion> mixpredicate = field_185213_a.get(i);
@@ -27,29 +27,29 @@
              return true;
           }
        }
-@@ -109,8 +109,8 @@
+@@ -108,8 +108,8 @@
  
           for(int j = field_185214_b.size(); i < j; ++i) {
              PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
 -            if (mixpredicate.field_185198_a == item && mixpredicate.field_185199_b.test(p_185212_0_)) {
--               return PotionUtils.func_185188_a(new ItemStack((IItemProvider)mixpredicate.field_185200_c), potion);
+-               return PotionUtils.func_185188_a(new ItemStack(mixpredicate.field_185200_c), potion);
 +            if (mixpredicate.field_185198_a.get() == item && mixpredicate.field_185199_b.test(p_185212_0_)) {
-+               return PotionUtils.func_185188_a(new ItemStack((IItemProvider)mixpredicate.field_185200_c.get()), potion);
++               return PotionUtils.func_185188_a(new ItemStack(mixpredicate.field_185200_c.get()), potion);
              }
           }
  
-@@ -118,8 +118,8 @@
+@@ -117,8 +117,8 @@
  
           for(int k = field_185213_a.size(); i < k; ++i) {
              PotionBrewing.MixPredicate<Potion> mixpredicate1 = field_185213_a.get(i);
 -            if (mixpredicate1.field_185198_a == potion && mixpredicate1.field_185199_b.test(p_185212_0_)) {
--               return PotionUtils.func_185188_a(new ItemStack(item), (Potion)mixpredicate1.field_185200_c);
+-               return PotionUtils.func_185188_a(new ItemStack(item), mixpredicate1.field_185200_c);
 +            if (mixpredicate1.field_185198_a.get() == potion && mixpredicate1.field_185199_b.test(p_185212_0_)) {
-+               return PotionUtils.func_185188_a(new ItemStack(item), (Potion)mixpredicate1.field_185200_c.get());
++               return PotionUtils.func_185188_a(new ItemStack(item), mixpredicate1.field_185200_c.get());
              }
           }
        }
-@@ -212,15 +212,15 @@
+@@ -211,15 +211,15 @@
        field_185213_a.add(new PotionBrewing.MixPredicate<>(p_193357_0_, Ingredient.func_199804_a(p_193357_1_), p_193357_2_));
     }
  

@@ -20,10 +20,7 @@
 package net.minecraftforge.fml.client;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -34,11 +31,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
 import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.multiplayer.PlayerController;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -131,7 +130,7 @@ public class ClientHooks
 
     }
 
-    public static void drawForgePingInfo(MultiplayerScreen gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
+    public static void drawForgePingInfo(MultiplayerScreen gui, ServerData target, MatrixStack mStack, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
         int idx;
         String tooltip;
         if (target.forgeData == null)
@@ -166,10 +165,11 @@ public class ClientHooks
         }
 
         Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
-        AbstractGui.blit(x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
+        AbstractGui.func_238466_a_(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
-            gui.setHoveringText(tooltip);
+            //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.
+            gui.func_238854_b_(Collections.singletonList(new StringTextComponent(tooltip)));
 
     }
 
@@ -187,7 +187,8 @@ public class ClientHooks
     {
         try
         {
-            Minecraft.getInstance().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
+            //TODO
+            //Minecraft.getInstance().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
         }
         catch (StartupQuery.AbortedException e)
         {

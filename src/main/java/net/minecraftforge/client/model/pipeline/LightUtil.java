@@ -93,7 +93,7 @@ public class LightUtil
         {
             consumer.setQuadTint(quad.getTintIndex());
         }
-        consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
+        consumer.setApplyDiffuseLighting(quad.func_239287_f_());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
         VertexFormat formatTo = DefaultVertexFormats.BLOCK;

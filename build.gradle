@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.178'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
@@ -64,13 +64,16 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20200514-1.15.1'
-    MC_VERSION = '1.15.2'
-    MCP_VERSION = '20200515.085601'
+    MAPPING_VERSION = '20200514-1.16'
+    MC_VERSION = '1.16-rc1'
+    MCP_VERSION = '20200622.150620'
 }
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
+    repositories {
+        mavenLocal()
+    }
     mcp {
         config = MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
@@ -84,6 +87,7 @@ project(':clean') {
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     
     repositories {
+        mavenLocal()
         //mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'

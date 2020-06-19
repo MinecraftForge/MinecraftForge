@@ -32,7 +32,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.minecraft.block.Block;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 
 public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
 
@@ -74,7 +74,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
     public class PartBuilder {
         public BlockStateProvider.ConfiguredModelList models;
         public boolean useOr;
-        public final Multimap<IProperty<?>, Comparable<?>> conditions = HashMultimap.create();
+        public final Multimap<Property<?>, Comparable<?>> conditions = HashMultimap.create();
 
         PartBuilder(BlockStateProvider.ConfiguredModelList models) {
             this.models = models;
@@ -101,7 +101,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
          *                                  current block's state
          */
         @SafeVarargs
-        public final <T extends Comparable<T>> PartBuilder condition(IProperty<T> prop, T... values) {
+        public final <T extends Comparable<T>> PartBuilder condition(Property<T> prop, T... values) {
             Preconditions.checkNotNull(prop, "Property must not be null");
             Preconditions.checkNotNull(values, "Value list must not be null");
             Preconditions.checkArgument(values.length > 0, "Value list must not be empty");
@@ -117,12 +117,12 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             JsonObject out = new JsonObject();
             if (!conditions.isEmpty()) {
                 JsonObject when = new JsonObject();
-                for (Entry<IProperty<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet()) {
+                for (Entry<Property<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet()) {
                     StringBuilder activeString = new StringBuilder();
                     for (Comparable<?> val : e.getValue()) {
                         if (activeString.length() > 0)
                             activeString.append("|");
-                        activeString.append(((IProperty) e.getKey()).getName(val));
+                        activeString.append(((Property) e.getKey()).getName(val));
                     }
                     when.addProperty(e.getKey().getName(), activeString.toString());
                 }

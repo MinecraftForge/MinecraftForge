@@ -1,0 +1,18 @@
+--- a/net/minecraft/block/SaplingBlock.java
++++ b/net/minecraft/block/SaplingBlock.java
+@@ -29,6 +29,7 @@
+ 
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+       super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
++      if (!p_225534_2_.isAreaLoaded(p_225534_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(7) == 0) {
+          this.func_226942_a_(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_);
+       }
+@@ -39,6 +40,7 @@
+       if (p_226942_3_.func_177229_b(field_176479_b) == 0) {
+          p_226942_1_.func_180501_a(p_226942_2_, p_226942_3_.func_177231_a(field_176479_b), 4);
+       } else {
++         if (!net.minecraftforge.event.ForgeEventFactory.saplingGrowTree(p_226942_1_, p_226942_4_, p_226942_2_)) return;
+          this.field_196387_c.func_225545_a_(p_226942_1_, p_226942_1_.func_72863_F().func_201711_g(), p_226942_2_, p_226942_3_, p_226942_4_);
+       }
+ 

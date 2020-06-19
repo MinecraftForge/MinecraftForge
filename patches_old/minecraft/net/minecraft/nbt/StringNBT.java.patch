@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/StringNBT.java
++++ b/net/minecraft/nbt/StringNBT.java
+@@ -12,7 +12,7 @@
+       public StringNBT func_225649_b_(DataInput p_225649_1_, int p_225649_2_, NBTSizeTracker p_225649_3_) throws IOException {
+          p_225649_3_.func_152450_a(288L);
+          String s = p_225649_1_.readUTF();
+-         p_225649_3_.func_152450_a((long)(16 * s.length()));
++         p_225649_3_.readUTF(s);
+          return StringNBT.func_229705_a_(s);
+       }
+ 

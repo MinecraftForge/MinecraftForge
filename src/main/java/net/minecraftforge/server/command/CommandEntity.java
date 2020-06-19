@@ -38,13 +38,14 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -70,14 +71,14 @@ class CommandEntity
                 .then(Commands.argument("filter", StringArgumentType.string())
                     .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString), builder))
                     .then(Commands.argument("dim", DimensionArgument.getDimension())
-                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim")))
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim").func_234923_W_()))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().dimension.getType()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().func_234923_W_()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().dimension.getType()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().func_234923_W_()));
         }
 
-        private static int execute(CommandSource sender, String filter, DimensionType dim) throws CommandSyntaxException
+        private static int execute(CommandSource sender, String filter, RegistryKey<World> dim) throws CommandSyntaxException
         {
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
 
@@ -86,14 +87,14 @@ class CommandEntity
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
 
-            ServerWorld world = DimensionManager.getWorld(sender.getServer(), dim, false, false);
+            ServerWorld world = sender.getServer().getWorld(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
             if (world == null)
                 throw INVALID_DIMENSION.create(dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             world.getEntities().forEach(e -> {
                 MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
-                ChunkPos chunk = new ChunkPos(e.getPosition());
+                ChunkPos chunk = new ChunkPos(e.func_233580_cy_());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
             });

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/HangingEntity.java
++++ b/net/minecraft/entity/item/HangingEntity.java
+@@ -113,6 +113,8 @@
+                int j1 = (j - 1) / -2;
+                blockpos$mutable.func_189533_g(blockpos).func_189534_c(direction, k + i1).func_189534_c(Direction.UP, l + j1);
+                BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
++               if (net.minecraft.block.Block.func_220055_a(this.field_70170_p, blockpos$mutable, this.field_174860_b))
++                  continue;
+                if (!blockstate.func_185904_a().func_76220_a() && !RedstoneDiodeBlock.func_185546_B(blockstate)) {
+                   return false;
+                }

@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.packs;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -29,6 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -92,7 +92,7 @@ public class ResourcePackLoader
     }
 
     public interface IPackInfoFinder<T extends ResourcePackInfo> {
-        void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory);
+        void addPackInfos(Consumer<T> consumer, ResourcePackInfo.IFactory<T> factory);
     }
 
     // SO GROSS - DON'T @ me bro
@@ -105,9 +105,9 @@ public class ResourcePackLoader
         }
 
         @Override
-        public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
+        public <T extends ResourcePackInfo> void func_230230_a_(Consumer<T> consumer, ResourcePackInfo.IFactory<T> factory)
         {
-            wrapped.addPackInfosToMap(packList, factory);
+            wrapped.addPackInfos(consumer, factory);
         }
     }
 }

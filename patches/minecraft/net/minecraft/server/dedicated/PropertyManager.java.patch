@@ -6,6 +6,6 @@
        try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {
 -         this.field_73672_b.store(outputstream, "Minecraft server properties");
 +         net.minecraftforge.common.util.SortedProperties.store(field_73672_b, outputstream, "Minecraft server properties");
-       } catch (IOException var15) {
+       } catch (IOException ioexception) {
           field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
        }

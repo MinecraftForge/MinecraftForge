@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/CreeperEntity.java
 +++ b/net/minecraft/entity/monster/CreeperEntity.java
-@@ -214,7 +214,7 @@
+@@ -215,7 +215,7 @@
  
     private void func_146077_cc() {
        if (!this.field_70170_p.field_72995_K) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -30,14 +30,28 @@
+@@ -32,14 +32,28 @@
  public class BucketItem extends Item {
     private final Fluid field_77876_a;
  
@@ -29,7 +29,7 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -54,7 +68,10 @@
+@@ -56,7 +70,10 @@
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
@@ -38,10 +38,10 @@
 +                     SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
 +                     if (soundevent == null) soundevent = fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M;
 +                     p_77659_2_.func_184185_a(soundevent, 1.0F, 1.0F);
-                      ItemStack itemstack1 = this.func_150910_a(itemstack, p_77659_2_, fluid.func_204524_b());
+                      ItemStack itemstack1 = DrinkHelper.func_241445_a_(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-@@ -67,7 +84,7 @@
+@@ -69,7 +86,7 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
@@ -50,26 +50,16 @@
                 if (this.func_180616_a(p_77659_2_, p_77659_1_, blockpos2, blockraytraceresult)) {
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
-@@ -117,7 +134,8 @@
-          BlockState blockstate = p_180616_2_.func_180495_p(p_180616_3_);
-          Material material = blockstate.func_185904_a();
-          boolean flag = blockstate.func_227032_a_(this.field_77876_a);
--         if (blockstate.func_196958_f() || flag || blockstate.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)blockstate.func_177230_c()).func_204510_a(p_180616_2_, p_180616_3_, blockstate, this.field_77876_a)) {
-+         boolean canContainFluid = canBlockContainFluid(p_180616_2_, p_180616_3_, blockstate);
-+         if (blockstate.func_196958_f() || flag || canContainFluid) {
-             if (p_180616_2_.field_73011_w.func_177500_n() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
-                int i = p_180616_3_.func_177958_n();
-                int j = p_180616_3_.func_177956_o();
-@@ -127,7 +145,7 @@
-                for(int l = 0; l < 8; ++l) {
-                   p_180616_2_.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
-                }
--            } else if (blockstate.func_177230_c() instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a) {
-+            } else if (canContainFluid) {
-                if (((ILiquidContainer)blockstate.func_177230_c()).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false))) {
-                   this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
-                }
-@@ -148,7 +166,24 @@
+@@ -117,7 +134,7 @@
+             }
+ 
+             return true;
+-         } else if (block instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a) {
++         } else if (block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_,p_180616_3_,blockstate,field_77876_a)) {
+             ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
+             this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
+             return true;
+@@ -137,7 +154,24 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/BeeEntity.java
++++ b/net/minecraft/entity/passive/BeeEntity.java
+@@ -438,7 +438,7 @@
+          return false;
+       } else {
+          TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
+-         return tileentity != null && tileentity.func_200662_C() == TileEntityType.field_226985_G_;
++         return tileentity instanceof BeehiveTileEntity;
+       }
+    }
+ 

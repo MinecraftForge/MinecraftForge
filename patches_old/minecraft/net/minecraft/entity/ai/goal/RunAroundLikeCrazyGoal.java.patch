@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/RunAroundLikeCrazyGoal.java
++++ b/net/minecraft/entity/ai/goal/RunAroundLikeCrazyGoal.java
+@@ -54,7 +54,7 @@
+          if (entity instanceof PlayerEntity) {
+             int i = this.field_111180_a.func_110252_cg();
+             int j = this.field_111180_a.func_190676_dC();
+-            if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i) {
++            if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(field_111180_a, (PlayerEntity)entity)) {
+                this.field_111180_a.func_110263_g((PlayerEntity)entity);
+                return;
+             }

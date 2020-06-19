@@ -1,0 +1,35 @@
+--- a/net/minecraft/pathfinding/WalkNodeProcessor.java
++++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
+@@ -383,16 +383,9 @@
+             for(int j = -1; j <= 1; ++j) {
+                for(int k = -1; k <= 1; ++k) {
+                   if (i != 0 || k != 0) {
+-                     Block block = p_193578_0_.func_180495_p(blockpos$pooledmutable.func_181079_c(i + p_193578_1_, j + p_193578_2_, k + p_193578_3_)).func_177230_c();
+-                     if (block == Blocks.field_150434_aF) {
+-                        p_193578_4_ = PathNodeType.DANGER_CACTUS;
+-                     } else if (block != Blocks.field_150480_ab && block != Blocks.field_150353_l) {
+-                        if (block == Blocks.field_222434_lW) {
+-                           p_193578_4_ = PathNodeType.DANGER_OTHER;
+-                        }
+-                     } else {
+-                        p_193578_4_ = PathNodeType.DANGER_FIRE;
+-                     }
++                     PathNodeType type = func_189553_b(p_193578_0_, p_193578_1_ + i, p_193578_2_ + j, p_193578_3_ + k).getDanger();
++                     if (type != null)
++                        p_193578_4_ = type;
+                   }
+                }
+             }
+@@ -405,9 +398,11 @@
+    protected static PathNodeType func_189553_b(IBlockReader p_189553_0_, int p_189553_1_, int p_189553_2_, int p_189553_3_) {
+       BlockPos blockpos = new BlockPos(p_189553_1_, p_189553_2_, p_189553_3_);
+       BlockState blockstate = p_189553_0_.func_180495_p(blockpos);
++      PathNodeType type = blockstate.getAiPathNodeType(p_189553_0_, blockpos);
++      if (type != null) return type;
+       Block block = blockstate.func_177230_c();
+       Material material = blockstate.func_185904_a();
+-      if (blockstate.func_196958_f()) {
++      if (blockstate.isAir(p_189553_0_, blockpos)) {
+          return PathNodeType.OPEN;
+       } else if (!block.func_203417_a(BlockTags.field_212185_E) && block != Blocks.field_196651_dG) {
+          if (block == Blocks.field_150480_ab) {

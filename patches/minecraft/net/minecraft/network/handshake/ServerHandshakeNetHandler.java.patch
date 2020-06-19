@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
 +++ b/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
-@@ -21,6 +21,7 @@
+@@ -23,6 +23,7 @@
     }
  
     public void func_147383_a(CHandshakePacket p_147383_1_) {

@@ -1,38 +1,24 @@
 --- a/net/minecraft/world/biome/Biome.java
 +++ b/net/minecraft/world/biome/Biome.java
-@@ -54,7 +54,7 @@
+@@ -68,7 +68,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
--public abstract class Biome {
-+public abstract class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
+-public class Biome {
++public class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
     public static final Logger field_150586_aC = LogManager.getLogger();
-    public static final Set<Biome> field_201870_ab = Sets.newHashSet();
-    public static final ObjectIntIdentityMap<Biome> field_185373_j = new ObjectIntIdentityMap<>();
-@@ -143,11 +143,11 @@
-    }
- 
-    protected void func_201866_a(EntityClassification p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
--      this.field_201880_ax.get(p_201866_1_).add(p_201866_2_);
-+      this.field_201880_ax.computeIfAbsent(p_201866_1_, k -> Lists.newArrayList()).add(p_201866_2_);
-    }
- 
-    public List<Biome.SpawnListEntry> func_76747_a(EntityClassification p_76747_1_) {
--      return this.field_201880_ax.get(p_76747_1_);
-+      return this.field_201880_ax.computeIfAbsent(p_76747_1_, k -> Lists.newArrayList());
-    }
- 
-    public Biome.RainType func_201851_b() {
-@@ -196,7 +196,7 @@
+    public static final Codec<Biome> field_235051_b_ = RecordCodecBuilder.create((p_235064_0_) -> {
+       return p_235064_0_.group(Biome.RainType.field_235121_d_.fieldOf("precipitation").forGetter((p_235088_0_) -> {
+@@ -283,7 +283,7 @@
        if (this.func_225486_c(p_201854_2_) >= 0.15F) {
           return false;
        } else {
 -         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256 && p_201854_1_.func_226658_a_(LightType.BLOCK, p_201854_2_) < 10) {
-+         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < p_201854_1_.func_201675_m().getHeight() && p_201854_1_.func_226658_a_(LightType.BLOCK, p_201854_2_) < 10) {
++         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256/*TODO worldIn.getDimension().getHeight()*/ && p_201854_1_.func_226658_a_(LightType.BLOCK, p_201854_2_) < 10) {
              BlockState blockstate = p_201854_1_.func_180495_p(p_201854_2_);
-             IFluidState ifluidstate = p_201854_1_.func_204610_c(p_201854_2_);
-             if (ifluidstate.func_206886_c() == Fluids.field_204546_a && blockstate.func_177230_c() instanceof FlowingFluidBlock) {
-@@ -221,7 +221,7 @@
+             FluidState fluidstate = p_201854_1_.func_204610_c(p_201854_2_);
+             if (fluidstate.func_206886_c() == Fluids.field_204546_a && blockstate.func_177230_c() instanceof FlowingFluidBlock) {
+@@ -308,7 +308,7 @@
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_226658_a_(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
@@ -41,8 +27,8 @@
                 return true;
              }
           }
-@@ -375,6 +375,17 @@
-       return this.field_185364_H;
+@@ -589,6 +589,17 @@
+       }
     }
  
 +   public Biome getRiver() {
@@ -59,7 +45,7 @@
     public static class Builder {
        @Nullable
        private ConfiguredSurfaceBuilder<?> field_205422_a;
-@@ -526,6 +537,18 @@
+@@ -787,6 +798,18 @@
        }
     }
  

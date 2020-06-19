@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FallingBlock.java
 +++ b/net/minecraft/block/FallingBlock.java
-@@ -29,7 +29,7 @@
+@@ -30,7 +30,7 @@
     }
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
@@ -15,6 +15,6 @@
           BlockPos blockpos = p_180655_3_.func_177977_b();
 -         if (func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
 +         if (p_180655_2_.func_175623_d(blockpos) || func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
-             double d0 = (double)p_180655_3_.func_177958_n() + (double)p_180655_4_.nextFloat();
+             double d0 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
              double d1 = (double)p_180655_3_.func_177956_o() - 0.05D;
-             double d2 = (double)p_180655_3_.func_177952_p() + (double)p_180655_4_.nextFloat();
+             double d2 = (double)p_180655_3_.func_177952_p() + p_180655_4_.nextDouble();

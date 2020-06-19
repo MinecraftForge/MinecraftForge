@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/TagsProvider.java
++++ b/net/minecraft/data/TagsProvider.java
+@@ -48,6 +48,7 @@
+       tagcollection.func_200039_c().forEach((p_223474_2_, p_223474_3_) -> {
+          JsonObject jsonobject = p_223474_3_.func_200571_a(this.field_200435_c::func_177774_c);
+          Path path = this.func_200431_a(p_223474_2_);
++         if (path == null) return; //Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
+ 
+          try {
+             String s = field_200437_e.toJson((JsonElement)jsonobject);

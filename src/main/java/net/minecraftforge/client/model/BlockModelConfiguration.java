@@ -99,7 +99,7 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Override
-    public Material resolveTexture(String name)
+    public RenderMaterial resolveTexture(String name)
     {
         return owner.resolveTextureName(name);
     }
@@ -144,14 +144,14 @@ public class BlockModelConfiguration implements IModelConfiguration
         this.visibilityData.copyFrom(other.visibilityData);
     }
 
-    public Collection<Material> getTextureDependencies(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<RenderMaterial> getTextureDependencies(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         IModelGeometry<?> geometry = getCustomGeometry();
         return geometry == null ? Collections.emptySet() :
                 geometry.getTextures(this, modelGetter, missingTextureErrors);
     }
 
-    public IBakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> bakedTextureGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> bakedTextureGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         IModelGeometry<?> geometry = getCustomGeometry();
         if (geometry == null)

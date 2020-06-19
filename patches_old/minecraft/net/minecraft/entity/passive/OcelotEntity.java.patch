@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/OcelotEntity.java
++++ b/net/minecraft/entity/passive/OcelotEntity.java
+@@ -161,7 +161,7 @@
+       if ((this.field_70914_e == null || this.field_70914_e.func_75277_f()) && !this.func_213530_dX() && this.func_70877_b(itemstack) && p_184645_1_.func_70068_e(this) < 9.0D) {
+          this.func_175505_a(p_184645_1_, itemstack);
+          if (!this.field_70170_p.field_72995_K) {
+-            if (this.field_70146_Z.nextInt(3) == 0) {
++            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_)) {
+                this.func_213528_r(true);
+                this.func_213527_s(true);
+                this.field_70170_p.func_72960_a(this, (byte)41);

@@ -49,8 +49,8 @@ public class ExistingFileHelper {
     private final boolean enable;
 
     public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
-        this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES, Thread.currentThread());
-        this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
+        this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
+        this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
         this.clientResources.addResourcePack(new VanillaPack("minecraft", "realms"));
         this.serverData.addResourcePack(new VanillaPack("minecraft"));
         for (Path existing : existingPacks) {

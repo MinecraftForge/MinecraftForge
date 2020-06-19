@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/model/SkeletonModel.java
 +++ b/net/minecraft/client/renderer/entity/model/SkeletonModel.java
-@@ -43,7 +43,7 @@
+@@ -44,7 +44,7 @@
        this.field_187076_m = BipedModel.ArmPose.EMPTY;
        this.field_187075_l = BipedModel.ArmPose.EMPTY;
        ItemStack itemstack = p_212843_1_.func_184586_b(Hand.MAIN_HAND);
@@ -9,7 +9,7 @@
           if (p_212843_1_.func_184591_cq() == HandSide.RIGHT) {
              this.field_187076_m = BipedModel.ArmPose.BOW_AND_ARROW;
           } else {
-@@ -57,7 +57,7 @@
+@@ -58,7 +58,7 @@
     public void func_225597_a_(T p_225597_1_, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_) {
        super.func_225597_a_(p_225597_1_, p_225597_2_, p_225597_3_, p_225597_4_, p_225597_5_, p_225597_6_);
        ItemStack itemstack = p_225597_1_.func_184614_ca();

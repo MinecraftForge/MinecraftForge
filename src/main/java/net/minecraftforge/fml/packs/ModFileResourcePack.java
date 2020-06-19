@@ -134,7 +134,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
 
     }

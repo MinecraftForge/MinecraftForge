@@ -1,0 +1,22 @@
+--- a/net/minecraft/client/shader/ShaderInstance.java
++++ b/net/minecraft/client/shader/ShaderInstance.java
+@@ -50,7 +50,8 @@
+    private final ShaderLoader field_216563_s;
+ 
+    public ShaderInstance(IResourceManager p_i50988_1_, String p_i50988_2_) throws IOException {
+-      ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_i50988_2_ + ".json");
++      ResourceLocation rl = ResourceLocation.func_208304_a(p_i50988_2_);
++      ResourceLocation resourcelocation = new ResourceLocation(rl.func_110624_b(), "shaders/program/" + rl.func_110623_a() + ".json");
+       this.field_216556_l = p_i50988_2_;
+       IResource iresource = null;
+ 
+@@ -142,7 +143,8 @@
+    public static ShaderLoader func_216542_a(IResourceManager p_216542_0_, ShaderLoader.ShaderType p_216542_1_, String p_216542_2_) throws IOException {
+       ShaderLoader shaderloader = p_216542_1_.func_148064_d().get(p_216542_2_);
+       if (shaderloader == null) {
+-         ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_216542_2_ + p_216542_1_.func_148063_b());
++         ResourceLocation rl = ResourceLocation.func_208304_a(p_216542_2_);
++         ResourceLocation resourcelocation = new ResourceLocation(rl.func_110624_b(), "shaders/program/" + rl.func_110623_a() + p_216542_1_.func_148063_b());
+          IResource iresource = p_216542_0_.func_199002_a(resourcelocation);
+ 
+          try {

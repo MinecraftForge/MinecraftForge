@@ -1,0 +1,24 @@
+--- a/net/minecraft/resources/IResourceManagerReloadListener.java
++++ b/net/minecraft/resources/IResourceManagerReloadListener.java
+@@ -5,6 +5,11 @@
+ import net.minecraft.profiler.IProfiler;
+ import net.minecraft.util.Unit;
+ 
++/**
++ * @deprecated Forge: {@link net.minecraftforge.resource.ISelectiveResourceReloadListener}, which selectively allows
++ * individual resource types being reloaded should rather be used where possible.
++ */
++@Deprecated
+ public interface IResourceManagerReloadListener extends IFutureReloadListener {
+    default CompletableFuture<Void> func_215226_a(IFutureReloadListener.IStage p_215226_1_, IResourceManager p_215226_2_, IProfiler p_215226_3_, IProfiler p_215226_4_, Executor p_215226_5_, Executor p_215226_6_) {
+       return p_215226_1_.func_216872_a(Unit.INSTANCE).thenRunAsync(() -> {
+@@ -13,4 +18,9 @@
+    }
+ 
+    void func_195410_a(IResourceManager p_195410_1_);
++
++   @javax.annotation.Nullable
++   default net.minecraftforge.resource.IResourceType getResourceType() {
++      return null;
++   }
+ }

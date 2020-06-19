@@ -20,8 +20,8 @@
 package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.*;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.*;
 
 /*
  * Replacement interface for ModelRotation to allow custom transformations of vanilla models.

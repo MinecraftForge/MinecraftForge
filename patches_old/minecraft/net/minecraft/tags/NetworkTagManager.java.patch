@@ -1,0 +1,10 @@
+--- a/net/minecraft/tags/NetworkTagManager.java
++++ b/net/minecraft/tags/NetworkTagManager.java
+@@ -69,6 +69,7 @@
+          ItemTags.func_199902_a(this.field_199720_b);
+          FluidTags.func_206953_a(this.field_205705_c);
+          EntityTypeTags.func_219759_a(this.field_215299_d);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
+       }, p_215226_6_);
+    }
+ 

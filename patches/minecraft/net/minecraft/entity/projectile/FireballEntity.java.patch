@@ -1,11 +1,11 @@
 --- a/net/minecraft/entity/projectile/FireballEntity.java
 +++ b/net/minecraft/entity/projectile/FireballEntity.java
-@@ -38,7 +38,7 @@
-             this.func_174815_a(this.field_70235_a, entity);
-          }
- 
+@@ -32,7 +32,7 @@
+    protected void func_70227_a(RayTraceResult p_70227_1_) {
+       super.func_70227_a(p_70227_1_);
+       if (!this.field_70170_p.field_72995_K) {
 -         boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b);
-+         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a);
++         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.func_234616_v_());
           this.field_70170_p.func_217398_a((Entity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), (float)this.field_92057_e, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
           this.func_70106_y();
        }

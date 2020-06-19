@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/BlockModelDefinition.java
++++ b/net/minecraft/data/BlockModelDefinition.java
+@@ -8,6 +8,8 @@
+ import java.util.Map;
+ import java.util.function.Supplier;
+ 
++import net.minecraft.data.BlockModeInfo.Field;
++
+ public class BlockModelDefinition implements Supplier<JsonElement> {
+    private final Map<BlockModeInfo<?>, BlockModeInfo<?>.Field> field_240193_a_ = Maps.newLinkedHashMap();
+ 

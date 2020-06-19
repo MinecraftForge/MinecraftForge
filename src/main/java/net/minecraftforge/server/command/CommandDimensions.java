@@ -23,7 +23,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +39,7 @@ public class CommandDimensions
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .executes(ctx -> {
                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.dimensions.list"), true);
+                /*
                 Map<String, List<String>> types = new HashMap<>();
                 for (DimensionType dim : DimensionType.getAll()) {
                     String key = dim.getModType() == null ? "Vanilla" : dim.getModType().getRegistryName().toString();
@@ -48,6 +48,10 @@ public class CommandDimensions
 
                 types.keySet().stream().sorted().forEach(key -> {
                     ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), false);
+                });
+                */
+                ctx.getSource().getServer().func_240770_D_().stream().sorted().forEach(key -> {
+                	ctx.getSource().sendFeedback(new StringTextComponent(key.func_240901_a_().toString()), false);
                 });
                 return 0;
             });

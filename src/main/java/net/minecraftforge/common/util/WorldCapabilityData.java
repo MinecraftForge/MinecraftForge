@@ -22,7 +22,6 @@ package net.minecraftforge.common.util;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class WorldCapabilityData extends WorldSavedData
@@ -68,7 +67,7 @@ public class WorldCapabilityData extends WorldSavedData
         return true;
     }
 
-    public void setCapabilities(Dimension provider, INBTSerializable<CompoundNBT> capabilities)
+    public void setCapabilities(INBTSerializable<CompoundNBT> capabilities)
     {
         this.serializable = capabilities;
         if (this.capNBT != null && serializable != null)

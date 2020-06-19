@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.extensions;
+/*package net.minecraftforge.common.extensions;
 
 import java.util.function.LongFunction;
 
@@ -50,7 +50,7 @@ public interface IForgeWorldType
 
     /**
      * Called when 'Create New World' button is pressed before starting game
-     */
+     * /
     default void onGUICreateWorldPress()
     {
     }
@@ -60,7 +60,7 @@ public interface IForgeWorldType
      *
      * @param mc  The Minecraft instance
      * @param gui the createworld GUI
-     */
+     * /
     @OnlyIn(Dist.CLIENT)
     default void onCustomizeButton(Minecraft mc, CreateWorldScreen gui)
     {
@@ -89,7 +89,7 @@ public interface IForgeWorldType
      * Get the height to render the clouds for this world type
      *
      * @return The height to render clouds at
-     */
+     * /
     default float getCloudHeight()
     {
         return 128.0F;
@@ -115,7 +115,7 @@ public interface IForgeWorldType
      *                       the supplied size.
      * @return An {@link IAreaFactory} that representing the Biomes to be generated.
      * @see {@link GenLayerBiome}
-     */
+     * /
     default <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer,
             OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)
     {
@@ -125,4 +125,4 @@ public interface IForgeWorldType
         parentLayer = EdgeBiomeLayer.INSTANCE.apply(contextFactory.apply(1000L), parentLayer);
         return parentLayer;
     }
-}
+}*/

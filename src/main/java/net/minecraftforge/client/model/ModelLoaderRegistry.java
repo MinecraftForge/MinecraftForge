@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
@@ -36,6 +35,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -141,7 +141,7 @@ public class ModelLoaderRegistry
     private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
             Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
 
-    public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner)
+    public static RenderMaterial resolveTexture(@Nullable String tex, IModelConfiguration owner)
     {
         if (tex == null)
             return blockMaterial(WHITE_TEXTURE);
@@ -163,14 +163,14 @@ public class ModelLoaderRegistry
         return blockMaterial(tex);
     }
 
-    public static Material blockMaterial(String location)
+    public static RenderMaterial blockMaterial(String location)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
     }
 
-    public static Material blockMaterial(ResourceLocation location)
+    public static RenderMaterial blockMaterial(ResourceLocation location)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
     }
 
     @Nullable
@@ -244,7 +244,7 @@ public class ModelLoaderRegistry
         }
     }
 
-    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
+    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
     {
         IBakedModel model;
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
@@ -273,7 +273,7 @@ public class ModelLoaderRegistry
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(BlockPart blockpart : elements) {
                 for(Direction direction : blockpart.mapFaces.keySet()) {
@@ -291,13 +291,13 @@ public class ModelLoaderRegistry
         }
 
         @Override
-        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
-            Set<Material> textures = Sets.newHashSet();
+            Set<RenderMaterial> textures = Sets.newHashSet();
 
             for(BlockPart part : elements) {
                 for(BlockPartFace face : part.mapFaces.values()) {
-                    Material texture = owner.resolveTexture(face.texture);
+                    RenderMaterial texture = owner.resolveTexture(face.texture);
                     if (Objects.equals(texture, MissingTextureSprite.getLocation().toString())) {
                         missingTextureErrors.add(Pair.of(face.texture, owner.getModelName()));
                     }

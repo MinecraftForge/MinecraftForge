@@ -1,6 +1,6 @@
 --- a/net/minecraft/enchantment/Enchantment.java
 +++ b/net/minecraft/enchantment/Enchantment.java
-@@ -17,7 +17,7 @@
+@@ -18,7 +18,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -8,7 +8,7 @@
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
     private final EquipmentSlotType[] field_185263_a;
     private final Enchantment.Rarity field_77333_a;
-    @Nullable
+    public final EnchantmentType field_77351_y;
 @@ -114,7 +114,7 @@
     }
  
@@ -18,8 +18,8 @@
     }
  
     public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -131,6 +131,24 @@
-       return false;
+@@ -139,6 +139,24 @@
+       return true;
     }
  
 +   /**

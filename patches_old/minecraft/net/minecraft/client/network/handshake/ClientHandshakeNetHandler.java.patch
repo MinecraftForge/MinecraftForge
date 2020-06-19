@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/network/handshake/ClientHandshakeNetHandler.java
++++ b/net/minecraft/client/network/handshake/ClientHandshakeNetHandler.java
+@@ -20,6 +20,7 @@
+    }
+ 
+    public void func_147383_a(CHandshakePacket p_147383_1_) {
++      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerLogin(p_147383_1_, this.field_147384_b)) return;
+       this.field_147384_b.func_150723_a(p_147383_1_.func_149594_c());
+       this.field_147384_b.func_150719_a(new ServerLoginNetHandler(this.field_147385_a, this.field_147384_b));
+    }

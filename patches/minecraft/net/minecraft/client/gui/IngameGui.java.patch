@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/IngameGui.java
 +++ b/net/minecraft/client/gui/IngameGui.java
-@@ -406,6 +406,9 @@
+@@ -416,6 +416,9 @@
  
           for(EffectInstance effectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              Effect effect = effectinstance.func_188419_a();
@@ -10,42 +10,45 @@
              if (effectinstance.func_205348_f()) {
                 int k = this.field_194811_H;
                 int l = 1;
-@@ -443,6 +446,7 @@
+@@ -453,6 +456,7 @@
                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, f1);
-                   blit(j1 + 3, k1 + 3, this.getBlitOffset(), 18, 18, textureatlassprite);
+                   func_238470_a_(p_238444_1_, j1 + 3, k1 + 3, this.func_230927_p_(), 18, 18, textureatlassprite);
                 });
-+               effectinstance.renderHUDEffect(this, k, l, this.getBlitOffset(), f);
++               effectinstance.renderHUDEffect(this, p_238444_1_, k, l, this.func_230927_p_(), f);
              }
           }
  
-@@ -568,6 +572,7 @@
+@@ -577,7 +581,8 @@
+             iformattabletextcomponent.func_240699_a_(TextFormatting.ITALIC);
           }
  
-          String s = itextcomponent.func_150254_d();
-+         s = this.field_92016_l.getHighlightTip(s);
-          int i = (this.field_194811_H - this.func_175179_f().func_78256_a(s)) / 2;
-          int j = this.field_194812_I - 59;
+-         int i = this.func_175179_f().func_238414_a_(iformattabletextcomponent);
++         ITextComponent highlightTip = this.field_92016_l.getHighlightTip(iformattabletextcomponent);
++         int i = this.func_175179_f().func_238414_a_(highlightTip);
+          int j = (this.field_194811_H - i) / 2;
+          int k = this.field_194812_I - 59;
           if (!this.field_73839_d.field_71442_b.func_78755_b()) {
-@@ -584,7 +589,13 @@
+@@ -594,7 +599,13 @@
              RenderSystem.enableBlend();
              RenderSystem.defaultBlendFunc();
-             fill(i - 2, j - 2, i + this.func_175179_f().func_78256_a(s) + 2, j + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
+             func_238467_a_(p_238453_1_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
+-            this.func_175179_f().func_238407_a_(p_238453_1_, iformattabletextcomponent, (float)j, (float)k, 16777215 + (l << 24));
 +            FontRenderer font = field_92016_l.func_77973_b().getFontRenderer(field_92016_l);
 +            if (font == null) {
-             this.func_175179_f().func_175063_a(s, (float)i, (float)j, 16777215 + (k << 24));
++            this.func_175179_f().func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            } else {
-+                i = (this.field_194811_H - font.func_78256_a(s)) / 2;
-+                font.func_175063_a(s, (float)i, (float)j, 16777215 + (k << 24));
++                j = (this.field_194811_H - font.func_238414_a_(highlightTip)) / 2;
++                font.func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            }
              RenderSystem.disableBlend();
              RenderSystem.popMatrix();
           }
-@@ -1045,7 +1056,7 @@
+@@ -1057,7 +1068,7 @@
           ItemStack itemstack = this.field_73839_d.field_71439_g.field_71071_by.func_70448_g();
           if (itemstack.func_190926_b()) {
              this.field_92017_k = 0;
 -         } else if (!this.field_92016_l.func_190926_b() && itemstack.func_77973_b() == this.field_92016_l.func_77973_b() && itemstack.func_200301_q().equals(this.field_92016_l.func_200301_q())) {
-+         } else if (!this.field_92016_l.func_190926_b() && itemstack.func_77973_b() == this.field_92016_l.func_77973_b() && (itemstack.func_200301_q().equals(this.field_92016_l.func_200301_q()) && itemstack.getHighlightTip(itemstack.func_200301_q().func_150261_e()).equals(field_92016_l.getHighlightTip(field_92016_l.func_200301_q().func_150261_e())))) {
++         } else if (!this.field_92016_l.func_190926_b() && itemstack.func_77973_b() == this.field_92016_l.func_77973_b() && (itemstack.func_200301_q().equals(this.field_92016_l.func_200301_q()) && itemstack.getHighlightTip(itemstack.func_200301_q()).equals(field_92016_l.getHighlightTip(field_92016_l.func_200301_q())))) {
              if (this.field_92017_k > 0) {
                 --this.field_92017_k;
              }

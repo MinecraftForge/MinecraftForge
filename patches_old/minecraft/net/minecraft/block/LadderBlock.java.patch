@@ -1,0 +1,14 @@
+--- a/net/minecraft/block/LadderBlock.java
++++ b/net/minecraft/block/LadderBlock.java
+@@ -93,6 +93,11 @@
+       return null;
+    }
+ 
++   @Override
++   public boolean isLadder(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) {
++      return true;
++   }
++
+    public BlockState func_185499_a(BlockState p_185499_1_, Rotation p_185499_2_) {
+       return p_185499_1_.func_206870_a(field_176382_a, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176382_a)));
+    }

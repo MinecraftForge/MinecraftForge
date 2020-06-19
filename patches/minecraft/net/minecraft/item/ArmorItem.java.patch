@@ -1,11 +1,13 @@
 --- a/net/minecraft/item/ArmorItem.java
 +++ b/net/minecraft/item/ArmorItem.java
-@@ -102,4 +102,8 @@
-    public int func_200881_e() {
+@@ -113,6 +113,10 @@
        return this.field_77879_b;
     }
-+
+ 
 +   public float getToughness() {
 +      return this.field_189415_e;
 +   }
- }
++
+    public float func_234657_f_() {
+       return this.field_189415_e;
+    }

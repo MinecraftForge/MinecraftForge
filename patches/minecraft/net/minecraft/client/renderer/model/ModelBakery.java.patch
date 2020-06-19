@@ -26,11 +26,11 @@
        p_i226056_3_.func_219895_b("special");
        this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
 +      for (ResourceLocation rl : getSpecialModels()) {
-+         addModelToCache(rl);
++          addModelToCache(rl);
 +      }
        p_i226056_3_.func_219895_b("textures");
        Set<Pair<String, String>> set = Sets.newLinkedHashSet();
-       Set<Material> set1 = this.field_217851_H.values().stream().flatMap((p_229342_2_) -> {
+       Set<RenderMaterial> set1 = this.field_217851_H.values().stream().flatMap((p_229342_2_) -> {
           return p_229342_2_.func_225614_a_(this::func_209597_a, set).stream();
        }).collect(Collectors.toSet());
        set1.addAll(field_177602_b);
@@ -46,7 +46,7 @@
              field_177603_c.warn("Unable to bake model: '{}': {}", p_229350_1_, exception);
           }
  
-@@ -443,6 +458,13 @@
+@@ -442,6 +457,13 @@
        this.field_217848_D.addAll(p_209593_2_.func_187965_e());
     }
  
@@ -60,7 +60,7 @@
     private void func_217843_a(ModelResourceLocation p_217843_1_) {
        IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
        this.field_217849_F.put(p_217843_1_, iunbakedmodel);
-@@ -457,7 +479,13 @@
+@@ -456,7 +478,13 @@
     }
  
     @Nullable
@@ -70,11 +70,11 @@
 +   }
 +
 +   @Nullable
-+   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, IModelTransform p_217845_2_, java.util.function.Function<Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter) {
++   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, IModelTransform p_217845_2_, java.util.function.Function<RenderMaterial, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter) {
        Triple<ResourceLocation, TransformationMatrix, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_225615_b_(), p_217845_2_.func_188049_c());
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
-@@ -468,11 +496,11 @@
+@@ -467,11 +495,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
@@ -88,7 +88,7 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -526,6 +554,10 @@
+@@ -524,6 +552,10 @@
        return this.field_225367_M;
     }
  
@@ -99,7 +99,7 @@
     @OnlyIn(Dist.CLIENT)
     static class BlockStateDefinitionException extends RuntimeException {
        public BlockStateDefinitionException(String p_i49526_1_) {
-@@ -533,6 +565,10 @@
+@@ -531,6 +563,10 @@
        }
     }
  

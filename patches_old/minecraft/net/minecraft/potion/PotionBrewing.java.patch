@@ -1,0 +1,72 @@
+--- a/net/minecraft/potion/PotionBrewing.java
++++ b/net/minecraft/potion/PotionBrewing.java
+@@ -57,7 +57,7 @@
+       int i = 0;
+ 
+       for(int j = field_185213_a.size(); i < j; ++i) {
+-         if ((field_185213_a.get(i)).field_185200_c == p_222124_0_) {
++         if ((field_185213_a.get(i)).field_185200_c.get() == p_222124_0_) {
+             return true;
+          }
+       }
+@@ -79,7 +79,7 @@
+ 
+       for(int j = field_185214_b.size(); i < j; ++i) {
+          PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
+-         if (mixpredicate.field_185198_a == item && mixpredicate.field_185199_b.test(p_185206_1_)) {
++         if (mixpredicate.field_185198_a.get() == item && mixpredicate.field_185199_b.test(p_185206_1_)) {
+             return true;
+          }
+       }
+@@ -93,7 +93,7 @@
+ 
+       for(int j = field_185213_a.size(); i < j; ++i) {
+          PotionBrewing.MixPredicate<Potion> mixpredicate = field_185213_a.get(i);
+-         if (mixpredicate.field_185198_a == potion && mixpredicate.field_185199_b.test(p_185209_1_)) {
++         if (mixpredicate.field_185198_a.get() == potion && mixpredicate.field_185199_b.test(p_185209_1_)) {
+             return true;
+          }
+       }
+@@ -109,8 +109,8 @@
+ 
+          for(int j = field_185214_b.size(); i < j; ++i) {
+             PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
+-            if (mixpredicate.field_185198_a == item && mixpredicate.field_185199_b.test(p_185212_0_)) {
+-               return PotionUtils.func_185188_a(new ItemStack((IItemProvider)mixpredicate.field_185200_c), potion);
++            if (mixpredicate.field_185198_a.get() == item && mixpredicate.field_185199_b.test(p_185212_0_)) {
++               return PotionUtils.func_185188_a(new ItemStack((IItemProvider)mixpredicate.field_185200_c.get()), potion);
+             }
+          }
+ 
+@@ -118,8 +118,8 @@
+ 
+          for(int k = field_185213_a.size(); i < k; ++i) {
+             PotionBrewing.MixPredicate<Potion> mixpredicate1 = field_185213_a.get(i);
+-            if (mixpredicate1.field_185198_a == potion && mixpredicate1.field_185199_b.test(p_185212_0_)) {
+-               return PotionUtils.func_185188_a(new ItemStack(item), (Potion)mixpredicate1.field_185200_c);
++            if (mixpredicate1.field_185198_a.get() == potion && mixpredicate1.field_185199_b.test(p_185212_0_)) {
++               return PotionUtils.func_185188_a(new ItemStack(item), (Potion)mixpredicate1.field_185200_c.get());
+             }
+          }
+       }
+@@ -212,15 +212,15 @@
+       field_185213_a.add(new PotionBrewing.MixPredicate<>(p_193357_0_, Ingredient.func_199804_a(p_193357_1_), p_193357_2_));
+    }
+ 
+-   static class MixPredicate<T> {
+-      private final T field_185198_a;
++   static class MixPredicate<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
++      private final net.minecraftforge.registries.IRegistryDelegate<T> field_185198_a;
+       private final Ingredient field_185199_b;
+-      private final T field_185200_c;
++      private final net.minecraftforge.registries.IRegistryDelegate<T> field_185200_c;
+ 
+       public MixPredicate(T p_i47570_1_, Ingredient p_i47570_2_, T p_i47570_3_) {
+-         this.field_185198_a = p_i47570_1_;
++         this.field_185198_a = p_i47570_1_.delegate;
+          this.field_185199_b = p_i47570_2_;
+-         this.field_185200_c = p_i47570_3_;
++         this.field_185200_c = p_i47570_3_.delegate;
+       }
+    }
+ }

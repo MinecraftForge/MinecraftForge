@@ -1,0 +1,10 @@
+--- a/net/minecraft/command/impl/TeleportCommand.java
++++ b/net/minecraft/command/impl/TeleportCommand.java
+@@ -151,7 +151,6 @@
+             p_201127_1_.func_70012_b(p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
+             p_201127_1_.func_70034_d(f1);
+             p_201127_2_.func_217460_e(p_201127_1_);
+-            entity.field_70128_L = true;
+          }
+       }
+ 

@@ -21,7 +21,7 @@ package net.minecraftforge.debug.fluid;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.*;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
@@ -133,7 +133,7 @@ public class NewFluidTest
         }
 
         @Override
-        public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, IFluidState fluidStateIn) {
+        public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
             if (canContainFluid(worldIn, pos, state, fluidStateIn.getFluid())) {
                 if (!worldIn.isRemote()) {
                     worldIn.setBlockState(pos, state.with(FLUIDLOGGED, true), 3);
@@ -157,7 +157,7 @@ public class NewFluidTest
         }
 
         @Override
-        public IFluidState getFluidState(BlockState state)
+        public FluidState getFluidState(BlockState state)
         {
             return state.get(FLUIDLOGGED) ? test_fluid.get().getDefaultState() : Fluids.EMPTY.getDefaultState();
         }

@@ -1,0 +1,61 @@
+--- a/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
+@@ -110,17 +110,19 @@
+    }
+ 
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.field_94112_b = false;
+-      return super.func_212321_a(p_212321_1_);
++      return super.changeDimension(p_212321_1_, teleporter);
+    }
+ 
+-   public void func_70106_y() {
++   @Override
++   public void remove(boolean keepData) {
+       if (!this.field_70170_p.field_72995_K && this.field_94112_b) {
+          InventoryHelper.func_180176_a(this.field_70170_p, this, this);
+       }
+ 
+-      super.func_70106_y();
++      super.remove(keepData);
++      if (!keepData) itemHandler.invalidate();
+    }
+ 
+    protected void func_213281_b(CompoundNBT p_213281_1_) {
+@@ -149,6 +151,7 @@
+    }
+ 
+    public boolean func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
++      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+       p_184230_1_.func_213829_a(this);
+       return true;
+    }
+@@ -168,6 +171,8 @@
+          LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(this.field_184290_c);
+          this.field_184290_c = null;
+          LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_216286_f, new BlockPos(this)).func_216016_a(this.field_184291_d);
++         // Forge: add this entity to loot context, however, currently Vanilla uses 'this' for the player creating the chests. So we take over 'killer_entity' for this.
++         lootcontext$builder.func_216015_a(LootParameters.field_216284_d, this);
+          if (p_184288_1_ != null) {
+             lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da()).func_216015_a(LootParameters.field_216281_a, p_184288_1_);
+          }
+@@ -198,4 +203,17 @@
+    }
+ 
+    protected abstract Container func_213968_a(int p_213968_1_, PlayerInventory p_213968_2_);
++
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.Direction facing) {
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   public void dropContentsWhenDead(boolean value) {
++      this.field_94112_b = value;
++   }
+ }

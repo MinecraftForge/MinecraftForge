@@ -22,6 +22,7 @@ package net.minecraftforge.common.extensions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.item.ItemStack;
@@ -64,25 +65,27 @@ public interface IForgeEffect {
      *
      * @param effect the active PotionEffect
      * @param gui the gui instance
+     * @param mStack The MatrixStack
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z level
      */
     @OnlyIn(Dist.CLIENT)
-    default void renderInventoryEffect(EffectInstance effect, DisplayEffectsScreen<?> gui, int x, int y, float z) { }
+    default void renderInventoryEffect(EffectInstance effect, DisplayEffectsScreen<?> gui, MatrixStack mStack, int x, int y, float z) { }
 
     /**
      * Called to draw the this Potion onto the player's ingame HUD when it's active.
      * This can be used to e.g. render Potion icons from your own texture.
      * @param effect the active PotionEffect
      * @param gui the gui instance
+     * @param mStack The MatrixStack
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z level
      * @param alpha the alpha value, blinks when the potion is about to run out
      */
     @OnlyIn(Dist.CLIENT)
-    default void renderHUDEffect(EffectInstance effect, AbstractGui gui, int x, int y, float z, float alpha) { }
+    default void renderHUDEffect(EffectInstance effect, AbstractGui gui, MatrixStack mStack, int x, int y, float z, float alpha) { }
 
     /**
      * Get a fresh list of items that can cure this Potion.

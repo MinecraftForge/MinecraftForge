@@ -377,7 +377,7 @@ public class BiomeDictionary
         addTypes(Biomes.TAIGA,                            COLD,     CONIFEROUS, FOREST, OVERWORLD                            );
         addTypes(Biomes.SWAMP,                        WET,      SWAMP, OVERWORLD                                         );
         addTypes(Biomes.RIVER,                            RIVER, OVERWORLD                                                   );
-        addTypes(Biomes.NETHER,                             HOT,      DRY,        NETHER                            );
+        addTypes(Biomes.field_235254_j_,                             HOT,      DRY,        NETHER                            );
         addTypes(Biomes.THE_END,                              COLD,     DRY,        END                               );
         addTypes(Biomes.FROZEN_OCEAN,                     COLD,     OCEAN,      SNOWY, OVERWORLD                             );
         addTypes(Biomes.FROZEN_RIVER,                     COLD,     RIVER,      SNOWY, OVERWORLD                             );

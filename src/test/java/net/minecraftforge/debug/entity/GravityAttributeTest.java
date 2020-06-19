@@ -33,6 +33,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -132,12 +133,12 @@ public class GravityAttributeTest
         }
 
         @Override
-        public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
+        public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
         {
             @SuppressWarnings("deprecation")
-            Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
+            Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot);
             if (slot == EquipmentSlotType.MAINHAND)
-                multimap.put(LivingEntity.ENTITY_GRAVITY.getName(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
+                multimap.put(LivingEntity.ENTITY_GRAVITY.func_233754_c_(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
 
             return multimap;
         }

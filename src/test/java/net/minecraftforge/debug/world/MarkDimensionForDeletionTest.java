@@ -1,4 +1,5 @@
 package net.minecraftforge.debug.world;
+/*
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -184,3 +185,4 @@ public class MarkDimensionForDeletionTest
         }
     }
 }
+*/

@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/CompoundNBT.java
 +++ b/net/minecraft/nbt/CompoundNBT.java
-@@ -39,6 +39,7 @@
+@@ -49,6 +49,7 @@
              while((b0 = CompoundNBT.func_152447_a(p_225649_1_, p_225649_3_)) != 0) {
                 String s = CompoundNBT.func_152448_b(p_225649_1_, p_225649_3_);
                 p_225649_3_.func_152450_a((long)(224 + 16 * s.length()));
@@ -8,7 +8,7 @@
                 INBT inbt = CompoundNBT.func_229680_b_(NBTTypes.func_229710_a_(b0), s, p_225649_1_, p_225649_2_ + 1, p_225649_3_);
                 if (map.put(s, inbt) != null) {
                    p_225649_3_.func_152450_a(288L);
-@@ -94,6 +95,7 @@
+@@ -104,6 +105,7 @@
  
     @Nullable
     public INBT func_218657_a(String p_218657_1_, INBT p_218657_2_) {
@@ -16,7 +16,7 @@
        return this.field_74784_a.put(p_218657_1_, p_218657_2_);
     }
  
-@@ -410,11 +412,12 @@
+@@ -408,11 +410,12 @@
     }
  
     private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException {

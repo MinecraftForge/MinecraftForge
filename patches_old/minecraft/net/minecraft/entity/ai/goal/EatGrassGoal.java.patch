@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/ai/goal/EatGrassGoal.java
++++ b/net/minecraft/entity/ai/goal/EatGrassGoal.java
+@@ -59,7 +59,7 @@
+       if (this.field_151502_a == 4) {
+          BlockPos blockpos = new BlockPos(this.field_151500_b);
+          if (field_179505_b.test(this.field_151501_c.func_180495_p(blockpos))) {
+-            if (this.field_151501_c.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_151501_c, this.field_151500_b)) {
+                this.field_151501_c.func_175655_b(blockpos, false);
+             }
+ 
+@@ -67,7 +67,7 @@
+          } else {
+             BlockPos blockpos1 = blockpos.func_177977_b();
+             if (this.field_151501_c.func_180495_p(blockpos1).func_177230_c() == Blocks.field_196658_i) {
+-               if (this.field_151501_c.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++               if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_151501_c, this.field_151500_b)) {
+                   this.field_151501_c.func_217379_c(2001, blockpos1, Block.func_196246_j(Blocks.field_196658_i.func_176223_P()));
+                   this.field_151501_c.func_180501_a(blockpos1, Blocks.field_150346_d.func_176223_P(), 2);
+                }

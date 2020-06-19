@@ -27,7 +27,6 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.ITeleporter;
 
@@ -56,8 +55,8 @@ public class CommandSetDimension
                 )
             );
     }
-    
-    private static int execute(CommandSource sender, Collection<? extends Entity> entities, DimensionType dim, BlockPos pos) throws CommandSyntaxException
+
+    private static int execute(CommandSource sender, Collection<? extends Entity> entities, ServerWorld dim, BlockPos pos) throws CommandSyntaxException
     {
         entities.removeIf(e -> !canEntityTeleport(e));
         if (entities.isEmpty())
@@ -66,8 +65,8 @@ public class CommandSetDimension
         //if (!DimensionManager.isDimensionRegistered(dim))
         //    throw INVALID_DIMENSION.create(dim);
 
-        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getFormattedText(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim, new ITeleporter()
+        entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
+        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.func_241206_a_(dim/* TODO: Custom Teleporters , new ITeleporter()
         {
             @Override
             public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
@@ -76,7 +75,8 @@ public class CommandSetDimension
                 repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
                 return repositionedEntity;
             }
-        }));
+        }*/));
+
 
         return 0;
     }

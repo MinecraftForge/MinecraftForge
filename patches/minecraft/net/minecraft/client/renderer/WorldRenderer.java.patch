@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/renderer/WorldRenderer.java
 +++ b/net/minecraft/client/renderer/WorldRenderer.java
-@@ -203,6 +203,11 @@
+@@ -221,6 +221,11 @@
     }
  
     private void func_228438_a_(LightTexture p_228438_1_, float p_228438_2_, double p_228438_3_, double p_228438_5_, double p_228438_7_) {
-+      net.minecraftforge.client.IRenderHandler renderer = this.field_72777_q.field_71441_e.func_201675_m().getWeatherRenderer();
++      net.minecraftforge.client.IRenderHandler renderer = null;//this.mc.world.getDimension().getWeatherRenderer(); //TODO FIX THIS
 +      if (renderer != null) {
 +         renderer.render(this.field_72773_u, p_228438_2_, this.field_72777_q.field_71441_e, this.field_72777_q);
 +         return;
@@ -12,18 +12,18 @@
        float f = this.field_72777_q.field_71441_e.func_72867_j(p_228438_2_);
        if (!(f <= 0.0F)) {
           p_228438_1_.func_205109_c();
-@@ -772,7 +777,7 @@
+@@ -812,7 +817,7 @@
              this.field_147595_R = true;
              BlockPos blockpos2 = chunkrenderdispatcher$chunkrender4.func_178568_j().func_177982_a(8, 8, 8);
-             boolean flag2 = blockpos2.func_177951_i(blockpos) < 768.0D;
--            if (!chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag2) {
-+            if (net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() || !chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag2) {
+             boolean flag1 = blockpos2.func_177951_i(blockpos) < 768.0D;
+-            if (!chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag1) {
++            if (net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() || !chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag1) {
                 this.field_175009_l.add(chunkrenderdispatcher$chunkrender4);
              } else {
                 this.field_72777_q.func_213239_aq().func_76320_a("build near");
-@@ -871,13 +876,13 @@
+@@ -897,13 +902,13 @@
        float f = p_228426_7_.func_205001_m();
-       boolean flag1 = this.field_72777_q.field_71441_e.field_73011_w.func_76568_b(MathHelper.func_76128_c(d0), MathHelper.func_76128_c(d1)) || this.field_72777_q.field_71456_v.func_184046_j().func_184056_f();
+       boolean flag1 = this.field_72777_q.field_71441_e.func_239132_a_().func_230493_a_(MathHelper.func_76128_c(d0), MathHelper.func_76128_c(d1)) || this.field_72777_q.field_71456_v.func_184046_j().func_184056_f();
        if (this.field_72777_q.field_71474_y.field_151451_c >= 4) {
 -         FogRenderer.func_228372_a_(p_228426_6_, FogRenderer.FogType.FOG_SKY, f, flag1);
 +         FogRenderer.setupFog(p_228426_6_, FogRenderer.FogType.FOG_SKY, f, flag1, p_228426_2_);
@@ -35,9 +35,9 @@
 -      FogRenderer.func_228372_a_(p_228426_6_, FogRenderer.FogType.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1);
 +      FogRenderer.setupFog(p_228426_6_, FogRenderer.FogType.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1, p_228426_2_);
        iprofiler.func_219895_b("terrain_setup");
-       this.func_228437_a_(p_228426_6_, clippinghelperimpl, flag, this.field_228409_ai_++, this.field_72777_q.field_71439_g.func_175149_v());
+       this.func_228437_a_(p_228426_6_, clippinghelper, flag, this.field_228409_ai_++, this.field_72777_q.field_71439_g.func_175149_v());
        iprofiler.func_219895_b("updatechunks");
-@@ -898,7 +903,9 @@
+@@ -924,7 +929,9 @@
        this.func_174967_a(p_228426_3_ + l1);
        iprofiler.func_219895_b("terrain");
        this.func_228441_a_(RenderType.func_228639_c_(), p_228426_1_, d0, d1, d2);
@@ -45,25 +45,25 @@
        this.func_228441_a_(RenderType.func_228641_d_(), p_228426_1_, d0, d1, d2);
 +      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).restoreLastBlurMipmap();
        this.func_228441_a_(RenderType.func_228643_e_(), p_228426_1_, d0, d1, d2);
-       RenderHelper.func_227781_a_(p_228426_1_.func_227866_c_().func_227870_a_());
-       iprofiler.func_219895_b("entities");
-@@ -953,6 +960,7 @@
+       if (this.field_72769_h.func_239132_a_().func_239217_c_()) {
+          RenderHelper.func_237533_a_(p_228426_1_.func_227866_c_().func_227870_a_());
+@@ -994,6 +1001,7 @@
           List<TileEntity> list = worldrenderer$localrenderinformationcontainer.field_178036_a.func_178571_g().func_178485_b();
           if (!list.isEmpty()) {
              for(TileEntity tileentity1 : list) {
-+               if(!clippinghelperimpl.func_228957_a_(tileentity1.getRenderBoundingBox())) continue;
++               if(!clippinghelper.func_228957_a_(tileentity1.getRenderBoundingBox())) continue;
                 BlockPos blockpos3 = tileentity1.func_174877_v();
                 IRenderTypeBuffer irendertypebuffer1 = irendertypebuffer$impl;
                 p_228426_1_.func_227860_a_();
-@@ -977,6 +985,7 @@
+@@ -1019,6 +1027,7 @@
  
        synchronized(this.field_181024_n) {
           for(TileEntity tileentity : this.field_181024_n) {
-+            if(!clippinghelperimpl.func_228957_a_(tileentity.getRenderBoundingBox())) continue;
++            if(!clippinghelper.func_228957_a_(tileentity.getRenderBoundingBox())) continue;
              BlockPos blockpos2 = tileentity.func_174877_v();
              p_228426_1_.func_227860_a_();
              p_228426_1_.func_227861_a_((double)blockpos2.func_177958_n() - d0, (double)blockpos2.func_177956_o() - d1, (double)blockpos2.func_177952_p() - d2);
-@@ -1026,7 +1035,8 @@
+@@ -1069,7 +1078,8 @@
           iprofiler.func_219895_b("outline");
           BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
@@ -73,39 +73,39 @@
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
           }
-@@ -1380,6 +1390,15 @@
+@@ -1461,6 +1471,15 @@
     }
  
     public void func_228424_a_(MatrixStack p_228424_1_, float p_228424_2_) {
-+      net.minecraftforge.client.IRenderHandler renderer = this.field_72769_h.func_201675_m().getSkyRenderer();
-+      if (renderer != null) {
-+         if (renderer instanceof net.minecraftforge.client.SkyRenderHandler) {
-+            ((net.minecraftforge.client.SkyRenderHandler) renderer).render(this.field_72773_u, p_228424_2_, p_228424_1_, this.field_72769_h, this.field_72777_q);
-+         } else {
-+            renderer.render(this.field_72773_u, p_228424_2_, this.field_72769_h, this.field_72777_q);
-+         }
-+         return;
-+      }
-       if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.field_223229_c_) {
++       net.minecraftforge.client.IRenderHandler renderer = null;//this.world.getDimension().getSkyRenderer(); //TODO FIX THIS
++       if (renderer != null) {
++           if (renderer instanceof net.minecraftforge.client.SkyRenderHandler) {
++               ((net.minecraftforge.client.SkyRenderHandler) renderer).render(this.field_72773_u, p_228424_2_, p_228424_1_, this.field_72769_h, this.field_72777_q);
++           } else {
++               renderer.render(this.field_72773_u, p_228424_2_, this.field_72769_h, this.field_72777_q);
++           }
++           return;
++       }
+       if (this.field_72777_q.field_71441_e.func_239132_a_().func_241683_c_() == DimensionRenderInfo.FogType.END) {
           this.func_228444_b_(p_228424_1_);
-       } else if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
-@@ -1508,6 +1527,15 @@
+       } else if (this.field_72777_q.field_71441_e.func_239132_a_().func_241683_c_() == DimensionRenderInfo.FogType.NORMAL) {
+@@ -1589,6 +1608,15 @@
     }
  
     public void func_228425_a_(MatrixStack p_228425_1_, float p_228425_2_, double p_228425_3_, double p_228425_5_, double p_228425_7_) {
-+      net.minecraftforge.client.IRenderHandler renderer = this.field_72769_h.func_201675_m().getCloudRenderer();
-+      if (renderer != null) {
-+         if (renderer instanceof net.minecraftforge.client.CloudRenderHandler) {
-+            ((net.minecraftforge.client.CloudRenderHandler) renderer).render(this.field_72773_u, p_228425_2_, p_228425_1_, this.field_72769_h, this.field_72777_q);
-+         } else {
-+            renderer.render(this.field_72773_u, p_228425_2_, this.field_72769_h, this.field_72777_q);
-+         }
-+         return;
-+      }
-       if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
++       net.minecraftforge.client.IRenderHandler renderer = null;//this.world.getDimension().getCloudRenderer(); //TODO FIX THIS
++       if (renderer != null) {
++           if (renderer instanceof net.minecraftforge.client.CloudRenderHandler) {
++               ((net.minecraftforge.client.CloudRenderHandler) renderer).render(this.field_72773_u, p_228425_2_, p_228425_1_, this.field_72769_h, this.field_72777_q);
++           } else {
++               renderer.render(this.field_72773_u, p_228425_2_, this.field_72769_h, this.field_72777_q);
++           }
++           return;
++       }
+       float f = this.field_72769_h.func_239132_a_().func_239213_a_();
+       if (!Float.isNaN(f)) {
           RenderSystem.disableCull();
-          RenderSystem.enableBlend();
-@@ -1977,7 +2005,12 @@
+@@ -2056,7 +2084,12 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }
  
@@ -118,16 +118,16 @@
        ISound isound = this.field_147593_P.get(p_184377_2_);
        if (isound != null) {
           this.field_72777_q.func_147118_V().func_147683_b(isound);
-@@ -1985,7 +2018,7 @@
+@@ -2064,7 +2097,7 @@
        }
  
        if (p_184377_1_ != null) {
 -         MusicDiscItem musicdiscitem = MusicDiscItem.func_185074_a(p_184377_1_);
 +         MusicDiscItem musicdiscitem = musicDiscItem;
           if (musicdiscitem != null) {
-             this.field_72777_q.field_71456_v.func_73833_a(musicdiscitem.func_200299_h().func_150254_d());
+             this.field_72777_q.field_71456_v.func_238451_a_(musicdiscitem.func_234801_g_());
           }
-@@ -2133,7 +2166,7 @@
+@@ -2212,7 +2245,7 @@
           break;
        case 1010:
           if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
@@ -136,7 +136,7 @@
           } else {
              this.func_184377_a((SoundEvent)null, p_180439_3_);
           }
-@@ -2283,8 +2316,8 @@
+@@ -2362,8 +2395,8 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
@@ -147,7 +147,7 @@
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
  
-@@ -2432,7 +2465,7 @@
+@@ -2511,7 +2544,7 @@
        } else {
           int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
           int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
@@ -156,8 +156,8 @@
           if (j < k) {
              j = k;
           }
-@@ -2445,6 +2478,11 @@
-       return this.field_175015_z;
+@@ -2550,6 +2583,11 @@
+       return this.field_239226_J_;
     }
  
 +   @Override

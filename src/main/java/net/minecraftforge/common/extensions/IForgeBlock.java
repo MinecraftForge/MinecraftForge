@@ -26,18 +26,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.FireBlock;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.IBeaconBeamColorProvider;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.StainedGlassBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -50,13 +40,12 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.block.Blocks;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
@@ -66,20 +55,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.IWorldWriter;
-import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 @SuppressWarnings("deprecation")
@@ -212,7 +195,7 @@ public interface IForgeBlock
      * @param fluid The current fluid state at current position
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
+    default boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid)
     {
         getBlock().onBlockHarvested(world, pos, state, player);
         return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ? 11 : 3);
@@ -259,7 +242,7 @@ public interface IForgeBlock
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vec3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
     {
         if (world instanceof World)
         {
@@ -347,7 +330,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLeaves(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
+        return isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES);
     }
 
     /**
@@ -360,7 +343,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLogs(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.isIn(net.minecraftforge.common.Tags.Blocks.DIRT)
+        return (isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.func_235714_a_(Tags.Blocks.DIRT)
             || getBlock().isIn(BlockTags.LOGS) || getBlock().isIn(BlockTags.SAPLINGS) || this == Blocks.VINE;
     }
 
@@ -536,7 +519,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (state.isIn(net.minecraftforge.common.Tags.Blocks.DIRT))
+        if (state.func_235714_a_(Tags.Blocks.DIRT))
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -632,7 +615,7 @@ public interface IForgeBlock
     @Nullable
     default Direction[] getValidRotations(BlockState state, IBlockReader world, BlockPos pos)
     {
-        for (IProperty<?> prop : state.getProperties())
+        for (Property<?> prop : state.func_235904_r_())
         {
             if ((prop.getName().equals("facing") || prop.getName().equals("rotation")) && prop.getValueClass() == Direction.class)
             {
@@ -668,14 +651,14 @@ public interface IForgeBlock
     @SuppressWarnings("unchecked")
     default boolean recolorBlock(BlockState state, IWorld world, BlockPos pos, Direction facing, DyeColor color)
     {
-        for (IProperty<?> prop : state.getProperties())
+        for (Property<?> prop : state.func_235904_r_())
         {
             if (prop.getName().equals("color") && prop.getValueClass() == DyeColor.class)
             {
                 DyeColor current = (DyeColor)state.get(prop);
                 if (current != color && prop.getAllowedValues().contains(color))
                 {
-                    world.setBlockState(pos, state.with(((IProperty<DyeColor>)prop), color), 3);
+                    world.setBlockState(pos, state.with(((Property<DyeColor>)prop), color), 3);
                     return true;
                 }
             }
@@ -801,7 +784,7 @@ public interface IForgeBlock
      * @return The new fog color.
      */
     @OnlyIn(Dist.CLIENT)
-    default Vec3d getFogColor(BlockState state, IWorldReader world, BlockPos pos, Entity entity, Vec3d originalColor, float partialTicks)
+    default Vector3d getFogColor(BlockState state, IWorldReader world, BlockPos pos, Entity entity, Vector3d originalColor, float partialTicks)
     {
         if (state.getMaterial() == Material.WATER)
         {
@@ -817,11 +800,11 @@ public interface IForgeBlock
                     f12 = f12 * 0.3F + 0.6F;
                 }
             }
-            return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
+            return new Vector3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
         }
         else if (state.getMaterial() == Material.LAVA)
         {
-            return new Vec3d(0.6F, 0.1F, 0.0F);
+            return new Vector3d(0.6F, 0.1F, 0.0F);
         }
         return originalColor;
     }
@@ -837,7 +820,7 @@ public interface IForgeBlock
      * @param viewpoint the viewpoint
      * @return the block state that should be 'seen'
      */
-    default BlockState getStateAtViewpoint(BlockState state, IBlockReader world, BlockPos pos, Vec3d viewpoint)
+    default BlockState getStateAtViewpoint(BlockState state, IBlockReader world, BlockPos pos, Vector3d viewpoint)
     {
         return state;
     }
@@ -983,15 +966,9 @@ public interface IForgeBlock
      * @param side The face that the fire is coming from
      * @return True if this block sustains fire, meaning it will never go out.
      */
-    default boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side)
+    default boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side)
     {
-        if (side != Direction.UP)
-            return false;
-        if (getBlock() == Blocks.NETHERRACK || getBlock() == Blocks.MAGMA_BLOCK)
-            return true;
-        if (world instanceof IWorldReader && ((IWorldReader)world).getDimension() instanceof EndDimension && getBlock() == Blocks.BEDROCK)
-            return true;
-        return false;
+        return state.func_235714_a_(world.func_230315_m_().func_241515_q_());
     }
 
     /**
@@ -1006,7 +983,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return !BlockTags.DRAGON_IMMUNE.contains(this.getBlock());
+            return !BlockTags.DRAGON_IMMUNE.func_230235_a_(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
@@ -1029,7 +1006,7 @@ public interface IForgeBlock
      * @return A result that suits your block
      */
     @Nullable
-    default RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
+    default RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original)
     {
         return original;
     }
@@ -1081,8 +1058,8 @@ public interface IForgeBlock
      * @param fluidState The state of the fluid
      * @return Whether the fluid overlay texture should be used
      */
-    default boolean shouldDisplayFluidOverlay(BlockState state, ILightReader world, BlockPos pos, IFluidState fluidState)
+    default boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
-        return state.getBlock() == Blocks.GLASS || state.getBlock() instanceof StainedGlassBlock;
+        return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof StainedGlassBlock;
     }
 }

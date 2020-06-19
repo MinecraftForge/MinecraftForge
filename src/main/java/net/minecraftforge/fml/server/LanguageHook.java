@@ -80,15 +80,16 @@ public class LanguageHook
 
     private static void loadLanguage(String langName, MinecraftServer server) {
         String langFile = String.format("lang/%s.json", langName);
-        server.getResourceManager().getResourceNamespaces().forEach(namespace -> {
-            try {
-                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
-                loadLocaleData(server.getResourceManager().getAllResources(langResource));
-            } catch (FileNotFoundException fnfe) {
-            } catch (Exception exception) {
-                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
-            }
-        });
+        //TODO
+//        server.getResourceManager().getResourceNamespaces().forEach(namespace -> {
+//            try {
+//                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
+//                loadLocaleData(server.getResourceManager().getAllResources(langResource));
+//            } catch (FileNotFoundException fnfe) {
+//            } catch (Exception exception) {
+//                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
+//            }
+//        });
 
     }
 

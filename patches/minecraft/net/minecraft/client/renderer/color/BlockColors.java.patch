@@ -7,7 +7,7 @@
 -   private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap<>(32);
 +   // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
 +   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Block>, IBlockColor> field_186725_a = new java.util.HashMap<>();
-    private final Map<Block, Set<IProperty<?>>> field_225311_b = Maps.newHashMap();
+    private final Map<Block, Set<Property<?>>> field_225311_b = Maps.newHashMap();
  
     public static BlockColors func_186723_a() {
 @@ -72,11 +73,12 @@
@@ -22,12 +22,12 @@
 -      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_189991_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_189991_1_.func_177230_c().delegate);
        if (iblockcolor != null) {
-          return iblockcolor.getColor(p_189991_1_, (ILightReader)null, (BlockPos)null, 0);
+          return iblockcolor.getColor(p_189991_1_, (IBlockDisplayReader)null, (BlockPos)null, 0);
        } else {
 @@ -86,13 +88,13 @@
     }
  
-    public int func_228054_a_(BlockState p_228054_1_, @Nullable ILightReader p_228054_2_, @Nullable BlockPos p_228054_3_, int p_228054_4_) {
+    public int func_228054_a_(BlockState p_228054_1_, @Nullable IBlockDisplayReader p_228054_2_, @Nullable BlockPos p_228054_3_, int p_228054_4_) {
 -      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_228054_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_228054_1_.func_177230_c().delegate);
        return iblockcolor == null ? -1 : iblockcolor.getColor(p_228054_1_, p_228054_2_, p_228054_3_, p_228054_4_);

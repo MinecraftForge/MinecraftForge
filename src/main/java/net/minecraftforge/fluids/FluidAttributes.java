@@ -23,13 +23,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
@@ -152,22 +152,22 @@ public class FluidAttributes
         return new ItemStack(stack.getFluid().getFilledBucket());
     }
 
-    public BlockState getBlock(ILightReader reader, BlockPos pos, IFluidState state)
+    public BlockState getBlock(IBlockDisplayReader reader, BlockPos pos, FluidState state)
     {
         return state.getBlockState();
     }
 
-    public IFluidState getStateForPlacement(ILightReader reader, BlockPos pos, FluidStack state)
+    public FluidState getStateForPlacement(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
     {
         return state.getFluid().getDefaultState();
     }
 
-    public final boolean canBePlacedInWorld(ILightReader reader, BlockPos pos, IFluidState state)
+    public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidState state)
     {
         return !getBlock(reader, pos, state).isAir(reader, pos);
     }
 
-    public final boolean canBePlacedInWorld(ILightReader reader, BlockPos pos, FluidStack state)
+    public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
     {
         return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir(reader, pos);
     }
@@ -186,7 +186,7 @@ public class FluidAttributes
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
      */
-    public boolean doesVaporize(ILightReader reader, BlockPos pos, FluidStack fluidStack)
+    public boolean doesVaporize(IBlockDisplayReader reader, BlockPos pos, FluidStack fluidStack)
     {
         BlockState blockstate = getBlock(reader, pos, getStateForPlacement(reader, pos, fluidStack));
         if (blockstate == null)
@@ -314,17 +314,17 @@ public class FluidAttributes
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
-    public int getLuminosity(ILightReader world, BlockPos pos){ return getLuminosity(); }
-    public int getDensity(ILightReader world, BlockPos pos){ return getDensity(); }
-    public int getTemperature(ILightReader world, BlockPos pos){ return getTemperature(); }
-    public int getViscosity(ILightReader world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(ILightReader world, BlockPos pos){ return isGaseous(); }
-    public Rarity getRarity(ILightReader world, BlockPos pos){ return getRarity(); }
-    public int getColor(ILightReader world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStillTexture(ILightReader world, BlockPos pos) { return getStillTexture(); }
-    public ResourceLocation getFlowingTexture(ILightReader world, BlockPos pos) { return getFlowingTexture(); }
-    public SoundEvent getFillSound(ILightReader world, BlockPos pos) { return getFillSound(); }
-    public SoundEvent getEmptySound(ILightReader world, BlockPos pos) { return getEmptySound(); }
+    public int getLuminosity(IBlockDisplayReader world, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(IBlockDisplayReader world, BlockPos pos){ return getDensity(); }
+    public int getTemperature(IBlockDisplayReader world, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(IBlockDisplayReader world, BlockPos pos){ return getViscosity(); }
+    public boolean isGaseous(IBlockDisplayReader world, BlockPos pos){ return isGaseous(); }
+    public Rarity getRarity(IBlockDisplayReader world, BlockPos pos){ return getRarity(); }
+    public int getColor(IBlockDisplayReader world, BlockPos pos){ return getColor(); }
+    public ResourceLocation getStillTexture(IBlockDisplayReader world, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(IBlockDisplayReader world, BlockPos pos) { return getFlowingTexture(); }
+    public SoundEvent getFillSound(IBlockDisplayReader world, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(IBlockDisplayReader world, BlockPos pos) { return getEmptySound(); }
 
     public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
@@ -441,7 +441,7 @@ public class FluidAttributes
         }
 
         @Override
-        public int getColor(ILightReader world, BlockPos pos)
+        public int getColor(IBlockDisplayReader world, BlockPos pos)
         {
             return BiomeColors.getWaterColor(world, pos) | 0xFF000000;
         }

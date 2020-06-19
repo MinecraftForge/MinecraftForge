@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/gen/feature/Feature.java
++++ b/net/minecraft/world/gen/feature/Feature.java
+@@ -43,7 +43,7 @@
+ import net.minecraft.world.gen.feature.structure.WoodlandMansionStructure;
+ import net.minecraft.world.gen.placement.CountConfig;
+ 
+-public abstract class Feature<FC extends IFeatureConfig> {
++public abstract class Feature<FC extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Feature<?>> {
+    public static final Structure<NoFeatureConfig> field_214536_b = func_214468_a("pillager_outpost", new PillagerOutpostStructure(NoFeatureConfig::func_214639_a));
+    public static final Structure<MineshaftConfig> field_202329_g = func_214468_a("mineshaft", new MineshaftStructure(MineshaftConfig::func_214638_a));
+    public static final Structure<NoFeatureConfig> field_202330_h = func_214468_a("woodland_mansion", new WoodlandMansionStructure(NoFeatureConfig::func_214639_a));
+@@ -61,12 +61,12 @@
+    public static final Structure<VillageConfig> field_214550_p = func_214468_a("village", new VillageStructure(VillageConfig::func_214679_a));
+    public static final Feature<NoFeatureConfig> field_227245_q_ = func_214468_a("no_op", new NoOpFeature(NoFeatureConfig::func_214639_a));
+    public static final Feature<TreeFeatureConfig> field_202301_A = func_214468_a("normal_tree", new TreeFeature(TreeFeatureConfig::func_227338_a_));
+-   public static final Feature<TreeFeatureConfig> field_227246_s_ = func_214468_a("acacia_tree", new AcaciaFeature(TreeFeatureConfig::func_227338_a_));
++   public static final Feature<TreeFeatureConfig> field_227246_s_ = func_214468_a("acacia_tree", new AcaciaFeature(TreeFeatureConfig::deserializeAcacia));
+    public static final Feature<TreeFeatureConfig> field_202339_q = func_214468_a("fancy_tree", new FancyTreeFeature(TreeFeatureConfig::func_227338_a_));
+-   public static final Feature<BaseTreeFeatureConfig> field_202342_t = func_214468_a("jungle_ground_bush", new ShrubFeature(BaseTreeFeatureConfig::func_227376_b_));
+-   public static final Feature<HugeTreeFeatureConfig> field_214551_w = func_214468_a("dark_oak_tree", new DarkOakTreeFeature(HugeTreeFeatureConfig::func_227277_a_));
+-   public static final Feature<HugeTreeFeatureConfig> field_202302_B = func_214468_a("mega_jungle_tree", new MegaJungleFeature(HugeTreeFeatureConfig::func_227277_a_));
+-   public static final Feature<HugeTreeFeatureConfig> field_202304_D = func_214468_a("mega_spruce_tree", new MegaPineTree(HugeTreeFeatureConfig::func_227277_a_));
++   public static final Feature<BaseTreeFeatureConfig> field_202342_t = func_214468_a("jungle_ground_bush", new ShrubFeature(BaseTreeFeatureConfig::deserializeJungle));
++   public static final Feature<HugeTreeFeatureConfig> field_214551_w = func_214468_a("dark_oak_tree", new DarkOakTreeFeature(HugeTreeFeatureConfig::deserializeDarkOak));
++   public static final Feature<HugeTreeFeatureConfig> field_202302_B = func_214468_a("mega_jungle_tree", new MegaJungleFeature(HugeTreeFeatureConfig::deserializeJungle));
++   public static final Feature<HugeTreeFeatureConfig> field_202304_D = func_214468_a("mega_spruce_tree", new MegaPineTree(HugeTreeFeatureConfig::deserializeSpruce));
+    public static final FlowersFeature<BlockClusterFeatureConfig> field_227247_y_ = func_214468_a("flower", new DefaultFlowersFeature(BlockClusterFeatureConfig::func_227300_a_));
+    public static final Feature<BlockClusterFeatureConfig> field_227248_z_ = func_214468_a("random_patch", new RandomPatchFeature(BlockClusterFeatureConfig::func_227300_a_));
+    public static final Feature<BlockStateProvidingFeatureConfig> field_227244_A_ = func_214468_a("block_pile", new BlockPileFeature(BlockStateProvidingFeatureConfig::func_227269_a_));
+@@ -109,7 +109,8 @@
+    public static final Feature<TwoFeatureChoiceConfig> field_202293_am = func_214468_a("random_boolean_selector", new TwoFeatureChoiceFeature(TwoFeatureChoiceConfig::func_227287_a_));
+    public static final Feature<DecoratedFeatureConfig> field_214483_aK = func_214468_a("decorated", new DecoratedFeature(DecoratedFeatureConfig::func_214688_a));
+    public static final Feature<DecoratedFeatureConfig> field_214484_aL = func_214468_a("decorated_flower", new DecoratedFlowerFeature(DecoratedFeatureConfig::func_214688_a));
+-   public static final BiMap<String, Structure<?>> field_202300_at = Util.func_200696_a(HashBiMap.create(), (p_205170_0_) -> {
++   public static final BiMap<String, Structure<?>> field_202300_at = Util.func_200696_a(net.minecraftforge.registries.GameData.getStructureMap(), (p_205170_0_) -> {
++      if (true) return; // Forge: This is now a slave map to the feature registry, leave this code here to reduce patch size
+       p_205170_0_.put("Pillager_Outpost".toLowerCase(Locale.ROOT), field_214536_b);
+       p_205170_0_.put("Mineshaft".toLowerCase(Locale.ROOT), field_202329_g);
+       p_205170_0_.put("Mansion".toLowerCase(Locale.ROOT), field_202330_h);
+@@ -160,10 +161,10 @@
+    }
+ 
+    protected static boolean func_227249_a_(Block p_227249_0_) {
+-      return p_227249_0_ == Blocks.field_150348_b || p_227249_0_ == Blocks.field_196650_c || p_227249_0_ == Blocks.field_196654_e || p_227249_0_ == Blocks.field_196656_g;
++      return net.minecraftforge.common.Tags.Blocks.STONE.func_199685_a_(p_227249_0_);
+    }
+ 
+    protected static boolean func_227250_b_(Block p_227250_0_) {
+-      return p_227250_0_ == Blocks.field_150346_d || p_227250_0_ == Blocks.field_196658_i || p_227250_0_ == Blocks.field_196661_l || p_227250_0_ == Blocks.field_196660_k || p_227250_0_ == Blocks.field_150391_bh;
++      return net.minecraftforge.common.Tags.Blocks.DIRT.func_199685_a_(p_227250_0_);
+    }
+ }

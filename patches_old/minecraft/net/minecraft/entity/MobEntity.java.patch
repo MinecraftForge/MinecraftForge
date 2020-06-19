@@ -1,0 +1,65 @@
+--- a/net/minecraft/entity/MobEntity.java
++++ b/net/minecraft/entity/MobEntity.java
+@@ -176,6 +176,7 @@
+ 
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+       this.field_70696_bz = p_70624_1_;
++      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
+    }
+ 
+    public boolean func_213358_a(EntityType<?> p_213358_1_) {
+@@ -460,7 +461,7 @@
+    public void func_70636_d() {
+       super.func_70636_d();
+       this.field_70170_p.func_217381_Z().func_76320_a("looting");
+-      if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && this.func_70089_S() && !this.field_70729_aU && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++      if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && this.func_70089_S() && !this.field_70729_aU && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
+          for(ItemEntity itementity : this.field_70170_p.func_217357_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D))) {
+             if (!itementity.field_70128_L && !itementity.func_92059_d().func_190926_b() && !itementity.func_174874_s()) {
+                this.func_175445_a(itementity);
+@@ -556,6 +557,14 @@
+          this.func_70106_y();
+       } else if (!this.func_104002_bU() && !this.func_213392_I()) {
+          Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
++         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
++            field_70708_bq = 0;
++            entity = null;
++         } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
++            this.func_70106_y();
++            entity = null;
++         }
+          if (entity != null) {
+             double d0 = entity.func_70068_e(this);
+             if (d0 > 16384.0D && this.func_213397_c(d0)) {
+@@ -791,6 +800,8 @@
+    }
+ 
+    public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
++      final EquipmentSlotType slot = p_184640_0_.getEquipmentSlot();
++      if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
+       Item item = p_184640_0_.func_77973_b();
+       if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
+          if (item instanceof ArmorItem) {
+@@ -798,7 +809,7 @@
+          } else if (item == Items.field_185160_cR) {
+             return EquipmentSlotType.CHEST;
+          } else {
+-            return item == Items.field_185159_cQ ? EquipmentSlotType.OFFHAND : EquipmentSlotType.MAINHAND;
++            return p_184640_0_.isShield(null) ? EquipmentSlotType.OFFHAND : EquipmentSlotType.MAINHAND;
+          }
+       } else {
+          return EquipmentSlotType.HEAD;
+@@ -1178,10 +1189,10 @@
+             PlayerEntity playerentity = (PlayerEntity)p_70652_1_;
+             ItemStack itemstack = this.func_184614_ca();
+             ItemStack itemstack1 = playerentity.func_184587_cr() ? playerentity.func_184607_cu() : ItemStack.field_190927_a;
+-            if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b() instanceof AxeItem && itemstack1.func_77973_b() == Items.field_185159_cQ) {
++            if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.canDisableShield(itemstack1, playerentity, this) && itemstack1.isShield(playerentity)) {
+                float f2 = 0.25F + (float)EnchantmentHelper.func_185293_e(this) * 0.05F;
+                if (this.field_70146_Z.nextFloat() < f2) {
+-                  playerentity.func_184811_cZ().func_185145_a(Items.field_185159_cQ, 100);
++                  playerentity.func_184811_cZ().func_185145_a(itemstack.func_77973_b(), 100);
+                   this.field_70170_p.func_72960_a(playerentity, (byte)30);
+                }
+             }

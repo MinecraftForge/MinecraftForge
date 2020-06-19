@@ -28,7 +28,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.IntSet;
-import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -38,7 +38,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
@@ -64,7 +63,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     private static final Direction[] HORIZONTALS = {Direction.UP, Direction.DOWN};
     private static final Direction[] VERTICALS = {Direction.WEST, Direction.EAST};
 
-    private ImmutableList<Material> textures;
+    private ImmutableList<RenderMaterial> textures;
     private final ImmutableSet<Integer> fullbrightLayers;
 
     public ItemLayerModel()
@@ -72,20 +71,20 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         this(null, ImmutableSet.of());
     }
 
-    public ItemLayerModel(ImmutableList<Material> textures)
+    public ItemLayerModel(ImmutableList<RenderMaterial> textures)
     {
         this(textures, ImmutableSet.of());
     }
 
-    public ItemLayerModel(@Nullable ImmutableList<Material> textures, ImmutableSet<Integer> fullbrightLayers)
+    public ItemLayerModel(@Nullable ImmutableList<RenderMaterial> textures, ImmutableSet<Integer> fullbrightLayers)
     {
         this.textures = textures;
         this.fullbrightLayers = fullbrightLayers;
     }
 
-    private static ImmutableList<Material> getTextures(IModelConfiguration model)
+    private static ImmutableList<RenderMaterial> getTextures(IModelConfiguration model)
     {
-        ImmutableList.Builder<Material> builder = ImmutableList.builder();
+        ImmutableList.Builder<RenderMaterial> builder = ImmutableList.builder();
         for(int i = 0; model.isTexturePresent("layer" + i); i++)
         {
             builder.add(model.resolveTexture("layer" + i));
@@ -94,7 +93,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         //TODO: Verify
         TransformationMatrix transform = modelTransform.getRotation();
@@ -106,12 +105,12 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         return new BakedItemModel(quads, particle, map, overrides, transform.isIdentity(), owner.isSideLit());
     }
 
-    public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter)
+    public static ImmutableList<BakedQuad> getQuadsForSprites(List<RenderMaterial> textures, TransformationMatrix transform, Function<RenderMaterial, TextureAtlasSprite> spriteGetter)
     {
         return getQuadsForSprites(textures, transform, spriteGetter, Collections.emptySet());
     }
 
-    public static ImmutableList<BakedQuad> getQuadsForSprites(List<Material> textures, TransformationMatrix transform, Function<Material, TextureAtlasSprite> spriteGetter, Set<Integer> fullbrights)
+    public static ImmutableList<BakedQuad> getQuadsForSprites(List<RenderMaterial> textures, TransformationMatrix transform, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, Set<Integer> fullbrights)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         for(int i = 0; i < textures.size(); i++)
@@ -303,7 +302,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         textures = getTextures(owner);
         return textures;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/status/server/SServerInfoPacket.java
++++ b/net/minecraft/network/status/server/SServerInfoPacket.java
+@@ -30,7 +30,7 @@
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+-      p_148840_1_.func_180714_a(field_149297_a.toJson(this.field_149296_b));
++      p_148840_1_.func_180714_a(this.field_149296_b.getJson()); //Forge: Let the response cache the JSON
+    }
+ 
+    public void func_148833_a(IClientStatusNetHandler p_148833_1_) {

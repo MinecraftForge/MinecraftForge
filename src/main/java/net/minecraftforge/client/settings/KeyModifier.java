@@ -49,7 +49,7 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasControlDown();
+            return Screen.func_231172_r_();
         }
 
         @Override
@@ -70,7 +70,7 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasShiftDown();
+            return Screen.func_231173_s_();
         }
 
         @Override
@@ -89,7 +89,7 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasAltDown();
+            return Screen.func_231174_t_();
         }
 
         @Override

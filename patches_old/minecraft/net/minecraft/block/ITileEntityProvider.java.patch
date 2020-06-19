@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/ITileEntityProvider.java
++++ b/net/minecraft/block/ITileEntityProvider.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.IBlockReader;
+ 
++@Deprecated //Forge: Do not use, use BlockState.hasTileEntity/Block.createTileEntity
+ public interface ITileEntityProvider {
+    @Nullable
+    TileEntity func_196283_a_(IBlockReader p_196283_1_);

@@ -31,19 +31,19 @@
 +         GameProfile ret = new GameProfile(uuid, this.func_111285_a());    //Forge: Adds cached GameProfile properties to returned GameProfile.
 +         if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
 +         return ret;                                                     // which helps to fix MC-52974.
-       } catch (IllegalArgumentException var2) {
+       } catch (IllegalArgumentException illegalargumentexception) {
           return new GameProfile((UUID)null, this.func_111285_a());
        }
     }
  
 +   //For internal use only. Modders should never need to use this.
 +   public void setProperties(com.mojang.authlib.properties.PropertyMap properties) {
-+      if (this.properties == null)
-+         this.properties = properties;
++       if (this.properties == null)
++           this.properties = properties;
 +   }
 +
 +   public boolean hasCachedProperties() {
-+      return properties != null;
++       return properties != null;
 +   }
 +
     @OnlyIn(Dist.CLIENT)

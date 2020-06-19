@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ToolItem.java
 +++ b/net/minecraft/item/ToolItem.java
-@@ -26,6 +26,7 @@
+@@ -33,6 +33,7 @@
     }
  
     public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {

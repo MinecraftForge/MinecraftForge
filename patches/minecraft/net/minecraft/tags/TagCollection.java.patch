@@ -1,7 +1,7 @@
 --- a/net/minecraft/tags/TagCollection.java
 +++ b/net/minecraft/tags/TagCollection.java
-@@ -154,4 +154,8 @@
-    public Map<ResourceLocation, Tag<T>> func_200039_c() {
+@@ -167,4 +167,8 @@
+    public Map<ResourceLocation, ITag<T>> func_200039_c() {
        return this.field_199921_d;
     }
 +

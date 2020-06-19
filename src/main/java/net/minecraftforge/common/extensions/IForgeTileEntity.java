@@ -43,7 +43,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
     @Override
     default void deserializeNBT(CompoundNBT nbt)
     {
-        getTileEntity().read(nbt);
+        //TODO re-evaluate
+        deserializeNBT(null, nbt);
+    }
+
+    //    @Override TODO  re-evaluate
+    default void deserializeNBT(BlockState state, CompoundNBT nbt)
+    {
+        getTileEntity().func_230337_a_(state, nbt);
     }
 
     @Override
@@ -72,9 +79,9 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      *
      * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
      */
-     default void handleUpdateTag(CompoundNBT tag)
+     default void handleUpdateTag(BlockState state, CompoundNBT tag)
      {
-         getTileEntity().read(tag);
+         getTileEntity().func_230337_a_(state, tag);
      }
 
     /**

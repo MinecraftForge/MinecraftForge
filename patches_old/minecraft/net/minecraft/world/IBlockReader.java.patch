@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/IBlockReader.java
++++ b/net/minecraft/world/IBlockReader.java
+@@ -23,7 +23,7 @@
+    IFluidState func_204610_c(BlockPos p_204610_1_);
+ 
+    default int func_217298_h(BlockPos p_217298_1_) {
+-      return this.func_180495_p(p_217298_1_).func_185906_d();
++      return this.func_180495_p(p_217298_1_).getLightValue(this, p_217298_1_);
+    }
+ 
+    default int func_201572_C() {

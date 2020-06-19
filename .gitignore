@@ -42,3 +42,4 @@ changelog.txt
 
 gradle.properties
 !/mdk/gradle.properties
+/projects/forge/rejects/

@@ -20,7 +20,8 @@
 package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
@@ -40,15 +41,15 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 @Cancelable
 public class EntityTravelToDimensionEvent extends EntityEvent
 {
-    private final DimensionType dimension;
+    private final RegistryKey<World> dimension;
 
-    public EntityTravelToDimensionEvent(Entity entity, DimensionType dimension)
+    public EntityTravelToDimensionEvent(Entity entity, RegistryKey<World> dimension)
     {
         super(entity);
         this.dimension = dimension;
     }
 
-    public DimensionType getDimension()
+    public RegistryKey<World> getDimension()
     {
         return dimension;
     }

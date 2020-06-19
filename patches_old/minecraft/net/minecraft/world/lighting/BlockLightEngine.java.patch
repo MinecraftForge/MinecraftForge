@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/lighting/BlockLightEngine.java
++++ b/net/minecraft/world/lighting/BlockLightEngine.java
+@@ -117,4 +117,11 @@
+       this.field_215627_c.func_215532_c();
+       this.func_215469_a(Long.MAX_VALUE, p_215623_1_.func_218275_a(), 15 - p_215623_2_, true);
+    }
++
++   // FORGE START
++
++   @Override
++   public int queuedUpdateSize() {
++      return field_215627_c.queuedUpdateSize();
++   }
+ }

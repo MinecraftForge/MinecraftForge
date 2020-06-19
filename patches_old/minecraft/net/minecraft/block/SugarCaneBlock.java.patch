@@ -1,0 +1,51 @@
+--- a/net/minecraft/block/SugarCaneBlock.java
++++ b/net/minecraft/block/SugarCaneBlock.java
+@@ -15,7 +15,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.server.ServerWorld;
+ 
+-public class SugarCaneBlock extends Block {
++public class SugarCaneBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final IntegerProperty field_176355_a = BlockStateProperties.field_208171_X;
+    protected static final VoxelShape field_196503_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+ 
+@@ -39,12 +39,15 @@
+ 
+          if (i < 3) {
+             int j = p_225534_1_.func_177229_b(field_176355_a);
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, true)) {
+             if (j == 15) {
+                p_225534_2_.func_175656_a(p_225534_3_.func_177984_a(), this.func_176223_P());
+                p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176355_a, Integer.valueOf(0)), 4);
+             } else {
+                p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176355_a, Integer.valueOf(j + 1)), 4);
+             }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
++            }
+          }
+       }
+ 
+@@ -59,6 +62,8 @@
+    }
+ 
+    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
++      BlockState soil = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      if (soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), Direction.UP, this)) return true;
+       Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
+       if (block == this) {
+          return true;
+@@ -82,4 +87,14 @@
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+       p_206840_1_.func_206894_a(field_176355_a);
+    }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++       return net.minecraftforge.common.PlantType.Beach;
++   }
++
++   @Override
++   public BlockState getPlant(IBlockReader world, BlockPos pos) {
++      return func_176223_P();
++   }
+ }

@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/entity/ai/goal/MeleeAttackGoal.java
-@@ -21,6 +21,8 @@
-    private double field_151496_k;
-    protected final int field_188493_g = 20;
+@@ -20,6 +20,8 @@
+    private int field_234037_i_;
+    private final int field_188493_g = 20;
     private long field_220720_k;
 +   private int failedPathFindingPenalty = 0;
 +   private boolean canPenalize = false;
  
     public MeleeAttackGoal(CreatureEntity p_i1636_1_, double p_i1636_2_, boolean p_i1636_4_) {
        this.field_75441_b = p_i1636_1_;
-@@ -41,6 +43,15 @@
+@@ -40,6 +42,15 @@
           } else if (!livingentity.func_70089_S()) {
              return false;
           } else {

@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/gen/feature/OreFeatureConfig.java
++++ b/net/minecraft/world/gen/feature/OreFeatureConfig.java
+@@ -34,7 +34,7 @@
+       return new OreFeatureConfig(orefeatureconfig$fillerblocktype, blockstate, i);
+    }
+ 
+-   public static enum FillerBlockType {
++   public static enum FillerBlockType implements net.minecraftforge.common.IExtensibleEnum {
+       NATURAL_STONE("natural_stone", (p_214739_0_) -> {
+          if (p_214739_0_ == null) {
+             return false;
+@@ -67,5 +67,15 @@
+       public Predicate<BlockState> func_214738_b() {
+          return this.field_214743_e;
+       }
++      
++      public static FillerBlockType create(String enumName, String p_i50618_3_, Predicate<BlockState> p_i50618_4_) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      @Override
++      @Deprecated
++      public void init() {
++          field_214741_c.put(func_214737_a(), this);
++      }
+    }
+ }

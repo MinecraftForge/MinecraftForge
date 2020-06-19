@@ -39,6 +39,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -358,7 +360,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param displayName the name that will be displayed unless it is changed in
      *                    this method.
      */
-    default String getHighlightTip(String displayName)
+    default ITextComponent getHighlightTip(ITextComponent displayName)
     {
         return getStack().getItem().getHighlightTip(getStack(), displayName);
     }

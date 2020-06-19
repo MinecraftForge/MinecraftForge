@@ -1,0 +1,85 @@
+--- a/net/minecraft/block/AbstractBlock.java
++++ b/net/minecraft/block/AbstractBlock.java
+@@ -59,7 +59,8 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public abstract class AbstractBlock {
++//TODO, Delegates are weird here now, because Block extends this.
++public abstract class AbstractBlock extends net.minecraftforge.registries.ForgeRegistryEntry<Block> {
+    protected static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
+    protected final Material field_149764_J;
+    protected final boolean field_235688_at_;
+@@ -71,6 +72,7 @@
+    protected final float field_226887_g_;
+    protected final boolean field_208621_p;
+    protected final AbstractBlock.Properties field_235684_aB_;
++
+    @Nullable
+    protected ResourceLocation field_220085_g;
+ 
+@@ -86,6 +88,8 @@
+       this.field_226887_g_ = p_i241196_1_.field_226894_k_;
+       this.field_208621_p = p_i241196_1_.field_208772_j;
+       this.field_235684_aB_ = p_i241196_1_;
++      final ResourceLocation lootTableCache = p_i241196_1_.field_222381_j;
++      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_i241196_1_.lootTableSupplier != null ? p_i241196_1_.lootTableSupplier : () -> new ResourceLocation(this.getRegistryName().func_110624_b(), "blocks/" + this.getRegistryName().func_110623_a());
+    }
+ 
+    @Deprecated
+@@ -128,7 +132,7 @@
+ 
+    @Deprecated
+    public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
+-      if (this.func_235695_q_() && !p_196243_1_.func_203425_a(p_196243_4_.func_177230_c())) {
++      if (this.func_235695_q_() && (p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c() || !p_196243_4_.hasTileEntity())) {
+          p_196243_2_.func_175713_t(p_196243_3_);
+       }
+ 
+@@ -190,7 +194,7 @@
+ 
+    @Deprecated
+    public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
+-      return this.field_149764_J.func_76222_j() && (p_196253_2_.func_195996_i().func_190926_b() || p_196253_2_.func_195996_i().func_77973_b() != this.func_199767_j());
++      return p_196253_1_.func_185904_a().func_76222_j() && (p_196253_2_.func_195996_i().func_190926_b() || p_196253_2_.func_195996_i().func_77973_b() != this.func_199767_j());
+    }
+ 
+    @Deprecated
+@@ -293,7 +297,7 @@
+       if (f == -1.0F) {
+          return 0.0F;
+       } else {
+-         int i = p_180647_2_.func_234569_d_(p_180647_1_) ? 30 : 100;
++         int i = net.minecraftforge.common.ForgeHooks.canHarvestBlock(p_180647_1_, p_180647_2_, p_180647_3_, p_180647_4_) ? 30 : 100;
+          return p_180647_2_.func_184813_a(p_180647_1_) / f / (float)i;
+       }
+    }
+@@ -326,8 +330,7 @@
+ 
+    public final ResourceLocation func_220068_i() {
+       if (this.field_220085_g == null) {
+-         ResourceLocation resourcelocation = Registry.field_212618_g.func_177774_c(this.func_230328_p_());
+-         this.field_220085_g = new ResourceLocation(resourcelocation.func_110624_b(), "blocks/" + resourcelocation.func_110623_a());
++         this.field_220085_g = this.lootTableSupplier.get();
+       }
+ 
+       return this.field_220085_g;
+@@ -345,6 +348,10 @@
+       return this.field_235684_aB_.field_235800_b_.apply(this.func_230328_p_().func_176223_P());
+    }
+ 
++   /* ======================================== FORGE START ===================================== */
++   private final java.util.function.Supplier<ResourceLocation> lootTableSupplier;
++   /* ========================================= FORGE END ====================================== */
++
+    public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
+       private final int field_215708_d;
+       private final boolean field_215709_e;
+@@ -786,6 +793,7 @@
+       private ResourceLocation field_222381_j;
+       private boolean field_226895_m_ = true;
+       private boolean field_235813_o_;
++      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
+       private AbstractBlock.IExtendedPositionPredicate<EntityType<?>> field_235814_p_ = (p_235832_0_, p_235832_1_, p_235832_2_, p_235832_3_) -> {
+          return p_235832_0_.func_224755_d(p_235832_1_, p_235832_2_, Direction.UP) && p_235832_0_.func_185906_d() < 14;
+       };

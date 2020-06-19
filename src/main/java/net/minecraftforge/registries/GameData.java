@@ -53,9 +53,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -66,7 +64,6 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
@@ -109,7 +106,7 @@ public class GameData
 
     // Vanilla registries
     // Names used here match those in net.minecraft.util.Registry
-    
+
     // Game objects
     public static final ResourceLocation BLOCKS = new ResourceLocation("block");
     public static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
@@ -126,7 +123,7 @@ public class GameData
     public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
     public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
     public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
-    
+
     // Villages
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
     public static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
@@ -158,7 +155,7 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
-    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
+    //private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
@@ -180,7 +177,7 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        
+
         // Game objects
         makeRegistry(BLOCKS, Block.class, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
         makeRegistry(FLUIDS, Fluid.class, new ResourceLocation("empty")).create();
@@ -197,7 +194,7 @@ public class GameData
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
-        
+
         // Villagers
         makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();
         makeRegistry(POI_TYPES, PointOfInterestType.class, new ResourceLocation("unemployed")).disableSync().create();
@@ -211,8 +208,8 @@ public class GameData
         makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
         makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
-        makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
-        makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
+//        makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
+//        makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
@@ -220,7 +217,7 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, TreeDecoratorType.class).disableSaving().disableSync().create();
 
         // Custom forge registries
-        makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
+        //makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create(); //TODO Dimensions
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
     }
@@ -275,13 +272,15 @@ public class GameData
     {
         return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
-    
+
+    /*
     @SuppressWarnings("unchecked")
     public static Registry<Structure<?>> getStructureFeatures()
     {
         return (Registry<Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURE_FEATURES, Registry.class);
     }
-    
+    */
+
     @SuppressWarnings("unchecked")
     public static BiMap<String, Structure<?>> getStructureMap()
     {
@@ -629,41 +628,43 @@ public class GameData
             owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
         }
     }
-    
+
     private static class FeatureCallbacks implements IForgeRegistry.AddCallback<Feature<?>>, IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
     {
         static final FeatureCallbacks INSTANCE = new FeatureCallbacks();
-        
+
         @Override
         public void onAdd(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage, int id, Feature<?> obj, Feature<?> oldObj)
         {
+            /*TODO, Structures arent Features anymore.
             if (obj instanceof Structure)
             {
                 Structure<?> structure = (Structure<?>) obj;
                 String key = structure.getStructureName().toLowerCase(Locale.ROOT);
-                
+
                 @SuppressWarnings("unchecked")
                 Registry<Structure<?>> reg = owner.getSlaveMap(STRUCTURE_FEATURES, Registry.class);
                 Registry.register(reg, key, structure);
-                
+
                 @SuppressWarnings("unchecked")
                 BiMap<String, Structure<?>> map = owner.getSlaveMap(STRUCTURES, BiMap.class);
                 if (oldObj != null && oldObj instanceof Structure) map.remove(((Structure<?>)oldObj).getStructureName());
                 map.put(key, structure);
             }
+        	*/
         }
-        
+
         @Override
         public void onClear(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            owner.getSlaveMap(STRUCTURE_FEATURES, ClearableRegistry.class).clear();
+            //owner.getSlaveMap(STRUCTURE_FEATURES, ClearableRegistry.class).clear();
             owner.getSlaveMap(STRUCTURES, BiMap.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            owner.setSlaveMap(STRUCTURE_FEATURES, new ClearableRegistry<>(owner.getRegistryName()));
+            //owner.setSlaveMap(STRUCTURE_FEATURES, new ClearableRegistry<>(owner.getRegistryName()));
             owner.setSlaveMap(STRUCTURES, HashBiMap.create());
         }
     }
@@ -715,7 +716,7 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
-        
+
         // Update legacy names
         snapshot = snapshot.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey()) // FIXME Registries need dependency ordering, this makes sure blocks are done before items (for ItemCallbacks) but it's lazy as hell

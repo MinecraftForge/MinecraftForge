@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/LeavesBlock.java
 +++ b/net/minecraft/block/LeavesBlock.java
-@@ -18,7 +18,7 @@
+@@ -19,7 +19,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

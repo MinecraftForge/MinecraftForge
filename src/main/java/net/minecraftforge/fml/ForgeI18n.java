@@ -36,6 +36,7 @@ import java.util.function.BiConsumer;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
+//TODO, this should be re-evaluated now that ITextComponents are passed everywhere instaed of strings.
 public class ForgeI18n {
     private static final Logger LOGGER = LogManager.getLogger();
     private static Map<String,String> i18n;

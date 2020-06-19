@@ -89,12 +89,14 @@ public class ForgeInternalHandler
             FarmlandWaterManager.removeTickets(event.getChunk());
     }
 
+    /*
     @SubscribeEvent
     public void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event)
     {
         if (event.getPlayer() instanceof ServerPlayerEntity)
             DimensionManager.rebuildPlayerMap(((ServerPlayerEntity)event.getPlayer()).server.getPlayerList(), true);
     }
+    */
 
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)

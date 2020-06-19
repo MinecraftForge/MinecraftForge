@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/advancements/AdvancementsScreen.java
-@@ -24,6 +24,7 @@
+@@ -25,6 +25,7 @@
     private final Map<Advancement, AdvancementTabGui> field_191947_i = Maps.newLinkedHashMap();
     private AdvancementTabGui field_191940_s;
     private boolean field_191944_v;
@@ -8,65 +8,65 @@
  
     public AdvancementsScreen(ClientAdvancementManager p_i47383_1_) {
        super(NarratorChatListener.field_216868_a);
-@@ -39,7 +40,13 @@
+@@ -40,7 +41,13 @@
        } else {
           this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
        }
 -
 +      if (this.field_191947_i.size() > AdvancementTabType.MAX_TABS) {
-+          int guiLeft = (this.width - 252) / 2;
-+          int guiTop = (this.height - 140) / 2;
-+          addButton(new net.minecraft.client.gui.widget.button.Button(guiLeft,            guiTop - 50, 20, 20, "<", b -> tabPage = Math.max(tabPage - 1, 0       )));
-+          addButton(new net.minecraft.client.gui.widget.button.Button(guiLeft + 252 - 20, guiTop - 50, 20, 20, ">", b -> tabPage = Math.min(tabPage + 1, maxPages)));
++          int guiLeft = (this.field_230708_k_ - 252) / 2;
++          int guiTop = (this.field_230709_l_ - 140) / 2;
++          func_230480_a_(new net.minecraft.client.gui.widget.button.Button(guiLeft,            guiTop - 50, 20, 20, new net.minecraft.util.text.StringTextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
++          func_230480_a_(new net.minecraft.client.gui.widget.button.Button(guiLeft + 252 - 20, guiTop - 50, 20, 20, new net.minecraft.util.text.StringTextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
 +          maxPages = this.field_191947_i.size() / AdvancementTabType.MAX_TABS;
 +      }
     }
  
-    public void removed() {
-@@ -57,7 +64,7 @@
-          int j = (this.height - 140) / 2;
+    public void func_231164_f_() {
+@@ -58,7 +65,7 @@
+          int j = (this.field_230709_l_ - 140) / 2;
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
--            if (advancementtabgui.func_195627_a(i, j, p_mouseClicked_1_, p_mouseClicked_3_)) {
-+            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(i, j, p_mouseClicked_1_, p_mouseClicked_3_)) {
+-            if (advancementtabgui.func_195627_a(i, j, p_231044_1_, p_231044_3_)) {
++            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(i, j, p_231044_1_, p_231044_3_)) {
                 this.field_191946_h.func_194230_a(advancementtabgui.func_193935_c(), true);
                 break;
              }
 @@ -82,6 +89,12 @@
-       int j = (this.height - 140) / 2;
-       this.renderBackground();
-       this.func_191936_c(p_render_1_, p_render_2_, i, j);
+       int i = (this.field_230708_k_ - 252) / 2;
+       int j = (this.field_230709_l_ - 140) / 2;
+       this.func_230446_a_(p_230430_1_);
 +      if (maxPages != 0) {
-+         String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
-+         int width = this.font.func_78256_a(page);
++          net.minecraft.util.text.ITextComponent page = new net.minecraft.util.text.StringTextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
++         int width = this.field_230712_o_.func_238414_a_(page);
 +         RenderSystem.disableLighting();
-+         this.font.func_175063_a(page, i + (252 / 2) - (width / 2), j - 44, -1);
++         this.field_230712_o_.func_238407_a_(p_230430_1_, page, i + (252 / 2) - (width / 2), j - 44, -1);
 +      }
-       this.func_191934_b(i, j);
-       this.func_191937_d(p_render_1_, p_render_2_, i, j);
-    }
-@@ -128,6 +141,7 @@
-          this.minecraft.func_110434_K().func_110577_a(field_191945_g);
+       this.func_238696_c_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
+       this.func_238695_a_(p_230430_1_, i, j);
+       this.func_238697_d_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
+@@ -129,6 +142,7 @@
+          this.field_230706_i_.func_110434_K().func_110577_a(field_191945_g);
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
 +            if (advancementtabgui.getPage() == tabPage)
-             advancementtabgui.func_191798_a(p_191934_1_, p_191934_2_, advancementtabgui == this.field_191940_s);
+             advancementtabgui.func_238683_a_(p_238695_1_, p_238695_2_, p_238695_3_, advancementtabgui == this.field_191940_s);
           }
  
-@@ -135,6 +149,7 @@
+@@ -136,6 +150,7 @@
           RenderSystem.defaultBlendFunc();
  
           for(AdvancementTabGui advancementtabgui1 : this.field_191947_i.values()) {
 +            if (advancementtabgui1.getPage() == tabPage)
-             advancementtabgui1.func_191796_a(p_191934_1_, p_191934_2_, this.itemRenderer);
+             advancementtabgui1.func_191796_a(p_238695_2_, p_238695_3_, this.field_230707_j_);
           }
  
-@@ -157,7 +172,7 @@
+@@ -158,7 +173,7 @@
  
        if (this.field_191947_i.size() > 1) {
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
--            if (advancementtabgui.func_195627_a(p_191937_3_, p_191937_4_, (double)p_191937_1_, (double)p_191937_2_)) {
-+            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(p_191937_3_, p_191937_4_, (double)p_191937_1_, (double)p_191937_2_)) {
-                this.renderTooltip(advancementtabgui.func_191795_d(), p_191937_1_, p_191937_2_);
+-            if (advancementtabgui.func_195627_a(p_238697_4_, p_238697_5_, (double)p_238697_2_, (double)p_238697_3_)) {
++            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(p_238697_4_, p_238697_5_, (double)p_238697_2_, (double)p_238697_3_)) {
+                this.func_238652_a_(p_238697_1_, advancementtabgui.func_238685_d_(), p_238697_2_, p_238697_3_);
              }
           }

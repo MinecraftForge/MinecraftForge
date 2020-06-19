@@ -1,0 +1,6 @@
+func_239290_a_
+func_233602_m_ should be func_220345_k (getTrackingRange)
+
+Look into:
+func_241212_a_ should be func_225521_a (destroyBlock)
+func_241211_a_ should be func_180501_a (setBlockState)

@@ -32,11 +32,9 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.FuzzedBiomeMagnifier;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
@@ -79,7 +77,7 @@ public class FMLPlayMessages
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
-            Vec3d vec3d = e.getMotion();
+            Vector3d vec3d = e.getMotion();
             double d1 = MathHelper.clamp(vec3d.x, -3.9D, 3.9D);
             double d2 = MathHelper.clamp(vec3d.y, -3.9D, 3.9D);
             double d3 = MathHelper.clamp(vec3d.z, -3.9D, 3.9D);
@@ -311,7 +309,8 @@ public class FMLPlayMessages
         }
     }
 
-    public static class DimensionInfoMessage
+    //TODO Dimensions..
+    /*public static class DimensionInfoMessage
     {
         private ResourceLocation dimName;
         private boolean skylight;
@@ -365,5 +364,5 @@ public class FMLPlayMessages
             contextSupplier.get().enqueueWork(()-> NetworkHooks.addCachedDimensionType(message.makeDummyDimensionType(), message.dimName));
             return true;
         }
-    }
+    }*/
 }

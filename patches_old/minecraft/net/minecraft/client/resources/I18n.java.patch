@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/resources/I18n.java
++++ b/net/minecraft/client/resources/I18n.java
+@@ -9,6 +9,7 @@
+ 
+    static void func_135051_a(Locale p_135051_0_) {
+       field_135054_a = p_135051_0_;
++      net.minecraftforge.fml.ForgeI18n.loadLanguageData(field_135054_a.field_135032_a);
+    }
+ 
+    public static String func_135052_a(String p_135052_0_, Object... p_135052_1_) {

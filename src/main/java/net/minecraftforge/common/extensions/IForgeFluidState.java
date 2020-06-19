@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -32,9 +32,9 @@ import net.minecraft.world.IWorldReader;
 
 public interface IForgeFluidState
 {
-    default IFluidState getFluidState()
+    default FluidState getFluidState()
     {
-        return (IFluidState)this;
+        return (FluidState)this;
     }
 
     /**
@@ -45,7 +45,7 @@ public interface IForgeFluidState
      * @param pos position thats being tested.
      * @param entity that is being tested.
      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
-     * @param material to test for.
+     * @param tag to test for.
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
     default boolean isEntityInside(IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)

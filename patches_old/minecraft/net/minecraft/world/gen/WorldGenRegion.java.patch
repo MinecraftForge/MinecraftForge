@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/gen/WorldGenRegion.java
++++ b/net/minecraft/world/gen/WorldGenRegion.java
+@@ -164,11 +164,11 @@
+ 
+    public boolean func_225521_a_(BlockPos p_225521_1_, boolean p_225521_2_, @Nullable Entity p_225521_3_) {
+       BlockState blockstate = this.func_180495_p(p_225521_1_);
+-      if (blockstate.func_196958_f()) {
++      if (blockstate.isAir(this, p_225521_1_)) {
+          return false;
+       } else {
+          if (p_225521_2_) {
+-            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_225521_1_) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_225521_1_) : null;
+             Block.func_220054_a(blockstate, this.field_201689_f, p_225521_1_, tileentity, p_225521_3_, ItemStack.field_190927_a);
+          }
+ 
+@@ -186,12 +186,12 @@
+          CompoundNBT compoundnbt = ichunk.func_201579_g(p_175625_1_);
+          if (compoundnbt != null) {
+             if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
+-               Block block = this.func_180495_p(p_175625_1_).func_177230_c();
+-               if (!(block instanceof ITileEntityProvider)) {
++               BlockState state = this.func_180495_p(p_175625_1_);
++               if (!state.hasTileEntity()) {
+                   return null;
+                }
+ 
+-               tileentity = ((ITileEntityProvider)block).func_196283_a_(this.field_201689_f);
++               tileentity = state.createTileEntity(this.field_201689_f);
+             } else {
+                tileentity = TileEntity.func_203403_c(compoundnbt);
+             }
+@@ -202,7 +202,7 @@
+             }
+          }
+ 
+-         if (ichunk.func_180495_p(p_175625_1_).func_177230_c() instanceof ITileEntityProvider) {
++         if (ichunk.func_180495_p(p_175625_1_).hasTileEntity()) {
+             field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
+          }
+ 
+@@ -218,9 +218,9 @@
+       }
+ 
+       Block block = p_180501_2_.func_177230_c();
+-      if (block.func_149716_u()) {
++      if (p_180501_2_.hasTileEntity()) {
+          if (ichunk.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
+-            ichunk.func_177426_a(p_180501_1_, ((ITileEntityProvider)block).func_196283_a_(this));
++            ichunk.func_177426_a(p_180501_1_, p_180501_2_.createTileEntity(this));
+          } else {
+             CompoundNBT compoundnbt = new CompoundNBT();
+             compoundnbt.func_74768_a("x", p_180501_1_.func_177958_n());
+@@ -229,7 +229,7 @@
+             compoundnbt.func_74778_a("id", "DUMMY");
+             ichunk.func_201591_a(compoundnbt);
+          }
+-      } else if (blockstate != null && blockstate.func_177230_c().func_149716_u()) {
++      } else if (blockstate != null && blockstate.hasTileEntity()) {
+          ichunk.func_177425_e(p_180501_1_);
+       }
+ 

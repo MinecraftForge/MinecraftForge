@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/storage/PlayerData.java
++++ b/net/minecraft/world/storage/PlayerData.java
+@@ -74,4 +74,8 @@
+ 
+       return astring;
+    }
++
++   public File getPlayerDataFolder() {
++      return field_237333_c_;
++   }
+ }

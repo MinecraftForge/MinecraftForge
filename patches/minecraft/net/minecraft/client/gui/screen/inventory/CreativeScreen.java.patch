@@ -1,29 +1,29 @@
 --- a/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
 +++ b/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
 @@ -65,6 +65,8 @@
+    private Slot field_147064_C;
+    private CreativeCraftingListener field_147059_E;
     private boolean field_195377_F;
-    private boolean field_199506_G;
-    private final Map<ResourceLocation, Tag<Item>> field_214085_w = Maps.newTreeMap();
 +   private static int tabPage = 0;
 +   private int maxPages = 0;
+    private boolean field_199506_G;
+    private final Map<ResourceLocation, ITag<Item>> field_214085_w = Maps.newTreeMap();
  
-    public CreativeScreen(PlayerEntity p_i1088_1_) {
-       super(new CreativeScreen.CreativeContainer(p_i1088_1_), p_i1088_1_.field_71071_by, new StringTextComponent(""));
 @@ -233,6 +235,12 @@
-       if (this.minecraft.field_71442_b.func_78758_h()) {
-          super.init();
-          this.minecraft.field_195559_v.func_197967_a(true);
+ 
+    protected void func_231160_c_() {
+       if (this.field_230706_i_.field_71442_b.func_78758_h()) {
 +         int tabCount = ItemGroup.field_78032_a.length;
 +         if (tabCount > 12) {
-+            addButton(new net.minecraft.client.gui.widget.button.Button(field_147003_i,              field_147009_r - 50, 20, 20, "<", b -> tabPage = Math.max(tabPage - 1, 0       )));
-+            addButton(new net.minecraft.client.gui.widget.button.Button(field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, ">", b -> tabPage = Math.min(tabPage + 1, maxPages)));
++            func_230480_a_(new net.minecraft.client.gui.widget.button.Button(field_147003_i,              field_147009_r - 50, 20, 20, new StringTextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
++            func_230480_a_(new net.minecraft.client.gui.widget.button.Button(field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, new StringTextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
 +            maxPages = (int) Math.ceil((tabCount - 12) / 10D);
 +         }
-          this.field_147062_A = new TextFieldWidget(this.font, this.field_147003_i + 82, this.field_147009_r + 6, 80, 9, I18n.func_135052_a("itemGroup.search"));
-          this.field_147062_A.func_146203_f(50);
-          this.field_147062_A.func_146185_a(false);
-@@ -273,7 +281,7 @@
-    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
+          super.func_231160_c_();
+          this.field_230706_i_.field_195559_v.func_197967_a(true);
+          this.field_147062_A = new TextFieldWidget(this.field_230712_o_, this.field_147003_i + 82, this.field_147009_r + 6, 80, 9, new TranslationTextComponent("itemGroup.search"));
+@@ -275,7 +283,7 @@
+    public boolean func_231042_a_(char p_231042_1_, int p_231042_2_) {
        if (this.field_195377_F) {
           return false;
 -      } else if (field_147058_w != ItemGroup.field_78027_g.func_78021_a()) {
@@ -31,16 +31,16 @@
           return false;
        } else {
           String s = this.field_147062_A.func_146179_b();
-@@ -291,7 +299,7 @@
+@@ -293,7 +301,7 @@
  
-    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+    public boolean func_231046_a_(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
        this.field_195377_F = false;
 -      if (field_147058_w != ItemGroup.field_78027_g.func_78021_a()) {
 +      if (!ItemGroup.field_78032_a[field_147058_w].hasSearchBar()) {
-          if (this.minecraft.field_71474_y.field_74310_D.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
+          if (this.field_230706_i_.field_71474_y.field_74310_D.func_197976_a(p_231046_1_, p_231046_2_)) {
              this.field_195377_F = true;
              this.func_147050_b(ItemGroup.field_78027_g);
-@@ -327,6 +335,32 @@
+@@ -330,6 +338,32 @@
     private void func_147053_i() {
        (this.field_147002_h).field_148330_a.clear();
        this.field_214085_w.clear();
@@ -55,7 +55,7 @@
 +            while (itr.hasNext()) {
 +               ItemStack stack = itr.next();
 +               boolean matches = false;
-+               for (ITextComponent line : stack.func_82840_a(this.minecraft.field_71439_g, this.minecraft.field_71474_y.field_82882_x ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL)) {
++               for (ITextComponent line : stack.func_82840_a(this.field_230706_i_.field_71439_g, this.field_230706_i_.field_71474_y.field_82882_x ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL)) {
 +                  if (TextFormatting.func_110646_a(line.getString()).toLowerCase(Locale.ROOT).contains(search)) {
 +                     matches = true;
 +                     break;
@@ -73,20 +73,20 @@
        String s = this.field_147062_A.func_146179_b();
        if (s.isEmpty()) {
           for(Item item : Registry.field_212630_s) {
-@@ -372,9 +406,9 @@
+@@ -375,9 +409,9 @@
  
-    protected void func_146979_b(int p_146979_1_, int p_146979_2_) {
+    protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
 -      if (itemgroup.func_78019_g()) {
 +      if (itemgroup != null && itemgroup.func_78019_g()) {
           RenderSystem.disableBlend();
--         this.font.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
-+         this.font.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, itemgroup.getLabelColor());
+-         this.field_230712_o_.func_238421_b_(p_230451_1_, I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
++         this.field_230712_o_.func_238421_b_(p_230451_1_, I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, itemgroup.getLabelColor());
        }
  
     }
-@@ -385,7 +419,7 @@
-          double d1 = p_mouseClicked_3_ - (double)this.field_147009_r;
+@@ -388,7 +422,7 @@
+          double d1 = p_231044_3_ - (double)this.field_147009_r;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
 -            if (this.func_195375_a(itemgroup, d0, d1)) {
@@ -94,7 +94,7 @@
                 return true;
              }
           }
-@@ -406,7 +440,7 @@
+@@ -409,7 +443,7 @@
           this.field_147066_y = false;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -103,7 +103,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -417,12 +451,15 @@
+@@ -420,12 +454,15 @@
     }
  
     private boolean func_147055_p() {
@@ -119,7 +119,7 @@
        this.field_147008_s.clear();
        (this.field_147002_h).field_148330_a.clear();
        if (p_147050_1_ == ItemGroup.field_192395_m) {
-@@ -499,13 +536,15 @@
+@@ -502,13 +539,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -131,67 +131,67 @@
              if (i != p_147050_1_.func_78021_a()) {
                 this.field_147062_A.func_146180_a("");
              }
-+            this.field_147062_A.setWidth(p_147050_1_.getSearchbarWidth());
-+            this.field_147062_A.x = this.field_147003_i + (82 /*default left*/ + 89 /*default width*/) - this.field_147062_A.getWidth();
++            this.field_147062_A.func_230991_b_(p_147050_1_.getSearchbarWidth());
++            this.field_147062_A.field_230690_l_ = this.field_147003_i + (82 /*default left*/ + 89 /*default width*/) - this.field_147062_A.func_230998_h_();
  
              this.func_147053_i();
           } else {
-@@ -565,16 +604,35 @@
-       this.renderBackground();
-       super.render(p_render_1_, p_render_2_, p_render_3_);
+@@ -568,16 +607,35 @@
+       this.func_230446_a_(p_230430_1_);
+       super.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
  
 -      for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
--         if (this.func_147052_b(itemgroup, p_render_1_, p_render_2_)) {
+-         if (this.func_238809_a_(p_230430_1_, itemgroup, p_230430_2_, p_230430_3_)) {
 +      int start = tabPage * 10;
 +      int end = Math.min(ItemGroup.field_78032_a.length, ((tabPage + 1) * 10) + 2);
 +      if (tabPage != 0) start += 2;
 +      boolean rendered = false;
 +
-+      for (int x = start; x < end; x++) {
++       for (int x = start; x < end; x++) {
 +         ItemGroup itemgroup = ItemGroup.field_78032_a[x];
-+         if (itemgroup != null && this.func_147052_b(itemgroup, p_render_1_, p_render_2_)) {
++         if (itemgroup != null && this.func_238809_a_(p_230430_1_, itemgroup, p_230430_2_, p_230430_3_)) {
 +            rendered = true;
              break;
           }
        }
-+      if (!rendered && !func_147052_b(ItemGroup.field_78027_g, p_render_1_, p_render_2_))
-+         func_147052_b(ItemGroup.field_78036_m, p_render_1_, p_render_2_);
++      if (!rendered && !func_238809_a_(p_230430_1_, ItemGroup.field_78027_g, p_230430_2_, p_230430_3_))
++          func_238809_a_(p_230430_1_, ItemGroup.field_78036_m, p_230430_2_, p_230430_3_);
  
-       if (this.field_147064_C != null && field_147058_w == ItemGroup.field_78036_m.func_78021_a() && this.func_195359_a(this.field_147064_C.field_75223_e, this.field_147064_C.field_75221_f, 16, 16, (double)p_render_1_, (double)p_render_2_)) {
-          this.renderTooltip(I18n.func_135052_a("inventory.binSlot"), p_render_1_, p_render_2_);
+       if (this.field_147064_C != null && field_147058_w == ItemGroup.field_78036_m.func_78021_a() && this.func_195359_a(this.field_147064_C.field_75223_e, this.field_147064_C.field_75221_f, 16, 16, (double)p_230430_2_, (double)p_230430_3_)) {
+          this.func_238652_a_(p_230430_1_, new TranslationTextComponent("inventory.binSlot"), p_230430_2_, p_230430_3_);
        }
  
 +      if (maxPages != 0) {
-+         String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
-+         RenderSystem.disableLighting();
-+         this.setBlitOffset(300);
-+         this.itemRenderer.field_77023_b = 300.0F;
-+         font.func_211126_b(page, field_147003_i + (field_146999_f / 2) - (font.func_78256_a(page) / 2), field_147009_r - 44, -1);
-+         this.setBlitOffset(0);
-+         this.itemRenderer.field_77023_b = 0.0F;
++          ITextComponent page = new StringTextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
++          RenderSystem.disableLighting();
++          this.func_230926_e_(300);
++          this.field_230707_j_.field_77023_b = 300.0F;
++          field_230712_o_.func_238407_a_(p_230430_1_, page, field_147003_i + (field_146999_f / 2) - (field_230712_o_.func_238414_a_(page) / 2), field_147009_r - 44, -1);
++          this.func_230926_e_(0);
++          this.field_230707_j_.field_77023_b = 0.0F;
 +      }
 +
        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-       this.func_191948_b(p_render_1_, p_render_2_);
+       this.func_230459_a_(p_230430_1_, p_230430_2_, p_230430_3_);
     }
-@@ -622,7 +680,10 @@
-             }
+@@ -612,7 +670,10 @@
+             list1.add(1, (new TranslationTextComponent(itemgroup.func_78024_c())).func_240699_a_(TextFormatting.BLUE));
           }
  
--         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_);
-+         net.minecraft.client.gui.FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
-+         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
-+         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+-         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_);
++         net.minecraft.client.gui.FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
++         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
++         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
        } else {
-          super.renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_);
+          super.func_230457_a_(p_230457_1_, p_230457_2_, p_230457_3_, p_230457_4_);
        }
-@@ -633,25 +694,44 @@
+@@ -623,25 +684,44 @@
        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
  
 -      for(ItemGroup itemgroup1 : ItemGroup.field_78032_a) {
--         this.minecraft.func_110434_K().func_110577_a(field_147061_u);
+-         this.field_230706_i_.func_110434_K().func_110577_a(field_147061_u);
 -         if (itemgroup1.func_78021_a() != field_147058_w) {
 +      int start = tabPage * 10;
 +      int end = Math.min(ItemGroup.field_78032_a.length, ((tabPage + 1) * 10 + 2));
@@ -200,43 +200,43 @@
 +      for (int idx = start; idx < end; idx++) {
 +         ItemGroup itemgroup1 = ItemGroup.field_78032_a[idx];
 +         if (itemgroup1 != null && itemgroup1.func_78021_a() != field_147058_w) {
-+            this.minecraft.func_110434_K().func_110577_a(itemgroup1.getTabsImage());
-             this.func_147051_a(itemgroup1);
++            this.field_230706_i_.func_110434_K().func_110577_a(itemgroup1.getBackgroundImage());
+             this.func_238808_a_(p_230450_1_, itemgroup1);
           }
        }
  
--      this.minecraft.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + itemgroup.func_78015_f()));
+-      this.field_230706_i_.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + itemgroup.func_78015_f()));
 +      if (tabPage != 0) {
 +         if (itemgroup != ItemGroup.field_78027_g) {
-+            this.minecraft.func_110434_K().func_110577_a(ItemGroup.field_78027_g.getTabsImage());
-+            func_147051_a(ItemGroup.field_78027_g);
++            this.field_230706_i_.func_110434_K().func_110577_a(ItemGroup.field_78027_g.getTabsImage());
++            func_238808_a_(p_230450_1_, ItemGroup.field_78027_g);
 +         }
 +         if (itemgroup != ItemGroup.field_78036_m) {
-+            this.minecraft.func_110434_K().func_110577_a(ItemGroup.field_78036_m.getTabsImage());
-+            func_147051_a(ItemGroup.field_78036_m);
++            this.field_230706_i_.func_110434_K().func_110577_a(ItemGroup.field_78036_m.getTabsImage());
++            func_238808_a_(p_230450_1_, ItemGroup.field_78036_m);
 +         }
 +      }
 +
-+      this.minecraft.func_110434_K().func_110577_a(itemgroup.getBackgroundImage());
-       this.blit(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
-       this.field_147062_A.render(p_146976_2_, p_146976_3_, p_146976_1_);
++      this.field_230706_i_.func_110434_K().func_110577_a(itemgroup.getBackgroundImage());
+       this.func_238474_b_(p_230450_1_, this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
+       this.field_147062_A.func_230430_a_(p_230450_1_, p_230450_3_, p_230450_4_, p_230450_2_);
        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        int i = this.field_147003_i + 175;
        int j = this.field_147009_r + 18;
        int k = j + 112;
--      this.minecraft.func_110434_K().func_110577_a(field_147061_u);
-+      this.minecraft.func_110434_K().func_110577_a(itemgroup.getTabsImage());
+-      this.field_230706_i_.func_110434_K().func_110577_a(field_147061_u);
++      this.field_230706_i_.func_110434_K().func_110577_a(itemgroup.getTabsImage());
        if (itemgroup.func_78017_i()) {
-          this.blit(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
+          this.func_238474_b_(p_230450_1_, i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
        }
  
 +      if ((itemgroup == null || itemgroup.getTabPage() != tabPage) && (itemgroup != ItemGroup.field_78027_g && itemgroup != ItemGroup.field_78036_m))
 +         return;
 +
-       this.func_147051_a(itemgroup);
+       this.func_238808_a_(p_230450_1_, itemgroup);
        if (itemgroup == ItemGroup.field_78036_m) {
-          InventoryScreen.func_228187_a_(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_146976_2_), (float)(this.field_147009_r + 45 - 30 - p_146976_3_), this.minecraft.field_71439_g);
-@@ -660,6 +740,7 @@
+          InventoryScreen.func_228187_a_(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_230450_3_), (float)(this.field_147009_r + 45 - 30 - p_230450_4_), this.field_230706_i_.field_71439_g);
+@@ -650,6 +730,7 @@
     }
  
     protected boolean func_195375_a(ItemGroup p_195375_1_, double p_195375_2_, double p_195375_4_) {
@@ -244,16 +244,25 @@
        int i = p_195375_1_.func_78020_k();
        int j = 28 * i;
        int k = 0;
-@@ -728,6 +809,8 @@
+@@ -718,6 +799,8 @@
           i1 = i1 + (this.field_147000_g - 4);
        }
  
 +      RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
 +      RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-       this.blit(l, i1, j, k, 28, 32);
-       this.setBlitOffset(100);
-       this.itemRenderer.field_77023_b = 100.0F;
-@@ -896,6 +979,22 @@
+       this.func_238474_b_(p_238808_1_, l, i1, j, k, 28, 32);
+       this.field_230707_j_.field_77023_b = 100.0F;
+       l = l + 6;
+@@ -769,6 +852,8 @@
+          for(int i = 0; i < 5; ++i) {
+             for(int j = 0; j < 9; ++j) {
+                this.func_75146_a(new CreativeScreen.LockedSlot(CreativeScreen.field_195378_x, i * 9 + j, 9 + j * 18, 18 + i * 18));
++      RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
++      RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
+             }
+          }
+ 
+@@ -884,6 +969,22 @@
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

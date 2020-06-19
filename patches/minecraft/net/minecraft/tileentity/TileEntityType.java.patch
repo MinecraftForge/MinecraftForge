@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntityType.java
 +++ b/net/minecraft/tileentity/TileEntityType.java
-@@ -18,7 +18,7 @@
+@@ -16,7 +16,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  

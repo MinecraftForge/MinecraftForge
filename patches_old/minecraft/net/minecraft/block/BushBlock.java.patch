@@ -1,0 +1,32 @@
+--- a/net/minecraft/block/BushBlock.java
++++ b/net/minecraft/block/BushBlock.java
+@@ -7,7 +7,7 @@
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.IWorldReader;
+ 
+-public class BushBlock extends Block {
++public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
+    protected BushBlock(Block.Properties p_i48437_1_) {
+       super(p_i48437_1_);
+    }
+@@ -23,6 +23,8 @@
+ 
+    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+       BlockPos blockpos = p_196260_3_.func_177977_b();
++      if (p_196260_1_.func_177230_c() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++         return p_196260_2_.func_180495_p(blockpos).canSustainPlant(p_196260_2_, blockpos, Direction.UP, this);
+       return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
+    }
+ 
+@@ -33,4 +35,11 @@
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return p_196266_4_ == PathType.AIR && !this.field_196274_w ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
+    }
++
++   @Override
++   public BlockState getPlant(IBlockReader world, BlockPos pos) {
++      BlockState state = world.func_180495_p(pos);
++      if (state.func_177230_c() != this) return func_176223_P();
++      return state;
++   }
+ }

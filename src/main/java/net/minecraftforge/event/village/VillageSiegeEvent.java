@@ -20,7 +20,7 @@
 package net.minecraftforge.event.village;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.village.VillageSiege;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,9 +43,9 @@ public class VillageSiegeEvent extends Event
     private final VillageSiege siege;
     private final World world;
     private final PlayerEntity player;
-    private final Vec3d attemptedSpawnPos;
+    private final Vector3d attemptedSpawnPos;
 
-    public VillageSiegeEvent(VillageSiege siege, World world, PlayerEntity player, Vec3d attemptedSpawnPos)
+    public VillageSiegeEvent(VillageSiege siege, World world, PlayerEntity player, Vector3d attemptedSpawnPos)
     {
        this.siege = siege;
        this.world = world;
@@ -68,7 +68,7 @@ public class VillageSiegeEvent extends Event
         return player;
     }
 
-    public Vec3d getAttemptedSpawnPos()
+    public Vector3d getAttemptedSpawnPos()
     {
         return attemptedSpawnPos;
     }

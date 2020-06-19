@@ -44,7 +44,7 @@ public class ItemFishedEvent extends PlayerEvent
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingBobberEntity hook)
     {
-        super(hook.getAngler());
+        super(hook.func_234606_i_());
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;

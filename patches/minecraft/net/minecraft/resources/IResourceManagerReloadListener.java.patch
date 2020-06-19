@@ -12,7 +12,7 @@
  public interface IResourceManagerReloadListener extends IFutureReloadListener {
     default CompletableFuture<Void> func_215226_a(IFutureReloadListener.IStage p_215226_1_, IResourceManager p_215226_2_, IProfiler p_215226_3_, IProfiler p_215226_4_, Executor p_215226_5_, Executor p_215226_6_) {
        return p_215226_1_.func_216872_a(Unit.INSTANCE).thenRunAsync(() -> {
-@@ -13,4 +18,9 @@
+@@ -17,4 +22,9 @@
     }
  
     void func_195410_a(IResourceManager p_195410_1_);

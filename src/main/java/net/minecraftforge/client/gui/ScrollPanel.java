@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
@@ -75,7 +76,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
      * @param mouseY
      * @param mouseX
      */
-    protected abstract void drawPanel(int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY);
+    protected abstract void drawPanel(MatrixStack mStack, int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY);
 
     protected boolean clickPanel(double mouseX, double mouseY, int button) { return false; }
 
@@ -105,7 +106,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
+    public boolean func_231043_a_(double mouseX, double mouseY, double scroll)
     {
         if (scroll != 0)
         {
@@ -122,15 +123,15 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean isMouseOver(double mouseX, double mouseY)
+    public boolean func_231047_b_(double mouseX, double mouseY)
     {
         return mouseX >= this.left && mouseX <= this.left + this.width &&
                 mouseY >= this.top && mouseY <= this.bottom;
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button))
+    public boolean func_231044_a_(double mouseX, double mouseY, int button) {
+        if (super.func_231044_a_(mouseX, mouseY, button))
             return true;
 
         this.scrolling = button == 0 && mouseX >= barLeft && mouseX < barLeft + barWidth;
@@ -147,8 +148,8 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
-        if (super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
+    public boolean func_231048_c_(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        if (super.func_231048_c_(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
             return true;
         boolean ret = this.scrolling;
         this.scrolling = false;
@@ -168,7 +169,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    public boolean func_231045_a_(double mouseX, double mouseY, int button, double deltaX, double deltaY)
     {
         if (this.scrolling)
         {
@@ -182,7 +183,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void func_230430_a_(MatrixStack matrix, int mouseX, int mouseY, float partialTicks)
     {
         this.drawBackground();
 
@@ -196,13 +197,13 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
 
         if (this.client.world != null)
         {
-            this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
+            this.drawGradientRect(matrix, this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
         }
         else // Draw dark dirt background
         {
             RenderSystem.disableLighting();
             RenderSystem.disableFog();
-            this.client.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
+            this.client.getTextureManager().bindTexture(AbstractGui.field_230663_f_);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             final float texScale = 32.0F;
             worldr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -214,7 +215,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
         }
 
         int baseY = this.top + border - (int)this.scrollDistance;
-        this.drawPanel(right, baseY, tess, mouseX, mouseY);
+        this.drawPanel(matrix, right, baseY, tess, mouseX, mouseY);
 
         RenderSystem.disableDepthTest();
 
@@ -257,13 +258,13 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
-    protected void drawGradientRect(int left, int top, int right, int bottom, int color1, int color2)
+    protected void drawGradientRect(MatrixStack mStack, int left, int top, int right, int bottom, int color1, int color2)
     {
-        GuiUtils.drawGradientRect(0, left, top, right, bottom, color1, color2);
+        GuiUtils.drawGradientRect(mStack.getLast().getMatrix(), 0, left, top, right, bottom, color1, color2);
     }
 
     @Override
-    public List<? extends IGuiEventListener> children()
+    public List<? extends IGuiEventListener> func_231039_at__()
     {
         return Collections.emptyList();
     }

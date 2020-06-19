@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,6 +49,8 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -68,7 +71,7 @@ public interface IForgeItem
      * ItemStack sensitive version of getItemAttributeModifiers
      */
     @SuppressWarnings("deprecation")
-    default Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
+    default Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
     {
         return getItem().getAttributeModifiers(slot);
     }
@@ -95,7 +98,7 @@ public interface IForgeItem
      * @param displayName the name that will be displayed unless it is changed in
      *                    this method.
      */
-    default String getHighlightTip(ItemStack item, String displayName)
+    default ITextComponent getHighlightTip(ItemStack item, ITextComponent displayName)
     {
         return displayName;
     }
@@ -616,7 +619,7 @@ public interface IForgeItem
      */
     default boolean isBeaconPayment(ItemStack stack)
     {
-        return Tags.Items.BEACON_PAYMENT.contains(stack.getItem());
+        return Tags.Items.BEACON_PAYMENT.func_230235_a_(stack.getItem());
     }
 
     /**
@@ -703,12 +706,13 @@ public interface IForgeItem
         return null;
     }
 
-    default ImmutableMap<String, ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity)
-    {
-        com.google.common.collect.ImmutableMap.Builder<String, ITimeValue> builder = ImmutableMap.builder();
-        getItem().properties.forEach((k,v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
-        return builder.build();
-    }
+    //TODO, properties dont exist anymore
+//    default ImmutableMap<String, ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity)
+//    {
+//        com.google.common.collect.ImmutableMap.Builder<String, ITimeValue> builder = ImmutableMap.builder();
+//        getItem().properties.forEach((k,v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
+//        return builder.build();
+//    }
 
     /**
      * Can this Item disable a shield

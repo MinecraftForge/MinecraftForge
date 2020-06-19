@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -43,9 +44,9 @@ public class TileFluidHandler extends TileEntity
     }
 
     @Override
-    public void read(CompoundNBT tag)
+    public void func_230337_a_(BlockState state, CompoundNBT tag)
     {
-        super.read(tag);
+        super.func_230337_a_(state, tag);
         tank.readFromNBT(tag);
     }
 

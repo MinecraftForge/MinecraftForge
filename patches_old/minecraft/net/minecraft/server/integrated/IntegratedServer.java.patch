@@ -1,0 +1,47 @@
+--- a/net/minecraft/server/integrated/IntegratedServer.java
++++ b/net/minecraft/server/integrated/IntegratedServer.java
+@@ -64,6 +64,8 @@
+       this.func_71237_c(p_71247_1_);
+       SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
+       this.func_175584_a(this.func_71270_I(), savehandler);
++      // Move factory creation earlier to prevent startupquery deadlock
++      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+       WorldInfo worldinfo = savehandler.func_75757_d();
+       if (worldinfo == null) {
+          worldinfo = new WorldInfo(this.field_71350_m, p_71247_2_);
+@@ -73,7 +75,6 @@
+ 
+       worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
+       this.func_195560_a(savehandler.func_75765_b(), worldinfo);
+-      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+       this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
+       if (this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_176130_y() == null) {
+          this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M, true);
+@@ -91,9 +92,10 @@
+       this.func_71245_h(true);
+       field_147148_h.info("Generating keypair");
+       this.func_71253_a(CryptManager.func_75891_b());
++      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+       this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j());
+       this.func_71205_p(this.func_71214_G() + " - " + this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_76065_j());
+-      return true;
++      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
+    }
+ 
+    public void func_71217_p(BooleanSupplier p_71217_1_) {
+@@ -128,6 +130,7 @@
+    }
+ 
+    public Difficulty func_147135_j() {
++      if (this.field_71349_l.field_71441_e == null) return this.field_71349_l.field_71474_y.field_74318_M; // Fix NPE just in case.
+       return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
+    }
+ 
+@@ -219,6 +222,7 @@
+    }
+ 
+    public void func_71263_m(boolean p_71263_1_) {
++      if (func_71278_l())
+       this.func_213167_f(() -> {
+          for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(this.func_184103_al().func_181057_v())) {
+             if (!serverplayerentity.func_110124_au().equals(this.field_211528_n)) {

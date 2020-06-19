@@ -1,0 +1,62 @@
+--- a/net/minecraft/network/play/ServerPlayNetHandler.java
++++ b/net/minecraft/network/play/ServerPlayNetHandler.java
+@@ -336,9 +336,11 @@
+             }
+ 
+             entity.func_70080_a(d3, d4, d5, f, f1);
++            this.field_147369_b.func_70080_a(d3, d4, d5, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
+             boolean flag2 = serverworld.func_226665_a__(entity, entity.func_174813_aQ().func_186664_h(0.0625D));
+             if (flag && (flag1 || !flag2)) {
+                entity.func_70080_a(d0, d1, d2, f, f1);
++               this.field_147369_b.func_70080_a(d3, d4, d5, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
+                this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
+                return;
+             }
+@@ -845,7 +847,9 @@
+       Direction direction = blockraytraceresult.func_216354_b();
+       this.field_147369_b.func_143004_u();
+       if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
+-         if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && serverworld.func_175660_a(this.field_147369_b, blockpos)) {
++         double dist = field_147369_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 3;
++         dist *= dist;
++         if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && serverworld.func_175660_a(this.field_147369_b, blockpos)) {
+             ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
+             if (actionresulttype.func_226247_b_()) {
+                this.field_147369_b.func_226292_a_(hand, true);
+@@ -968,7 +972,9 @@
+          if (s.startsWith("/")) {
+             this.func_147361_d(s);
+          } else {
+-            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), s);
++            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
++            itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
++            if (itextcomponent == null) return;
+             this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
+          }
+ 
+@@ -1061,6 +1067,7 @@
+                this.field_147369_b.func_190775_a(entity, hand);
+             } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
+                Hand hand1 = p_147340_1_.func_186994_b();
++               if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), hand1) != null) return;
+                ActionResultType actionresulttype = entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
+                if (actionresulttype.func_226247_b_()) {
+                   this.field_147369_b.func_226292_a_(hand1, true);
+@@ -1094,7 +1101,7 @@
+                return;
+             }
+ 
+-            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, DimensionType.field_223227_a_, false);
++            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, this.field_147369_b.field_71093_bK, false);
+             if (this.field_147367_d.func_71199_h()) {
+                this.field_147369_b.func_71033_a(GameType.SPECTATOR);
+                this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
+@@ -1268,6 +1275,8 @@
+    }
+ 
+    public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
++      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
+    }
+ 
+    public void func_217263_a(CSetDifficultyPacket p_217263_1_) {

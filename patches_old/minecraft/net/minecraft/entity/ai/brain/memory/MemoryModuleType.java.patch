@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/brain/memory/MemoryModuleType.java
++++ b/net/minecraft/entity/ai/brain/memory/MemoryModuleType.java
+@@ -18,7 +18,7 @@
+ import net.minecraft.util.math.IPosWrapper;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class MemoryModuleType<U> {
++public class MemoryModuleType<U> extends net.minecraftforge.registries.ForgeRegistryEntry<MemoryModuleType<?>> {
+    public static final MemoryModuleType<Void> field_220940_a = func_223541_a("dummy");
+    public static final MemoryModuleType<GlobalPos> field_220941_b = func_220937_a("home", Optional.of(GlobalPos::func_218176_a));
+    public static final MemoryModuleType<GlobalPos> field_220942_c = func_220937_a("job_site", Optional.of(GlobalPos::func_218176_a));

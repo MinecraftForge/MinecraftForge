@@ -104,7 +104,7 @@ public class DelegatingResourcePack extends ResourcePack
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
         synchronized(delegates)
         {

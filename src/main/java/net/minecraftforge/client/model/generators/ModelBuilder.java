@@ -36,7 +36,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
@@ -53,11 +53,11 @@ import net.minecraft.util.math.MathHelper;
 /**
  * General purpose model builder, contains all the commonalities between item
  * and block models.
- * 
+ *
  * @see ModelProvider
  * @see BlockModelBuilder
  * @see ItemModelBuilder
- * 
+ *
  * @param <T> Self type, for simpler chaining of methods.
  */
 @SuppressWarnings("deprecation")
@@ -89,7 +89,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     /**
      * Set the parent model for the current model.
-     * 
+     *
      * @param parent the parent model
      * @return this builder
      * @throws NullPointerException  if {@code parent} is {@code null}
@@ -104,7 +104,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     /**
      * Set the texture for a given dictionary key.
-     * 
+     *
      * @param key     the texture key
      * @param texture the texture, can be another key e.g. {@code "#all"}
      * @return this builder
@@ -133,7 +133,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     /**
      * Set the texture for a given dictionary key.
-     * 
+     *
      * @param key     the texture key
      * @param texture the texture
      * @return this builder
@@ -170,7 +170,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     public T gui3d(boolean gui3d) {
         return self();
     }
-    
+
     public T guiLight(GuiLight light) {
         this.guiLight = light;
         return self();
@@ -184,7 +184,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     /**
      * Get an existing element builder
-     * 
+     *
      * @param index the index of the existing element builder
      * @return the element builder
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds
@@ -204,7 +204,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         if (!this.ambientOcclusion) {
             root.addProperty("ambientocclusion", this.ambientOcclusion);
         }
-        
+
         if (this.guiLight != null) {
             root.addProperty("gui_light", this.guiLight.getSerializedName());
         }
@@ -240,7 +240,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         if (!this.elements.isEmpty()) {
             JsonArray elements = new JsonArray();
-            this.elements.stream().map(ElementBuilder::build).forEach(part -> { 
+            this.elements.stream().map(ElementBuilder::build).forEach(part -> {
                 JsonObject partObj = new JsonObject();
                 partObj.add("from", serializeVector3f(part.positionFrom));
                 partObj.add("to", serializeVector3f(part.positionTo));
@@ -248,7 +248,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (part.partRotation != null) {
                     JsonObject rotation = new JsonObject();
                     rotation.add("origin", serializeVector3f(part.partRotation.origin));
-                    rotation.addProperty("axis", part.partRotation.axis.getName());
+                    rotation.addProperty("axis", part.partRotation.axis.func_176610_l());
                     rotation.addProperty("angle", part.partRotation.angle);
                     if (part.partRotation.rescale) {
                         rotation.addProperty("rescale", part.partRotation.rescale);
@@ -271,7 +271,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                         faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
                     }
                     if (face.cullFace != null) {
-                        faceObj.addProperty("cullface", face.cullFace.getName());
+                        faceObj.addProperty("cullface", face.cullFace.func_176610_l());
                     }
                     if (face.blockFaceUV.rotation != 0) {
                         faceObj.addProperty("rotation", face.blockFaceUV.rotation);
@@ -279,7 +279,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    faces.add(dir.getName(), faceObj);
+                    faces.add(dir.func_176610_l(), faceObj);
                 }
                 if (!part.mapFaces.isEmpty()) {
                     partObj.add("faces", faces);
@@ -341,7 +341,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         /**
          * Set the "from" position for this element.
-         * 
+         *
          * @param x x-position for this vector
          * @param y y-position for this vector
          * @param z z-position for this vector
@@ -358,7 +358,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         /**
          * Set the "to" position for this element.
-         * 
+         *
          * @param x x-position for this vector
          * @param y y-position for this vector
          * @param z z-position for this vector
@@ -375,7 +375,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         /**
          * Return or create the face builder for the given direction.
-         * 
+         *
          * @param dir the direction
          * @return the face builder for the given direction
          * @throws NullPointerException if {@code dir} is {@code null}
@@ -400,7 +400,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         /**
          * Modify all <em>possible</em> faces dynamically using a function, creating new
          * faces as necessary.
-         * 
+         *
          * @param action the function to apply to each direction
          * @return this builder
          * @throws NullPointerException if {@code action} is {@code null}
@@ -413,7 +413,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         /**
          * Modify all <em>existing</em> faces dynamically using a function.
-         * 
+         *
          * @param action the function to apply to each direction
          * @return this builder
          * @throws NullPointerException if {@code action} is {@code null}
@@ -427,7 +427,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         /**
          * Texture all <em>possible</em> faces in the current element with the given
          * texture, creating new faces where necessary.
-         * 
+         *
          * @param texture the texture
          * @return this builder
          * @throws NullPointerException if {@code texture} is {@code null}
@@ -439,7 +439,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         /**
          * Texture all <em>existing</em> faces in the current element with the given
          * texture.
-         * 
+         *
          * @param texture the texture
          * @return this builder
          * @throws NullPointerException if {@code texture} is {@code null}
@@ -451,7 +451,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         /**
          * Create a typical cube element, creating new faces as needed, applying the
          * given texture, and setting the cullface.
-         * 
+         *
          * @param texture the texture
          * @return this builder
          * @throws NullPointerException if {@code texture} is {@code null}
@@ -496,7 +496,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
             /**
              * Set the texture for the current face.
-             * 
+             *
              * @param texture the texture
              * @return this builder
              * @throws NullPointerException if {@code texture} is {@code null}
@@ -514,7 +514,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
             /**
              * Set the texture rotation for the current face.
-             * 
+             *
              * @param rot the rotation
              * @return this builder
              * @throws NullPointerException if {@code rot} is {@code null}
@@ -625,7 +625,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         /**
          * Begin building a new transform for the given perspective.
-         * 
+         *
          * @param type the perspective to create or return the builder for
          * @return the builder for the given perspective
          * @throws NullPointerException if {@code type} is {@code null}

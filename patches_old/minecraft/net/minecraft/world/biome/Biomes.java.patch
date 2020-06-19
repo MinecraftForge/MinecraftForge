@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/biome/Biomes.java
++++ b/net/minecraft/world/biome/Biomes.java
+@@ -4,8 +4,10 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public abstract class Biomes {
+    public static final Biome field_76771_b = func_222369_a(0, "ocean", new OceanBiome());
++   @net.minecraftforge.registries.ObjectHolder("minecraft:ocean")
+    public static final Biome field_180279_ad = field_76771_b;
+    public static final Biome field_76772_c = func_222369_a(1, "plains", new PlainsBiome());
+    public static final Biome field_76769_d = func_222369_a(2, "desert", new DesertBiome());

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MusicDiscItem.java
 +++ b/net/minecraft/item/MusicDiscItem.java
-@@ -21,17 +21,40 @@
+@@ -22,17 +22,40 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class MusicDiscItem extends Item {
@@ -41,7 +41,7 @@
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();
-@@ -76,6 +99,6 @@
+@@ -77,6 +100,6 @@
  
     @OnlyIn(Dist.CLIENT)
     public SoundEvent func_185075_h() {

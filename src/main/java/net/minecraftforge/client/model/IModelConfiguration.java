@@ -22,7 +22,7 @@ package net.minecraftforge.client.model;
 import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 
 import javax.annotation.Nullable;
@@ -55,7 +55,7 @@ public interface IModelConfiguration {
      * @param name The name of a texture channel.
      * @return The location of the texture, or the missing texture if not found.
      */
-    Material resolveTexture(String name);
+    RenderMaterial resolveTexture(String name);
 
     /**
      * @return True if the item uses 3D lighting.

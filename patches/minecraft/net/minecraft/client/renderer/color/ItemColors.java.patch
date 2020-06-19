@@ -10,7 +10,7 @@
  
     public static ItemColors func_186729_a(BlockColors p_186729_0_) {
        ItemColors itemcolors = new ItemColors();
-@@ -80,17 +81,18 @@
+@@ -82,17 +83,18 @@
        itemcolors.func_199877_a((p_210237_0_, p_210237_1_) -> {
           return p_210237_1_ == 0 ? -1 : FilledMapItem.func_190907_h(p_210237_0_);
        }, Items.field_151098_aY);

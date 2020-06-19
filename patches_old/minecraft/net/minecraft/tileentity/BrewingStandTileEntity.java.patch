@@ -1,0 +1,76 @@
+--- a/net/minecraft/tileentity/BrewingStandTileEntity.java
++++ b/net/minecraft/tileentity/BrewingStandTileEntity.java
+@@ -146,6 +146,7 @@
+ 
+    private boolean func_145934_k() {
+       ItemStack itemstack = this.field_145945_j.get(3);
++      if (!itemstack.func_190926_b()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, itemstack, field_145947_i); // divert to VanillaBrewingRegistry
+       if (itemstack.func_190926_b()) {
+          return false;
+       } else if (!PotionBrewing.func_185205_a(itemstack)) {
+@@ -163,16 +164,16 @@
+    }
+ 
+    private void func_145940_l() {
++      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(field_145945_j)) return;
+       ItemStack itemstack = this.field_145945_j.get(3);
+ 
+-      for(int i = 0; i < 3; ++i) {
+-         this.field_145945_j.set(i, PotionBrewing.func_185212_d(itemstack, this.field_145945_j.get(i)));
+-      }
++      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, itemstack, field_145947_i);
+ 
+       itemstack.func_190918_g(1);
++      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
+       BlockPos blockpos = this.func_174877_v();
+-      if (itemstack.func_77973_b().func_77634_r()) {
+-         ItemStack itemstack1 = new ItemStack(itemstack.func_77973_b().func_77668_q());
++      if (itemstack.hasContainerItem()) {
++         ItemStack itemstack1 = itemstack.getContainerItem();
+          if (itemstack.func_190926_b()) {
+             itemstack = itemstack1;
+          } else if (!this.field_145850_b.field_72995_K) {
+@@ -229,13 +230,13 @@
+ 
+    public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
+       if (p_94041_1_ == 3) {
+-         return PotionBrewing.func_185205_a(p_94041_2_);
++         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_);
+       } else {
+          Item item = p_94041_2_.func_77973_b();
+          if (p_94041_1_ == 4) {
+             return item == Items.field_151065_br;
+          } else {
+-            return (item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo) && this.func_70301_a(p_94041_1_).func_190926_b();
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b();
+          }
+       }
+    }
+@@ -267,4 +268,27 @@
+    protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
+       return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
+    }
++
++   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
++           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
++      if (!this.field_145846_f && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++         if (facing == Direction.UP)
++            return handlers[0].cast();
++         else if (facing == Direction.DOWN)
++            return handlers[1].cast();
++         else
++            return handlers[2].cast();
++      }
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void func_145843_s() {
++      super.func_145843_s();
++      for (int x = 0; x < handlers.length; x++)
++        handlers[x].invalidate();
++   }
+ }

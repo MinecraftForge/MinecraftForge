@@ -56,7 +56,7 @@ public class CommandEventTest
         if (nodes.size() > 0 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("give"))
         {
             String msg = source.getName() + " used the give command: " + event.getParseResults().getReader().getString();
-            source.getServer().getPlayerList().getPlayers().forEach(PlayerEntityMP -> PlayerEntityMP.sendMessage(new StringTextComponent(msg)));
+            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new StringTextComponent(msg), player.getUniqueID()));
             return;
         }
 

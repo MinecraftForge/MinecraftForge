@@ -9,7 +9,7 @@
     private final Queue<Particle> field_187241_h = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleManager.AnimatedSpriteImpl> field_215242_i = Maps.newHashMap();
     private final AtlasTexture field_215243_j = new AtlasTexture(AtlasTexture.field_215262_g);
-@@ -143,13 +143,13 @@
+@@ -153,13 +153,13 @@
     }
  
     public <T extends IParticleData> void func_199283_a(ParticleType<T> p_199283_1_, IParticleFactory<T> p_199283_2_) {
@@ -25,21 +25,16 @@
     }
  
     public CompletableFuture<Void> func_215226_a(IFutureReloadListener.IStage p_215226_1_, IResourceManager p_215226_2_, IProfiler p_215226_3_, IProfiler p_215226_4_, Executor p_215226_5_, Executor p_215226_6_) {
-@@ -238,11 +238,12 @@
+@@ -248,7 +248,7 @@
  
     @Nullable
     private <T extends IParticleData> Particle func_199927_b(T p_199927_1_, double p_199927_2_, double p_199927_4_, double p_199927_6_, double p_199927_8_, double p_199927_10_, double p_199927_12_) {
--      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>) this.field_178932_g.get(Registry.field_212632_u.func_148757_b(p_199927_1_.func_197554_b()));
-+      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>) this.field_178932_g.get(Registry.field_212632_u.func_177774_c(p_199927_1_.func_197554_b()));
+-      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>)this.field_178932_g.get(Registry.field_212632_u.func_148757_b(p_199927_1_.func_197554_b()));
++      IParticleFactory<T> iparticlefactory = (IParticleFactory<T>)this.field_178932_g.get(Registry.field_212632_u.func_177774_c(p_199927_1_.func_197554_b()));
        return iparticlefactory == null ? null : iparticlefactory.func_199234_a(p_199927_1_, this.field_78878_a, p_199927_2_, p_199927_4_, p_199927_6_, p_199927_8_, p_199927_10_, p_199927_12_);
     }
  
-    public void func_78873_a(Particle p_78873_1_) {
-+      if (p_78873_1_ == null) return; //Forge: Prevent modders from being bad and adding nulls causing untraceable NPEs.
-       this.field_187241_h.add(p_78873_1_);
-    }
- 
-@@ -305,14 +306,18 @@
+@@ -315,14 +315,18 @@
  
     public void func_228345_a_(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_) {
        p_228345_3_.func_205109_c();
@@ -59,7 +54,7 @@
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -351,7 +356,7 @@
+@@ -362,7 +366,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
@@ -68,7 +63,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_228348_3_, p_228348_5_, p_228348_7_, p_228348_9_, p_228348_11_, p_228348_13_) -> {
-@@ -423,6 +428,12 @@
+@@ -434,6 +438,12 @@
        return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
     }
  

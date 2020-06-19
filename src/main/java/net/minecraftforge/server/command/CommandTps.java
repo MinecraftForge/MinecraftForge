@@ -26,7 +26,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 
 class CommandTps
 {
@@ -41,7 +41,7 @@ class CommandTps
                 .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.getDimensionArgument(ctx, "dim")))
             )
             .executes(ctx -> {
-                for (DimensionType dim : DimensionType.getAll())
+                for (ServerWorld dim : ctx.getSource().getServer().getWorlds())
                     sendTime(ctx.getSource(), dim);
 
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
@@ -53,16 +53,16 @@ class CommandTps
         );
     }
 
-    private static int sendTime(CommandSource cs, DimensionType dim) throws CommandSyntaxException
+    private static int sendTime(CommandSource cs, ServerWorld dim) throws CommandSyntaxException
     {
-        long[] times = cs.getServer().getTickTime(dim);
+        long[] times = cs.getServer().getTickTime(dim.func_234923_W_());
 
         if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
             times = UNLOADED;
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().toString(), dim.func_234922_V_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }

@@ -9,7 +9,7 @@
     }
  
     public boolean func_150897_b(BlockState p_150897_1_) {
-@@ -40,7 +40,7 @@
+@@ -39,7 +39,7 @@
           PlayerEntity playerentity = p_195939_1_.func_195999_j();
           BlockState blockstate1 = field_195955_e.get(blockstate.func_177230_c());
           BlockState blockstate2 = null;

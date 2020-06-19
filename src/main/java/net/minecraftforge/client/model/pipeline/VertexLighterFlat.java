@@ -24,9 +24,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -34,8 +32,9 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
+import net.minecraft.world.IBlockDisplayReader;
 
 import java.util.List;
 import java.util.Objects;
@@ -222,7 +221,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 switch(element.getUsage())
                 {
                     case POSITION:
-                        final net.minecraft.client.renderer.Vector4f pos = new net.minecraft.client.renderer.Vector4f(
+                        final Vector4f pos = new Vector4f(
                                 position[v][0], position[v][1], position[v][2], 1);
                         pos.transform(pose.getMatrix());
 
@@ -232,7 +231,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         parent.put(e, position[v]);
                         break;
                     case NORMAL:
-                        final net.minecraft.client.renderer.Vector3f norm = new net.minecraft.client.renderer.Vector3f(normal[v]);
+                        final Vector3f norm = new Vector3f(normal[v]);
                         norm.transform(pose.getNormal());
 
                         normal[v][0] = norm.getX();
@@ -306,7 +305,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(ILightReader world)
+    public void setWorld(IBlockDisplayReader world)
     {
         blockInfo.setWorld(world);
     }

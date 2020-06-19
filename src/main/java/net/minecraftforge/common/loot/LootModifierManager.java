@@ -30,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.loot.conditions.LootConditionManager;
+import net.minecraft.loot.functions.ILootFunction;
+import net.minecraft.loot.functions.LootFunctionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,15 +52,11 @@ import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraft.world.storage.loot.conditions.LootConditionManager;
-import net.minecraft.world.storage.loot.functions.ILootFunction;
-import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends JsonReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, new LootFunctionManager.Serializer()).registerTypeHierarchyAdapter(ILootCondition.class, new LootConditionManager.Serializer()).create();
+    private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, LootFunctionManager.func_237450_a_()).registerTypeHierarchyAdapter(ILootCondition.class, LootConditionManager.func_237474_a_()).create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
@@ -66,7 +66,7 @@ public class LootModifierManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonObject> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
         //old way (for reference)
         /*Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
@@ -116,7 +116,8 @@ public class LootModifierManager extends JsonReloadListener {
         finalLocations.forEach(location -> {
             try {
                 IGlobalLootModifier modifier = deserializeModifier(location, resourceList.get(location));
-                builder.put(location, modifier);
+                if(modifier != null)
+                    builder.put(location, modifier);
             } catch (Exception exception) {
                 LOGGER.error("Couldn't parse loot modifier {}", location, exception);
             }
@@ -125,7 +126,9 @@ public class LootModifierManager extends JsonReloadListener {
         this.registeredLootModifiers = immutablemap;
     }
 
-    private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonObject object) {
+    private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonElement element) {
+        if (!element.isJsonObject()) return null;
+        JsonObject object = element.getAsJsonObject();
         ILootCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
 
         // For backward compatibility with the initial implementation, fall back to using the location as the type.

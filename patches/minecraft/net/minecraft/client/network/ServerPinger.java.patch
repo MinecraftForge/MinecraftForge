@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/network/ServerPinger.java
 +++ b/net/minecraft/client/network/ServerPinger.java
-@@ -120,6 +120,8 @@
-                   p_147224_1_.func_147407_a((String)null);
+@@ -116,6 +116,8 @@
+                   p_147224_2_.run();
                 }
  
 +               net.minecraftforge.fml.client.ClientHooks.processForgeListPingData(serverstatusresponse, p_147224_1_);

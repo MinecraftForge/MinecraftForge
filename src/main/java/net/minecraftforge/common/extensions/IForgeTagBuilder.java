@@ -19,24 +19,25 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-
-import com.google.gson.JsonArray;
-
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraft.data.TagsProvider;
+import net.minecraft.tags.ITag;
 
 public interface IForgeTagBuilder<T>
 {
 
-    default Tag.Builder<T> addOptional(final TagCollection<T> collection, final ResourceLocation... locations)
+    default TagsProvider.Builder<T> getBuilder() {
+        return (TagsProvider.Builder<T>) this;
+    }
+
+    default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
+        TagsProvider.Builder<T> builder = getBuilder();
+        for (ITag.INamedTag<T> value : values) {
+            builder.func_240531_a_(value);
+        }
+        return builder;
+    }
+
+    /*default Tag.Builder<T> addOptional(final TagCollection<T> collection, final ResourceLocation... locations)
     {
         return addOptional(collection, Arrays.asList(locations));
     }
@@ -104,5 +105,5 @@ public interface IForgeTagBuilder<T>
         };
 
         return ((Tag.Builder<T>)this).add(new TagTarget<>(tag));
-    }
+    }*/
 }

@@ -12,7 +12,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        BlockState blockstate = p_195481_0_.func_180495_p(p_195481_1_);
--      if (blockstate.func_177230_c().func_149716_u()) {
+-      if (blockstate.func_177230_c().func_235695_q_()) {
 +      if (blockstate.hasTileEntity()) {
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {

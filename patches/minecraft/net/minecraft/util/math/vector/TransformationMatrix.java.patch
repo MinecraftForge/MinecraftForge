@@ -1,0 +1,44 @@
+--- a/net/minecraft/util/math/vector/TransformationMatrix.java
++++ b/net/minecraft/util/math/vector/TransformationMatrix.java
+@@ -9,7 +9,7 @@
+ import org.apache.commons.lang3.tuple.Triple;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public final class TransformationMatrix {
++public final class TransformationMatrix implements net.minecraftforge.client.extensions.IForgeTransformationMatrix {
+    private final Matrix4f field_227976_a_;
+    private boolean field_227977_b_;
+    @Nullable
+@@ -133,4 +133,32 @@
+    public int hashCode() {
+       return Objects.hash(this.field_227976_a_);
+    }
++
++    // FORGE START
++    public Vector3f getTranslation() {
++        func_227990_e_();
++        return field_227978_c_.func_229195_e_();
++    }
++    public Vector3f getScale() {
++        func_227990_e_();
++        return field_227980_e_.func_229195_e_();
++    }
++
++    public Quaternion getRightRot() {
++        func_227990_e_();
++        return field_227981_f_.func_227068_g_();
++    }
++
++    private Matrix3f normalTransform = null;
++    public Matrix3f getNormalMatrix() {
++        checkNormalTransform();
++        return normalTransform;
++    }
++    private void checkNormalTransform() {
++        if (normalTransform == null) {
++            normalTransform = new Matrix3f(field_227976_a_);
++            normalTransform.func_226123_f_();
++            normalTransform.func_226110_a_();
++        }
++    }
+ }

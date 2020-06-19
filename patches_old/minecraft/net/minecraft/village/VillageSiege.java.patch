@@ -1,0 +1,22 @@
+--- a/net/minecraft/village/VillageSiege.java
++++ b/net/minecraft/village/VillageSiege.java
+@@ -74,7 +74,9 @@
+                   this.field_75532_g = blockpos.func_177958_n() + MathHelper.func_76141_d(MathHelper.func_76134_b(f) * 32.0F);
+                   this.field_75538_h = blockpos.func_177956_o();
+                   this.field_75539_i = blockpos.func_177952_p() + MathHelper.func_76141_d(MathHelper.func_76126_a(f) * 32.0F);
+-                  if (this.func_225476_a(p_75529_1_, new BlockPos(this.field_75532_g, this.field_75538_h, this.field_75539_i)) != null) {
++                  Vec3d siegeLocation = this.func_225476_a(p_75529_1_, new BlockPos(this.field_75532_g, this.field_75538_h, this.field_75539_i));
++                  if (siegeLocation != null) {
++                     if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, p_75529_1_, playerentity, siegeLocation))) return false;
+                      this.field_75534_e = 0;
+                      this.field_75533_d = 20;
+                      break;
+@@ -94,7 +96,7 @@
+       if (vec3d != null) {
+          ZombieEntity zombieentity;
+          try {
+-            zombieentity = new ZombieEntity(p_75530_1_);
++            zombieentity = EntityType.field_200725_aD.func_200721_a(p_75530_1_); //Forge: Direct Initialization is deprecated, use EntityType.
+             zombieentity.func_213386_a(p_75530_1_, p_75530_1_.func_175649_E(new BlockPos(zombieentity)), SpawnReason.EVENT, (ILivingEntityData)null, (CompoundNBT)null);
+          } catch (Exception exception) {
+             exception.printStackTrace();

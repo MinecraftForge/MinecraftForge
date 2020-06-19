@@ -1,0 +1,38 @@
+--- a/net/minecraft/item/crafting/ShulkerBoxColoringRecipe.java
++++ b/net/minecraft/item/crafting/ShulkerBoxColoringRecipe.java
+@@ -25,7 +25,7 @@
+             if (Block.func_149634_a(itemstack.func_77973_b()) instanceof ShulkerBoxBlock) {
+                ++i;
+             } else {
+-               if (!(itemstack.func_77973_b() instanceof DyeItem)) {
++               if (!itemstack.func_77973_b().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
+                   return false;
+                }
+ 
+@@ -43,7 +43,7 @@
+ 
+    public ItemStack func_77572_b(CraftingInventory p_77572_1_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+-      DyeItem dyeitem = (DyeItem)Items.field_222069_lA;
++      net.minecraft.item.DyeColor dyecolor = net.minecraft.item.DyeColor.WHITE;
+ 
+       for(int i = 0; i < p_77572_1_.func_70302_i_(); ++i) {
+          ItemStack itemstack1 = p_77572_1_.func_70301_a(i);
+@@ -51,13 +51,14 @@
+             Item item = itemstack1.func_77973_b();
+             if (Block.func_149634_a(item) instanceof ShulkerBoxBlock) {
+                itemstack = itemstack1;
+-            } else if (item instanceof DyeItem) {
+-               dyeitem = (DyeItem)item;
++            } else {
++               net.minecraft.item.DyeColor tmp = net.minecraft.item.DyeColor.getColor(itemstack1);
++               if (tmp != null) dyecolor = tmp;
+             }
+          }
+       }
+ 
+-      ItemStack itemstack2 = ShulkerBoxBlock.func_190953_b(dyeitem.func_195962_g());
++      ItemStack itemstack2 = ShulkerBoxBlock.func_190953_b(dyecolor);
+       if (itemstack.func_77942_o()) {
+          itemstack2.func_77982_d(itemstack.func_77978_p().func_74737_b());
+       }

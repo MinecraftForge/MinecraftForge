@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common;
+/*package net.minecraftforge.common;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +63,7 @@ import net.minecraft.world.chunk.listener.IChunkStatusListener;
 import net.minecraft.world.server.ServerMultiWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
@@ -108,7 +109,7 @@ public class DimensionManager
      * @param hasSkyLight does this dimension have a skylight?
      * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
-     */
+     * /
     public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
         return REGISTRY.getValue(name).orElseGet(()->registerDimension(name, type, data, hasSkyLight));
@@ -125,7 +126,7 @@ public class DimensionManager
      * @param hasSkyLight skylight for this dimension
      * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
-     */
+     * /
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
         Validate.notNull(name, "Can not register a dimension with null name");
@@ -154,7 +155,7 @@ public class DimensionManager
      * @param dim The dimension
      * @param value True to keep loaded, false to allow unloading
      * @return The old value for this dimension.
-     */
+     * /
     public static boolean keepLoaded(DimensionType dim, boolean value)
     {
         Validate.notNull(dim, "Dimension type must not be null");
@@ -168,7 +169,7 @@ public class DimensionManager
      * Determines if the dimension will stay loaded in memory even if all chunks are unloaded.
      * @param dim The dimension
      * @return True if the dimension will stay loaded with no chunks loaded.
-     */
+     * /
     public static boolean keepLoaded(DimensionType dim)
     {
         Validate.notNull(dim, "Dimension type must not be null");
@@ -184,7 +185,7 @@ public class DimensionManager
      * @param resetUnloadDelay True to reset the unload timer, which is a delay that is used to prevent constant world loading/unloading cycle.
      * @param forceLoad True to attempt to load the dimension if the server has it unloaded.
      * @return The world, null if unloaded and not loadable.
-     */
+     * /
     @Nullable
     public static ServerWorld getWorld(MinecraftServer server, DimensionType dim, boolean resetUnloadDelay, boolean forceLoad)
     {
@@ -219,7 +220,7 @@ public class DimensionManager
      * Vanilla dimensions are not supported and will throw an exception.
      *
      * @param dim the dimension to delete
-     */
+     * /
     public static void markForDeletion(DimensionType dim)
     {
         if (dim.isVanilla())
@@ -248,7 +249,7 @@ public class DimensionManager
     /**
      * Deprecated, unregistering dimensions at runtime is not supported.
      * @see DimensionManager#markForDeletion(DimensionType)
-     */
+     * /
     @Deprecated
     public static void unregisterDimension(int id)
     {
@@ -302,7 +303,7 @@ public class DimensionManager
     /**
      * Queues a dimension to unload, if it can be unloaded.
      * @param world The world to unload
-     */
+     * /
     public static void unloadWorld(ServerWorld world)
     {
         if (world == null || !canUnloadWorld(world))
@@ -466,7 +467,7 @@ public class DimensionManager
                 .forEach(foldersScheduledForDeletion::add);
     }
 
-    public static void processScheduledDeletions(SaveHandler saveHandler)
+    public static void processScheduledDeletions(SaveFormat.LevelSave levelSave)
     {
         List<String> toDelete = new ArrayList<>(foldersScheduledForDeletion);
         foldersScheduledForDeletion.clear();
@@ -486,7 +487,7 @@ public class DimensionManager
         }
         for (String folderName : toDelete)
         {
-            File folder = new File(saveHandler.getWorldDirectory(), folderName);
+            File folder = new File(levelSave.getWorldDir().toFile(), folderName);
             try
             {
                 FileUtils.deleteDirectory(folder);
@@ -613,4 +614,4 @@ public class DimensionManager
         playerWorlds = players.getPlayers().stream().map(e -> e.world).collect(Collectors.toSet());
         return changed;
     }
-}
+}*/

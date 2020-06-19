@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.extensions;
 
-import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.util.math.vector.TransformationMatrix;
 
 /**
  * An {@code IModelState} is a function from model part to a transformation that should be applied

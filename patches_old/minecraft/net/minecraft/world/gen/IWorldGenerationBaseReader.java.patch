@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/IWorldGenerationBaseReader.java
++++ b/net/minecraft/world/gen/IWorldGenerationBaseReader.java
+@@ -8,4 +8,8 @@
+    boolean func_217375_a(BlockPos p_217375_1_, Predicate<BlockState> p_217375_2_);
+ 
+    BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_);
++
++   default int getMaxHeight() {
++      return this instanceof net.minecraft.world.IWorld ? ((net.minecraft.world.IWorld)this).func_201672_e().func_201675_m().getHeight() : 256;
++   }
+ }

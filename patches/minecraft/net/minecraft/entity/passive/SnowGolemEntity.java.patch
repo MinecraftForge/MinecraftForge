@@ -1,15 +1,6 @@
 --- a/net/minecraft/entity/passive/SnowGolemEntity.java
 +++ b/net/minecraft/entity/passive/SnowGolemEntity.java
-@@ -33,7 +33,7 @@
- import net.minecraft.world.GameRules;
- import net.minecraft.world.World;
- 
--public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob {
-+public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob, net.minecraftforge.common.IShearable {
-    private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(SnowGolemEntity.class, DataSerializers.field_187191_a);
- 
-    public SnowGolemEntity(EntityType<? extends SnowGolemEntity> p_i50244_1_, World p_i50244_2_) {
-@@ -88,7 +88,7 @@
+@@ -93,7 +93,7 @@
              this.func_70097_a(DamageSource.field_76370_b, 1.0F);
           }
  
@@ -18,7 +9,7 @@
              return;
           }
  
-@@ -99,7 +99,7 @@
+@@ -104,7 +104,7 @@
              j = MathHelper.func_76128_c(this.func_226278_cu_());
              k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
@@ -27,28 +18,3 @@
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }
-@@ -125,7 +125,7 @@
- 
-    protected boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
-       ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
--      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) {
-+      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) { //Forge: Moved to onSheared
-          if (!this.field_70170_p.field_72995_K) {
-             this.func_184747_a(false);
-             itemstack.func_222118_a(1, p_184645_1_, (p_213622_1_) -> {
-@@ -167,4 +167,15 @@
-    protected SoundEvent func_184615_bR() {
-       return SoundEvents.field_187801_fC;
-    }
-+
-+   @Override
-+   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
-+      return this.func_184748_o();
-+   }
-+
-+   @Override
-+   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {
-+      this.func_184747_a(false);
-+      return new java.util.ArrayList<>();
-+   }
- }

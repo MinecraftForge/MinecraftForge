@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.block.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -49,19 +50,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.block.BarrelBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.FurnaceBlock;
-import net.minecraft.block.LogBlock;
-import net.minecraft.block.PaneBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.TrapDoorBlock;
-import net.minecraft.block.WallBlock;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.Variant;
@@ -200,9 +188,9 @@ public class DataGeneratorTest
         @Override
         protected void registerTags()
         {
-            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "test")))
-                .add(Blocks.DIAMOND_BLOCK)
-                .add(BlockTags.STONE_BRICKS)
+            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
+                .func_240532_a_(Blocks.DIAMOND_BLOCK)
+                .func_240531_a_(BlockTags.STONE_BRICKS)
                 .addOptional(BlockTags.getCollection(), new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
@@ -409,7 +397,7 @@ public class DataGeneratorTest
             models().getBuilder("cube")
                 .parent(block)
                 .element()
-                    .allFaces((dir, face) -> face.texture("#" + dir.getName()).cullface(dir));
+                    .allFaces((dir, face) -> face.texture("#" + dir.func_176610_l()).cullface(dir));
 
             ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
             ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
@@ -425,7 +413,7 @@ public class DataGeneratorTest
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
 
-            logBlock((LogBlock) Blocks.ACACIA_LOG);
+            logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
             slabBlock((SlabBlock) Blocks.ACACIA_SLAB, Blocks.ACACIA_PLANKS.getRegistryName(), mcLoc("block/acacia_planks"));

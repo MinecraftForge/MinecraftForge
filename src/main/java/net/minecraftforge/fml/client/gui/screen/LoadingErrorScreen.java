@@ -20,11 +20,14 @@
 package net.minecraftforge.fml.client.gui.screen;
 
 import com.google.common.base.Strings;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.ErrorScreen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.Util;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ForgeI18n;
@@ -50,8 +53,8 @@ public class LoadingErrorScreen extends ErrorScreen {
     private final List<ModLoadingException> modLoadErrors;
     private final List<ModLoadingWarning> modLoadWarnings;
     private LoadingEntryList entryList;
-    private String errorHeader;
-    private String warningHeader;
+    private ITextComponent errorHeader;
+    private ITextComponent warningHeader;
 
     public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings)
     {
@@ -63,95 +66,95 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     @Override
-    public void init()
+    public void func_231160_c_()
     {
-        super.init();
-        this.buttons.clear();
-        this.children.clear();
+        super.func_231160_c_();
+        this.field_230710_m_.clear();
+        this.field_230705_e_.clear();
 
-        this.errorHeader = TextFormatting.RED + ForgeI18n.parseMessage("fml.loadingerrorscreen.errorheader", this.modLoadErrors.size()) + TextFormatting.RESET;
-        this.warningHeader = TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET;
+        this.errorHeader = new StringTextComponent(TextFormatting.RED + ForgeI18n.parseMessage("fml.loadingerrorscreen.errorheader", this.modLoadErrors.size()) + TextFormatting.RESET);
+        this.warningHeader = new StringTextComponent(TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET);
 
         int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
-        this.addButton(new ExtendedButton(50, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.mods.folder"), b -> Util.getOSType().openFile(modsDir.toFile())));
-        this.addButton(new ExtendedButton(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), b -> Util.getOSType().openFile(logFile.toFile())));
+        this.func_230480_a_(new ExtendedButton(50, this.field_230709_l_ - yOffset, this.field_230708_k_ / 2 - 55, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getOSType().openFile(modsDir.toFile())));
+        this.func_230480_a_(new ExtendedButton(this.field_230708_k_ / 2 + 5, this.field_230709_l_ - yOffset, this.field_230708_k_ / 2 - 55, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), b -> Util.getOSType().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
-            this.addButton(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, ForgeI18n.parseMessage("fml.button.continue.launch"), b -> {
+            this.func_230480_a_(new ExtendedButton(this.field_230708_k_ / 4, this.field_230709_l_ - 24, this.field_230708_k_ / 2, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> {
                 ClientHooks.logMissingTextureErrors();
-                this.minecraft.displayGuiScreen(null);
+                this.field_230706_i_.displayGuiScreen(null);
             }));
         }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
-        this.children.add(this.entryList);
-        this.setFocused(this.entryList);
+        this.field_230705_e_.add(this.entryList);
+        this.func_231035_a_(this.entryList);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        this.entryList.render(mouseX, mouseY, partialTicks);
-        drawMultiLineCenteredString(font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
-        this.buttons.forEach(button -> button.render(mouseX, mouseY, partialTicks));
+        this.func_230446_a_(mStack);
+        this.entryList.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+        drawMultiLineCenteredString(mStack, field_230712_o_, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.field_230708_k_ / 2, 10);
+        this.field_230710_m_.forEach(button -> button.func_230430_a_(mStack, mouseX, mouseY, partialTicks));
     }
 
-    private void drawMultiLineCenteredString(FontRenderer fr, String str, int x, int y) {
-        for (String s : fr.listFormattedStringToWidth(str, this.width)) {
-            fr.drawStringWithShadow(s, (float) (x - fr.getStringWidth(s) / 2.0), y, 0xFFFFFF);
+    private void drawMultiLineCenteredString(MatrixStack mStack, FontRenderer fr, ITextComponent str, int x, int y) {
+        for (ITextProperties s : fr.func_238425_b_(str, this.field_230708_k_)) {
+            fr.func_238407_a_(mStack, s, (float) (x - fr.func_238414_a_(s) / 2.0), y, 0xFFFFFF);
             y+=fr.FONT_HEIGHT;
         }
     }
     public static class LoadingEntryList extends ExtendedList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
-            super(parent.minecraft, parent.width, parent.height, 35, parent.height - 50, 2 * parent.minecraft.fontRenderer.FONT_HEIGHT + 8);
+            super(parent.field_230706_i_, parent.field_230708_k_, parent.field_230709_l_, 35, parent.field_230709_l_ - 50, 2 * parent.field_230706_i_.fontRenderer.FONT_HEIGHT + 8);
             boolean both = !errors.isEmpty() && !warnings.isEmpty();
             if (both)
-                addEntry(new LoadingMessageEntry(parent.errorHeader, true));
-            errors.forEach(e->addEntry(new LoadingMessageEntry(e.formatToString())));
+                func_230513_b_(new LoadingMessageEntry(parent.errorHeader, true));
+            errors.forEach(e->func_230513_b_(new LoadingMessageEntry(new StringTextComponent(e.formatToString()))));
             if (both) {
-                int maxChars = (this.width - 10) / parent.minecraft.fontRenderer.getStringWidth("-");
-                addEntry(new LoadingMessageEntry("\n" + Strings.repeat("-", maxChars) + "\n"));
-                addEntry(new LoadingMessageEntry(parent.warningHeader, true));
+                int maxChars = (this.field_230670_d_ - 10) / parent.field_230706_i_.fontRenderer.getStringWidth("-");
+                func_230513_b_(new LoadingMessageEntry(new StringTextComponent("\n" + Strings.repeat("-", maxChars) + "\n")));
+                func_230513_b_(new LoadingMessageEntry(parent.warningHeader, true));
             }
-            warnings.forEach(w->addEntry(new LoadingMessageEntry(w.formatToString())));
+            warnings.forEach(w->func_230513_b_(new LoadingMessageEntry(new StringTextComponent(w.formatToString()))));
         }
 
         @Override
-        protected int getScrollbarPosition()
+        protected int func_230952_d_()
         {
             return this.getRight() - 6;
         }
 
         @Override
-        public int getRowWidth()
+        public int func_230949_c_()
         {
-            return this.width;
+            return this.field_230670_d_;
         }
 
         public class LoadingMessageEntry extends ExtendedList.AbstractListEntry<LoadingMessageEntry> {
-            private final String message;
+            private final ITextComponent message;
             private final boolean center;
 
-            LoadingMessageEntry(final String message) {
+            LoadingMessageEntry(final ITextComponent message) {
                 this(message, false);
             }
 
-            LoadingMessageEntry(final String message, final boolean center) {
+            LoadingMessageEntry(final ITextComponent message, final boolean center) {
                 this.message = Objects.requireNonNull(message);
                 this.center = center;
             }
 
             @Override
-            public void render(int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
+            public void func_230432_a_(MatrixStack mStack, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
                 FontRenderer font = Minecraft.getInstance().fontRenderer;
-                final List<String> strings = font.listFormattedStringToWidth(message, LoadingEntryList.this.width);
+                final List<ITextProperties> strings = font.func_238425_b_(message, LoadingEntryList.this.field_230670_d_);
                 int y = top + 2;
                 for (int i = 0; i < Math.min(strings.size(), 2); i++) {
                     if (center)
-                        font.drawString(strings.get(i), left + (width  / 2F) - font.getStringWidth(strings.get(i)) / 2F, y, 0xFFFFFF);
+                        font.func_238422_b_(mStack, strings.get(i), left + (field_230670_d_) - font.func_238414_a_(strings.get(i)) / 2F, y, 0xFFFFFF);
                     else
-                        font.drawString(strings.get(i), left + 5, y, 0xFFFFFF);
+                        font.func_238422_b_(mStack, strings.get(i), left + 5, y, 0xFFFFFF);
                     y += font.FONT_HEIGHT;
                 }
             }

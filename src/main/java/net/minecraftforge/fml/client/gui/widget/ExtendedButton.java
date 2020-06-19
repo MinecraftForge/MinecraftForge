@@ -19,8 +19,12 @@
 
 package net.minecraftforge.fml.client.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 /**
@@ -35,7 +39,7 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
  */
 public class ExtendedButton extends Button
 {
-    public ExtendedButton(int xPos, int yPos, int width, int height, String displayString, IPressable handler)
+    public ExtendedButton(int xPos, int yPos, int width, int height, ITextComponent displayString, IPressable handler)
     {
         super(xPos, yPos, width, height, displayString, handler);
     }
@@ -44,24 +48,25 @@ public class ExtendedButton extends Button
      * Draws this button to the screen.
      */
     @Override
-    public void renderButton(int mouseX, int mouseY, float partial)
+    public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial)
     {
-        if (this.visible)
+        if (this.field_230694_p_)
         {
             Minecraft mc = Minecraft.getInstance();
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int k = this.getYImage(this.isHovered);
-            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
-            this.renderBg(mc, mouseX, mouseY);
+            this.field_230692_n_ = mouseX >= this.field_230690_l_ && mouseY >= this.field_230691_m_ && mouseX < this.field_230690_l_ + this.field_230688_j_ && mouseY < this.field_230691_m_ + this.field_230689_k_;
+            int k = this.func_230989_a_(this.func_230449_g_());
+            GuiUtils.drawContinuousTexturedBox(field_230687_i_, this.field_230690_l_, this.field_230691_m_, 0, 46 + k * 20, this.field_230688_j_, this.field_230689_k_, 200, 20, 2, 3, 2, 2, this.func_230927_p_());
+            this.func_230441_a_(mStack, mc, mouseX, mouseY);
 
-            String buttonText = this.getMessage();
-            int strWidth = mc.fontRenderer.getStringWidth(buttonText);
+            ITextComponent buttonText = this.func_230442_c_();
+            int strWidth = mc.fontRenderer.func_238414_a_(buttonText);
             int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
 
-            if (strWidth > width - 6 && strWidth > ellipsisWidth)
-                buttonText = mc.fontRenderer.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
+            if (strWidth > field_230688_j_ - 6 && strWidth > ellipsisWidth)
+                //TODO, srg names make it hard to figure out how to append to an ITextProperties from this trim operation, wraping this in StringTextComponent is kinda dirty.
+                buttonText = new StringTextComponent(mc.fontRenderer.func_238417_a_(buttonText, field_230688_j_ - 6 - ellipsisWidth).getString() + "...");
 
-            this.drawCenteredString(mc.fontRenderer, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
+            this.func_238472_a_(mStack, mc.fontRenderer, buttonText, this.field_230690_l_ + this.field_230688_j_ / 2, this.field_230691_m_ + (this.field_230689_k_ - 8) / 2, getFGColor());
         }
     }
 }
