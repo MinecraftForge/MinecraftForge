@@ -22,7 +22,7 @@
 -   STONECUTTER(new ItemStack(Items.field_221782_da)),
 -   CAMPFIRE(new ItemStack(Items.field_151147_al));
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
-+public class RecipeBookCategories extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeBookCategories> {
++public class RecipeBookCategories extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeBookCategories> implements Comparable<RecipeBookCategories> {
 +   public static final RecipeBookCategories SEARCH = register(new RecipeBookCategories(net.minecraft.item.crafting.IRecipeType.field_222149_a).setIcon(new ItemStack(Items.field_151111_aL)).setSearch(), "search");
 +   public static final RecipeBookCategories BUILDING_BLOCKS = register(new RecipeBookCategories(net.minecraft.item.crafting.IRecipeType.field_222149_a).setPredicate(RecipeBookCategories::buildingBlocksPredicate).setIcon(new ItemStack(Blocks.field_196584_bK)), "building_blocks");
 +   public static final RecipeBookCategories REDSTONE = register(new RecipeBookCategories(net.minecraft.item.crafting.IRecipeType.field_222149_a).setPredicate(RecipeBookCategories::redstonePredicate).setIcon(new ItemStack(Items.field_151137_ax)), "redstone");
@@ -42,7 +42,7 @@
  
     private List<ItemStack> field_202904_j;
  
-@@ -36,4 +37,106 @@
+@@ -36,4 +37,145 @@
     public List<ItemStack> func_202903_a() {
        return this.field_202904_j;
     }
@@ -54,6 +54,30 @@
 +
 +   public RecipeBookCategories(net.minecraft.item.crafting.IRecipeType<?> recipeType) {
 +      this.recipeType = recipeType;
++   }
++
++   @Override
++   public int compareTo(RecipeBookCategories to) {
++      if (this.equals(to)) {
++         return 0;
++      }
++
++      Integer thisValue = VANILLA_LIST.get(this);
++      Integer toValue = VANILLA_LIST.get(to);
++
++      if (thisValue == null && toValue == null) {
++         if (getRegistryName() != null) {
++            return getRegistryName().compareTo(to.getRegistryName());
++         } else {
++            return (hashCode() > to.hashCode()) ? 1 : -1;
++         }
++      } else if (thisValue == null) {
++         return 1;
++      } else if (toValue == null){
++         return -1;
++      }
++
++      return Integer.compare(thisValue, toValue);
 +   }
 +
 +   public boolean isSearch() {
@@ -85,12 +109,6 @@
 +   public RecipeBookCategories setIcon(ItemStack... items) {
 +      this.field_202904_j = ImmutableList.copyOf(items);
 +      return this;
-+   }
-+
-+   public static java.util.Optional<RecipeBookCategories> getSearchCategory(net.minecraft.item.crafting.IRecipe<?> recipe) {
-+      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
-+         return recipe.func_222127_g().equals(category.recipeType) && category.isSearch;
-+      }).findFirst();
 +   }
 +
 +   public static List<RecipeBookCategories> getValidCategories(net.minecraft.item.crafting.IRecipe<?> recipe) {
@@ -147,5 +165,26 @@
 +
 +   private static boolean blastFurnaceMiscPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
 +      return !(recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem);
++   }
++   
++   private static final java.util.Map<RecipeBookCategories, Integer> VANILLA_LIST  = new java.util.HashMap<>();
++   static {
++      // priority map to stick with vanilla tabs order, custom tabs goes under them
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BUILDING_BLOCKS, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.REDSTONE, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.EQUIPMENT, 40);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.MISC, 50);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_FOOD, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_BLOCKS, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_MISC, 40);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_BLOCKS, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_MISC, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SMOKER_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SMOKER_FOOD, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.STONECUTTER, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CAMPFIRE, 40);
 +   }
  }

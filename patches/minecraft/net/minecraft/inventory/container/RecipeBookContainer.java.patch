@@ -1,37 +1,13 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -3,11 +3,15 @@
- import net.minecraft.entity.player.ServerPlayerEntity;
- import net.minecraft.inventory.IInventory;
- import net.minecraft.item.crafting.IRecipe;
-+import net.minecraft.item.crafting.IRecipeType;
- import net.minecraft.item.crafting.RecipeItemHelper;
- import net.minecraft.item.crafting.ServerRecipePlacer;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.registries.ForgeRegistries;
- 
-+import java.util.stream.Collectors;
-+
- public abstract class RecipeBookContainer<C extends IInventory> extends Container {
-    public RecipeBookContainer(ContainerType<?> p_i50067_1_, int p_i50067_2_) {
-       super(p_i50067_1_, p_i50067_2_);
-@@ -31,4 +35,18 @@
+@@ -31,4 +31,10 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
 +
-+   public abstract IRecipeType<?> getRecipeType();
++   public abstract net.minecraft.item.crafting.IRecipeType<?> getRecipeType();
 +
 +   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
-+      return ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> category.getRecipeType().equals(this.getRecipeType())).sorted((o1, o2) -> {
-+         if (o1.isSearch() && !o2.isSearch()) {
-+            return -1;
-+         } else if (!o1.isSearch() && o2.isSearch()) {
-+            return 1;
-+         }
-+
-+         return 0;
-+      }).collect(Collectors.toList());
++      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> category.getRecipeType().equals(this.getRecipeType())).sorted(net.minecraft.client.util.RecipeBookCategories::compareTo).collect(java.util.stream.Collectors.toList());
 +   }
  }
