@@ -180,14 +180,15 @@ public class CraftingBookTest {
     private static class TestGui extends ContainerScreen<TestContainer> implements IRecipeShownListener {
         private static final ResourceLocation RECIPE_BUTTON = new ResourceLocation("textures/gui/recipe_button.png");
         private static final ResourceLocation BACKGROUND = new ResourceLocation("textures/gui/container/furnace.png");
-        public final AbstractRecipeBookGui recipeBookGui;
+        private final AbstractRecipeBookGui recipeBookGui;
         private boolean narrowWidth;
 
-        public TestGui(TestContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+        private TestGui(TestContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
             super(screenContainer, inv, titleIn);
             this.recipeBookGui = new TestRecipeBookGui();
         }
 
+        @Override
         public void init() {
             super.init();
             this.narrowWidth = this.width < 379;
@@ -201,11 +202,13 @@ public class CraftingBookTest {
             })));
         }
 
+        @Override
         public void tick() {
             super.tick();
             this.recipeBookGui.tick();
         }
 
+        @Override
         public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
             this.renderBackground();
             if (this.recipeBookGui.isVisible() && this.narrowWidth) {
@@ -221,12 +224,14 @@ public class CraftingBookTest {
             this.recipeBookGui.renderTooltip(this.guiLeft, this.guiTop, p_render_1_, p_render_2_);
         }
 
+        @Override
         protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
             String s = this.title.getFormattedText();
             this.font.drawString(s, (float)(this.xSize / 2 - this.font.getStringWidth(s) / 2), 6.0F, 4210752);
             this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F, (float)(this.ySize - 96 + 2), 4210752);
         }
 
+        @Override
         protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.minecraft.getTextureManager().bindTexture(BACKGROUND);
@@ -235,6 +240,7 @@ public class CraftingBookTest {
             this.blit(i, j, 0, 0, this.xSize, this.ySize);
         }
 
+        @Override
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
             if (this.recipeBookGui.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
                 return true;
@@ -243,32 +249,39 @@ public class CraftingBookTest {
             }
         }
 
+        @Override
         protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
             super.handleMouseClick(slotIn, slotId, mouseButton, type);
             this.recipeBookGui.slotClicked(slotIn);
         }
 
+        @Override
         public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
             return this.recipeBookGui.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) ? false : super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
         }
 
+        @Override
         protected boolean hasClickedOutside(double p_195361_1_, double p_195361_3_, int p_195361_5_, int p_195361_6_, int p_195361_7_) {
             boolean flag = p_195361_1_ < (double)p_195361_5_ || p_195361_3_ < (double)p_195361_6_ || p_195361_1_ >= (double)(p_195361_5_ + this.xSize) || p_195361_3_ >= (double)(p_195361_6_ + this.ySize);
             return this.recipeBookGui.func_195604_a(p_195361_1_, p_195361_3_, this.guiLeft, this.guiTop, this.xSize, this.ySize, p_195361_7_) && flag;
         }
 
+        @Override
         public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
             return this.recipeBookGui.charTyped(p_charTyped_1_, p_charTyped_2_) ? true : super.charTyped(p_charTyped_1_, p_charTyped_2_);
         }
 
+        @Override
         public void recipesUpdated() {
             this.recipeBookGui.recipesUpdated();
         }
 
+        @Override
         public RecipeBookGui func_194310_f() {
             return this.recipeBookGui;
         }
 
+        @Override
         public void removed() {
             this.recipeBookGui.removed();
             super.removed();
@@ -276,7 +289,7 @@ public class CraftingBookTest {
     }
 
     private static class TestBlock extends Block {
-        public TestBlock() {
+        private TestBlock() {
             super(Properties.create(Material.ROCK));
         }
 
@@ -309,7 +322,7 @@ public class CraftingBookTest {
 
     private static class TestTile extends TileEntity implements INamedContainerProvider {
 
-        public TestTile() {
+        private TestTile() {
             super(test_tile);
         }
 
@@ -348,11 +361,11 @@ public class CraftingBookTest {
         protected final World world;
         private final IInventory furnaceInventory;
 
-        public TestContainer(int windowId, @Nonnull PlayerInventory inv, @Nonnull PacketBuffer extraData) {
+        private TestContainer(int windowId, @Nonnull PlayerInventory inv, @Nonnull PacketBuffer extraData) {
             this(windowId, extraData.readBlockPos(), Minecraft.getInstance().world, inv, Minecraft.getInstance().player);
         }
 
-        TestContainer(int id, @Nonnull BlockPos pos, @Nonnull World world, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player) {
+        private TestContainer(int id, @Nonnull BlockPos pos, @Nonnull World world, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player) {
             super(test_container, id);
             IInventory furnaceInventoryIn = new Inventory(3);
             assertInventorySize(furnaceInventoryIn, 3);
@@ -420,6 +433,7 @@ public class CraftingBookTest {
             return this.furnaceInventory.isUsableByPlayer(playerIn);
         }
 
+        @Override
         public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
             ItemStack itemstack = ItemStack.EMPTY;
             Slot slot = this.inventorySlots.get(index);
@@ -473,10 +487,10 @@ public class CraftingBookTest {
         }
     }
 
-    public static class TestRecipe extends AbstractCookingRecipe {
-        public static final IRecipeType<TestRecipe> test = IRecipeType.register("test");
+    private static class TestRecipe extends AbstractCookingRecipe {
+        private static final IRecipeType<TestRecipe> test = IRecipeType.register("test");
 
-        public TestRecipe(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookTimeIn) {
+        private TestRecipe(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookTimeIn) {
             super(test, idIn, groupIn, ingredientIn, resultIn, experienceIn, cookTimeIn);
         }
 
@@ -485,15 +499,17 @@ public class CraftingBookTest {
             return test_recipe;
         }
     }
-    public static class TestRecipeSerializer<T extends AbstractCookingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T> {
+
+    private static class TestRecipeSerializer<T extends AbstractCookingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T> {
         private final int field_222178_t;
         private final IFactory<T> field_222179_u;
 
-        public TestRecipeSerializer(IFactory<T> p_i50025_1_, int p_i50025_2_) {
+        private TestRecipeSerializer(IFactory<T> p_i50025_1_, int p_i50025_2_) {
             this.field_222178_t = p_i50025_2_;
             this.field_222179_u = p_i50025_1_;
         }
 
+        @Override
         public T read(ResourceLocation recipeId, JsonObject json) {
             String s = JSONUtils.getString(json, "group", "");
             JsonElement jsonelement = (JsonElement)(JSONUtils.isJsonArray(json, "ingredient") ? JSONUtils.getJsonArray(json, "ingredient") : JSONUtils.getJsonObject(json, "ingredient"));
@@ -514,6 +530,7 @@ public class CraftingBookTest {
             return this.field_222179_u.create(recipeId, s, ingredient, itemstack, f, i);
         }
 
+        @Override
         public T read(ResourceLocation recipeId, PacketBuffer buffer) {
             String s = buffer.readString(32767);
             Ingredient ingredient = Ingredient.read(buffer);
@@ -523,6 +540,7 @@ public class CraftingBookTest {
             return this.field_222179_u.create(recipeId, s, ingredient, itemstack, f, i);
         }
 
+        @Override
         public void write(PacketBuffer buffer, T recipe) {
             buffer.writeString(recipe.getGroup());
             recipe.getIngredients().get(0).write(buffer);
