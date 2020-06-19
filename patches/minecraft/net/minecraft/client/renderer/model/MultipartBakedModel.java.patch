@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/renderer/model/MultipartBakedModel.java
++++ b/net/minecraft/client/renderer/model/MultipartBakedModel.java
+@@ -27,10 +27,12 @@
+    protected final ItemCameraTransforms field_188624_d;
+    protected final ItemOverrideList field_188625_e;
+    private final Map<BlockState, BitSet> field_210277_g = new Object2ObjectOpenCustomHashMap<>(Util.func_212443_g());
++   private final IBakedModel firstModel;
+ 
+    public MultipartBakedModel(List<Pair<Predicate<BlockState>, IBakedModel>> p_i48273_1_) {
+       this.field_188626_f = p_i48273_1_;
+       IBakedModel ibakedmodel = p_i48273_1_.iterator().next().getRight();
++      this.firstModel = ibakedmodel;
+       this.field_188621_a = ibakedmodel.func_177555_b();
+       this.field_188622_b = ibakedmodel.func_177556_c();
+       this.field_230185_c_ = ibakedmodel.func_230044_c_();
+@@ -98,6 +100,22 @@
+       return this.field_188625_e;
+    }
+ 
++   public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, net.minecraftforge.client.model.data.IModelData extraData) {
++      return net.minecraftforge.client.ForgeHooksClient.getMultipartModelQuads(this.field_188626_f, this.field_210277_g, state, side, rand, extraData);
++   }
++
++   public boolean isAmbientOcclusion(BlockState state) {
++      return this.firstModel.isAmbientOcclusion(state);
++   }
++
++   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.world.IBlockDisplayReader world, net.minecraft.util.math.BlockPos pos, BlockState state, net.minecraftforge.client.model.data.IModelData tileData) {
++      return this.firstModel.getModelData(world, pos, state, tileData);
++   }
++
++   public TextureAtlasSprite getParticleTexture(net.minecraftforge.client.model.data.IModelData data) {
++      return this.firstModel.getParticleTexture(data);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class Builder {
+       private final List<Pair<Predicate<BlockState>, IBakedModel>> field_188649_a = Lists.newArrayList();

@@ -25,9 +25,14 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,11 +49,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -59,11 +69,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Mod(NewModelLoaderTest.MODID)
 public class NewModelLoaderTest
@@ -97,6 +111,8 @@ public class NewModelLoaderTest
             }
     );
 
+    public static RegistryObject<Block> multipart_block = BLOCKS.register("multipart_block", () -> new FenceBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)));
+
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
             new BlockItem(obj_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
                 @Override
@@ -106,6 +122,7 @@ public class NewModelLoaderTest
                 }
             }
     );
+    public static RegistryObject<Item> multipart_item = ITEMS.register("multipart_block", () -> new BlockItem(multipart_block.get(), new Item.Properties().group(ItemGroup.MISC)));
 
     public static RegistryObject<Item> custom_transforms = ITEMS.register("custom_transforms", () ->
             new Item(new Item.Properties().group(ItemGroup.MISC))
@@ -172,6 +189,12 @@ public class NewModelLoaderTest
             modelBuilder.addGeneralQuad(builder.build());
         }
 
+        @Override
+        public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+        {
+            return new BakedTestModel(ISimpleModelGeometry.super.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation));
+        }
+
         private void putVertex(BakedQuadBuilder builder, int x, float y, float z, float u, float v, float red, float green, float blue)
         {
             ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.getElements();
@@ -202,6 +225,36 @@ public class NewModelLoaderTest
         public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return Collections.singleton(owner.resolveTexture("particle"));
+        }
+    }
+
+    static class BakedTestModel extends BakedModelWrapper<IBakedModel>
+    {
+        private static final ModelProperty<Boolean> INVISIBLE = new ModelProperty<>();
+        BakedTestModel(IBakedModel originalModel)
+        {
+            super(originalModel);
+        }
+
+        @Override
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
+        {
+            if (extraData.getData(INVISIBLE) == Boolean.TRUE)
+            {
+                return ImmutableList.of();
+            }
+            return originalModel.getQuads(state, side, rand, extraData);
+        }
+
+        @Nonnull
+        @Override
+        public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData tileData)
+        {
+            if (world.getBlockState(pos.down()).getBlock() == Blocks.WHITE_WOOL)
+            {
+                return new ModelDataMap.Builder().withInitial(INVISIBLE, true).build();
+            }
+            return tileData;
         }
     }
 }

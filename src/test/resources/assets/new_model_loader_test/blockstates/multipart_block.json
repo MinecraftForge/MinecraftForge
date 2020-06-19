@@ -1,0 +1,17 @@
+{
+    "multipart": [
+        {   "apply": { "model": "new_model_loader_test:block/multipart_block" }},
+        {   "when": { "north": "true" },
+            "apply": { "model": "block/oak_fence_side", "uvlock": true }
+        },
+        {   "when": { "east": "true" },
+            "apply": { "model": "block/oak_fence_side", "y": 90, "uvlock": true }
+        },
+        {   "when": { "south": "true" },
+            "apply": { "model": "block/oak_fence_side", "y": 180, "uvlock": true }
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "block/oak_fence_side", "y": 270, "uvlock": true }
+        }
+    ]
+}
