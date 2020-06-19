@@ -1,0 +1,7 @@
+{
+  "parent": "block/block",
+  "loader": "new_model_loader_test:custom_loader",
+  "textures": {
+    "particle": "block/oak_planks"
+  }
+}
