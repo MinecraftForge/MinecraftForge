@@ -620,6 +620,17 @@ public interface IForgeItem
     }
 
     /**
+     * Whether this Item can be used as a payment to activate the vanilla beacon.
+     *
+     * @param stack the ItemStack
+     * @return true if this Item can be used to hide player head for enderman
+     */
+    default boolean isEnderMask(ItemStack stack)
+    {
+        return stack.getItem() == Items.PUMPKIN;
+    }
+
+    /**
      * Determine if the player switching between these two item stacks
      *
      * @param oldStack    The old stack that was equipped

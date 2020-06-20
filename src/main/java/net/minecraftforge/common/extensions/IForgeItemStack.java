@@ -448,4 +448,14 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     {
         return getStack().getItem().isRepairable(getStack());
     }
+
+    /**
+     * Whether this Item can be used to hide player head for enderman.
+     *
+     * @return true if this Item can be used.
+     */
+    default boolean isEnderMask()
+    {
+        return getStack().getItem().isEnderMask(getStack());
+    }
 }

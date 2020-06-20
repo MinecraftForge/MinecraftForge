@@ -64,9 +64,9 @@ loaderVersion="[28,)"
 [[mods]]
     modId="stencil_enable_test"
 [[mods]]
-    modId="entity_event_test"
-[[mods]]
     modId="deferred_registry_test"
+[[mods]]
+    modId="ender_mask_test"
 [[dependencies.global_loot_test]]
     modId="forge"
     mandatory=true
