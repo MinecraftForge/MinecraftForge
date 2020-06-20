@@ -56,6 +56,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -85,6 +86,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
     public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Attribute.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
+    public static final IForgeRegistry<IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(IForgeRecipeBookCategory.class);
 
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
@@ -155,6 +157,7 @@ public class ForgeRegistries
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final RegistryKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
+        public static final RegistryKey<Registry<IForgeRecipeBookCategory<?>>> RECIPE_BOOK_CATEGORIES = key("forge:recipe_book_categories");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {

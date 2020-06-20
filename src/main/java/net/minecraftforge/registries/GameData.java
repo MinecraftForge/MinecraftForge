@@ -73,6 +73,7 @@ import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
@@ -160,6 +161,7 @@ public class GameData
         makeRegistry(RECIPE_SERIALIZERS, c(IRecipeSerializer.class)).disableSaving().create();
         makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES, c(StatType.class)).create();
+        makeRegistry(RECIPE_BOOK_CATEGORIES, c(IForgeRecipeBookCategory.class)).disableSaving().create();
 
         // Villagers
         makeRegistry(VILLAGER_PROFESSIONS, VillagerProfession.class, "none").create();
