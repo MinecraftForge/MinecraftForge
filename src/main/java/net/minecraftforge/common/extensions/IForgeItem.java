@@ -620,7 +620,7 @@ public interface IForgeItem
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
+     * Whether this Item can be used to hide player head for enderman.
      *
      * @param stack the ItemStack
      * @return true if this Item can be used to hide player head for enderman
