@@ -1,0 +1,9 @@
+{
+  "type": "base_crafting_book_test:test_recipe",
+  "ingredient": {
+    "item": "minecraft:sugar_cane"
+  },
+  "result": "minecraft:sugar",
+  "experience": 0.35,
+  "cookingtime": 200
+}

@@ -1,0 +1,9 @@
+{
+  "type": "base_crafting_book_test:test_recipe",
+  "ingredient": {
+    "item": "minecraft:leather"
+  },
+  "result": "minecraft:elytra",
+  "experience": 0.35,
+  "cookingtime": 200
+}

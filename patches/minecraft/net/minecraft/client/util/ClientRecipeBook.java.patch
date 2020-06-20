@@ -1,0 +1,82 @@
+--- a/net/minecraft/client/util/ClientRecipeBook.java
++++ b/net/minecraft/client/util/ClientRecipeBook.java
+@@ -27,7 +27,7 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ClientRecipeBook extends RecipeBook {
+    private final RecipeManager field_199645_e;
+-   private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
++   @Deprecated private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
+    private final List<RecipeList> field_197932_f = Lists.newArrayList();
+ 
+    public ClientRecipeBook(RecipeManager p_i48186_1_) {
+@@ -36,20 +36,20 @@
+ 
+    public void func_199644_c() {
+       this.field_197932_f.clear();
+-      this.field_197931_e.clear();
+-      Table<RecipeBookCategories, String, RecipeList> table = HashBasedTable.create();
++      this.forgeRecipeBookCategories.clear();
++      Table<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, String, RecipeList> table = HashBasedTable.create();
+ 
+       for(IRecipe<?> irecipe : this.field_199645_e.func_199510_b()) {
+          if (!irecipe.func_192399_d()) {
+-            RecipeBookCategories recipebookcategories = func_202887_g(irecipe);
++            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = func_202887_g(irecipe);
+             String s = irecipe.func_193358_e();
+             RecipeList recipelist;
+             if (s.isEmpty()) {
+-               recipelist = this.func_202889_b(recipebookcategories);
++               recipelist = this.newRecipeList(irecipe);
+             } else {
+                recipelist = table.get(recipebookcategories, s);
+                if (recipelist == null) {
+-                  recipelist = this.func_202889_b(recipebookcategories);
++                  recipelist = this.newRecipeList(irecipe);
+                   table.put(recipebookcategories, s, recipelist);
+                }
+             }
+@@ -63,7 +63,7 @@
+    private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
+       RecipeList recipelist = new RecipeList();
+       this.field_197932_f.add(recipelist);
+-      this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
++      this.forgeRecipeBookCategories.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
+          return Lists.newArrayList();
+       }).add(recipelist);
+       if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
+@@ -88,7 +88,7 @@
+    }
+ 
+    private void func_216767_a(RecipeBookCategories p_216767_1_, RecipeList p_216767_2_) {
+-      this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
++      this.forgeRecipeBookCategories.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
+          return Lists.newArrayList();
+       }).add(p_216767_2_);
+    }
+@@ -141,6 +141,25 @@
+    }
+ 
+    public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
+-      return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
++      return this.forgeRecipeBookCategories.getOrDefault(p_202891_1_, Collections.emptyList());
+    }
++
++   private final Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> forgeRecipeBookCategories = Maps.newHashMap();
++
++   private RecipeList newRecipeList(IRecipe<?> recipe) {
++      RecipeList recipelist = new RecipeList();
++      this.field_197932_f.add(recipelist);
++      net.minecraftforge.common.ForgeRecipeBookCategories.getValidCategories(recipe).forEach(category -> addToForgeRecipeBookCategories(category, recipelist));
++      return recipelist;
++   }
++
++   private void addToForgeRecipeBookCategories(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> forgeRecipeBookCategory, RecipeList recipeList) {
++      this.forgeRecipeBookCategories.computeIfAbsent(forgeRecipeBookCategory, (category) -> {
++         return Lists.newArrayList();
++      }).add(recipeList);
++   }
++
++   public List<RecipeList> getRecipes(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> forgeRecipeBookCategory) {
++      return this.forgeRecipeBookCategories.getOrDefault(forgeRecipeBookCategory, Collections.emptyList());
++   }
+ }

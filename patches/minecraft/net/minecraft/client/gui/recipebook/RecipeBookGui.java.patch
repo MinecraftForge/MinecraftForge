@@ -1,15 +1,118 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -88,7 +88,7 @@
+@@ -52,6 +52,9 @@
+    protected final RecipeItemHelper field_193965_u = new RecipeItemHelper();
+    private int field_193966_v;
+    private boolean field_199738_u;
++   private net.minecraftforge.client.UpDownButton up;
++   private net.minecraftforge.client.UpDownButton down;
++   private int offset;
+ 
+    public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
+       this.field_191888_F = p_201520_3_;
+@@ -88,13 +91,13 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
 -      for(RecipeBookCategories recipebookcategories : ClientRecipeBook.func_216769_b(this.field_201522_g)) {
-+      for(RecipeBookCategories recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
++      for(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -417,7 +417,7 @@
+       if (this.field_191913_x != null) {
+          this.field_191913_x = this.field_193018_j.stream().filter((p_209505_1_) -> {
+-            return p_209505_1_.func_201503_d().equals(this.field_191913_x.func_201503_d());
++            return p_209505_1_.getRecipeBookCategory().equals(this.field_191913_x.getRecipeBookCategory());
+          }).findFirst().orElse((RecipeTabToggleWidget)null);
+       }
+ 
+@@ -104,7 +107,18 @@
+ 
+       this.field_191913_x.func_191753_b(true);
+       this.func_193003_g(false);
++      // remove tabs that does not contains recipes
++      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.getRecipes(tabToggleWidget.getRecipeBookCategory()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
+       this.func_193949_f();
++      this.up = new net.minecraftforge.client.UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
++         this.offset = Math.max(0, this.offset - 1);
++         this.updateButtons();
++      });
++      this.down = new net.minecraftforge.client.UpDownButton(i - 23, j + 154, 17, 11, true, p_onPress_1_ -> {
++         this.offset = Math.min(this.field_193018_j.size() - 5, this.offset + 1);
++         this.updateButtons();
++      });
++      this.updateButtons();
+    }
+ 
+    public boolean changeFocus(boolean p_changeFocus_1_) {
+@@ -119,6 +133,8 @@
+       this.field_193962_q = null;
+       this.field_191913_x = null;
+       this.field_191888_F.field_195559_v.func_197967_a(false);
++      this.up = null;
++      this.down = null;
+    }
+ 
+    public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
+@@ -160,7 +176,7 @@
+    }
+ 
+    private void func_193003_g(boolean p_193003_1_) {
+-      List<RecipeList> list = this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d());
++      List<RecipeList> list = this.field_193964_s.getRecipes(this.field_191913_x.getRecipeBookCategory());
+       list.forEach((p_193944_1_) -> {
+          p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
+       });
+@@ -190,13 +206,15 @@
+ 
+    private void func_193949_f() {
+       int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
+-      int j = (this.field_191905_p - 166) / 2 + 3;
++      int j = (this.field_191905_p - 166) / 2 + (this.field_193018_j.size() > 5 ? 16 : 3);
+       int k = 27;
+       int l = 0;
+ 
++      int x = 0;
+       for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
+-         RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
+-         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
++         if (x >= this.offset && x < Math.min(this.field_193018_j.size(), this.offset + 5)) {
++            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = recipetabtogglewidget.getRecipeBookCategory();
++         if (!recipebookcategories.isSearch()) {
+             if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
+                recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+                recipetabtogglewidget.func_193918_a(this.field_191888_F);
+@@ -205,6 +223,10 @@
+             recipetabtogglewidget.visible = true;
+             recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+          }
++         } else {
++            recipetabtogglewidget.visible = false;
++         }
++         x++;
+       }
+ 
+    }
+@@ -243,6 +265,8 @@
+ 
+          this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
+          this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
++         this.up.render(p_render_1_, p_render_2_, p_render_3_);
++         this.down.render(p_render_1_, p_render_2_, p_render_3_);
+          RenderSystem.popMatrix();
+       }
+    }
+@@ -307,6 +331,9 @@
+             return true;
+          } else if (this.field_193962_q.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
+             return true;
++         } else if (this.up.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_) || this.down.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
++            this.func_193949_f();
++            return true;
+          } else if (this.field_193960_m.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
+             boolean flag = this.func_201521_f();
+             this.field_193960_m.func_191753_b(flag);
+@@ -417,7 +444,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
@@ -18,3 +121,13 @@
           this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
           this.field_191888_F.field_71474_y.func_74303_b();
        }
+@@ -465,4 +492,9 @@
+       }
+ 
+    }
++
++   private void updateButtons() {
++      this.up.visible = this.offset > 0 && this.field_193018_j.size() > 5;
++      this.down.visible = this.field_193018_j.size() > 5 && this.offset < this.field_193018_j.size() - 5;
++   }
+ }
