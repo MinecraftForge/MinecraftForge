@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/util/ClientRecipeBook.java
 +++ b/net/minecraft/client/util/ClientRecipeBook.java
+@@ -27,7 +27,7 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ClientRecipeBook extends RecipeBook {
+    private final RecipeManager field_199645_e;
+-   private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
++   private final Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> field_197931_e = Maps.newHashMap();
+    private final List<RecipeList> field_197932_f = Lists.newArrayList();
+ 
+    public ClientRecipeBook(RecipeManager p_i48186_1_) {
 @@ -45,11 +45,11 @@
              String s = irecipe.func_193358_e();
              RecipeList recipelist;
@@ -14,15 +23,28 @@
                    table.put(recipebookcategories, s, recipelist);
                 }
              }
-@@ -143,4 +143,11 @@
-    public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
+@@ -87,7 +87,7 @@
+       return recipelist;
+    }
+ 
+-   private void func_216767_a(RecipeBookCategories p_216767_1_, RecipeList p_216767_2_) {
++   private void func_216767_a(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> p_216767_1_, RecipeList p_216767_2_) {
+       this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
+          return Lists.newArrayList();
+       }).add(p_216767_2_);
+@@ -140,7 +140,14 @@
+       return this.field_197932_f;
+    }
+ 
+-   public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
++   public List<RecipeList> getRecipes(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> p_202891_1_) {
        return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
     }
 +
 +   private RecipeList newRecipeList(IRecipe<?> recipe) {
 +      RecipeList recipelist = new RecipeList();
 +      this.field_197932_f.add(recipelist);
-+      RecipeBookCategories.getValidCategories(recipe).forEach(category -> func_216767_a(category, recipelist));
++      net.minecraftforge.common.ForgeRecipeBookCategories.getValidCategories(recipe).forEach(category -> func_216767_a(category, recipelist));
 +      return recipelist;
 +   }
  }

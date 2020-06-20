@@ -189,7 +189,7 @@ public class GameData
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
-        makeRegistry(RECIPE_BOOK_CATEGORIES, net.minecraft.client.util.RecipeBookCategories.class).disableSaving().disableSync().create();
+        makeRegistry(RECIPE_BOOK_CATEGORIES, net.minecraftforge.common.extensions.IForgeRecipeBookCategory.class).disableSaving().create();
         
         // Villagers
         makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();

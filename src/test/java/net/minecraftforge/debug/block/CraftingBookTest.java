@@ -32,7 +32,6 @@ import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.ImageButton;
-import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -59,7 +58,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeRecipeBookCategories;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -76,11 +77,11 @@ import java.util.Set;
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class CraftingBookTest {
     @ObjectHolder("rare")
-    public static final RecipeBookCategories rare = null;
+    public static final ForgeRecipeBookCategories<?> rare = null;
     @ObjectHolder("test")
-    public static final RecipeBookCategories test = null;
+    public static final ForgeRecipeBookCategories<?> test = null;
     @ObjectHolder("test_uncommon")
-    public static final RecipeBookCategories test_uncommon = null;
+    public static final ForgeRecipeBookCategories<?> test_uncommon = null;
 
     @ObjectHolder("test_block")
     public static final Block test_block = null;
@@ -98,21 +99,15 @@ public class CraftingBookTest {
     }
 
     @SubscribeEvent
-    public static void registerRecipeBookCategories(RegistryEvent.Register<RecipeBookCategories> event) {
+    public static void registerForgeRecipeBookCategories(RegistryEvent.Register<IForgeRecipeBookCategory<?>> event) {
         // search category for custom machine
-        event.getRegistry().register(new RecipeBookCategories(TestRecipe.test)
-                .setSearch()
-                .setIcon(new ItemStack(Items.COMPASS))
-                .setRegistryName("base_crafting_book_test", "test"));
+        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(true, TestRecipe.test, new ItemStack(Items.COMPASS)).setRegistryName("base_crafting_book_test", "test"));
         // custom machine category showing only uncommon recipes
-        event.getRegistry().register(new RecipeBookCategories(TestRecipe.test)
-                .setPredicate(recipe -> recipe.getRecipeOutput().getRarity() == Rarity.UNCOMMON)
-                .setIcon(new ItemStack(Items.STONE), new ItemStack(Items.STONE_PICKAXE))
+        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(false,
+                TestRecipe.test, recipe -> true, new ItemStack(Items.GOLDEN_AXE), new ItemStack(Items.STONE_PICKAXE))
                 .setRegistryName("base_crafting_book_test", "test_uncommon"));
         // added new category to crafting table & player displaying only rare output items recipes
-        event.getRegistry().register(new RecipeBookCategories(IRecipeType.CRAFTING)
-                .setPredicate(recipe -> recipe.getRecipeOutput().getRarity() == Rarity.RARE)
-                .setIcon(new ItemStack(Items.BEACON))
+        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(false, IRecipeType.CRAFTING, recipe -> true, new ItemStack(Items.BEACON))
                 .setRegistryName("base_crafting_book_test", "rare"));
     }
 

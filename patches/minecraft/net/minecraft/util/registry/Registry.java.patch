@@ -102,7 +102,7 @@
     public static final Registry<IStructurePieceType> field_218362_C = func_222935_a("structure_piece", () -> {
        return IStructurePieceType.field_214782_c;
     });
-@@ -148,39 +150,41 @@
+@@ -148,40 +150,46 @@
     public static final Registry<IJigsawDeserializer> field_218365_F = func_222935_a("structure_pool_element", () -> {
        return IJigsawDeserializer.field_214931_e;
     });
@@ -148,12 +148,17 @@
 +   @Deprecated public static final Registry<Activity> field_218375_Q = forge("activity", Activity.class, () -> {
        return Activity.field_221366_b;
     });
-+   @Deprecated public static final Registry<net.minecraft.client.util.RecipeBookCategories> RECIPE_BOOK_CATEGORIES = forge("recipe_book_categories",
-+           net.minecraft.client.util.RecipeBookCategories.class, () -> { return net.minecraft.client.util.RecipeBookCategories.SEARCH; });
++   @Deprecated public static final Registry<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = forge("recipe_book_categories",
++           net.minecraftforge.common.extensions.IForgeRecipeBookCategory.class, Registry::getDefaultRecipeBook);
  
++   private static net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> getDefaultRecipeBook() {
++      return net.minecraft.client.util.RecipeBookCategories.SEARCH;
++   }
++
     private static <T> Registry<T> func_222935_a(String p_222935_0_, Supplier<T> p_222935_1_) {
        return func_222939_a(p_222935_0_, new SimpleRegistry<>(), p_222935_1_);
-@@ -230,6 +234,14 @@
+    }
+@@ -230,6 +238,14 @@
        return ((MutableRegistry<T>)p_218343_0_).func_218382_a(p_218343_1_, new ResourceLocation(p_218343_2_), p_218343_3_);
     }
  

@@ -19,7 +19,7 @@
 +      }
 +   }
 +
-+   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
-+      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> category.getRecipeType().equals(this.getRecipeType())).sorted(net.minecraft.client.util.RecipeBookCategories::compareTo).collect(java.util.stream.Collectors.toList());
++   public java.util.List<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>> getRecipeBookCategories() {
++      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> category.getRecipeType().equals(this.getRecipeType())).collect(java.util.stream.Collectors.toList());
 +   }
  }
