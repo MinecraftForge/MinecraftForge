@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -31,4 +31,67 @@
+@@ -31,4 +31,69 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
@@ -26,6 +26,7 @@
 +   }
 +
 +   private static final java.util.Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, Integer> VANILLA_LIST  = new java.util.HashMap<>();
++
 +   private static int compareTo(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> from, net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> to) {
 +      if (from.equals(to)) {
 +         return 0;
@@ -48,6 +49,7 @@
 +
 +      return Integer.compare(thisValue, toValue);
 +   }
++
 +   static {
 +      // priority map to stick with vanilla tabs order, custom tabs goes under them
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SEARCH, 10);

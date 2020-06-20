@@ -24,7 +24,7 @@
        this.field_191913_x.func_191753_b(true);
        this.func_193003_g(false);
 +      // remove tabs that does not contains recipes
-+      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.getRecipes(tabToggleWidget.func_201503_d()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
++      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.func_202891_a(tabToggleWidget.func_201503_d()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
        this.func_193949_f();
 +      this.up = new net.minecraftforge.client.UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
 +         this.offset = Math.max(0, this.offset - 1);
@@ -47,15 +47,6 @@
     }
  
     public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
-@@ -161,7 +177,7 @@
-    }
- 
-    private void func_193003_g(boolean p_193003_1_) {
--      List<RecipeList> list = this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d());
-+      List<RecipeList> list = this.field_193964_s.getRecipes(this.field_191913_x.func_201503_d());
-       list.forEach((p_193944_1_) -> {
-          p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
-       });
 @@ -191,13 +207,15 @@
  
     private void func_193949_f() {
