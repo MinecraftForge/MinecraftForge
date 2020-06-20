@@ -9,6 +9,15 @@
     private final List<RecipeList> field_197932_f = Lists.newArrayList();
  
     public ClientRecipeBook(RecipeManager p_i48186_1_) {
+@@ -36,7 +36,7 @@
+ 
+    public void func_199644_c() {
+       this.field_197932_f.clear();
+-      this.field_197931_e.clear();
++      this.forgeRecipeBookCategories.clear();
+       Table<RecipeBookCategories, String, RecipeList> table = HashBasedTable.create();
+ 
+       for(IRecipe<?> irecipe : this.field_199645_e.func_199510_b()) {
 @@ -45,11 +45,11 @@
              String s = irecipe.func_193358_e();
              RecipeList recipelist;
@@ -23,7 +32,7 @@
                    table.put(recipebookcategories, s, recipelist);
                 }
              }
-@@ -60,6 +60,7 @@
+@@ -60,10 +60,11 @@
  
     }
  
@@ -31,14 +40,22 @@
     private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
        RecipeList recipelist = new RecipeList();
        this.field_197932_f.add(recipelist);
-@@ -87,6 +88,7 @@
+-      this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
++      this.forgeRecipeBookCategories.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
+          return Lists.newArrayList();
+       }).add(recipelist);
+       if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
+@@ -87,8 +88,9 @@
        return recipelist;
     }
  
 +   @Deprecated
     private void func_216767_a(RecipeBookCategories p_216767_1_, RecipeList p_216767_2_) {
-       this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
+-      this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
++      this.forgeRecipeBookCategories.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
           return Lists.newArrayList();
+       }).add(p_216767_2_);
+    }
 @@ -122,6 +124,7 @@
        }
     }
@@ -53,7 +70,8 @@
  
 +   @Deprecated
     public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
-       return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
+-      return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
++      return this.forgeRecipeBookCategories.getOrDefault(p_202891_1_, Collections.emptyList());
     }
 +
 +   private final Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> forgeRecipeBookCategories = Maps.newHashMap();

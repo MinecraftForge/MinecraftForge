@@ -12,16 +12,25 @@
     public RecipeTabToggleWidget(RecipeBookCategories p_i51075_1_) {
        super(0, 0, 35, 27, false);
        this.field_193921_u = p_i51075_1_;
+@@ -28,7 +29,7 @@
+ 
+    public void func_193918_a(Minecraft p_193918_1_) {
+       ClientRecipeBook clientrecipebook = p_193918_1_.field_71439_g.func_199507_B();
+-      List<RecipeList> list = clientrecipebook.func_202891_a(this.field_193921_u);
++      List<RecipeList> list = clientrecipebook.getRecipes(this.recipeBookCategory);
+       if (p_193918_1_.field_71439_g.field_71070_bA instanceof RecipeBookContainer) {
+          label25:
+          for(RecipeList recipelist : list) {
 @@ -95,7 +96,7 @@
     }
  
     private void func_193920_a(ItemRenderer p_193920_1_) {
 -      List<ItemStack> list = this.field_193921_u.func_202903_a();
-+      List<ItemStack> list = this.field_193921_u.getIcons();
++      List<ItemStack> list = this.recipeBookCategory.getIcons();
        int i = this.field_191755_p ? -2 : 0;
        if (list.size() == 1) {
           p_193920_1_.func_180450_b(list.get(0), this.x + 9 + i, this.y + 5);
-@@ -106,6 +107,7 @@
+@@ -106,12 +107,13 @@
  
     }
  
@@ -29,6 +38,13 @@
     public RecipeBookCategories func_201503_d() {
        return this.field_193921_u;
     }
+ 
+    public boolean func_199500_a(ClientRecipeBook p_199500_1_) {
+-      List<RecipeList> list = p_199500_1_.func_202891_a(this.field_193921_u);
++      List<RecipeList> list = p_199500_1_.getRecipes(this.recipeBookCategory);
+       this.visible = false;
+       if (list != null) {
+          for(RecipeList recipelist : list) {
 @@ -124,4 +126,16 @@
  
        return this.visible;
@@ -43,6 +59,6 @@
 +   }
 +
 +   public net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> getRecipeBookCategory() {
-+      return this.field_193921_u;
++      return this.recipeBookCategory;
 +   }
  }

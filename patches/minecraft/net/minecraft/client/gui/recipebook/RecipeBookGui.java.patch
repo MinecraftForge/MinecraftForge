@@ -10,7 +10,7 @@
  
     public void func_201520_a(int p_201520_1_, int p_201520_2_, Minecraft p_201520_3_, boolean p_201520_4_, RecipeBookContainer<?> p_201520_5_) {
        this.field_191888_F = p_201520_3_;
-@@ -89,7 +92,7 @@
+@@ -89,13 +92,13 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
@@ -19,12 +19,19 @@
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
+       if (this.field_191913_x != null) {
+          this.field_191913_x = this.field_193018_j.stream().filter((p_209505_1_) -> {
+-            return p_209505_1_.func_201503_d().equals(this.field_191913_x.func_201503_d());
++            return p_209505_1_.getRecipeBookCategory().equals(this.field_191913_x.getRecipeBookCategory());
+          }).findFirst().orElse((RecipeTabToggleWidget)null);
+       }
+ 
 @@ -105,7 +108,18 @@
  
        this.field_191913_x.func_191753_b(true);
        this.func_193003_g(false);
 +      // remove tabs that does not contains recipes
-+      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.func_202891_a(tabToggleWidget.func_201503_d()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
++      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.getRecipes(tabToggleWidget.getRecipeBookCategory()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
        this.func_193949_f();
 +      this.up = new net.minecraftforge.client.UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
 +         this.offset = Math.max(0, this.offset - 1);
@@ -47,6 +54,15 @@
     }
  
     public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
+@@ -161,7 +177,7 @@
+    }
+ 
+    private void func_193003_g(boolean p_193003_1_) {
+-      List<RecipeList> list = this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d());
++      List<RecipeList> list = this.field_193964_s.getRecipes(this.field_191913_x.getRecipeBookCategory());
+       list.forEach((p_193944_1_) -> {
+          p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
+       });
 @@ -191,13 +207,15 @@
  
     private void func_193949_f() {
@@ -61,7 +77,7 @@
 -         RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
 -         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
 +         if (x >= this.offset && x < Math.min(this.field_193018_j.size(), this.offset + 5)) {
-+            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = recipetabtogglewidget.func_201503_d();
++            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = recipetabtogglewidget.getRecipeBookCategory();
 +         if (!recipebookcategories.isSearch()) {
              if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
                 recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
