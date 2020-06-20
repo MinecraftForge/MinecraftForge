@@ -37,8 +37,7 @@ public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
-    private static List<Biome> deepOceanBiomes = new ArrayList<Biome>();
-    private static List<OceanBiomeEntry>[] oceanBiomes = setupOceanBiomes();
+    public static List<OceanBiomeEntry>[] oceanBiomes = setupOceanBiomes();
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -174,11 +173,6 @@ public class BiomeManager
         return list.isEmpty() ? null : ImmutableList.copyOf(list);
     }
 
-    public static List<Biome> getDeepOceanBiomes()
-    {
-        return deepOceanBiomes;
-    }
-
     public static boolean isOceanBiome(Biome biome, boolean shallow)
     {
         for(OceanType type : OceanType.values())
@@ -238,10 +232,6 @@ public class BiomeManager
         public OceanBiomeEntry(Biome ocean, Biome deepOcean, Biome mixOcean, int weight)
         {
             super(ocean, weight);
-            if(!deepOceanBiomes.contains(deepOcean))
-            {
-                deepOceanBiomes.add(deepOcean);
-            }
             this.deepOcean = deepOcean;
             this.mixOcean = mixOcean;
         }
