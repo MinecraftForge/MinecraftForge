@@ -29,16 +29,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @SuppressWarnings("deprecation")
 @Mod(StencilTest.MODID)
 public class StencilTest {
-	
-	public static final String MODID = "stencil_backport_test";
-	
-	public StencilTest() {
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener(this::clientSetup);
-	}
-	
-	private void clientSetup(FMLClientSetupEvent event) {
-		DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+
+    public static final String MODID = "stencil_backport_test";
+
+    public StencilTest() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::clientSetup);
     }
-	
+
+    private void clientSetup(FMLClientSetupEvent event) {
+        DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+    }
 }
