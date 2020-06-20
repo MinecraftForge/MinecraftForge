@@ -627,7 +627,7 @@ public interface IForgeItem
      */
     default boolean isEnderMask(ItemStack stack)
     {
-        return stack.getItem() == Items.PUMPKIN;
+        return stack.getItem() == Items.CARVED_PUMPKIN;
     }
 
     /**
