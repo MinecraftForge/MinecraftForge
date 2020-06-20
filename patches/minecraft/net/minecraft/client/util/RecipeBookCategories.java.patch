@@ -1,79 +1,84 @@
 --- a/net/minecraft/client/util/RecipeBookCategories.java
 +++ b/net/minecraft/client/util/RecipeBookCategories.java
-@@ -9,31 +9,148 @@
+@@ -9,7 +9,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public enum RecipeBookCategories {
--   SEARCH(new ItemStack(Items.field_151111_aL)),
--   BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
--   REDSTONE(new ItemStack(Items.field_151137_ax)),
--   EQUIPMENT(new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151010_B)),
--   MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e)),
--   FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
--   FURNACE_FOOD(new ItemStack(Items.field_151147_al)),
--   FURNACE_BLOCKS(new ItemStack(Blocks.field_150348_b)),
--   FURNACE_MISC(new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC)),
--   BLAST_FURNACE_SEARCH(new ItemStack(Items.field_151111_aL)),
--   BLAST_FURNACE_BLOCKS(new ItemStack(Blocks.field_150450_ax)),
--   BLAST_FURNACE_MISC(new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
--   SMOKER_SEARCH(new ItemStack(Items.field_151111_aL)),
--   SMOKER_FOOD(new ItemStack(Items.field_151147_al)),
--   STONECUTTER(new ItemStack(Items.field_221782_da)),
--   CAMPFIRE(new ItemStack(Items.field_151147_al));
 +public enum RecipeBookCategories implements net.minecraftforge.common.extensions.IForgeRecipeBookCategory<net.minecraft.item.crafting.IRecipeType<?>> {
-+   SEARCH(net.minecraft.item.crafting.IRecipeType.field_222149_a, "search", new ItemStack(Items.field_151111_aL)),
-+   BUILDING_BLOCKS(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::buildingBlocksPredicate, "building_blocks", new ItemStack(Blocks.field_196584_bK)),
-+   REDSTONE(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::redstonePredicate, "redstone", new ItemStack(Items.field_151137_ax)),
-+   EQUIPMENT(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::equipmentPredicate, "equipment", new ItemStack(Items.field_151036_c), new ItemStack(Items.field_151010_B)),
-+   MISC(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::miscPredicate, "misc", new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151034_e)),
-+   FURNACE_SEARCH(net.minecraft.item.crafting.IRecipeType.field_222150_b, "furnace_search", new ItemStack(Items.field_151111_aL)),
-+   FURNACE_FOOD(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::foodPredicate, "furnace_food", new ItemStack(Items.field_151147_al)),
-+   FURNACE_BLOCKS(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::furnaceBlocksPredicate, "furnace_blocks", new ItemStack(Blocks.field_150348_b)),
-+   FURNACE_MISC(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::furnaceMiscPredicate, "furnace_misc", new ItemStack(Items.field_151129_at), new ItemStack(Items.field_151166_bC)),
-+   BLAST_FURNACE_SEARCH(net.minecraft.item.crafting.IRecipeType.field_222151_c, "blast_furnace_search", new ItemStack(Items.field_151111_aL)),
-+   BLAST_FURNACE_BLOCKS(net.minecraft.item.crafting.IRecipeType.field_222151_c, RecipeBookCategories::blastFurnaceBlocksPredicate, "blast_furnace_blocks", new ItemStack(Blocks.field_150450_ax)),
-+   BLAST_FURNACE_MISC(net.minecraft.item.crafting.IRecipeType.field_222151_c, RecipeBookCategories::blastFurnaceMiscPredicate, "blast_furnace_misc", new ItemStack(Items.field_151037_a), new ItemStack(Items.field_151149_ai)),
-+   SMOKER_SEARCH(net.minecraft.item.crafting.IRecipeType.field_222152_d, "smoker_search", new ItemStack(Items.field_151111_aL)),
-+   SMOKER_FOOD(net.minecraft.item.crafting.IRecipeType.field_222152_d, RecipeBookCategories::foodPredicate, "smoker_food", new ItemStack(Items.field_151147_al)),
-+   STONECUTTER(net.minecraft.item.crafting.IRecipeType.field_222154_f, "stonecutter", new ItemStack(Items.field_221782_da)),
-+   CAMPFIRE(net.minecraft.item.crafting.IRecipeType.field_222153_e, "campfire", new ItemStack(Items.field_151147_al));
- 
-    private final List<ItemStack> field_202904_j;
- 
--   private RecipeBookCategories(ItemStack... p_i48836_3_) {
--      this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
-+   @Override
-+   public List<ItemStack> getIcons() {
-+      return this.field_202904_j;
+    SEARCH(new ItemStack(Items.field_151111_aL)),
+    BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
+    REDSTONE(new ItemStack(Items.field_151137_ax)),
+@@ -33,7 +33,176 @@
+       this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
     }
  
 -   public List<ItemStack> func_202903_a() {
--      return this.field_202904_j;
-+   //--FORGE
-+   private net.minecraft.util.ResourceLocation registryName;
-+   private final boolean isSearch;
-+   private final net.minecraft.item.crafting.IRecipeType<?> recipeType;
-+   private final java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate;
-+
-+   static {
-+      for (RecipeBookCategories categories : RecipeBookCategories.values()) {
-+         register(categories, categories.name().toLowerCase());
-+      }
++   @Override
++   public List<ItemStack> getIcons() {
+       return this.field_202904_j;
     }
 +
-+   private RecipeBookCategories(net.minecraft.item.crafting.IRecipeType<?> recipeType, String name, ItemStack... icons) {
-+      this.isSearch = true;
-+      this.recipeType = recipeType;
-+      this.predicate = recipe -> true;
-+      this.field_202904_j = ImmutableList.copyOf(icons);
-+   }
++   //--FORGE
++   private net.minecraft.util.ResourceLocation registryName;
++   private boolean isSearch;
++   private net.minecraft.item.crafting.IRecipeType<?> recipeType;
++   private java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate;
 +
-+   private RecipeBookCategories(net.minecraft.item.crafting.IRecipeType<?> recipeType, java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate, String name, ItemStack... icons) {
-+      this.isSearch = false;
-+      this.recipeType = recipeType;
-+      this.predicate = predicate;
-+      this.field_202904_j = ImmutableList.copyOf(icons);
++   static {
++      for (RecipeBookCategories category : RecipeBookCategories.values()) {
++         switch (category) {
++            case SEARCH:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222149_a);
++               break;
++            case BUILDING_BLOCKS:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::buildingBlocksPredicate);
++               break;
++            case REDSTONE:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::redstonePredicate);
++               break;
++            case EQUIPMENT:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::equipmentPredicate);
++               break;
++            case MISC:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222149_a, RecipeBookCategories::miscPredicate);
++               break;
++            case FURNACE_SEARCH:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222150_b);
++               break;
++            case FURNACE_FOOD:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::foodPredicate);
++               break;
++            case FURNACE_BLOCKS:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::furnaceBlocksPredicate);
++               break;
++            case FURNACE_MISC:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222150_b, RecipeBookCategories::furnaceMiscPredicate);
++               break;
++            case BLAST_FURNACE_SEARCH:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222151_c);
++               break;
++            case BLAST_FURNACE_BLOCKS:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222151_c, RecipeBookCategories::blastFurnaceBlocksPredicate);
++               break;
++            case BLAST_FURNACE_MISC:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222151_c, RecipeBookCategories::blastFurnaceMiscPredicate);
++               break;
++            case SMOKER_SEARCH:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222152_d);
++               break;
++            case SMOKER_FOOD:
++               category.setupFilter(net.minecraft.item.crafting.IRecipeType.field_222152_d, RecipeBookCategories::foodPredicate);
++               break;
++            case STONECUTTER:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222154_f);
++               break;
++            case CAMPFIRE:
++               category.setupSearch(net.minecraft.item.crafting.IRecipeType.field_222153_e);
++         }
++
++         register(category, category.name().toLowerCase());
++      }
 +   }
 +
 +   @Override
@@ -119,6 +124,18 @@
 +   @Override
 +   public net.minecraft.item.crafting.IRecipeType<?> getRecipeType() {
 +      return recipeType;
++   }
++
++   private void setupSearch(net.minecraft.item.crafting.IRecipeType<?> recipeType) {
++      this.isSearch = true;
++      this.predicate = recipe -> true;
++      this.recipeType = recipeType;
++   }
++
++   private void setupFilter(net.minecraft.item.crafting.IRecipeType<?> recipeType, java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate) {
++      this.isSearch = false;
++      this.predicate = predicate;
++      this.recipeType = recipeType;
 +   }
 +
 +   private static void register(RecipeBookCategories category, String resourceName) {
