@@ -12,5 +12,5 @@ public interface IForgeRecipeBookCategory<T extends IRecipeType<?>> extends IFor
     boolean isSearch();
     Predicate<IRecipe<?>> getPredicate();
     T getRecipeType();
-    List<ItemStack> getIcons();
+    List<ItemStack> getIcon();
 }

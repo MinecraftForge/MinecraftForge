@@ -9,13 +9,8 @@
     SEARCH(new ItemStack(Items.field_151111_aL)),
     BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
     REDSTONE(new ItemStack(Items.field_151137_ax)),
-@@ -33,7 +33,176 @@
-       this.field_202904_j = ImmutableList.copyOf(p_i48836_3_);
-    }
- 
--   public List<ItemStack> func_202903_a() {
-+   @Override
-+   public List<ItemStack> getIcons() {
+@@ -36,4 +36,176 @@
+    public List<ItemStack> func_202903_a() {
        return this.field_202904_j;
     }
 +
@@ -109,6 +104,10 @@
 +
 +      this.registryName = net.minecraftforge.registries.GameData.checkPrefix(name, true);
 +      return this;
++   }
++
++   public List<ItemStack> getIcon() {
++      return this.field_202904_j;
 +   }
 +
 +   @Override

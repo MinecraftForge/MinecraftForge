@@ -42,7 +42,7 @@ public class ForgeRecipeBookCategories<T extends IRecipeType<?>> extends net.min
     }
 
     @Override
-    public List<ItemStack> getIcons() {
+    public List<ItemStack> getIcon() {
         return this.icons;
     }
 

@@ -26,7 +26,7 @@
  
     private void func_193920_a(ItemRenderer p_193920_1_) {
 -      List<ItemStack> list = this.field_193921_u.func_202903_a();
-+      List<ItemStack> list = this.recipeBookCategory.getIcons();
++      List<ItemStack> list = this.recipeBookCategory.getIcon();
        int i = this.field_191755_p ? -2 : 0;
        if (list.size() == 1) {
           p_193920_1_.func_180450_b(list.get(0), this.x + 9 + i, this.y + 5);
