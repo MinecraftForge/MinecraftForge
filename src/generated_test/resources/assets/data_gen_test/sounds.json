@@ -1,0 +1,125 @@
+{
+  "ambient.underwater.loop.additions": {
+    "sounds": [
+      "minecraft:ambient/underwater/additions/bubbles1",
+      "minecraft:ambient/underwater/additions/bubbles2",
+      "minecraft:ambient/underwater/additions/bubbles3",
+      "minecraft:ambient/underwater/additions/bubbles4",
+      "minecraft:ambient/underwater/additions/bubbles5",
+      "minecraft:ambient/underwater/additions/bubbles6",
+      "minecraft:ambient/underwater/additions/water1",
+      "minecraft:ambient/underwater/additions/water2"
+    ]
+  },
+  "ambient.underwater.loop.additions.ultra_rare": {
+    "sounds": [
+      "minecraft:ambient/underwater/additions/animal2",
+      "minecraft:ambient/underwater/additions/dark1",
+      {
+        "name": "minecraft:ambient/underwater/additions/dark2",
+        "volume": 0.7
+      },
+      "minecraft:ambient/underwater/additions/dark3",
+      "minecraft:ambient/underwater/additions/dark4"
+    ]
+  },
+  "block.lava.ambient": {
+    "subtitle": "subtitles.block.lava.ambient",
+    "sounds": [
+      "minecraft:liquid/lava"
+    ]
+  },
+  "entity.dolphin.ambient_water": {
+    "subtitle": "subtitles.entity.dolphin.ambient_water",
+    "sounds": [
+      {
+        "name": "minecraft:mob/dolphin/idle_water1",
+        "volume": 0.8
+      },
+      "minecraft:mob/dolphin/idle_water2",
+      "minecraft:mob/dolphin/idle_water3",
+      "minecraft:mob/dolphin/idle_water4",
+      "minecraft:mob/dolphin/idle_water5",
+      "minecraft:mob/dolphin/idle_water6",
+      {
+        "name": "minecraft:mob/dolphin/idle_water7",
+        "volume": 0.75
+      },
+      {
+        "name": "minecraft:mob/dolphin/idle_water8",
+        "volume": 0.75
+      },
+      "minecraft:mob/dolphin/idle_water9",
+      {
+        "name": "minecraft:mob/dolphin/idle_water10",
+        "volume": 0.8
+      }
+    ]
+  },
+  "entity.parrot.imitate.drowned": {
+    "subtitle": "subtitles.entity.parrot.imitate.drowned",
+    "sounds": [
+      {
+        "name": "minecraft:entity.drowned.ambient",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "item.trident.return": {
+    "subtitle": "subtitles.item.trident.return",
+    "sounds": [
+      {
+        "name": "minecraft:item/trident/return1",
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:item/trident/return2",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:item/trident/return3",
+        "volume": 0.8,
+        "pitch": 0.8
+      },
+      {
+        "name": "minecraft:item/trident/return2",
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:item/trident/return2",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:item/trident/return2",
+        "volume": 0.8,
+        "pitch": 0.8
+      },
+      {
+        "name": "minecraft:item/trident/return3",
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:item/trident/return3",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:item/trident/return3",
+        "volume": 0.8,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "music_disc.blocks": {
+    "sounds": [
+      {
+        "name": "minecraft:records/blocks",
+        "stream": true
+      }
+    ]
+  }
+}

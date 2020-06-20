@@ -32,6 +32,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.util.SoundEvents;
+import net.minecraftforge.client.sounds.generators.SoundDefinition;
+import net.minecraftforge.client.sounds.generators.SoundDefinitionsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -127,6 +130,7 @@ public class DataGeneratorTest
             gen.addProvider(new Lang(gen));
             gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
             gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
+            gen.addProvider(new SoundDefinitions(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -188,6 +192,80 @@ public class DataGeneratorTest
             .build(consumer, ID);
         }
     }
+
+    public static class SoundDefinitions extends SoundDefinitionsProvider {
+        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper) {
+            super(generator, MODID, helper);
+        }
+
+        @Override
+        public void registerSounds() {
+            // Taken from vanilla's 'sounds.json'. These are supposed to be 1-to-1 copies, but currently
+            // automatic testing of those copies cannot be performed due to limitations in the data-gen
+            // system, where the additional data pack that vanilla loads from the launcher's assets/
+            // directory isn't actually loaded when running data-gen.
+
+            // ambient.underwater.loop.additions
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, definition().with(
+                    sound("ambient/underwater/additions/bubbles1"),
+                    sound("ambient/underwater/additions/bubbles2"),
+                    sound("ambient/underwater/additions/bubbles3"),
+                    sound("ambient/underwater/additions/bubbles4"),
+                    sound("ambient/underwater/additions/bubbles5"),
+                    sound("ambient/underwater/additions/bubbles6"),
+                    sound("ambient/underwater/additions/water1"),
+                    sound("ambient/underwater/additions/water2")
+            ));
+
+            //ambient.underwater.loop.additions.ultra_rare
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, definition().with(
+                    sound("ambient/underwater/additions/animal2"),
+                    sound("ambient/underwater/additions/dark1"),
+                    sound("ambient/underwater/additions/dark2").volume(0.7),
+                    sound("ambient/underwater/additions/dark3"),
+                    sound("ambient/underwater/additions/dark4")
+            ));
+
+            //block.lava.ambient
+            this.add(SoundEvents.BLOCK_LAVA_AMBIENT, definition().with(sound("liquid/lava")).subtitle("subtitles.block.lava.ambient"));
+
+            //entity.dolphin.ambient_water
+            this.add(SoundEvents.ENTITY_DOLPHIN_AMBIENT_WATER, definition().with(
+                    sound("mob/dolphin/idle_water1").volume(0.8),
+                    sound("mob/dolphin/idle_water2"),
+                    sound("mob/dolphin/idle_water3"),
+                    sound("mob/dolphin/idle_water4"),
+                    sound("mob/dolphin/idle_water5"),
+                    sound("mob/dolphin/idle_water6"),
+                    sound("mob/dolphin/idle_water7").volume(0.75),
+                    sound("mob/dolphin/idle_water8").volume(0.75),
+                    sound("mob/dolphin/idle_water9"),
+                    sound("mob/dolphin/idle_water10").volume(0.8)
+            ).subtitle("subtitles.entity.dolphin.ambient_water"));
+
+            //entity.parrot.imitate.drowned
+            this.add(SoundEvents.ENTITY_PARROT_IMITATE_DROWNED, definition().with(
+                    sound("entity.drowned.ambient", SoundDefinition.SoundType.EVENT).pitch(1.8).volume(0.6)
+            ).subtitle("subtitles.entity.parrot.imitate.drowned"));
+
+            //item.trident.return
+            this.add(SoundEvents.ITEM_TRIDENT_RETURN, definition().with(
+                    sound("item/trident/return1").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8),
+                    sound("item/trident/return2").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return2").pitch(0.8).volume(0.8),
+                    sound("item/trident/return3").volume(0.8),
+                    sound("item/trident/return3").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8)
+            ).subtitle("subtitles.item.trident.return"));
+
+            //music_disc.blocks
+            this.add(SoundEvents.MUSIC_DISC_BLOCKS, definition().with(sound("records/blocks").stream()));
+        }
+    }
+
 
     public static class Tags extends BlockTagsProvider
     {
