@@ -26,11 +26,10 @@
           }).findFirst().orElse((RecipeTabToggleWidget)null);
        }
  
-@@ -104,7 +107,18 @@
+@@ -104,7 +107,17 @@
  
        this.field_191913_x.func_191753_b(true);
        this.func_193003_g(false);
-+      // remove tabs that does not contains recipes
 +      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.getRecipes(tabToggleWidget.getRecipeBookCategory()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
        this.func_193949_f();
 +      this.up = new net.minecraftforge.client.UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
@@ -45,7 +44,7 @@
     }
  
     public boolean changeFocus(boolean p_changeFocus_1_) {
-@@ -119,6 +133,8 @@
+@@ -119,6 +132,8 @@
        this.field_193962_q = null;
        this.field_191913_x = null;
        this.field_191888_F.field_195559_v.func_197967_a(false);
@@ -54,7 +53,7 @@
     }
  
     public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
-@@ -160,7 +176,7 @@
+@@ -160,7 +175,7 @@
     }
  
     private void func_193003_g(boolean p_193003_1_) {
@@ -63,7 +62,7 @@
        list.forEach((p_193944_1_) -> {
           p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
        });
-@@ -190,13 +206,15 @@
+@@ -190,13 +205,15 @@
  
     private void func_193949_f() {
        int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
@@ -82,7 +81,7 @@
              if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
                 recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
                 recipetabtogglewidget.func_193918_a(this.field_191888_F);
-@@ -205,6 +223,10 @@
+@@ -205,6 +222,10 @@
              recipetabtogglewidget.visible = true;
              recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
           }
@@ -93,7 +92,7 @@
        }
  
     }
-@@ -243,6 +265,8 @@
+@@ -243,6 +264,8 @@
  
           this.field_193960_m.render(p_render_1_, p_render_2_, p_render_3_);
           this.field_193022_s.func_194191_a(i, j, p_render_1_, p_render_2_, p_render_3_);
@@ -102,7 +101,7 @@
           RenderSystem.popMatrix();
        }
     }
-@@ -307,6 +331,9 @@
+@@ -307,6 +330,9 @@
              return true;
           } else if (this.field_193962_q.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
              return true;
@@ -112,7 +111,7 @@
           } else if (this.field_193960_m.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
              boolean flag = this.func_201521_f();
              this.field_193960_m.func_191753_b(flag);
-@@ -417,7 +444,7 @@
+@@ -417,7 +443,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
@@ -121,13 +120,15 @@
           this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
           this.field_191888_F.field_71474_y.func_74303_b();
        }
-@@ -465,4 +492,9 @@
+@@ -465,4 +491,11 @@
        }
  
     }
 +
++   /*================================ FORGE START ================================================*/
 +   private void updateButtons() {
 +      this.up.visible = this.offset > 0 && this.field_193018_j.size() > 5;
 +      this.down.visible = this.field_193018_j.size() > 5 && this.offset < this.field_193018_j.size() - 5;
 +   }
++   /*================================ FORGE END ================================================*/
  }

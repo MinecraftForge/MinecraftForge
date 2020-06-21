@@ -31,6 +31,7 @@ public class UpDownButton extends net.minecraft.client.gui.widget.button.Button 
         this.renderBg(minecraft, mouseX, mouseY);
     }
 
+    // re-implemented blit function for rotating and mirroring texture
     public void blit(int x, int y, int u, int v, int w, int h) {
         blit(x, y, 0, (float)u, (float)v, w, h, 256, 256);
     }

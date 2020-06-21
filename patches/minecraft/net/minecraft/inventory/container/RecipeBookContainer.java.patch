@@ -1,10 +1,11 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -31,4 +31,69 @@
+@@ -31,4 +31,70 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
 +
++   /*================================ FORGE START ================================================*/
 +   public net.minecraft.item.crafting.IRecipeType<?> getRecipeType() {
 +      if (this instanceof FurnaceContainer) {
 +         return net.minecraft.item.crafting.IRecipeType.field_222150_b;
@@ -51,7 +52,6 @@
 +   }
 +
 +   static {
-+      // priority map to stick with vanilla tabs order, custom tabs goes under them
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SEARCH, 10);
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BUILDING_BLOCKS, 20);
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.REDSTONE, 30);
@@ -69,4 +69,5 @@
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.STONECUTTER, 30);
 +      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CAMPFIRE, 40);
 +   }
++   /*================================ FORGE END ================================================*/
  }

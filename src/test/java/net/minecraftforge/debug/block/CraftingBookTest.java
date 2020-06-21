@@ -59,7 +59,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeRecipeBookCategories;
+import net.minecraftforge.common.ForgeRecipeBookCategory;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import net.minecraftforge.event.RegistryEvent;
@@ -78,11 +78,11 @@ import java.util.Set;
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class CraftingBookTest {
     @ObjectHolder("rare")
-    public static final ForgeRecipeBookCategories<?> rare = null;
+    public static final ForgeRecipeBookCategory<?> rare = null;
     @ObjectHolder("test")
-    public static final ForgeRecipeBookCategories<?> test = null;
+    public static final ForgeRecipeBookCategory<?> test = null;
     @ObjectHolder("test_uncommon")
-    public static final ForgeRecipeBookCategories<?> test_uncommon = null;
+    public static final ForgeRecipeBookCategory<?> test_uncommon = null;
 
     @ObjectHolder("test_block")
     public static final Block test_block = null;
@@ -102,13 +102,13 @@ public class CraftingBookTest {
     @SubscribeEvent
     public static void registerForgeRecipeBookCategories(RegistryEvent.Register<IForgeRecipeBookCategory<?>> event) {
         // search category for custom machine
-        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(true, TestRecipe.test, new ItemStack(Items.COMPASS)).setRegistryName("base_crafting_book_test", "test"));
+        event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(true, TestRecipe.test, new ItemStack(Items.COMPASS)).setRegistryName("base_crafting_book_test", "test"));
         // custom machine category showing only uncommon recipes
-        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(false,
+        event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(false,
                 TestRecipe.test, recipe -> recipe.getRecipeOutput().getRarity() == Rarity.UNCOMMON, new ItemStack(Items.GOLDEN_AXE), new ItemStack(Items.STONE_PICKAXE))
                 .setRegistryName("base_crafting_book_test", "test_uncommon"));
         // added new category to crafting table & player displaying only rare output items recipes
-        event.getRegistry().register(new ForgeRecipeBookCategories<IRecipeType<?>>(false, IRecipeType.CRAFTING, recipe -> recipe.getRecipeOutput().getRarity() == Rarity.RARE, new ItemStack(Items.BEACON))
+        event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(false, IRecipeType.CRAFTING, recipe -> recipe.getRecipeOutput().getRarity() == Rarity.RARE, new ItemStack(Items.BEACON))
                 .setRegistryName("base_crafting_book_test", "rare"));
     }
 
