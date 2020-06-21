@@ -19,6 +19,7 @@
 +   private boolean isSearch;
 +   private net.minecraft.item.crafting.IRecipeType<?> recipeType;
 +   private java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate;
++   private final com.google.common.reflect.TypeToken<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>> token = new com.google.common.reflect.TypeToken<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>>(getClass()){};
 +
 +   static {
 +      for (RecipeBookCategories category : RecipeBookCategories.values()) {
@@ -89,8 +90,7 @@
 +
 +   @Override
 +   public Class<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>> getRegistryType() {
-+      //return RecipeBookCategories.class;
-+      return null;
++      return (Class<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>>)token.getRawType();
 +   }
 +
 +   public final RecipeBookCategories setRegistryName(String modID, String name) {
