@@ -9,17 +9,28 @@ import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ForgeRecipeBookCategories<T extends IRecipeType<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<IForgeRecipeBookCategory<?>> implements IForgeRecipeBookCategory<T> {
+public class ForgeRecipeBookCategory<T extends IRecipeType<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<IForgeRecipeBookCategory<?>> implements IForgeRecipeBookCategory<T> {
     private final List<ItemStack> icons;
     private final boolean isSearch;
     private final T recipeType;
     private final Predicate<IRecipe<?>> predicate;
 
-    public ForgeRecipeBookCategories(boolean isSearch, T recipeType, ItemStack... icons) {
+    /**
+     * @param isSearch If tab is search
+     * @param recipeType Recipe type
+     * @param icons Recipe tab icons
+     */
+    public ForgeRecipeBookCategory(boolean isSearch, T recipeType, ItemStack... icons) {
         this(isSearch, recipeType, recipe -> true, icons);
     }
 
-    public ForgeRecipeBookCategories(boolean isSearch, T recipeType, Predicate<IRecipe<?>> predicate, ItemStack... icons) {
+    /**
+     * @param isSearch If tab is search
+     * @param recipeType Recipe type
+     * @param predicate Filtering function
+     * @param icons Recipe tab icons
+     */
+    public ForgeRecipeBookCategory(boolean isSearch, T recipeType, Predicate<IRecipe<?>> predicate, ItemStack... icons) {
         this.isSearch = isSearch;
         this.recipeType = recipeType;
         this.predicate = predicate;
