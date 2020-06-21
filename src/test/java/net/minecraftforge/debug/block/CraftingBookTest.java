@@ -104,10 +104,10 @@ public class CraftingBookTest {
         event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(true, TestRecipe.test, new ItemStack(Items.COMPASS)).setRegistryName("base_crafting_book_test", "test"));
         // custom machine category showing only uncommon recipes
         event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(false,
-                TestRecipe.test, recipe -> true, new ItemStack(Items.GOLDEN_AXE), new ItemStack(Items.STONE_PICKAXE))
+                TestRecipe.test, recipe -> recipe.getRecipeOutput().getRarity() == Rarity.UNCOMMON, new ItemStack(Items.GOLDEN_AXE), new ItemStack(Items.STONE_PICKAXE))
                 .setRegistryName("base_crafting_book_test", "test_uncommon"));
         // added new category to crafting table & player displaying only rare output items recipes
-        event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(false, IRecipeType.CRAFTING, recipe -> true, new ItemStack(Items.BEACON))
+        event.getRegistry().register(new ForgeRecipeBookCategory<IRecipeType<?>>(false, IRecipeType.CRAFTING, recipe -> recipe.getRecipeOutput().getRarity() == Rarity.RARE, new ItemStack(Items.BEACON))
                 .setRegistryName("base_crafting_book_test", "rare"));
     }
 
