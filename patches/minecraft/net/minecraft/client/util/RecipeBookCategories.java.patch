@@ -9,12 +9,12 @@
     SEARCH(new ItemStack(Items.field_151111_aL)),
     BUILDING_BLOCKS(new ItemStack(Blocks.field_196584_bK)),
     REDSTONE(new ItemStack(Items.field_151137_ax)),
-@@ -36,4 +36,176 @@
+@@ -36,4 +36,177 @@
     public List<ItemStack> func_202903_a() {
        return this.field_202904_j;
     }
 +
-+   //--FORGE
++   /*================================ FORGE START ================================================*/
 +   private net.minecraft.util.ResourceLocation registryName;
 +   private boolean isSearch;
 +   private net.minecraft.item.crafting.IRecipeType<?> recipeType;
@@ -185,4 +185,5 @@
 +   private static boolean blastFurnaceMiscPredicate(net.minecraft.item.crafting.IRecipe<?> recipe) {
 +      return !(recipe.func_77571_b().func_77973_b() instanceof net.minecraft.item.BlockItem);
 +   }
++   /*================================ FORGE END ================================================*/
  }

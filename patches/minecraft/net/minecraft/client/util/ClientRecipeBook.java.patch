@@ -5,7 +5,7 @@
  public class ClientRecipeBook extends RecipeBook {
     private final RecipeManager field_199645_e;
 -   private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
-+   @Deprecated private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap();
++   @Deprecated private final Map<RecipeBookCategories, List<RecipeList>> field_197931_e = Maps.newHashMap(); // use forgeRecipeBookCategories instead
     private final List<RecipeList> field_197932_f = Lists.newArrayList();
  
     public ClientRecipeBook(RecipeManager p_i48186_1_) {
@@ -32,54 +32,47 @@
                    table.put(recipebookcategories, s, recipelist);
                 }
              }
-@@ -60,10 +60,11 @@
+@@ -60,6 +60,7 @@
  
     }
  
-+   @Deprecated
++   @Deprecated // use newRecipeList(IForgeRecipeBookCategory) instead
     private RecipeList func_202889_b(RecipeBookCategories p_202889_1_) {
        RecipeList recipelist = new RecipeList();
        this.field_197932_f.add(recipelist);
--      this.field_197931_e.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
-+      this.forgeRecipeBookCategories.computeIfAbsent(p_202889_1_, (p_202890_0_) -> {
-          return Lists.newArrayList();
-       }).add(recipelist);
-       if (p_202889_1_ != RecipeBookCategories.FURNACE_BLOCKS && p_202889_1_ != RecipeBookCategories.FURNACE_FOOD && p_202889_1_ != RecipeBookCategories.FURNACE_MISC) {
-@@ -87,8 +88,9 @@
-       return recipelist;
+@@ -88,7 +89,7 @@
     }
  
-+   @Deprecated
     private void func_216767_a(RecipeBookCategories p_216767_1_, RecipeList p_216767_2_) {
 -      this.field_197931_e.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
 +      this.forgeRecipeBookCategories.computeIfAbsent(p_216767_1_, (p_216768_0_) -> {
           return Lists.newArrayList();
        }).add(p_216767_2_);
     }
-@@ -122,6 +124,7 @@
+@@ -122,6 +123,7 @@
        }
     }
  
-+   @Deprecated
++   @Deprecated // use RecipeBookContainer.getRecipeBookCategories() instead
     public static List<RecipeBookCategories> func_216769_b(RecipeBookContainer<?> p_216769_0_) {
        if (!(p_216769_0_ instanceof WorkbenchContainer) && !(p_216769_0_ instanceof PlayerContainer)) {
           if (p_216769_0_ instanceof FurnaceContainer) {
-@@ -140,7 +143,27 @@
+@@ -140,7 +142,29 @@
        return this.field_197932_f;
     }
  
 +   @Deprecated
     public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
--      return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
-+      return this.forgeRecipeBookCategories.getOrDefault(p_202891_1_, Collections.emptyList());
+       return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
     }
 +
++   /*================================ FORGE START ================================================*/
 +   private final Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> forgeRecipeBookCategories = Maps.newHashMap();
 +
 +   private RecipeList newRecipeList(IRecipe<?> recipe) {
 +      RecipeList recipelist = new RecipeList();
 +      this.field_197932_f.add(recipelist);
-+      net.minecraftforge.common.ForgeRecipeBookCategories.getValidCategories(recipe).forEach(category -> addToForgeRecipeBookCategories(category, recipelist));
++      net.minecraftforge.common.ForgeRecipeBookCategory.getValidCategories(recipe).forEach(category -> addToForgeRecipeBookCategories(category, recipelist));
 +      return recipelist;
 +   }
 +
@@ -92,4 +85,5 @@
 +   public List<RecipeList> getRecipes(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> forgeRecipeBookCategory) {
 +      return this.forgeRecipeBookCategories.getOrDefault(forgeRecipeBookCategory, Collections.emptyList());
 +   }
++   /*================================ FORGE END ================================================*/
  }
