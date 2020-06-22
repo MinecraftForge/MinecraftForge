@@ -82,6 +82,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private IForgeRegistry<T> type;
     private Supplier<RegistryBuilder<T>> registryFactory;
+    private boolean seenRegisterEvent = false;
 
     private DeferredRegister(Class<T> base, String modid)
     {
@@ -106,6 +107,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     @SuppressWarnings("unchecked")
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
     {
+        if (seenRegisterEvent)
+            throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegistryEvent.Register has been fired.");
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
@@ -173,6 +176,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     {
         if (this.type != null && event.getGenericType() == this.type.getRegistrySuperType())
         {
+            this.seenRegisterEvent = true;
             @SuppressWarnings("unchecked")
             IForgeRegistry<T> reg = (IForgeRegistry<T>)event.getRegistry();
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
