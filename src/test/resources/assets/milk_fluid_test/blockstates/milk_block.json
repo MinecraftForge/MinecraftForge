@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "milk_fluid_test:block/milk_block" }
+  }
+}

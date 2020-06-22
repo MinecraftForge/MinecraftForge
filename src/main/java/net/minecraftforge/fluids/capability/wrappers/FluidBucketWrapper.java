@@ -25,15 +25,14 @@ import javax.annotation.Nullable;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
  * Wrapper for vanilla and forge buckets.
@@ -60,7 +59,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     public boolean canFillFluidType(FluidStack fluid)
     {
-        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA || fluid.getFluid().getRegistryName().equals(new ResourceLocation("milk")))
+        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA)
         {
             return true;
         }
@@ -117,7 +116,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     @Override
     public int fill(FluidStack resource, FluidAction action)
     {
-        if (container.getCount() != 1 || resource.getAmount() < FluidAttributes.BUCKET_VOLUME || container.getItem() instanceof MilkBucketItem || !getFluid().isEmpty() || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource.getAmount() < FluidAttributes.BUCKET_VOLUME || !getFluid().isEmpty() || !canFillFluidType(resource))
         {
             return 0;
         }
