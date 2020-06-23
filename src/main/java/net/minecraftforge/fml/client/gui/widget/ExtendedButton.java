@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.gui.GuiUtils;

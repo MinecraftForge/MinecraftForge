@@ -36,6 +36,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.item.FireworkRocketEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -628,6 +629,11 @@ public class ForgeEventFactory
     public static boolean onProjectileImpact(ThrowableEntity throwable, RayTraceResult ray)
     {
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
+    }
+
+    public static boolean onProjectileImpact(FireworkRocketEntity fireworkRocket, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FireworkRocket(fireworkRocket, ray));
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)

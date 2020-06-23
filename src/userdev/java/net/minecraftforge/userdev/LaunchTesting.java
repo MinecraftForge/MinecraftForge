@@ -20,9 +20,12 @@
 package net.minecraftforge.userdev;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.UserAuthentication;
 import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import cpw.mods.modlauncher.Launcher;
 
@@ -157,10 +160,11 @@ public class LaunchTesting
             throw new RuntimeException(e); // don't set other variables
         }
 
+        Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
         args.put("username",       auth.getSelectedProfile().getName());
         args.put("uuid",           auth.getSelectedProfile().getId().toString().replace("-", ""));
         args.put("accessToken",    auth.getAuthenticatedToken());
-        args.put("userProperties", auth.getUserProperties().toString());
+        args.put("userProperties", gson.toJson(auth.getUserProperties()));
         return true;
     }
 }

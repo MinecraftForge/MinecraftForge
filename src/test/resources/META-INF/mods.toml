@@ -2,6 +2,8 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
+    modId="mark_dimension_for_deletion_test"
+[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
@@ -9,28 +11,17 @@ loaderVersion="[28,)"
     modId="base_block_place_event_test"
 [[mods]]
     modId="farmland_trample_test"
-#[[mods]]
-#    modId="farmland_water_test"
-##[[mods]] # Fluid System needs implementing
-##    modId="fog_color_in_material_test"
 [[mods]]
+
     modId="neighbor_notify_event_test"
-#[[mods]]
-#    modId="block_particle_effects_test"
-[[mods]]
-    modId="ai_node_type_test"
 [[mods]]
     modId="block_place_event_test"
-#[[mods]]
-#    modId="portal_spawn_event_test"
 [[mods]]
     modId="slipperiness_test"
 [[mods]]
     modId="custom_slime_block_test"
 [[mods]]
     modId="client_chat_event_test"
-##[[mods]] # Client Command System doesn't exist yet
-##    modId="client_command_test"
 [[mods]]
     modId="command_event_test"
 [[mods]]
@@ -47,8 +38,6 @@ loaderVersion="[28,)"
     modId="flower_pot_test"
 [[mods]]
     modId="player_xp_event_test"
-##[[mods]]
-##    modId="custom_tnt_test"
 [[mods]]
     modId="new_model_loader_test"
 [[mods]]
@@ -61,6 +50,12 @@ loaderVersion="[28,)"
     modId="nameplate_render_test"
 [[mods]]
     modId="global_loot_test"
+[[dependencies.global_loot_test]]
+    modId="forge"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
 [[mods]]
     modId="custom_plant_type_test"
 [[mods]]
@@ -71,9 +66,5 @@ loaderVersion="[28,)"
     modId="music_disc_test"
 [[mods]]
     modId="stencil_enable_test"
-[[dependencies.global_loot_test]]
-    modId="forge"
-    mandatory=true
-    versionRange="[1,)"
-    ordering="AFTER"
-    side="BOTH"
+[[mods]]
+    modId="deferred_registry_test"
