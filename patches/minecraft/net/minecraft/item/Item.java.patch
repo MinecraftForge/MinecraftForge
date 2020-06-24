@@ -63,7 +63,7 @@
        float f7 = f2 * f4;
 -      double d0 = 5.0D;
 -      Vector3d vector3d1 = vector3d.func_72441_c((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
-+      double d0 = p_219968_1_.func_110148_a(PlayerEntity.REACH_DISTANCE).func_111126_e();;
++      double d0 = p_219968_1_.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e();;
 +      Vector3d vector3d1 = vector3d.func_72441_c((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
        return p_219968_0_.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.OUTLINE, p_219968_2_, p_219968_1_));
     }

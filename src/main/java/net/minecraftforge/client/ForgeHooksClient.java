@@ -321,10 +321,10 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
-            gui.func_238472_a_(mStack, font, line, (width - font.func_238414_a_(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).func_240699_a_(TextFormatting.RED);
+            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = new TranslationTextComponent("forge.update.beta.2");
-            gui.func_238472_a_(mStack, font, line, (width - font.func_238414_a_(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;

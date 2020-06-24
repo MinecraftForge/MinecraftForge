@@ -16,7 +16,27 @@
        this.field_147299_f.field_71474_y.func_82879_c();
        this.field_147302_e.func_179290_a(new CCustomPayloadPacket(CCustomPayloadPacket.field_210344_a, (new PacketBuffer(Unpooled.buffer())).func_180714_a(ClientBrandRetriever.getClientModName())));
        this.field_147299_f.func_213229_ar().func_216814_a();
-@@ -1034,8 +1036,10 @@
+@@ -745,7 +747,7 @@
+          BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
+          TileEntity tileentity = this.field_147300_g.func_175625_s(blockpos);
+          if (tileentity != null) {
+-            tileentity.func_230337_a_(this.field_147300_g.func_180495_p(blockpos), compoundnbt);
++            tileentity.handleUpdateTag(this.field_147300_g.func_180495_p(blockpos), compoundnbt);
+          }
+       }
+ 
+@@ -844,7 +846,9 @@
+ 
+    public void func_147251_a(SChatPacket p_147251_1_) {
+       PacketThreadUtil.func_218797_a(p_147251_1_, this, this.field_147299_f);
+-      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c(), p_147251_1_.func_240810_e_());
++      net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c());
++      if (message == null) return;
++      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), message, p_147251_1_.func_240810_e_());
+    }
+ 
+    public void func_147279_a(SAnimateHandPacket p_147279_1_) {
+@@ -1034,8 +1038,10 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }
  
@@ -27,7 +47,7 @@
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
        clientplayerentity1.field_70177_z = -180.0F;
        clientplayerentity1.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -1161,6 +1165,12 @@
+@@ -1161,6 +1167,12 @@
  
        if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
           ((CommandBlockScreen)this.field_147299_f.field_71462_r).func_184075_a();
@@ -40,7 +60,7 @@
        }
  
     }
-@@ -1329,6 +1339,7 @@
+@@ -1329,6 +1341,7 @@
        clientrecipebook.func_199644_c();
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -48,7 +68,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1409,7 +1420,7 @@
+@@ -1409,7 +1422,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -57,7 +77,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1426,6 +1437,7 @@
+@@ -1426,6 +1439,7 @@
        }
  
        this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
@@ -65,7 +85,7 @@
     }
  
     public void func_175098_a(SCombatPacket p_175098_1_) {
-@@ -1909,10 +1921,12 @@
+@@ -1909,10 +1923,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {

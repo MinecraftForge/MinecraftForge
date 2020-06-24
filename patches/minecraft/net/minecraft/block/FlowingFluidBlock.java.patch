@@ -43,6 +43,22 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
+@@ -122,13 +137,13 @@
+                BlockPos blockpos = p_204515_2_.func_177972_a(direction);
+                if (p_204515_1_.func_204610_c(blockpos).func_206884_a(FluidTags.field_206959_a)) {
+                   Block block = p_204515_1_.func_204610_c(p_204515_2_).func_206889_d() ? Blocks.field_150343_Z : Blocks.field_150347_e;
+-                  p_204515_1_.func_175656_a(p_204515_2_, block.func_176223_P());
++                  p_204515_1_.func_175656_a(p_204515_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_204515_1_, p_204515_2_, p_204515_2_, block.func_176223_P()));
+                   this.func_180688_d(p_204515_1_, p_204515_2_);
+                   return false;
+                }
+ 
+                if (flag && p_204515_1_.func_180495_p(blockpos).func_203425_a(Blocks.field_205164_gk)) {
+-                  p_204515_1_.func_175656_a(p_204515_2_, Blocks.field_235337_cO_.func_176223_P());
++                  p_204515_1_.func_175656_a(p_204515_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_204515_1_, p_204515_2_, p_204515_2_, Blocks.field_235337_cO_.func_176223_P()));
+                   this.func_180688_d(p_204515_1_, p_204515_2_);
+                   return false;
+                }
 @@ -166,4 +181,23 @@
        }
  

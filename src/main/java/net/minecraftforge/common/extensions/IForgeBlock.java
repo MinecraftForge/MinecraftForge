@@ -114,7 +114,7 @@ public interface IForgeBlock
      */
     default boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
-        return false;
+        return state.getBlock().isIn(BlockTags.field_232878_as_);
     }
 
     /**
@@ -533,7 +533,7 @@ public interface IForgeBlock
     */
     default boolean isFertile(BlockState state, IBlockReader world, BlockPos pos)
     {
-        if (this.getBlock() == Blocks.FARMLAND)
+        if (state.isIn(Blocks.FARMLAND))
             return state.get(FarmlandBlock.MOISTURE) > 0;
 
         return  false;
@@ -581,7 +581,7 @@ public interface IForgeBlock
      */
     default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return state.getBlock() == Blocks.OBSIDIAN;
+        return state.isIn(Blocks.OBSIDIAN);
     }
 
    /**
@@ -634,7 +634,7 @@ public interface IForgeBlock
     */
     default float getEnchantPowerBonus(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return this.getBlock() == Blocks.BOOKSHELF ? 1: 0;
+        return state.isIn(Blocks.BOOKSHELF) ? 1: 0;
     }
 
    /**

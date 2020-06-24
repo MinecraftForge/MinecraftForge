@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -336,6 +336,8 @@
-       ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, registrykey, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
-       this.field_71305_c.put(World.field_234918_g_, serverworld);
-       DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
-+      // Move factory creation earlier to prevent startupquery deadlock
-+      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
-       this.func_213204_a(dimensionsaveddatamanager);
-       this.field_229733_al_ = new CommandStorage(dimensionsaveddatamanager);
-       WorldBorder worldborder = serverworld.func_175723_af();
-@@ -380,6 +382,7 @@
+@@ -226,7 +226,7 @@
+ 
+    public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
+       AtomicReference<S> atomicreference = new AtomicReference<>();
+-      Thread thread = new Thread(() -> {
++      Thread thread = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, () -> {
+          atomicreference.get().func_240802_v_();
+       }, "Server thread");
+       thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
+@@ -380,6 +380,7 @@
              worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
              this.field_71305_c.put(registrykey2, serverworld1);
           }
@@ -17,7 +17,7 @@
        }
  
     }
-@@ -391,6 +394,7 @@
+@@ -391,6 +392,7 @@
        } else if (p_240786_3_) {
           p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -25,7 +25,7 @@
           BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(p_240786_0_.func_72905_C());
-@@ -569,6 +573,7 @@
+@@ -569,6 +571,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -33,7 +33,7 @@
                 serverworld1.close();
              } catch (IOException ioexception1) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-@@ -617,6 +622,7 @@
+@@ -617,6 +620,7 @@
     protected void func_240802_v_() {
        try {
           if (this.func_71197_b()) {
@@ -41,7 +41,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
-@@ -646,9 +652,15 @@
+@@ -646,9 +650,15 @@
                 this.func_240795_b_(longtickdetector);
                 this.field_71296_Q = true;
              }
@@ -57,7 +57,7 @@
        } catch (Throwable throwable1) {
           field_147145_h.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport;
-@@ -665,6 +677,7 @@
+@@ -665,6 +675,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -65,7 +65,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -673,6 +686,7 @@
+@@ -673,6 +684,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -73,7 +73,7 @@
              this.func_71240_o();
           }
  
-@@ -774,6 +788,7 @@
+@@ -774,6 +786,7 @@
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
@@ -81,7 +81,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -788,6 +803,7 @@
+@@ -788,6 +801,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -89,7 +89,7 @@
        }
  
        if (this.field_71315_w % 6000 == 0) {
-@@ -815,6 +831,7 @@
+@@ -815,6 +829,7 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -97,7 +97,7 @@
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -822,7 +839,8 @@
+@@ -822,7 +837,8 @@
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
  
@@ -107,7 +107,7 @@
           this.field_71304_b.func_194340_a(() -> {
              return serverworld + " " + serverworld.func_234923_W_().func_240901_a_();
           });
-@@ -833,6 +851,7 @@
+@@ -833,6 +849,7 @@
           }
  
           this.field_71304_b.func_76320_a("tick");
@@ -115,6 +115,27 @@
  
           try {
              serverworld.func_72835_b(p_71190_1_);
+@@ -841,9 +858,11 @@
+             serverworld.func_72914_a(crashreport);
+             throw new ReportedException(crashreport);
+          }
++         net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(serverworld);
+ 
+          this.field_71304_b.func_76319_b();
+          this.field_71304_b.func_76319_b();
++         perWorldTickTimes.computeIfAbsent(serverworld.func_234923_W_(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
+       }
+ 
+       this.field_71304_b.func_219895_b("connection");
+@@ -918,7 +937,7 @@
+    }
+ 
+    public String getServerModName() {
+-      return "vanilla";
++      return net.minecraftforge.fml.BrandingControl.getServerBranding();
+    }
+ 
+    public CrashReport func_71230_b(CrashReport p_71230_1_) {
 @@ -931,6 +950,7 @@
        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();

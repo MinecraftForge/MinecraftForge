@@ -57,7 +57,7 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
-+      }else if (!p_226532_0_.areCapsCompatible(p_226532_1_)) {
++      } else if (!p_226532_0_.areCapsCompatible(p_226532_1_)) {
 +         return false;
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
@@ -86,7 +86,7 @@
  
        if (!this.func_92059_d().func_190926_b()) {
           p_213281_1_.func_218657_a("Item", this.func_92059_d().func_77955_b(new CompoundNBT()));
-@@ -291,12 +310,21 @@
+@@ -291,10 +310,18 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -105,11 +105,8 @@
 +            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerItemPickupEvent(p_70100_1_, this, copy);
              p_70100_1_.func_71001_a(this, i);
              if (itemstack.func_190926_b()) {
-+               p_70100_1_.func_71001_a(this, i);
                 this.func_70106_y();
-                itemstack.func_190920_e(i);
-             }
-@@ -392,7 +420,7 @@
+@@ -392,7 +419,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();

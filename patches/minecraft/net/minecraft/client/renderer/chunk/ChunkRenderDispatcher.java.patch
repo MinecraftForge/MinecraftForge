@@ -125,7 +125,7 @@
                       BufferBuilder bufferbuilder2 = p_228940_5_.func_228366_a_(rendertype1);
                       if (p_228940_4_.field_178501_c.add(rendertype1)) {
                          ChunkRender.this.func_228923_a_(bufferbuilder2);
-@@ -500,7 +524,7 @@
+@@ -500,14 +524,16 @@
  
                       matrixstack.func_227860_a_();
                       matrixstack.func_227861_a_((double)(blockpos2.func_177958_n() & 15), (double)(blockpos2.func_177956_o() & 15), (double)(blockpos2.func_177952_p() & 15));
@@ -134,11 +134,11 @@
                          p_228940_4_.field_178498_d = false;
                          p_228940_4_.field_178500_b.add(rendertype1);
                       }
-@@ -508,6 +532,8 @@
+ 
                       matrixstack.func_227865_b_();
                    }
++                  }
                 }
-+               }
 +               net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
  
                 if (p_228940_4_.field_178500_b.contains(RenderType.func_228645_f_())) {

@@ -7,17 +7,29 @@
 +      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
           int i = Math.min(inventory.func_70302_i_(), this.field_110296_bG.func_70302_i_());
  
-          if (this.func_184207_aI() && this.field_190688_bE) {
-@@ -672,6 +673,7 @@
-                this.func_213293_j(vec3d.field_72450_a, d1, vec3d.field_72449_c);
-                this.func_110255_k(true);
-                this.field_70160_al = true;
-+               net.minecraftforge.common.ForgeHooks.onLivingJump(this);
-                if (f1 > 0.0F) {
-                   float f2 = MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F));
-                   float f3 = MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F));
-@@ -947,4 +949,22 @@
+          for(int j = 0; j < i; ++j) {
+@@ -275,6 +276,7 @@
 
+       this.field_110296_bG.func_110134_a(this);
+       this.func_230275_fc_();
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
+    }
+
+    protected void func_230275_fc_() {
+@@ -333,9 +335,9 @@
+    protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
+       if (!p_180429_2_.func_185904_a().func_76224_d()) {
+          BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
+-         SoundType soundtype = p_180429_2_.func_215695_r();
++         SoundType soundtype = p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
+          if (blockstate.func_203425_a(Blocks.field_150433_aE)) {
+-            soundtype = blockstate.func_215695_r();
++            soundtype = blockstate.getSoundType(field_70170_p, p_180429_1_, this);
+          }
+
+          if (this.func_184207_aI() && this.field_190688_bE) {
+@@ -1010,4 +1012,22 @@
+       this.func_230273_eI_();
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
 +

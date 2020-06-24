@@ -141,7 +141,6 @@ public class GameData
     public static final ResourceLocation FEATURES = new ResourceLocation("feature");
     public static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
     public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
-    public static final ResourceLocation CHUNK_GENERATOR_TYPES = new ResourceLocation("chunk_generator_type");
     public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
     public static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
     public static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
@@ -149,7 +148,6 @@ public class GameData
     public static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
 
     // Custom forge registries
-    public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
     public static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
 
@@ -212,8 +210,6 @@ public class GameData
         makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
         makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
-//        makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
-//        makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
@@ -221,7 +217,6 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, TreeDecoratorType.class).disableSaving().disableSync().create();
 
         // Custom forge registries
-        //makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create(); //TODO Dimensions
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
     }

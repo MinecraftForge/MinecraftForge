@@ -23,7 +23,7 @@
        double d2 = this.field_73090_b.func_226281_cx_() - ((double)p_225416_1_.func_177952_p() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 -      if (d3 > 36.0D) {
-+      double dist = field_73090_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 1;
++      double dist = field_73090_b.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_225416_1_, p_225416_3_);
 +      if (event.isCanceled() || (!this.func_73083_d() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
 +         field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false, "mod canceled"));

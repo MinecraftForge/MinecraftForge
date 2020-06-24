@@ -82,7 +82,7 @@
  
     public float func_78757_d() {
 -      return this.field_78779_k.func_77145_d() ? 5.0F : 4.5F;
-+      float attrib = (float)field_78776_a.field_71439_g.func_110148_a(PlayerEntity.REACH_DISTANCE).func_111126_e();
++      float attrib = (float)field_78776_a.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e();
 +      return this.field_78779_k.func_77145_d() ? attrib : attrib - 0.5F;
     }
  

@@ -200,7 +200,7 @@
 +      for (int idx = start; idx < end; idx++) {
 +         ItemGroup itemgroup1 = ItemGroup.field_78032_a[idx];
 +         if (itemgroup1 != null && itemgroup1.func_78021_a() != field_147058_w) {
-+            this.field_230706_i_.func_110434_K().func_110577_a(itemgroup1.getBackgroundImage());
++            this.field_230706_i_.func_110434_K().func_110577_a(itemgroup1.getTabsImage());
              this.func_238808_a_(p_230450_1_, itemgroup1);
           }
        }
@@ -253,16 +253,7 @@
        this.func_238474_b_(p_238808_1_, l, i1, j, k, 28, 32);
        this.field_230707_j_.field_77023_b = 100.0F;
        l = l + 6;
-@@ -769,6 +852,8 @@
-          for(int i = 0; i < 5; ++i) {
-             for(int j = 0; j < 9; ++j) {
-                this.func_75146_a(new CreativeScreen.LockedSlot(CreativeScreen.field_195378_x, i * 9 + j, 9 + j * 18, 18 + i * 18));
-+      RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-+      RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-             }
-          }
- 
-@@ -884,6 +969,22 @@
+@@ -884,6 +967,22 @@
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

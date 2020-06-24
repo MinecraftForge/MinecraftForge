@@ -8,6 +8,15 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
+@@ -86,7 +87,7 @@
+          Util.func_240994_l_();
+          Path path = Paths.get("server.properties");
+          ServerPropertiesProvider serverpropertiesprovider = new ServerPropertiesProvider(path);
+-         serverpropertiesprovider.func_219035_b();
++         if (optionset.has(optionspec1) || !java.nio.file.Files.exists(path)) serverpropertiesprovider.func_219035_b();
+          Path path1 = Paths.get("eula.txt");
+          ServerEula servereula = new ServerEula(path1);
+          if (optionset.has(optionspec1)) {
 @@ -105,6 +106,10 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
@@ -19,3 +28,11 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
+@@ -170,6 +175,7 @@
+          Thread thread = new Thread("Server Shutdown Thread") {
+             public void run() {
+                dedicatedserver.func_71263_m(true);
++               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
+             }
+          };
+          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_240759_a_));

@@ -289,10 +289,11 @@
              worldloadprogressscreen.func_231023_e_();
              this.func_195542_b(false);
  
-@@ -1697,6 +1740,12 @@
+@@ -1696,7 +1739,12 @@
+          networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
-          networkmanager.func_179290_a(new CLoginStartPacket(this.func_110432_I().func_148256_e()));
+-         networkmanager.func_179290_a(new CLoginStartPacket(this.func_110432_I().func_148256_e()));
 +         com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
 +         if (!this.func_110432_I().hasCachedProperties()) {
 +            gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
@@ -302,7 +303,7 @@
           this.field_71453_ak = networkmanager;
        } else {
           this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
-@@ -1770,6 +1819,7 @@
+@@ -1770,6 +1818,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -310,7 +311,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1801,10 +1851,12 @@
+@@ -1801,10 +1850,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -323,7 +324,7 @@
           if (integratedserver != null) {
              this.field_71424_I.func_76320_a("waitForServer");
  
-@@ -1819,6 +1871,7 @@
+@@ -1819,6 +1870,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -331,7 +332,7 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1849,6 +1902,7 @@
+@@ -1849,6 +1901,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
@@ -339,7 +340,7 @@
     }
  
     public boolean func_238216_r_() {
-@@ -1894,112 +1948,9 @@
+@@ -1894,112 +1947,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -455,7 +456,7 @@
        }
     }
  
-@@ -2081,6 +2032,7 @@
+@@ -2081,6 +2031,7 @@
        return field_71432_P;
     }
  
@@ -463,7 +464,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -2388,7 +2340,7 @@
+@@ -2388,7 +2339,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -472,7 +473,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2407,6 +2359,14 @@
+@@ -2407,6 +2358,14 @@
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
  

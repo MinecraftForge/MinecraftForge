@@ -45,6 +45,15 @@
              iworld.func_180501_a(blockpos, blockstate2, 3);
              this.field_179475_a.func_195406_b((BlockState)null);
           }
+@@ -457,7 +459,7 @@
+       }
+ 
+       private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
+-         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
++         return p_220836_4_.isAir(p_220836_1_, p_220836_2_) && !p_220836_5_.isAir(p_220836_1_, p_220836_6_) && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_);
+       }
+    }
+ 
 @@ -499,7 +501,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {

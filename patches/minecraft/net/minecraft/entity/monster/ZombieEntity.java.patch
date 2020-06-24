@@ -1,6 +1,25 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -277,6 +277,7 @@
+@@ -260,12 +260,16 @@
+             livingentity = (LivingEntity)p_70097_1_.func_76346_g();
+          }
+ 
+-         if (livingentity != null && this.field_70170_p.func_175659_aa() == Difficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_233637_b_(Attributes.field_233829_l_) && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
+             int i = MathHelper.func_76128_c(this.func_226277_ct_());
+             int j = MathHelper.func_76128_c(this.func_226278_cu_());
+             int k = MathHelper.func_76128_c(this.func_226281_cx_());
+-            ZombieEntity zombieentity = new ZombieEntity(this.field_70170_p);
+ 
++         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, livingentity, this.func_110148_a(Attributes.field_233829_l_).func_111126_e());
++         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
++         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
++            livingentity != null && this.field_70170_p.func_175659_aa() == Difficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(Attributes.field_233829_l_).func_111126_e() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
++            ZombieEntity zombieentity = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.field_200725_aD.func_200721_a(this.field_70170_p);
++
+             for(int l = 0; l < 50; ++l) {
+                int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+                int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+@@ -277,6 +281,7 @@
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
                       this.field_70170_p.func_217376_c(zombieentity);
@@ -8,3 +27,21 @@
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(this.field_70170_p, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       this.func_110148_a(Attributes.field_233829_l_).func_233769_c_(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
+@@ -463,7 +468,7 @@
+    }
+ 
+    public static boolean func_241399_a_(Random p_241399_0_) {
+-      return p_241399_0_.nextFloat() < 0.05F;
++      return p_241399_0_.nextFloat() < net.minecraftforge.common.ForgeConfig.SERVER.zombieBabyChance.get();
+    }
+ 
+    protected void func_207304_a(float p_207304_1_) {
+@@ -483,7 +488,7 @@
+    }
+ 
+    protected void func_230291_eT_() {
+-      this.func_110148_a(Attributes.field_233829_l_).func_111128_a(this.field_70146_Z.nextDouble() * (double)0.1F);
++      this.func_110148_a(Attributes.field_233829_l_).func_111128_a(this.field_70146_Z.nextDouble() * net.minecraftforge.common.ForgeConfig.SERVER.zombieBaseSummonChance.get());
+    }
+ 
+    public double func_70033_W() {

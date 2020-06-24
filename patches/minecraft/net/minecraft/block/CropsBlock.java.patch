@@ -1,6 +1,34 @@
 --- a/net/minecraft/block/CropsBlock.java
 +++ b/net/minecraft/block/CropsBlock.java
-@@ -133,7 +133,7 @@
+@@ -61,12 +61,14 @@
+    }
+ 
+    public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
++      if (!p_225542_2_.isAreaLoaded(p_225542_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_225542_2_.func_226659_b_(p_225542_3_, 0) >= 9) {
+          int i = this.func_185527_x(p_225542_1_);
+          if (i < this.func_185526_g()) {
+             float f = func_180672_a(this, p_225542_2_, p_225542_3_);
+-            if (p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
+                p_225542_2_.func_180501_a(p_225542_3_, this.func_185528_e(i + 1), 2);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
+             }
+          }
+       }
+@@ -95,9 +97,9 @@
+          for(int j = -1; j <= 1; ++j) {
+             float f1 = 0.0F;
+             BlockState blockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
+-            if (blockstate.func_203425_a(Blocks.field_150458_ak)) {
++            if (blockstate.canSustainPlant(p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.Direction.UP, (net.minecraftforge.common.IPlantable) p_180672_0_)) {
+                f1 = 1.0F;
+-               if (blockstate.func_177229_b(FarmlandBlock.field_176531_a) > 0) {
++               if (blockstate.isFertile(p_180672_1_, p_180672_2_.func_177982_a(i, 0, j))) {
+                   f1 = 3.0F;
+                }
+             }
+@@ -133,7 +135,7 @@
     }
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {

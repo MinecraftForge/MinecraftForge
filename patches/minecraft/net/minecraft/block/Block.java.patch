@@ -1,16 +1,18 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -52,8 +52,9 @@
+@@ -52,9 +52,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public class Block extends AbstractBlock implements IItemProvider {
 +public class Block extends AbstractBlock implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
+-   public static final ObjectIntIdentityMap<BlockState> field_176229_d = new ObjectIntIdentityMap<>();
 +   @Deprecated //Forge: Do not use, use GameRegistry
-    public static final ObjectIntIdentityMap<BlockState> field_176229_d = new ObjectIntIdentityMap<>();
++   public static final ObjectIntIdentityMap<BlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
+          return !VoxelShapes.func_197879_c(VoxelShapes.func_197868_b(), p_load_1_, IBooleanFunction.field_223236_g_);
 @@ -270,7 +271,7 @@
     }
  
@@ -79,7 +81,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -419,6 +424,73 @@
+@@ -419,6 +424,77 @@
        return this;
     }
  
@@ -111,7 +113,7 @@
 +      net.minecraftforge.common.PlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
 +
 +      if (plant.func_177230_c() == Blocks.field_150434_aF)
-+         return this.getBlock() == Blocks.field_150434_aF || this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_196611_F;
++         return state.func_203425_a(Blocks.field_150434_aF) || state.func_203425_a(Blocks.field_150354_m) || state.func_203425_a(Blocks.field_196611_F);
 +
 +      if (plant.func_177230_c() == Blocks.field_196608_cF && this == Blocks.field_196608_cF)
 +         return true;
@@ -122,16 +124,20 @@
 +      switch (type) {
 +             case Desert: return this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_150405_ch || this.getBlock() instanceof GlazedTerracottaBlock;
 +             case Nether: return this.getBlock() == Blocks.field_150425_aM;
-+             case Crop:   return this.getBlock() == Blocks.field_150458_ak;
++             case Crop:   return state.func_203425_a(Blocks.field_150458_ak);
 +             case Cave:   return Block.func_220056_d(state, world, pos, Direction.UP);
 +             case Plains: return this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || this.getBlock() == Blocks.field_150458_ak;
 +             case Water:  return state.func_185904_a() == net.minecraft.block.material.Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
 +             case Beach:
-+                    boolean isBeach = this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || this.getBlock() == Blocks.field_150354_m;
-+                    boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == net.minecraft.block.material.Material.field_151586_h ||
-+                            world.func_180495_p(pos.func_177976_e()).func_185904_a()  == net.minecraft.block.material.Material.field_151586_h ||
-+                            world.func_180495_p(pos.func_177978_c()).func_185904_a() == net.minecraft.block.material.Material.field_151586_h ||
-+                            world.func_180495_p(pos.func_177968_d()).func_185904_a() == net.minecraft.block.material.Material.field_151586_h);
++                    boolean isBeach = state.func_203425_a(Blocks.field_196658_i) || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || state.func_203425_a(Blocks.field_150354_m) || state.func_203425_a(Blocks.field_196611_F);
++                    boolean hasWater = false;
++                    for (Direction face : Direction.Plane.HORIZONTAL) {
++                        BlockState blockState = world.func_180495_p(pos.func_177972_a(face));
++                        net.minecraft.fluid.FluidState fluidState = world.func_204610_c(pos.func_177972_a(face));
++                        hasWater |= blockState.func_203425_a(Blocks.field_185778_de);
++                        hasWater |= fluidState.func_206884_a(net.minecraft.tags.FluidTags.field_206959_a);
++                        if(hasWater) break; //No point continuing.
++                    }
 +            return isBeach && hasWater;
 +         }
 +      return false;

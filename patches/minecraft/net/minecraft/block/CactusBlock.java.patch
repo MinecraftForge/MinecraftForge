@@ -35,6 +35,15 @@
           }
        }
     }
+@@ -84,7 +87,7 @@
+       }
+ 
+       BlockState blockstate1 = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
+-      return (blockstate1.func_203425_a(Blocks.field_150434_aF) || blockstate1.func_203425_a(Blocks.field_150354_m) || blockstate1.func_203425_a(Blocks.field_196611_F)) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
++      return blockstate1.canSustainPlant(p_196260_2_, p_196260_3_, Direction.UP, this) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
+    }
+ 
+    public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
 @@ -98,4 +101,14 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;

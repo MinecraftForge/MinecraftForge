@@ -1,14 +1,5 @@
 --- a/net/minecraft/block/DoublePlantBlock.java
 +++ b/net/minecraft/block/DoublePlantBlock.java
-@@ -39,7 +39,7 @@
-    @Nullable
-    public BlockState func_196258_a(BlockItemUseContext p_196258_1_) {
-       BlockPos blockpos = p_196258_1_.func_195995_a();
--      return blockpos.func_177956_o() < 255 && p_196258_1_.func_195991_k().func_180495_p(blockpos.func_177984_a()).func_196953_a(p_196258_1_) ? super.func_196258_a(p_196258_1_) : null;
-+      return blockpos.func_177956_o() < 255 /*TODO context.getWorld().getDimension().getHeight() - 1*/ && p_196258_1_.func_195991_k().func_180495_p(blockpos.func_177984_a()).func_196953_a(p_196258_1_) ? super.func_196258_a(p_196258_1_) : null;
-    }
- 
-    public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, BlockState p_180633_3_, LivingEntity p_180633_4_, ItemStack p_180633_5_) {
 @@ -51,6 +51,7 @@
           return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_);
        } else {

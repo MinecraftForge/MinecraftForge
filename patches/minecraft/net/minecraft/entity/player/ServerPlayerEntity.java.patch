@@ -23,7 +23,41 @@
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
        if (flag) {
           ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-@@ -731,6 +728,9 @@
+@@ -597,12 +594,13 @@
+ 
+    @Nullable
+    public Entity func_241206_a_(ServerWorld p_241206_1_) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_241206_1_.func_234923_W_())) return null;
+       this.field_184851_cj = true;
+       ServerWorld serverworld = this.func_71121_q();
+       RegistryKey<World> registrykey = serverworld.func_234923_W_();
+       if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_) {
+          this.func_213319_R();
+-         this.func_71121_q().func_217434_e(this);
++         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
+          if (!this.field_71136_j) {
+             this.field_71136_j = true;
+             this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
+@@ -616,8 +614,8 @@
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
+          PlayerList playerlist = this.field_71133_b.func_184103_al();
+          playerlist.func_187243_f(this);
+-         serverworld.func_217434_e(this);
+-         this.field_70128_L = false;
++         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
++         this.revive();
+          double d0 = this.func_226277_ct_();
+          double d1 = this.func_226278_cu_();
+          double d2 = this.func_226281_cx_();
+@@ -689,6 +687,7 @@
+          this.field_71144_ck = -1;
+          this.field_71149_ch = -1.0F;
+          this.field_71146_ci = -1;
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, p_241206_1_.func_234923_W_());
+          return this;
+       }
+    }
+@@ -731,6 +730,9 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
@@ -33,7 +67,7 @@
        Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.func_70608_bn() && this.func_70089_S()) {
           if (!this.field_70170_p.func_230315_m_().func_236043_f_()) {
-@@ -775,6 +775,7 @@
+@@ -775,6 +777,7 @@
     }
  
     private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_) {
@@ -41,7 +75,7 @@
        return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.func_177972_a(p_241147_2_.func_176734_d()));
     }
  
-@@ -874,6 +875,7 @@
+@@ -874,6 +877,7 @@
              this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
              container.func_75132_a(this);
              this.field_71070_bA = container;
@@ -49,7 +83,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -892,6 +894,7 @@
+@@ -892,6 +896,7 @@
        this.field_71135_a.func_147359_a(new SOpenHorseWindowPacket(this.field_71139_cq, p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
        this.field_71070_bA = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
        this.field_71070_bA.func_75132_a(this);
@@ -57,7 +91,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -949,6 +952,7 @@
+@@ -949,6 +954,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -65,13 +99,10 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -1075,6 +1079,16 @@
+@@ -1075,6 +1081,13 @@
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
-+
-+      this.spawnPosMap = p_193104_1_.spawnPosMap;
-+      this.spawnForcedMap = p_193104_1_.spawnForcedMap;
 +
 +      //Copy over a section of the Entity Data from the old player.
 +      //Allows mods to specify data that persists after players respawn.
@@ -82,6 +113,32 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
+@@ -1291,14 +1304,14 @@
+       this.func_184210_p();
+       if (p_200619_1_ == this.field_70170_p) {
+          this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
+-      } else {
++      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.func_234923_W_())) {
+          ServerWorld serverworld = this.func_71121_q();
+          IWorldInfo iworldinfo = p_200619_1_.func_72912_H();
+          this.field_71135_a.func_147359_a(new SRespawnPacket(p_200619_1_.func_234922_V_(), p_200619_1_.func_234923_W_(), BiomeManager.func_235200_a_(p_200619_1_.func_72905_C()), this.field_71134_c.func_73081_b(), this.field_71134_c.func_241815_c_(), p_200619_1_.func_234925_Z_(), p_200619_1_.func_241109_A_(), true));
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
+          this.field_71133_b.func_184103_al().func_187243_f(this);
+-         serverworld.func_217434_e(this);
+-         this.field_70128_L = false;
++         serverworld.removePlayer(this, true); //Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
++         this.revive();
+          this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
+          this.func_70029_a(p_200619_1_);
+          p_200619_1_.func_217446_a(this);
+@@ -1307,6 +1320,7 @@
+          this.field_71134_c.func_73080_a(p_200619_1_);
+          this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
+          this.field_71133_b.func_184103_al().func_72385_f(this);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, serverworld.func_234923_W_(), p_200619_1_.func_234923_W_());
+       }
+ 
+    }
 @@ -1375,6 +1389,8 @@
        if (itementity == null) {
           return null;
