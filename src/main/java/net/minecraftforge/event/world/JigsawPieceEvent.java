@@ -13,26 +13,14 @@ import java.util.List;
  * The list does NOT contain the pieces contained in {@link net.minecraft.world.gen.feature.jigsaw.JigsawPattern#fallback}
  * This is to avoid infinite generation problems, for the fallbacks are the empty/end Jigsaw pieces.
  * <br><br>
- * To get an understanding of the JigsawPatterns pools go here: {@link net.minecraft.world.gen.feature.structure.PlainsVillagePools} or, for a more
- * readable version, <a href=https://gist.github.com/Cyborgmas/0aea49f1cc940abf06da3443c65e1678>here.</a>
- * Pools are used directly once, on creation. For villages it is the town_centers pool. Other than that exception, pools are ALWAYS called from jigsaw blocks
- * inside the jigsaw pieces. It is whent that happens that this event fires. This also means that there is NO WAY to modify the starting pool using this event.
- * The best option to modify a starting pool would be to add a new {@link net.minecraft.world.gen.feature.structure.VillageStructure}
- * to {@link net.minecraft.world.biome.PlainsBiome} with a different {@link net.minecraft.world.gen.feature.structure.VillageConfig}
- * The config is what specifies the starting pool and the maximum depth of the jigsaw creation.
- * <br><br>
- * Modifying this event can provide a LOT of unexpected consequences.
- * Jigsaw pieces will contain other jigsaw blocks with their appropriate pools and correct attachments.
- * When modifying "end jigsaws", like houses, villagers, animals and decors, the only issue is to have the custom jigsaw piece
- * have one {@link net.minecraft.block.JigsawBlock} with the correct {@link net.minecraft.tileentity.JigsawTileEntity#getAttachmentType()}.
- * Otherwise it will NEVER attach. An other thing to consider is the volume of the piece that is getting placed, a discrepancy might produce weird results.
- * <br><br>
- * More care must be had when modifying pieces that will determine the layout of the village by providing more than one jigsaw blocks that have a pool
- * of non-terminal pieces. (streets for example). When providing a custom street, jigsawblocks must be also layed out in
- * the correct direction and have an appropriate attachment type. This attachment type can be a custom one to have a completely custom pool.
- * However, this "ends" the vanilla jigsaw pattern in that direction and the village will not grow more unless the custom pool does so on its own.
- * To avoid this issue in a relatively simple manner, the {@link JigsawPieceEvent#currentDepth} is provided. This allows to only modify a pool when the village
- * has grown out enough. The max depth is usually six, it can be found in the appropriate {@link net.minecraft.world.gen.feature.structure.VillageConfig} of the biome.
+ * Adding a custom villager's house can be just:
+ *
+ * {@code
+ *    if(event.specificType.equals("houses"))
+ *       event.pieces.add(new SingleJigsawPiece("namespace:path"));
+ * }
+ *
+ * For more detailed insight see <a href=https://mcforge.readthedocs.io/en/1.15.x/events/jigsawevent/>here.</a>
  */
 public class JigsawPieceEvent extends Event
 {
