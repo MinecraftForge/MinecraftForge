@@ -17,21 +17,21 @@
        if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
           p_225534_2_.func_175655_b(p_225534_3_, true);
        }
-@@ -42,6 +43,7 @@
-          int i;
-          for(i = 1; p_225542_2_.func_180495_p(p_225542_3_.func_177979_c(i)).func_203425_a(this); ++i) {
-          }
-+               if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, blockpos, p_225542_1_, true)) {
+@@ -45,6 +46,7 @@
  
           if (i < 3) {
              int j = p_225542_1_.func_177229_b(field_176587_a);
++            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, blockpos, p_225542_1_, true)) {
+             if (j == 15) {
+                p_225542_2_.func_175656_a(blockpos, this.func_176223_P());
+                BlockState blockstate = p_225542_1_.func_206870_a(field_176587_a, Integer.valueOf(0));
 @@ -53,7 +55,8 @@
              } else {
                 p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_.func_206870_a(field_176587_a, Integer.valueOf(j + 1)), 4);
              }
 -
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
-+               }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
++            }
           }
        }
     }

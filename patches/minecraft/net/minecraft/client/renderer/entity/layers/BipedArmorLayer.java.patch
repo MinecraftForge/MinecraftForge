@@ -38,7 +38,7 @@
        p_241738_6_.func_225598_a_(p_241738_1_, ivertexbuilder, p_241738_3_, OverlayTexture.field_229196_a_, p_241738_8_, p_241738_9_, p_241738_10_, 1.0F);
     }
  
-@@ -100,8 +104,52 @@
+@@ -100,8 +104,50 @@
        return p_188363_1_ == EquipmentSlotType.LEGS;
     }
  
@@ -71,8 +71,7 @@
 +      String texture = item.func_200880_d().func_200897_d();
 +      String domain = "minecraft";
 +      int idx = texture.indexOf(':');
-+      if (idx != -1)
-+      {
++      if (idx != -1) {
 +         domain = texture.substring(0, idx);
 +         texture = texture.substring(idx + 1);
 +      }
@@ -81,10 +80,9 @@
 +      s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +      ResourceLocation resourcelocation = field_177191_j.get(s1);
 +
-+      if (resourcelocation == null)
-+      {
++      if (resourcelocation == null) {
 +         resourcelocation = new ResourceLocation(s1);
-+          field_177191_j.put(s1, resourcelocation);
++         field_177191_j.put(s1, resourcelocation);
 +      }
 +
 +      return resourcelocation;

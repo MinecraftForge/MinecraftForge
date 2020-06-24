@@ -59,9 +59,9 @@
 +         public ChunkRenderTask(@Nullable net.minecraft.util.math.ChunkPos pos, double p_i226023_2_) {
              this.field_188229_e = p_i226023_2_;
 +            if (pos == null) {
-+                this.modelData = java.util.Collections.emptyMap();
++               this.modelData = java.util.Collections.emptyMap();
 +            } else {
-+                this.modelData = net.minecraftforge.client.model.ModelDataManager.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, pos);
++               this.modelData = net.minecraftforge.client.model.ModelDataManager.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, pos);
 +            }
           }
  
@@ -107,9 +107,9 @@
                    FluidState fluidstate = chunkrendercache.func_204610_c(blockpos2);
 -                  if (!fluidstate.func_206888_e()) {
 -                     RenderType rendertype = RenderTypeLookup.func_228391_a_(fluidstate);
-+                   net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
++                  net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
 +                  for (RenderType rendertype : RenderType.func_228661_n_()) {
-+                      net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
++                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
 +                  if (!fluidstate.func_206888_e() && RenderTypeLookup.canRenderInLayer(fluidstate, rendertype)) {
                       BufferBuilder bufferbuilder = p_228940_5_.func_228366_a_(rendertype);
                       if (p_228940_4_.field_178501_c.add(rendertype)) {

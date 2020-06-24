@@ -66,25 +66,11 @@
                 this.func_217454_n(entity1);
                 objectiterator.remove();
 -               this.func_217484_g(entity1);
-+                this.removeEntityComplete(entity1, entity1 instanceof ServerPlayerEntity); //Forge: Keep cap data until revive. Every other entity removes directly.
++               this.removeEntityComplete(entity1, entity1 instanceof ServerPlayerEntity); //Forge: Keep cap data until revive. Every other entity removes directly.
              }
  
              iprofiler.func_76319_b();
-@@ -443,7 +448,7 @@
-       int j = chunkpos.func_180333_d();
-       IProfiler iprofiler = this.func_217381_Z();
-       iprofiler.func_76320_a("thunder");
--      if (flag && this.func_72911_I() && this.field_73012_v.nextInt(100000) == 0) {
-+      if (/*TODO this.dimension.canDoLightning(chunkIn) &&*/ flag && this.func_72911_I() && this.field_73012_v.nextInt(100000) == 0) {
-          BlockPos blockpos = this.func_175736_a(this.func_217383_a(i, 0, j, 15));
-          if (this.func_175727_C(blockpos)) {
-             DifficultyInstance difficultyinstance = this.func_175649_E(blockpos);
-@@ -464,10 +469,11 @@
-       }
- 
-       iprofiler.func_219895_b("iceandsnow");
--      if (this.field_73012_v.nextInt(16) == 0) {
-+      if (/*TODO this.dimension.canDoRainSnowIce(chunkIn) &&*/ this.field_73012_v.nextInt(16) == 0) {
+@@ -468,6 +473,7 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
@@ -92,17 +78,18 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
-@@ -591,8 +597,9 @@
+@@ -591,9 +597,10 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
 -               return Registry.field_212629_r.func_177774_c(p_217479_1_.func_200600_R()).toString();
 +               return p_217479_1_.func_200600_R().getRegistryName() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
              });
-+            if (p_217479_1_.canUpdate())
              iprofiler.func_230035_c_("tickNonPassenger");
++            if (p_217479_1_.canUpdate())
              p_217479_1_.func_70071_h_();
              iprofiler.func_76319_b();
+          }
 @@ -680,6 +687,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
@@ -226,14 +213,13 @@
        explosion.func_77278_a();
        explosion.func_77279_a(false);
        if (p_230546_12_ == Explosion.Mode.NONE) {
-@@ -1331,4 +1366,15 @@
+@@ -1331,4 +1366,14 @@
           p_241121_0_.func_175656_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P());
        });
     }
 +
 +   protected void initCapabilities() {
-+      net.minecraftforge.common.capabilities.ICapabilityProvider parent = null;//TODO dimension.initCapabilities();
-+      this.gatherCapabilities(parent);
++      this.gatherCapabilities();
 +      capabilityData = this.func_217481_x().func_215752_a(() -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
 +      capabilityData.setCapabilities(getCapabilities());
 +   }

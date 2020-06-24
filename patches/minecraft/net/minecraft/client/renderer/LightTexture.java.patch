@@ -1,16 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -123,6 +123,9 @@
-                      }
-                   }
- 
-+                  //TODO
-+                  //clientworld.getDimension().getLightmapColors(partialTicks, f, f4, f5, vector3f1);
-+
-                   vector3f1.func_195901_a(0.0F, 1.0F);
-                   if (f2 > 0.0F) {
-                      float f10 = Math.max(vector3f1.func_195899_a(), Math.max(vector3f1.func_195900_b(), vector3f1.func_195902_c()));
-@@ -169,7 +172,7 @@
+@@ -169,7 +169,7 @@
     }
  
     public static int func_228450_a_(int p_228450_0_) {

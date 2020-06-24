@@ -43,8 +43,8 @@
        this.field_230708_k_ = p_231158_2_;
        this.field_230709_l_ = p_231158_3_;
 +      java.util.function.Consumer<Widget> remove = (b) -> {
-+          field_230710_m_.remove(b);
-+          field_230705_e_.remove(b);
++         field_230710_m_.remove(b);
++         field_230705_e_.remove(b);
 +      };
 +      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.field_230710_m_, this::func_230480_a_, remove))) {
        this.field_230710_m_.clear();
@@ -77,7 +77,7 @@
     public void func_230476_a_(List<Path> p_230476_1_) {
     }
 +
-+    public Minecraft getMinecraft() {
-+        return this.field_230706_i_;
-+    }
++   public Minecraft getMinecraft() {
++      return this.field_230706_i_;
++   }
  }

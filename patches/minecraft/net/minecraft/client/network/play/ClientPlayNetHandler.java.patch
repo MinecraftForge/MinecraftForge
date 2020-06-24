@@ -32,11 +32,11 @@
        if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
           ((CommandBlockScreen)this.field_147299_f.field_71462_r).func_184075_a();
 +      } else {
-+          if(tileentity == null) {
-+              field_147301_d.error("Received invalid update packet for null tile entity at {} with data: {}", p_147273_1_.func_179823_a(), p_147273_1_.func_148857_g());
-+              return;
-+          }
-+          tileentity.onDataPacket(field_147302_e, p_147273_1_);
++         if(tileentity == null) {
++            field_147301_d.error("Received invalid update packet for null tile entity at {} with data: {}", p_147273_1_.func_179823_a(), p_147273_1_.func_148857_g());
++            return;
++         }
++         tileentity.onDataPacket(field_147302_e, p_147273_1_);
        }
  
     }

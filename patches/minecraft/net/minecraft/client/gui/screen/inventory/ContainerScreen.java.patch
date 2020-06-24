@@ -117,7 +117,7 @@
 +      } else if (p_231046_1_ != 256 && !this.field_230706_i_.field_71474_y.field_151445_Q.isActiveAndMatches(mouseKey)) {
 +         boolean handled = false;// Forge MC-146650: Needs to return true when the key is handled.
 +         if (this.func_195363_d(p_231046_1_, p_231046_2_))
-+             handled = true;
++            handled = true;
           if (this.field_147006_u != null && this.field_147006_u.func_75216_d()) {
 -            if (this.field_230706_i_.field_71474_y.field_74322_I.func_197976_a(p_231046_1_, p_231046_2_)) {
 +            if (this.field_230706_i_.field_71474_y.field_74322_I.isActiveAndMatches(mouseKey)) {
@@ -129,7 +129,7 @@
 +               handled = true;
              }
 +         } else if (this.field_230706_i_.field_71474_y.field_74316_C.isActiveAndMatches(mouseKey)) {
-+             handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
++            handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
           }
  
 -         return true;

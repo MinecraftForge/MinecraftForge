@@ -1,6 +1,6 @@
---- a/net/minecraft/world/storage/loot/functions/Smelt.java
-+++ b/net/minecraft/world/storage/loot/functions/Smelt.java
-@@ -30,7 +30,7 @@
+--- a/net/minecraft/loot/functions/Smelt.java
++++ b/net/minecraft/loot/functions/Smelt.java
+@@ -34,7 +34,7 @@
              ItemStack itemstack = optional.get().func_77571_b();
              if (!itemstack.func_190926_b()) {
                 ItemStack itemstack1 = itemstack.func_77946_l();

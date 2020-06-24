@@ -6,6 +6,6 @@
     }
 +
 +   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
-+       return new ResourceLocation(rl.func_110624_b(), this.field_223383_d + "/" + rl.func_110623_a() + ".json");
++      return new ResourceLocation(rl.func_110624_b(), this.field_223383_d + "/" + rl.func_110623_a() + ".json");
 +   }
  }

@@ -143,18 +143,18 @@
 +    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
 +    */
 +   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, InputMappings.Input keyCode, String category) {
-+       this.field_74515_c = description;
-+       this.field_74512_d = keyCode;
-+       this.field_151472_e = keyCode;
-+       this.field_151471_f = category;
-+       this.keyConflictContext = keyConflictContext;
-+       this.keyModifier = keyModifier;
-+       this.keyModifierDefault = keyModifier;
-+       if (this.keyModifier.matches(keyCode))
-+           this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+       field_74516_a.put(description, this);
-+       field_74514_b.addKey(keyCode, this);
-+       field_151473_c.add(category);
++      this.field_74515_c = description;
++      this.field_74512_d = keyCode;
++      this.field_151472_e = keyCode;
++      this.field_151471_f = category;
++      this.keyConflictContext = keyConflictContext;
++      this.keyModifier = keyModifier;
++      this.keyModifierDefault = keyModifier;
++      if (this.keyModifier.matches(keyCode))
++         this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++      field_74516_a.put(description, this);
++      field_74514_b.addKey(keyCode, this);
++      field_151473_c.add(category);
 +   }
 +
 +   @Override

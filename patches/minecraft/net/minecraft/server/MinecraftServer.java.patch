@@ -21,7 +21,7 @@
        } else if (p_240786_3_) {
           p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
-+         //if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(p_240786_0_, settings)) return; //TODO, Re-Evaluate what settings to pass into here.
++         if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(p_240786_0_, p_240786_1_)) return;
           BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(p_240786_0_.func_72905_C());
@@ -123,7 +123,15 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -1437,6 +1457,31 @@
+@@ -1284,6 +1304,7 @@
+    }
+ 
+    public static DatapackCodec func_240772_a_(ResourcePackList<ResourcePackInfo> p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
++      net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
+       p_240772_0_.func_198983_a();
+       if (p_240772_2_) {
+          p_240772_0_.func_198985_a(Collections.singleton("vanilla"));
+@@ -1437,6 +1458,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -155,3 +163,12 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
+@@ -1564,4 +1610,8 @@
+    public IServerConfiguration func_240793_aU_() {
+       return this.field_240768_i_;
+    }
++
++   public DataPackRegistries getDataPackRegistries() {
++       return field_195576_ac;
++   }
+ }

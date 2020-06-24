@@ -28,6 +28,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 
 public interface IForgeFluidState
@@ -61,15 +62,14 @@ public interface IForgeFluidState
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param exploder The entity that caused the explosion, can be null
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
-    default float getExplosionResistance(IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
+    default float getExplosionResistance(IBlockReader world, BlockPos pos, Explosion explosion)
     {
-        return getFluidState().getFluid().getExplosionResistance(getFluidState(), world, pos, exploder, explosion);
+        return getFluidState().getFluid().getExplosionResistance(getFluidState(), world, pos, explosion);
     }
-    
+
     /**
      * Queries if this fluidstate should render in a given layer.
      * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.

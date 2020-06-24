@@ -1,5 +1,5 @@
---- a/net/minecraft/world/storage/loot/LootParameterSets.java
-+++ b/net/minecraft/world/storage/loot/LootParameterSets.java
+--- a/net/minecraft/loot/LootParameterSets.java
++++ b/net/minecraft/loot/LootParameterSets.java
 @@ -12,6 +12,7 @@
     });
     public static final LootParameterSet field_216261_b = func_216253_a("chest", (p_216259_0_) -> {
@@ -11,7 +11,7 @@
 @@ -21,6 +22,7 @@
     });
     public static final LootParameterSet field_216262_c = func_216253_a("fishing", (p_216258_0_) -> {
-       p_216258_0_.func_216269_a(LootParameters.field_216286_f).func_216269_a(LootParameters.field_216289_i);
+       p_216258_0_.func_216269_a(LootParameters.field_216286_f).func_216269_a(LootParameters.field_216289_i).func_216271_b(LootParameters.field_216281_a);
 +      p_216258_0_.func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216281_a); //Forge: Allow fisher, and bobber
     });
     public static final LootParameterSet field_216263_d = func_216253_a("entity", (p_216251_0_) -> {

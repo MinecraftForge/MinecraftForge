@@ -7,7 +7,7 @@
 +   @Deprecated
     public ClientResourcePackInfo(String p_i232485_1_, boolean p_i232485_2_, Supplier<IResourcePack> p_i232485_3_, IResourcePack p_i232485_4_, PackMetadataSection p_i232485_5_, ResourcePackInfo.Priority p_i232485_6_, IPackNameDecorator p_i232485_7_) {
 -      super(p_i232485_1_, p_i232485_2_, p_i232485_3_, p_i232485_4_, p_i232485_5_, p_i232485_6_, p_i232485_7_);
-+       this(p_i232485_1_, p_i232485_2_, p_i232485_3_, p_i232485_4_, p_i232485_5_, p_i232485_6_, p_i232485_7_, false);
++      this(p_i232485_1_, p_i232485_2_, p_i232485_3_, p_i232485_4_, p_i232485_5_, p_i232485_6_, p_i232485_7_, false);
 +   }
 +
 +   public ClientResourcePackInfo(String p_i232485_1_, boolean p_i232485_2_, Supplier<IResourcePack> p_i232485_3_, IResourcePack p_i232485_4_, PackMetadataSection p_i232485_5_, ResourcePackInfo.Priority p_i232485_6_, IPackNameDecorator p_i232485_7_, boolean hidden) {
@@ -18,7 +18,7 @@
 +   @Deprecated
     public ClientResourcePackInfo(String p_i232486_1_, boolean p_i232486_2_, Supplier<IResourcePack> p_i232486_3_, ITextComponent p_i232486_4_, ITextComponent p_i232486_5_, PackCompatibility p_i232486_6_, ResourcePackInfo.Priority p_i232486_7_, boolean p_i232486_8_, IPackNameDecorator p_i232486_9_, @Nullable NativeImage p_i232486_10_) {
 -      super(p_i232486_1_, p_i232486_2_, p_i232486_3_, p_i232486_4_, p_i232486_5_, p_i232486_6_, p_i232486_7_, p_i232486_8_, p_i232486_9_);
-+       this(p_i232486_1_, p_i232486_2_, p_i232486_3_, p_i232486_4_, p_i232486_5_, p_i232486_6_, p_i232486_7_, p_i232486_8_, p_i232486_9_, p_i232486_10_, false);
++      this(p_i232486_1_, p_i232486_2_, p_i232486_3_, p_i232486_4_, p_i232486_5_, p_i232486_6_, p_i232486_7_, p_i232486_8_, p_i232486_9_, p_i232486_10_, false);
 +   }
 +
 +   public ClientResourcePackInfo(String p_i232486_1_, boolean p_i232486_2_, Supplier<IResourcePack> p_i232486_3_, ITextComponent p_i232486_4_, ITextComponent p_i232486_5_, PackCompatibility p_i232486_6_, ResourcePackInfo.Priority p_i232486_7_, boolean p_i232486_8_, IPackNameDecorator p_i232486_9_, @Nullable NativeImage p_i232486_10_, boolean hidden) {

@@ -61,6 +61,15 @@
     }
  
     public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {
+@@ -356,7 +360,7 @@
+    private TileEntity func_177422_i(BlockPos p_177422_1_) {
+       BlockState blockstate = this.func_180495_p(p_177422_1_);
+       Block block = blockstate.func_177230_c();
+-      return !block.func_235695_q_() ? null : ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
++      return !blockstate.hasTileEntity() ? null : blockstate.createTileEntity(this.field_76637_e);
+    }
+ 
+    @Nullable
 @@ -367,6 +371,10 @@
     @Nullable
     public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {

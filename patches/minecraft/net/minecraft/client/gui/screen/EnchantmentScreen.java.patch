@@ -20,8 +20,8 @@
 -            if (!flag) {
 +            list.add((new TranslationTextComponent("container.enchant.clue", enchantment == null ? "" : enchantment.func_200305_d(l))).func_240699_a_(TextFormatting.WHITE));
 +            if(enchantment == null) {
-+                list.add(new StringTextComponent(""));
-+                list.add(new TranslationTextComponent("forge.container.enchant.limitedEnchantability").func_240699_a_(TextFormatting.RED));
++               list.add(new StringTextComponent(""));
++               list.add(new TranslationTextComponent("forge.container.enchant.limitedEnchantability").func_240699_a_(TextFormatting.RED));
 +            } else if (!flag) {
                 list.add(StringTextComponent.field_240750_d_);
                 if (this.field_230706_i_.field_71439_g.field_71068_ca < k) {

@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
@@ -80,16 +81,16 @@ public class LanguageHook
 
     private static void loadLanguage(String langName, MinecraftServer server) {
         String langFile = String.format("lang/%s.json", langName);
-        //TODO
-//        server.getResourceManager().getResourceNamespaces().forEach(namespace -> {
-//            try {
-//                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
-//                loadLocaleData(server.getResourceManager().getAllResources(langResource));
-//            } catch (FileNotFoundException fnfe) {
-//            } catch (Exception exception) {
-//                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
-//            }
-//        });
+        IResourceManager resourceManager = server.getDataPackRegistries().func_240970_h_();
+        resourceManager.getResourceNamespaces().forEach(namespace -> {
+            try {
+                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
+                loadLocaleData(resourceManager.getAllResources(langResource));
+            } catch (FileNotFoundException fnfe) {
+            } catch (Exception exception) {
+                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
+            }
+        });
 
     }
 

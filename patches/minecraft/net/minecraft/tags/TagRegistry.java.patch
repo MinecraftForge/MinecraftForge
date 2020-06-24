@@ -1,0 +1,10 @@
+--- a/net/minecraft/tags/TagRegistry.java
++++ b/net/minecraft/tags/TagRegistry.java
+@@ -22,6 +22,7 @@
+ 
+    public ITag.INamedTag<T> func_232937_a_(String p_232937_1_) {
+       TagRegistry.NamedTag<T> namedtag = new TagRegistry.NamedTag<>(new ResourceLocation(p_232937_1_));
++      namedtag.func_232943_a_(field_232930_b_::func_199910_a);
+       this.field_232931_c_.add(namedtag);
+       return namedtag;
+    }

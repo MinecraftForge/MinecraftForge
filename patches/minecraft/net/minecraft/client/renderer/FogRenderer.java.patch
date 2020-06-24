@@ -36,7 +36,7 @@
 -   public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
 +    @Deprecated // FORGE: Pass in partialTicks
 +    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
-+        setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
++       setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
 +    }
 +
 +    public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {

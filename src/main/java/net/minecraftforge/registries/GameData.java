@@ -27,6 +27,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.schedule.Schedule;
@@ -122,6 +124,7 @@ public class GameData
     public static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
     public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
     public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
+    public static final ResourceLocation ATTRIBUTES = new ResourceLocation("attribute");
     public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
 
     // Villages
@@ -193,6 +196,7 @@ public class GameData
         makeRegistry(CONTAINERS, ContainerType.class).disableSaving().create();
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
+        makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
 
         // Villagers
@@ -534,74 +538,16 @@ public class GameData
         }
     }
 
-/*
-    private static class RecipeCallbacks implements IForgeRegistry.ValidateCallback<IRecipe>, IForgeRegistry.MissingFactory<IRecipe>
-    {
-        static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+    private static class AttributeCallbacks implements IForgeRegistry.ValidateCallback<Attribute> {
+
+        static final AttributeCallbacks INSTANCE = new AttributeCallbacks();
 
         @Override
-        public void onValidate(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, int id, ResourceLocation key, IRecipe obj)
+        public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
-            if (stage != RegistryManager.ACTIVE) return;
-            // verify the recipe output yields a registered item
-            Item item = obj.getRecipeOutput().getItem();
-            if (!stage.getRegistry(Item.class).containsValue(item))
-            {
-                throw new IllegalStateException(String.format("Recipe %s (%s) produces unregistered item %s (%s)", key, obj, item.getRegistryName(), item));
-            }
-        }
-
-        @Override
-        public IRecipe createMissing(ResourceLocation key, boolean isNetwork)
-        {
-            return isNetwork ? new DummyRecipe().setRegistryName(key) : null;
-        }
-        private static class DummyRecipe implements IRecipe
-        {
-            private static ItemStack result = new ItemStack(Items.DIAMOND, 64);
-            private ResourceLocation name;
-
-            @Override
-            public IRecipe setRegistryName(ResourceLocation name) {
-                this.name = name;
-                return this;
-            }
-            @Override public ResourceLocation getRegistryName() { return name; }
-            @Override public Class<IRecipe> getRegistryType() { return IRecipe.class; }
-            @Override public boolean matches(InventoryCrafting inv, World worldIn) { return false; } //dirt?
-            @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
-            @Override public boolean canFit(int width, int height) { return false; }
-            @Override public ItemStack getRecipeOutput() { return result; }
-            @Override public boolean isDynamic() { return true; }
+            GlobalEntityTypeAttributes.func_233834_a_();
         }
     }
-
-
-    private static ForgeRegistry<EntityEntry> entityRegistry;
-    public static ForgeRegistry<EntityEntry> getEntityRegistry() { return entityRegistry; }
-    public static void registerEntity(int id, ResourceLocation key, Class<? extends Entity> clazz, String oldName)
-    {
-        RegistryNamespaced<ResourceLocation, EntityEntry> reg = getWrapper(EntityEntry.class);
-        reg.register(id, key, new EntityEntry(clazz, oldName));
-    }
-
-    private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>
-    {
-        static final EntityCallbacks INSTANCE = new EntityCallbacks();
-
-        @Override
-        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
-        {
-            if (entry instanceof EntityEntryBuilder.BuiltEntityEntry)
-            {
-                ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
-            }
-            if (entry.getEgg() != null)
-                EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
-            }
-        }
-    }
-*/
 
     private static class SerializerCallbacks implements IForgeRegistry.AddCallback<DataSerializerEntry>, IForgeRegistry.ClearCallback<DataSerializerEntry>, IForgeRegistry.CreateCallback<DataSerializerEntry>
     {

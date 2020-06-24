@@ -73,6 +73,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.PlayerData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -484,7 +485,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
     }
 
-    public static boolean onCreateWorldSpawn(World world, WorldSettings settings)
+    public static boolean onCreateWorldSpawn(World world, IServerWorldInfo settings)
     {
         return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
     }

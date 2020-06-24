@@ -311,13 +311,12 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param exploder The entity that caused the explosion, can be null
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
-    default float getExplosionResistance(IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
+    default float getExplosionResistance(IBlockReader world, BlockPos pos, Explosion explosion)
     {
-        return getBlockState().getBlock().getExplosionResistance(getBlockState(), world, pos, exploder, explosion);
+        return getBlockState().getBlock().getExplosionResistance(getBlockState(), world, pos, explosion);
     }
 
     /**

@@ -59,7 +59,7 @@
     }
  
     public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
-+       return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
++      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
 +   }
 +
 +   @Deprecated //Forge: exposed for our callbacks only. Use the above function.

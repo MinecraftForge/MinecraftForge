@@ -5,7 +5,7 @@
  
        public AlphaState(float p_i225974_1_) {
 -         super("alpha", () -> {
-+         super("line_width", () -> { // FORGE: fix MC-167447
++         super("alpha", () -> { // FORGE: fix MC-167447
              if (p_i225974_1_ > 0.0F) {
                 RenderSystem.enableAlphaTest();
                 RenderSystem.alphaFunc(516, p_i225974_1_);

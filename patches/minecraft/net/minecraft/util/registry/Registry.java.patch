@@ -129,7 +129,8 @@
 +   @Deprecated public static final Registry<IRecipeSerializer<?>> field_218368_I = forge(field_239679_Q_, IRecipeSerializer.class, () -> {
        return IRecipeSerializer.field_222158_b;
     });
-    public static final Registry<Attribute> field_239692_aP_ = func_239746_a_(field_239680_R_, () -> {
+-   public static final Registry<Attribute> field_239692_aP_ = func_239746_a_(field_239680_R_, () -> {
++   @Deprecated public static final Registry<Attribute> field_239692_aP_ = forge(field_239680_R_, Attribute.class, () -> {
        return Attributes.field_233828_k_;
     });
 -   public static final Registry<StatType<?>> field_212634_w = func_239746_a_(field_239681_S_, () -> {

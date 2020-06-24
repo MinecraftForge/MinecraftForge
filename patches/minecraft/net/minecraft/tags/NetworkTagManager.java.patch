@@ -1,10 +1,9 @@
 --- a/net/minecraft/tags/NetworkTagManager.java
 +++ b/net/minecraft/tags/NetworkTagManager.java
-@@ -69,6 +69,7 @@
-          TagCollectionManager.func_232924_a_(this.field_199719_a, this.field_199720_b, this.field_205705_c, this.field_215299_d);
-          Multimap<String, ResourceLocation> multimap = HashMultimap.create();
-          multimap.putAll("blocks", BlockTags.func_232892_b_(this.field_199719_a));
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
-          multimap.putAll("items", ItemTags.func_232917_b_(this.field_199720_b));
-          multimap.putAll("fluids", FluidTags.func_232901_b_(this.field_205705_c));
-          multimap.putAll("entity_types", EntityTypeTags.func_232897_b_(this.field_215299_d));
+@@ -86,5 +86,6 @@
+       FluidTags.func_206953_a(this.field_205705_c);
+       EntityTypeTags.func_219759_a(this.field_215299_d);
+       Blocks.func_235419_a_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
+    }
+ }

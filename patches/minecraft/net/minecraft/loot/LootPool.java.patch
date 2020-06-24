@@ -1,5 +1,5 @@
---- a/net/minecraft/world/storage/loot/LootPool.java
-+++ b/net/minecraft/world/storage/loot/LootPool.java
+--- a/net/minecraft/loot/LootPool.java
++++ b/net/minecraft/loot/LootPool.java
 @@ -25,17 +25,19 @@
  import org.apache.commons.lang3.mutable.MutableInt;
  
@@ -25,7 +25,7 @@
        this.field_216101_c = LootConditionManager.func_216305_a(p_i51268_2_);
        this.field_216102_d = p_i51268_3_;
        this.field_216103_e = LootFunctionManager.func_216241_a(p_i51268_3_);
-@@ -92,16 +94,16 @@
+@@ -92,19 +94,33 @@
     }
  
     public void func_227505_a_(ValidationTracker p_227505_1_) {
@@ -46,7 +46,24 @@
        }
  
     }
-@@ -116,6 +118,7 @@
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() { this.isFrozen = true; }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootPool after being frozen!");
++   }
++   public String getName(){ return this.name; }
++   public IRandomRange getRolls()      { return this.field_186455_c; }
++   public IRandomRange getBonusRolls() { return this.field_186456_d; }
++   public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
++   public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
++   //======================== FORGE END ===============================================
+ 
+    public static LootPool.Builder func_216096_a() {
+       return new LootPool.Builder();
+@@ -116,6 +132,7 @@
        private final List<ILootFunction> field_216049_c = Lists.newArrayList();
        private IRandomRange field_216050_d = new RandomValueRange(1.0F);
        private RandomValueRange field_216051_e = new RandomValueRange(0.0F, 0.0F);
@@ -54,7 +71,7 @@
  
        public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
           this.field_216050_d = p_216046_1_;
-@@ -141,15 +144,61 @@
+@@ -141,11 +158,21 @@
           return this;
        }
  
@@ -77,47 +94,7 @@
           }
        }
     }
- 
-+   //======================== FORGE START =============================================
-+   private boolean isFrozen = false;
-+   public void freeze() { this.isFrozen = true; }
-+   public boolean isFrozen(){ return this.isFrozen; }
-+   private void checkFrozen() {
-+      if (this.isFrozen())
-+         throw new RuntimeException("Attempted to modify LootPool after being frozen!");
-+   }
-+   public String getName(){ return this.name; }
-+   public IRandomRange getRolls()      { return this.field_186455_c; }
-+   public IRandomRange getBonusRolls() { return this.field_186456_d; }
-+   public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
-+   public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
-+   /*
-+   public LootEntry getEntry(String name) {
-+      return lootEntries.stream().filter(e -> name.equals(e.getEntryName())).findFirst().orElse(null);
-+   }
-+   public LootEntry removeEntry(String name) {
-+      checkFrozen();
-+      for (LootEntry entry : this.lootEntries) {
-+         if (name.equals(entry.getEntryName())) {
-+            this.lootEntries.remove(entry);
-+            return entry;
-+         }
-+      }
-+      return null;
-+   }
-+   public void addEntry(LootEntry entry) {
-+      checkFrozen();
-+      if (lootEntries.stream().anyMatch(e -> e == entry || e.getEntryName().equals(entry.getEntryName())))
-+         throw new RuntimeException("Attempted to add a duplicate entry to pool: " + entry.getEntryName());
-+      this.lootEntries.add(entry);
-+   }
-+   */
-+   //======================== FORGE END ===============================================
-+
-    public static class Serializer implements JsonDeserializer<LootPool>, JsonSerializer<LootPool> {
-       public LootPool deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
-          JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot pool");
-@@ -158,18 +207,20 @@
+@@ -158,18 +185,20 @@
           ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
           IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
           RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);

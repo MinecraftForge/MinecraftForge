@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -25,6 +25,8 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
-+import java.util.Objects;
-+
- @OnlyIn(Dist.CLIENT)
- public class FirstPersonRenderer {
-    private static final RenderType field_230010_a_ = RenderType.func_228658_l_(new ResourceLocation("textures/map/map_background.png"));
-@@ -208,7 +210,7 @@
+@@ -208,7 +208,7 @@
        boolean flag1 = true;
        if (p_228396_4_.func_184587_cr()) {
           ItemStack itemstack = p_228396_4_.func_184607_cu();
@@ -18,7 +9,7 @@
              flag = p_228396_4_.func_184600_cs() == Hand.MAIN_HAND;
              flag1 = !flag;
           }
-@@ -216,18 +218,18 @@
+@@ -216,18 +216,18 @@
           Hand hand1 = p_228396_4_.func_184600_cs();
           if (hand1 == Hand.MAIN_HAND) {
              ItemStack itemstack1 = p_228396_4_.func_184592_cb();
@@ -40,7 +31,7 @@
              flag = !itemstack2.func_190926_b();
              flag1 = !flag;
           }
-@@ -240,12 +242,14 @@
+@@ -240,12 +240,14 @@
        if (flag) {
           float f5 = hand == Hand.MAIN_HAND ? f : 0.0F;
           float f2 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187470_g, this.field_187469_f);
@@ -55,7 +46,7 @@
           this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.OFF_HAND, f6, this.field_187468_e, f7, p_228396_2_, p_228396_3_, p_228396_5_);
        }
  
-@@ -260,13 +264,13 @@
+@@ -260,13 +262,13 @@
           if (flag && !p_228405_1_.func_82150_aj()) {
              this.func_228401_a_(p_228405_8_, p_228405_9_, p_228405_10_, p_228405_7_, p_228405_5_, handside);
           }
@@ -71,26 +62,26 @@
           boolean flag1 = CrossbowItem.func_220012_d(p_228405_6_);
           boolean flag2 = handside == HandSide.RIGHT;
           int i = flag2 ? 1 : -1;
-@@ -410,8 +414,16 @@
+@@ -410,8 +412,16 @@
           this.field_187471_h = MathHelper.func_76131_a(this.field_187471_h - 0.4F, 0.0F, 1.0F);
        } else {
           float f = clientplayerentity.func_184825_o(1.0F);
 -         this.field_187469_f += MathHelper.func_76131_a((this.field_187467_d == itemstack ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
 -         this.field_187471_h += MathHelper.func_76131_a((float)(this.field_187468_e == itemstack1 ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
-+          boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, clientplayerentity.field_71071_by.field_70461_c);
-+          boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
++         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, clientplayerentity.field_71071_by.field_70461_c);
++         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
 +
-+          if (!requipM && this.field_187467_d != itemstack)
-+              this.field_187467_d = itemstack;
-+          if (!requipO && this.field_187468_e != itemstack1)
-+              this.field_187468_e = itemstack1;
++         if (!requipM && this.field_187467_d != itemstack)
++            this.field_187467_d = itemstack;
++         if (!requipO && this.field_187468_e != itemstack1)
++            this.field_187468_e = itemstack1;
 +
-+          this.field_187469_f += MathHelper.func_76131_a((!requipM ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
-+          this.field_187471_h += MathHelper.func_76131_a((float)(!requipO ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++         this.field_187469_f += MathHelper.func_76131_a((!requipM ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++         this.field_187471_h += MathHelper.func_76131_a((float)(!requipO ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
        }
  
        if (this.field_187469_f < 0.1F) {
-@@ -430,6 +442,5 @@
+@@ -430,6 +440,5 @@
        } else {
           this.field_187471_h = 0.0F;
        }

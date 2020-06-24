@@ -33,7 +33,7 @@
  
     }
  
-+   @Deprecated
++   @Deprecated //Forge: Use more sensitive version
     public float func_149638_a() {
        return this.field_235689_au_;
     }

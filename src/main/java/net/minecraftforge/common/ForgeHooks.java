@@ -218,7 +218,8 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        blocks = getPrivateValue(AxeItem.class, null, 0);
+        //TODO Axes check Material and Blocks now.
+        blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
 
         //This is taken from ItemAxe, if that changes update here.
@@ -796,7 +797,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonObject data, boolean custom, LootTableManager lootTableManager)
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom, LootTableManager lootTableManager)
     {
         Deque<LootTableContext> que = lootContext.get();
         if (que == null)
@@ -821,10 +822,8 @@ public class ForgeHooks
         if (!custom)
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
-        /* TODO:
-         if (ret != null)
-            ret.freeze();
-         */
+        if (ret != null)
+           ret.freeze();
 
         return ret;
     }

@@ -32,6 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -163,14 +164,14 @@ public class WorldEvent extends Event
     @net.minecraftforge.eventbus.api.Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
-        private final WorldSettings settings;
-        public CreateSpawnPosition(IWorld world, WorldSettings settings)
+        private final IServerWorldInfo settings;
+        public CreateSpawnPosition(IWorld world, IServerWorldInfo settings)
         {
             super(world);
             this.settings = settings;
         }
 
-        public WorldSettings getSettings()
+        public IServerWorldInfo getSettings()
         {
             return settings;
         }

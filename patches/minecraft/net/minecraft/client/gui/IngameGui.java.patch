@@ -35,10 +35,10 @@
 -            this.func_175179_f().func_238407_a_(p_238453_1_, iformattabletextcomponent, (float)j, (float)k, 16777215 + (l << 24));
 +            FontRenderer font = field_92016_l.func_77973_b().getFontRenderer(field_92016_l);
 +            if (font == null) {
-+            this.func_175179_f().func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++               this.func_175179_f().func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            } else {
-+                j = (this.field_194811_H - font.func_238414_a_(highlightTip)) / 2;
-+                font.func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++               j = (this.field_194811_H - font.func_238414_a_(highlightTip)) / 2;
++               font.func_238407_a_(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            }
              RenderSystem.disableBlend();
              RenderSystem.popMatrix();

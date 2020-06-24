@@ -33,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.fluids.FluidAttributes;
 
@@ -94,11 +95,10 @@ public interface IForgeFluid
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param exploder The entity that caused the explosion, can be null
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
-    default float getExplosionResistance(FluidState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
+    default float getExplosionResistance(FluidState state, IBlockReader world, BlockPos pos, Explosion explosion)
     {
         return state.getExplosionResistance();
     }

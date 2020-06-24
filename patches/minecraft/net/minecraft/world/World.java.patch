@@ -60,13 +60,13 @@
                 this.func_217381_Z().func_76319_b();
              }
  
-+           if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
++            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
 +               this.markAndNotifyBlock(p_241211_1_, chunk, blockstate, p_241211_2_, p_241211_3_, p_241211_4_);
-+           }
-+           return true;
-+        }
-+     }
-+  }
++            }
++            return true;
++         }
++      }
++   }
 +
 +   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +   public void markAndNotifyBlock(BlockPos p_241211_1_, @Nullable Chunk chunk, BlockState blockstate, BlockState p_241211_2_, int p_241211_3_, int p_241211_4_)
@@ -364,7 +364,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -985,16 +1048,14 @@
+@@ -985,16 +1048,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -376,6 +376,7 @@
 -            if (blockstate.func_203425_a(Blocks.field_196762_fd)) {
 -               blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
 -            } else if (blockstate.func_215686_e(this, blockpos)) {
++            blockstate.onNeighborChange(this, blockpos, p_175666_1_);
 +            if (blockstate.func_215686_e(this, blockpos)) {
                 blockpos = blockpos.func_177972_a(direction);
                 blockstate = this.func_180495_p(blockpos);
@@ -384,7 +385,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1075,6 +1136,18 @@
+@@ -1075,6 +1137,18 @@
        return this.field_226689_w_;
     }
  

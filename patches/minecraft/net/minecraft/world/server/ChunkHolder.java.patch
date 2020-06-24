@@ -3,10 +3,10 @@
 @@ -135,7 +135,7 @@
        Chunk chunk = this.func_219298_c();
        if (chunk != null) {
-          this.field_219322_q |= 1 << (p_241812_2_ >> 4);
+          this.field_219322_q |= 1 << (p_241819_2_ >> 4);
 -         if (this.field_219321_p < 64) {
 +         { //Forge; Cache everything, so always run
-             short short1 = (short)(p_241812_1_ << 12 | p_241812_3_ << 8 | p_241812_2_);
+             short short1 = (short)(p_241819_1_ << 12 | p_241819_3_ << 8 | p_241819_2_);
  
              for(int i = 0; i < this.field_219321_p; ++i) {
 @@ -144,6 +144,8 @@
@@ -18,3 +18,34 @@
              this.field_219320_o[this.field_219321_p++] = short1;
           }
  
+@@ -166,7 +168,7 @@
+    public void func_219274_a(Chunk p_219274_1_) {
+       if (this.field_219321_p != 0 || this.field_219325_t != 0 || this.field_219324_s != 0) {
+          World world = p_219274_1_.func_177412_p();
+-         if (this.field_219321_p < 64 && (this.field_219325_t != 0 || this.field_219324_s != 0)) {
++         if (this.field_219321_p < net.minecraftforge.common.ForgeConfig.SERVER.clumpingThreshold.get() && (this.field_219325_t != 0 || this.field_219324_s != 0)) {
+             this.func_219293_a(new SUpdateLightPacket(p_219274_1_.func_76632_l(), this.field_219326_u, this.field_219325_t, this.field_219324_s, false), true);
+             this.field_219325_t = 0;
+             this.field_219324_s = 0;
+@@ -178,10 +180,10 @@
+             int k = (this.field_219320_o[0] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
+             BlockPos blockpos = new BlockPos(i, j, k);
+             this.func_219293_a(new SChangeBlockPacket(world, blockpos), false);
+-            if (world.func_180495_p(blockpos).func_177230_c().func_235695_q_()) {
++            if (world.func_180495_p(blockpos).hasTileEntity()) {
+                this.func_219305_a(world, blockpos);
+             }
+-         } else if (this.field_219321_p == 64) {
++         } else if (this.field_219321_p >= net.minecraftforge.common.ForgeConfig.SERVER.clumpingThreshold.get()) {
+             this.func_219293_a(new SChunkDataPacket(p_219274_1_, this.field_219322_q, false), false);
+          } else if (this.field_219321_p != 0) {
+             this.func_219293_a(new SMultiBlockChangePacket(this.field_219321_p, this.field_219320_o, p_219274_1_), false);
+@@ -191,7 +193,7 @@
+                int j1 = this.field_219320_o[l] & 255;
+                int k1 = (this.field_219320_o[l] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
+                BlockPos blockpos1 = new BlockPos(i1, j1, k1);
+-               if (world.func_180495_p(blockpos1).func_177230_c().func_235695_q_()) {
++               if (world.func_180495_p(blockpos1).hasTileEntity()) {
+                   this.func_219305_a(world, blockpos1);
+                }
+             }

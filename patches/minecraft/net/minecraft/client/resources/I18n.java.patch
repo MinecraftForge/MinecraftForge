@@ -4,7 +4,7 @@
  
     static void func_239502_a_(LanguageMap p_239502_0_) {
        field_239501_a_ = p_239502_0_;
-+      //net.minecraftforge.fml.ForgeI18n.loadLanguageData(i18nLocale.properties); //TODO
++      net.minecraftforge.fml.ForgeI18n.loadLanguageData(p_239502_0_.getLanguageData());
     }
  
     public static String func_135052_a(String p_135052_0_, Object... p_135052_1_) {

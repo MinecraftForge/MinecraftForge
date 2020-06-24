@@ -1,5 +1,5 @@
---- a/net/minecraft/world/storage/loot/LootContext.java
-+++ b/net/minecraft/world/storage/loot/LootContext.java
+--- a/net/minecraft/loot/LootContext.java
++++ b/net/minecraft/loot/LootContext.java
 @@ -94,6 +94,10 @@
        return this.field_186499_b;
     }

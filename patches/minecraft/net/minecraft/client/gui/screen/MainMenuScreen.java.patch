@@ -17,8 +17,8 @@
           this.func_73972_b(j, 24);
        } else {
           this.func_73969_a(j, 24);
-+          modButton = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, j + 24 * 2, 98, 20, new TranslationTextComponent("fml.menu.mods"), button -> {
-+             this.field_230706_i_.func_147108_a(new net.minecraftforge.fml.client.gui.screen.ModListScreen(this));
++         modButton = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, j + 24 * 2, 98, 20, new TranslationTextComponent("fml.menu.mods"), button -> {
++            this.field_230706_i_.func_147108_a(new net.minecraftforge.fml.client.gui.screen.ModListScreen(this));
 +         }));
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
@@ -48,11 +48,11 @@
  
 -         this.func_238476_c_(p_230430_1_, this.field_230712_o_, s, 2, this.field_230709_l_ - 10, 16777215 | l);
 +         net.minecraftforge.fml.BrandingControl.forEachLine(true, true, (brdline, brd) ->
-+                 this.func_238476_c_(p_230430_1_, this.field_230712_o_, brd, 2, this.field_230709_l_ - ( 10 + brdline * (this.field_230712_o_.field_78288_b + 1)), 16777215 | l)
++               this.func_238476_c_(p_230430_1_, this.field_230712_o_, brd, 2, this.field_230709_l_ - ( 10 + brdline * (this.field_230712_o_.field_78288_b + 1)), 16777215 | l)
 +         );
 +
 +         net.minecraftforge.fml.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
-+                 this.func_238476_c_(p_230430_1_, this.field_230712_o_, brd, this.field_230708_k_ - field_230712_o_.func_78256_a(brd), this.field_230709_l_ - (10 + (brdline + 1) * ( this.field_230712_o_.field_78288_b + 1)), 16777215 | l)
++               this.func_238476_c_(p_230430_1_, this.field_230712_o_, brd, this.field_230708_k_ - field_230712_o_.func_78256_a(brd), this.field_230709_l_ - (10 + (brdline + 1) * ( this.field_230712_o_.field_78288_b + 1)), 16777215 | l)
 +         );
           this.func_238476_c_(p_230430_1_, this.field_230712_o_, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_230709_l_ - 10, 16777215 | l);
           if (p_230430_2_ > this.field_193979_N && p_230430_2_ < this.field_193979_N + this.field_193978_M && p_230430_3_ > this.field_230709_l_ - 10 && p_230430_3_ < this.field_230709_l_) {
@@ -61,7 +61,7 @@
           if (this.func_183501_a() && f1 >= 1.0F) {
              this.field_183503_M.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
           }
-+          modUpdateNotification.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
++         modUpdateNotification.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
  
        }
     }

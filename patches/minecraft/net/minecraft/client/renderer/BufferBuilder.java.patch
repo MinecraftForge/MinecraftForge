@@ -21,6 +21,7 @@
        }
     }
 +
++   // Forge start
 +   public void putBulkData(ByteBuffer buffer) {
 +      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
 +      ((Buffer)this.field_179001_a).position(this.field_178997_d * this.field_179011_q.func_177338_f());
@@ -29,6 +30,5 @@
 +      this.field_227824_l_ += buffer.limit();
 +   }
 +
-+   // Forge start
 +   public VertexFormat getVertexFormat() { return this.field_179011_q; }
  }

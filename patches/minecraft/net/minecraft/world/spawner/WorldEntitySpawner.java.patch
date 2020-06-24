@@ -9,7 +9,33 @@
           if (entityclassification != EntityClassification.MISC) {
              BlockPos blockpos = entity.func_233580_cy_();
              long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
-@@ -294,6 +294,13 @@
+@@ -171,13 +171,15 @@
+                         }
+ 
+                         mobentity.func_70012_b(d0, (double)i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-                        if (func_234974_a_(p_234966_1_, mobentity, d2)) {
++                        int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_234966_1_, d0, i, d1, null, SpawnReason.NATURAL);
++                        if (canSpawn != -1 && (canSpawn == 1 || func_234974_a_(p_234966_1_, mobentity, d2))) {
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_234966_1_, (float)d0, (float)i, (float)d1, null, SpawnReason.NATURAL))
+                            ilivingentitydata = mobentity.func_213386_a(p_234966_1_, p_234966_1_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
+                            ++j;
+                            ++l1;
+                            p_234966_1_.func_217376_c(mobentity);
+                            p_234966_5_.run(mobentity, p_234966_2_);
+-                           if (j >= mobentity.func_70641_bl()) {
++                           if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mobentity)) {
+                               return;
+                            }
+ 
+@@ -255,6 +257,7 @@
+          return null;
+       } else {
+          List<Biome.SpawnListEntry> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
++         list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_234977_0_, p_234977_3_, p_234977_5_, list);
+          return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
+       }
+    }
+@@ -294,6 +297,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;
        } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
@@ -23,7 +49,7 @@
           BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
           FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
           BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -312,8 +319,6 @@
+@@ -312,8 +322,6 @@
                 return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
              }
           }
@@ -32,7 +58,7 @@
        }
     }
  
-@@ -356,6 +361,7 @@
+@@ -356,6 +364,7 @@
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;

@@ -8,3 +8,11 @@
                 func_179868_d();
              }
           }
+@@ -101,7 +102,6 @@
+             });
+          }
+ 
+-         GlobalEntityTypeAttributes.func_233834_a_();
+       }
+    }
+ 

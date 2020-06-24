@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.schedule.Schedule;
@@ -77,6 +78,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<ContainerType<?>> CONTAINERS = RegistryManager.ACTIVE.getRegistry(ContainerType.class);
     public static final IForgeRegistry<PaintingType> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(PaintingType.class);
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
+    public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Attribute.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
     
     // Villages

@@ -1,6 +1,6 @@
---- a/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
-+++ b/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
-@@ -28,12 +28,7 @@
+--- a/net/minecraft/loot/conditions/RandomChanceWithLooting.java
++++ b/net/minecraft/loot/conditions/RandomChanceWithLooting.java
+@@ -33,12 +33,7 @@
     }
  
     public boolean test(LootContext p_test_1_) {

@@ -31,7 +31,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.world.storage.FolderNames;
+import net.minecraft.world.storage.FolderName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -73,7 +73,7 @@ public class ServerLifecycleHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker SERVERHOOKS = MarkerManager.getMarker("SERVERHOOKS");
-    private static final FolderNames SERVERCONFIG = new FolderNames("serverconfig");
+    private static final FolderName SERVERCONFIG = new FolderName("serverconfig");
     private static volatile CountDownLatch exitLatch = null;
     private static MinecraftServer currentServer;
 
@@ -89,7 +89,6 @@ public class ServerLifecycleHooks
         currentServer = server;
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
-        ResourcePackLoader.loadResourcePacks(currentServer.getResourcePacks(), ServerLifecycleHooks::buildPackFinder);
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
 
@@ -207,7 +206,9 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
+    //INTERNAL MODDERS DO NOT USE
+    @Deprecated
+    public static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
