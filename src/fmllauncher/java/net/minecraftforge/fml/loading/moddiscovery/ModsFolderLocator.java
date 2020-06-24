@@ -65,7 +65,7 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
                 .filter(p->!excluded.contains(p))
                 .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
                 .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
-                .map(p->new ModFile(p, this))
+                .map(p->ModFile.newFMLInstance(p, this))
                 .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
                 .collect(Collectors.toList());
     }

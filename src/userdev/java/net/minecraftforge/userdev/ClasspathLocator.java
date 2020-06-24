@@ -52,7 +52,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     @Override
     public List<IModFile> scanMods() {
         return modCoords.stream().
-            map(mc -> new ModFile(mc, this)).
+            map(mc -> ModFile.newFMLInstance(mc, this)).
             peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf))).
             collect(Collectors.toList());
     }

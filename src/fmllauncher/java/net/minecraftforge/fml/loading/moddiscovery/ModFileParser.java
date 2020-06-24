@@ -23,6 +23,8 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,25 +40,28 @@ import java.util.stream.Collectors;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class ModFileParser {
-
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static IModFileInfo readModList(final ModFile modFile) {
+    public static IModFileInfo readModList(final ModFile modFile, final ModFileFactory.ModFileInfoParser parser) {
+        return parser.build(modFile);
+    }
+
+    public static IModFileInfo modsTomlParser(final IModFile imodFile) {
+        ModFile modFile = (ModFile) imodFile;
         LOGGER.debug(LOADING,"Considering mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
             LOGGER.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
             return null;
         }
-        return loadModFile(modFile, modsjson);
-    }
 
-    public static IModFileInfo loadModFile(final ModFile file, final Path modsjson)
-    {
         final FileConfig fileConfig = FileConfig.builder(modsjson).build();
         fileConfig.load();
         fileConfig.close();
-        return new ModFileInfo(file, fileConfig);
+        final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
+        final ModFileInfo modFileInfo = new ModFileInfo(modFile, configWrapper);
+        configWrapper.setFile(modFileInfo);
+        return modFileInfo;
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {
