@@ -9,3 +9,12 @@
     private final Set<Path> field_218457_g = Sets.newHashSet();
  
     public DirectoryCache(Path p_i49352_1_, String p_i49352_2_) throws IOException {
+@@ -55,7 +55,7 @@
+       }
+ 
+       IOUtils.writeLines(this.field_208329_f.entrySet().stream().map((p_208319_1_) -> {
+-         return (String)p_208319_1_.getValue() + ' ' + this.field_208325_b.relativize(p_208319_1_.getKey());
++         return (String)p_208319_1_.getValue() + ' ' + this.field_208325_b.relativize(p_208319_1_.getKey()).toString().replace('\\', '/'); //Forge: Standardize file paths.
+       }).collect(Collectors.toList()), System.lineSeparator(), writer);
+       writer.close();
+       field_208324_a.debug("Caching: cache hits: {}, created: {} removed: {}", this.field_208327_d, this.field_208329_f.size() - this.field_208327_d, this.field_208328_e.size());

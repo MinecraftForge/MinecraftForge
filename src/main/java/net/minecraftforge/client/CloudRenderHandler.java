@@ -17,22 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftforge.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraft.client.world.ClientWorld;
 
-@Mod("stencil_enable_test")
-public class StencilEnableTest {
-    public StencilEnableTest() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-    }
+/**
+ * Call {@link net.minecraft.world.dimension.Dimension#setCloudRenderer} with an implementation of this
+ * to override all cloud rendering with your own.
+ */
+public interface CloudRenderHandler extends IRenderHandler {
+	@Override
+	default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}
 
-    private void clientSetup(FMLClientSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
-    }
+	void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
 }

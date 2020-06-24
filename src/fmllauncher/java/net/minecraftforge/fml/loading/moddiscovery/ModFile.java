@@ -21,13 +21,15 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.forgespi.Environment;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,31 +59,10 @@ public class ModFile implements IModFile {
     }
 
     private final String jarVersion;
+    private final ModFileFactory.ModFileInfoParser parser;
     private Map<String, Object> fileProperties;
     private IModLanguageProvider loader;
     private Throwable scanError;
-
-    public void setFileProperties(Map<String, Object> fileProperties)
-    {
-        this.fileProperties = fileProperties;
-    }
-
-    @Override
-    public IModLanguageProvider getLoader()
-    {
-        return loader;
-    }
-
-    @Override
-    public Path findResource(String className)
-    {
-        return locator.findPath(this, className);
-    }
-
-    public void identifyLanguage() {
-        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this, this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
-    }
-
     private final Path filePath;
     private final Type modFileType;
     private final Manifest manifest;
@@ -94,9 +75,10 @@ public class ModFile implements IModFile {
 
     public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
 
-    public ModFile(final Path file, final IModLocator locator) {
+    public ModFile(final Path file, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
         this.locator = locator;
         this.filePath = file;
+        this.parser = parser;
         manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
         if (manifest != DEFAULTMANIFEST) LOGGER.debug(SCAN,"Mod file {} has a manifest", file);
         else LOGGER.debug(SCAN,"Mod file {} is missing a manifest", file);
@@ -129,7 +111,7 @@ public class ModFile implements IModFile {
     }
 
     public boolean identifyMods() {
-        this.modFileInfo = ModFileParser.readModList(this);
+        this.modFileInfo = ModFileParser.readModList(this, this.parser);
         if (this.modFileInfo == null) return false;
         LOGGER.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.getModLoader());
         this.coreMods = ModFileParser.getCoreMods(this);
@@ -182,6 +164,27 @@ public class ModFile implements IModFile {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Completed deep scan of "+this.getFileName()));
     }
 
+    public void setFileProperties(Map<String, Object> fileProperties)
+    {
+        this.fileProperties = fileProperties;
+    }
+
+    @Override
+    public IModLanguageProvider getLoader()
+    {
+        return loader;
+    }
+
+    @Override
+    public Path findResource(String className)
+    {
+        return locator.findPath(this, className);
+    }
+
+    public void identifyLanguage() {
+        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this, this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
+    }
+
     @Override
     public String toString() {
         return "Mod File: " + Objects.toString(this.filePath);
@@ -200,5 +203,13 @@ public class ModFile implements IModFile {
     @Override
     public IModFileInfo getModFileInfo() {
         return modFileInfo;
+    }
+
+    public static ModFileFactory buildFactory() {
+        return ModFile::new;
+    }
+
+    public static ModFile newFMLInstance(final Path path, final IModLocator locator) {
+        return (ModFile) ModFileFactory.FACTORY.build(path, locator, ModFileParser::modsTomlParser);
     }
 }

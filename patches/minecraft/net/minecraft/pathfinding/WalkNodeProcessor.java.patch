@@ -14,8 +14,8 @@
 -                     } else {
 -                        p_193578_4_ = PathNodeType.DANGER_FIRE;
 -                     }
-+                     PathNodeType type = func_189553_b(p_193578_0_, p_193578_1_, p_193578_2_, p_193578_3_);
-+                     if (type == PathNodeType.DANGER_CACTUS || type == PathNodeType.DANGER_FIRE || type == PathNodeType.DANGER_OTHER)
++                     PathNodeType type = func_189553_b(p_193578_0_, p_193578_1_ + i, p_193578_2_ + j, p_193578_3_ + k).getDanger();
++                     if (type != null)
 +                        p_193578_4_ = type;
                    }
                 }

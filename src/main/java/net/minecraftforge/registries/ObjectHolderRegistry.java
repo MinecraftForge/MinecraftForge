@@ -45,7 +45,6 @@ import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**

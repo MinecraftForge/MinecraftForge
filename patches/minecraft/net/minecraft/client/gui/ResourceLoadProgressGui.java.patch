@@ -8,3 +8,19 @@
        if (f < 1.0F) {
           this.func_228181_a_(i / 2 - 150, j / 4 * 3, i / 2 + 150, j / 4 * 3 + 10, 1.0F - MathHelper.func_76131_a(f, 0.0F, 1.0F));
        }
+@@ -90,6 +91,7 @@
+       }
+ 
+       if (this.field_212979_g == -1L && this.field_212975_c.func_219554_d() && (!this.field_212977_e || f1 >= 2.0F)) {
++         this.field_212979_g = Util.func_211177_b(); // Moved up to guard against inf loops caused by callback
+          try {
+             this.field_212975_c.func_219556_e();
+             this.field_212976_d.accept(Optional.empty());
+@@ -97,7 +99,6 @@
+             this.field_212976_d.accept(Optional.of(throwable));
+          }
+ 
+-         this.field_212979_g = Util.func_211177_b();
+          if (this.field_212974_b.field_71462_r != null) {
+             this.field_212974_b.field_71462_r.init(this.field_212974_b, this.field_212974_b.func_228018_at_().func_198107_o(), this.field_212974_b.func_228018_at_().func_198087_p());
+          }
