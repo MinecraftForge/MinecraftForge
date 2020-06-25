@@ -94,7 +94,7 @@
        return ParticleTypes.field_197611_d;
     });
     public static final Registry<Codec<? extends BiomeProvider>> field_239689_aA_ = func_239742_a_(field_239665_C_, Lifecycle.stable(), () -> {
-@@ -207,16 +211,16 @@
+@@ -207,19 +211,19 @@
     public static final Registry<Codec<? extends ChunkGenerator>> field_239690_aB_ = func_239742_a_(field_239666_D_, Lifecycle.stable(), () -> {
        return ChunkGenerator.field_235948_a_;
     });
@@ -113,7 +113,11 @@
 +   @Deprecated public static final DefaultedRegistry<ChunkStatus> field_218360_A = forgeDefaulted(field_239670_H_, ChunkStatus.class, () -> {
        return ChunkStatus.field_223226_a_;
     });
-    public static final Registry<Structure<?>> field_218361_B = func_239746_a_(field_239671_I_, () -> {
+-   public static final Registry<Structure<?>> field_218361_B = func_239746_a_(field_239671_I_, () -> {
++   @Deprecated public static final Registry<Structure<?>> field_218361_B = forge(field_239671_I_, Structure.class, () -> {
+       return Structure.field_236367_c_;
+    });
+    public static final Registry<IStructurePieceType> field_218362_C = func_239746_a_(field_239672_J_, () -> {
 @@ -237,40 +241,40 @@
     public static final Registry<IJigsawDeserializer<?>> field_218365_F = func_239746_a_(field_239676_N_, () -> {
        return IJigsawDeserializer.field_214931_e;

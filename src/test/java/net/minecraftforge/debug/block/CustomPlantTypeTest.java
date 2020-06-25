@@ -87,7 +87,7 @@ public class CustomPlantTypeTest
 
     public static class CustomPlantBlock extends FlowerBlock implements IPlantable
     {
-        public static PlantType pt = PlantType.create("CustomPlantType");
+        public static PlantType pt = PlantType.get("CustomPlantType");
 
         public CustomPlantBlock()
         {

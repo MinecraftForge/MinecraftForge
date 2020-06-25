@@ -61,7 +61,67 @@
           return false;
        } else {
           TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
-@@ -291,6 +301,8 @@
+@@ -226,38 +236,52 @@
+          if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_73090_b.func_195070_dx()) {
+             this.field_73092_a.func_184138_a(p_180237_1_, blockstate, blockstate, 3);
+             return false;
++         } else if (field_73090_b.func_184614_ca().onBlockStartBreak(p_180237_1_, field_73090_b)) {
++            return false;
+          } else if (this.field_73090_b.func_223729_a(this.field_73092_a, p_180237_1_, this.field_73091_c)) {
+             return false;
+          } else {
+-            block.func_176208_a(this.field_73092_a, p_180237_1_, blockstate, this.field_73090_b);
+-            boolean flag = this.field_73092_a.func_217377_a(p_180237_1_, false);
+-            if (flag) {
+-               block.func_176206_d(this.field_73092_a, p_180237_1_, blockstate);
+-            }
+-
+             if (this.func_73083_d()) {
++               removeBlock(p_180237_1_, false);
+                return true;
+             } else {
+                ItemStack itemstack = this.field_73090_b.func_184614_ca();
+                ItemStack itemstack1 = itemstack.func_77946_l();
+-               boolean flag1 = this.field_73090_b.func_234569_d_(blockstate);
++               boolean flag1 = blockstate.canHarvestBlock(this.field_73092_a, p_180237_1_, this.field_73090_b); // previously player.func_234569_d_(blockstate)
+                itemstack.func_179548_a(this.field_73092_a, blockstate, p_180237_1_, this.field_73090_b);
++               if (itemstack.func_190926_b() && !itemstack1.func_190926_b())
++                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, itemstack1, Hand.MAIN_HAND);
++               boolean flag = removeBlock(p_180237_1_, flag1);
++
+                if (flag && flag1) {
+                   block.func_180657_a(this.field_73092_a, this.field_73090_b, p_180237_1_, blockstate, tileentity, itemstack1);
+                }
+ 
++               if (flag && exp > 0)
++                  blockstate.func_177230_c().func_180637_b(field_73092_a, p_180237_1_, exp);
++
+                return true;
+             }
+          }
+       }
+    }
+ 
++   private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
++      BlockState state = this.field_73092_a.func_180495_p(p_180235_1_);
++      boolean removed = state.removedByPlayer(this.field_73092_a, p_180235_1_, this.field_73090_b, canHarvest, this.field_73092_a.func_204610_c(p_180235_1_));
++      if (removed)
++         state.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, state);
++      return removed;
++   }
++
+    public ActionResultType func_187250_a(ServerPlayerEntity p_187250_1_, World p_187250_2_, ItemStack p_187250_3_, Hand p_187250_4_) {
+       if (this.field_73091_c == GameType.SPECTATOR) {
+          return ActionResultType.PASS;
+       } else if (p_187250_1_.func_184811_cZ().func_185141_a(p_187250_3_.func_77973_b())) {
+          return ActionResultType.PASS;
+       } else {
++         ActionResultType cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_);
++         if (cancelResult != null) return cancelResult;
+          int i = p_187250_3_.func_190916_E();
+          int j = p_187250_3_.func_77952_i();
+          ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
+@@ -291,6 +315,8 @@
     public ActionResultType func_219441_a(ServerPlayerEntity p_219441_1_, World p_219441_2_, ItemStack p_219441_3_, Hand p_219441_4_, BlockRayTraceResult p_219441_5_) {
        BlockPos blockpos = p_219441_5_.func_216350_a();
        BlockState blockstate = p_219441_2_.func_180495_p(blockpos);
@@ -70,14 +130,14 @@
        if (this.field_73091_c == GameType.SPECTATOR) {
           INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
           if (inamedcontainerprovider != null) {
-@@ -300,10 +312,15 @@
+@@ -300,10 +326,15 @@
              return ActionResultType.PASS;
           }
        } else {
 +         ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
 +         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+             ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);
-+             if (result != ActionResultType.PASS) return result;
++            ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);
++            if (result != ActionResultType.PASS) return result;
 +         }
           boolean flag = !p_219441_1_.func_184614_ca().func_190926_b() || !p_219441_1_.func_184592_cb().func_190926_b();
 -         boolean flag1 = p_219441_1_.func_226563_dT_() && flag;
@@ -88,7 +148,7 @@
              ActionResultType actionresulttype = blockstate.func_227031_a_(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_);
              if (actionresulttype.func_226246_a_()) {
                 CriteriaTriggers.field_232607_M_.func_226695_a_(p_219441_1_, blockpos, itemstack);
-@@ -312,7 +329,7 @@
+@@ -312,7 +343,7 @@
           }
  
           if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {

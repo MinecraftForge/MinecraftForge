@@ -94,12 +94,13 @@
        return this.field_74512_d.equals(p_197983_1_.field_74512_d);
     }
  
-@@ -156,11 +176,12 @@
+@@ -156,11 +176,13 @@
     }
  
     public ITextComponent func_238171_j_() {
-+       //TODO eturn getKeyModifier().getLocalizedComboName needs to go here
++      return getKeyModifier().getCombinedName(field_74512_d, () -> {
        return this.field_74512_d.func_237520_d_();
++      });
     }
  
     public boolean func_197985_l() {
@@ -108,7 +109,7 @@
     }
  
     public String func_197982_m() {
-@@ -170,4 +191,84 @@
+@@ -170,4 +192,84 @@
     public void func_225593_a_(boolean p_225593_1_) {
        this.field_74513_e = p_225593_1_;
     }

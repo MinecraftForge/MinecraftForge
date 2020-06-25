@@ -99,19 +99,7 @@ public class StartupQuery {
         return new QueryBuilder();
     }
 
-    @Deprecated // TODO 1.16 remove
-    public static boolean confirm(String text)
-    {
-        return builder().text(text).confirm();
-    }
-
     private InterruptedException exception;
-
-    @Deprecated // TODO 1.16 remove
-    public static void notify(String text)
-    {
-        builder().text(text).notification();
-    }
 
     public static void abort()
     {

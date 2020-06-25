@@ -42,15 +42,6 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -292,7 +297,7 @@
-    @OnlyIn(Dist.CLIENT)
-    protected void func_70065_x() {
-       if (this.field_70170_p != null) {
--         for(double d0 = this.func_226278_cu_(); d0 > 0.0D && d0 < 256.0D; ++d0) {
-+         for(double d0 = this.func_226278_cu_(); d0 > 0.0D && d0 < 256.0D/*TODO this.world.getDimension().getHeight()*/; ++d0) {
-             this.func_70107_b(this.func_226277_ct_(), d0, this.func_226281_cx_());
-             if (this.field_70170_p.func_226669_j_(this)) {
-                break;
 @@ -305,7 +310,13 @@
     }
  

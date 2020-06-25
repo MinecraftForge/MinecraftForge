@@ -144,6 +144,19 @@
        if (!this.field_70128_L && !this.field_70729_aU) {
           Entity entity = p_70645_1_.func_76346_g();
           LivingEntity livingentity = this.func_94060_bK();
+@@ -1194,10 +1210,10 @@
+       if (!this.field_70170_p.field_72995_K) {
+          boolean flag = false;
+          if (p_226298_1_ instanceof WitherEntity) {
+-            if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
+                BlockPos blockpos = this.func_233580_cy_();
+                BlockState blockstate = Blocks.field_222388_bz.func_176223_P();
+-               if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
++               if (this.field_70170_p.func_175623_d(blockpos) && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
+                   this.field_70170_p.func_180501_a(blockpos, blockstate, 3);
+                   flag = true;
+                }
 @@ -1214,13 +1230,10 @@
  
     protected void func_213345_d(DamageSource p_213345_1_) {
@@ -180,15 +193,7 @@
           while(i > 0) {
              int j = ExperienceOrbEntity.func_70527_a(i);
              i -= j;
-@@ -1245,6 +1263,7 @@
-          }
-       }
- 
-+
-    }
- 
-    protected void func_213333_a(DamageSource p_213333_1_, int p_213333_2_, boolean p_213333_3_) {
-@@ -1258,7 +1277,8 @@
+@@ -1258,7 +1276,8 @@
        ResourceLocation resourcelocation = this.func_213346_cF();
        LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
        LootContext.Builder lootcontext$builder = this.func_213363_a(p_213354_2_, p_213354_1_);
@@ -198,7 +203,7 @@
     }
  
     protected LootContext.Builder func_213363_a(boolean p_213363_1_, DamageSource p_213363_2_) {
-@@ -1271,6 +1291,12 @@
+@@ -1271,6 +1290,12 @@
     }
  
     public void func_233627_a_(float p_233627_1_, double p_233627_2_, double p_233627_4_) {
@@ -211,7 +216,25 @@
        p_233627_1_ = (float)((double)p_233627_1_ * (1.0D - this.func_233637_b_(Attributes.field_233820_c_)));
        if (!(p_233627_1_ <= 0.0F)) {
           this.field_70160_al = true;
-@@ -1353,6 +1379,11 @@
+@@ -1320,16 +1345,7 @@
+       } else {
+          BlockPos blockpos = this.func_233580_cy_();
+          BlockState blockstate = this.func_213339_cH();
+-         Block block = blockstate.func_177230_c();
+-         if (block.func_203417_a(BlockTags.field_232878_as_)) {
+-            this.field_233624_bE_ = Optional.of(blockpos);
+-            return true;
+-         } else if (block instanceof TrapDoorBlock && this.func_184604_a(blockpos, blockstate)) {
+-            this.field_233624_bE_ = Optional.of(blockpos);
+-            return true;
+-         } else {
+-            return false;
+-         }
++         return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(blockstate, field_70170_p, blockpos, this);
+       }
+    }
+ 
+@@ -1353,6 +1369,11 @@
     }
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
@@ -223,7 +246,7 @@
        boolean flag = super.func_225503_b_(p_225503_1_, p_225503_2_);
        int i = this.func_225508_e_(p_225503_1_, p_225503_2_);
        if (i > 0) {
-@@ -1376,9 +1407,10 @@
+@@ -1376,9 +1397,10 @@
           int i = MathHelper.func_76128_c(this.func_226277_ct_());
           int j = MathHelper.func_76128_c(this.func_226278_cu_() - (double)0.2F);
           int k = MathHelper.func_76128_c(this.func_226281_cx_());
@@ -237,7 +260,7 @@
              this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
           }
  
-@@ -1446,6 +1478,8 @@
+@@ -1446,6 +1468,8 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
@@ -246,7 +269,7 @@
           p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
           p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
           float f2 = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-@@ -1455,10 +1489,11 @@
+@@ -1455,10 +1479,11 @@
              ((ServerPlayerEntity)p_70665_1_.func_76346_g()).func_195067_a(Stats.field_212735_F, Math.round(f * 10.0F));
           }
  
@@ -259,7 +282,7 @@
              this.func_110149_m(this.func_110139_bj() - f2);
           }
        }
-@@ -1512,6 +1547,8 @@
+@@ -1512,6 +1537,8 @@
     }
  
     public void func_226292_a_(Hand p_226292_1_, boolean p_226292_2_) {
@@ -268,7 +291,26 @@
        if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0) {
           this.field_110158_av = -1;
           this.field_82175_bq = true;
-@@ -1868,11 +1905,15 @@
+@@ -1846,15 +1873,16 @@
+       }
+ 
+       this.field_70160_al = true;
++      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    protected void func_203010_cG() {
+-      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)-0.04F, 0.0D));
++      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)0.04F * this.func_110148_a(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_111126_e(), 0.0D));
+    }
+ 
+    protected void func_180466_bG(ITag<Fluid> p_180466_1_) {
+-      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)0.04F, 0.0D));
++      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)0.04F * this.func_110148_a(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_111126_e(), 0.0D));
+    }
+ 
+    protected float func_189749_co() {
+@@ -1868,16 +1896,20 @@
     public void func_213352_e(Vector3d p_213352_1_) {
        if (this.func_70613_aW() || this.func_184186_bw()) {
           double d0 = 0.08D;
@@ -285,7 +327,13 @@
  
           FluidState fluidstate = this.field_70170_p.func_204610_c(this.func_233580_cy_());
           if (this.func_70090_H() && this.func_241208_cS_() && !this.func_230285_a_(fluidstate.func_206886_c())) {
-@@ -1897,6 +1938,7 @@
+             double d8 = this.func_226278_cu_();
+-            float f5 = this.func_70051_ag() ? 0.9F : this.func_189749_co();
++            float f5 = this.field_70170_p.func_180495_p(this.func_226270_aj_()).getSlipperiness(field_70170_p, this.func_226270_aj_(), this);
+             float f6 = 0.02F;
+             float f7 = (float)EnchantmentHelper.func_185294_d(this);
+             if (f7 > 3.0F) {
+@@ -1897,6 +1929,7 @@
                 f5 = 0.96F;
              }
  
@@ -293,7 +341,7 @@
              this.func_213309_a(f6, p_213352_1_);
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              Vector3d vector3d6 = this.func_213322_ci();
-@@ -2075,6 +2117,7 @@
+@@ -2075,6 +2108,7 @@
     }
  
     public void func_70071_h_() {
@@ -301,7 +349,35 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2707,8 +2750,10 @@
+@@ -2230,6 +2264,8 @@
+ 
+          ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
+          if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
++            if (!itemstack1.equals(itemstack1, true))
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslottype, itemstack, itemstack1));
+             if (map == null) {
+                map = Maps.newEnumMap(EquipmentSlotType.class);
+             }
+@@ -2658,8 +2694,16 @@
+ 
+    private void func_184608_ct() {
+       if (this.func_184587_cr()) {
+-         if (ItemStack.func_185132_d(this.func_184586_b(this.func_184600_cs()), this.field_184627_bm)) {
+-            this.field_184627_bm = this.func_184586_b(this.func_184600_cs());
++         ItemStack itemStack = this.func_184586_b(this.func_184600_cs());
++         if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.field_184627_bm, itemStack)) this.field_184627_bm = itemStack;
++         if (itemStack == this.field_184627_bm) {
++
++            if (!this.field_184627_bm.func_190926_b()) {
++              field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
++              if (field_184628_bn > 0)
++                 field_184627_bm.onUsingTick(this, field_184628_bn);
++            }
++
+             this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
+             if (this.func_226299_p_()) {
+                this.func_226293_b_(this.field_184627_bm, 5);
+@@ -2707,8 +2751,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -313,7 +389,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
-@@ -2768,6 +2813,9 @@
+@@ -2768,6 +2814,9 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
@@ -323,7 +399,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c);
        }
  
-@@ -2779,7 +2827,9 @@
+@@ -2779,7 +2828,9 @@
        } else {
           if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
              this.func_226293_b_(this.field_184627_bm, 16);
@@ -334,7 +410,7 @@
              this.func_184602_cy();
           }
  
-@@ -2800,7 +2850,11 @@
+@@ -2800,7 +2851,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -346,7 +422,24 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2993,7 +3047,9 @@
+@@ -2966,14 +3021,14 @@
+ 
+    private boolean func_213359_p() {
+       return this.func_213374_dv().map((p_241350_1_) -> {
+-         return this.field_70170_p.func_180495_p(p_241350_1_).func_177230_c() instanceof BedBlock;
++         return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_241350_1_);
+       }).orElse(false);
+    }
+ 
+    public void func_213366_dy() {
+       this.func_213374_dv().filter(this.field_70170_p::func_175667_e).ifPresent((p_241348_1_) -> {
+          BlockState blockstate = this.field_70170_p.func_180495_p(p_241348_1_);
+-         if (blockstate.func_177230_c() instanceof BedBlock) {
++         if (blockstate.isBed(field_70170_p, func_226270_aj_(), this)) {
+             this.field_70170_p.func_180501_a(p_241348_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(false)), 3);
+             Vector3d vector3d1 = BedBlock.func_220172_a(this.func_200600_R(), this.field_70170_p, p_241348_1_, 0).orElseGet(() -> {
+                BlockPos blockpos = p_241348_1_.func_177984_a();
+@@ -2993,7 +3048,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
        BlockPos blockpos = this.func_213374_dv().orElse((BlockPos)null);
@@ -357,7 +450,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -3062,4 +3118,58 @@
+@@ -3062,4 +3119,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

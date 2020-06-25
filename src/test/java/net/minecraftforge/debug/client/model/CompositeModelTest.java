@@ -49,8 +49,8 @@ import javax.annotation.Nullable;
 public class CompositeModelTest
 {
     public static final String MODID = "composite_model_test";
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> composite_block = BLOCKS.register("composite_block", () ->
             new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {

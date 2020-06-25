@@ -70,12 +70,6 @@ public class ModAnnotation
         this.asmType = asmType;
         this.member = member;
     }
-
-    @Deprecated // TODO 1.16 remove this
-    public ModAnnotation(ElementType type, Type asmType, ModAnnotation parent)
-    {
-        this(asmType, parent);
-    }
     
     public ModAnnotation(Type asmType, ModAnnotation parent)
     {

@@ -30,16 +30,16 @@ import net.minecraft.world.IBlockReader;
 public interface IPlantable
 {
     default PlantType getPlantType(IBlockReader world, BlockPos pos) {
-        if (this instanceof CropsBlock) return PlantType.Crop;
-        if (this instanceof SaplingBlock) return PlantType.Plains;
-        if (this instanceof FlowerBlock) return PlantType.Plains;
-        if (this == Blocks.DEAD_BUSH)      return PlantType.Desert;
-        if (this == Blocks.LILY_PAD)       return PlantType.Water;
-        if (this == Blocks.RED_MUSHROOM)   return PlantType.Cave;
-        if (this == Blocks.BROWN_MUSHROOM) return PlantType.Cave;
-        if (this == Blocks.NETHER_WART)    return PlantType.Nether;
-        if (this == Blocks.TALL_GRASS)      return PlantType.Plains;
-        return net.minecraftforge.common.PlantType.Plains;
+        if (this instanceof CropsBlock) return PlantType.CROP;
+        if (this instanceof SaplingBlock) return PlantType.PLAINS;
+        if (this instanceof FlowerBlock) return PlantType.PLAINS;
+        if (this == Blocks.DEAD_BUSH)      return PlantType.DESERT;
+        if (this == Blocks.LILY_PAD)       return PlantType.WATER;
+        if (this == Blocks.RED_MUSHROOM)   return PlantType.CAVE;
+        if (this == Blocks.BROWN_MUSHROOM) return PlantType.CAVE;
+        if (this == Blocks.NETHER_WART)    return PlantType.NETHER;
+        if (this == Blocks.TALL_GRASS)      return PlantType.PLAINS;
+        return net.minecraftforge.common.PlantType.PLAINS;
     }
 
     BlockState getPlant(IBlockReader world, BlockPos pos);

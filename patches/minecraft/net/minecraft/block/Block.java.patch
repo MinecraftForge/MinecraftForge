@@ -81,7 +81,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -419,6 +424,77 @@
+@@ -419,6 +424,83 @@
        return this;
     }
  
@@ -121,25 +121,31 @@
 +      if (plantable instanceof BushBlock && ((BushBlock)plantable).func_200014_a_(state, world, pos))
 +         return true;
 +
-+      switch (type) {
-+             case Desert: return this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_150405_ch || this.getBlock() instanceof GlazedTerracottaBlock;
-+             case Nether: return this.getBlock() == Blocks.field_150425_aM;
-+             case Crop:   return state.func_203425_a(Blocks.field_150458_ak);
-+             case Cave:   return Block.func_220056_d(state, world, pos, Direction.UP);
-+             case Plains: return this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || this.getBlock() == Blocks.field_150458_ak;
-+             case Water:  return state.func_185904_a() == net.minecraft.block.material.Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
-+             case Beach:
-+                    boolean isBeach = state.func_203425_a(Blocks.field_196658_i) || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || state.func_203425_a(Blocks.field_150354_m) || state.func_203425_a(Blocks.field_196611_F);
-+                    boolean hasWater = false;
-+                    for (Direction face : Direction.Plane.HORIZONTAL) {
-+                        BlockState blockState = world.func_180495_p(pos.func_177972_a(face));
-+                        net.minecraft.fluid.FluidState fluidState = world.func_204610_c(pos.func_177972_a(face));
-+                        hasWater |= blockState.func_203425_a(Blocks.field_185778_de);
-+                        hasWater |= fluidState.func_206884_a(net.minecraft.tags.FluidTags.field_206959_a);
-+                        if(hasWater) break; //No point continuing.
-+                    }
-+            return isBeach && hasWater;
++      if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {
++         return this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_150405_ch || this.getBlock() instanceof GlazedTerracottaBlock;
++      } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
++         return this.getBlock() == Blocks.field_150425_aM;
++      } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
++         return state.func_203425_a(Blocks.field_150458_ak);
++      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
++         return Block.func_220056_d(state, world, pos, Direction.UP);
++      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
++         return this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || this.getBlock() == Blocks.field_150458_ak;
++      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
++         return state.func_185904_a() == net.minecraft.block.material.Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
++      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {
++         boolean isBeach = state.func_203425_a(Blocks.field_196658_i) || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || state.func_203425_a(Blocks.field_150354_m) || state.func_203425_a(Blocks.field_196611_F);
++         boolean hasWater = false;
++         for (Direction face : Direction.Plane.HORIZONTAL) {
++             BlockState blockState = world.func_180495_p(pos.func_177972_a(face));
++             net.minecraft.fluid.FluidState fluidState = world.func_204610_c(pos.func_177972_a(face));
++             hasWater |= blockState.func_203425_a(Blocks.field_185778_de);
++             hasWater |= fluidState.func_206884_a(net.minecraft.tags.FluidTags.field_206959_a);
++             if (hasWater)
++                break; //No point continuing.
 +         }
++         return isBeach && hasWater;
++      }
 +      return false;
 +  }
 +

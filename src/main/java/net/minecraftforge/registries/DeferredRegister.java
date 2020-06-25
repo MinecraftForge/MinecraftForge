@@ -90,8 +90,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         this.modid = modid;
     }
 
-    @Deprecated // Make private in 1.16, Use create. Constructors are an implementation detail.
-    public DeferredRegister(IForgeRegistry<T> reg, String modid)
+    private DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
         this(reg.getRegistrySuperType(), modid);
         this.type = reg;

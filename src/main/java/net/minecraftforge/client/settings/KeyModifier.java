@@ -28,6 +28,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.InputMappings;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
@@ -53,11 +55,10 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            String keyName = defaultLogic.get();
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-            return I18n.format(localizationFormatKey, keyName);
+            return new TranslationTextComponent(localizationFormatKey).func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
         }
     },
     SHIFT {
@@ -74,9 +75,9 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.shift", defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.shift").func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
         }
     },
     ALT {
@@ -93,9 +94,9 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input keyCode, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input keyCode, Supplier<ITextComponent> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.alt", defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.alt").func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
         }
     },
     NONE {
@@ -122,7 +123,7 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
             return defaultLogic.get();
         }
@@ -170,5 +171,5 @@ public enum KeyModifier {
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-    public abstract String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic);
+    public abstract ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic);
 }

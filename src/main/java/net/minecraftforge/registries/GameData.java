@@ -142,6 +142,7 @@ public class GameData
     public static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
     public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
     public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
+    public static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("structure_feature");
     public static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
     public static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
     public static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
@@ -156,7 +157,6 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
-    //private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
@@ -211,6 +211,7 @@ public class GameData
         makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
+        makeRegistry(STRUCTURE_FEATURES, Structure.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, FoliagePlacerType.class).disableSaving().disableSync().create();
@@ -271,14 +272,6 @@ public class GameData
     {
         return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
-
-    /*
-    @SuppressWarnings("unchecked")
-    public static Registry<Structure<?>> getStructureFeatures()
-    {
-        return (Registry<Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURE_FEATURES, Registry.class);
-    }
-    */
 
     @SuppressWarnings("unchecked")
     public static BiMap<String, Structure<?>> getStructureMap()
@@ -570,42 +563,19 @@ public class GameData
         }
     }
 
-    private static class FeatureCallbacks implements IForgeRegistry.AddCallback<Feature<?>>, IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
+    private static class FeatureCallbacks implements IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
     {
         static final FeatureCallbacks INSTANCE = new FeatureCallbacks();
 
         @Override
-        public void onAdd(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage, int id, Feature<?> obj, Feature<?> oldObj)
-        {
-            /*TODO, Structures arent Features anymore.
-            if (obj instanceof Structure)
-            {
-                Structure<?> structure = (Structure<?>) obj;
-                String key = structure.getStructureName().toLowerCase(Locale.ROOT);
-
-                @SuppressWarnings("unchecked")
-                Registry<Structure<?>> reg = owner.getSlaveMap(STRUCTURE_FEATURES, Registry.class);
-                Registry.register(reg, key, structure);
-
-                @SuppressWarnings("unchecked")
-                BiMap<String, Structure<?>> map = owner.getSlaveMap(STRUCTURES, BiMap.class);
-                if (oldObj != null && oldObj instanceof Structure) map.remove(((Structure<?>)oldObj).getStructureName());
-                map.put(key, structure);
-            }
-        	*/
-        }
-
-        @Override
         public void onClear(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            //owner.getSlaveMap(STRUCTURE_FEATURES, ClearableRegistry.class).clear();
             owner.getSlaveMap(STRUCTURES, BiMap.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            //owner.setSlaveMap(STRUCTURE_FEATURES, new ClearableRegistry<>(owner.getRegistryName()));
             owner.setSlaveMap(STRUCTURES, HashBiMap.create());
         }
     }

@@ -14,7 +14,7 @@
                          p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
                          flag = true;
 +                     } else if (itemstack.func_77973_b() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(p_212833_1_, field_220422_a) == net.minecraftforge.common.PlantType.Crop) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(p_212833_1_, field_220422_a) == net.minecraftforge.common.PlantType.CROP) {
 +                           p_212833_1_.func_180501_a(field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a), 3);
 +                           flag = true;
 +                        }

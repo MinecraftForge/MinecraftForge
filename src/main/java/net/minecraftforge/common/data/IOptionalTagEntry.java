@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-//package net.minecraftforge.common.data;
+package net.minecraftforge.common.data;
 
-//import net.minecraft.tags.Tag.ITagEntry;
+import net.minecraft.tags.ITag;
 
 /**
  * Marker class used by Forge to make a tag entry optional at runtime
  */
-//public interface IOptionalTagEntry<T> extends ITagEntry<T> {}
+public interface IOptionalTagEntry extends ITag.ITagEntry {}

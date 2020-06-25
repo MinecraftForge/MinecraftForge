@@ -21,6 +21,7 @@ package net.minecraftforge.debug.client.rendering;
 
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -47,13 +48,13 @@ public class NameplateRenderingEventTest
 
         if(event.getEntity() instanceof CowEntity)
         {
-            event.setContent(TextFormatting.RED + "Evil Cow");
+            event.setContent(new StringTextComponent("Evil Cow").func_240699_a_(TextFormatting.RED));
             event.setResult(Event.Result.ALLOW);
         }
 
         if(event.getEntity() instanceof PlayerEntity)
         {
-            event.setContent(TextFormatting.GOLD + "" + (event.getEntity()).getDisplayName().getString());
+            event.setContent(event.getEntity().getDisplayName().func_230532_e_().func_240701_a_(TextFormatting.GOLD));
         }
     }
 }

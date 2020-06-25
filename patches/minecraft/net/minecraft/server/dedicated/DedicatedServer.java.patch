@@ -30,7 +30,14 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -159,11 +159,13 @@
+@@ -153,17 +153,20 @@
+       if (!PreYggdrasilConverter.func_219587_e(this)) {
+          return false;
+       } else {
++         net.minecraftforge.fml.server.ServerModLoader.end();
+          this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
+          long i = Util.func_211178_c();
+          this.func_71191_d(serverproperties.field_219026_t);
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -44,7 +51,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +177,7 @@
+@@ -175,6 +178,7 @@
           }
  
           if (serverproperties.field_219030_x) {
@@ -52,17 +59,17 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
-@@ -306,7 +309,8 @@
-    }
+@@ -193,7 +197,8 @@
+             ServerInfoMBean.func_233490_a_(this);
+          }
  
-    public boolean func_71262_S() {
--      return true;
+-         return true;
 +         // <3 you Grum for this, saves us ~30 patch files! --^
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
+       }
     }
  
-    public boolean func_181035_ah() {
-@@ -506,6 +510,11 @@
+@@ -506,6 +511,11 @@
        return false;
     }
  

@@ -22,16 +22,22 @@ package net.minecraftforge.common;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-// TODO 1.16: This should not be an enum. Change it to something that functions similarly to ToolType
-public enum PlantType implements IExtensibleEnum
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+public final class PlantType
 {
-    Plains,
-    Desert,
-    Beach,
-    Cave,
-    Water,
-    Nether,
-    Crop;
+    private static final Pattern INVALID_CHARACTERS = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
+    private static final Map<String, PlantType> VALUES = new HashMap<>();
+
+    public static final PlantType PLAINS = get("plains");
+    public static final PlantType DESERT = get("desert");
+    public static final PlantType BEACH = get("beach");
+    public static final PlantType CAVE = get("cave");
+    public static final PlantType WATER = get("water");
+    public static final PlantType NETHER = get("nether");
+    public static final PlantType CROP = get("crop");
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
@@ -46,9 +52,25 @@ public enum PlantType implements IExtensibleEnum
      * @param name the name of the type of plant, you had better follow the style above
      * @return the acquired {@link PlantType}, a new one if not found.
      */
-    public static PlantType create(String name)
+    public static PlantType get(String name)
     {
-        throw new IllegalStateException("Enum not extended");
+        return VALUES.computeIfAbsent(name, e -> {
+            if (INVALID_CHARACTERS.matcher(e).find())
+                throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
+            return new PlantType(e);
+        });
+    }
+
+    private final String name;
+
+    private PlantType(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }
 

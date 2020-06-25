@@ -1,0 +1,108 @@
+--- a/net/minecraft/client/renderer/FluidBlockRenderer.java
++++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
+@@ -70,9 +70,10 @@
+ 
+    public boolean func_228796_a_(IBlockDisplayReader p_228796_1_, BlockPos p_228796_2_, IVertexBuilder p_228796_3_, FluidState p_228796_4_) {
+       boolean flag = p_228796_4_.func_206884_a(FluidTags.field_206960_b);
+-      TextureAtlasSprite[] atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
++      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_228796_1_, p_228796_2_, p_228796_4_);
+       BlockState blockstate = p_228796_1_.func_180495_p(p_228796_2_);
+-      int i = flag ? 16777215 : BiomeColors.func_228363_c_(p_228796_1_, p_228796_2_);
++      int i = p_228796_4_.func_206886_c().getAttributes().getColor(p_228796_1_, p_228796_2_);
++      float alpha = (float)(i >> 24 & 255) / 255.0F;
+       float f = (float)(i >> 16 & 255) / 255.0F;
+       float f1 = (float)(i >> 8 & 255) / 255.0F;
+       float f2 = (float)(i & 255) / 255.0F;
+@@ -157,15 +158,15 @@
+             float f25 = f4 * f;
+             float f26 = f4 * f1;
+             float f27 = f4 * f2;
+-            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, f13, f17, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, f14, f18, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, f15, f19, j);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, f16, f20, j);
++            this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
++            this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
++            this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
++            this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
+             if (p_228796_4_.func_205586_a(p_228796_1_, p_228796_2_.func_177984_a())) {
+-               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, f13, f17, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, f16, f20, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, f15, f19, j);
+-               this.func_228797_a_(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, f14, f18, j);
++               this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
++               this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
++               this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
++               this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
+             }
+          }
+ 
+@@ -178,10 +179,10 @@
+             float f40 = f3 * f;
+             float f41 = f3 * f1;
+             float f42 = f3 * f2;
+-            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, f34, f39, i1);
+-            this.func_228797_a_(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, f34, f37, i1);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, f35, f37, i1);
+-            this.func_228797_a_(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, f35, f39, i1);
++            this.vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f34, f39, i1);
++            this.vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, alpha, f34, f37, i1);
++            this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, alpha, f35, f37, i1);
++            this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f35, f39, i1);
+             flag7 = true;
+          }
+ 
+@@ -236,10 +237,9 @@
+                flag7 = true;
+                BlockPos blockpos = p_228796_2_.func_177972_a(direction);
+                TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
+-               if (!flag) {
+-                  Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
+-                  if (block instanceof BreakableBlock || block instanceof LeavesBlock) {
+-                     textureatlassprite2 = this.field_187501_d;
++               if (atextureatlassprite[2] != null) {
++                  if (p_228796_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_228796_1_, blockpos, p_228796_4_)) {
++                     textureatlassprite2 = atextureatlassprite[2];
+                   }
+                }
+ 
+@@ -253,15 +253,15 @@
+                float f31 = f4 * f30 * f;
+                float f32 = f4 * f30 * f1;
+                float f33 = f4 * f30 * f2;
+-               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, f48, f50, k);
+-               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
+-               this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
+-               this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
+-               if (textureatlassprite2 != this.field_187501_d) {
+-                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, f48, f29, k);
+-                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, f49, f29, k);
+-                  this.func_228797_a_(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, f49, f28, k);
+-                  this.func_228797_a_(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, f48, f50, k);
++               this.vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
++               this.vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
++               this.vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
++               this.vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
++               if (textureatlassprite2 != atextureatlassprite[2]) {
++                  this.vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
++                  this.vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
++                  this.vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
++                  this.vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
+                }
+             }
+          }
+@@ -270,9 +270,13 @@
+       }
+    }
+ 
++   @Deprecated
+    private void func_228797_a_(IVertexBuilder p_228797_1_, double p_228797_2_, double p_228797_4_, double p_228797_6_, float p_228797_8_, float p_228797_9_, float p_228797_10_, float p_228797_11_, float p_228797_12_, int p_228797_13_) {
+-      p_228797_1_.func_225582_a_(p_228797_2_, p_228797_4_, p_228797_6_).func_227885_a_(p_228797_8_, p_228797_9_, p_228797_10_, 1.0F).func_225583_a_(p_228797_11_, p_228797_12_).func_227886_a_(p_228797_13_).func_225584_a_(0.0F, 1.0F, 0.0F).func_181675_d();
++       vertexVanilla(p_228797_1_, p_228797_2_, p_228797_4_, p_228797_6_, p_228797_8_, p_228797_9_, p_228797_10_, 1.0F, p_228797_11_, p_228797_12_, p_228797_13_);
+    }
++   private void vertexVanilla(IVertexBuilder vertexBuilderIn, double x, double y, double z, float red, float green, float blue, float alpha, float u, float v, int packedLight) {
++      vertexBuilderIn.func_225582_a_(x, y, z).func_227885_a_(red, green, blue, alpha).func_225583_a_(u, v).func_227886_a_(packedLight).func_225584_a_(0.0F, 1.0F, 0.0F).func_181675_d();
++   }
+ 
+    private int func_228795_a_(IBlockDisplayReader p_228795_1_, BlockPos p_228795_2_) {
+       int i = WorldRenderer.func_228421_a_(p_228795_1_, p_228795_2_);

@@ -191,7 +191,7 @@ public class DataGeneratorTest
             func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .func_240532_a_(Blocks.DIAMOND_BLOCK)
                 .func_240531_a_(BlockTags.STONE_BRICKS)
-                .addOptional(BlockTags.getCollection(), new ResourceLocation("chisel", "marble/raw"))
+                .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues

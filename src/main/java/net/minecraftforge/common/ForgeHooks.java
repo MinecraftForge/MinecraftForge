@@ -29,8 +29,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -50,6 +52,7 @@ import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -87,7 +90,6 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
 import net.minecraft.world.spawner.AbstractSpawner;
@@ -106,8 +108,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifierManager;
+import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1074,9 +1075,7 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
-    /*
-    @SuppressWarnings("deprecation")
-    public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Function<ResourceLocation, Optional<T>> valueGetter, JsonObject json)
+    public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
         if (json.has("optional"))
         {
@@ -1084,9 +1083,9 @@ public class ForgeHooks
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                    builder.addOptional(valueGetter, Collections.singleton(new ResourceLocation(s)));
+                    list.add(ForgeHooks.makeOptionalTag(true, Collections.singleton(new ResourceLocation(s))));
                 else
-                    builder.addOptionalTag(new ResourceLocation(s.substring(1)));
+                    list.add(ForgeHooks.makeOptionalTag(false, Collections.singleton(new ResourceLocation(s.substring(1)))));
             }
         }
 
@@ -1095,23 +1094,15 @@ public class ForgeHooks
             for (JsonElement entry : JSONUtils.getJsonArray(json, "remove"))
             {
                 String s = JSONUtils.getString(entry, "value");
+                ITag.ITagEntry dummy;
                 if (!s.startsWith("#"))
-                {
-                    T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
-                    if (value != null)
-                    {
-                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singleton(value));
-                        builder.remove(dummyEntry);
-                    }
-                } else
-                {
-                    Tag.ITagEntry<T> dummyEntry = new Tag.TagEntry<>(new ResourceLocation(s.substring(1)));
-                    builder.remove(dummyEntry);
-                }
+                    dummy = new ITag.ItemEntry(new ResourceLocation(s));
+                else
+                    dummy = new ITag.TagEntry(new ResourceLocation(s.substring(1)));
+                allList.removeIf(e -> e.func_232968_a_().equals(dummy));
             }
         }
     }
-    */
 
     private static final Map<IDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
     //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
@@ -1189,4 +1180,61 @@ public class ForgeHooks
         return list;
     }
 
+    @Deprecated//INTERNAL
+    public static IOptionalTagEntry makeOptionalTag(boolean items, Collection<ResourceLocation> locations) {
+        return items ? new OptionalItemTarget(locations) : new OptionalTagTarget(locations);
+    }
+
+    private static class OptionalTagTarget implements IOptionalTagEntry
+    {
+
+        private final Collection<ResourceLocation> referents;
+
+        public OptionalTagTarget(Collection<ResourceLocation> referents)
+        {
+            this.referents = referents;
+        }
+
+        @Override
+        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
+        {
+            referents.stream()
+                    .map(tagLookup)
+                    .filter(Objects::nonNull)
+                    .map(ITag::func_230236_b_)
+                    .flatMap(List::stream)
+                    .forEach(collector);
+            return true;
+        }
+
+        @Override
+        public void func_230237_a_(JsonArray array)
+        {
+            referents.stream().map(e -> "#" + e).forEach(array::add);
+        }
+    }
+
+    private static class OptionalItemTarget implements IOptionalTagEntry
+    {
+
+        private final Collection<ResourceLocation> locations;
+
+        public OptionalItemTarget(Collection<ResourceLocation> locations)
+        {
+            this.locations = locations;
+        }
+
+        @Override
+        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
+        {
+            locations.stream().map(itemLookup).filter(Objects::nonNull).forEach(collector);
+            return true;
+        }
+
+        @Override
+        public void func_230237_a_(JsonArray array)
+        {
+            locations.stream().map(ResourceLocation::toString).forEach(array::add);
+        }
+    }
 }

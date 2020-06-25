@@ -1059,6 +1059,6 @@ public interface IForgeBlock
      */
     default boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
-        return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof StainedGlassBlock;
+        return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof LeavesBlock;
     }
 }

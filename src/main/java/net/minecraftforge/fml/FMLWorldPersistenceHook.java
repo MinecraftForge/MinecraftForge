@@ -111,7 +111,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         if (tag.contains("ModItemData") || tag.contains("ItemData")) // Pre 1.7
         {
-            StartupQuery.notify("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first");
+            StartupQuery.builder().text("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first").notification();
             StartupQuery.abort();
         }
         else if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
@@ -138,7 +138,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
                 entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
             });
 
-            StartupQuery.notify(buf.toString());
+            StartupQuery.builder().text(buf.toString()).notification();
             StartupQuery.abort();
         }
     }
