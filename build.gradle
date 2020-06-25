@@ -66,7 +66,7 @@ ext {
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20200514-1.16'
     MC_VERSION = '1.16.1'
-    MCP_VERSION = '20200625.134731'
+    MCP_VERSION = '20200625.160719'
 }
 
 project(':mcp') {
