@@ -103,10 +103,10 @@ public class DataGeneratorTest
     public static void gatherData(GatherDataEvent event)
     {
         GSON = new GsonBuilder()
-        .registerTypeAdapter(Variant.class, new Variant.Deserializer())
-        .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
-        .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
-        .create();
+                .registerTypeAdapter(Variant.class, new Variant.Deserializer())
+                .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
+                .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
+                .create();
 
         DataGenerator gen = event.getGenerator();
 
@@ -195,17 +195,17 @@ public class DataGeneratorTest
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/one")))
-                    .add(Blocks.COBBLESTONE);
-            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/two")))
-                    .add(Blocks.DIORITE);
-            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/three")))
-                    .add(Blocks.ANDESITE);
+            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
+                    .func_240532_a_(Blocks.COBBLESTONE);
+            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
+                    .func_240532_a_(Blocks.DIORITE);
+            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
+                    .func_240532_a_(Blocks.ANDESITE);
 
-            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "things")))
-                    .add(Blocks.COBBLESTONE)
-                    .add(Blocks.DIORITE)
-                    .add(Blocks.ANDESITE);
+            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
+                    .func_240532_a_(Blocks.COBBLESTONE)
+                    .func_240532_a_(Blocks.DIORITE)
+                    .func_240532_a_(Blocks.ANDESITE);
         }
     }
 
@@ -250,26 +250,26 @@ public class DataGeneratorTest
                     .texture("all", mcLoc("block/dirt"))
                     .texture("top", mcLoc("block/stone"))
                     .element()
-                        .cube("#all")
-                        .face(Direction.UP)
-                            .texture("#top")
-                            .tintindex(0)
-                            .end()
-                        .end();
+                    .cube("#all")
+                    .face(Direction.UP)
+                    .texture("#top")
+                    .tintindex(0)
+                    .end()
+                    .end();
 
             // Testing consistency
 
             // Test overrides
             ModelFile fishingRod = withExistingParent("fishing_rod", "handheld_rod")
-                .texture("layer0", mcLoc("item/fishing_rod"))
-                .override()
+                    .texture("layer0", mcLoc("item/fishing_rod"))
+                    .override()
                     .predicate(mcLoc("cast"), 1)
                     .model(getExistingFile(mcLoc("item/fishing_rod_cast"))) // Use the vanilla model for validation
                     .end();
 
             withExistingParent("fishing_rod_cast", modLoc("fishing_rod"))
-                .parent(fishingRod)
-                .texture("layer0", mcLoc("item/fishing_rod_cast"));
+                    .parent(fishingRod)
+                    .texture("layer0", mcLoc("item/fishing_rod_cast"));
         }
 
         private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model");
@@ -317,44 +317,44 @@ public class DataGeneratorTest
             for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
                 int angle = (int) dir.getHorizontalAngle();
                 builder
-                    .partialState()
+                        .partialState()
                         .with(FenceGateBlock.HORIZONTAL_FACING, dir)
                         .with(FenceGateBlock.IN_WALL, false)
                         .with(FenceGateBlock.OPEN, false)
                         .modelForState()
-                            .modelFile(invisbleModel)
+                        .modelFile(invisbleModel)
                         .nextModel()
-                            .modelFile(birchFenceGate)
-                            .rotationY(angle)
-                            .uvLock(true)
-                            .weight(100)
+                        .modelFile(birchFenceGate)
+                        .rotationY(angle)
+                        .uvLock(true)
+                        .weight(100)
                         .addModel()
-                    .partialState()
+                        .partialState()
                         .with(FenceGateBlock.HORIZONTAL_FACING, dir)
                         .with(FenceGateBlock.IN_WALL, false)
                         .with(FenceGateBlock.OPEN, true)
                         .modelForState()
-                            .modelFile(birchFenceGateOpen)
-                            .rotationY(angle)
-                            .uvLock(true)
+                        .modelFile(birchFenceGateOpen)
+                        .rotationY(angle)
+                        .uvLock(true)
                         .addModel()
-                    .partialState()
+                        .partialState()
                         .with(FenceGateBlock.HORIZONTAL_FACING, dir)
                         .with(FenceGateBlock.IN_WALL, true)
                         .with(FenceGateBlock.OPEN, false)
                         .modelForState()
-                            .modelFile(birchFenceGateWall)
-                            .rotationY(angle)
-                            .uvLock(true)
+                        .modelFile(birchFenceGateWall)
+                        .rotationY(angle)
+                        .uvLock(true)
                         .addModel()
-                    .partialState()
+                        .partialState()
                         .with(FenceGateBlock.HORIZONTAL_FACING, dir)
                         .with(FenceGateBlock.IN_WALL, true)
                         .with(FenceGateBlock.OPEN, true)
                         .modelForState()
-                            .modelFile(birchFenceGateWallOpen)
-                            .rotationY(angle)
-                            .uvLock(true)
+                        .modelFile(birchFenceGateWallOpen)
+                        .rotationY(angle)
+                        .uvLock(true)
                         .addModel();
             }
 
@@ -366,48 +366,48 @@ public class DataGeneratorTest
 
             // From here on, models are 1-to-1 copies of vanilla (except for model locations) and will be tested as such below
             ModelFile block = models().getBuilder("block")
-                .guiLight(GuiLight.SIDE)
-                .transforms()
+                    .guiLight(GuiLight.SIDE)
+                    .transforms()
                     .transform(Perspective.GUI)
-                        .rotation(30, 225, 0)
-                        .scale(0.625f)
-                        .end()
+                    .rotation(30, 225, 0)
+                    .scale(0.625f)
+                    .end()
                     .transform(Perspective.GROUND)
-                        .translation(0, 3, 0)
-                        .scale(0.25f)
-                        .end()
+                    .translation(0, 3, 0)
+                    .scale(0.25f)
+                    .end()
                     .transform(Perspective.FIXED)
-                        .scale(0.5f)
-                        .end()
+                    .scale(0.5f)
+                    .end()
                     .transform(Perspective.THIRDPERSON_RIGHT)
-                        .rotation(75, 45, 0)
-                        .translation(0, 2.5f, 0)
-                        .scale(0.375f)
-                        .end()
+                    .rotation(75, 45, 0)
+                    .translation(0, 2.5f, 0)
+                    .scale(0.375f)
+                    .end()
                     .transform(Perspective.FIRSTPERSON_RIGHT)
-                        .rotation(0, 45, 0)
-                        .scale(0.4f)
-                        .end()
+                    .rotation(0, 45, 0)
+                    .scale(0.4f)
+                    .end()
                     .transform(Perspective.FIRSTPERSON_LEFT)
-                        .rotation(0, 225, 0)
-                        .scale(0.4f)
-                        .end()
+                    .rotation(0, 225, 0)
+                    .scale(0.4f)
+                    .end()
                     .end();
 
             models().getBuilder("cube")
-                .parent(block)
-                .element()
+                    .parent(block)
+                    .element()
                     .allFaces((dir, face) -> face.texture("#" + dir.func_176610_l()).cullface(dir));
 
             ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
             ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
 
             getVariantBuilder(Blocks.FURNACE)
-                .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(state.get(FurnaceBlock.LIT) ? furnaceLit : furnace)
-                        .rotationY((int) state.get(FurnaceBlock.FACING).getOpposite().getHorizontalAngle())
-                        .build()
-                );
+                    .forAllStates(state -> ConfiguredModel.builder()
+                            .modelFile(state.get(FurnaceBlock.LIT) ? furnaceLit : furnace)
+                            .rotationY((int) state.get(FurnaceBlock.FACING).getOpposite().getHorizontalAngle())
+                            .build()
+                    );
 
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
@@ -476,25 +476,25 @@ public class DataGeneratorTest
             JsonObject generatedVariants = generated.getAsJsonObject("variants");
             JsonObject vanillaVariants = vanilla.getAsJsonObject("variants");
             Stream.concat(generatedVariants.entrySet().stream(), vanillaVariants.entrySet().stream())
-                .map(e -> e.getKey())
-                .distinct()
-                .forEach(key -> {
-                    JsonElement generatedVariant = generatedVariants.get(key);
-                    JsonElement vanillaVariant = vanillaVariants.get(key);
-                    if (generatedVariant.isJsonArray()) {
-                        compareArrays(block, "key " + key, "random variants", generatedVariant, vanillaVariant);
-                        for (int i = 0; i < generatedVariant.getAsJsonArray().size(); i++) {
-                            compareVariant(block, key + "[" + i + "]", generatedVariant.getAsJsonArray().get(i).getAsJsonObject(), vanillaVariant.getAsJsonArray().get(i).getAsJsonObject());
+                    .map(e -> e.getKey())
+                    .distinct()
+                    .forEach(key -> {
+                        JsonElement generatedVariant = generatedVariants.get(key);
+                        JsonElement vanillaVariant = vanillaVariants.get(key);
+                        if (generatedVariant.isJsonArray()) {
+                            compareArrays(block, "key " + key, "random variants", generatedVariant, vanillaVariant);
+                            for (int i = 0; i < generatedVariant.getAsJsonArray().size(); i++) {
+                                compareVariant(block, key + "[" + i + "]", generatedVariant.getAsJsonArray().get(i).getAsJsonObject(), vanillaVariant.getAsJsonArray().get(i).getAsJsonObject());
+                            }
                         }
-                    }
-                    if (generatedVariant.isJsonObject()) {
-                        if (!vanillaVariant.isJsonObject()) {
-                            blockstateError(block, "incorrectly does not have an array of variants for key %s", key);
-                            return;
+                        if (generatedVariant.isJsonObject()) {
+                            if (!vanillaVariant.isJsonObject()) {
+                                blockstateError(block, "incorrectly does not have an array of variants for key %s", key);
+                                return;
+                            }
+                            compareVariant(block, key, generatedVariant.getAsJsonObject(), vanillaVariant.getAsJsonObject());
                         }
-                        compareVariant(block, key, generatedVariant.getAsJsonObject(), vanillaVariant.getAsJsonObject());
-                    }
-                });
+                    });
         }
 
         private void compareVariant(Block block, String key, JsonObject generatedVariant, JsonObject vanillaVariant) {
@@ -553,34 +553,34 @@ public class DataGeneratorTest
             }
 
             Stream.concat(generatedPartsByCondition.keySet().stream(), vanillaPartsByCondition.keySet().stream())
-                .distinct()
-                .forEach(cond -> {
-                    Collection<String> generatedVariants = generatedPartsByCondition.get(cond);
-                    Collection<String> vanillaVariants = vanillaPartsByCondition.get(cond);
-                    if (generatedVariants.size() != vanillaVariants.size()) {
-                        if (vanillaVariants.isEmpty()) {
-                            blockstateError(block, " has extra condition %s", cond);
-                        } else if (generatedVariants.isEmpty()) {
-                            blockstateError(block, " is missing condition %s", cond);
-                        } else {
-                            blockstateError(block, " has differing amounts of variant lists matching condition %s. Expected: %d, Found: %d", cond, vanillaVariants.size(), generatedVariants.size());
+                    .distinct()
+                    .forEach(cond -> {
+                        Collection<String> generatedVariants = generatedPartsByCondition.get(cond);
+                        Collection<String> vanillaVariants = vanillaPartsByCondition.get(cond);
+                        if (generatedVariants.size() != vanillaVariants.size()) {
+                            if (vanillaVariants.isEmpty()) {
+                                blockstateError(block, " has extra condition %s", cond);
+                            } else if (generatedVariants.isEmpty()) {
+                                blockstateError(block, " is missing condition %s", cond);
+                            } else {
+                                blockstateError(block, " has differing amounts of variant lists matching condition %s. Expected: %d, Found: %d", cond, vanillaVariants.size(), generatedVariants.size());
+                            }
+                            return;
                         }
-                        return;
-                    }
 
-                    if (!vanillaVariants.containsAll(generatedVariants) || !generatedVariants.containsAll(vanillaVariants)) {
-                        List<String> extra = new ArrayList<>(generatedVariants);
-                        extra.removeAll(vanillaVariants);
-                        List<String> missing = new ArrayList<>(vanillaVariants);
-                        missing.removeAll(generatedVariants);
-                        if (!extra.isEmpty()) {
-                            blockstateError(block, " has extra variants for condition %s: %s", cond, extra);
+                        if (!vanillaVariants.containsAll(generatedVariants) || !generatedVariants.containsAll(vanillaVariants)) {
+                            List<String> extra = new ArrayList<>(generatedVariants);
+                            extra.removeAll(vanillaVariants);
+                            List<String> missing = new ArrayList<>(vanillaVariants);
+                            missing.removeAll(generatedVariants);
+                            if (!extra.isEmpty()) {
+                                blockstateError(block, " has extra variants for condition %s: %s", cond, extra);
+                            }
+                            if (!missing.isEmpty()) {
+                                blockstateError(block, " has missing variants for condition %s: %s", cond, missing);
+                            }
                         }
-                        if (!missing.isEmpty()) {
-                            blockstateError(block, " has missing variants for condition %s: %s", cond, missing);
-                        }
-                    }
-                });
+                    });
         }
 
         // Eliminate some formatting differences that are not meaningful
