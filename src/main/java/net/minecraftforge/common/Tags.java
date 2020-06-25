@@ -246,26 +246,27 @@ public class Tags
         public static final Tag<Item> SAND_COLORLESS = tag("sand/colorless");
         public static final Tag<Item> SAND_RED = tag("sand/red");
 
-        public static final Tag<Item> SANDSTONE = tag("sandstone");
-        public static final Tag<Item> SEEDS = tag("seeds");
-        public static final Tag<Item> SEEDS_BEETROOT = tag("seeds/beetroot");
-        public static final Tag<Item> SEEDS_MELON = tag("seeds/melon");
-        public static final Tag<Item> SEEDS_PUMPKIN = tag("seeds/pumpkin");
-        public static final Tag<Item> SEEDS_WHEAT = tag("seeds/wheat");
-        public static final Tag<Item> SLIMEBALLS = tag("slimeballs");
-        public static final Tag<Item> STAINED_GLASS = tag("stained_glass");
-        public static final Tag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
-        public static final Tag<Item> STONE = tag("stone");
-        public static final Tag<Item> STORAGE_BLOCKS = tag("storage_blocks");
-        public static final Tag<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
-        public static final Tag<Item> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
-        public static final Tag<Item> STORAGE_BLOCKS_EMERALD = tag("storage_blocks/emerald");
-        public static final Tag<Item> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
-        public static final Tag<Item> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
-        public static final Tag<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
-        public static final Tag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
-        public static final Tag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
-        public static final Tag<Item> STRING = tag("string");
+        public static final ITag.INamedTag<Item> SANDSTONE = tag("sandstone");
+        public static final ITag.INamedTag<Item> SEEDS = tag("seeds");
+        public static final ITag.INamedTag<Item> SEEDS_BEETROOT = tag("seeds/beetroot");
+        public static final ITag.INamedTag<Item> SEEDS_MELON = tag("seeds/melon");
+        public static final ITag.INamedTag<Item> SEEDS_PUMPKIN = tag("seeds/pumpkin");
+        public static final ITag.INamedTag<Item> SEEDS_WHEAT = tag("seeds/wheat");
+        public static final ITag.INamedTag<Item> SHEARS = tag("shears");
+        public static final ITag.INamedTag<Item> SLIMEBALLS = tag("slimeballs");
+        public static final ITag.INamedTag<Item> STAINED_GLASS = tag("stained_glass");
+        public static final ITag.INamedTag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
+        public static final ITag.INamedTag<Item> STONE = tag("stone");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS = tag("storage_blocks");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_EMERALD = tag("storage_blocks/emerald");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+        public static final ITag.INamedTag<Item> STRING = tag("string");
 
         private static Tag<Item> tag(String name)
         {
