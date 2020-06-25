@@ -6,13 +6,13 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.Alternative;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraft.world.storage.loot.conditions.Inverted;
-import net.minecraft.world.storage.loot.conditions.MatchTool;
+import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.Alternative;
+import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.loot.conditions.Inverted;
+import net.minecraft.loot.conditions.MatchTool;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -53,7 +53,7 @@ public class ForgeLootTableProvider extends LootTableProvider {
         });
     }
 
-    private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, Tag<Item> to) {
+    private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, ITag.INamedTag<Item> to) {
         List<LootPool> lootPools = ObfuscationReflectionHelper.getPrivateValue(LootTable.Builder.class, builder, "field_216041_a");
         boolean found = false;
 
@@ -70,7 +70,7 @@ public class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, Tag<Item> to) {
+    private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, ITag.INamedTag<Item> to) {
         List<LootEntry> lootEntries = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "field_186453_a");
         List<ILootCondition> lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "field_186454_b");
         boolean found = false;
@@ -111,7 +111,7 @@ public class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInParentedLootEntry(ParentedLootEntry entry, Item from, Tag<Item> to) {
+    private boolean findAndReplaceInParentedLootEntry(ParentedLootEntry entry, Item from, ITag.INamedTag<Item> to) {
         LootEntry[] lootEntries = ObfuscationReflectionHelper.getPrivateValue(ParentedLootEntry.class, entry, "field_216147_c");
         boolean found = false;
 
@@ -128,7 +128,7 @@ public class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInLootEntry(LootEntry entry, Item from, Tag<Item> to) {
+    private boolean findAndReplaceInLootEntry(LootEntry entry, Item from, ITag.INamedTag<Item> to) {
         ILootCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootEntry.class, entry, "field_216144_d");
         boolean found = false;
 
@@ -148,7 +148,7 @@ public class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInAlternative(Alternative alternative, Item from, Tag<Item> to) {
+    private boolean findAndReplaceInAlternative(Alternative alternative, Item from, ITag.INamedTag<Item> to) {
         ILootCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(Alternative.class, alternative, "field_215962_a");
         boolean found = false;
 

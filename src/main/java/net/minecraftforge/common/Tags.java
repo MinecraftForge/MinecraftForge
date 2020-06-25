@@ -251,6 +251,7 @@ public class Tags
         public static final ITag.INamedTag<Item> SEEDS_MELON = tag("seeds/melon");
         public static final ITag.INamedTag<Item> SEEDS_PUMPKIN = tag("seeds/pumpkin");
         public static final ITag.INamedTag<Item> SEEDS_WHEAT = tag("seeds/wheat");
+        public static final ITag.INamedTag<Item> SHEARS = tag("shears");
         public static final ITag.INamedTag<Item> SLIMEBALLS = tag("slimeballs");
         public static final ITag.INamedTag<Item> STAINED_GLASS = tag("stained_glass");
         public static final ITag.INamedTag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
