@@ -1,0 +1,17 @@
+--- a/net/minecraft/util/math/RayTraceContext.java
++++ b/net/minecraft/util/math/RayTraceContext.java
+@@ -16,12 +16,12 @@
+    private final RayTraceContext.FluidMode field_222257_d;
+    private final ISelectionContext field_222258_e;
+ 
+-   public RayTraceContext(Vec3d p_i50009_1_, Vec3d p_i50009_2_, RayTraceContext.BlockMode p_i50009_3_, RayTraceContext.FluidMode p_i50009_4_, Entity p_i50009_5_) {
++   public RayTraceContext(Vec3d p_i50009_1_, Vec3d p_i50009_2_, RayTraceContext.BlockMode p_i50009_3_, RayTraceContext.FluidMode p_i50009_4_, @javax.annotation.Nullable Entity p_i50009_5_) {
+       this.field_222254_a = p_i50009_1_;
+       this.field_222255_b = p_i50009_2_;
+       this.field_222256_c = p_i50009_3_;
+       this.field_222257_d = p_i50009_4_;
+-      this.field_222258_e = ISelectionContext.func_216374_a(p_i50009_5_);
++      this.field_222258_e = p_i50009_5_ == null ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(p_i50009_5_);
+    }
+ 
+    public Vec3d func_222250_a() {
