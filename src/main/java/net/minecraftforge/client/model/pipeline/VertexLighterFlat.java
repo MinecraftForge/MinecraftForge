@@ -42,6 +42,7 @@ import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
+    private static final float LIGHT_UNPACK_SCALE = (float) Short.MAX_VALUE / 0xF0;
     protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.NORMAL, 4);
 
     protected final BlockInfo blockInfo;
@@ -198,7 +199,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 z += normal[v][2] * .5f;
             }
 
-            float blockLight = lightmap[v][0], skyLight = lightmap[v][1];
+            float blockLight = lightmap[v][0] * LIGHT_UNPACK_SCALE, skyLight = lightmap[v][1] * LIGHT_UNPACK_SCALE;
             updateLightmap(normal[v], lightmap[v], x, y, z);
             if(dataLength[lightmapIndex] > 1)
             {
