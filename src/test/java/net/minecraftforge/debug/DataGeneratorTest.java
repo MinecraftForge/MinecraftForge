@@ -205,6 +205,19 @@ public class DataGeneratorTest
                 .add(BlockTags.STONE_BRICKS)
                 .addOptional(BlockTags.getCollection(), new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
+
+            // Hopefully sorting issues
+            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/one")))
+                    .add(Blocks.COBBLESTONE);
+            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/two")))
+                    .add(Blocks.DIORITE);
+            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "thing/three")))
+                    .add(Blocks.ANDESITE);
+
+            getBuilder(new BlockTags.Wrapper(new ResourceLocation(MODID, "things")))
+                    .add(Blocks.COBBLESTONE)
+                    .add(Blocks.DIORITE)
+                    .add(Blocks.ANDESITE);
         }
     }
 

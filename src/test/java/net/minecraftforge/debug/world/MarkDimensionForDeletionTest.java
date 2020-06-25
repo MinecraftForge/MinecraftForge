@@ -61,7 +61,7 @@ public class MarkDimensionForDeletionTest
         {
             if (!worldIn.isRemote)
             {
-                if (playerIn.isShiftKeyDown())
+                if (playerIn.isSneaking())
                 {
                     playerIn.sendMessage(new StringTextComponent("You are in dimension " + worldIn.dimension.getType().getRegistryName()));
                 }
