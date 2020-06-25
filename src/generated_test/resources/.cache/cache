@@ -67,3 +67,7 @@ f51f026a75e27a0a53a76771d553c0e3385a2966 assets/piston_event_test/models/item/sh
 4fbaf6f4a3ea05cc071076e27f44ac81f9cc50e3 data/data_gen_test/advancements/conditional.json
 ed4cbf1a3a2f5d8969f6346fdc9acdbe81d0c919 data/data_gen_test/recipes/conditional.json
 2c3e2073a1597baaa2970de5ae1649781f87aef8 data/data_gen_test/tags/blocks/test.json
+d65c425e740dc833f29d16606a1171825876be0d data/data_gen_test/tags/blocks/thing/one.json
+1f70ed4ddc878bada5e43d3c44a34157806beda8 data/data_gen_test/tags/blocks/thing/three.json
+2c648bca262caaa826ddbbde796d35bb2ee5f03a data/data_gen_test/tags/blocks/thing/two.json
+b0565ce75fc7880be7517e86a218d1ed9d9e346f data/data_gen_test/tags/blocks/things.json
