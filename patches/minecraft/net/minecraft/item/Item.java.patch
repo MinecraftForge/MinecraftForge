@@ -131,15 +131,7 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -368,6 +414,7 @@
-          return this;
-       }
- 
-+
-       public Item.Properties func_208103_a(Rarity p_208103_1_) {
-          this.field_208104_e = p_208103_1_;
-          return this;
-@@ -377,5 +424,20 @@
+@@ -377,5 +423,20 @@
           this.field_234688_g_ = true;
           return this;
        }

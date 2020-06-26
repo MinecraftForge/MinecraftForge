@@ -205,9 +205,20 @@ public class GuiScreenEvent extends Event
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        public BackgroundDrawnEvent(Screen gui)
+        private final MatrixStack mStack;
+
+        public BackgroundDrawnEvent(Screen gui, MatrixStack mStack)
         {
             super(gui);
+            this.mStack = mStack;
+        }
+
+        /**
+         * The MatrixStack to render with.
+         */
+        public MatrixStack getMatrixStack()
+        {
+            return mStack;
         }
     }
 

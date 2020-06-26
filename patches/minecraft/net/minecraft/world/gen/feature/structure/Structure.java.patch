@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/gen/feature/structure/Structure.java
 +++ b/net/minecraft/world/gen/feature/structure/Structure.java
-@@ -32,10 +32,11 @@
- import net.minecraft.world.gen.feature.StructureFeature;
- import net.minecraft.world.gen.feature.template.TemplateManager;
- import net.minecraft.world.gen.settings.StructureSeparationSettings;
-+import net.minecraftforge.registries.ForgeRegistryEntry;
+@@ -35,7 +35,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Structure<C extends IFeatureConfig> {
-+public abstract class Structure<C extends IFeatureConfig> extends ForgeRegistryEntry<Structure<?>> {
++public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> {
     public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
     private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
     private static final Logger field_208204_b = LogManager.getLogger();
