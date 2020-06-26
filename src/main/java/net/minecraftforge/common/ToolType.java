@@ -38,20 +38,12 @@ public final class ToolType
      */
     public static ToolType get(String name)
     {
-        ToolType type = VALUES.get(name);
-        if (type == null)
+        return VALUES.computeIfAbsent(name, k ->
         {
-            synchronized (ToolType.class)
-            {
-                type = VALUES.computeIfAbsent(name, k ->
-                {
-                    if (VALID_NAME.matcher(name).find())
-                        throw new IllegalArgumentException("ToolType.get() called with invalid name: " + name);
-                    return new ToolType(name);
-                });
-            }
-        }
-        return type;
+            if (VALID_NAME.matcher(name).find())
+                throw new IllegalArgumentException("ToolType.get() called with invalid name: " + name);
+            return new ToolType(name);
+        });
     }
 
     private final String name;

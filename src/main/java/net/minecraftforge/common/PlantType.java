@@ -56,20 +56,12 @@ public final class PlantType
      */
     public static PlantType get(String name)
     {
-        PlantType type = VALUES.get(name);
-        if (type == null)
+        return VALUES.computeIfAbsent(name, e ->
         {
-            synchronized (PlantType.class)
-            {
-                type = VALUES.computeIfAbsent(name, e ->
-                {
-                    if (INVALID_CHARACTERS.matcher(e).find())
-                        throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
-                    return new PlantType(e);
-                });
-            }
-        }
-        return type;
+            if (INVALID_CHARACTERS.matcher(e).find())
+                throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
+            return new PlantType(e);
+        });
     }
 
     private final String name;
