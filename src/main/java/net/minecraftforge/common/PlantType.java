@@ -23,16 +23,15 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public final class PlantType
 {
     private static final Pattern INVALID_CHARACTERS = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
-    private static final Map<String, PlantType> VALUES = new HashMap<>();
+    private static final Map<String, PlantType> VALUES = new ConcurrentHashMap<>();
 
     public static final PlantType PLAINS = get("plains");
     public static final PlantType DESERT = get("desert");
