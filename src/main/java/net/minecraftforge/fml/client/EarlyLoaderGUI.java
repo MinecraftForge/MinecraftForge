@@ -123,14 +123,12 @@ public class EarlyLoaderGUI {
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
         ByteBuffer vertexBuf = MemoryUtil.memAlloc(message.length() * 270);
         int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, vertexBuf);
-        GL14.glVertexPointer(2, GL11.GL_FLOAT, 16, vertexBuf);
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         RenderSystem.pushMatrix();
-        RenderSystem.translatef(10, line * 10, 0);
         RenderSystem.scalef(1, 1, 0);
 
         //The quads need to be flipped in order for some reason
@@ -140,6 +138,7 @@ public class EarlyLoaderGUI {
         float[] quadPosX = new float[4];
         float[] quadPosY = new float[4];
         float[] quadPosZ = new float[4];
+        int lineOffset = line * 10;
         for (int quad = 0; quad < quads; quad++) {
             for (int vertex = 0; vertex < 4; vertex++) {
                 quadPosX[vertex] = vertexBuf.getFloat();
@@ -148,7 +147,7 @@ public class EarlyLoaderGUI {
                 vertexBuf.getInt(); //color, but it is ignored, as we use our own color
             }
             for (int i = 3; i >= 0; i--)
-                bufferbuilder.pos(quadPosX[i], quadPosY[i], quadPosZ[i]).color(colour[0], colour[1], colour[2], 1.0F).endVertex();
+                bufferbuilder.pos(quadPosX[i] + 10, quadPosY[i] + lineOffset, quadPosZ[i]).color(colour[0], colour[1], colour[2], 1.0F).endVertex();
         }
         bufferbuilder.finishDrawing();
         WorldVertexBufferUploader.draw(bufferbuilder);
