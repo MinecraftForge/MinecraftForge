@@ -69,7 +69,7 @@ public class ParticleWorldHandleEvent extends Event {
         return particleSpeed;
     }
 
-    public void setParticleSpeed(float particleSpeed) {
+    public void setParticleSpeed(double particleSpeed) {
         this.particleSpeed = particleSpeed;
     }
 
@@ -77,7 +77,7 @@ public class ParticleWorldHandleEvent extends Event {
         return xCoord;
     }
 
-    public void setXCoord(float xCoord) {
+    public void setXCoord(double xCoord) {
         this.xCoord = xCoord;
     }
 
@@ -85,7 +85,7 @@ public class ParticleWorldHandleEvent extends Event {
         return yCoord;
     }
 
-    public void setYCoord(float yCoord) {
+    public void setYCoord(double yCoord) {
         this.yCoord = yCoord;
     }
 
@@ -93,7 +93,7 @@ public class ParticleWorldHandleEvent extends Event {
         return zCoord;
     }
 
-    public void setZCoord(float zCoord) {
+    public void setZCoord(double zCoord) {
         this.zCoord = zCoord;
     }
 
@@ -101,7 +101,7 @@ public class ParticleWorldHandleEvent extends Event {
         return xOffset;
     }
 
-    public void setXOffset(float xOffset) {
+    public void setXOffset(double xOffset) {
         this.xOffset = xOffset;
     }
 
@@ -109,7 +109,7 @@ public class ParticleWorldHandleEvent extends Event {
         return yOffset;
     }
 
-    public void setYOffset(float yOffset) {
+    public void setYOffset(double yOffset) {
         this.yOffset = yOffset;
     }
 
@@ -117,7 +117,7 @@ public class ParticleWorldHandleEvent extends Event {
         return zOffset;
     }
 
-    public void setZOffset(float zOffset) {
+    public void setZOffset(double zOffset) {
         this.zOffset = zOffset;
     }
 }
