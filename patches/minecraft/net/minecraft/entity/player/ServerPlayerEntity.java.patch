@@ -108,12 +108,20 @@
 +      //Allows mods to specify data that persists after players respawn.
 +      CompoundNBT old = p_193104_1_.getPersistentData();
 +      if (old.func_74764_b(PERSISTED_NBT_TAG))
-+          getPersistentData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
++         getPersistentData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_193104_1_, !p_193104_2_);
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1291,14 +1304,14 @@
+@@ -1177,6 +1190,7 @@
+    }
+ 
+    public void func_147100_a(CClientSettingsPacket p_147100_1_) {
++      this.language = p_147100_1_.field_149530_a;
+       this.field_71143_cn = p_147100_1_.func_149523_e();
+       this.field_71140_co = p_147100_1_.func_149520_f();
+       this.func_184212_Q().func_187227_b(field_184827_bp, (byte)p_147100_1_.func_149521_d());
+@@ -1291,14 +1305,14 @@
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
@@ -131,7 +139,7 @@
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);
           p_200619_1_.func_217446_a(this);
-@@ -1307,6 +1320,7 @@
+@@ -1307,6 +1321,7 @@
           this.field_71134_c.func_73080_a(p_200619_1_);
           this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
           this.field_71133_b.func_184103_al().func_72385_f(this);
@@ -139,12 +147,27 @@
        }
  
     }
-@@ -1375,6 +1389,8 @@
+@@ -1375,7 +1390,9 @@
        if (itementity == null) {
           return null;
        } else {
+-         this.field_70170_p.func_217376_c(itementity);
 +         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
-          this.field_70170_p.func_217376_c(itementity);
++            this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
+             if (!itemstack.func_190926_b()) {
+@@ -1388,4 +1405,12 @@
+          return itementity;
+       }
+    }
++
++   // Forge Start
++   private String language;
++   @Nullable
++   public String getLanguage() {
++      return this.language;
++   }
++   // Forge End
+ }
