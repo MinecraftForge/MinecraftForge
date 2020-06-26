@@ -9,19 +9,19 @@
     private boolean field_199506_G;
     private final Map<ResourceLocation, ITag<Item>> field_214085_w = Maps.newTreeMap();
  
-@@ -233,6 +235,12 @@
- 
+@@ -234,6 +236,12 @@
     protected void func_231160_c_() {
        if (this.field_230706_i_.field_71442_b.func_78758_h()) {
+          super.func_231160_c_();
 +         int tabCount = ItemGroup.field_78032_a.length;
 +         if (tabCount > 12) {
 +            func_230480_a_(new net.minecraft.client.gui.widget.button.Button(field_147003_i,              field_147009_r - 50, 20, 20, new StringTextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
 +            func_230480_a_(new net.minecraft.client.gui.widget.button.Button(field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, new StringTextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
 +            maxPages = (int) Math.ceil((tabCount - 12) / 10D);
 +         }
-          super.func_231160_c_();
           this.field_230706_i_.field_195559_v.func_197967_a(true);
           this.field_147062_A = new TextFieldWidget(this.field_230712_o_, this.field_147003_i + 82, this.field_147009_r + 6, 80, 9, new TranslationTextComponent("itemGroup.search"));
+          this.field_147062_A.func_146203_f(50);
 @@ -275,7 +283,7 @@
     public boolean func_231042_a_(char p_231042_1_, int p_231042_2_) {
        if (this.field_195377_F) {
