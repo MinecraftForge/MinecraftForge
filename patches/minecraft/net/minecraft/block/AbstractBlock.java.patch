@@ -136,7 +136,7 @@
        public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
           this.field_200961_i = p_200941_1_;
           return this;
-@@ -917,7 +944,8 @@
+@@ -917,7 +944,7 @@
        }
  
        public AbstractBlock.Properties func_222379_b(Block p_222379_1_) {
