@@ -51,7 +51,7 @@ public class FMLUserdevServerLaunchProvider extends FMLUserdevLaunchProvider imp
             super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
-            Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
+            Class.forName("net.minecraft.server.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
     }

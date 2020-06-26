@@ -37,6 +37,13 @@ public class ServerModLoader
     private static boolean hasErrors = false;
 
     public static void gatherAndInit() {
+        LanguageHook.loadForgeAndMCLangs();
+        SidedProvider.setServer(()-> {
+            throw new IllegalStateException("Unable to access server yet");
+        });
+        LogicalSidedProvider.setServer(()-> {
+            throw new IllegalStateException("Unable to access server yet");
+        });
         try {
             ModLoader.get().gatherAndInitializeMods(() -> {});
         } catch (LoadingFailedException e) {
@@ -47,9 +54,8 @@ public class ServerModLoader
 
     public static void begin(DedicatedServer dedicatedServer) {
         ServerModLoader.server = dedicatedServer;
-        SidedProvider.setServer(()->dedicatedServer);
-        LogicalSidedProvider.setServer(()->dedicatedServer);
-        LanguageHook.loadForgeAndMCLangs();
+        SidedProvider.setServer(()->ServerModLoader.server);
+        LogicalSidedProvider.setServer(()->ServerModLoader.server);
         try {
             ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
         } catch (LoadingFailedException e) {
@@ -65,7 +71,6 @@ public class ServerModLoader
         } catch (LoadingFailedException e) {
             ServerModLoader.hasErrors = true;
             throw e;
-
         }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {
