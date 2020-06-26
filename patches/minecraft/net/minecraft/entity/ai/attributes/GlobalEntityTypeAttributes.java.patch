@@ -12,8 +12,8 @@
  
     public static AttributeModifierMap func_233835_a_(EntityType<? extends LivingEntity> p_233835_0_) {
 -      return field_233833_b_.get(p_233835_0_);
-+       AttributeModifierMap map = field_233833_b_.get(p_233835_0_);
-+       return map != null ? map : FORGE_ATTRIBUTES.get(p_233835_0_);
++       AttributeModifierMap map = FORGE_ATTRIBUTES.get(p_233835_0_);
++       return map != null ? map : field_233833_b_.get(p_233835_0_);
     }
  
     public static boolean func_233837_b_(EntityType<?> p_233837_0_) {
