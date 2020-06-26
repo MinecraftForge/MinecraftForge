@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/impl/LocateCommand.java
 +++ b/net/minecraft/command/impl/LocateCommand.java
-@@ -25,12 +25,19 @@
+@@ -25,11 +25,18 @@
           return p_198533_0_.func_197034_c(2);
        });
  
@@ -10,13 +10,12 @@
              return func_241053_a_(p_241056_1_.getSource(), entry.getValue());
           }));
        }
- 
++      else {
 +      for (Structure<?> structureFeature : net.minecraftforge.registries.ForgeRegistries.STRUCTURE_FEATURES) {
 +         String name = structureFeature.getRegistryName().toString().replace("minecraft:", "");
-+         literalargumentbuilder = literalargumentbuilder.then(Commands.func_197057_a(name))
-+               .executes(ctx -> func_241053_a_(ctx.getSource(), structureFeature));
-+      }
-+
++         literalargumentbuilder = literalargumentbuilder.then(Commands.func_197057_a(name)
++               .executes(ctx -> func_241053_a_(ctx.getSource(), structureFeature)));
++      }}
+ 
        p_198528_0_.register(literalargumentbuilder);
     }
- 
