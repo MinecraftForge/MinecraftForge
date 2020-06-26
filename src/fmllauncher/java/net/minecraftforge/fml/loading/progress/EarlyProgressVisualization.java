@@ -40,10 +40,6 @@ public enum EarlyProgressVisualization {
         return visualization.handOffWindow(width, height, title, monitor);
     }
 
-    public boolean replacedWindow() {
-        return visualization.replacedWindow();
-    }
-
     interface Visualization {
         Runnable start();
 
@@ -55,8 +51,6 @@ public enum EarlyProgressVisualization {
                 }
             }.getAsLong();
         }
-
-        default boolean replacedWindow() { return false; }
     }
 
     private static class NoVisualization implements Visualization {
