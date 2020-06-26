@@ -30,11 +30,12 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -153,17 +153,20 @@
+@@ -153,17 +153,21 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
 +         net.minecraftforge.fml.server.ServerModLoader.end();
++         this.getDataPackRegistries().func_240971_i_();
           this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
           long i = Util.func_211178_c();
           this.func_71191_d(serverproperties.field_219026_t);
@@ -51,7 +52,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +178,7 @@
+@@ -175,6 +179,7 @@
           }
  
           if (serverproperties.field_219030_x) {
@@ -59,7 +60,7 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
-@@ -193,7 +197,8 @@
+@@ -193,7 +198,8 @@
              ServerInfoMBean.func_233490_a_(this);
           }
  
@@ -69,7 +70,7 @@
        }
     }
  
-@@ -506,6 +511,11 @@
+@@ -506,6 +512,11 @@
        return false;
     }
  
