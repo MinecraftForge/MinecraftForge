@@ -100,11 +100,48 @@
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
-@@ -786,6 +798,7 @@
+@@ -786,6 +798,9 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
        private boolean field_235813_o_;
++      private int harvestLevel = -1;
++      private net.minecraftforge.common.ToolType harvestTool;
 +      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
        private AbstractBlock.IExtendedPositionPredicate<EntityType<?>> field_235814_p_ = (p_235832_0_, p_235832_1_, p_235832_2_, p_235832_3_) -> {
           return p_235832_0_.func_224755_d(p_235832_1_, p_235832_2_, Direction.UP) && p_235832_0_.func_185906_d() < 14;
        };
+@@ -847,6 +862,8 @@
+          abstractblock$properties.field_226895_m_ = p_200950_0_.field_235684_aB_.field_226895_m_;
+          abstractblock$properties.field_235813_o_ = p_200950_0_.field_235684_aB_.field_235813_o_;
+          abstractblock$properties.field_235806_h_ = p_200950_0_.field_235684_aB_.field_235806_h_;
++         abstractblock$properties.harvestLevel = p_200950_0_.field_235684_aB_.harvestLevel;
++         abstractblock$properties.harvestTool = p_200950_0_.field_235684_aB_.harvestTool;
+          return abstractblock$properties;
+       }
+ 
+@@ -861,6 +878,16 @@
+          return this;
+       }
+ 
++      public AbstractBlock.Properties harvestLevel(int harvestLevel) {
++         this.harvestLevel = harvestLevel;
++         return this;
++      }
++
++      public AbstractBlock.Properties harvestTool(net.minecraftforge.common.ToolType harvestTool) {
++         this.harvestTool = harvestTool;
++         return this;
++      }
++
+       public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
+          this.field_200961_i = p_200941_1_;
+          return this;
+@@ -917,7 +944,8 @@
+       }
+ 
+       public AbstractBlock.Properties func_222379_b(Block p_222379_1_) {
+-         this.field_222381_j = p_222379_1_.func_220068_i();
++         this.lootTableSupplier = () -> p_222379_1_.delegate.get().func_220068_i();
+          return this;
+       }
+ 
