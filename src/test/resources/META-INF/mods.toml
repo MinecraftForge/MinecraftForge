@@ -2,8 +2,6 @@ modLoader="javafml"
 loaderVersion="[28,)"
 
 [[mods]]
-    modId="mark_dimension_for_deletion_test"
-[[mods]]
 	modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
@@ -68,3 +66,5 @@ loaderVersion="[28,)"
     modId="stencil_enable_test"
 [[mods]]
     modId="deferred_registry_test"
+[[mods]]
+    modId="create_entity_classification_test"
