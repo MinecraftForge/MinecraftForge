@@ -301,7 +301,7 @@
     @OnlyIn(Dist.CLIENT)
     protected void func_203010_cG() {
 -      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)-0.04F, 0.0D));
-+      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)0.04F * this.func_110148_a(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_111126_e(), 0.0D));
++      this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, (double)-0.04F * this.func_110148_a(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_111126_e(), 0.0D));
     }
  
     protected void func_180466_bG(ITag<Fluid> p_180466_1_) {
