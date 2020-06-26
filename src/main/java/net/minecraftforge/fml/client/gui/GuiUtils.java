@@ -374,7 +374,7 @@ public class GuiUtils
             else if (tooltipY + tooltipHeight + 4 > screenHeight)
                 tooltipY = screenHeight - tooltipHeight - 4;
 
-            final int zLevel = 300;
+            final int zLevel = 400;
             RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
             MinecraftForge.EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
