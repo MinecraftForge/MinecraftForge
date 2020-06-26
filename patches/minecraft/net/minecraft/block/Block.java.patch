@@ -18,7 +18,7 @@
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
 -      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
-+      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f) && p_180635_0_.restoringBlockSnapshots) {
++      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180635_0_.restoringBlockSnapshots) {
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
@@ -27,7 +27,7 @@
  
     public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
 -      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
-+      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && p_180637_1_.restoringBlockSnapshots) {
++      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) {
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
