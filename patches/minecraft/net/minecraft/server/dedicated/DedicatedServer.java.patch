@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -12,10 +12,7 @@
+@@ -12,27 +12,31 @@
  import java.net.InetAddress;
  import java.net.Proxy;
  import java.nio.charset.StandardCharsets;
@@ -9,10 +9,113 @@
 -import java.util.Locale;
 -import java.util.Optional;
 +import java.util.*;
++import java.util.concurrent.CompletableFuture;
  import java.util.function.BooleanSupplier;
++import java.util.function.Supplier;
  import java.util.regex.Pattern;
  import javax.annotation.Nullable;
-@@ -77,6 +74,7 @@
++
++import com.mojang.serialization.Lifecycle;
++import net.minecraft.advancements.FunctionManager;
+ import net.minecraft.command.CommandSource;
++import net.minecraft.command.Commands;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.ItemGroup;
+ import net.minecraft.item.Items;
++import net.minecraft.nbt.INBT;
++import net.minecraft.nbt.NBTDynamicOps;
+ import net.minecraft.network.rcon.IServer;
+ import net.minecraft.network.rcon.MainThread;
+ import net.minecraft.network.rcon.QueryThread;
+ import net.minecraft.network.rcon.RConConsoleSource;
+ import net.minecraft.profiler.Snooper;
+-import net.minecraft.resources.DataPackRegistries;
+-import net.minecraft.resources.ResourcePackInfo;
+-import net.minecraft.resources.ResourcePackList;
++import net.minecraft.resources.*;
+ import net.minecraft.server.IDynamicRegistries;
++import net.minecraft.server.Main;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.ServerPropertiesProvider;
+ import net.minecraft.server.gui.MinecraftServerGui;
+@@ -45,15 +49,23 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.Util;
++import net.minecraft.util.datafix.DataFixesManager;
++import net.minecraft.util.datafix.codec.DatapackCodec;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.registry.WorldSettingsImport;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.chunk.listener.IChunkStatusListenerFactory;
++import net.minecraft.world.gen.feature.template.TemplateManager;
++import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+ import net.minecraft.world.server.ServerWorld;
++import net.minecraft.world.storage.FolderName;
+ import net.minecraft.world.storage.IServerConfiguration;
+ import net.minecraft.world.storage.SaveFormat;
++import net.minecraft.world.storage.ServerWorldInfo;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -74,9 +86,59 @@
+       this.field_184115_n = new RConConsoleSource(this);
+    }
+ 
++   private void setupWorldData() {
++      DatapackCodec datapackCodec = field_71310_m.func_237297_e_();
++      DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(func_195561_aH(), datapackCodec == null ? DatapackCodec.field_234880_a_ : datapackCodec, false);
++      CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(func_195561_aH().func_232623_f_(), Commands.EnvironmentType.DEDICATED, field_71340_o.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
++
++      DataPackRegistries datapackregistries;
++      try {
++         datapackregistries = completablefuture.get();
++      } catch (Exception exception) {
++         field_155771_h.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
++         func_195561_aH().close();
++         return;
++      }
++
++      datapackregistries.func_240971_i_();
++      IDynamicRegistries.Impl idynamicregistries$impl = IDynamicRegistries.func_239770_b_();
++      WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_240876_a_(NBTDynamicOps.field_210820_a, datapackregistries.func_240970_h_(), idynamicregistries$impl);
++      IServerConfiguration iserverconfiguration = field_71310_m.func_237284_a_(worldsettingsimport, datapackcodec1);
++      if (iserverconfiguration == null) {
++         WorldSettings worldsettings;
++         DimensionGeneratorSettings dimensiongeneratorsettings;
++         if (func_71242_L()) {
++            worldsettings = MinecraftServer.field_213219_c;
++            dimensiongeneratorsettings = DimensionGeneratorSettings.field_236202_b_;
++         } else {
++            ServerProperties serverproperties = field_71340_o.func_219034_a();
++            worldsettings = new WorldSettings(serverproperties.field_219021_o, serverproperties.field_219020_n, serverproperties.field_218990_C, serverproperties.field_219019_m, false, new GameRules(), datapackcodec1);
++//            dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
++            dimensiongeneratorsettings = serverproperties.field_241082_U_;
++         }
++
++         iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
++      }
++
++//      if (optionset.has(optionspec4)) {
++//         Main.func_240761_a_(this.anvilConverterForAnvilFile, DataFixesManager.getDataFixer(), optionset.has(optionspec5), () -> {
++//            return true;
++//         }, iserverconfiguration.func_230418_z_().func_236226_g_());
++//      }
++
++      this.field_71310_m.func_237287_a_(idynamicregistries$impl, iserverconfiguration);
++      this.field_240767_f_ = idynamicregistries$impl;
++      this.field_240768_i_ = iserverconfiguration;
++      this.field_195576_ac = datapackregistries;
++
++      this.field_200258_al = new FunctionManager(this, field_195576_ac.func_240960_a_());
++      this.field_240765_ak_ = new TemplateManager(field_195576_ac.func_240970_h_(), field_71310_m, func_195563_aC());
++   }
++
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -20,7 +123,7 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -98,7 +96,9 @@
+@@ -98,7 +160,9 @@
           field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
@@ -30,7 +133,15 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -153,17 +153,20 @@
+@@ -108,6 +172,7 @@
+          this.func_71189_e(serverproperties.field_219009_c);
+       }
+ 
++      this.setupWorldData();
+       this.func_71188_g(serverproperties.field_219012_f);
+       this.func_71245_h(serverproperties.field_219013_g);
+       this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
+@@ -153,17 +218,20 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -43,7 +154,8 @@
           PlayerProfileCache.func_187320_a(this.func_71266_T());
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-          this.func_240800_l__();
+-         this.func_240800_l__();
++         this.func_240800_l__(); //THIS IS WHERE A BUNCH OF SERVERCONFIGURATION STUFF START
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
@@ -51,7 +163,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +178,7 @@
+@@ -175,6 +243,7 @@
           }
  
           if (serverproperties.field_219030_x) {
@@ -59,7 +171,7 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
-@@ -193,7 +197,8 @@
+@@ -193,7 +262,8 @@
              ServerInfoMBean.func_233490_a_(this);
           }
  
@@ -69,7 +181,7 @@
        }
     }
  
-@@ -506,6 +511,11 @@
+@@ -506,6 +576,11 @@
        return false;
     }
  

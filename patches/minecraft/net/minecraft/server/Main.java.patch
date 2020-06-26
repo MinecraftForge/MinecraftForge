@@ -28,6 +28,94 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
+@@ -115,47 +120,47 @@
+          }
+ 
+          ResourcePackList<ResourcePackInfo> resourcepacklist = new ResourcePackList<>(ResourcePackInfo::new, new ServerPackFinder(), new FolderPackFinder(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), IPackNameDecorator.field_232627_c_));
+-         DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
+-         CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
+-
+-         DataPackRegistries datapackregistries;
+-         try {
+-            datapackregistries = completablefuture.get();
+-         } catch (Exception exception) {
+-            field_240759_a_.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
+-            resourcepacklist.close();
+-            return;
+-         }
+-
+-         datapackregistries.func_240971_i_();
+-         IDynamicRegistries.Impl idynamicregistries$impl = IDynamicRegistries.func_239770_b_();
+-         WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_240876_a_(NBTDynamicOps.field_210820_a, datapackregistries.func_240970_h_(), idynamicregistries$impl);
+-         IServerConfiguration iserverconfiguration = saveformat$levelsave.func_237284_a_(worldsettingsimport, datapackcodec1);
+-         if (iserverconfiguration == null) {
+-            WorldSettings worldsettings;
+-            DimensionGeneratorSettings dimensiongeneratorsettings;
+-            if (optionset.has(optionspec2)) {
+-               worldsettings = MinecraftServer.field_213219_c;
+-               dimensiongeneratorsettings = DimensionGeneratorSettings.field_236202_b_;
+-            } else {
+-               ServerProperties serverproperties = serverpropertiesprovider.func_219034_a();
+-               worldsettings = new WorldSettings(serverproperties.field_219021_o, serverproperties.field_219020_n, serverproperties.field_218990_C, serverproperties.field_219019_m, false, new GameRules(), datapackcodec1);
+-               dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
+-            }
+-
+-            iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
+-         }
+-
+-         if (optionset.has(optionspec4)) {
+-            func_240761_a_(saveformat$levelsave, DataFixesManager.func_210901_a(), optionset.has(optionspec5), () -> {
+-               return true;
+-            }, iserverconfiguration.func_230418_z_().func_236226_g_());
+-         }
+-
+-         saveformat$levelsave.func_237287_a_(idynamicregistries$impl, iserverconfiguration);
+-         IServerConfiguration iserverconfiguration1 = iserverconfiguration;
++//         DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
++//         CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.getProperties().functionPermissionLevel, Util.getServerExecutor(), Runnable::run);
++//
++//         DataPackRegistries datapackregistries;
++//         try {
++//            datapackregistries = completablefuture.get();
++//         } catch (Exception exception) {
++//            field_240759_a_.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
++//            resourcepacklist.close();
++//            return;
++//         }
++//
++//         datapackregistries.func_240971_i_();
++//         IDynamicRegistries.Impl idynamicregistries$impl = IDynamicRegistries.func_239770_b_();
++//         WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_240876_a_(NBTDynamicOps.INSTANCE, datapackregistries.func_240970_h_(), idynamicregistries$impl);
++//         IServerConfiguration iserverconfiguration = saveformat$levelsave.func_237284_a_(worldsettingsimport, datapackcodec1);
++//         if (iserverconfiguration == null) {
++//            WorldSettings worldsettings;
++//            DimensionGeneratorSettings dimensiongeneratorsettings;
++//            if (optionset.has(optionspec2)) {
++//               worldsettings = MinecraftServer.DEMO_WORLD_SETTINGS;
++//               dimensiongeneratorsettings = DimensionGeneratorSettings.field_236202_b_;
++//            } else {
++//               ServerProperties serverproperties = serverpropertiesprovider.getProperties();
++//               worldsettings = new WorldSettings(serverproperties.worldName, serverproperties.gamemode, serverproperties.hardcore, serverproperties.difficulty, false, new GameRules(), datapackcodec1);
++//               dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
++//            }
++//
++//            iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
++//         }
++//
++//         if (optionset.has(optionspec4)) {
++//            func_240761_a_(saveformat$levelsave, DataFixesManager.getDataFixer(), optionset.has(optionspec5), () -> {
++//               return true;
++//            }, iserverconfiguration.func_230418_z_().func_236226_g_());
++//         }
++//
++//         saveformat$levelsave.func_237287_a_(idynamicregistries$impl, iserverconfiguration);
++//         IServerConfiguration iserverconfiguration1 = iserverconfiguration;
+          final DedicatedServer dedicatedserver = MinecraftServer.func_240784_a_((p_240762_16_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_240762_16_, idynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, iserverconfiguration1, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
++            DedicatedServer dedicatedserver1 = new DedicatedServer(p_240762_16_, null, saveformat$levelsave, resourcepacklist, null, null, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
+             dedicatedserver1.func_71224_l(optionset.valueOf(optionspec8));
+             dedicatedserver1.func_71208_b(optionset.valueOf(optionspec11));
+             dedicatedserver1.func_71204_b(optionset.has(optionspec2));
 @@ -170,6 +175,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
@@ -36,3 +124,12 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_240759_a_));
+@@ -180,7 +186,7 @@
+ 
+    }
+ 
+-   private static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
++   public static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
+       field_240759_a_.info("Forcing world upgrade!");
+       WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
+       ITextComponent itextcomponent = null;

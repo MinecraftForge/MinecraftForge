@@ -1,6 +1,32 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -226,7 +226,7 @@
+@@ -171,7 +171,7 @@
+    private final DataFixer field_184112_s;
+    private String field_71320_r;
+    private int field_71319_s = -1;
+-   protected final IDynamicRegistries.Impl field_240767_f_;
++   protected IDynamicRegistries.Impl field_240767_f_;
+    private final Map<RegistryKey<World>, ServerWorld> field_71305_c = Maps.newLinkedHashMap();
+    private PlayerList field_71318_t;
+    private volatile boolean field_71317_u = true;
+@@ -213,20 +213,20 @@
+    @Nullable
+    private CommandStorage field_229733_al_;
+    private final CustomServerBossInfoManager field_201301_aj = new CustomServerBossInfoManager();
+-   private final FunctionManager field_200258_al;
++   public FunctionManager field_200258_al;
+    private final FrameTimer field_213215_ap = new FrameTimer();
+    private boolean field_205745_an;
+    private float field_211152_ao;
+    private final Executor field_213217_au;
+    @Nullable
+    private String field_213218_av;
+-   private DataPackRegistries field_195576_ac;
+-   private final TemplateManager field_240765_ak_;
+-   protected final IServerConfiguration field_240768_i_;
++   public DataPackRegistries field_195576_ac;
++   public TemplateManager field_240765_ak_;
++   protected IServerConfiguration field_240768_i_;
  
     public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,6 +35,17 @@
           atomicreference.get().func_240802_v_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
+@@ -253,8 +253,8 @@
+       this.field_71310_m = p_i232576_3_;
+       this.field_240766_e_ = p_i232576_3_.func_237292_b_();
+       this.field_184112_s = p_i232576_7_;
+-      this.field_200258_al = new FunctionManager(this, p_i232576_8_.func_240960_a_());
+-      this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
++//      this.functionManager = new FunctionManager(this, p_i232576_8_.func_240960_a_());
++//      this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
+       this.field_175590_aa = p_i232576_1_;
+       this.field_213217_au = Util.func_215072_e();
+    }
 @@ -380,6 +380,7 @@
              worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
              this.field_71305_c.put(registrykey2, serverworld1);
