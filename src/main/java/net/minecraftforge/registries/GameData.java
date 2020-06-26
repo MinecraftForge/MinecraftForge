@@ -110,47 +110,47 @@ public class GameData
     // Names used here match those in net.minecraft.util.Registry
 
     // Game objects
-    public static final ResourceLocation BLOCKS = new ResourceLocation("block");
-    public static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
-    public static final ResourceLocation ITEMS = new ResourceLocation("item");
-    public static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
-    public static final ResourceLocation BIOMES = new ResourceLocation("biome");
-    public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
-    public static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
-    public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
-    public static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
-    public static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
-    public static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
-    public static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
-    public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
-    public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
-    public static final ResourceLocation ATTRIBUTES = new ResourceLocation("attribute");
-    public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
+    private static final ResourceLocation BLOCKS = new ResourceLocation("block");
+    private static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
+    private static final ResourceLocation ITEMS = new ResourceLocation("item");
+    private static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
+    private static final ResourceLocation BIOMES = new ResourceLocation("biome");
+    private static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
+    private static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
+    private static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
+    private static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
+    private static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
+    private static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
+    private static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
+    private static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
+    private static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
+    private static final ResourceLocation ATTRIBUTES = new ResourceLocation("attribute");
+    private static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
 
     // Villages
-    public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
-    public static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
-    public static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
-    public static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
-    public static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
-    public static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
+    private static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
+    private static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
+    private static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
+    private static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
+    private static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
+    private static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
 
     // Worldgen
-    public static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
-    public static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
-    public static final ResourceLocation FEATURES = new ResourceLocation("feature");
-    public static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
-    public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
-    public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
-    public static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("structure_feature");
-    public static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
-    public static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
-    public static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
-    public static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
+    private static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
+    private static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
+    private static final ResourceLocation FEATURES = new ResourceLocation("feature");
+    private static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
+    private static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
+    private static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
+    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("structure_feature");
+    private static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
+    private static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
+    private static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
+    private static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
 
     // Custom forge registries
-    public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
-    public static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
+    private static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
+    private static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
@@ -369,7 +369,7 @@ public class GameData
     }
 
     //Lets us clear the map so we can rebuild it.
-    static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
+    private static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
     {
         void clear()
         {
@@ -753,27 +753,6 @@ public class GameData
                         .confirm();
                 if (!confirmed)
                     StartupQuery.abort();
-
-/*
-                try
-                {
-                    String skip = System.getProperty("fml.doNotBackup");
-                    if (skip == null || !"true".equals(skip))
-                    {
-                        ZipperUtil.backupWorld();
-                    }
-                    else
-                    {
-                        for (int x = 0; x < 10; x++)
-                            LOGGER.error(GD, "!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
-                    }
-                }
-                catch (IOException e)
-                {
-                    StartupQuery.notify("The world backup couldn't be created.\n\n" + e);
-                    StartupQuery.abort();
-                }
-*/
             }
 
             if (!defaulted.isEmpty())
