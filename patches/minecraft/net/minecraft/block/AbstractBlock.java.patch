@@ -45,15 +45,17 @@
     }
  
     @Deprecated
-@@ -293,7 +297,7 @@
+@@ -293,8 +297,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
 -         int i = p_180647_2_.func_234569_d_(p_180647_1_) ? 30 : 100;
+-         return p_180647_2_.func_184813_a(p_180647_1_) / f / (float)i;
 +         int i = net.minecraftforge.common.ForgeHooks.canHarvestBlock(p_180647_1_, p_180647_2_, p_180647_3_, p_180647_4_) ? 30 : 100;
-          return p_180647_2_.func_184813_a(p_180647_1_) / f / (float)i;
++         return p_180647_2_.getDigSpeed(p_180647_1_, p_180647_4_) / f / (float)i;
        }
     }
+ 
 @@ -320,14 +324,14 @@
        return 0;
     }
