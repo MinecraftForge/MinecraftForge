@@ -29,16 +29,15 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -127,7 +133,7 @@
+@@ -127,7 +133,6 @@
              return;
           }
  
 -         datapackregistries.func_240971_i_();
-+         //datapackregistries.func_240971_i_(); Forge event bus is still shutdown at this point. Fire when modloading ends instead.
           IDynamicRegistries.Impl idynamicregistries$impl = IDynamicRegistries.func_239770_b_();
           WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_240876_a_(NBTDynamicOps.field_210820_a, datapackregistries.func_240970_h_(), idynamicregistries$impl);
           IServerConfiguration iserverconfiguration = saveformat$levelsave.func_237284_a_(worldsettingsimport, datapackcodec1);
-@@ -170,6 +176,7 @@
+@@ -170,6 +175,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
