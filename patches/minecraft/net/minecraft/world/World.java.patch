@@ -24,7 +24,7 @@
     private final RegistryKey<DimensionType> field_234915_C_;
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
-+   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
++   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
  
     protected World(ISpawnWorldInfo p_i231617_1_, RegistryKey<World> p_i231617_2_, RegistryKey<DimensionType> p_i231617_3_, DimensionType p_i231617_4_, Supplier<IProfiler> p_i231617_5_, boolean p_i231617_6_, boolean p_i231617_7_, long p_i231617_8_) {
 +      super(World.class);
@@ -39,7 +39,7 @@
 +         p_241211_1_ = p_241211_1_.func_185334_h(); // Forge - prevent mutable BlockPos leaks
 +         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
 +         if (this.captureBlockSnapshots && !this.field_72995_K) {
-+             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, p_241211_1_, p_241211_3_);
++             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this, p_241211_1_, p_241211_3_);
 +             this.capturedBlockSnapshots.add(blockSnapshot);
 +         }
 +

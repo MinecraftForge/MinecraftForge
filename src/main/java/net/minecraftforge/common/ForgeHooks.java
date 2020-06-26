@@ -603,7 +603,7 @@ public class ForgeHooks
 
         world.captureBlockSnapshots = false;
 
-        if (ret == ActionResultType.SUCCESS)
+        if (ret.isSuccessOrConsume())
         {
             // save new item data
             int newSize = itemstack.getCount();
@@ -654,12 +654,12 @@ public class ForgeHooks
                     int updateFlag = snap.getFlag();
                     BlockState oldBlock = snap.getReplacedBlock();
                     BlockState newBlock = world.getBlockState(snap.getPos());
-                    if (!newBlock.getBlock().hasTileEntity(newBlock)) // Containers get placed automatically
+                    if (!newBlock.hasTileEntity()) // Containers get placed automatically
                     {
                         newBlock.onBlockAdded(world, snap.getPos(), oldBlock, false);
                     }
 
-                    world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag, 512);
+                    world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
                 player.addStat(Stats.ITEM_USED.get(item));
             }
