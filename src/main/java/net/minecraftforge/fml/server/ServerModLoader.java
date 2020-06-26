@@ -36,13 +36,21 @@ public class ServerModLoader
     private static DedicatedServer server;
     private static boolean hasErrors = false;
 
+    public static void gatherAndInit() {
+        try {
+            ModLoader.get().gatherAndInitializeMods(() -> {});
+        } catch (LoadingFailedException e) {
+            ServerModLoader.hasErrors = true;
+            throw e;
+        }
+    }
+
     public static void begin(DedicatedServer dedicatedServer) {
         ServerModLoader.server = dedicatedServer;
         SidedProvider.setServer(()->dedicatedServer);
         LogicalSidedProvider.setServer(()->dedicatedServer);
         LanguageHook.loadForgeAndMCLangs();
         try {
-            ModLoader.get().gatherAndInitializeMods(() -> {});
             ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
         } catch (LoadingFailedException e) {
             ServerModLoader.hasErrors = true;

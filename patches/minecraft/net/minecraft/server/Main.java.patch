@@ -17,7 +17,7 @@
           Path path1 = Paths.get("eula.txt");
           ServerEula servereula = new ServerEula(path1);
           if (optionset.has(optionspec1)) {
-@@ -105,6 +106,10 @@
+@@ -105,6 +106,11 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -25,10 +25,11 @@
 +             field_240759_a_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
 +             return;
 +         }
++         net.minecraftforge.fml.server.ServerModLoader.gatherAndInit(); // Gather and construct mods before resource loading and before world conversions.
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -170,6 +175,7 @@
+@@ -170,6 +176,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
