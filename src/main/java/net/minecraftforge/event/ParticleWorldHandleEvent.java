@@ -7,7 +7,7 @@ import net.minecraft.network.play.server.SSpawnParticlePacket;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * CommandEvent is fired before an {@link SSpawnParticlePacket} is sent.<br>
+ * ParticleWorldHandleEvent is fired before an {@link SSpawnParticlePacket} is sent.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
  * If the event is canceled, the execution of the command does not occur.<br>
