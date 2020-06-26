@@ -30,6 +30,11 @@ import net.minecraft.client.gui.ClientBossInfo;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
+    public MatrixStack getMatrixStack()
+    {
+        return mStack;
+    }
+
     public float getPartialTicks()
     {
         return partialTicks;
