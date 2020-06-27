@@ -1,0 +1,194 @@
+import java.util.regex.Pattern
+
+def ignore = [
+        "patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch",
+        "patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch"
+]
+
+task checkPatches() {
+    inputs.files fileTree("$rootDir/patches")
+
+    doLast {
+        def verified = true;
+        inputs.files.each { patch ->
+            def patchPath = rootDir.toPath().relativize(patch.toPath()).toString()
+            //System.out.println(patchPath)
+            if (!ignore.contains(patchPath))
+                verified &= verifyPatch(patch, false)
+        }
+
+        if (!verified)
+            throw new RuntimeException('One or more patches failed verification. Check the log for errors.')
+    }
+}
+
+task checkPatchesAndFix() {
+    inputs.files fileTree("$rootDir/patches")
+
+    doLast {
+        def verified = true;
+        inputs.files.each { patch ->
+            def patchPath = rootDir.toPath().relativize(patch.toPath()).toString()
+            if (!ignore.contains(patchPath))
+                verified &= verifyPatch(patch, true)
+        }
+
+        if (!verified)
+            throw new RuntimeException('One or more patches failed verification. Check the log for errors.')
+    }
+}
+
+def verifyPatch(patch, fix) {
+    def hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,]* @@$')
+    def white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
+    def import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
+    def field_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;$')
+
+    def accessMap = [("private"):0, (null):1, ("protected"):2, ("public"):3]
+
+    def patchPath = rootDir.toPath().relativize(patch.toPath()).toString()
+
+    def hasProblem = false;
+    def lines = patch.readLines()
+
+    def hunksStart = 0
+    def onlyWhiteSpace = false
+
+    def didFix = false
+    def newLines = []
+    def whiteSpaceErrors = []
+
+    // First two lines are file name ++/-- and we do not care
+    newLines.add(lines[0] + '\n')
+    newLines.add(lines[1] + '\n')
+
+    int i = 2
+    for (; i < lines.size(); ++i) {
+        def line = lines[i]
+        newLines.add(line + '\n')
+
+        if (hunk_start_pattern.matcher(line).find()) {
+            if (onlyWhiteSpace) {
+                if (!fix) {
+                    getLogger().lifecycle("Patch contains only white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+                    hasProblem = true
+                }
+                else {
+                    getLogger().lifecycle("Removing white space hunk 2 starting at {}, file: {}", hunksStart + 1, patchPath)
+                    def toRemove = i - hunksStart;
+                    while (toRemove-- > 0)
+                        newLines.remove(newLines.size() - 1)
+                    didFix = true;
+                }
+            }
+            else {
+                whiteSpaceErrors.each { getLogger().lifecycle(it) }
+                whiteSpaceErrors.clear()
+            }
+            hunksStart = i
+            onlyWhiteSpace = true
+            continue
+        }
+
+        if (line.startsWithAny('+','-')) {
+            def prefixChange = false
+            def prevLine = lines[i - 1]
+            if (line.charAt(0) == (char)'+' && prevLine.charAt(0) == (char)'-') {
+                def prevTrim = prevLine.substring(1).replaceAll("\\s", "")
+                def currTrim = line.substring(1).replaceAll("\\s", "")
+
+                if (prevTrim.equals(currTrim)) {
+                    prefixChange = true
+                }
+
+                def pMatcher = field_pattern.matcher(prevLine)
+                def cMatcher = field_pattern.matcher(line)
+
+                if (pMatcher.find() && cMatcher.find() &&
+                    pMatcher.group(6) == cMatcher.group(6) && // = ...
+                    pMatcher.group(5) == cMatcher.group(5) && // field name
+                    pMatcher.group(3) == cMatcher.group(3) && // static
+                    (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                    getLogger().lifecycle("Patch contains access changes or final removal at {}, file: {}", i + 1, patchPath)
+                    hasProblem = true
+                }
+            }
+
+            if (line.charAt(0) == (char)'-' && i + 1 < lines.size()) {
+                def nextLine = lines[i + 1]
+                if (nextLine.charAt(0) == (char)'+') {
+                    def nextTrim = nextLine.substring(1).replaceAll("\\s", "")
+                    def currTrim = line.substring(1).replaceAll("\\s", "")
+
+                    if (nextTrim.equals(currTrim)) {
+                        prefixChange = true
+                    }
+                }
+            }
+
+            def isWhiteSpaceChange = white_space_pattern.matcher(line).find()
+
+            if (!prefixChange && !isWhiteSpaceChange)
+                onlyWhiteSpace = false
+            else if (isWhiteSpaceChange) {
+                def prevLineChange = prevLine.startsWithAny('+','-')
+                def nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
+
+                if (!prevLineChange && !nextLineChange) {
+                    whiteSpaceErrors.add(String.format("Patch contains white space change in valid hunk at %d (cannot auto fix), file: %s", i + 1, patchPath))
+                }
+            }
+
+            if (line.contains("\t")) {
+                if (!fix) {
+                    getLogger().lifecycle("Patch contains tabs on line {}, file: {}", i + 1, patchPath)
+                    hasProblem = true
+                }
+                else {
+                    getLogger().lifecycle("Fixing tabs on line {}, file: {}", i + 1, patchPath)
+                    line = line.replaceAll('\t', '    ')
+                    newLines.remove(newLines.size() - 1)
+                    newLines.add(line + '\n')
+                    didFix = true
+                }
+            }
+
+            if (import_pattern.matcher(line).find()) {
+                getLogger().lifecycle("Patch contains import change on line {}, file: {}", i + 1, patchPath)
+                hasProblem = true
+            }
+        }
+    }
+
+    if (onlyWhiteSpace) {
+        if (!fix) {
+            getLogger().lifecycle("Patch contains only white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+            hasProblem = true
+        }
+        else {
+            getLogger().lifecycle("Removing white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+            def toRemove = i - hunksStart;
+            while (toRemove-- > 0)
+                newLines.remove(newLines.size() - 1)
+            didFix = true;
+        }
+    }
+    else {
+        whiteSpaceErrors.each { getLogger().lifecycle(it) }
+    }
+
+    if (didFix) {
+        if (newLines.size() == 2) {
+            getLogger().lifecycle("Patch is now empty removing, file: {}", patchPath)
+            delete(patch)
+        } // Empty patch now, remove
+        else {
+            getLogger().lifecycle("*** Updating patch file. Please run setup then genPatches again. ***")
+            patch.withWriter('UTF-8') { writer ->
+                newLines.each { l -> writer.write(l) }
+            }
+        }
+    }
+
+    return !hasProblem
+}
