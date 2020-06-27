@@ -66,7 +66,7 @@ public class LootModifierManager extends JsonReloadListener {
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
 
-    private static final LootModifierManager INSTANCE = new LootModifierManager();
+    private static LootModifierManager INSTANCE;
 
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
@@ -164,6 +164,14 @@ public class LootModifierManager extends JsonReloadListener {
     @SubscribeEvent
     public static void onResourceReload(AddReloadListenerEvent event)
     {
+        INSTANCE = new LootModifierManager();
         event.addListener(INSTANCE);
+    }
+
+    public static LootModifierManager getInstance()
+    {
+        if(INSTANCE == null)
+            throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+        return INSTANCE;
     }
 }

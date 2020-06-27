@@ -24,7 +24,6 @@ import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
-import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
