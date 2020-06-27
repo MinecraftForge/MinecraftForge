@@ -23,10 +23,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DataTagCollectionManager {
-   private final DataTagCollection<Block> blocks = new DataTagCollection<>(ForgeRegistries.BLOCKS, "tags/blocks", "block");
-   private final DataTagCollection<Item> items = new DataTagCollection<>(ForgeRegistries.ITEMS, "tags/items", "item");
-   private final DataTagCollection<Fluid> fluids = new DataTagCollection<>(ForgeRegistries.FLUIDS, "tags/fluids", "fluid");
-   private final DataTagCollection<EntityType<?>> entityTypes = new DataTagCollection<>(ForgeRegistries.ENTITIES, "tags/entity_types", "entity_type");
+   private final TagCollection<Block> blocks = new TagCollection<>(resloc -> Optional.ofNullable(ForgeRegistries.BLOCKS.getValue(resloc)), "tags/blocks", "block");
+   private final TagCollection<Item> items = new TagCollection<>(resloc -> Optional.ofNullable(ForgeRegistries.ITEMS.getValue(resloc)), "tags/items", "item");
+   private final TagCollection<Fluid> fluids = new TagCollection<>(resloc -> Optional.ofNullable(ForgeRegistries.FLUIDS.getValue(resloc)), "tags/fluids", "fluid");
+   private final TagCollection<EntityType<?>> entityTypes = new TagCollection<>(resloc -> Optional.ofNullable(ForgeRegistries.ENTITIES.getValue(resloc)), "tags/entity_types", "entity_type");
 
    public void loadTags(IResourceManager resourceManager, Executor game, Executor background) {
       CompletableFuture<Map<ResourceLocation, ITag.Builder>> cfBlocks = this.blocks.reload(resourceManager, background);
@@ -56,11 +56,5 @@ public class DataTagCollectionManager {
       ItemTags.setCollection(this.items);
       FluidTags.setCollection(this.fluids);
       EntityTypeTags.setCollection(this.entityTypes);
-   }
-
-   static class DataTagCollection<T extends IForgeRegistryEntry<T>> extends TagCollection<T> {
-      public DataTagCollection(IForgeRegistry<T> registry, String p_i231436_2_, String p_i231436_3_) {
-         super(resloc -> Optional.ofNullable(registry.getValue(resloc)), p_i231436_2_, p_i231436_3_);
-      }
    }
 }
