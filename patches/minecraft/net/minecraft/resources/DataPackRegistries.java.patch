@@ -1,28 +1,19 @@
 --- a/net/minecraft/resources/DataPackRegistries.java
 +++ b/net/minecraft/resources/DataPackRegistries.java
-@@ -22,6 +22,8 @@
-    private final AdvancementManager field_240958_h_ = new AdvancementManager(this.field_240956_f_);
-    private final FunctionReloader field_240959_i_;
+@@ -11,7 +11,7 @@
+ import net.minecraft.tags.NetworkTagManager;
+ import net.minecraft.util.Unit;
  
-+   private final net.minecraftforge.common.loot.LootModifierManager lootManager = new net.minecraftforge.common.loot.LootModifierManager();
-+
-    public DataPackRegistries(Commands.EnvironmentType p_i232598_1_, int p_i232598_2_) {
-       this.field_240953_c_ = new Commands(p_i232598_1_);
-       this.field_240959_i_ = new FunctionReloader(p_i232598_2_, this.field_240953_c_.func_197054_a());
-@@ -31,6 +33,7 @@
+-public class DataPackRegistries implements AutoCloseable {
++public class DataPackRegistries implements AutoCloseable, net.minecraftforge.resource.IForgeDataPackRegistries {
+    private static final CompletableFuture<Unit> field_240951_a_ = CompletableFuture.completedFuture(Unit.INSTANCE);
+    private final IReloadableResourceManager field_240952_b_ = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
+    private final Commands field_240953_c_;
+@@ -31,6 +31,7 @@
        this.field_240952_b_.func_219534_a(this.field_240957_g_);
        this.field_240952_b_.func_219534_a(this.field_240959_i_);
        this.field_240952_b_.func_219534_a(this.field_240958_h_);
-+      this.field_240952_b_.func_219534_a(this.lootManager);
++      this.getResourcesToReload().forEach(field_240952_b_::func_219534_a);
     }
  
     public FunctionReloader func_240960_a_() {
-@@ -85,4 +88,8 @@
-    public void close() {
-       this.field_240952_b_.close();
-    }
-+
-+   public net.minecraftforge.common.loot.LootModifierManager getLootModifierManager() {
-+      return lootManager;
-+   }
- }
