@@ -122,8 +122,17 @@ project(':clean') {
             clean_server {
                 taskName 'clean_server'
 
-                main 'net.minecraft.server.MinecraftServer'
+                main 'net.minecraft.server.Main'
                 workingDirectory project.file('run')
+            }
+
+            clean_data {
+                taskName 'clean_data'
+
+                main 'net.minecraft.data.Main'
+                workingDirectory project.file('run')
+
+                args '--dev', '--output', rootProject.file('src/generated/resources/'), '--validate'
             }
         }
     }
