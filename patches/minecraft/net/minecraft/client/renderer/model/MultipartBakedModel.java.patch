@@ -13,12 +13,15 @@
        this.field_188621_a = ibakedmodel.func_177555_b();
        this.field_188622_b = ibakedmodel.func_177556_c();
        this.field_230185_c_ = ibakedmodel.func_230044_c_();
-@@ -98,6 +100,22 @@
+@@ -98,6 +100,25 @@
        return this.field_188625_e;
     }
  
 +   public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, net.minecraftforge.client.model.data.IModelData extraData) {
-+      return net.minecraftforge.client.ForgeHooksClient.getMultipartModelQuads(this.field_188626_f, this.field_210277_g, state, side, rand, extraData);
++      if (state == null) return Collections.emptyList();
++      BitSet bitset = field_210277_g.computeIfAbsent(state, (s) -> java.util.stream.IntStream.range(0, field_188626_f.size()).filter((i) -> field_188626_f.get(i).getLeft().test(s)).collect(BitSet::new, BitSet::set, BitSet::or));
++      long seed = rand.nextLong();
++      return bitset.stream().mapToObj(field_188626_f::get).flatMap(pair -> pair.getRight().getQuads(state, side, new Random(seed), extraData).stream()).collect(java.util.stream.Collectors.toList());
 +   }
 +
 +   public boolean isAmbientOcclusion(BlockState state) {

@@ -42,21 +42,15 @@ import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.settings.KeyBinding;
@@ -69,10 +63,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
@@ -662,43 +654,6 @@ public class ForgeHooksClient
             tr.push(stack);
         }
         return model;
-    }
-
-    public static List<BakedQuad> getMultipartModelQuads(List<Pair<Predicate<BlockState>, IBakedModel>> selectors, Map<BlockState, BitSet> bitSetMap, @Nullable BlockState state, @Nullable Direction side, Random rand, IModelData data)
-    {
-        if (state == null)
-        {
-            return Collections.emptyList();
-        }
-
-        BitSet bitset = bitSetMap.get(state);
-        if (bitset == null)
-        {
-            bitset = new BitSet();
-
-            for(int i = 0; i < selectors.size(); ++i)
-            {
-                Pair<Predicate<BlockState>, IBakedModel> pair = selectors.get(i);
-                if (pair.getLeft().test(state))
-                {
-                    bitset.set(i);
-                }
-            }
-
-            bitSetMap.put(state, bitset);
-        }
-
-        List<BakedQuad> list = Lists.newArrayList();
-        long k = rand.nextLong();
-        for(int j = 0; j < bitset.length(); ++j)
-        {
-            if (bitset.get(j))
-            {
-                list.addAll(selectors.get(j).getRight().getQuads(state, side, new Random(k), data));
-            }
-        }
-
-        return list;
     }
 
     public static void onInputUpdate(PlayerEntity player, MovementInput movementInput)
