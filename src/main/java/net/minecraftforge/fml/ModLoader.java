@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -43,6 +44,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
+import net.minecraftforge.resource.DataTagCollectionManager;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -291,6 +293,9 @@ public class ModLoader
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
+        DataTagCollectionManager manager = new DataTagCollectionManager();
+        manager.loadTags(existingFileHelper.getServer(), Util.getServerExecutor(), Runnable::run);
+//        manager.setupTags();
         gatherAndInitializeMods(() -> {});
         dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
         dataGeneratorConfig.runAll();

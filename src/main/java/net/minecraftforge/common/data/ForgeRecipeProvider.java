@@ -153,7 +153,7 @@ public class ForgeRecipeProvider extends RecipeProvider
 
         boolean modified = false;
         List<IItemList> items = new ArrayList<>();
-        IItemList[] vanillaItems = getField(Ingredient.class, vanilla, 3);
+        IItemList[] vanillaItems = getField(Ingredient.class, vanilla, 2); //This will probably crash between versions, if null fix index
         for (IItemList entry : vanillaItems)
         {
             if (entry instanceof SingleItemList)
