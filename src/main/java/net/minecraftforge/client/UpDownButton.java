@@ -23,35 +23,20 @@ public class UpDownButton extends net.minecraft.client.gui.widget.button.Button 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(x, y, 0);
+        RenderSystem.scalef(-1, 1, 1);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(5.5f, 8.5f, 0.0f);
+        RenderSystem.rotatef(90, 0, 0, 1);
+        RenderSystem.translatef(-8.5f, 5.5f, 0.0f);
         if (isDown) {
-            blit(this.x, this.y, 1, 208 + i * 18, 11, 17);
+            blit(0, 0, 1, 208 + i * 18, 11, 17);
         } else {
-            blit(this.x, this.y, 15, 208 + i * 18, 11, 17);
+            blit(0, 0, 15, 208 + i * 18, 11, 17);
         }
+        RenderSystem.popMatrix();
+        RenderSystem.popMatrix();
         this.renderBg(minecraft, mouseX, mouseY);
-    }
-
-    // re-implemented blit function for rotating and mirroring texture
-    public void blit(int x, int y, int u, int v, int w, int h) {
-        blit(x, y, 0, (float)u, (float)v, w, h, 256, 256);
-    }
-
-    public static void blit(int x, int y, int blitOffset, float u, float v, int w, int h, int textureW, int textureH) {
-        innerBlit(x, x + h, y, y + w, blitOffset, w, h, u, v, textureH, textureW);
-    }
-
-    private static void innerBlit(int minX, int maxX, int minY, int maxY, int blitOffset, int w, int h, float u, float v, int textureW, int textureH) {
-        innerBlit(minX, maxX, minY, maxY, blitOffset, u / textureW, (u + w) / textureW, v / textureH, (v + h) / textureH);
-    }
-
-    protected static void innerBlit(int minX, int maxX, int minY, int maxY, int blitOffset, float minU, float maxU, float minV, float maxV) {
-        net.minecraft.client.renderer.Tessellator tessellator = net.minecraft.client.renderer.Tessellator.getInstance();
-        net.minecraft.client.renderer.BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(7, net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(minX, maxY, blitOffset).tex(maxU, minV).endVertex();
-        bufferBuilder.pos(maxX, maxY, blitOffset).tex(maxU, maxV).endVertex();
-        bufferBuilder.pos(maxX, minY, blitOffset).tex(minU, maxV).endVertex();
-        bufferBuilder.pos(minX, minY, blitOffset).tex(minU, minV).endVertex();
-        tessellator.draw();
     }
 }

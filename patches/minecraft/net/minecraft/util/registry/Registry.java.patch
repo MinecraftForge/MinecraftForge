@@ -165,9 +165,9 @@
        return Activity.field_221366_b;
     });
 +   @Deprecated public static final Registry<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = forge("recipe_book_categories",
-+           net.minecraftforge.common.extensions.IForgeRecipeBookCategory.class, Registry::getDefaultRecipeBook);
++           net.minecraftforge.common.extensions.IForgeRecipeBookCategory.class, Registry::getDefaultRecipeBookCategory);
  
-+   private static net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> getDefaultRecipeBook() {
++   private static net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> getDefaultRecipeBookCategory() {
 +      return net.minecraft.client.util.RecipeBookCategories.SEARCH;
 +   }
 +

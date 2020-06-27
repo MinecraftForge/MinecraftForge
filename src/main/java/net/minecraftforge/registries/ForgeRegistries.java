@@ -82,7 +82,6 @@ public class ForgeRegistries
     public static final IForgeRegistry<PaintingType> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(PaintingType.class);
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
-    public static final IForgeRegistry<IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(IForgeRecipeBookCategory.class);
     
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
@@ -109,6 +108,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<ModDimension> MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
+    public static final IForgeRegistry<IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(IForgeRecipeBookCategory.class);
 
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.

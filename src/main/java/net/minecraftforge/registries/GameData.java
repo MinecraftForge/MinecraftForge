@@ -67,6 +67,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
@@ -126,7 +127,6 @@ public class GameData
     public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
     public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
     public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
-    public static final ResourceLocation RECIPE_BOOK_CATEGORIES = new ResourceLocation("recipe_book_categories");
     
     // Villages
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
@@ -153,6 +153,7 @@ public class GameData
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
     public static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
+    public static final ResourceLocation RECIPE_BOOK_CATEGORIES = new ResourceLocation("recipe_book_categories");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
@@ -198,7 +199,6 @@ public class GameData
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
-        makeRegistry(RECIPE_BOOK_CATEGORIES, net.minecraftforge.common.extensions.IForgeRecipeBookCategory.class).disableSaving().create();
         
         // Villagers
         makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();
@@ -225,6 +225,7 @@ public class GameData
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
+        makeRegistry(RECIPE_BOOK_CATEGORIES, IForgeRecipeBookCategory.class).disableSaving().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
