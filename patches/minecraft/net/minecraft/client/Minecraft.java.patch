@@ -169,6 +169,15 @@
        this.field_71417_B.func_198021_g();
     }
  
+@@ -1104,7 +1115,7 @@
+       RenderSystem.clear(256, field_142025_a);
+       RenderSystem.matrixMode(5889);
+       RenderSystem.loadIdentity();
+-      RenderSystem.ortho(0.0D, (double)this.field_195558_d.func_198109_k(), (double)this.field_195558_d.func_198091_l(), 0.0D, 1000.0D, 3000.0D);
++      RenderSystem.ortho(0.0D, (double)this.field_195558_d.func_198109_k(), (double)this.field_195558_d.func_198091_l(), 0.0D, net.minecraftforge.client.ForgeHooksClient.GUI_DEPTH_NEAR, net.minecraftforge.client.ForgeHooksClient.GUI_DEPTH_FAR);
+       RenderSystem.matrixMode(5888);
+       RenderSystem.loadIdentity();
+       RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
 @@ -1227,11 +1238,21 @@
           if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.func_216346_c() == RayTraceResult.Type.BLOCK) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;

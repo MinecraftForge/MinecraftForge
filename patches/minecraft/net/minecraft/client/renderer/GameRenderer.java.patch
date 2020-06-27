@@ -18,6 +18,15 @@
        }
     }
  
+@@ -445,7 +447,7 @@
+          RenderSystem.clear(256, Minecraft.field_142025_a);
+          RenderSystem.matrixMode(5889);
+          RenderSystem.loadIdentity();
+-         RenderSystem.ortho(0.0D, (double)mainwindow.func_198109_k() / mainwindow.func_198100_s(), (double)mainwindow.func_198091_l() / mainwindow.func_198100_s(), 0.0D, 1000.0D, 3000.0D);
++         RenderSystem.ortho(0.0D, (double)mainwindow.func_198109_k() / mainwindow.func_198100_s(), (double)mainwindow.func_198091_l() / mainwindow.func_198100_s(), 0.0D, net.minecraftforge.client.ForgeHooksClient.GUI_DEPTH_NEAR, net.minecraftforge.client.ForgeHooksClient.GUI_DEPTH_FAR);
+          RenderSystem.matrixMode(5888);
+          RenderSystem.loadIdentity();
+          RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
 @@ -476,7 +478,7 @@
              }
           } else if (this.field_78531_r.field_71462_r != null) {
