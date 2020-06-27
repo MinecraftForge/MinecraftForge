@@ -34,6 +34,9 @@ import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.LootConditionManager;
 import net.minecraft.loot.functions.ILootFunction;
 import net.minecraft.loot.functions.LootFunctionManager;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,13 +57,17 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
+@Mod.EventBusSubscriber(modid = "forge")
 public class LootModifierManager extends JsonReloadListener {
+
     public static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, LootFunctionManager.func_237450_a_()).registerTypeHierarchyAdapter(ILootCondition.class, LootConditionManager.func_237474_a_()).create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-    
+
+    private static final LootModifierManager INSTANCE = new LootModifierManager();
+
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
@@ -154,4 +161,9 @@ public class LootModifierManager extends JsonReloadListener {
         return registeredLootModifiers.values();
     }
 
+    @SubscribeEvent
+    public static void onResourceReload(AddReloadListenerEvent event)
+    {
+        event.addListener(INSTANCE);
+    }
 }
