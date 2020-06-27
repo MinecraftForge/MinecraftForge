@@ -30,6 +30,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
@@ -1060,5 +1061,14 @@ public interface IForgeBlock
     default boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
         return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof LeavesBlock;
+    }
+
+    /**
+     * @return true if {@link Atlases#field_239279_C_} should be applied on fabulous graphics, for better translucency management.
+     * This is only of use when the block is rendered as an ItemEntity
+     */
+    default boolean shouldRenderFabulousGraphics()
+    {
+        return getBlock() instanceof BreakableBlock || getBlock() instanceof StainedGlassPaneBlock;
     }
 }
