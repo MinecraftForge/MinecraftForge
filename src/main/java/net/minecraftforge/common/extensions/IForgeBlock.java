@@ -1062,13 +1062,4 @@ public interface IForgeBlock
     {
         return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof LeavesBlock;
     }
-
-    /**
-     * @return true if {@link Atlases#field_239279_C_} should be applied on fabulous graphics, for better translucency management.
-     * This is only of use when the block is rendered as an ItemEntity
-     */
-    default boolean shouldRenderFabulousGraphics()
-    {
-        return getBlock() instanceof BreakableBlock || getBlock() instanceof StainedGlassPaneBlock;
-    }
 }
