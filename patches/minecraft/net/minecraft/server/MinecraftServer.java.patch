@@ -34,21 +34,16 @@
        WorldInfo worldinfo = savehandler.func_75757_d();
        WorldSettings worldsettings;
        if (worldinfo == null) {
-@@ -357,13 +361,13 @@
+@@ -356,8 +360,8 @@
+       }
  
        worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
++      net.minecraftforge.common.DimensionManager.fireRegister();
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
        this.func_213194_a(savehandler, worldinfo, worldsettings, ichunkstatuslistener);
        this.func_147139_a(this.func_147135_j(), true);
        this.func_213186_a(ichunkstatuslistener);
-    }
- 
-    protected void func_213194_a(SaveHandler p_213194_1_, WorldInfo p_213194_2_, WorldSettings p_213194_3_, IChunkStatusListener p_213194_4_) {
-+      net.minecraftforge.common.DimensionManager.fireRegister();
-       if (this.func_71242_L()) {
-          p_213194_2_.func_176127_a(field_213219_c);
-       }
 @@ -407,6 +411,7 @@
           if (dimensiontype != DimensionType.field_223227_a_) {
              this.field_71305_c.put(dimensiontype, new ServerMultiWorld(serverworld1, this, this.field_213217_au, p_213194_1_, dimensiontype, this.field_71304_b, p_213194_4_));
