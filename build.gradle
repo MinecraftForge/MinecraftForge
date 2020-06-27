@@ -132,7 +132,7 @@ project(':clean') {
                 main 'net.minecraft.data.Main'
                 workingDirectory project.file('run')
 
-                args '--dev', '--output', rootProject.file('src/generated/resources/'), '--validate'
+                args '--all', '--output', rootProject.file('src/generated/resources/'), '--validate'
             }
         }
     }

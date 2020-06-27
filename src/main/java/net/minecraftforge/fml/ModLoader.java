@@ -295,7 +295,6 @@ public class ModLoader
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
         DataTagCollectionManager manager = new DataTagCollectionManager();
         manager.loadTags(existingFileHelper.getServer(), Util.getServerExecutor(), Runnable::run);
-//        manager.setupTags();
         gatherAndInitializeMods(() -> {});
         dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
         dataGeneratorConfig.runAll();
