@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
@@ -37,6 +38,7 @@ public class BiomeManager
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
+    private static List<Biome> netherBiomes = Lists.newArrayList(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_);
 
     static
     {
@@ -103,6 +105,11 @@ public class BiomeManager
         if (list != null) list.add(entry);
     }
 
+    public static void addNetherBiome(Biome biome)
+    {
+        netherBiomes.add(biome);
+    }
+
     public static void removeBiome(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
@@ -114,6 +121,11 @@ public class BiomeManager
         }
     }
 
+    public static void removeNetherBiome(Biome biome)
+    {
+        netherBiomes.remove(biome);
+    }
+
     @Nullable
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
@@ -121,6 +133,11 @@ public class BiomeManager
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
+    }
+
+    public static ImmutableList<Biome> getNetherBiomes()
+    {
+        return ImmutableList.copyOf(netherBiomes);
     }
 
     public static boolean isTypeListModded(BiomeType type)
