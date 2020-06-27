@@ -5,10 +5,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nonnull;
@@ -31,35 +29,20 @@ public class UpDownButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        matrixStack.pushPose();
+        matrixStack.translate(x, y, 0);
+        matrixStack.scale(-1, 1, 1);
+        matrixStack.pushPose();
+        matrixStack.translate(5.5f, 8.5f, 0.0f);
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90f));
+        matrixStack.translate(-8.5f, 5.5f, 0.0f);
         if (isDown) {
-            blit(this.x, this.y, 1, 208 + i * 18, 11, 17);
+            blit(matrixStack, 0, 0, 1, 208 + i * 18, 11, 17);
         } else {
-            blit(this.x, this.y, 15, 208 + i * 18, 11, 17);
+            blit(matrixStack, 0, 0, 15, 208 + i * 18, 11, 17);
         }
+        matrixStack.popPose();
+        matrixStack.popPose();
         this.renderBg(matrixStack, minecraft, mouseX, mouseY);
-    }
-
-    // re-implemented blit function for rotating and mirroring texture
-    public void blit(int x, int y, int u, int v, int w, int h) {
-        blit(x, y, 0, (float)u, (float)v, w, h, 256, 256);
-    }
-
-    public static void blit(int x, int y, int blitOffset, float u, float v, int w, int h, int textureW, int textureH) {
-        innerBlit(x, x + h, y, y + w, blitOffset, w, h, u, v, textureH, textureW);
-    }
-
-    private static void innerBlit(int minX, int maxX, int minY, int maxY, int blitOffset, int w, int h, float u, float v, int textureW, int textureH) {
-        innerBlit(minX, maxX, minY, maxY, blitOffset, u / textureW, (u + w) / textureW, v / textureH, (v + h) / textureH);
-    }
-
-    protected static void innerBlit(int minX, int maxX, int minY, int maxY, int blitOffset, float minU, float maxU, float minV, float maxV) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuilder();
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.vertex(minX, maxY, blitOffset).uv(maxU, minV).endVertex();
-        bufferBuilder.vertex(maxX, maxY, blitOffset).uv(maxU, maxV).endVertex();
-        bufferBuilder.vertex(maxX, minY, blitOffset).uv(minU, maxV).endVertex();
-        bufferBuilder.vertex(minX, minY, blitOffset).uv(minU, minV).endVertex();
-        tessellator.end();
     }
 }

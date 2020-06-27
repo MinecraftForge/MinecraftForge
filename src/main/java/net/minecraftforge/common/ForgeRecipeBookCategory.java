@@ -5,11 +5,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraftforge.common.extensions.IForgeRecipeBookCategory;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ForgeRecipeBookCategory<T extends IRecipeType<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<IForgeRecipeBookCategory<?>> implements IForgeRecipeBookCategory<T> {
+public class ForgeRecipeBookCategory<T extends IRecipeType<?>> extends ForgeRegistryEntry<IForgeRecipeBookCategory<?>> implements IForgeRecipeBookCategory<T> {
     private final List<ItemStack> icons;
     private final boolean isSearch;
     private final T recipeType;
@@ -58,7 +60,7 @@ public class ForgeRecipeBookCategory<T extends IRecipeType<?>> extends net.minec
     }
 
     public static List<IForgeRecipeBookCategory<?>> getValidCategories(IRecipe<?> recipe) {
-        return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
+        return ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
             return recipe.getType().equals(category.getRecipeType()) && category.getPredicate().test(recipe);
         }).collect(java.util.stream.Collectors.toList());
     }

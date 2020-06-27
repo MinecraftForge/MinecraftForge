@@ -161,7 +161,6 @@ public class GameData
         makeRegistry(RECIPE_SERIALIZERS, c(IRecipeSerializer.class)).disableSaving().create();
         makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES, c(StatType.class)).create();
-        makeRegistry(RECIPE_BOOK_CATEGORIES, c(IForgeRecipeBookCategory.class)).disableSaving().create();
 
         // Villagers
         makeRegistry(VILLAGER_PROFESSIONS, VillagerProfession.class, "none").create();
@@ -190,6 +189,7 @@ public class GameData
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
         makeRegistry(WORLD_TYPES, ForgeWorldType.class).disableSaving().disableSync().create();
+        makeRegistry(RECIPE_BOOK_CATEGORIES, c(IForgeRecipeBookCategory.class)).disableSaving().create();
     }
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
     private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }

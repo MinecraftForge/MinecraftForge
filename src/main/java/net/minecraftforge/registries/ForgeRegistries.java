@@ -86,7 +86,6 @@ public class ForgeRegistries
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
     public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Attribute.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
-    public static final IForgeRegistry<IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(IForgeRecipeBookCategory.class);
 
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
