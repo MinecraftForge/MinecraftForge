@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.178'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
@@ -829,16 +829,16 @@ project(':forge') {
                         server: '/data/server.lzma'
                     ],
                     MC_SLIM: [
-                        client: "[net.minecraft:client:${MC_VERSION}:slim]",
-                        server: "[net.minecraft:server:${MC_VERSION}:slim]"
+                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim]",
+                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim]"
                     ],
                     MC_SLIM_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
                         server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
                     ],
                     MC_EXTRA: [
-                        client: "[net.minecraft:client:${MC_VERSION}:extra]",
-                        server: "[net.minecraft:server:${MC_VERSION}:extra]"
+                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:extra]",
+                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:extra]"
                     ],
                     MC_EXTRA_SHA: [
                         client: "'${sha1(tasks.getByName('downloadClientExtra').output)}'",
@@ -926,7 +926,7 @@ project(':forge') {
         ['slim', 'extra'].each { type -> 
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
-                artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
+                artifact = "net.minecraft:${side}:${MC_VERSION}-${MCP_VERSION}:${type}"
             }
             installerJson.dependsOn(name)
             installerJson.inputs.file(tasks.getByName(name).output)
@@ -979,7 +979,7 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
+            classpath += "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {

@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/renderer/BufferBuilder.java
 +++ b/net/minecraft/client/renderer/BufferBuilder.java
-@@ -121,7 +121,6 @@
- 
-          bitset.set(l);
-       }
--
-    }
- 
-    private void func_227829_a_(FloatBuffer p_227829_1_, int p_227829_2_) {
-@@ -297,6 +296,7 @@
+@@ -297,6 +297,7 @@
        }
  
        ByteBuffer bytebuffer = this.field_179001_a.slice();
@@ -16,7 +8,7 @@
        ((Buffer)this.field_179001_a).clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
     }
-@@ -364,4 +364,15 @@
+@@ -364,4 +365,15 @@
           this.field_179018_e = p_i225907_2_;
        }
     }
