@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +222,56 @@
+@@ -221,4 +222,69 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }
@@ -57,9 +57,22 @@
 +               if (ote instanceof ChestTileEntity) {
 +                  IInventory top    = type == ChestType.RIGHT ? this : (IInventory)ote;
 +                  IInventory bottom = type == ChestType.RIGHT ? (IInventory)ote : this;
++                  class ChestWrapper extends net.minecraftforge.items.wrapper.InvWrapper {
++                     public ChestWrapper(IInventory inv)
++                     {
++                        super(inv);
++                     }
++
++                     @Override
++                     protected void markDirty()
++                     {
++                        top.func_70296_d();
++                        bottom.func_70296_d();
++                     }
++                  }
 +                  return new net.minecraftforge.items.wrapper.CombinedInvWrapper(
-+                     new net.minecraftforge.items.wrapper.InvWrapper(top),
-+                     new net.minecraftforge.items.wrapper.InvWrapper(bottom));
++                     new ChestWrapper(top),
++                     new ChestWrapper(bottom));
 +               }
 +            }
 +         }
