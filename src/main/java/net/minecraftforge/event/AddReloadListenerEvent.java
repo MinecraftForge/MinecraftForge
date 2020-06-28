@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * The main ResourceManager is recreated on each reload, through {@link DataPackRegistries}'s creation.
  *
- * The event is fired on each reload and lets modders add their own ReloadListeners.
+ * The event is fired on each reload and lets modders add their own ReloadListeners, for server-side resources.
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
 public class AddReloadListenerEvent extends Event
