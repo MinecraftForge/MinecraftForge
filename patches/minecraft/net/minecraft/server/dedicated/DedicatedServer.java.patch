@@ -39,25 +39,21 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +181,7 @@
+@@ -189,11 +195,12 @@
           }
  
-          if (serverproperties.field_219030_x) {
-+         net.minecraftforge.fml.server.ServerModLoader.end();
-             field_155771_h.info("Starting remote control listener");
-             this.field_71339_n = new MainThread(this);
-             this.field_71339_n.func_72602_a();
-@@ -193,7 +200,8 @@
+          Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
++         // <3 you Grum for this, saves us ~30 patch files! --^
+          if (serverproperties.field_241079_P_) {
              ServerInfoMBean.func_233490_a_(this);
           }
  
 -         return true;
-+         // <3 you Grum for this, saves us ~30 patch files! --^
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -506,6 +514,11 @@
+@@ -506,6 +513,11 @@
        return false;
     }
  
