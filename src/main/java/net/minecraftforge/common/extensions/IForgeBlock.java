@@ -41,6 +41,7 @@ import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -500,7 +501,30 @@ public interface IForgeBlock
     * @param plantable The plant that wants to check
     * @return True to allow the plant to be planted/stay.
     */
-    boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable);
+    default boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable)
+    {
+        BlockState plant = plantable.getPlant(world, pos.offset(facing));
+
+        if(plant.getBlock() instanceof AttachedStemBlock || plant.getBlock() instanceof CropsBlock || plant.getBlock() instanceof StemBlock) return state.isIn(Blocks.FARMLAND);
+        if(plant.getBlock() instanceof DeadBushBlock) return state.getBlock() == Blocks.SAND || state.getBlock() == Blocks.RED_SAND || state.getBlock() == Blocks.TERRACOTTA || state.getBlock() == Blocks.WHITE_TERRACOTTA || state.getBlock() == Blocks.ORANGE_TERRACOTTA || state.getBlock() == Blocks.MAGENTA_TERRACOTTA || state.getBlock() == Blocks.LIGHT_BLUE_TERRACOTTA || state.getBlock() == Blocks.YELLOW_TERRACOTTA || state.getBlock() == Blocks.LIME_TERRACOTTA || state.getBlock() == Blocks.PINK_TERRACOTTA || state.getBlock() == Blocks.GRAY_TERRACOTTA || state.getBlock() == Blocks.LIGHT_GRAY_TERRACOTTA || state.getBlock() == Blocks.CYAN_TERRACOTTA || state.getBlock() == Blocks.PURPLE_TERRACOTTA || state.getBlock() == Blocks.BLUE_TERRACOTTA || state.getBlock() == Blocks.BROWN_TERRACOTTA || state.getBlock() == Blocks.GREEN_TERRACOTTA || state.getBlock() == Blocks.RED_TERRACOTTA || state.getBlock() == Blocks.BLACK_TERRACOTTA || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.COARSE_DIRT || state.getBlock() == Blocks.PODZOL;
+        if(plant.getBlock() instanceof LilyPadBlock) return (world.getFluidState(pos).getFluid() == Fluids.WATER || state.getMaterial() == Material.ICE) && world.getFluidState(pos.up()).getFluid() == Fluids.EMPTY;
+        if(plant.getBlock() instanceof MushroomBlock) return state.isOpaqueCube(world, pos);
+        if(plant.getBlock() instanceof NetherWartBlock) return state.isIn(Blocks.SOUL_SAND);
+        if(plant.getBlock() instanceof SeaGrassBlock || plant.getBlock() instanceof TallSeaGrassBlock) return state.isSolidSide(world, pos, Direction.UP) && !state.isIn(Blocks.MAGMA_BLOCK);
+        if(plant.getBlock() instanceof SeaPickleBlock) return !state.getCollisionShape(world, pos).project(Direction.UP).isEmpty();
+
+        if(plant.getBlock() instanceof BushBlock) return state.isIn(Blocks.GRASS_BLOCK) || state.isIn(Blocks.DIRT) || state.isIn(Blocks.COARSE_DIRT) || state.isIn(Blocks.PODZOL) || state.isIn(Blocks.FARMLAND); //Organization is around BushBlock, children that ignore super go above, those that accept it go below
+
+        if(plant.getBlock() instanceof FungusBlock) return state.func_235714_a_(BlockTags.field_232873_an_) || state.isIn(Blocks.field_235336_cN_);
+        if(plant.getBlock() instanceof NetherRootsBlock) return state.func_235714_a_(BlockTags.field_232873_an_) || state.isIn(Blocks.field_235336_cN_);
+        if(plant.getBlock() instanceof NetherSproutsBlock) return state.func_235714_a_(BlockTags.field_232873_an_) || state.isIn(Blocks.field_235336_cN_);
+        if(plant.getBlock() instanceof WitherRoseBlock) return state.isIn(Blocks.NETHERRACK) || state.isIn(Blocks.SOUL_SAND) || state.isIn(Blocks.field_235336_cN_);
+
+        //End BushBlock Children
+        if(plant.getBlock() instanceof CactusBlock) return state.isIn(Blocks.CACTUS) || state.isIn(Blocks.SAND) || state.isIn(Blocks.RED_SAND);
+        if(plant.getBlock() instanceof SugarCaneBlock) return state.getBlock() == plant.getBlock() || (state.isIn(Blocks.GRASS_BLOCK) || state.isIn(Blocks.DIRT) || state.isIn(Blocks.COARSE_DIRT) || state.isIn(Blocks.PODZOL) || state.isIn(Blocks.SAND) || state.isIn(Blocks.RED_SAND));
+        return false;
+    }
 
     /**
      * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
