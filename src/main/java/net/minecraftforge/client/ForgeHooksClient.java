@@ -153,7 +153,7 @@ public class ForgeHooksClient
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    // De-inlined to ensure
+    // De-inlined to ensure the patches don't get out of sync.
     public static final double GUI_DEPTH_NEAR = 1000.0;
     public static final double GUI_DEPTH_FAR = 30000.0; // Forge: expand from 3000 because quite a lot of mods have issues due to the limited range.
 
