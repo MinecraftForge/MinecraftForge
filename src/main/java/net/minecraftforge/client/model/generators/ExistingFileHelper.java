@@ -62,10 +62,6 @@ public class ExistingFileHelper {
         this.enable = enable;
     }
 
-    public IResourceManager getServer(){
-        return serverData;
-    }
-
     private IResourceManager getManager(ResourcePackType type) {
         return type == ResourcePackType.CLIENT_RESOURCES ? clientResources : serverData;
     }
