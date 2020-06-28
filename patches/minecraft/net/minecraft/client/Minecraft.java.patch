@@ -278,7 +278,15 @@
     }
  
     private void func_184117_aA() {
-@@ -1676,6 +1715,10 @@
+@@ -1643,6 +1682,7 @@
+          try {
+             saveformat$levelsave.func_237287_a_(p_238195_2_, iserverconfiguration);
+             minecraft$packmanager.func_238225_b_().func_240971_i_();
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(minecraft$packmanager.func_238225_b_().func_240966_d_()));
+             YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString());
+             MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+             GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
+@@ -1676,6 +1716,10 @@
           this.field_71424_I.func_76320_a("waitForServer");
  
           while(!this.field_71437_Z.func_71200_ad()) {
@@ -289,7 +297,7 @@
              worldloadprogressscreen.func_231023_e_();
              this.func_195542_b(false);
  
-@@ -1696,7 +1739,12 @@
+@@ -1696,7 +1740,12 @@
           networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -303,7 +311,7 @@
           this.field_71453_ak = networkmanager;
        } else {
           this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
-@@ -1770,6 +1818,7 @@
+@@ -1770,6 +1819,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -311,7 +319,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1801,10 +1850,12 @@
+@@ -1801,10 +1851,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -324,7 +332,7 @@
           if (integratedserver != null) {
              this.field_71424_I.func_76320_a("waitForServer");
  
-@@ -1819,6 +1870,7 @@
+@@ -1819,6 +1871,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -332,7 +340,7 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1849,6 +1901,7 @@
+@@ -1849,6 +1902,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
@@ -340,7 +348,7 @@
     }
  
     public boolean func_238216_r_() {
-@@ -1894,112 +1947,9 @@
+@@ -1894,112 +1948,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -456,7 +464,7 @@
        }
     }
  
-@@ -2081,6 +2031,7 @@
+@@ -2081,6 +2032,7 @@
        return field_71432_P;
     }
  
@@ -464,7 +472,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -2388,7 +2339,7 @@
+@@ -2388,7 +2340,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -473,7 +481,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2407,6 +2358,14 @@
+@@ -2407,6 +2359,14 @@
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
  

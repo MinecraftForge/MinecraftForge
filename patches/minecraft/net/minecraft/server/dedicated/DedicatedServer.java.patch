@@ -18,11 +18,12 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -153,17 +156,20 @@
+@@ -153,17 +156,21 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
 +         net.minecraftforge.fml.server.ServerModLoader.end();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(getDataPackRegistries().func_240966_d_()));
           this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
           long i = Util.func_211178_c();
           this.func_71191_d(serverproperties.field_219026_t);
@@ -39,7 +40,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -189,11 +195,12 @@
+@@ -189,11 +196,12 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -53,7 +54,7 @@
        }
     }
  
-@@ -506,6 +513,11 @@
+@@ -506,6 +514,11 @@
        return false;
     }
  
