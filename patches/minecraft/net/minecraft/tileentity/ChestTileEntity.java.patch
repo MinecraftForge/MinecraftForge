@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +222,69 @@
+@@ -221,4 +222,39 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }
@@ -46,38 +46,8 @@
 +      if (!(state.func_177230_c() instanceof ChestBlock)) {
 +         return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +      }
-+      ChestType type = state.func_177229_b(ChestBlock.field_196314_b);
-+      if (type != ChestType.SINGLE) {
-+         BlockPos opos = this.func_174877_v().func_177972_a(ChestBlock.func_196311_i(state));
-+         BlockState ostate = this.func_145831_w().func_180495_p(opos);
-+         if (state.func_177230_c() == ostate.func_177230_c()) {
-+            ChestType otype = ostate.func_177229_b(ChestBlock.field_196314_b);
-+            if (otype != ChestType.SINGLE && type != otype && state.func_177229_b(ChestBlock.field_176459_a) == ostate.func_177229_b(ChestBlock.field_176459_a)) {
-+               TileEntity ote = this.func_145831_w().func_175625_s(opos);
-+               if (ote instanceof ChestTileEntity) {
-+                  IInventory top    = type == ChestType.RIGHT ? this : (IInventory)ote;
-+                  IInventory bottom = type == ChestType.RIGHT ? (IInventory)ote : this;
-+                  class ChestWrapper extends net.minecraftforge.items.wrapper.InvWrapper {
-+                     public ChestWrapper(IInventory inv)
-+                     {
-+                        super(inv);
-+                     }
-+
-+                     @Override
-+                     protected void markDirty()
-+                     {
-+                        top.func_70296_d();
-+                        bottom.func_70296_d();
-+                     }
-+                  }
-+                  return new net.minecraftforge.items.wrapper.CombinedInvWrapper(
-+                     new ChestWrapper(top),
-+                     new ChestWrapper(bottom));
-+               }
-+            }
-+         }
-+      }
-+      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++      IInventory inv = ChestBlock.func_226916_a_((ChestBlock) state.func_177230_c(), state, func_145831_w(), func_174877_v(), true);
++      return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
 +   }
 +
 +   @Override
