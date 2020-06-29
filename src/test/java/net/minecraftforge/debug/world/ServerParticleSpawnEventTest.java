@@ -26,7 +26,8 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = ServerParticleSpawnEventTest.MODID)
 @Mod(value = ServerParticleSpawnEventTest.MODID)
-public class ServerParticleSpawnEventTest {
+public class ServerParticleSpawnEventTest
+{
 
     public static final String MODID = "particle_world_handle_event_test";
 
@@ -36,8 +37,10 @@ public class ServerParticleSpawnEventTest {
      * @param event
      */
     @SubscribeEvent
-    public static void onEvent(ServerParticleSpawnEvent event) {
-        if(event.getParticle().getParameters().equals(ParticleTypes.DAMAGE_INDICATOR.getParameters())) {
+    public static void onEvent(ServerParticleSpawnEvent event)
+    {
+        if (event.getParticle().getParameters().equals(ParticleTypes.DAMAGE_INDICATOR.getParameters()))
+        {
             event.setPosY(event.getPosY() + 2);
             event.setParticle(ParticleTypes.ANGRY_VILLAGER);
             event.setParticleSpeed(event.getParticleSpeed() * 2);

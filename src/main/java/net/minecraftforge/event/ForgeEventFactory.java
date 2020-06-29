@@ -529,7 +529,8 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
     }
 
-    public static ServerParticleSpawnEvent onWorldParticleSpawn(IParticleData particle, boolean longDistance, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed) {
+    public static ServerParticleSpawnEvent onWorldParticleSpawn(IParticleData particle, boolean longDistance, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed)
+    {
         ServerParticleSpawnEvent event = new ServerParticleSpawnEvent(particle, longDistance, particleCount, speed, posX, posY, posZ, xOffset, yOffset, zOffset);
         if (MinecraftForge.EVENT_BUS.post(event)) return null;
         return event;

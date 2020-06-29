@@ -34,7 +34,8 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class ServerParticleSpawnEvent extends Event {
+public class ServerParticleSpawnEvent extends Event
+{
 
     private IParticleData particle;
     private boolean longDistance;
@@ -47,7 +48,8 @@ public class ServerParticleSpawnEvent extends Event {
     private double yOffset;
     private double zOffset;
 
-    public ServerParticleSpawnEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double posX, double posY, double posZ, double xOffset, double yOffset, double zOffset) {
+    public ServerParticleSpawnEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double posX, double posY, double posZ, double xOffset, double yOffset, double zOffset)
+    {
         this.particle = particle;
         this.longDistance = longDistance;
         this.particleCount = particleCount;
@@ -60,83 +62,103 @@ public class ServerParticleSpawnEvent extends Event {
         this.zOffset = zOffset;
     }
 
-    public IParticleData getParticle() {
+    public IParticleData getParticle()
+    {
         return particle;
     }
 
-    public void setParticle(IParticleData particle) {
+    public void setParticle(IParticleData particle)
+    {
         this.particle = particle;
     }
 
-    public boolean isLongDistance() {
+    public boolean isLongDistance()
+    {
         return longDistance;
     }
 
-    public void setLongDistance(boolean longDistance) {
+    public void setLongDistance(boolean longDistance)
+    {
         this.longDistance = longDistance;
     }
 
-    public int getParticleCount() {
+    public int getParticleCount()
+    {
         return particleCount;
     }
 
-    public void setParticleCount(int particleCount) {
+    public void setParticleCount(int particleCount)
+    {
         this.particleCount = particleCount;
     }
 
-    public double getParticleSpeed() {
+    public double getParticleSpeed()
+    {
         return particleSpeed;
     }
 
-    public void setParticleSpeed(double particleSpeed) {
+    public void setParticleSpeed(double particleSpeed)
+    {
         this.particleSpeed = particleSpeed;
     }
 
-    public double getPosX() {
+    public double getPosX()
+    {
         return posX;
     }
 
-    public void setPosX(double posX) {
+    public void setPosX(double posX)
+    {
         this.posX = posX;
     }
 
-    public double getPosY() {
+    public double getPosY()
+    {
         return posY;
     }
 
-    public void setPosY(double posY) {
+    public void setPosY(double posY)
+    {
         this.posY = posY;
     }
 
-    public double getPosZ() {
+    public double getPosZ()
+    {
         return posZ;
     }
 
-    public void setPosZ(double posZ) {
+    public void setPosZ(double posZ)
+    {
         this.posZ = posZ;
     }
 
-    public double getXOffset() {
+    public double getXOffset()
+    {
         return xOffset;
     }
 
-    public void setXOffset(double xOffset) {
+    public void setXOffset(double xOffset)
+    {
         this.xOffset = xOffset;
     }
 
-    public double getYOffset() {
+    public double getYOffset()
+    {
         return yOffset;
     }
 
-    public void setYOffset(double yOffset) {
+    public void setYOffset(double yOffset)
+    {
         this.yOffset = yOffset;
     }
 
-    public double getZOffset() {
+    public double getZOffset()
+    {
         return zOffset;
     }
 
-    public void setZOffset(double zOffset) {
+    public void setZOffset(double zOffset)
+    {
         this.zOffset = zOffset;
     }
 }
