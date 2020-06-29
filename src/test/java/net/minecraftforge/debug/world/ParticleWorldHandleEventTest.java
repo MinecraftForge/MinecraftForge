@@ -20,7 +20,7 @@
 package net.minecraftforge.debug.world;
 
 import net.minecraft.particles.ParticleTypes;
-import net.minecraftforge.event.ParticleWorldHandleEvent;
+import net.minecraftforge.event.ServerParticleSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -36,7 +36,7 @@ public class ParticleWorldHandleEventTest {
      * @param event
      */
     @SubscribeEvent
-    public static void onEvent(ParticleWorldHandleEvent event) {
+    public static void onEvent(ServerParticleSpawnEvent event) {
         if(event.getParticle().getParameters().equals(ParticleTypes.DAMAGE_INDICATOR.getParameters())) {
             event.setYCoord(event.getYCoord() + 2);
             event.setParticle(ParticleTypes.ANGRY_VILLAGER);
