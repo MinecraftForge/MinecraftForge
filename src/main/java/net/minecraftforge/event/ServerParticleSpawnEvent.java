@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class ParticleWorldHandleEvent extends Event {
+public class ServerParticleSpawnEvent extends Event {
 
     private IParticleData particle;
     private boolean longDistance;
@@ -47,7 +47,7 @@ public class ParticleWorldHandleEvent extends Event {
     private double yOffset;
     private double zOffset;
 
-    public ParticleWorldHandleEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset) {
+    public ServerParticleSpawnEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset) {
         this.particle = particle;
         this.longDistance = longDistance;
         this.particleCount = particleCount;
