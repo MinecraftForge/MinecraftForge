@@ -47,6 +47,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         super(gen, blockTagProvider);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void registerTags()
     {
