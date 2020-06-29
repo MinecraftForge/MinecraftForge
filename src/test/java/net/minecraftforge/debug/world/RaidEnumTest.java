@@ -11,9 +11,9 @@ public class RaidEnumTest
 	
 	public RaidEnumTest()
 	{
-		if (ENABLE)
-		{
-	      Raid.WaveMember.create("thebluemengroup", EntityType.ILLUSIONER, new int[]{0, 10, 1, 1, 1, 1, 1});
-		}
+     if (ENABLE)
+     {
+	    Raid.WaveMember.create("thebluemengroup", EntityType.ILLUSIONER, new int[]{0, 10, 0, 1, 0, 1, 0, 2});
+     }
 	}
 }
