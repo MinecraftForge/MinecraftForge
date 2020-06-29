@@ -123,6 +123,10 @@ public class NewModelLoaderTest
             new Item(new Item.Properties().group(ItemGroup.MISC))
     );
 
+    public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
+            new Item(new Item.Properties().group(ItemGroup.MISC))
+    );
+
     public NewModelLoaderTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

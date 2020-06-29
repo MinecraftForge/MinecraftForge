@@ -35,6 +35,7 @@ public interface IForgeTagBuilder<T>
         return (TagsProvider.Builder<T>) this;
     }
 
+    @SuppressWarnings("unchecked")
     default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
@@ -57,6 +58,7 @@ public interface IForgeTagBuilder<T>
         return addOptional(Arrays.asList(locations));
     }
 
+    @SuppressWarnings("deprecation")
     default TagsProvider.Builder<T> addOptional(final Collection<ResourceLocation> locations)
     {
         return getBuilder().add(ForgeHooks.makeOptionalTag(true, locations));
@@ -67,6 +69,7 @@ public interface IForgeTagBuilder<T>
         return addOptionalTag(Arrays.asList(locations));
     }
 
+    @SuppressWarnings("deprecation")
     default TagsProvider.Builder<T> addOptionalTag(final Collection<ResourceLocation> locations)
     {
         return getBuilder().add(ForgeHooks.makeOptionalTag(false, locations));

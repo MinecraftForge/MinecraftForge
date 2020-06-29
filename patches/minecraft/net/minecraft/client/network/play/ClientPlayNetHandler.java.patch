@@ -77,14 +77,14 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1426,6 +1439,7 @@
+@@ -1423,6 +1436,7 @@
+       this.field_199725_m = p_199723_1_.func_199858_a();
+       if (!this.field_147302_e.func_150731_c()) {
+          this.field_199725_m.func_232980_f_();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.field_199725_m));
        }
  
        this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.field_199725_m));
-    }
- 
-    public void func_175098_a(SCombatPacket p_175098_1_) {
 @@ -1909,10 +1923,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);

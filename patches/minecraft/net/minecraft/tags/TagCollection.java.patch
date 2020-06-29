@@ -6,6 +6,6 @@
     }
 +
 +   public Function<ResourceLocation, Optional<T>> getEntryLookup() {
-+       return this.field_200040_e;
++      return this.field_200040_e;
 +   }
  }
