@@ -40,12 +40,6 @@ public class ClientChatReceivedEvent extends Event
     @Nullable
     private final UUID senderUUID;
 
-    @Deprecated // use constructor that takes senderUUID
-    public ClientChatReceivedEvent(ChatType type, ITextComponent message)
-    {
-        this(type, message, null);
-    }
-
     public ClientChatReceivedEvent(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
     {
         this.type = type;

@@ -330,13 +330,6 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    @Deprecated // use version with senderUUID
-    public static ITextComponent onClientChat(ChatType type, ITextComponent message)
-    {
-        return onClientChat(type, message, null);
-    }
-
-    @Nullable
     public static ITextComponent onClientChat(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, senderUUID);
