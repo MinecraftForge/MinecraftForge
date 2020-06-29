@@ -1,6 +1,8 @@
 package net.minecraftforge.debug.item;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraftforge.debug.client.model.CompositeModelTest;
@@ -24,8 +26,8 @@ public class EnderMaskTest {
             new ArmorItem(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, (new Item.Properties().group(ItemGroup.MISC))) {
 
                 @Override
-                public boolean isEnderMask(ItemStack stack) {
-                    return true;
+                public boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity) {
+                    return player.experienceLevel > 10;
                 }
             }
     );

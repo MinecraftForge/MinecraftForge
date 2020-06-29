@@ -35,6 +35,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -625,7 +626,7 @@ public interface IForgeItem
      * @param stack the ItemStack
      * @return true if this Item can be used to hide player head for enderman
      */
-    default boolean isEnderMask(ItemStack stack)
+    default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
     {
         return stack.getItem() == Items.CARVED_PUMPKIN;
     }

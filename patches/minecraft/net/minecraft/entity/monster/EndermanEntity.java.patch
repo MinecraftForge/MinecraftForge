@@ -21,7 +21,7 @@
     private boolean func_70821_d(PlayerEntity p_70821_1_) {
        ItemStack itemstack = p_70821_1_.field_71071_by.field_70460_b.get(3);
 -      if (itemstack.func_77973_b() == Blocks.field_196625_cS.func_199767_j()) {
-+      if (itemstack.isEnderMask()) {
++      if (itemstack.isEnderMask(p_70821_1_, this)) {
           return false;
        } else {
           Vec3d vec3d = p_70821_1_.func_70676_i(1.0F).func_72432_b();

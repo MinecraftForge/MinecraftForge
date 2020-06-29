@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -454,8 +455,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *
      * @return true if this Item can be used.
      */
-    default boolean isEnderMask()
+    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
     {
-        return getStack().getItem().isEnderMask(getStack());
+        return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
     }
 }
