@@ -114,6 +114,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
     public static final IForgeRegistry<ForgeWorldType> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldType.class);
+    public static final IForgeRegistry<IForgeRecipeBookCategory<?>> RECIPE_BOOK_CATEGORIES = RegistryManager.ACTIVE.getRegistry(IForgeRecipeBookCategory.class);
 
     public static final class Keys {
         //Vanilla
