@@ -31,6 +31,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import javax.annotation.Nullable;
 
@@ -106,6 +107,12 @@ public class BiomeManager
         if (list != null) list.add(entry);
     }
 
+    /**
+     * Adds the specified {@linkplain Biome biome} to the {@linkplain net.minecraft.world.biome.provider.NetherBiomeProvider nether biome provider}.
+     * The specific generation information about how the biome is placed in the nether is handled by the {@linkplain Biome.Attributes attributes} of the biome.<br>
+     * This method should be called during {@link FMLCommonSetupEvent}.
+     * @param biome the biome to add to the nether.
+     */
     public static void addNetherBiome(Biome biome)
     {
         netherBiomes.add(biome);
@@ -122,9 +129,15 @@ public class BiomeManager
         }
     }
 
-    public static void removeNetherBiome(Biome biome)
+    /**
+     * Removes the specified {@linkplain Biome biome} from the {@linkplain net.minecraft.world.biome.provider.NetherBiomeProvider nether biome provider}.<br>
+     * This method should be called during {@link FMLCommonSetupEvent}.
+     * @param biome the biome to remove from the nether.
+     * @return if the nether biome list contained the specified biome.
+     */
+    public static boolean removeNetherBiome(Biome biome)
     {
-        netherBiomes.remove(biome);
+        return netherBiomes.remove(biome);
     }
 
     @Nullable
