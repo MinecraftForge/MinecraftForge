@@ -26,10 +26,10 @@ import net.minecraft.network.play.server.SSpawnParticlePacket;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * ParticleWorldHandleEvent is fired before an {@link SSpawnParticlePacket} is sent.<br>
+ * ServerParticleSpawnEvent is fired before an {@link SSpawnParticlePacket} is sent.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
- * If the event is canceled, the execution of the command does not occur.<br>
+ * If the event is canceled, the particle(s) will not spawn.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
