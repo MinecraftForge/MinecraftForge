@@ -68,3 +68,5 @@ loaderVersion="[28,)"
     modId="deferred_registry_test"
 [[mods]]
     modId="create_entity_classification_test"
+[[mods]]
+    modId="raid_enum_test"
