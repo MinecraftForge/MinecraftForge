@@ -336,6 +336,7 @@ public class ForgeEventFactory
         return onClientChat(type, message, null);
     }
 
+    @Nullable
     public static ITextComponent onClientChat(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, senderUUID);
