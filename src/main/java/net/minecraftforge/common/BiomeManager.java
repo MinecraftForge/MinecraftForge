@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -38,7 +39,7 @@ public class BiomeManager
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-    private static List<Biome> netherBiomes = Lists.newArrayList(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_);
+    private static List<Biome> netherBiomes = Collections.synchronizedList(Lists.newArrayList(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_));
 
     static
     {
