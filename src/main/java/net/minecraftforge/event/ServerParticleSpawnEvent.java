@@ -40,21 +40,21 @@ public class ServerParticleSpawnEvent extends Event {
     private boolean longDistance;
     private int particleCount;
     private double particleSpeed;
-    private double xCoord;
-    private double yCoord;
-    private double zCoord;
+    private double posX;
+    private double posY;
+    private double posZ;
     private double xOffset;
     private double yOffset;
     private double zOffset;
 
-    public ServerParticleSpawnEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset) {
+    public ServerParticleSpawnEvent(IParticleData particle, boolean longDistance, int particleCount, double particleSpeed, double posX, double posY, double posZ, double xOffset, double yOffset, double zOffset) {
         this.particle = particle;
         this.longDistance = longDistance;
         this.particleCount = particleCount;
         this.particleSpeed = particleSpeed;
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.zCoord = zCoord;
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.zOffset = zOffset;
@@ -92,28 +92,28 @@ public class ServerParticleSpawnEvent extends Event {
         this.particleSpeed = particleSpeed;
     }
 
-    public double getXCoord() {
-        return xCoord;
+    public double getPosX() {
+        return posX;
     }
 
-    public void setXCoord(double xCoord) {
-        this.xCoord = xCoord;
+    public void setPosX(double posX) {
+        this.posX = posX;
     }
 
-    public double getYCoord() {
-        return yCoord;
+    public double getPosY() {
+        return posY;
     }
 
-    public void setYCoord(double yCoord) {
-        this.yCoord = yCoord;
+    public void setPosY(double posY) {
+        this.posY = posY;
     }
 
-    public double getZCoord() {
-        return zCoord;
+    public double getPosZ() {
+        return posZ;
     }
 
-    public void setZCoord(double zCoord) {
-        this.zCoord = zCoord;
+    public void setPosZ(double posZ) {
+        this.posZ = posZ;
     }
 
     public double getXOffset() {
