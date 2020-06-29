@@ -125,15 +125,6 @@ project(':clean') {
                 main 'net.minecraft.server.Main'
                 workingDirectory project.file('run')
             }
-
-            clean_data {
-                taskName 'clean_data'
-
-                main 'net.minecraft.data.Main'
-                workingDirectory project.file('run')
-
-                args '--all', '--output', rootProject.file('src/generated/resources/'), '--validate'
-            }
         }
     }
 }
