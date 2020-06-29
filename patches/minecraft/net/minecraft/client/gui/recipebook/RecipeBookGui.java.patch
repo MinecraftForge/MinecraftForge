@@ -77,7 +77,7 @@
 -         if (recipebookcategories != RecipeBookCategories.SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
 +         if (x >= this.offset && x < Math.min(this.field_193018_j.size(), this.offset + 5)) {
 +            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = recipetabtogglewidget.getRecipeBookCategory();
-+         if (!recipebookcategories.isSearch()) {
++         if (!recipebookcategories.isUnfiltered()) {
              if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
                 recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
                 recipetabtogglewidget.func_193918_a(this.field_191888_F);

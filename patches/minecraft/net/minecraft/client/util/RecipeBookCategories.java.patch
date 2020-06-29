@@ -16,7 +16,7 @@
 +
 +   /*================================ FORGE START ================================================*/
 +   private net.minecraft.util.ResourceLocation registryName;
-+   private boolean isSearch;
++   private boolean isUnfiltered;
 +   private net.minecraft.item.crafting.IRecipeType<?> recipeType;
 +   private java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate;
 +   private final com.google.common.reflect.TypeToken<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>> token = new com.google.common.reflect.TypeToken<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<? extends net.minecraft.item.crafting.IRecipeType<?>>>(getClass()){};
@@ -111,8 +111,8 @@
 +   }
 +
 +   @Override
-+   public boolean isSearch() {
-+      return isSearch;
++   public boolean isUnfiltered() {
++      return isUnfiltered;
 +   }
 +
 +   @Override
@@ -126,13 +126,13 @@
 +   }
 +
 +   private void setupSearch(net.minecraft.item.crafting.IRecipeType<?> recipeType) {
-+      this.isSearch = true;
++      this.isUnfiltered = true;
 +      this.predicate = recipe -> true;
 +      this.recipeType = recipeType;
 +   }
 +
 +   private void setupFilter(net.minecraft.item.crafting.IRecipeType<?> recipeType, java.util.function.Predicate<net.minecraft.item.crafting.IRecipe<?>> predicate) {
-+      this.isSearch = false;
++      this.isUnfiltered = false;
 +      this.predicate = predicate;
 +      this.recipeType = recipeType;
 +   }
