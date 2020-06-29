@@ -285,9 +285,16 @@ public class ModLoader
         this.loadingWarnings.add(warning);
     }
 
+    private static boolean runningDataGen = false;
+
+    public static boolean isDataGenRunning () {
+        return runningDataGen;
+    }
+
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
+        runningDataGen = true;
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
