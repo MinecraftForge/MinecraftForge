@@ -98,7 +98,7 @@ public class InvWrapper implements IItemHandlerModifiable
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
                     getInv().setInventorySlotContents(slot, copy);
-                    markDirty();
+                    getInv().markDirty();
                 }
 
                 return ItemStack.EMPTY;
@@ -112,7 +112,7 @@ public class InvWrapper implements IItemHandlerModifiable
                     ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
                     getInv().setInventorySlotContents(slot, copy);
-                    markDirty();
+                    getInv().markDirty();
                     return stack;
                 }
                 else
@@ -135,7 +135,7 @@ public class InvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     getInv().setInventorySlotContents(slot, stack.split(m));
-                    markDirty();
+                    getInv().markDirty();
                     return stack;
                 }
                 else
@@ -149,7 +149,7 @@ public class InvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     getInv().setInventorySlotContents(slot, stack);
-                    markDirty();
+                    getInv().markDirty();
                 }
                 return ItemStack.EMPTY;
             }
@@ -187,7 +187,7 @@ public class InvWrapper implements IItemHandlerModifiable
             int m = Math.min(stackInSlot.getCount(), amount);
 
             ItemStack decrStackSize = getInv().decrStackSize(slot, m);
-            markDirty();
+            getInv().markDirty();
             return decrStackSize;
         }
     }
@@ -214,10 +214,4 @@ public class InvWrapper implements IItemHandlerModifiable
     {
         return inv;
     }
-
-    protected void markDirty()
-    {
-        getInv().markDirty();
-    }
-
 }
