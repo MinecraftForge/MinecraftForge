@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-
+    @Deprecated //Don't call this method directly, use the proper methods in this class
     public static List<OceanBiomeEntry>[] oceanBiomes = setupOceanBiomes();
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
@@ -119,21 +119,41 @@ public class BiomeManager
         }
     }
 
+    /**
+     * Adds an OceanBiomeEntry to a type of ocean.
+     * This method should be called during mod loading to add a new OceanBiomeEntry to a type of ocean (e.g. a new Frozen Ocean biome).
+     * This method is threadsafe.
+     *
+     * @param type The type of ocean for this OceanBiomeEntry.
+     * @param entry The OceanBiomeEntry to add.
+     */
     public static void addOceanBiome(OceanType type, OceanBiomeEntry entry)
     {
         int idx = type.ordinal();
-        List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
-        if (list != null) list.add(entry);
+        synchronized (BiomeManager.class) {
+            List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
+            if (list != null) list.add(entry);
+        }
     }
 
+    /**
+     * Removes an OceanBiomeEntry for a type of ocean.
+     * This method should be called to remove a OceanBiomeEntry from a type of ocean.
+     * This method is threadsafe.
+     *
+     * @param type The type of ocean for this OceanBiomeEntry.
+     * @param entry The OceanBiomeEntry to remove.
+     */
     public static void removeOceanBiome(OceanType type, OceanBiomeEntry entry)
     {
         int idx = type.ordinal();
-        List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
-
-        if (list != null && list.contains(entry))
+        synchronized (BiomeManager.class)
         {
-            list.remove(entry);
+            List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
+            if (list != null && list.contains(entry))
+            {
+                list.remove(entry);
+            }
         }
     }
 
@@ -146,46 +166,81 @@ public class BiomeManager
         return list != null ? ImmutableList.copyOf(list) : null;
     }
 
+    /**
+     * Gets the ocean biome entries for a type of ocean.
+     * This method should be called to get the ocean biome entries for a type of ocean.
+     * This method is threadsafe.
+     *
+     * @param type The type of ocean to get the entries for.
+     * @return An ImmutableList of the ocean biome entries for the ocean type or null if there are no entries.
+     */
     @Nullable
     public static ImmutableList<OceanBiomeEntry> getOceanBiomes(OceanType type)
     {
         int idx = type.ordinal();
-        List<OceanBiomeEntry> list = idx >= oceanBiomes.length ? null : oceanBiomes[idx];
-
-        return list != null ? ImmutableList.copyOf(list) : null;
+        synchronized (BiomeManager.class)
+        {
+            List<OceanBiomeEntry> list = idx >= oceanBiomes.length ? null : oceanBiomes[idx];
+            return list != null ? ImmutableList.copyOf(list) : null;
+        }
     }
 
+    /**
+     * Gets the ocean biome entries that have a biome as their main biome ('main' meaning the biome that is not its deep or mix variant).
+     * This method should be called to get the ocean biome entries that have a biome as their main biome.
+     * This method is threadsafe.
+     *
+     * @param biome The biome to check for.
+     * @param type A specific OceanType to also check for or null for any OceanType.
+     * @param excludeWarm True to exclude WARM OceanType (used internally for mixing oceans)
+     * @return An ImmutableList of ocean biome entries that meet the conditions specified in the params or null if empty
+     */
     @Nullable
-    public static ImmutableList<OceanBiomeEntry> getOceanBiomesForBiome(Biome biome, @Nullable OceanType type, boolean excludeWarm)
+    public static ImmutableList<OceanBiomeEntry> getOceanBiomesContainingBiome(Biome biome, @Nullable OceanType type, boolean excludeWarm)
     {
         OceanType[] values = type != null ? new OceanType[] {type} : OceanType.values();
         List<OceanBiomeEntry> list = new ArrayList<>();
-        for(OceanType types : values)
+        synchronized (BiomeManager.class)
         {
-            for(OceanBiomeEntry entry : getOceanBiomes(types))
+            for(OceanType types : values)
             {
-                if(entry.biome == biome && (excludeWarm ? type != OceanType.WARM : true))
+                for(OceanBiomeEntry entry : getOceanBiomes(types))
                 {
-                    list.add(entry);
+                    if(entry.biome == biome && (excludeWarm ? type != OceanType.WARM : true))
+                    {
+                        list.add(entry);
+                    }
                 }
             }
+            return list.isEmpty() ? null : ImmutableList.copyOf(list);
         }
-        return list.isEmpty() ? null : ImmutableList.copyOf(list);
     }
 
+    /**
+     * Checks if a biome is present in the ocean biome entries for every OceanType.
+     * This method should be called to check if a biome is present in the ocean biome entries for every OceanType (i.e. if a biome is considered an ocean).
+     * This method is threadsafe.
+     *
+     * @param biome The biome to check
+     * @param shallow If the biome is shallow (i.e. not a deep ocean)
+     * @return True if the biome is an ocean or is a shallow ocean if shallow is true
+     */
     public static boolean isOceanBiome(Biome biome, boolean shallow)
     {
-        for(OceanType type : OceanType.values())
+        synchronized (BiomeManager.class)
         {
-            for(OceanBiomeEntry entry : getOceanBiomes(type))
+            for(OceanType type : OceanType.values())
             {
-                if((shallow && entry.biome == biome) || (!shallow && (entry.biome == biome || entry.deepOcean == biome)))
+                for(OceanBiomeEntry entry : getOceanBiomes(type))
                 {
-                    return true;
+                    if((shallow && entry.biome == biome) || (!shallow && (entry.biome == biome || entry.deepOcean == biome)))
+                    {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
-        return false;
     }
 
     public static boolean isTypeListModded(BiomeType type)
@@ -207,6 +262,10 @@ public class BiomeManager
         }
     }
 
+    /**
+     * Types of Oceans to be used for adding new ocean biomes.
+     * Each type corresponds to a vanilla ocean (e.g. WARM for warm oceans).
+     */
     public static enum OceanType
     {
         WARM, LUKEWARM, FROZEN, COLD, NORMAL;
@@ -229,6 +288,14 @@ public class BiomeManager
         public final Biome deepOcean;
         public final Biome mixOcean;
 
+        /**
+         * Creates an entry that's used for new Ocean Biomes.
+         *
+         * @param ocean The main ocean for this entry (e.g. Biomes.COLD_OCEAN).
+         * @param deepOcean The deep variant of the main ocean (e.g. Biomes.DEEP_COLD_OCEAN).
+         * @param mixOcean The mix variant of the main ocean, this typically matches the deep variant for vanilla's oceans (e.g. Biomes.DEEP_COLD_OCEAN).
+         * @param weight The weight of this entry, the higher the weight the larger the probability.
+         */
         public OceanBiomeEntry(Biome ocean, Biome deepOcean, Biome mixOcean, int weight)
         {
             super(ocean, weight);

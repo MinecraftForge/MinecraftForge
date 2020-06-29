@@ -25,8 +25,8 @@
 -            }
 -
 -            return LayerUtil.field_202830_a;
-+            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> oceanBiomes = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_202748_6_), null, false);
-+            return oceanBiomes != null ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b((net.minecraft.util.WeightedRandom.func_180166_a(oceanBiomes, p_202748_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(oceanBiomes))).biome)) : LayerUtil.field_202830_a;
++            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> oceanBiomes = net.minecraftforge.common.BiomeManager.getOceanBiomesContainingBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_202748_6_), null, false);
++            return oceanBiomes != null ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b((net.minecraft.util.WeightedRandom.func_180166_a(oceanBiomes, p_202748_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(oceanBiomes))).deepOcean)) : LayerUtil.field_202830_a;
           }
        }
  

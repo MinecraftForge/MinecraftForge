@@ -11,8 +11,8 @@
                 if (!LayerUtil.func_202827_a(k1)) {
 -                  if (j == LayerUtil.field_203632_a) {
 -                     return LayerUtil.field_203633_b;
-+                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> warmEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.WARM, false);
-+                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> frozenEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.FROZEN, false);
++                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> warmEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesContainingBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.WARM, false);
++                  java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> frozenEntries = net.minecraftforge.common.BiomeManager.getOceanBiomesContainingBiome(jBiome, net.minecraftforge.common.BiomeManager.OceanType.FROZEN, false);
 +                  if (warmEntries != null) {
 +                     return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(net.minecraft.util.WeightedRandom.func_180166_a(warmEntries, p_215723_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(warmEntries))).mixOcean);
                    }
@@ -29,7 +29,7 @@
           if (i == LayerUtil.field_202830_a) {
 -            if (j == LayerUtil.field_203633_b) {
 -               return LayerUtil.field_203636_g;
-+            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> entries = net.minecraftforge.common.BiomeManager.getOceanBiomesForBiome(jBiome, null, true);
++            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> entries = net.minecraftforge.common.BiomeManager.getOceanBiomesContainingBiome(jBiome, null, true);
 +            if (entries != null) {
 +               return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(net.minecraft.util.WeightedRandom.func_180166_a(entries, p_215723_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(entries))).mixOcean);
              }

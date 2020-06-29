@@ -14,11 +14,11 @@
 +         return net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.FROZEN, p_215735_1_).biome);
        } else {
 -         return d0 < -0.2D ? LayerUtil.field_203634_d : LayerUtil.field_202832_c;
-+         return d0 < -0.2D ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.COLD, p_215735_1_).biome) : net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(this.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.NORMAL, p_215735_1_).biome);
++         return d0 < -0.2D ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.COLD, p_215735_1_).biome) : net.minecraft.util.registry.Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType.NORMAL, p_215735_1_).biome);
        }
     }
 +
-+   public static net.minecraftforge.common.BiomeManager.OceanBiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType type, INoiseRandom context) {
++   private net.minecraftforge.common.BiomeManager.OceanBiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.OceanType type, INoiseRandom context) {
 +      java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> biomeList = net.minecraftforge.common.BiomeManager.getOceanBiomes(type);
 +      return net.minecraft.util.WeightedRandom.func_180166_a(biomeList, context.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(biomeList)));
 +   }
