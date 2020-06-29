@@ -14,30 +14,24 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(EnderMaskTest.MODID)
-public class EnderMaskTest {
-
-
-
+public class EnderMaskTest
+{
     public static final String MODID = "ender_mask_test";
-
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Item> ender_mask = ITEMS.register("ender_mask", () ->
             new ArmorItem(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, (new Item.Properties().group(ItemGroup.MISC))) {
-
                 @Override
-                public boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity) {
+                public boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
+                {
                     return player.experienceLevel > 10;
                 }
             }
     );
 
-    public EnderMaskTest() {
-
+    public EnderMaskTest()
+    {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         ITEMS.register(modEventBus);
-
     }
-
 }
