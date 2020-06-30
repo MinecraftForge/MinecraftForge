@@ -144,3 +144,5 @@ publishing {
         }
     }
 }
+
+System.out.println("Running with java ${System.getProperty("java.version")} (${System.getProperty("os.arch")})")
