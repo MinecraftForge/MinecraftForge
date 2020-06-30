@@ -8,11 +8,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -48,10 +46,9 @@ public class RenderWorldPreTranslucentEventTest
         World world = DimensionManager.getWorld(server, DimensionType.OVERWORLD, false, true);
         MatrixStack matrixStack = event.getMatrixStack();
         Impl renderTypeBuffers = event.getRenderTypeBuffers();
-
+        
         // Get the projected view coordinates.
-        @SuppressWarnings("resource")
-        Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        Vec3d projectedView = event.getActiveRenderInfo().getProjectedView();
 
         // Choose diamond ore as the arbitrary block.
         BlockState blockState = Blocks.DIAMOND_ORE.getDefaultState();

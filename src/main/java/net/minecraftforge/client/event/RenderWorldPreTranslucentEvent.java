@@ -21,7 +21,8 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraftforge.eventbus.api.Event;
@@ -38,15 +39,17 @@ import net.minecraftforge.eventbus.api.Event;
 public class RenderWorldPreTranslucentEvent extends Event
 {
     private final WorldRenderer context;
+    private final ActiveRenderInfo info;
     private final MatrixStack mat;
-    private final Impl buffers;
+    private final IRenderTypeBuffer.Impl buffers;
     private final float partialTicks;
     private final Matrix4f projectionMatrix;
     private final long finishTimeNano;
 
-    public RenderWorldPreTranslucentEvent(WorldRenderer context, MatrixStack mat, Impl buffers, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    public RenderWorldPreTranslucentEvent(WorldRenderer context, ActiveRenderInfo info, MatrixStack mat, IRenderTypeBuffer.Impl buffers, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         this.context = context;
+        this.info = info;
         this.mat = mat;
         this.buffers = buffers;
         this.partialTicks = partialTicks;
@@ -58,13 +61,18 @@ public class RenderWorldPreTranslucentEvent extends Event
     {
         return context;
     }
+    
+    public ActiveRenderInfo getActiveRenderInfo()
+    {
+        return info;
+    }
 
     public MatrixStack getMatrixStack()
     {
         return mat;
     }
     
-    public Impl getRenderTypeBuffers()
+    public IRenderTypeBuffer.Impl getRenderTypeBuffers()
     {
         return buffers;
     }
