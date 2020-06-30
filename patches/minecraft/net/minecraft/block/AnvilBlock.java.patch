@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/AnvilBlock.java
++++ b/net/minecraft/block/AnvilBlock.java
+@@ -91,6 +91,7 @@
+ 
+    @Nullable
+    public static BlockState func_196433_f(BlockState p_196433_0_) {
++      if (net.minecraftforge.common.ForgeHooks.onAnvilDamage(p_196433_0_)) return p_196433_0_;
+       if (p_196433_0_.func_203425_a(Blocks.field_150467_bQ)) {
+          return Blocks.field_196717_eY.func_176223_P().func_206870_a(field_176506_a, p_196433_0_.func_177229_b(field_176506_a));
+       } else {
