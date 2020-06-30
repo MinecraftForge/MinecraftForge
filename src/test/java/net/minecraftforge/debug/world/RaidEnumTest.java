@@ -13,7 +13,7 @@ public class RaidEnumTest
 	{
        if (ENABLE)
        {
-	     Raid.WaveMember.create("thebluemengroup", EntityType.ILLUSIONER, new int[]{0, 10, 0, 1, 0, 1, 0, 2});
+	     Raid.WaveMember.create("thebluemengroup", EntityType.ILLUSIONER, new int[]{0, 5, 0, 1, 0, 1, 0, 2});
        }
 	}
 }

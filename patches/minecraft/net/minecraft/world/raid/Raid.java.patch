@@ -1,5 +1,6 @@
 --- a/net/minecraft/world/raid/Raid.java
 +++ b/net/minecraft/world/raid/Raid.java
+@@ -768,7 +768,7 @@
        }
     }
  
@@ -20,7 +21,7 @@
 +      @Override
 +      @Deprecated
 +      public void init() {
-+          field_221284_f = values();
-+      } 
++    	  field_221284_f = values();
++      }
     }
  }
