@@ -1,6 +1,8 @@
 package net.minecraftforge.event.anvil;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -10,6 +12,25 @@ import javax.annotation.Nullable;
 @Cancelable
 public class AnvilDamageEvent extends Event
 {
+    /**
+     * The current state of the Anvil pre-damage
+     */
+    @Nonnull
+    private final BlockState currentState;
+
+    /**
+     * A simple event fired whenever code is fired to attempt to damage the Anvil.
+     * If the event is canceled, vanilla behaviour will not run and the Anvil's BlockState will not change (It won't be damaged).
+     * If the event is not canceled, vanilla behaviour will run and the Anvil will be damaged.
+     */
+    public AnvilDamageEvent(@Nonnull BlockState currentState)
+    {
+        this.currentState = currentState;
+    }
+
+    @Nonnull
+    public BlockState getCurrentState() { return currentState; }
+
     /**
      * A simple event fired whenever code is fired from the FallingBlockEntity to damage the Anvil.
      * If the event is canceled, vanilla behaviour will not run and the Anvil's BlockState will not change (It won't be damaged).
@@ -33,22 +54,34 @@ public class AnvilDamageEvent extends Event
         public BlockState getGroundState() { return groundState; }
     }
 
-    /**
-     * The current state of the Anvil pre-damage
-     */
-    @Nonnull
-    private final BlockState currentState;
-
-    /**
-     * A simple event fired whenever code is fired to attempt to damage the Anvil.
-     * If the event is canceled, vanilla behaviour will not run and the Anvil's BlockState will not change (It won't be damaged).
-     * If the event is not canceled, vanilla behaviour will run and the Anvil will be damaged.
-     */
-    public AnvilDamageEvent(@Nonnull BlockState currentState)
+    public static class Container extends AnvilDamageEvent
     {
-        this.currentState = currentState;
-    }
+        /**
+         * The player using the RepairContainer.
+         */
+        private final PlayerEntity player;
 
-    @Nonnull
-    public BlockState getCurrentState() { return currentState; }
+        /**
+         * The world of the Player.
+         */
+        private final World world;
+
+        /**
+         * A simple event fired whenever code is fired from the RepairContainer to damage the Anvil.
+         * If the event is canceled, vanilla behaviour will not run and the Anvil's BlockState will not change (It won't be damaged).
+         * If the event is not canceled, vanilla behaviour will run and the Anvil will be damaged.
+         *
+         * @param currentState
+         */
+        public Container(@Nonnull BlockState currentState, PlayerEntity player, World world)
+        {
+            super(currentState);
+            this.player = player;
+            this.world = world;
+        }
+
+        public PlayerEntity getPlayer() { return player; }
+
+        public World getWorld() { return world; }
+    }
 }

@@ -110,6 +110,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.anvil.AnvilBreakEvent;
 import net.minecraftforge.event.anvil.AnvilDamageEvent;
 import net.minecraftforge.event.anvil.AnvilDamageEvent.Falling;
 import net.minecraftforge.event.anvil.AnvilUpdateEvent;
@@ -677,15 +678,27 @@ public class ForgeHooks
         return false;
     }
 
+    public static boolean onAnvilDamage(BlockState currentState)
+    {
+        AnvilDamageEvent e = new AnvilDamageEvent(currentState);
+        return MinecraftForge.EVENT_BUS.post(e);
+    }
+
     public static boolean onAnvilDamageFalling(BlockState currentState, BlockState groundState)
     {
         AnvilDamageEvent.Falling e = new AnvilDamageEvent.Falling(currentState, groundState);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
-    public static boolean onAnvilDamage(BlockState currentState)
+    public static boolean onAnvilDamageContainer(BlockState currentState, PlayerEntity player, World world)
     {
-        AnvilDamageEvent e = new AnvilDamageEvent(currentState);
+        AnvilDamageEvent.Container e = new AnvilDamageEvent.Container(currentState, player, world);
+        return MinecraftForge.EVENT_BUS.post(e);
+    }
+
+    public static boolean onAnvilBreak(BlockState statePreBreak, World world, BlockPos pos, Entity entity)
+    {
+        AnvilBreakEvent e = new AnvilBreakEvent(statePreBreak, world, pos, entity);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
