@@ -9,7 +9,7 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-@@ -95,7 +95,7 @@
+@@ -95,13 +95,13 @@
              p_229111_8_ = this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation("minecraft:trident#inventory"));
           }
  
@@ -18,6 +18,13 @@
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag)) {
              boolean flag1;
+             if (p_229111_2_ != ItemCameraTransforms.TransformType.GUI && !p_229111_2_.func_241716_a_() && p_229111_1_.func_77973_b() instanceof BlockItem) {
+                Block block = ((BlockItem)p_229111_1_.func_77973_b()).func_179223_d();
+-               flag1 = !(block instanceof BreakableBlock) && !(block instanceof StainedGlassPaneBlock);
++               flag1 = !RenderTypeLookup.canRenderFabulouslyInLayer(block.func_176223_P(), RenderType.func_228645_f_());
+             } else {
+                flag1 = true;
+             }
 @@ -132,7 +132,7 @@
  
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
