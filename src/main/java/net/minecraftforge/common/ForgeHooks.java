@@ -119,7 +119,7 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.anvil.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
