@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -449,5 +450,17 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default boolean isRepairable()
     {
         return getStack().getItem().isRepairable(getStack());
+    }
+
+    /**
+     * Whether this Item can be used to hide player head for enderman.
+     *
+     * @param player The player watching the enderman
+     * @param endermanEntity The enderman that the player look
+     * @return true if this Item can be used.
+     */
+    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
+    {
+        return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
     }
 }
