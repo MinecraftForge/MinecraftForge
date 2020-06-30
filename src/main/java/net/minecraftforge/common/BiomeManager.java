@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.WeightedRandom;
@@ -32,6 +30,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+
+import javax.annotation.Nullable;
 
 public class BiomeManager
 {
