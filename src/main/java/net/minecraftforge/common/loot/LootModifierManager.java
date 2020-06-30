@@ -64,7 +64,7 @@ public class LootModifierManager extends JsonReloadListener {
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
-
+    
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
@@ -153,5 +153,5 @@ public class LootModifierManager extends JsonReloadListener {
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();
     }
-    
+
 }
