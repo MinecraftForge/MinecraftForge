@@ -119,6 +119,8 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.anvil.AnvilDamageEvent;
+import net.minecraftforge.event.anvil.AnvilDamageEvent.Falling;
 import net.minecraftforge.event.anvil.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -690,6 +692,19 @@ public class ForgeHooks
         container.materialCost = e.getMaterialCost();
         return false;
     }
+
+    public static boolean onAnvilDamageFalling(BlockState currentState, BlockState groundState)
+    {
+        AnvilDamageEvent.Falling e = new AnvilDamageEvent.Falling(currentState, groundState);
+        return MinecraftForge.EVENT_BUS.post(e);
+    }
+
+    public static boolean onAnvilDamage(BlockState currentState)
+    {
+        AnvilDamageEvent e = new AnvilDamageEvent(currentState);
+        return MinecraftForge.EVENT_BUS.post(e);
+    }
+
 
     public static float onAnvilRepair(PlayerEntity player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
     {
