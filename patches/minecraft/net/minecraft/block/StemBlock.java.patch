@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/StemBlock.java
 +++ b/net/minecraft/block/StemBlock.java
-@@ -38,22 +38,24 @@
+@@ -40,22 +40,24 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
@@ -30,7 +30,7 @@
           }
  
        }
-@@ -98,4 +100,10 @@
+@@ -101,4 +103,10 @@
     public StemGrownBlock func_208486_d() {
        return this.field_149877_a;
     }
