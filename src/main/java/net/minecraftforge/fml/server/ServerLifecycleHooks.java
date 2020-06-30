@@ -31,7 +31,19 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.IPackNameDecorator;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.storage.FolderName;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.network.ConnectionType;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.FMLStatusPing;
+import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -46,11 +58,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -60,10 +67,6 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.network.ConnectionType;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -87,6 +90,9 @@ public class ServerLifecycleHooks
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
+        currentServer.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
+        // on the dedi server we need to force the stuff to setup properly
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, ()->()->SidedProvider.setServer(()->(DedicatedServer)server));
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
