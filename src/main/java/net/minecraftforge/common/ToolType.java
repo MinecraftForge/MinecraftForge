@@ -29,6 +29,7 @@ public final class ToolType
     private static final Map<String, ToolType> VALUES = new ConcurrentHashMap<>();
 
     public static final ToolType AXE = get("axe");
+    public static final ToolType HOE = get("hoe");
     public static final ToolType PICKAXE = get("pickaxe");
     public static final ToolType SHOVEL = get("shovel");
 
