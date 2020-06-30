@@ -140,6 +140,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
 
         glEnableClientState(GL11.GL_VERTEX_ARRAY);
         glEnable(GL_BLEND);
+        renderBackground();
         renderMessages();
         glfwSwapBuffers(window);
     }
@@ -208,6 +209,16 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         int k = clamp((int)(f5 * 255.0F), 0, 255);
         int l = clamp((int)(f6 * 255.0F), 0, 255);
         return j << 16 | k << 8 | l;
+    }
+
+    private void renderBackground() {
+        glBegin(GL_QUADS);
+        glColor4f(239F / 255F, 50F / 255F, 61F / 255F, 255F / 255F); //Color from ResourceLoadProgressGui
+        glVertex2f(0, 0);
+        glVertex2f(0, screenHeight);
+        glVertex2f(screenWidth, screenHeight);
+        glVertex2f(screenWidth, 0);
+        glEnd();
     }
 
     private void renderMessages() {
@@ -299,10 +310,5 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwSwapBuffers(window);
         glfwSwapInterval(1);
         return window;
-    }
-
-    @Override
-    public boolean replacedWindow() {
-        return running; // TODO is this method necessary? it's only used to prevent the vanilla icon set, which we do want as it only occurs after handoff
     }
 }
