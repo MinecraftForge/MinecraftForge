@@ -60,11 +60,11 @@ public class LootModifierManager extends JsonReloadListener {
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-
+    
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
-    
+
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
