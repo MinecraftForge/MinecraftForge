@@ -24,10 +24,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.tuple.Pair;
@@ -121,40 +117,25 @@ public class EarlyLoaderGUI {
     }
 
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
-        ByteBuffer vertexBuf = MemoryUtil.memAlloc(message.length() * 270);
-        int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, vertexBuf);
+        GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
+        ByteBuffer charBuffer = MemoryUtil.memAlloc(message.length() * 270);
+        int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, charBuffer);
+        GL14.glVertexPointer(2, GL11.GL_FLOAT, 16, charBuffer);
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
+        RenderSystem.disableCull();
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
+        RenderSystem.color3f(colour[0],colour[1],colour[2]);
         RenderSystem.pushMatrix();
+        RenderSystem.translatef(10, line * 10, 0);
         RenderSystem.scalef(1, 1, 0);
-
-        //The quads need to be flipped in order for some reason
-        //So quad 0 -> quad 3, quad 1 -> quad 2, quad 2 -> quad 1 and quad 3 -> quad 0
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        float[] quadPosX = new float[4];
-        float[] quadPosY = new float[4];
-        float[] quadPosZ = new float[4];
-        int lineOffset = line * 10;
-        for (int quad = 0; quad < quads; quad++) {
-            for (int vertex = 0; vertex < 4; vertex++) {
-                quadPosX[vertex] = vertexBuf.getFloat();
-                quadPosY[vertex] = vertexBuf.getFloat();
-                quadPosZ[vertex] = vertexBuf.getFloat();
-                vertexBuf.getInt(); //color, but it is ignored, as we use our own color
-            }
-            for (int i = 3; i >= 0; i--)
-                bufferbuilder.pos(quadPosX[i] + 10, quadPosY[i] + lineOffset, quadPosZ[i]).color(colour[0], colour[1], colour[2], 1.0F).endVertex();
-        }
-        bufferbuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferbuilder);
-
-
+        RenderSystem.drawArrays(GL11.GL_QUADS, 0, quads * 4);
         RenderSystem.popMatrix();
 
-        MemoryUtil.memFree(vertexBuf);
+        RenderSystem.enableCull();
+        GlStateManager.disableClientState(GL11.GL_VERTEX_ARRAY);
+        MemoryUtil.memFree(charBuffer);
     }
 }
