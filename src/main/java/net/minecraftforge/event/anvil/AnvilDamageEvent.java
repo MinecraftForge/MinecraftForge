@@ -67,7 +67,7 @@ public class AnvilDamageEvent extends Event
         private final World world;
 
         /**
-         * A simple event fired whenever code is fired to attempt to damage the Anvil.
+         * A simple event fired whenever code is fired from the RepairContainer to damage the Anvil.
          * If the event is canceled, vanilla behaviour will not run and the Anvil's BlockState will not change (It won't be damaged).
          * If the event is not canceled, vanilla behaviour will run and the Anvil will be damaged.
          *
