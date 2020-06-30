@@ -109,6 +109,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1165,12 +1167,10 @@ public class ForgeHooks
      * @return The modified list
      */
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
-    	/*
-        LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
+        LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
         for(IGlobalLootModifier mod : man.getAllLootMods()) {
             list = mod.apply(list, context);
         }
-        */
         return list;
     }
 

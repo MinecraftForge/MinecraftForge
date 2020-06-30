@@ -115,13 +115,13 @@ public class ForgeInternalHandler
     private static LootModifierManager INSTANCE;
 
     @SubscribeEvent
-    public static void onResourceReload(AddReloadListenerEvent event)
+    public void onResourceReload(AddReloadListenerEvent event)
     {
         INSTANCE = new LootModifierManager();
         event.addListener(INSTANCE);
     }
 
-    static LootModifierManager getInstance()
+    static LootModifierManager getLootModifierManager()
     {
         if(INSTANCE == null)
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
