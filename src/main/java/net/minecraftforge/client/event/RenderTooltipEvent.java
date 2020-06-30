@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextProperties;
@@ -48,14 +49,16 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     @Nonnull
     protected final ItemStack stack;
     protected final List<? extends ITextProperties> lines;
+    protected final MatrixStack matrixStack;
     protected int x;
     protected int y;
     protected FontRenderer fr;
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, int x, int y, @Nonnull FontRenderer fr)
+    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr)
     {
         this.stack = stack;
         this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
+        this.matrixStack = matrixStack;
         this.x = x;
         this.y = y;
         this.fr = fr;
@@ -118,9 +121,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenHeight;
         private int maxWidth;
 
-        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
+        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
         {
-            super(stack, lines, x, y, fr);
+            super(stack, lines, matrixStack, x, y, fr);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.maxWidth = maxWidth;
@@ -201,9 +204,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final int width;
         private final int height;
         
-        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack,int x, int y, @Nonnull FontRenderer fr, int width, int height)
         {
-            super(stack, textLines, x, y, fr);
+            super(stack, textLines, matrixStack, x, y, fr);
             this.width = width;
             this.height = height;
         }
@@ -230,8 +233,8 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostBackground extends Post 
     {
-        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
-            { super(stack, textLines, x, y, fr, width, height); }
+        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
     }
 
     /**
@@ -239,8 +242,8 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostText extends Post
     {
-        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
-            { super(stack, textLines, x, y, fr, width, height); }
+        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
     }
     
     /**
@@ -255,10 +258,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
+        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
                 int borderEnd)
         {
-            super(stack, textLines, x, y, fr);
+            super(stack, textLines, matrixStack, x, y, fr);
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;
