@@ -124,7 +124,9 @@ public class EarlyLoaderGUI {
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-        RenderSystem.disableCull();
+        // STBEasyFont's quads are in reverse order or what OGGL expects, so it gets culled for facing the wrong way. 
+        // So Disable culling https://github.com/MinecraftForge/MinecraftForge/pull/6824
+        RenderSystem.disableCull(); 
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         RenderSystem.color3f(colour[0],colour[1],colour[2]);
