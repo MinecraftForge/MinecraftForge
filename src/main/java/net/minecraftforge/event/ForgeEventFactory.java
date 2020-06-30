@@ -330,9 +330,9 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static ITextComponent onClientChat(ChatType type, ITextComponent message)
+    public static ITextComponent onClientChat(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, senderUUID);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
