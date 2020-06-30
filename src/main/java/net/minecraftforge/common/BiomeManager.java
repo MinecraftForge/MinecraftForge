@@ -25,9 +25,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
