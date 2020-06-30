@@ -679,7 +679,7 @@ public class ForgeHooks
 
     public static boolean onAnvilDamageFalling(BlockState currentState, BlockState groundState)
     {
-        Falling e = new AnvilDamageEvent.Falling(currentState, groundState);
+        AnvilDamageEvent.Falling e = new AnvilDamageEvent.Falling(currentState, groundState);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
