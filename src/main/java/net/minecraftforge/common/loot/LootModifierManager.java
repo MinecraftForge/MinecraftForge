@@ -57,7 +57,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod.EventBusSubscriber(modid = "forge")
 public class LootModifierManager extends JsonReloadListener {
 
     public static final Logger LOGGER = LogManager.getLogger();
@@ -65,8 +64,6 @@ public class LootModifierManager extends JsonReloadListener {
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-
-    private static LootModifierManager INSTANCE;
 
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
@@ -159,19 +156,5 @@ public class LootModifierManager extends JsonReloadListener {
      */
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();
-    }
-
-    @SubscribeEvent
-    public static void onResourceReload(AddReloadListenerEvent event)
-    {
-        INSTANCE = new LootModifierManager();
-        event.addListener(INSTANCE);
-    }
-
-    public static LootModifierManager getInstance()
-    {
-        if(INSTANCE == null)
-            throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
-        return INSTANCE;
     }
 }
