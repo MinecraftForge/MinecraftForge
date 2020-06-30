@@ -21,26 +21,24 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import javax.annotation.Nullable;
 
-import net.minecraft.world.biome.Biomes;
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-
-import javax.annotation.Nullable;
 
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-    private static List<Biome> netherBiomes = Collections.synchronizedList(Lists.newArrayList(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_));
+    private static List<Biome> moddedNetherBiomes = new ArrayList<>();
 
     static
     {
@@ -115,7 +113,10 @@ public class BiomeManager
      */
     public static void addNetherBiome(Biome biome)
     {
-        netherBiomes.add(biome);
+        synchronized (moddedNetherBiomes)
+        {
+            moddedNetherBiomes.add(biome);
+        }
     }
 
     public static void removeBiome(BiomeType type, BiomeEntry entry)
@@ -129,17 +130,6 @@ public class BiomeManager
         }
     }
 
-    /**
-     * Removes the specified {@linkplain Biome biome} from the {@linkplain net.minecraft.world.biome.provider.NetherBiomeProvider nether biome provider}.<br>
-     * This method should be called during {@link FMLCommonSetupEvent}.
-     * @param biome the biome to remove from the nether.
-     * @return if the nether biome list contained the specified biome.
-     */
-    public static boolean removeNetherBiome(Biome biome)
-    {
-        return netherBiomes.remove(biome);
-    }
-
     @Nullable
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
@@ -149,9 +139,17 @@ public class BiomeManager
         return list != null ? ImmutableList.copyOf(list) : null;
     }
 
-    public static ImmutableList<Biome> getNetherBiomes()
+    public static ImmutableList<Biome> getNetherBiomes(ImmutableList<Biome> biomes)
     {
-        return ImmutableList.copyOf(netherBiomes);
+        ImmutableList.Builder<Biome> result = ImmutableList.builder();
+        result.addAll(biomes);
+
+        synchronized (moddedNetherBiomes)
+        {
+            result.addAll(moddedNetherBiomes);
+        }
+
+        return result.build();
     }
 
     public static boolean isTypeListModded(BiomeType type)

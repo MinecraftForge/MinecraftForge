@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/biome/provider/NetherBiomeProvider.java
 +++ b/net/minecraft/world/biome/provider/NetherBiomeProvider.java
-@@ -77,7 +77,7 @@
-    }
+@@ -78,6 +78,7 @@
  
     private static NetherBiomeProvider func_235285_d_(long p_235285_0_) {
--      ImmutableList<Biome> immutablelist = ImmutableList.of(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_);
-+      ImmutableList<Biome> immutablelist = net.minecraftforge.common.BiomeManager.getNetherBiomes();
+       ImmutableList<Biome> immutablelist = ImmutableList.of(Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_);
++      immutablelist = net.minecraftforge.common.BiomeManager.getNetherBiomes(immutablelist);
        return new NetherBiomeProvider(p_235285_0_, immutablelist.stream().flatMap((p_235273_0_) -> {
           return p_235273_0_.func_235055_B_().map((p_235274_1_) -> {
              return Pair.of(p_235274_1_, p_235273_0_);
