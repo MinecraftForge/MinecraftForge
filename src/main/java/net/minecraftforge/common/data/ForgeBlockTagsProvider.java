@@ -22,7 +22,6 @@ package net.minecraftforge.common.data;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -47,6 +46,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         super(gen);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void registerTags()
     {
