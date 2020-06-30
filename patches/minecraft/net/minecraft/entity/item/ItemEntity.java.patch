@@ -106,6 +106,17 @@
              p_70100_1_.func_71001_a(this, i);
              if (itemstack.func_190926_b()) {
                 this.func_70106_y();
+@@ -318,8 +345,8 @@
+    }
+ 
+    @Nullable
+-   public Entity func_241206_a_(ServerWorld p_241206_1_) {
+-      Entity entity = super.func_241206_a_(p_241206_1_);
++   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      Entity entity = super.changeDimension(p_241206_1_, teleporter);
+       if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
+          ((ItemEntity)entity).func_85054_d();
+       }
 @@ -392,7 +419,7 @@
  
     public void func_174870_v() {
