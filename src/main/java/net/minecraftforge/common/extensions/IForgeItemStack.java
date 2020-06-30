@@ -459,8 +459,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param endermanEntity The enderman that the player look
      * @return true if this Item can be used.
      */
-    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
-    {
+    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity) {
         return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
     }
 }

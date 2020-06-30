@@ -799,8 +799,7 @@ public interface IForgeItem
      * @param endermanEntity The enderman that the player look
      * @return true if this Item can be used to hide player head for enderman
      */
-    default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
-    {
+    default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity) {
         return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
     }
 
