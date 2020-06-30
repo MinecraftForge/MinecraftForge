@@ -85,6 +85,14 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     }
 
     /**
+     * @return The MatrixStack of the current rendering context
+     */
+    public MatrixStack getMatrixStack()
+    {
+        return matrixStack;
+    }
+
+    /**
      * @return The X position of the tooltip box. By default, the mouse X position.
      */
     public int getX()
