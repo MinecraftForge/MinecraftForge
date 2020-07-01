@@ -26,11 +26,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
 
 /**
- * ServerConnectEvent is fired when a player is connecting to a server right after the ban and whitelist checks. <br>
+ * PlayerConnectingEvent is fired when a player is connecting to a server right after the ban and whitelist checks. <br>
  * <br>
  * If the event is canceled, the player will be disconnected with either the set rejection message or a generic disconnected message.<br>
  * <br>
@@ -41,7 +42,7 @@ import javax.annotation.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class PlayerConnectingEvent extends net.minecraftforge.eventbus.api.Event {
+public class PlayerConnectingEvent extends Event {
     private final MinecraftServer server;
     private final NetworkManager networkManager;
     private final GameProfile profile;
