@@ -45,3 +45,64 @@
                 this.field_150862_g = 0;
                 break;
              }
+
+@@ -217,19 +217,25 @@ public class NetherPortalBlock extends Block {
+    }
+
+    public static class Size {
+-      private final IWorld world;
+-      private final Direction.Axis axis;
+-      private final Direction rightDir;
+-      private final Direction leftDir;
+-      private int portalBlockCount;
++      protected final IWorld world;
++      protected final Direction.Axis axis;
++      protected final Direction rightDir;
++      protected final Direction leftDir;
++      protected int portalBlockCount;
+       @Nullable
+-      private BlockPos bottomLeft;
+-      private int height;
+-      private int width;
++      protected BlockPos bottomLeft;
++      protected int height;
++      protected int width;
++      protected Block portalBlock;
+
+       public Size(IWorld worldIn, BlockPos pos, Direction.Axis axisIn) {
++         this(worldIn, pos, axisIn, Blocks.NETHER_PORTAL);
++      }
++
++      public Size(IWorld worldIn, BlockPos pos, Direction.Axis axisIn, Block portalBlock) {
+          this.world = worldIn;
+          this.axis = axisIn;
++         this.portalBlock = portalBlock;
+          if (axisIn == Direction.Axis.X) {
+             this.leftDir = Direction.EAST;
+             this.rightDir = Direction.WEST;
+@@ -287,7 +293,7 @@ public class NetherPortalBlock extends Block {
+                   break label56;
+                }
+
+-               if (blockstate.isIn(Blocks.NETHER_PORTAL)) {
++               if (blockstate.isIn(portalBlock)) {
+                   ++this.portalBlockCount;
+                }
+
+@@ -319,7 +325,7 @@ public class NetherPortalBlock extends Block {
+       }
+
+       protected boolean func_196900_a(BlockState pos) {
+-         return pos.isAir() || pos.func_235714_a_(BlockTags.field_232872_am_) || pos.isIn(Blocks.NETHER_PORTAL);
++         return pos.isAir() || pos.func_235714_a_(BlockTags.field_232872_am_) || pos.isIn(portalBlock);
+       }
+
+       public boolean isValid() {
+@@ -331,7 +337,7 @@ public class NetherPortalBlock extends Block {
+             BlockPos blockpos = this.bottomLeft.offset(this.rightDir, i);
+
+             for(int j = 0; j < this.height; ++j) {
+-               this.world.setBlockState(blockpos.up(j), Blocks.NETHER_PORTAL.getDefaultState().with(NetherPortalBlock.AXIS, this.axis), 18);
++               this.world.setBlockState(blockpos.up(j), portalBlock.getDefaultState().with(NetherPortalBlock.AXIS, this.axis), 18);
+             }
+          }
