@@ -1,19 +1,17 @@
 --- a/net/minecraft/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/entity/item/FallingBlockEntity.java
-@@ -153,7 +153,7 @@
-                               ((FallingBlock)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, blockstate, this);
-                            }
+@@ -198,10 +198,12 @@
+                entity.func_70097_a(damagesource, (float)Math.min(MathHelper.func_76141_d((float)i * this.field_145816_i), this.field_145815_h));
+             }
  
--                           if (this.field_145810_d != null && block instanceof ITileEntityProvider) {
-+                           if (this.field_145810_d != null && this.field_175132_d.hasTileEntity()) {
-                               TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
-                               if (tileentity != null) {
-                                  CompoundNBT compoundnbt = tileentity.func_189515_b(new CompoundNBT());
 -            if (flag && (double)this.field_70146_Z.nextFloat() < (double)0.05F + (double)i * 0.05D) {
-+            if (flag && (double)this.field_70146_Z.nextFloat() < (double)0.05F + (double)i * 0.05D && !net.minecraftforge.common.ForgeHooks.onAnvilDamageFalling(this.field_175132_d, this.field_70122_E ? this.func_130014_f_().func_180495_p(this.func_226270_aj_()) : null)) {
++            if (flag && (double)this.field_70146_Z.nextFloat() < (double)0.05F + (double)i * 0.05D && net.minecraftforge.common.ForgeHooks.onAnvilDamageFalling(this.field_175132_d, this.func_226268_ag_(), this.func_130014_f_().func_180495_p(func_226270_aj_()), this.func_226270_aj_(), this, this.func_130014_f_())) {
                 BlockState blockstate = AnvilBlock.func_196433_f(this.field_175132_d);
                 if (blockstate == null) {
 -                  this.field_145808_f = true;
-+                  if (net.minecraftforge.common.ForgeHooks.onAnvilBreak(this.field_175132_d, field_70170_p, func_226268_ag_(), this)) {
++                  if (net.minecraftforge.common.ForgeHooks.onAnvilBreak(this.field_175132_d, this.func_130014_f_(), this.func_226268_ag_(), this, null)) {
 +                     this.field_145808_f = true;
 +                  }
+                } else {
+                   this.field_175132_d = blockstate;
+                }
