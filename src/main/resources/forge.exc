@@ -45,18 +45,18 @@ net/minecraft/client/renderer/model/multipart/Multipart.bake(Lnet/minecraft/clie
 net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i48113_1_,p_i48113_2_,p_i48113_3_,p_i48113_4_,p_i48113_5_,p_i48113_6_,hidden
 net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZLnet/minecraft/client/renderer/texture/NativeImage;Z)V=|p_i48114_1_,p_i48114_2_,p_i48114_3_,p_i48114_4_,p_i48114_5_,p_i48114_6_,p_i48114_7_,p_i48114_8_,p_i48114_9_,hidden
 
-net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/EntityClassification.create(Ljava/lang/String;Ljava/lang/String;IZZ)Lnet/minecraft/entity/EntityClassification;=|name,p_i50381_3_,p_i50381_4_,p_i50381_5_,p_i50381_6_
 net/minecraft/entity/EntityType.<init>(Lnet/minecraft/entity/EntityType$IFactory;Lnet/minecraft/entity/EntityClassification;ZZZZLnet/minecraft/entity/EntitySize;Ljava/util/function/Predicate;Ljava/util/function/ToIntFunction;Ljava/util/function/ToIntFunction;Ljava/util/function/BiFunction;)V=|p_i51559_1_,p_i51559_2_,p_i51559_3_,p_i51559_4_,p_i51559_5_,p_i51559_6_,p_i51559_7_,velocityUpdateSupplier,trackingRangeSupplier,updateIntervalSupplier,customClientFactory
 
-net/minecraft/entity/item/EnderPearlEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/item/ItemEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/item/minecart/ContainerMinecartEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/item/EnderPearlEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
+net/minecraft/entity/item/ItemEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
+net/minecraft/entity/item/minecart/ContainerMinecartEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 
-net/minecraft/entity/merchant/villager/AbstractVillagerEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/merchant/villager/AbstractVillagerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
-net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 
 net/minecraft/item/BoneMealItem.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)Z=|p_195966_0_,p_195966_1_,p_195966_2_,player
 net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;)Lnet/minecraft/world/storage/MapData;=|p_195950_0_,p_195950_1_
