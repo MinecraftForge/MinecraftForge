@@ -136,7 +136,7 @@
        }
  
 +      Screen old = this.field_71462_r;
-+      net.minecraftforge.client.event.GuiOpenEvent event = new net.minecraftforge.client.event.GuiOpenEvent(p_147108_1_);
++      net.minecraftforge.client.event.GuiOpenEvent event = new net.minecraftforge.client.event.GuiOpenEvent(p_147108_1_, old);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +
 +      p_147108_1_ = event.getGui();

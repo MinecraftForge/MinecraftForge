@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.gui.screen.Screen;
 
 /**
@@ -34,9 +32,11 @@ import net.minecraft.client.gui.screen.Screen;
 public class GuiOpenEvent extends net.minecraftforge.eventbus.api.Event
 {
     private Screen gui;
-    public GuiOpenEvent(Screen gui)
+    private final Screen oldGui;
+    public GuiOpenEvent(Screen gui, Screen oldGui)
     {
         this.setGui(gui);
+        this.oldGui = oldGui;
     }
 
     public Screen getGui()
@@ -47,5 +47,10 @@ public class GuiOpenEvent extends net.minecraftforge.eventbus.api.Event
     public void setGui(Screen gui)
     {
         this.gui = gui;
+    }
+
+    public Screen getOldGui()
+    {
+        return oldGui;
     }
 }
