@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/layer/DeepOceanLayer.java
 +++ b/net/minecraft/world/gen/layer/DeepOceanLayer.java
-@@ -26,27 +26,8 @@
+@@ -26,27 +26,7 @@
           }
  
           if (i > 3) {
@@ -25,8 +25,7 @@
 -            }
 -
 -            return LayerUtil.field_202830_a;
-+            java.util.List<net.minecraftforge.common.BiomeManager.OceanBiomeEntry> oceanBiomes = net.minecraftforge.common.BiomeManager.getOceanBiomesContainingBiome(net.minecraft.util.registry.Registry.field_212624_m.func_148745_a(p_202748_6_), null, false);
-+            return oceanBiomes != null ? net.minecraft.util.registry.Registry.field_212624_m.func_148757_b((net.minecraft.util.WeightedRandom.func_180166_a(oceanBiomes, p_202748_1_.func_202696_a(net.minecraft.util.WeightedRandom.func_76272_a(oceanBiomes))).deepOcean)) : LayerUtil.field_202830_a;
++            return net.minecraftforge.common.ForgeHooks.getDeepOceanIdForShallowOcean(p_202748_6_, p_202748_1_);
           }
        }
  

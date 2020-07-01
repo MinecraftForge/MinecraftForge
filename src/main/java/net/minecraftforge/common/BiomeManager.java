@@ -36,8 +36,15 @@ import javax.annotation.Nullable;
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-    @Deprecated //Don't call this method directly, use the proper methods in this class
-    public static List<OceanBiomeEntry>[] oceanBiomes = setupOceanBiomes();
+    @Deprecated //Don't call this field, use the proper methods in this class to add and get ocean biomes
+    public static List<Biome> oceanBiomes = new ArrayList<Biome>();
+    private static List<OceanBiomeEntry>[] forgeOceanBiomes = setupOceanBiomes();
+
+    static {
+        oceanBiomes.add(Biomes.OCEAN);
+        oceanBiomes.add(Biomes.DEEP_OCEAN);
+        oceanBiomes.add(Biomes.FROZEN_OCEAN);
+    }
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -129,10 +136,9 @@ public class BiomeManager
      */
     public static void addOceanBiome(OceanType type, OceanBiomeEntry entry)
     {
-        int idx = type.ordinal();
-        synchronized (BiomeManager.class) {
-            List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
-            if (list != null) list.add(entry);
+        synchronized (BiomeManager.class)
+        {
+            forgeOceanBiomes[type.ordinal()].add(entry);
         }
     }
 
@@ -149,11 +155,11 @@ public class BiomeManager
         int idx = type.ordinal();
         synchronized (BiomeManager.class)
         {
-            List<OceanBiomeEntry> list = idx > oceanBiomes.length ? null : oceanBiomes[idx];
-            if (list != null && list.contains(entry))
+            if(type == OceanType.NORMAL && forgeOceanBiomes[idx].size() <= 1)
             {
-                list.remove(entry);
+                throw new IllegalStateException("At least one NORMAL type ocean biome entry must be present");
             }
+            forgeOceanBiomes[idx].remove(entry);
         }
     }
 
@@ -172,16 +178,13 @@ public class BiomeManager
      * This method is threadsafe.
      *
      * @param type The type of ocean to get the entries for.
-     * @return An ImmutableList of the ocean biome entries for the ocean type or null if there are no entries.
+     * @return An ImmutableList of the ocean biome entries for the ocean type.
      */
-    @Nullable
     public static ImmutableList<OceanBiomeEntry> getOceanBiomes(OceanType type)
     {
-        int idx = type.ordinal();
         synchronized (BiomeManager.class)
         {
-            List<OceanBiomeEntry> list = idx >= oceanBiomes.length ? null : oceanBiomes[idx];
-            return list != null ? ImmutableList.copyOf(list) : null;
+            return ImmutableList.copyOf(forgeOceanBiomes[type.ordinal()]);
         }
     }
 
@@ -193,13 +196,12 @@ public class BiomeManager
      * @param biome The biome to check for.
      * @param type A specific OceanType to also check for or null for any OceanType.
      * @param excludeWarm True to exclude WARM OceanType (used internally for mixing oceans)
-     * @return An ImmutableList of ocean biome entries that meet the conditions specified in the params or null if empty
+     * @return An ImmutableList of ocean biome entries that meet the conditions specified in the params.
      */
-    @Nullable
     public static ImmutableList<OceanBiomeEntry> getOceanBiomesContainingBiome(Biome biome, @Nullable OceanType type, boolean excludeWarm)
     {
         OceanType[] values = type != null ? new OceanType[] {type} : OceanType.values();
-        List<OceanBiomeEntry> list = new ArrayList<>();
+        ImmutableList.Builder<OceanBiomeEntry> list = ImmutableList.builder();
         synchronized (BiomeManager.class)
         {
             for(OceanType types : values)
@@ -212,12 +214,12 @@ public class BiomeManager
                     }
                 }
             }
-            return list.isEmpty() ? null : ImmutableList.copyOf(list);
+            return list.build();
         }
     }
 
     /**
-     * Checks if a biome is present in the ocean biome entries for every OceanType.
+     * Checks if a biome is present in the ocean biome entries for any OceanType.
      * This method should be called to check if a biome is present in the ocean biome entries for every OceanType (i.e. if a biome is considered an ocean).
      * This method is threadsafe.
      *

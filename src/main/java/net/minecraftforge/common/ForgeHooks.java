@@ -85,6 +85,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.INoiseRandom;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -94,6 +98,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -1194,6 +1199,33 @@ public class ForgeHooks
             list = mod.apply(list, context);
         }
         return list;
+    }
+
+    public static BiomeManager.OceanBiomeEntry getWeightedOceanBiomeEntry(BiomeManager.OceanType type, INoiseRandom context)
+    {
+        List<BiomeManager.OceanBiomeEntry> biomeList = BiomeManager.getOceanBiomes(type);
+        if(biomeList.isEmpty()) biomeList = BiomeManager.getOceanBiomes(BiomeManager.OceanType.NORMAL);
+        return WeightedRandom.getRandomItem(biomeList, context.random(WeightedRandom.getTotalWeight(biomeList)));
+    }
+
+    public static Biome[] getMixedOceansForOcean(int oceanId, INoiseRandom context)
+    {
+        Biome[] mixedOceans = new Biome[3];
+        Biome ocean = Registry.BIOME.getByValue(oceanId);
+        List<BiomeManager.OceanBiomeEntry> warmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanType.WARM, false);
+        List<BiomeManager.OceanBiomeEntry> frozenMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanType.FROZEN, false);
+        List<BiomeManager.OceanBiomeEntry> nonWarmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, null, true);
+
+        mixedOceans[0] = warmMixedOceans.isEmpty() ? null : WeightedRandom.getRandomItem(warmMixedOceans, context.random(WeightedRandom.getTotalWeight(warmMixedOceans))).mixOcean;
+        mixedOceans[1] = frozenMixedOceans.isEmpty() ? null : WeightedRandom.getRandomItem(frozenMixedOceans, context.random(WeightedRandom.getTotalWeight(frozenMixedOceans))).mixOcean;
+        mixedOceans[2] = nonWarmMixedOceans.isEmpty() ? null : WeightedRandom.getRandomItem(nonWarmMixedOceans, context.random(WeightedRandom.getTotalWeight(nonWarmMixedOceans))).mixOcean;
+        return mixedOceans;
+    }
+
+    public static int getDeepOceanIdForShallowOcean(int oceanId, INoiseRandom context)
+    {
+        List<BiomeManager.OceanBiomeEntry> oceanBiomes = BiomeManager.getOceanBiomesContainingBiome(Registry.BIOME.getByValue(oceanId), null, false);
+        return oceanBiomes.isEmpty() ? Registry.BIOME.getId(Biomes.DEEP_OCEAN) : Registry.BIOME.getId((WeightedRandom.getRandomItem(oceanBiomes, context.random(WeightedRandom.getTotalWeight(oceanBiomes))).deepOcean));
     }
 
 }

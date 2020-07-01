@@ -41,6 +41,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod(OceanBiomeTest.MODID)
 public class OceanBiomeTest {
     public static final String MODID = "ocean_biome_test";
+    private static final boolean ENABLE = false;
 
     public OceanBiomeTest()
     {
@@ -51,6 +52,10 @@ public class OceanBiomeTest {
 
     public static void setup(FMLCommonSetupEvent event)
     {
+        if(!ENABLE) return;
+        /**
+         * Adds a new ocean for the NORMAL, COLD, and FROZEN types
+         */
         BiomeManager.addOceanBiome(BiomeManager.OceanType.NORMAL, new BiomeManager.OceanBiomeEntry(TestBiomes.TEST_OCEAN1.get(), TestBiomes.TEST_OCEAN1_DEEP.get(), TestBiomes.TEST_OCEAN1_DEEP.get(), 10));
         BiomeManager.addOceanBiome(BiomeManager.OceanType.COLD, new BiomeManager.OceanBiomeEntry(TestBiomes.TEST_OCEAN2.get(), Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, 7));
         BiomeManager.addOceanBiome(BiomeManager.OceanType.FROZEN, new BiomeManager.OceanBiomeEntry(TestBiomes.TEST_OCEAN3.get(), Biomes.DEEP_FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN, 5));
