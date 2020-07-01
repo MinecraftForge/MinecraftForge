@@ -1,49 +1,67 @@
 package net.minecraftforge.event.anvil;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @Cancelable
 public class AnvilBreakEvent extends Event
 {
-    /**
-     * This is the state of the block before it broke.
-     */
+    @Nonnull
     private final BlockState statePreBreaking;
-
-    /**
-     * This is the World of the Entity, be it the FallingBlockEntity or Player.
-     */
+    @Nonnull
     private final World world;
-
-    /**
-     * This is the BlockPos of where the block broke.
-     */
+    @Nonnull
     private final BlockPos pos;
+    @Nullable
+    private final FallingBlockEntity fallingBlockEntity;
+    @Nullable
+    private final PlayerEntity playerEntity;
 
-    /**
-     * This is the entity involved with the break.
-     * This can either be a FallingBlockEntity or a PlayerEntity.
-     */
-    private final Entity entity;
-
-    public AnvilBreakEvent(BlockState statePreBreaking, World world, BlockPos pos, Entity entity)
+    public AnvilBreakEvent(@Nonnull BlockState statePreBreaking, @Nonnull World world, @Nonnull BlockPos pos, @Nullable FallingBlockEntity fallingBlockEntity, @Nullable PlayerEntity playerEntity)
     {
         this.statePreBreaking = statePreBreaking;
         this.world = world;
         this.pos = pos;
-        this.entity = entity;
+        this.fallingBlockEntity = fallingBlockEntity;
+        this.playerEntity = playerEntity;
     }
 
+    /**
+     * @return Returns the BlockState before it broke.
+     */
+    @Nonnull
     public BlockState getStatePreBreaking() { return statePreBreaking; }
 
+    /**
+     * This is either supplied by the FallingBlockEntity or the PlayerEntity.
+     * @return Returns the World where the breaking took place.
+     */
+    @Nonnull
     public World getWorld() { return world; }
 
+    /**
+     * @return Returns the position of where the Break took place.
+     */
+    @Nonnull
     public BlockPos getPos() { return pos; }
 
-    public Entity getEntity() { return entity; }
+    /**
+     * @return Returns the FallingBlockEntity, This can return Null!
+     */
+    @Nullable
+    public FallingBlockEntity getFallingBlockEntity() { return fallingBlockEntity; }
+
+    /**
+     * @return Returns the PlayerEntity, This can return Null!
+     */
+    @Nullable
+    public PlayerEntity getPlayerEntity() { return playerEntity; }
 }

@@ -48,6 +48,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
@@ -678,27 +680,27 @@ public class ForgeHooks
         return false;
     }
 
-    public static boolean onAnvilDamage(BlockState currentState)
+    public static boolean onAnvilDamage(@Nonnull BlockState currentState)
     {
         AnvilDamageEvent e = new AnvilDamageEvent(currentState);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
-    public static boolean onAnvilDamageFalling(BlockState currentState, BlockState groundState)
+    public static boolean onAnvilDamageFalling(@Nonnull BlockState currentState, @Nonnull BlockPos fallingEntityPos, @Nullable BlockState groundState, @Nonnull BlockPos groundStatePos, @Nonnull FallingBlockEntity fallingBlockEntity, @Nonnull World world)
     {
-        AnvilDamageEvent.Falling e = new AnvilDamageEvent.Falling(currentState, groundState);
+        AnvilDamageEvent.Falling e = new AnvilDamageEvent.Falling(currentState,fallingEntityPos, groundState, groundStatePos, fallingBlockEntity, world);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
-    public static boolean onAnvilDamageContainer(BlockState currentState, PlayerEntity player, World world)
+    public static boolean onAnvilDamageContainer(@Nonnull BlockState currentState, @Nonnull PlayerEntity player, @Nonnull World world, @Nonnull RepairContainer container)
     {
-        AnvilDamageEvent.Container e = new AnvilDamageEvent.Container(currentState, player, world);
+        AnvilDamageEvent.Container e = new AnvilDamageEvent.Container(currentState, player, world, container);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
-    public static boolean onAnvilBreak(BlockState statePreBreak, World world, BlockPos pos, Entity entity)
+    public static boolean onAnvilBreak(@Nonnull BlockState statePreBreak, @Nonnull World world, @Nonnull BlockPos pos, @Nullable FallingBlockEntity fallingBlockEntity, @Nullable PlayerEntity playerEntity)
     {
-        AnvilBreakEvent e = new AnvilBreakEvent(statePreBreak, world, pos, entity);
+        AnvilBreakEvent e = new AnvilBreakEvent(statePreBreak, world, pos, fallingBlockEntity, playerEntity);
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
