@@ -91,3 +91,11 @@
     public void func_198021_g() {
        this.field_198043_h = true;
     }
+@@ -294,7 +316,6 @@
+             this.field_198040_e = (double)(this.field_198036_a.func_228018_at_().func_198105_m() / 2);
+             this.field_198041_f = (double)(this.field_198036_a.func_228018_at_().func_198083_n() / 2);
+             InputMappings.func_216504_a(this.field_198036_a.func_228018_at_().func_198092_i(), 212995, this.field_198040_e, this.field_198041_f);
+-            this.field_198036_a.func_147108_a((Screen)null);
+             this.field_198036_a.field_71429_W = 10000;
+             this.field_198043_h = true;
+          }
