@@ -60,6 +60,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+// TODO: Write a model loader and test/fix as needed
 public final class FluidModel implements IModelGeometry<FluidModel>
 {
     public static final FluidModel WATER = new FluidModel(Fluids.WATER);

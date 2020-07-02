@@ -76,7 +76,6 @@ public interface IModelConfiguration {
      * Gets the vanilla camera transforms data.
      * Do not use for non-vanilla code. For general usage, prefer getCombinedState.
      */
-    @Deprecated
     ItemCameraTransforms getCameraTransforms();
 
     /**
