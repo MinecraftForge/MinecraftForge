@@ -425,7 +425,18 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2966,14 +3021,14 @@
+@@ -2949,8 +3004,8 @@
+       }
+ 
+       BlockState blockstate = this.field_70170_p.func_180495_p(p_213342_1_);
+-      if (blockstate.func_177230_c() instanceof BedBlock) {
+-         this.field_70170_p.func_180501_a(p_213342_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(true)), 3);
++      if (blockstate.isBed(field_70170_p, p_213342_1_, this)) {
++         blockstate.setBedOccupied(field_70170_p, p_213342_1_, this, true);
+       }
+ 
+       this.func_213301_b(Pose.SLEEPING);
+@@ -2966,15 +3021,15 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_241350_1_) -> {
@@ -438,10 +449,12 @@
        this.func_213374_dv().filter(this.field_70170_p::func_175667_e).ifPresent((p_241348_1_) -> {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_241348_1_);
 -         if (blockstate.func_177230_c() instanceof BedBlock) {
-+         if (blockstate.isBed(field_70170_p, func_226270_aj_(), this)) {
-             this.field_70170_p.func_180501_a(p_241348_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(false)), 3);
+-            this.field_70170_p.func_180501_a(p_241348_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(false)), 3);
++         if (blockstate.isBed(field_70170_p, p_241348_1_, this)) {
++            blockstate.setBedOccupied(field_70170_p, p_241348_1_, this, false);
              Vector3d vector3d1 = BedBlock.func_220172_a(this.func_200600_R(), this.field_70170_p, p_241348_1_, 0).orElseGet(() -> {
                 BlockPos blockpos = p_241348_1_.func_177984_a();
+                return new Vector3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
 @@ -2993,7 +3048,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
