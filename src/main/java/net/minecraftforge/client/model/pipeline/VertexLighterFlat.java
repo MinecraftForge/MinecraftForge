@@ -19,12 +19,14 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import java.util.List;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -35,14 +37,18 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
-
-import java.util.List;
-import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
     protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.NORMAL, 4);
+    
+    // TODO 1.16/1.17 possibly refactor out the need for the "unpacked" format entirely. It's creating more headaches than solutions.
+    // This mess reverses the conversion to float bits done in LightUtil.unpack
+    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.TEX_2SB.getType().getSize() - 1))) - 1) >>> 1;
+    // Max lightmap value, for rescaling
+    private static final int LIGHTMAP_MAX = 0xF0;
+    // Inlined factor for rescaling input lightmap values, "rounded" up to the next float value to avoid precision loss when result is truncated to int
+    private static final float LIGHTMAP_RESCALE = Math.nextAfter((float) LIGHTMAP_PACKING_FACTOR / LIGHTMAP_MAX, LIGHTMAP_PACKING_FACTOR);
 
     protected final BlockInfo blockInfo;
     private int tint = -1;
@@ -198,7 +204,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 z += normal[v][2] * .5f;
             }
 
-            float blockLight = lightmap[v][0], skyLight = lightmap[v][1];
+            float blockLight = lightmap[v][0] * LIGHTMAP_RESCALE, skyLight = lightmap[v][1] * LIGHTMAP_RESCALE;
             updateLightmap(normal[v], lightmap[v], x, y, z);
             if(dataLength[lightmapIndex] > 1)
             {
