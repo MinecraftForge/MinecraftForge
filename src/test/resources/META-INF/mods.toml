@@ -10,7 +10,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="farmland_trample_test"
 [[mods]]
-
     modId="neighbor_notify_event_test"
 [[mods]]
     modId="block_place_event_test"
@@ -68,3 +67,5 @@ loaderVersion="[28,)"
     modId="deferred_registry_test"
 [[mods]]
     modId="create_entity_classification_test"
+[[mods]]
+    modId="gui_open_event_test"
