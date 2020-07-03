@@ -29,15 +29,48 @@ import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import org.lwjgl.opengl.GL11;
 
+@SuppressWarnings("deprecation")
 public enum ForgeRenderTypes
 {
-    /**
-     * A cached copy of {@link ForgeRenderTypes#getUnsortedTranslucent(ResourceLocation)}
-     * for use in item models and TileEntityRenderers that use the block/item atlas.
-     */
+    ITEM_LAYERED_SOLID(()-> getItemLayeredSolid(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
+    ITEM_LAYERED_CUTOUT(()-> getItemLayeredCutout(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
+    ITEM_LAYERED_CUTOUT_MIPPED(()-> getItemLayeredCutoutMipped(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
+    ITEM_LAYERED_TRANSLUCENT(()-> getItemLayeredTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
     ITEM_UNSORTED_TRANSLUCENT(()-> getUnsortedTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
     ITEM_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
     ITEM_UNSORTED_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE, false));
+
+    /**
+     * @return A RenderType fit for multi-layer solid item rendering.
+     */
+    public static RenderType getItemLayeredSolid(ResourceLocation textureLocation)
+    {
+        return Internal.layeredItemSolid(textureLocation);
+    }
+
+    /**
+     * @return A RenderType fit for multi-layer cutout item item rendering.
+     */
+    public static RenderType getItemLayeredCutout(ResourceLocation textureLocation)
+    {
+        return Internal.layeredItemCutout(textureLocation);
+    }
+
+    /**
+     * @return A RenderType fit for multi-layer cutout-mipped item rendering.
+     */
+    public static RenderType getItemLayeredCutoutMipped(ResourceLocation textureLocation)
+    {
+        return Internal.layeredItemCutoutMipped(textureLocation);
+    }
+
+    /**
+     * @return A RenderType fit for multi-layer translucent item rendering.
+     */
+    public static RenderType getItemLayeredTranslucent(ResourceLocation textureLocation)
+    {
+        return Internal.layeredItemTranslucent(textureLocation);
+    }
 
     /**
      * @return A RenderType fit for translucent item/entity rendering, but with depth sorting disabled.
@@ -71,7 +104,7 @@ public enum ForgeRenderTypes
      */
     public static RenderType getEntityCutoutMipped(ResourceLocation textureLocation)
     {
-        return Internal.entityCutoutMipped(textureLocation);
+        return Internal.layeredItemCutoutMipped(textureLocation);
     }
 
     // ----------------------------------------
@@ -111,7 +144,7 @@ public enum ForgeRenderTypes
                     .lightmap(LIGHTMAP_ENABLED)
                     .overlay(OVERLAY_ENABLED)
                     .build(true);
-            return makeType("entity_unsorted_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
+            return makeType("forge_entity_unsorted_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
         }
 
         public static RenderType unlitTranslucent(ResourceLocation textureLocation, boolean sortingEnabled)
@@ -124,10 +157,33 @@ public enum ForgeRenderTypes
                     .lightmap(LIGHTMAP_ENABLED)
                     .overlay(OVERLAY_ENABLED)
                     .build(true);
-            return makeType("entity_unlit_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
+            return makeType("forge_entity_unlit_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
         }
 
-        public static RenderType entityCutoutMipped(ResourceLocation locationIn) {
+        public static RenderType layeredItemSolid(ResourceLocation locationIn) {
+            RenderType.State rendertype$state = RenderType.State.getBuilder()
+                    .texture(new RenderState.TextureState(locationIn, false, false))
+                    .transparency(NO_TRANSPARENCY)
+                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
+                    .lightmap(LIGHTMAP_ENABLED)
+                    .overlay(OVERLAY_ENABLED)
+                    .build(true);
+            return makeType("forge_item_entity_solid", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+        }
+
+        public static RenderType layeredItemCutout(ResourceLocation locationIn) {
+            RenderType.State rendertype$state = RenderType.State.getBuilder()
+                    .texture(new RenderState.TextureState(locationIn, false, false))
+                    .transparency(NO_TRANSPARENCY)
+                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
+                    .alpha(DEFAULT_ALPHA)
+                    .lightmap(LIGHTMAP_ENABLED)
+                    .overlay(OVERLAY_ENABLED)
+                    .build(true);
+            return makeType("forge_item_entity_cutout", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+        }
+
+        public static RenderType layeredItemCutoutMipped(ResourceLocation locationIn) {
             RenderType.State rendertype$state = RenderType.State.getBuilder()
                     .texture(new RenderState.TextureState(locationIn, false, true))
                     .transparency(NO_TRANSPARENCY)
@@ -136,7 +192,19 @@ public enum ForgeRenderTypes
                     .lightmap(LIGHTMAP_ENABLED)
                     .overlay(OVERLAY_ENABLED)
                     .build(true);
-            return makeType("entity_cutout_mipped", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+            return makeType("forge_item_entity_cutout_mipped", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+        }
+
+        public static RenderType layeredItemTranslucent(ResourceLocation p_239268_0_) {
+            RenderType.State rendertype$state = RenderType.State.getBuilder()
+                    .texture(new RenderState.TextureState(p_239268_0_, false, false))
+                    .transparency(TRANSLUCENT_TRANSPARENCY)
+                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
+                    .alpha(DEFAULT_ALPHA)
+                    .lightmap(LIGHTMAP_ENABLED)
+                    .overlay(OVERLAY_ENABLED)
+                    .build(true);
+            return makeType("forge_item_entity_translucent_cull", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
         }
     }
 }

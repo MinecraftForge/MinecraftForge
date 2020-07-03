@@ -28,11 +28,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod("stencil_enable_test")
 public class StencilEnableTest {
+    public static boolean ENABLED = false;
+
     public StencilEnableTest() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+        if (ENABLED)
+            DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
     }
 }
