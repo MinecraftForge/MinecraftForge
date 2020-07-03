@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
@@ -34,6 +35,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Tags
 {
+    public static void init () {}; //Dummy init, create the tags so that they are added to their collections.
+
     public static class Blocks
     {
         public static final ITag.INamedTag<Block> CHESTS = tag("chests");
@@ -153,22 +156,22 @@ public class Tags
         public static final ITag.INamedTag<Item> DUSTS_GLOWSTONE = tag("dusts/glowstone");
 
         public static final ITag.INamedTag<Item> DYES = tag("dyes");
-        public static final ITag.INamedTag<Item> DYES_BLACK = tag("dyes/black");
-        public static final ITag.INamedTag<Item> DYES_RED = tag("dyes/red");
-        public static final ITag.INamedTag<Item> DYES_GREEN = tag("dyes/green");
-        public static final ITag.INamedTag<Item> DYES_BROWN = tag("dyes/brown");
-        public static final ITag.INamedTag<Item> DYES_BLUE = tag("dyes/blue");
-        public static final ITag.INamedTag<Item> DYES_PURPLE = tag("dyes/purple");
-        public static final ITag.INamedTag<Item> DYES_CYAN = tag("dyes/cyan");
-        public static final ITag.INamedTag<Item> DYES_LIGHT_GRAY = tag("dyes/light_gray");
-        public static final ITag.INamedTag<Item> DYES_GRAY = tag("dyes/gray");
-        public static final ITag.INamedTag<Item> DYES_PINK = tag("dyes/pink");
-        public static final ITag.INamedTag<Item> DYES_LIME = tag("dyes/lime");
-        public static final ITag.INamedTag<Item> DYES_YELLOW = tag("dyes/yellow");
-        public static final ITag.INamedTag<Item> DYES_LIGHT_BLUE = tag("dyes/light_blue");
-        public static final ITag.INamedTag<Item> DYES_MAGENTA = tag("dyes/magenta");
-        public static final ITag.INamedTag<Item> DYES_ORANGE = tag("dyes/orange");
-        public static final ITag.INamedTag<Item> DYES_WHITE = tag("dyes/white");
+        public static final ITag.INamedTag<Item> DYES_BLACK = DyeColor.BLACK.getTag();
+        public static final ITag.INamedTag<Item> DYES_RED = DyeColor.RED.getTag();
+        public static final ITag.INamedTag<Item> DYES_GREEN = DyeColor.GREEN.getTag();
+        public static final ITag.INamedTag<Item> DYES_BROWN = DyeColor.BROWN.getTag();
+        public static final ITag.INamedTag<Item> DYES_BLUE = DyeColor.BLUE.getTag();
+        public static final ITag.INamedTag<Item> DYES_PURPLE = DyeColor.PURPLE.getTag();
+        public static final ITag.INamedTag<Item> DYES_CYAN = DyeColor.CYAN.getTag();
+        public static final ITag.INamedTag<Item> DYES_LIGHT_GRAY = DyeColor.LIGHT_GRAY.getTag();
+        public static final ITag.INamedTag<Item> DYES_GRAY = DyeColor.GRAY.getTag();
+        public static final ITag.INamedTag<Item> DYES_PINK = DyeColor.PINK.getTag();
+        public static final ITag.INamedTag<Item> DYES_LIME = DyeColor.LIME.getTag();
+        public static final ITag.INamedTag<Item> DYES_YELLOW = DyeColor.YELLOW.getTag();
+        public static final ITag.INamedTag<Item> DYES_LIGHT_BLUE = DyeColor.LIGHT_BLUE.getTag();
+        public static final ITag.INamedTag<Item> DYES_MAGENTA = DyeColor.MAGENTA.getTag();
+        public static final ITag.INamedTag<Item> DYES_ORANGE = DyeColor.ORANGE.getTag();
+        public static final ITag.INamedTag<Item> DYES_WHITE = DyeColor.WHITE.getTag();
 
         public static final ITag.INamedTag<Item> EGGS = tag("eggs");
         public static final ITag.INamedTag<Item> END_STONES = tag("end_stones");
