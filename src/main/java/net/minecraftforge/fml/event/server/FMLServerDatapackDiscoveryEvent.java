@@ -1,0 +1,47 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2020.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package net.minecraftforge.fml.event.server;
+
+import net.minecraft.resources.IPackFinder;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.Event;
+
+import java.util.function.Consumer;
+
+/**
+ * Fired when datapacks are discovered for the Minecraft server.<br>
+ * At this point during server loading, a {@link MinecraftServer} instance does not exist yet.
+ */
+public class FMLServerDatapackDiscoveryEvent extends Event
+{
+
+    private final Consumer<IPackFinder> packFinderConsumer;
+
+    public FMLServerDatapackDiscoveryEvent(Consumer<IPackFinder> packFinderConsumer)
+    {
+        this.packFinderConsumer = packFinderConsumer;
+    }
+
+    public void addPackFinder(IPackFinder packFinder)
+    {
+        packFinderConsumer.accept(packFinder);
+    }
+
+}

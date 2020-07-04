@@ -148,7 +148,7 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList<ResourcePackInfo> p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
-+      net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
++      net.minecraftforge.fml.packs.ResourcePackLoader.loadServerResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
        p_240772_0_.func_198983_a();
        if (p_240772_2_) {
           p_240772_0_.func_198985_a(Collections.singleton("vanilla"));
