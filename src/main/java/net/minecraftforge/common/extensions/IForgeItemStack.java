@@ -450,4 +450,22 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     {
         return getStack().getItem().isRepairable(getStack());
     }
+
+    /**
+     * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
+     *
+     * @return True if this item can be used as "currency" by piglins
+     */
+    default boolean isPiglinCurrency() {
+        return getStack().getItem().isPiglinCurrency(getStack());
+    }
+
+    /**
+     * Called by Piglins to check if a given item marks a player as "honorable" and should not be attacked.
+     *
+     * @return True if piglins are neutral to players wearing this item in an armor slot
+     */
+    default boolean pacifiesPiglins() {
+        return getStack().getItem().pacifiesPiglins(getStack());
+    }
 }
