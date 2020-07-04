@@ -32,7 +32,7 @@
        for(ItemStack itemstack : p_234460_0_.func_184193_aE()) {
           Item item = itemstack.func_77973_b();
 -         if (item instanceof ArmorItem && ((ArmorItem)item).func_200880_d() == ArmorMaterial.GOLD) {
-+         if (itemstack.pacifiesPiglins()) {
++         if (itemstack.pacifiesPiglins(p_234460_0_)) {
              return true;
           }
        }

@@ -463,9 +463,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * Called by Piglins to check if a given item marks a player as "honorable" and should not be attacked.
      *
+     * @param wearer The entity wearing this ItemStack
+     *
      * @return True if piglins are neutral to players wearing this item in an armor slot
      */
-    default boolean pacifiesPiglins() {
-        return getStack().getItem().pacifiesPiglins(getStack());
+    default boolean pacifiesPiglins(LivingEntity wearer) {
+        return getStack().getItem().pacifiesPiglins(getStack(), wearer);
     }
 }
