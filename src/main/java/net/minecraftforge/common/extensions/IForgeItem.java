@@ -121,7 +121,8 @@ public interface IForgeItem
      *
      * @return True if this item can be used as "currency" by piglins
      */
-    default boolean isPiglinCurrency(ItemStack stack) {
+    default boolean isPiglinCurrency(ItemStack stack)
+    {
         return stack.getItem() == PiglinTasks.field_234444_a_;
     }
 
@@ -132,7 +133,8 @@ public interface IForgeItem
      *
      * @return True if piglins are neutral to players wearing this item in an armor slot
      */
-    default boolean pacifiesPiglins(ItemStack stack, LivingEntity wearer) {
+    default boolean pacifiesPiglins(ItemStack stack, LivingEntity wearer)
+    {
         return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getArmorMaterial() == ArmorMaterial.GOLD;
     }
 

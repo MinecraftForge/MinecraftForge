@@ -456,7 +456,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *
      * @return True if this item can be used as "currency" by piglins
      */
-    default boolean isPiglinCurrency() {
+    default boolean isPiglinCurrency()
+    {
         return getStack().getItem().isPiglinCurrency(getStack());
     }
 
@@ -467,7 +468,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *
      * @return True if piglins are neutral to players wearing this item in an armor slot
      */
-    default boolean pacifiesPiglins(LivingEntity wearer) {
+    default boolean pacifiesPiglins(LivingEntity wearer)
+    {
         return getStack().getItem().pacifiesPiglins(getStack(), wearer);
     }
 }
