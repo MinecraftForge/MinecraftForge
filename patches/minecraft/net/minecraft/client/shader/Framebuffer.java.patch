@@ -1,0 +1,47 @@
+--- a/net/minecraft/client/shader/Framebuffer.java
++++ b/net/minecraft/client/shader/Framebuffer.java
+@@ -95,8 +95,14 @@
+          GLX.glFramebufferTexture2D(GLX.GL_FRAMEBUFFER, GLX.GL_COLOR_ATTACHMENT0, 3553, this.field_147617_g, 0);
+          if (this.field_147619_e) {
+             GLX.glBindRenderbuffer(GLX.GL_RENDERBUFFER, this.field_147624_h);
++            if (!stencilEnabled) {
+             GLX.glRenderbufferStorage(GLX.GL_RENDERBUFFER, 33190, this.field_147622_a, this.field_147620_b);
+             GLX.glFramebufferRenderbuffer(GLX.GL_FRAMEBUFFER, GLX.GL_DEPTH_ATTACHMENT, GLX.GL_RENDERBUFFER, this.field_147624_h);
++            } else {
++            GLX.glRenderbufferStorage(GLX.GL_RENDERBUFFER, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++            GLX.glFramebufferRenderbuffer(GLX.GL_FRAMEBUFFER, GLX.GL_DEPTH_ATTACHMENT, GLX.GL_RENDERBUFFER, this.field_147624_h);
++            GLX.glFramebufferRenderbuffer(GLX.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, GLX.GL_RENDERBUFFER, this.field_147624_h);
++            }
+          }
+ 
+          this.func_147611_b();
+@@ -229,4 +235,29 @@
+       GlStateManager.clear(i, p_216493_1_);
+       this.func_147609_e();
+    }
++
++   /*================================ FORGE START ================================================*/
++   private boolean stencilEnabled = false;
++   /**
++    * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
++    * Modders must call this directly to set things up.
++    * This is to prevent the default cause where graphics cards do not support stencil bits.
++    * <b>Make sure to call this on the main render thread!</b>
++    */
++   public void enableStencil()
++   {
++       if(stencilEnabled) return;
++       stencilEnabled = true;
++       this.func_216491_a(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
++   }
++
++   /**
++    * Returns whether or not this FBO has been successfully initialised with stencil bits.
++    * If not, and a modder wishes it to be, they must call enableStencil.
++    */
++   public boolean isStencilEnabled()
++   {
++     return this.stencilEnabled;
++   }
++   /*================================ FORGE END ================================================*/
+ }

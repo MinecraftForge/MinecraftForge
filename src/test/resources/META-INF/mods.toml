@@ -70,4 +70,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="forgedebugmultilayermodel"
 [[mods]]
+    modId="stencil_backport_test"
+[[mods]]
     modId="particle_world_handle_event_test"
