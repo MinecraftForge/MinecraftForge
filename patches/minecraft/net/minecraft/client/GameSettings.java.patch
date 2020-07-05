@@ -38,7 +38,7 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -733,4 +739,22 @@
+@@ -733,4 +739,21 @@
  
        p_198017_1_.func_198985_a(set);
     }
@@ -58,6 +58,5 @@
 +      field_74323_J.setKeyConflictContext(inGame);
 +      field_151457_aa.setKeyConflictContext(inGame);
 +      field_151458_ab.setKeyConflictContext(inGame);
-+      field_186718_X.setKeyConflictContext(inGame);
 +   }
  }
