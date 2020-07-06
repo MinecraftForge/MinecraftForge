@@ -156,29 +156,6 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
          return bb;
      }
 
-     /**
-      * Checks if this tile entity knows how to render its 'breaking' overlay effect.
-      * If this returns true, The TileEntitySpecialRenderer will be called again with break progress set.
-      * @return True to re-render tile with breaking effect.
-      */
-     default boolean canRenderBreaking()
-     {
-         Block block = getTileEntity().getBlockState().getBlock();
-         return (block instanceof net.minecraft.block.ChestBlock ||
-                 block instanceof net.minecraft.block.EnderChestBlock ||
-                 block instanceof net.minecraft.block.AbstractSignBlock ||
-                 block instanceof net.minecraft.block.SkullBlock);
-     }
-
-     /**
-      * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
-      * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
-      */
-     default boolean hasFastRenderer()
-     {
-         return false;
-     }
-
     /**
      * Requests a refresh for the model data of your TE
      * Call this every time your {@link #getModelData()} changes

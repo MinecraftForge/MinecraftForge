@@ -247,7 +247,7 @@ public class ForgeHooks
             if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
-            result = state.getBlock().getPickBlock(state, target, world, pos, player);
+            result = state.getPickBlock(target, world, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
