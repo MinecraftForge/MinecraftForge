@@ -80,7 +80,7 @@
 +      synchronized (RenderTypeLookup.class) {
 +         rendertype = blockFabulousRenderChecks.get(state.func_177230_c().delegate);
 +      }
-+      return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
++      return rendertype != null ? rendertype.test(type) : type == RenderType.func_228645_f_();
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
