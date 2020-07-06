@@ -49,13 +49,11 @@
        if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
           float f = 1.0F;
           f = 0.05F;
-@@ -231,8 +250,8 @@
+@@ -231,6 +250,7 @@
           RenderSystem.fogEnd(f3);
           RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
           RenderSystem.setupNvFogDistance();
 +         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_228372_1_, p_228372_0_, partialTicks, f3);
        }
--
-    }
  
-    public static void func_228373_b_() {
+    }

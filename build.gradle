@@ -29,6 +29,7 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import java.security.MessageDigest
 import java.net.URL
+import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.gradle.common.task.ArchiveChecksum
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.ExtractInheritance
@@ -43,6 +44,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.Opcodes
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
@@ -52,7 +54,7 @@ plugins {
 }
 apply plugin: 'eclipse'
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version'))
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 ext {
     JAR_SIGNER = null
@@ -122,7 +124,7 @@ project(':clean') {
             clean_server {
                 taskName 'clean_server'
 
-                main 'net.minecraft.server.MinecraftServer'
+                main 'net.minecraft.server.Main'
                 workingDirectory project.file('run')
             }
         }
@@ -137,7 +139,7 @@ project(':forge') {
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'de.undercouch.download'
-    
+
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     group = 'net.minecraftforge'
 
@@ -217,6 +219,7 @@ project(':forge') {
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
+        INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
     def getVersion = {
@@ -621,6 +624,7 @@ project(':forge') {
     }
     
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
+        tool = INSTALLER_TOOLS + ':fatjar'
         input { genJoinedBinPatches.cleanJar }
         doFirst {
             def json = new JsonSlurper().parseText(VERSION_JSON.text)
@@ -634,51 +638,220 @@ project(':forge') {
             }
         }
     }
-    task checkATs(dependsOn: genJoinedBinPatches) {
-        inputs.file { genJoinedBinPatches.cleanJar }
+    task checkATs(dependsOn: extractInheritance) {
+        inputs.file { extractInheritance.output }
         inputs.files patcher.accessTransformers
         doLast {
-            def vanilla = [:]
-            def zip = new java.util.zip.ZipFile(genJoinedBinPatches.cleanJar)
-            zip.entries().findAll { !it.directory && it.name.endsWith('.class') }.each { entry ->
-                new ClassReader(zip.getInputStream(entry)).accept(new org.objectweb.asm.ClassVisitor(org.objectweb.asm.Opcodes.ASM7) {
-                    String name
-                    void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
-                        this.name = name
-                        vanilla[name] = access
-                    }
-                    org.objectweb.asm.FieldVisitor visitField(int access, String name, String desc, String sig, Object value) {
-                        vanilla[this.name + ' ' + name] = access
-                        return null
-                    }
-                    org.objectweb.asm.MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] excs) {
-                        vanilla[this.name + ' ' + name + desc] = access
-                        return null
-                    }
-                }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)   
+            def parse = { line ->
+                def idx = line.indexOf('#')
+                def comment = idx == -1 ? null : line.substring(idx)
+                if (idx != -1) line = line.substring(0, idx - 1)
+                def (modifier, cls, desc) = (line.trim() + '     ').split(' ', -1)
+                def key = cls + (desc.isEmpty() ? '' : ' ' + desc)
+                return [modifier, cls, desc, comment, key]
             }
+            def accessLevel = { access ->
+                if ((access & Opcodes.ACC_PUBLIC)    != 0) return 3
+                if ((access & Opcodes.ACC_PROTECTED) != 0) return 2
+                if ((access & Opcodes.ACC_PRIVATE)   != 0) return 0
+                return 1
+            }
+            def accessStr = { access ->
+                if (access.endsWith('-f') || access.endsWith('+f'))
+                    return 4
+                switch (access.toLowerCase()) {
+                    case 'public':    return 3
+                    case 'protected': return 2
+                    case 'default':   return 1
+                    case 'private':   return 0
+                    default:          return -1
+                }
+            }
+            def json = new JsonSlurper().parseText(extractInheritance.output.text)
+            
             patcher.accessTransformers.each { f -> 
                 TreeMap lines = [:]
-                f.eachLine { line -> 
-                    def idx = line.indexOf('#')
-                    if (idx == 0 || line.isEmpty()) return
-                    def comment = idx == -1 ? null : line.substring(idx)
-                    if (idx != -1) line = line.substring(0, idx - 1)
-                    def (modifier, cls, desc) = (line.trim() + '     ').split(' ', -1)
-                    def key = cls + (desc.isEmpty() ? '' : ' ' + desc)
-                    def access = vanilla[key.replace('.', '/')]
-                    if (access == null) {
-                        if ((desc.equals('*') || desc.equals('*()')) && vanilla[cls.replace('.', '/')] != null)
-                            println('Warning: ' + line)
-                        else {
-                            println('Invalid: ' + line)
-                            return
+                def group = null
+                for (def line : f.readLines()) {
+                    if (line.isEmpty()) continue
+                    if (line.startsWith('#group ')) {
+                        def (modifier, cls, desc, comment, key) = parse.call(line.substring(7))
+                        
+                        if (!desc.equals('*') && !desc.equals('*()') && !desc.equals('<init>'))
+                            throw new IllegalStateException('Invalid group: ' + line)
+                        
+                        group = [modifier: modifier, cls: cls, desc: desc, comment: comment, 
+                            'existing': [] as Set, 
+                            'children': [] as TreeSet,
+                            group: true
+                        ]
+                        if (lines.containsKey(key))
+                            throw new IllegalStateException('Duplicate group: ' + line)
+                        
+                        lines[key] = group
+                    } else if (group != null) {
+                        if (line.startsWith('#endgroup')) {
+                            group = null
+                        } else {
+                            def (modifier, cls, desc, comment, key) = parse.call(line)
+                            group['existing'].add(key)
+                        }
+                    } else if (line.startsWith('#endgroup')) {
+                        throw new IllegalStateException('Invalid group ending: ' + line)
+                    } else if (line.startsWith('#')) {
+                        //Nom
+                    } else {
+                        def (modifier, cls, desc, comment, key) = parse.call(line)
+                        if (lines.containsKey(key)) {
+                            println('Duplicate: ' + line)
+                            continue
+                        }
+                        lines[key] = [modifier: modifier, cls: cls, desc: desc, comment: comment, group: false]
+                    }
+                }
+                
+                // Process Groups, this will remove any entries outside the group that is covered by the group
+                for (def key : new ArrayList<>(lines.keySet())) {
+                    def entry = lines.get(key)
+                    if (entry != null && entry['group']) {
+                        def cls = entry['cls']
+                        def jcls = json.get(cls.replaceAll('\\.', '/'))
+                        if (jcls == null) {
+                            lines.remove(key)
+                            println('Invalid Group: ' + key)
+                        } else if ('*'.equals(entry['desc'])) {
+                            if (!jcls.containsKey('fields')) {
+                                lines.remove(key)
+                                println('Invalid Group, Class has no fields: ' + key)
+                            } else {
+                                jcls['fields'].each { field, value ->
+                                    def fkey = cls + ' ' + field
+                                    if (accessLevel.call(value['access']) < accessStr.call(entry['modifier'])) {
+                                        if (lines.containsKey(fkey)) {
+                                            lines.remove(fkey)
+                                        } else if (!entry['existing'].contains(fkey)) {
+                                            println('Added: ' + fkey)
+                                        }
+                                        entry['children'].add(fkey)
+                                    } else if (lines.containsKey(fkey)) {
+                                        lines.remove(fkey)
+                                        println('Removed: ' + fkey)
+                                    }
+                                }
+                                entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
+                            }
+                        } else if ('*()'.equals(entry['desc'])) {
+                            if (!jcls.containsKey('methods')) {
+                                lines.remove(key)
+                                println('Invalid Group, Class has no methods: ' + key)
+                            } else {
+                                jcls['methods'].each{ mtd, value ->
+                                    if (mtd.startsWith('<clinit>'))
+                                        return
+                                    key = cls + ' ' + mtd.replace(' ', '')
+                                    if (accessLevel.call(value['access']) < accessStr.call(entry['modifier'])) {
+                                        if (lines.containsKey(key)) {
+                                            lines.remove(key)
+                                        } else if (!entry['existing'].contains(key)) {
+                                            println('Added: ' + key)
+                                        }
+                                        entry['children'].add(key)
+                                    } else if (lines.containsKey(key)) {
+                                        lines.remove(key)
+                                        println('Removed: ' + key)
+                                    }
+                                }
+                                entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
+                            }
+                        } else if ('<init>'.equals(entry['desc'])) { //Make all public non-abstract subclasses 
+                            json.each{ tcls,value -> 
+                                if (!value.containsKey('methods') || ((value['access'] & Opcodes.ACC_ABSTRACT) != 0))
+                                    return
+                                def parents = [] as Set
+                                def parent = tcls
+                                while (parent != null && json.containsKey(parent)) {
+                                    parents.add(parent)
+                                    def p = json[parent]
+                                    parent = p == null ? null : p['superName']
+                                }
+                                if (parents.contains(cls.replaceAll('\\.', '/'))) {
+                                    value['methods'].each{ mtd, v -> 
+                                        if (mtd.startsWith('<init>')) {
+                                            def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
+                                            if (accessLevel.call(v['access']) < 3) {
+                                                if (lines.containsKey(child)) {
+                                                    lines.remove(child)
+                                                } else if (!entry['existing'].contains(child)) {
+                                                    println('Added: ' + child)
+                                                }
+                                                entry['children'].add(child)
+                                            } else if (lines.containsKey(child)) {
+                                                lines.remove(child)
+                                                println('Removed: ' + child)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
                         }
                     }
-                    //TODO: Check access actually changes, and expand inheretence?
-                    lines[key] = [modifier: modifier, comment: comment]
                 }
-                f.text = lines.collect{ it.value.modifier + ' ' + it.key + (it.value.comment == null ? '' : ' ' + it.value.comment) }.join('\n')
+                
+                // Process normal lines, remove invalid and remove narrowing
+                for (def key : new ArrayList<>(lines.keySet())) {
+                    def entry = lines.get(key)
+                    if (entry != null && !entry['group']) {
+                        def cls = entry['cls']
+                        def jcls = json.get(cls.replaceAll('\\.', '/'))
+                        if (jcls == null) {
+                            lines.remove(key)
+                            println('Invalid: ' + key)
+                        } else if (entry['desc'] == '') {
+                            if (accessLevel.call(jcls['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+                                lines.remove(key)
+                                println('Invalid Narrowing: ' + key)
+                            }
+                        } else if (!entry['desc'].contains('(')) {
+                            if (!jcls.containsKey('fields') || !jcls['fields'].containsKey(entry['desc'])) {
+                                lines.remove(key)
+                                println('Invalid: ' + key)
+                            } else {
+                                def value = jcls['fields'][entry['desc']]
+                                if (accessLevel.call(value['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+                                    lines.remove(key)
+                                    println('Invalid Narrowing: ' + key)
+                                    println(entry.comment)
+                                }
+                            }
+                        } else {
+                            def jdesc = entry['desc'].replace('(', ' (')
+                            if (!jcls.containsKey('methods') || !jcls['methods'].containsKey(jdesc)) {
+                                lines.remove(key)
+                                println('Invalid: ' + key)
+                            } else {
+                                def value = jcls['methods'][jdesc]
+                                if (accessLevel.call(value['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+                                    lines.remove(key)
+                                    println('Invalid Narrowing: ' + key)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                
+                def data = []
+                lines.each { key,value -> 
+                    if (!value.group) {
+                        data.add(value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
+                    } else {
+                        data.add('#group ' + value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
+                        value.children.each{ data.add(value.modifier + ' ' + it) }
+                        data.add('#endgroup')
+                    }
+                }
+                f.text = data.join('\n')
             }
         }
     }
@@ -719,6 +892,17 @@ project(':forge') {
             }
         }
     }
+
+    task checkPatchesAndFix(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = true
+    }
+
+    task checkPatches(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = false
+    }
+    project(':forge').getTasks().getByName('genPatches').finalizedBy(checkPatches)
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
@@ -779,7 +963,6 @@ project(':forge') {
     task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
         ext {
             output = file('build/install_profile.json')
-            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.4'
             JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.2'
         }
         doFirst {

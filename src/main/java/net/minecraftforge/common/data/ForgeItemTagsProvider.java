@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -131,6 +131,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240522_a_(Tags.Items.SEEDS_MELON).func_240534_a_(Items.MELON_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_PUMPKIN).func_240534_a_(Items.PUMPKIN_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_WHEAT).func_240534_a_(Items.WHEAT_SEEDS);
+        func_240522_a_(Tags.Items.SHEARS).func_240534_a_(Items.SHEARS);
         func_240522_a_(Tags.Items.SLIMEBALLS).func_240534_a_(Items.SLIME_BALL);
         func_240521_a_(Tags.Blocks.STAINED_GLASS, Tags.Items.STAINED_GLASS);
         func_240521_a_(Tags.Blocks.STAINED_GLASS_PANES, Tags.Items.STAINED_GLASS_PANES);

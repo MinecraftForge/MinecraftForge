@@ -30,7 +30,7 @@
     public void func_147251_a(SChatPacket p_147251_1_) {
        PacketThreadUtil.func_218797_a(p_147251_1_, this, this.field_147299_f);
 -      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c(), p_147251_1_.func_240810_e_());
-+      net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c());
++      net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c(), p_147251_1_.func_240810_e_());
 +      if (message == null) return;
 +      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), message, p_147251_1_.func_240810_e_());
     }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +28,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod("stencil_enable_test")
 public class StencilEnableTest {
+    public static boolean ENABLED = true;
+
     public StencilEnableTest() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+        if (ENABLED)
+            DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
     }
 }
