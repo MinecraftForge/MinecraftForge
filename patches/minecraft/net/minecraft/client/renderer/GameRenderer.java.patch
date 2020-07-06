@@ -26,6 +26,19 @@
              }
  
              this.field_78531_r.func_147110_a().func_147610_a(true);
+@@ -448,10 +_,10 @@
+          RenderSystem.clear(256, Minecraft.field_142025_a);
+          RenderSystem.matrixMode(5889);
+          RenderSystem.loadIdentity();
+-         RenderSystem.ortho(0.0D, (double)mainwindow.func_198109_k() / mainwindow.func_198100_s(), (double)mainwindow.func_198091_l() / mainwindow.func_198100_s(), 0.0D, 1000.0D, 3000.0D);
++         RenderSystem.ortho(0.0D, (double)mainwindow.func_198109_k() / mainwindow.func_198100_s(), (double)mainwindow.func_198091_l() / mainwindow.func_198100_s(), 0.0D, 1000.0D, net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
+          RenderSystem.matrixMode(5888);
+          RenderSystem.loadIdentity();
+-         RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
++         RenderSystem.translatef(0.0F, 0.0F, 1000.0F - net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
+          RenderHelper.func_227784_d_();
+          MatrixStack matrixstack = new MatrixStack();
+          if (p_195458_4_ && this.field_78531_r.field_71441_e != null) {
 @@ -486,7 +_,7 @@
              }
           } else if (this.field_78531_r.field_71462_r != null) {
