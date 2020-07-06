@@ -78,14 +78,14 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_186854_a("Thrower", this.func_200214_m());
        }
-@@ -259,6 +277,7 @@
-       if (this.func_200215_l() != null) {
-          p_213281_1_.func_186854_a("Owner", this.func_200215_l());
+@@ -272,6 +290,7 @@
+       if (p_70037_1_.func_74764_b("PickupDelay")) {
+          this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
-+      if (p_213281_1_.func_74764_b("Lifespan")) lifespan = p_213281_1_.func_74762_e("Lifespan");
++      if (p_70037_1_.func_74764_b("Lifespan")) lifespan = p_70037_1_.func_74762_e("Lifespan");
  
-       if (!this.func_92059_d().func_190926_b()) {
-          p_213281_1_.func_218657_a("Item", this.func_92059_d().func_77955_b(new CompoundNBT()));
+       if (p_70037_1_.func_186855_b("Owner")) {
+          this.field_145802_g = p_70037_1_.func_186857_a("Owner");
 @@ -291,10 +310,18 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {

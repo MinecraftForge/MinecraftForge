@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -109,6 +109,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -166,23 +168,17 @@ public class ForgeHooks
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);
-        if (state.func_235783_q_())
-        {
+        if (!state.func_235783_q_())
             return true;
-        }
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
         if (stack.isEmpty() || tool == null)
-        {
-            return true; // TODO: player.canHarvestBlock(state);
-        }
+            return player.func_234569_d_(state);
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
         if (toolLevel < 0)
-        {
-            return true; //TODO: player.canHarvestBlock(state);
-        }
+            return player.func_234569_d_(state);
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
     }
@@ -251,7 +247,7 @@ public class ForgeHooks
             if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
-            result = state.getBlock().getPickBlock(state, target, world, pos, player);
+            result = state.getPickBlock(target, world, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -1171,12 +1167,10 @@ public class ForgeHooks
      * @return The modified list
      */
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
-    	/*
-        LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
+        LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
         for(IGlobalLootModifier mod : man.getAllLootMods()) {
             list = mod.apply(list, context);
         }
-        */
         return list;
     }
 

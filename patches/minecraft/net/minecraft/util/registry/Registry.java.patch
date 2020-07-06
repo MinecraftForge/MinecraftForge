@@ -169,7 +169,7 @@
        return Activity.field_221366_b;
     });
     public static final Registry<LootPoolEntryType> field_239693_aY_ = func_239746_a_(field_239695_aa_, () -> {
-@@ -407,6 +411,14 @@
+@@ -407,6 +411,18 @@
        return ((MutableRegistry<V>)p_218343_0_).func_218382_a(p_218343_1_, RegistryKey.func_240903_a_(p_218343_0_.field_239703_b_, new ResourceLocation(p_218343_2_)), p_218343_3_);
     }
  
@@ -179,6 +179,10 @@
 +
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forgeDefaulted(RegistryKey<Registry<T>> key, Class<? super T> cls, Supplier<T> def) {
 +      return Registry.func_239743_a_(key, net.minecraftforge.registries.GameData.<T>getWrapperDefaulted(cls), def);
++   }
++
++   public final RegistryKey<Registry<T>> getRegistryKey() {
++      return field_239703_b_;
 +   }
 +
     static {

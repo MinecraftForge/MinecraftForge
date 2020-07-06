@@ -1,6 +1,27 @@
 --- a/net/minecraft/tags/NetworkTagManager.java
 +++ b/net/minecraft/tags/NetworkTagManager.java
-@@ -86,5 +86,6 @@
+@@ -47,8 +47,19 @@
+       this.field_215299_d.func_200042_a(p_199716_1_);
+    }
+ 
++   /*
++    * Reads a list of Network Tag Collections from the packet, but supports missing/empty tags.
++    * If the tag is missing, it will either return an empty tag when requested, or a tag with default values.
++    */
++   public static NetworkTagManager readSafe(PacketBuffer buffer) {
++      return read(buffer, net.minecraftforge.common.util.ForgeNetworkTagManager.create());
++   }
++
+    public static NetworkTagManager func_199714_b(PacketBuffer p_199714_0_) {
+-      NetworkTagManager networktagmanager = new NetworkTagManager();
++      return read(p_199714_0_, new NetworkTagManager());
++   }
++
++   private static NetworkTagManager read(PacketBuffer p_199714_0_, NetworkTagManager networktagmanager) {
+       networktagmanager.func_199717_a().func_200043_b(p_199714_0_);
+       networktagmanager.func_199715_b().func_200043_b(p_199714_0_);
+       networktagmanager.func_205704_c().func_200043_b(p_199714_0_);
+@@ -86,5 +97,6 @@
        FluidTags.func_206953_a(this.field_205705_c);
        EntityTypeTags.func_219759_a(this.field_215299_d);
        Blocks.func_235419_a_();

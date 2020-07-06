@@ -6,7 +6,7 @@
     public static final BooleanProperty field_176569_M = BlockStateProperties.field_208194_u;
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
-    protected PoweredRailBlock(AbstractBlock.Properties p_i48349_1_) {
+    public PoweredRailBlock(AbstractBlock.Properties p_i48349_1_) {
 -      super(true, p_i48349_1_);
 +      this(p_i48349_1_, false);
 +   }

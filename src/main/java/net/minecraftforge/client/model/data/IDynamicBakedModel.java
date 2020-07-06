@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 
 /**
- * Convenience interface with default implementation of {@link IBakedModel#getQuads(net.minecraft.block.state.IBlockState, net.minecraft.util.EnumFacing, java.util.Random)}.
+ * Convenience interface with default implementation of {@link IBakedModel#getQuads(net.minecraft.block.BlockState, net.minecraft.util.Direction, java.util.Random)}.
  */
 public interface IDynamicBakedModel extends IBakedModel
 {

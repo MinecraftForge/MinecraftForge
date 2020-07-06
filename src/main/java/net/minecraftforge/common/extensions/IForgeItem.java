@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,10 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -113,6 +116,29 @@ public interface IForgeItem
     default ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context)
     {
         return ActionResultType.PASS;
+    }
+
+    /**
+     * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
+     *
+     * @return True if this item can be used as "currency" by piglins
+     */
+    default boolean isPiglinCurrency(ItemStack stack)
+    {
+        return stack.getItem() == PiglinTasks.field_234444_a_;
+    }
+
+    /**
+     * Called by Piglins to check if a given item prevents hostility on sight. If this is true the Piglins will be neutral to the entity wearing this item, and will not
+     * attack on sight. Note: This does not prevent Piglins from becoming hostile due to other actions, nor does it make Piglins that are already hostile stop being so.
+     *
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if piglins are neutral to players wearing this item in an armor slot
+     */
+    default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getArmorMaterial() == ArmorMaterial.GOLD;
     }
 
     /**

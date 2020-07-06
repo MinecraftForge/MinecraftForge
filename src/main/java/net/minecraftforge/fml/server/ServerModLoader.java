@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,12 @@
 
 package net.minecraftforge.fml.server;
 
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.network.FMLStatusPing;
+import net.minecraftforge.fml.LoadingFailedException;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.SidedProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,31 +35,23 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 public class ServerModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static DedicatedServer server;
     private static boolean hasErrors = false;
 
-    public static void begin(DedicatedServer dedicatedServer) {
-        ServerModLoader.server = dedicatedServer;
-        SidedProvider.setServer(()->dedicatedServer);
-        LogicalSidedProvider.setServer(()->dedicatedServer);
+    public static void load() {
+        SidedProvider.setServer(()-> {
+            throw new IllegalStateException("Unable to access server yet");
+        });
+        LogicalSidedProvider.setServer(()-> {
+            throw new IllegalStateException("Unable to access server yet");
+        });
         LanguageHook.loadForgeAndMCLangs();
         try {
             ModLoader.get().gatherAndInitializeMods(() -> {});
             ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
-        } catch (LoadingFailedException e) {
-            ServerModLoader.hasErrors = true;
-            throw e;
-        }
-    }
-
-
-    public static void end() {
-        try {
             ModLoader.get().finishMods(Runnable::run);
         } catch (LoadingFailedException e) {
             ServerModLoader.hasErrors = true;
             throw e;
-
         }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {
@@ -65,7 +59,6 @@ public class ServerModLoader
             warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
         }
         MinecraftForge.EVENT_BUS.start();
-        server.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
     }
 
     public static boolean hasErrors() {

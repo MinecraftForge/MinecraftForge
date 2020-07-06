@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -123,6 +123,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
+
+        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
+        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -131,9 +135,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
-        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
-        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-        MinecraftForge.EVENT_BUS.register(this);
 
         VersionChecker.startVersionCheck();
 

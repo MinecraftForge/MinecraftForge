@@ -81,7 +81,7 @@
 -            int i = WorldRenderer.func_228420_a_(p_228806_1_, p_228806_3_, p_228806_4_.func_177972_a(direction));
 -            this.func_228798_a_(p_228806_1_, p_228806_3_, p_228806_4_, i, p_228806_11_, false, p_228806_5_, p_228806_6_, list, bitset);
 +         randomIn.setSeed(rand);
-+         List<BakedQuad> list = modelIn.func_200117_a(stateIn, direction, randomIn);
++         List<BakedQuad> list = modelIn.getQuads(stateIn, direction, randomIn, modelData);
 +         if (!list.isEmpty() && (!checkSides || Block.func_176225_a(stateIn, worldIn, posIn, direction))) {
 +            int i = WorldRenderer.func_228420_a_(worldIn, stateIn, posIn.func_177972_a(direction));
 +            this.func_228798_a_(worldIn, stateIn, posIn, i, combinedOverlayIn, false, matrixStackIn, buffer, list, bitset);
