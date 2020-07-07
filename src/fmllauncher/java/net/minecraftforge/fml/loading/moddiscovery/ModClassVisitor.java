@@ -78,7 +78,7 @@ public class ModClassVisitor extends ClassVisitor
     public void buildData(final Set<ModFileScanData.ClassData> classes, final Set<ModFileScanData.AnnotationData> annotations) {
         classes.add(new ModFileScanData.ClassData(this.asmType, this.asmSuperType, this.interfaces));
         final List<ModFileScanData.AnnotationData> collect = this.annotations.stream().
-                filter(ma->ModFileScanData.interestingAnnotations().test(ma.asmType)).
+                filter(ma->ModFileScanData.interestingAnnotations().test(ma.getASMType())).
                 map(a -> ModAnnotation.fromModAnnotation(this.asmType, a)).collect(Collectors.toList());
         annotations.addAll(collect);
     }

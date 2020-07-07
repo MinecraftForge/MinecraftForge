@@ -67,6 +67,7 @@ public class ModelLoaderRegistry
         registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
@@ -219,15 +220,15 @@ public class ModelLoaderRegistry
             if(transform.has("rotation")) k--;
             if(transform.has("scale")) k--;
             if(transform.has("post-rotation")) k--;
+            if(transform.has("origin")) k--;
             if(k > 0)
             {
-                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
+                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
             }
             TransformationMatrix base = TransformationMatrix.identity();
             if(!transform.entrySet().isEmpty())
             {
                 base = context.deserialize(transform, TransformationMatrix.class);
-                base = base.blockCenterToCorner();
             }
             IModelTransform state = new SimpleModelTransform(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
@@ -249,7 +250,7 @@ public class ModelLoaderRegistry
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
-            modelTransform = new ModelTransformComposition(customModelState, modelTransform, modelTransform.isUvLock());
+            modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isUvLock());
 
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);

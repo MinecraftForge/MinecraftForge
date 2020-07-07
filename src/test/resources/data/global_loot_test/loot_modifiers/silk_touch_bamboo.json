@@ -1,0 +1,11 @@
+{
+  "type": "global_loot_test:silk_touch_bamboo",
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "item": "minecraft:bamboo"
+      }
+    }
+  ]
+}

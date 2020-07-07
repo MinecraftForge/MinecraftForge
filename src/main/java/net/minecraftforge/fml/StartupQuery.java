@@ -25,6 +25,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
+import com.google.common.base.Strings;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -34,31 +43,74 @@ import net.minecraftforge.fml.client.gui.screen.NotificationScreen;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import javax.annotation.Nullable;
 
 public class StartupQuery {
+
+    public static class QueryBuilder
+    {
+        private String header = "";
+        private String text = "";
+        private String action = "";
+
+        QueryBuilder() {}
+
+        public QueryBuilder header(String header)
+        {
+            this.header = Strings.nullToEmpty(header);
+            return this;
+        }
+
+        public QueryBuilder text(String text)
+        {
+            this.text = Strings.nullToEmpty(text);
+            return this;
+        }
+
+        public QueryBuilder action(String action)
+        {
+            this.action = Strings.nullToEmpty(action);
+            return this;
+        }
+
+        public boolean confirm()
+        {
+            return build(new AtomicBoolean()).getResult();
+        }
+
+        public void notification()
+        {
+            build(null);
+        }
+
+        private StartupQuery build(AtomicBoolean result)
+        {
+            StartupQuery query = new StartupQuery(header, text, action, new AtomicBoolean());
+            query.execute();
+            return query;
+        }
+    }
+
     // internal class/functionality, do not use
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker SQ = MarkerManager.getMarker("STARTUPQUERY");
 
+    public static QueryBuilder builder()
+    {
+        return new QueryBuilder();
+    }
+
+    @Deprecated // TODO 1.16 remove
     public static boolean confirm(String text)
     {
-        StartupQuery query = new StartupQuery(text, new AtomicBoolean());
-        query.execute();
-        return query.getResult();
+        return builder().text(text).confirm();
     }
 
     private InterruptedException exception;
 
+    @Deprecated // TODO 1.16 remove
     public static void notify(String text)
     {
-        StartupQuery query = new StartupQuery(text, null);
-        query.execute();
+        builder().text(text).notification();
     }
 
     public static void abort()
@@ -66,7 +118,6 @@ public class StartupQuery {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null) server.initiateShutdown(false);
 
-        aborted = true; // to abort loading and go back to the main menu
         throw new AbortedException(); // to halt the server
     }
 
@@ -76,7 +127,6 @@ public class StartupQuery {
     public static void reset()
     {
         pending = null;
-        aborted = false;
     }
 
     public static boolean check()
@@ -104,7 +154,7 @@ public class StartupQuery {
             pending = null;
         }
 
-        return !aborted;
+        return true;
     }
 
     private void throwException() throws InterruptedException
@@ -113,12 +163,13 @@ public class StartupQuery {
     }
 
     private static volatile StartupQuery pending;
-    private static volatile boolean aborted = false;
 
 
-    private StartupQuery(String text, @Nullable AtomicBoolean result)
+    private StartupQuery(String header, String text, String action, @Nullable AtomicBoolean result)
     {
+        this.header = header;
         this.text = text;
+        this.action = action;
         this.result = result;
     }
 
@@ -133,9 +184,19 @@ public class StartupQuery {
         this.result.set(result);
     }
 
+    public String getHeader()
+    {
+        return header;
+    }
+
     public String getText()
     {
         return text;
+    }
+
+    public String getAction()
+    {
+        return action;
     }
 
     public boolean isSynchronous()
@@ -194,7 +255,9 @@ public class StartupQuery {
         }
     }
 
-    private String text;
+    private final String header;
+    private final String text;
+    private final String action;
     @Nullable
     private AtomicBoolean result;
     private CountDownLatch signal = new CountDownLatch(1);
@@ -250,14 +313,29 @@ public class StartupQuery {
                 DedicatedServer server = serverSupplier.get();
                 if (query.getResult() == null)
                 {
-                    LOGGER.warn(SQ, query.getText());
+                    if (!query.getHeader().isEmpty())
+                    {
+                        LOGGER.warn(SQ, "\n" + query.getHeader() + "\n");
+                    }
+                    LOGGER.warn(SQ, "\n" + query.getText());
+                    if (!query.getAction().isEmpty())
+                    {
+                        LOGGER.warn(SQ, "\n\n" + query.getAction());
+                    }
                     query.finish();
                 }
                 else
                 {
-                    String text = query.getText() +
-                            "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
-                            "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
+                    StringBuilder text = new StringBuilder("\n");
+                    if (!query.getHeader().isEmpty()) {
+                        text.append(query.getHeader()).append("\n\n");
+                    }
+                    text.append(query.getText()).append("\n");
+                    if (!query.getAction().isEmpty()) {
+                        text.append("\n").append(query.getAction());
+                    }
+                    text.append("\nConfirm with '/fml confirm' or cancel with '/fml cancel'.")
+                        .append("\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.");
                     LOGGER.warn(SQ, text);
 
                     if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)

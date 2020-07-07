@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -147,6 +148,7 @@ public class ModLoader
     }
 
     public void loadMods(Executor mainThreadExecutor, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
+        DeferredWorkQueue.workExecutor = mainThreadExecutor;
         statusConsumer.ifPresent(c->c.accept("Loading mod config"));
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
@@ -159,7 +161,21 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
 
+    private static class SpacedRunnable implements Executor {
+        private static final long FIFTYMILLIS = TimeUnit.MILLISECONDS.toNanos(50);
+        private long next = System.nanoTime() + FIFTYMILLIS;
+        @Override
+        public void execute(final Runnable command) {
+            final long time = System.nanoTime();
+            if (next < time) {
+                command.run();
+                next = time + FIFTYMILLIS;
+            }
+        }
+    }
     public void gatherAndInitializeMods(final Runnable ticker) {
+        statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
+        FMLLoader.backgroundScanHandler.waitForScanToComplete(ticker);
         statusConsumer.ifPresent(c->c.accept("Loading mods"));
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
@@ -179,14 +195,15 @@ public class ModLoader
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
+        SpacedRunnable sr = new SpacedRunnable();
         statusConsumer.ifPresent(c->c.accept(String.format("Constructing %d mods", modList.size())));
-        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, Runnable::run, ticker);
+        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, sr, ticker);
         statusConsumer.ifPresent(c->c.accept("Creating registries"));
-        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run, ticker));
+        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, sr, ticker));
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run, ticker));
+        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, sr, ticker));
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
@@ -217,8 +234,8 @@ public class ModLoader
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
-                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").collect(Collectors.toList()),
-                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
+                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         return containers;
@@ -245,6 +262,7 @@ public class ModLoader
 
     public void finishMods(Executor mainThreadExecutor)
     {
+        DeferredWorkQueue.workExecutor = mainThreadExecutor;
         statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
         dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor, null);
         statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
@@ -267,18 +285,23 @@ public class ModLoader
         this.loadingWarnings.add(warning);
     }
 
+    @Deprecated //Remove in 1.16
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
+        runDataGenerator(mods, path, inputs, existingPacks, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, false);
+    }
+
+    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();
-        dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
+        dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
-        gatherAndInitializeMods(null);
-        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, null);
+        gatherAndInitializeMods(() -> {});
+        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
         dataGeneratorConfig.runAll();
     }
 
     public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
+        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
     }
 }

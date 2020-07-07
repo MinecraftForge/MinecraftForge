@@ -43,6 +43,7 @@ import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
@@ -69,7 +70,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected final ExistingFileHelper existingFileHelper;
 
     protected boolean ambientOcclusion = true;
-    protected boolean gui3d = false;
+    protected GuiLight guiLight = null;
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
@@ -160,8 +161,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return self();
     }
 
+    /**
+     * @param gui3d
+     * @return this builder
+     * @deprecated Unused in 1.15, use {@link #guiLight(GuiLight)} instead.
+     */
+    @Deprecated
     public T gui3d(boolean gui3d) {
-        this.gui3d = gui3d;
+        return self();
+    }
+    
+    public T guiLight(GuiLight light) {
+        this.guiLight = light;
         return self();
     }
 
@@ -192,6 +203,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         if (!this.ambientOcclusion) {
             root.addProperty("ambientocclusion", this.ambientOcclusion);
+        }
+        
+        if (this.guiLight != null) {
+            root.addProperty("gui_light", this.guiLight.getSerializedName());
         }
 
         Map<Perspective, ItemTransformVec3f> transforms = this.transforms.build();

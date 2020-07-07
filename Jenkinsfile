@@ -6,8 +6,8 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradlewrapper:latest'
-            args '-v gradlecache:/gradlecache'
+            image 'gradle:jdk8'
+            args '-v forgegc:/home/gradle/.gradle/'
         }
     }
     environment {
@@ -18,11 +18,6 @@ pipeline {
     }
 
     stages {
-        stage('fetch') {
-            steps {
-                checkout scm
-            }
-        }
         stage('notify_start') {
             when {
                 not {
@@ -91,9 +86,7 @@ pipeline {
         always {
             script {
                 archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
-                //junit 'build/test-results/*/*.xml'
-                //jacoco sourcePattern: '**/src/*/java'
-                
+
                 if (env.CHANGE_ID == null) { // This is unset for non-PRs
                     discordSend(
                         title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",

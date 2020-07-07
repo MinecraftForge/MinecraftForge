@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2019.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.loot;
 
 import java.io.BufferedReader;
@@ -107,8 +126,17 @@ public class LootModifierManager extends JsonReloadListener {
     }
 
     private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonObject object) {
-        ILootCondition[] ailootcondition = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, ailootcondition);
+        ILootCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
+
+        // For backward compatibility with the initial implementation, fall back to using the location as the type.
+        // TODO: Remove fallback in 1.16
+        ResourceLocation serializer = location;
+        if (object.has("type"))
+        {
+            serializer = new ResourceLocation(JSONUtils.getString(object, "type"));
+        }
+
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {

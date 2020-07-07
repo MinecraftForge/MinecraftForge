@@ -39,6 +39,7 @@ public class StartupMessageManager {
         return messages.values().stream().flatMap(Collection::stream).
                 sorted(Comparator.comparingLong(Message::getTimestamp).thenComparing(Message::getText).reversed()).
                 map(m -> Pair.of((int) ((ts - m.timestamp) / 1e6), m)).
+                limit(5).
                 collect(Collectors.toList());
     }
 
@@ -102,7 +103,7 @@ public class StartupMessageManager {
         return Optional.of(s -> messages.get(MessageType.LOC).add(new Message(s, MessageType.LOC)));
     }
 
-    static Optional<Consumer<String>> mcLoaderConsumer() {
+    public static Optional<Consumer<String>> mcLoaderConsumer() {
         return Optional.of(s-> messages.get(MessageType.MC).add(new Message(s, MessageType.MC)));
     }
 }

@@ -158,7 +158,7 @@ public class ModDiscoverer {
 
         @Override
         public List<IModFile> scanMods() {
-            return Collections.singletonList(new ModFile(mcJar, this));
+            return Collections.singletonList(ModFile.newFMLInstance(mcJar, this));
         }
 
         @Override

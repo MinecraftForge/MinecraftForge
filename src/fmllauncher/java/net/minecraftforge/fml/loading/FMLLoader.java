@@ -82,6 +82,9 @@ public class FMLLoader
     private static Predicate<String> classLoaderExclusions;
     private static String launchHandlerName;
     private static FMLCommonLaunchHandler commonLaunchHandler;
+    public static Runnable progressWindowTick;
+    public static BackgroundScanHandler backgroundScanHandler;
+    private static boolean production;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -179,7 +182,8 @@ public class FMLLoader
         commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
-        EarlyProgressVisualization.INSTANCE.accept(dist);
+        production = commonLaunchHandler.isProduction();
+        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist);
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
@@ -200,14 +204,16 @@ public class FMLLoader
         languageLoadingProvider.addForgeLanguage(forgePath);
 
         runtimeDistCleaner.getExtension().accept(dist);
+        progressWindowTick.run();
     }
     public static Map<IModFile.Type, List<ModFile>> beginModScan(final Map<String,?> arguments)
     {
         LOGGER.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer(arguments);
-        final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
+        backgroundScanHandler = modDiscoverer.discoverMods();
         loadingModList = backgroundScanHandler.getLoadingModList();
         commonLaunchHandler.addLibraries(backgroundScanHandler.getModFiles().getOrDefault(IModFile.Type.LIBRARY, Collections.emptyList()));
+        progressWindowTick.run();
         return backgroundScanHandler.getModFiles();
     }
 
@@ -239,6 +245,7 @@ public class FMLLoader
     {
         FMLLoader.launchClassLoader = (TransformingClassLoader) launchClassLoader.getInstance();
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Launching minecraft"));
+        progressWindowTick.run();
     }
 
     public static LoadingModList getLoadingModList()
@@ -290,5 +297,9 @@ public class FMLLoader
 
     public static String launcherHandlerName() {
         return launchHandlerName;
+    }
+
+    public static boolean isProduction() {
+        return production;
     }
 }

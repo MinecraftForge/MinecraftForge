@@ -73,13 +73,18 @@ public class ServerLifecycleHooks
     private static volatile CountDownLatch exitLatch = null;
     private static MinecraftServer currentServer;
 
+    private static Path getServerConfigPath(final MinecraftServer server)
+    {
+        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
+        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+        return serverConfig;
+    }
+
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
         LogicalSidedProvider.setServer(()->server);
-        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
-        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
-        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, serverConfig);
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
         ResourcePackLoader.loadResourcePacks(currentServer.getResourcePacks(), ServerLifecycleHooks::buildPackFinder);
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
@@ -120,6 +125,7 @@ public class ServerLifecycleHooks
             latch.countDown();
             exitLatch = null;
         }
+        ConfigTracker.INSTANCE.unloadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
     }
 
     public static MinecraftServer getCurrentServer()
@@ -207,7 +213,7 @@ public class ServerLifecycleHooks
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.TOP);
+            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));

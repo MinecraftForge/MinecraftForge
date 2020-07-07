@@ -53,7 +53,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
     }
 
     private static void scan(final Path gameDirectory) {
-        final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative());
+        final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative()).toAbsolutePath().normalize();
         transformers = new ArrayList<>();
         locators = new ArrayList<>();
         if (!Files.exists(modsDir)) {
@@ -74,9 +74,9 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         if (LamdbaExceptionUtils.uncheck(() -> Files.size(path)) == 0) return;
         try (ZipFile zf = new ZipFile(new File(path.toUri()))) {
             if (zf.getEntry("META-INF/services/cpw.mods.modlauncher.api.ITransformationService") != null) {
-                transformers.add(path.toRealPath());
+                transformers.add(path);
             } else if (zf.getEntry("META-INF/services/net.minecraftforge.forgespi.locating.IModLocator") != null) {
-                locators.add(path.toRealPath());
+                locators.add(path);
             }
         } catch (IOException ioe) {
             LogManager.getLogger().error("Zip Error when loading jar file {}", path, ioe);

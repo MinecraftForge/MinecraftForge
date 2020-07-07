@@ -49,9 +49,9 @@ import net.minecraftforge.common.util.LazyOptional;
  */
 public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntityRenderer<T> implements IEventHandler<T>
 {
-    public TileEntityRendererAnimation(TileEntityRendererDispatcher p_i226006_1_)
+    public TileEntityRendererAnimation(TileEntityRendererDispatcher rendererDispatcherIn)
     {
-        super(p_i226006_1_);
+        super(rendererDispatcherIn);
     }
 
     protected static BlockRendererDispatcher blockRenderer;

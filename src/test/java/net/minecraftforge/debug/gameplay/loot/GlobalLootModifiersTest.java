@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2019.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.debug.gameplay.loot;
 
 import java.util.ArrayList;
@@ -25,7 +44,7 @@ import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraftforge.common.loot.IGlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,7 +72,7 @@ public class GlobalLootModifiersTest {
         }
 
         @SubscribeEvent
-        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<IGlobalLootModifierSerializer<?>> event) {
+        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
             if (ENABLE) {
                 event.getRegistry().register(
                         new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
@@ -95,7 +114,7 @@ public class GlobalLootModifiersTest {
                     .orElse(stack);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SmeltingEnchantmentModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SmeltingEnchantmentModifier> {
             @Override
             public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SmeltingEnchantmentModifier(conditionsIn);
@@ -127,7 +146,7 @@ public class GlobalLootModifiersTest {
             return loottable.generate(ctx);
         }
 
-        private static class Serializer extends LootModifier.Serializer<SilkTouchTestModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<SilkTouchTestModifier> {
             @Override
             public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SilkTouchTestModifier(conditionsIn);
@@ -137,7 +156,7 @@ public class GlobalLootModifiersTest {
 
     /**
      * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
-     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)  
+     * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
@@ -173,7 +192,7 @@ public class GlobalLootModifiersTest {
             return generatedLoot;
         }
 
-        private static class Serializer extends LootModifier.Serializer<WheatSeedsConverterModifier> {
+        private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
 
             @Override
             public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {

@@ -25,12 +25,19 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/StemBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/SweetBerryBushBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+# Vanilla blocks calling these sided methods in getItem
+net/minecraft/tileentity/BannerTileEntity func_190615_l(Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/AttachedStemBlock func_196279_O_()Lnet/minecraft/item/Item;
+net/minecraft/block/StemBlock func_176481_j()Lnet/minecraft/item/Item;
+#=====================================
 net/minecraft/block/CropsBlock func_199772_f()Lnet/minecraft/util/IItemProvider; # getSeedsItem
 	net/minecraft/block/BeetrootBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/CarrotBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 	net/minecraft/block/PotatoBlock func_199772_f()Lnet/minecraft/util/IItemProvider;
 net/minecraft/block/SoundType func_185845_c()Lnet/minecraft/util/SoundEvent; # getBreakSound
 net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # getHitSound
+net/minecraft/block/WoodType func_227046_a_()Ljava/util/stream/Stream; # getValues
+net/minecraft/block/WoodType func_227048_b_()Ljava/lang/String; # getName
 net/minecraft/item/DyeColor func_218388_g()I # getTextColor
 net/minecraft/item/DyeColor func_196058_b(I)Lnet/minecraft/item/DyeColor; # byFireworkColor
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks

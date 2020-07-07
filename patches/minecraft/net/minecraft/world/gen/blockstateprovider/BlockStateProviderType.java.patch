@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/blockstateprovider/BlockStateProviderType.java
++++ b/net/minecraft/world/gen/blockstateprovider/BlockStateProviderType.java
+@@ -4,7 +4,7 @@
+ import java.util.function.Function;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class BlockStateProviderType<P extends BlockStateProvider> {
++public class BlockStateProviderType<P extends BlockStateProvider> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockStateProviderType<?>> {
+    public static final BlockStateProviderType<SimpleBlockStateProvider> field_227394_a_ = func_227400_a_("simple_state_provider", SimpleBlockStateProvider::new);
+    public static final BlockStateProviderType<WeightedBlockStateProvider> field_227395_b_ = func_227400_a_("weighted_state_provider", WeightedBlockStateProvider::new);
+    public static final BlockStateProviderType<PlainFlowerBlockStateProvider> field_227396_c_ = func_227400_a_("plain_flower_provider", PlainFlowerBlockStateProvider::new);

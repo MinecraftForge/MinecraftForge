@@ -60,7 +60,8 @@ public class GravityAttributeTest
     private static final AttributeModifier REDUCED_GRAVITY = (new AttributeModifier(REDUCED_GRAVITY_ID, "Reduced gravity", (double)-0.80, Operation.MULTIPLY_TOTAL)).setSaved(false);
 
 
-    public GravityAttributeTest() {
+    public GravityAttributeTest()
+    {
         if (ENABLE)
         {
             MinecraftForge.EVENT_BUS.register(this);
@@ -71,7 +72,7 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void worldTick(TickEvent.WorldTickEvent event)
     {
-        if (ENABLE && !event.world.isRemote)
+        if (!event.world.isRemote)
         {
             if (ticks++ > 60)
             {
