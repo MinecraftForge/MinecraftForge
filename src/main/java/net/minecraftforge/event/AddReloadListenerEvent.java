@@ -20,7 +20,8 @@ public class AddReloadListenerEvent extends Event
    private final List<IFutureReloadListener> listeners = new ArrayList<>();
    private final DataPackRegistries dataPackRegistries;
     
-    public AddReloadListenerEvent(DataPackRegistries dataPackRegistries) {
+    public AddReloadListenerEvent(DataPackRegistries dataPackRegistries)
+    {
         this.dataPackRegistries = dataPackRegistries;
     }
     
@@ -37,7 +38,8 @@ public class AddReloadListenerEvent extends Event
       return ImmutableList.copyOf(listeners);
    }
     
-    public DataPackRegistries getDataPackRegistries() {
+    public DataPackRegistries getDataPackRegistries()
+    {
         return dataPackRegistries;
     }
 }
