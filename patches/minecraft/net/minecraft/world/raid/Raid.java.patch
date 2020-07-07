@@ -25,7 +25,7 @@
 +      @Override
 +      @Deprecated
 +      public void init() {
-+    	 field_221284_f = values();
++         field_221284_f = values();
 +      }
     }
  }
