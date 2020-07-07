@@ -26,3 +26,65 @@
        if (j1 < p_229220_4_) {
           field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_229214_j_, p_229220_4_, j1, i1);
           k1 = j1;
+@@ -116,6 +119,8 @@
+ 
+       p_229220_3_.func_219895_b("register");
+       stitcher.func_229211_a_(MissingTextureSprite.func_229177_b_());
++      for (Pair<TextureAtlasSprite.Info, ICustomSpriteProvider> sprite : customSprites.values())
++         stitcher.func_229211_a_(sprite.getFirst());
+       p_229220_3_.func_219895_b("stitching");
+ 
+       try {
+@@ -141,7 +146,7 @@
+       ConcurrentLinkedQueue<TextureAtlasSprite.Info> concurrentlinkedqueue = new ConcurrentLinkedQueue<>();
+ 
+       for(ResourceLocation resourcelocation : p_215256_2_) {
+-         if (!MissingTextureSprite.func_195675_b().equals(resourcelocation)) {
++         if (!MissingTextureSprite.func_195675_b().equals(resourcelocation) && !customSprites.containsKey(resourcelocation)) {
+             list.add(CompletableFuture.runAsync(() -> {
+                ResourceLocation resourcelocation1 = this.func_195420_b(resourcelocation);
+ 
+@@ -180,6 +185,11 @@
+             MissingTextureSprite missingtexturesprite = MissingTextureSprite.func_229176_a_(this, p_229217_3_, p_229215_6_, p_229215_7_, p_229215_8_, p_229215_9_);
+             concurrentlinkedqueue.add(missingtexturesprite);
+          } else {
++            Pair<TextureAtlasSprite.Info, ICustomSpriteProvider> customSprite = customSprites.get(p_229215_5_.func_229248_a_());
++            if (customSprite != null) {
++               concurrentlinkedqueue.add(customSprite.getSecond().create(this, p_229215_5_, p_229217_3_, p_229215_6_, p_229215_7_, p_229215_8_, p_229215_9_));
++               return;
++            }
+             list.add(CompletableFuture.runAsync(() -> {
+                TextureAtlasSprite textureatlassprite = this.func_229218_a_(p_229217_1_, p_229215_5_, p_229215_6_, p_229215_7_, p_229217_3_, p_229215_8_, p_229215_9_);
+                if (textureatlassprite != null) {
+@@ -245,6 +255,7 @@
+ 
+       this.field_94252_e.clear();
+       this.field_94258_i.clear();
++      this.customSprites.clear();
+    }
+ 
+    public ResourceLocation func_229223_g_() {
+@@ -271,4 +282,23 @@
+          this.field_217808_d = p_i226048_5_;
+       }
+    }
++
++   /* ======================================== FORGE START =====================================*/
++   private final Map<ResourceLocation, Pair<TextureAtlasSprite.Info, ICustomSpriteProvider>> customSprites = Maps.newHashMap();
++
++   public boolean addCustomSprite(@javax.annotation.Nonnull TextureAtlasSprite.Info info, @javax.annotation.Nonnull ICustomSpriteProvider provider)
++   {
++      if (customSprites.containsKey(info.func_229248_a_()))
++         return false;
++
++      customSprites.put(info.func_229248_a_(), Pair.of(info, provider));
++      return true;
++   }
++
++   @FunctionalInterface
++   public interface ICustomSpriteProvider
++   {
++      TextureAtlasSprite create(AtlasTexture atlas, TextureAtlasSprite.Info info, int mipMapLevels, int atlasWidth, int atlasHeight, int x, int y);
++   }
++   /* ========================================= FORGE END ======================================*/
+ }
