@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -287,7 +287,7 @@ public class GuiUtils
     {
         if (!textLines.isEmpty())
         {
-            RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+            RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mStack, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
             if (MinecraftForge.EVENT_BUS.post(event))
                 return;
             mouseX = event.getX();
@@ -375,7 +375,7 @@ public class GuiUtils
                 tooltipY = screenHeight - tooltipHeight - 4;
 
             final int zLevel = 400;
-            RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
+            RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, mStack, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
             MinecraftForge.EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
             borderColorStart = colorEvent.getBorderStart();
@@ -394,7 +394,7 @@ public class GuiUtils
             drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
             drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
-            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, mStack, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
 
             IRenderTypeBuffer.Impl renderType = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
             mStack.translate(0.0D, 0.0D, zLevel);
@@ -416,7 +416,7 @@ public class GuiUtils
             renderType.finish();
             mStack.pop();
 
-            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, mStack, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
 
             RenderSystem.enableDepthTest();
             RenderSystem.enableRescaleNormal();

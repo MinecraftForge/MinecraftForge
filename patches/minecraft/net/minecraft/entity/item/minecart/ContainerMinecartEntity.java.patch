@@ -1,7 +1,14 @@
 --- a/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
-@@ -116,12 +116,14 @@
-       return super.func_241206_a_(p_241206_1_);
+@@ -111,17 +111,19 @@
+    }
+ 
+    @Nullable
+-   public Entity func_241206_a_(ServerWorld p_241206_1_) {
++   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.field_94112_b = false;
+-      return super.func_241206_a_(p_241206_1_);
++      return super.changeDimension(p_241206_1_, teleporter);
     }
  
 -   public void func_70106_y() {

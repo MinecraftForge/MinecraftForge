@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,6 +51,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -330,9 +331,9 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static ITextComponent onClientChat(ChatType type, ITextComponent message)
+    public static ITextComponent onClientChat(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, senderUUID);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
@@ -721,5 +722,12 @@ public class ForgeEventFactory
         SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
+    }
+
+    public static List<IFutureReloadListener> onResourceReload()
+    {
+        AddReloadListenerEvent event = new AddReloadListenerEvent();
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getListeners();
     }
 }

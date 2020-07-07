@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,6 +60,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+// TODO: Write a model loader and test/fix as needed
 public final class FluidModel implements IModelGeometry<FluidModel>
 {
     public static final FluidModel WATER = new FluidModel(Fluids.WATER);

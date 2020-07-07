@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ public final class ToolType
     private static final Map<String, ToolType> VALUES = new ConcurrentHashMap<>();
 
     public static final ToolType AXE = get("axe");
+    public static final ToolType HOE = get("hoe");
     public static final ToolType PICKAXE = get("pickaxe");
     public static final ToolType SHOVEL = get("shovel");
 

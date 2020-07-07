@@ -27,7 +27,6 @@
 /projects/**/run/
 /projects/**/*.launch
 /repo/
-/buildSrc
 src/generated/resources/.cache/
 
 #Patch rejects

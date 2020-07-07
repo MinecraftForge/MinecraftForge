@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -168,12 +168,12 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param player The player or camera entity, null in some cases.
+     * @param sleeper The sleeper or camera entity, null in some cases.
      * @return True to treat this as a bed
      */
-    default boolean isBed(IBlockReader world, BlockPos pos, @Nullable LivingEntity player)
+    default boolean isBed(IBlockReader world, BlockPos pos, @Nullable LivingEntity sleeper)
     {
-        return getBlockState().getBlock().isBed(getBlockState(), world, pos, player);
+        return getBlockState().getBlock().isBed(getBlockState(), world, pos, sleeper);
     }
 
     /**
@@ -211,7 +211,7 @@ public interface IForgeBlockState
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
      */
-    default void setBedOccupied(IWorldReader world, BlockPos pos, LivingEntity sleeper, boolean occupied)
+    default void setBedOccupied(World world, BlockPos pos, LivingEntity sleeper, boolean occupied)
     {
         getBlockState().getBlock().setBedOccupied(getBlockState(), world, pos, sleeper, occupied);
     }
@@ -227,29 +227,6 @@ public interface IForgeBlockState
     default Direction getBedDirection(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getBedDirection(getBlockState(), world, pos);
-    }
-
-    /**
-     * Determines if the current block is the foot half of the bed.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if the current block is the foot side of a bed.
-     */
-    default boolean isBedFoot(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isBedFoot(getBlockState(), world, pos);
-    }
-
-    /**
-     * Called when a leaf should start its decay process.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     */
-    default void beginLeaveDecay(IWorldReader world, BlockPos pos)
-    {
-        getBlockState().getBlock().beginLeaveDecay(getBlockState(), world, pos);
     }
 
     /**
@@ -282,7 +259,6 @@ public interface IForgeBlockState
     /**
      * Used during tree growth to determine if newly generated logs can replace this block.
      *
-     * @param state The current state
      * @param world The current world
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
@@ -290,20 +266,6 @@ public interface IForgeBlockState
     default boolean canBeReplacedByLogs(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().canBeReplacedByLogs(getBlockState(), world, pos);
-    }
-
-    /**
-     * Determines if the current block is replaceable by Ore veins during world generation.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @param target The generic target block the gen is looking for, Standards define stone
-     *      for overworld generation, and neatherack for the nether.
-     * @return True to allow this block to be replaced by a ore
-     */
-    default boolean isReplaceableOreGen(IWorldReader world, BlockPos pos, Predicate<BlockState> target)
-    {
-        return getBlockState().getBlock().isReplaceableOreGen(getBlockState(), world, pos, target);
     }
 
     /**
@@ -343,17 +305,6 @@ public interface IForgeBlockState
     default ItemStack getPickBlock(RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
     {
         return getBlockState().getBlock().getPickBlock(getBlockState(), target, world, pos, player);
-    }
-
-    /**
-     * Used by getTopSoilidOrLiquidBlock while placing biome decorations, villages, etc
-     * Also used to determine if the player can spawn in this block.
-     *
-     * @return False to disallow spawning.
-     */
-    default boolean isFoliage(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isFoliage(getBlockState(), world, pos);
     }
 
     /**
@@ -443,24 +394,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
     }
 
-    /**
-     * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
-     * Modder may implement this for custom plants.
-     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
-     * so the source location is specified.
-     * Currently this just changes the block to dirt if it was grass.
-     *
-     * Note: This happens DURING the generation, the generation may not be complete when this is called.
-     *
-     * @param world Current world
-     * @param pos Block position in world
-     * @param source Source plant's position in world
-     */
-    default void onPlantGrow(IWorld world, BlockPos pos, BlockPos source)
-    {
-        getBlockState().getBlock().onPlantGrow(getBlockState(), world, pos, source);
-    }
-
    /**
     * Checks if this soil is fertile, typically this means that growth rates
     * of plants on this soil will be slightly sped up.
@@ -540,21 +473,6 @@ public interface IForgeBlockState
     default float getEnchantPowerBonus(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getEnchantPowerBonus(getBlockState(), world, pos);
-    }
-
-    /**
-     * //TODO: Re-Evaluate
-     * Gathers how much experience this block drops when broken.
-     *
-     * @param state The current state
-     * @param world The world
-     * @param pos Block position
-     * @param fortune
-     * @return Amount of XP from breaking this block.
-     */
-    default boolean recolorBlock(IWorld world, BlockPos pos, Direction facing, DyeColor color)
-    {
-        return getBlockState().getBlock().recolorBlock(getBlockState(), world, pos, facing, color);
     }
 
    /**
@@ -686,37 +604,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().getStateAtViewpoint(getBlockState(), world, pos, viewpoint);
     }
 
-    /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
-     * @param world The world the block is being placed in
-     * @param pos The position the block is being placed at
-     * @param facing The side the block is being placed on
-     * @param hitX The X coordinate of the hit vector
-     * @param hitY The Y coordinate of the hit vector
-     * @param hitZ The Z coordinate of the hit vector
-     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
-     * @param placer The entity placing the block
-     * @param hand The player hand used to place this block
-     * @return The state to be placed in the world
-     */
-    default BlockState getStateForPlacement(Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand)
-    {
-        return getBlockState().getBlock().getStateForPlacement(getBlockState(), facing, state2, world, pos1, pos2, hand);
-    }
-
-    /**
-     * Determines if another block can connect to this block
-     *
-     * @param world The current world
-     * @param pos The position of this block
-     * @param facing The side the connecting block is on
-     * @return True to allow another block to connect to this block
-     */
-    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, Direction facing)
-    {
-        return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, facing);
-    }
-
     /**
      * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
@@ -824,19 +711,6 @@ public interface IForgeBlockState
     default boolean canEntityDestroy(IBlockReader world, BlockPos pos, Entity entity)
     {
         return getBlockState().getBlock().canEntityDestroy(getBlockState(), world, pos, entity);
-    }
-
-    /**
-     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
-     * Note, this is up to the block to decide. It may not be accurate or representative.
-     * @param world The world
-     * @param pos Block position in world
-     * @return An array of valid axes to rotate around, or null for none or unknown
-     */
-    @Nullable
-    default Direction[] getValidRotations(IBlockReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().getValidRotations(getBlockState(), world, pos);
     }
 
     /**
