@@ -17,8 +17,14 @@ import java.util.List;
  */
 public class AddReloadListenerEvent extends Event
 {
-   private final List<IFutureReloadListener> listeners = new ArrayList<>();
-
+    private final List<IFutureReloadListener> listeners = new ArrayList<>();
+    private final DataPackRegistries dataPackRegistries;
+    
+    public AddReloadListenerEvent(DataPackRegistries dataPackRegistries)
+    {
+        this.dataPackRegistries = dataPackRegistries;
+    }
+    
    /**
     * @param listener the listener to add to the ResourceManager on reload
     */
@@ -31,4 +37,9 @@ public class AddReloadListenerEvent extends Event
    {
       return ImmutableList.copyOf(listeners);
    }
+    
+    public DataPackRegistries getDataPackRegistries()
+    {
+        return dataPackRegistries;
+    }
 }

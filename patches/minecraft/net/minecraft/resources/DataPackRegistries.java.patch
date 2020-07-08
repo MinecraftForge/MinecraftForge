@@ -4,7 +4,7 @@
        this.field_240952_b_.func_219534_a(this.field_240957_g_);
        this.field_240952_b_.func_219534_a(this.field_240959_i_);
        this.field_240952_b_.func_219534_a(this.field_240958_h_);
-+      net.minecraftforge.event.ForgeEventFactory.onResourceReload().forEach(field_240952_b_::func_219534_a);
++      net.minecraftforge.event.ForgeEventFactory.onResourceReload(this).forEach(field_240952_b_::func_219534_a);
     }
  
     public FunctionReloader func_240960_a_() {

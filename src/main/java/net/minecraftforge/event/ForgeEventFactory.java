@@ -52,6 +52,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -724,9 +725,9 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<IFutureReloadListener> onResourceReload()
+    public static List<IFutureReloadListener> onResourceReload(DataPackRegistries dataPackRegistries)
     {
-        AddReloadListenerEvent event = new AddReloadListenerEvent();
+        AddReloadListenerEvent event = new AddReloadListenerEvent(dataPackRegistries);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
     }
