@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod("raid_enum_test")
 public class RaidEnumTest 
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
 	
     public RaidEnumTest()
     {
