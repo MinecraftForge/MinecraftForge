@@ -113,7 +113,7 @@
           return abstractblock$properties;
        }
  
-@@ -861,6 +877,16 @@
+@@ -861,6 +877,24 @@
           return this;
        }
  
@@ -127,10 +127,18 @@
 +         return this;
 +      }
 +
++      public int getHarvestLevel() {
++         return this.harvestLevel;
++      }
++
++      public net.minecraftforge.common.ToolType getHarvestTool() {
++         return this.harvestTool;
++      }
++
        public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
           this.field_200961_i = p_200941_1_;
           return this;
-@@ -917,7 +943,7 @@
+@@ -917,7 +951,7 @@
        }
  
        public AbstractBlock.Properties func_222379_b(Block p_222379_1_) {

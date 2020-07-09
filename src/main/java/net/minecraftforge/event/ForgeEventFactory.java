@@ -51,6 +51,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -721,5 +723,12 @@ public class ForgeEventFactory
         SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
+    }
+
+    public static List<IFutureReloadListener> onResourceReload(DataPackRegistries dataPackRegistries)
+    {
+        AddReloadListenerEvent event = new AddReloadListenerEvent(dataPackRegistries);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getListeners();
     }
 }

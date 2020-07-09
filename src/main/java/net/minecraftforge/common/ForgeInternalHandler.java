@@ -25,7 +25,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -108,6 +110,22 @@ public class ForgeInternalHandler
     public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
+    }
+
+    private static LootModifierManager INSTANCE;
+
+    @SubscribeEvent
+    public void onResourceReload(AddReloadListenerEvent event)
+    {
+        INSTANCE = new LootModifierManager();
+        event.addListener(INSTANCE);
+    }
+
+    static LootModifierManager getLootModifierManager()
+    {
+        if(INSTANCE == null)
+            throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+        return INSTANCE;
     }
 }
 
