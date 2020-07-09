@@ -1,0 +1,12 @@
+--- a/net/minecraft/util/datafix/codec/DatapackCodec.java
++++ b/net/minecraft/util/datafix/codec/DatapackCodec.java
+@@ -29,4 +29,9 @@
+    public List<String> func_234887_b_() {
+       return this.field_234883_d_;
+    }
++
++   @Deprecated //Forge internal
++   public static DatapackCodec getModdedDefault() {
++      return new DatapackCodec(ImmutableList.<String>builder().add("vanilla").addAll(net.minecraftforge.fml.packs.ResourcePackLoader.getPackNames()).build(), ImmutableList.of());
++   }
+ }

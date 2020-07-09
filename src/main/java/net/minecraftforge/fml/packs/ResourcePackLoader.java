@@ -61,6 +61,11 @@ public class ResourcePackLoader
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
     }
 
+    public static List<String> getPackNames()
+    {
+        return modResourcePacks.values().stream().map(pack -> pack.getPackInfo().getName()).collect(Collectors.toList());
+    }
+
     public static <V> Comparator<Map.Entry<String,V>> getSorter() {
         List<String> order = new ArrayList<>();
         order.add("vanilla");
