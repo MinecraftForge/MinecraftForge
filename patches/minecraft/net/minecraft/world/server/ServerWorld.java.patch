@@ -213,7 +213,35 @@
        explosion.func_77278_a();
        explosion.func_77279_a(false);
        if (p_230546_12_ == Explosion.Mode.NONE) {
-@@ -1331,4 +1366,14 @@
+@@ -1019,12 +1054,14 @@
+    }
+ 
+    public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
+-      SSpawnParticlePacket sspawnparticlepacket = new SSpawnParticlePacket(p_195598_1_, false, p_195598_2_, p_195598_4_, p_195598_6_, (float)p_195598_9_, (float)p_195598_11_, (float)p_195598_13_, (float)p_195598_15_, p_195598_8_);
++      net.minecraftforge.event.ServerParticleSpawnEvent event = net.minecraftforge.event.ForgeEventFactory.onWorldParticleSpawn(p_195598_1_, false, p_195598_2_, p_195598_4_, p_195598_6_, p_195598_8_, p_195598_9_, p_195598_11_, p_195598_13_, p_195598_15_);
++      if(event == null) return 0;
++      SSpawnParticlePacket sspawnparticlepacket = new SSpawnParticlePacket(event.getParticle(), event.isLongDistance(), event.getPosX(), event.getPosY(), event.getPosZ(), (float)event.getXOffset(), (float)event.getYOffset(), (float)event.getZOffset(), (float)event.getParticleSpeed(), event.getParticleCount());
+       int i = 0;
+ 
+       for(int j = 0; j < this.field_217491_A.size(); ++j) {
+          ServerPlayerEntity serverplayerentity = this.field_217491_A.get(j);
+-         if (this.func_195601_a(serverplayerentity, false, p_195598_2_, p_195598_4_, p_195598_6_, sspawnparticlepacket)) {
++         if (this.func_195601_a(serverplayerentity, event.isLongDistance(), event.getPosX(), event.getPosY(), event.getPosZ(), sspawnparticlepacket)) {
+             ++i;
+          }
+       }
+@@ -1033,7 +1070,9 @@
+    }
+ 
+    public <T extends IParticleData> boolean func_195600_a(ServerPlayerEntity p_195600_1_, T p_195600_2_, boolean p_195600_3_, double p_195600_4_, double p_195600_6_, double p_195600_8_, int p_195600_10_, double p_195600_11_, double p_195600_13_, double p_195600_15_, double p_195600_17_) {
+-      IPacket<?> ipacket = new SSpawnParticlePacket(p_195600_2_, p_195600_3_, p_195600_4_, p_195600_6_, p_195600_8_, (float)p_195600_11_, (float)p_195600_13_, (float)p_195600_15_, (float)p_195600_17_, p_195600_10_);
++      net.minecraftforge.event.ServerParticleSpawnEvent event = net.minecraftforge.event.ForgeEventFactory.onWorldParticleSpawn(p_195600_2_, p_195600_3_, p_195600_4_, p_195600_6_, p_195600_8_, p_195600_10_, p_195600_11_, p_195600_13_, p_195600_15_, p_195600_17_);
++      if(event == null) return false;
++      IPacket<?> ipacket = new SSpawnParticlePacket(event.getParticle(), event.isLongDistance(), event.getPosX(), event.getPosY(), event.getPosZ(), (float)event.getXOffset(), (float)event.getYOffset(), (float)event.getZOffset(), (float)event.getParticleSpeed(), event.getParticleCount());
+       return this.func_195601_a(p_195600_1_, p_195600_3_, p_195600_4_, p_195600_6_, p_195600_8_, ipacket);
+    }
+ 
+@@ -1331,4 +1370,14 @@
           p_241121_0_.func_175656_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P());
        });
     }
