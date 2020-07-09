@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/DungeonsFeature.java
++++ b/net/minecraft/world/gen/feature/DungeonsFeature.java
+@@ -124,6 +124,6 @@
+    }
+ 
+    private EntityType<?> func_201043_a(Random p_201043_1_) {
+-      return Util.func_240989_a_(field_175916_b, p_201043_1_);
++      return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_201043_1_);
+    }
+ }

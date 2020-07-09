@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/ClientBrandRetriever.java
++++ b/net/minecraft/client/ClientBrandRetriever.java
+@@ -6,6 +6,6 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ClientBrandRetriever {
+    public static String getClientModName() {
+-      return "vanilla";
++      return net.minecraftforge.fml.BrandingControl.getClientBranding();
+    }
+ }

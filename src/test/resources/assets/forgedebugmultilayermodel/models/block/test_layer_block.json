@@ -1,0 +1,16 @@
+{
+  "parent": "block/block",
+  "loader": "forge:multi-layer",
+  "layers": {
+    "solid": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/slime_block" },
+      "transform": { "origin":"center", "scale": 0.625 }
+    },
+    "translucent": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/slime_block" }
+    }
+  },
+  "textures": { "particle": "block/slime_block" }
+}

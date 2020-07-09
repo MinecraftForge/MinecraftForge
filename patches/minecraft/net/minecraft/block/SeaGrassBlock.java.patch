@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/SeaGrassBlock.java
++++ b/net/minecraft/block/SeaGrassBlock.java
+@@ -17,7 +17,7 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
+ 
+-public class SeaGrassBlock extends BushBlock implements IGrowable, ILiquidContainer {
++public class SeaGrassBlock extends BushBlock implements IGrowable, ILiquidContainer, net.minecraftforge.common.IForgeShearable {
+    protected static final VoxelShape field_207798_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+ 
+    public SeaGrassBlock(AbstractBlock.Properties p_i48780_1_) {

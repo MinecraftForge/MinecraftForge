@@ -1,0 +1,33 @@
+--- a/net/minecraft/item/PickaxeItem.java
++++ b/net/minecraft/item/PickaxeItem.java
+@@ -11,25 +11,16 @@
+    private static final Set<Block> field_150915_c = ImmutableSet.of(Blocks.field_150408_cc, Blocks.field_150365_q, Blocks.field_150347_e, Blocks.field_150319_E, Blocks.field_150484_ah, Blocks.field_150482_ag, Blocks.field_196552_aC, Blocks.field_150340_R, Blocks.field_150352_o, Blocks.field_235334_I_, Blocks.field_150432_aD, Blocks.field_150339_S, Blocks.field_150366_p, Blocks.field_150368_y, Blocks.field_150369_x, Blocks.field_150341_Y, Blocks.field_150424_aL, Blocks.field_150403_cj, Blocks.field_205164_gk, Blocks.field_150448_aq, Blocks.field_150450_ax, Blocks.field_150322_A, Blocks.field_196583_aj, Blocks.field_196585_ak, Blocks.field_196798_hA, Blocks.field_196799_hB, Blocks.field_180395_cM, Blocks.field_150348_b, Blocks.field_196650_c, Blocks.field_196652_d, Blocks.field_196654_e, Blocks.field_196655_f, Blocks.field_196656_g, Blocks.field_196657_h, Blocks.field_150333_U, Blocks.field_222401_hJ, Blocks.field_196640_bx, Blocks.field_196643_by, Blocks.field_196646_bz, Blocks.field_196571_bA, Blocks.field_196573_bB, Blocks.field_196575_bC, Blocks.field_196576_bD, Blocks.field_196578_bE, Blocks.field_185771_cX, Blocks.field_196581_bI, Blocks.field_196582_bJ, Blocks.field_196580_bH, Blocks.field_196579_bG, Blocks.field_150430_aB, Blocks.field_150456_au, Blocks.field_222446_lj, Blocks.field_222447_lk, Blocks.field_222448_ll, Blocks.field_222449_lm, Blocks.field_222450_ln, Blocks.field_222451_lo, Blocks.field_222452_lp, Blocks.field_222453_lq, Blocks.field_222454_lr, Blocks.field_222455_ls, Blocks.field_222456_lt, Blocks.field_222457_lu, Blocks.field_222458_lv, Blocks.field_204409_il, Blocks.field_190975_dA, Blocks.field_190988_dw, Blocks.field_190989_dx, Blocks.field_190986_du, Blocks.field_190984_ds, Blocks.field_190990_dy, Blocks.field_190980_do, Blocks.field_196875_ie, Blocks.field_190982_dq, Blocks.field_190979_dn, Blocks.field_190978_dm, Blocks.field_190983_dr, Blocks.field_190987_dv, Blocks.field_190991_dz, Blocks.field_190977_dl, Blocks.field_190981_dp, Blocks.field_150331_J, Blocks.field_150320_F, Blocks.field_150332_K);
+ 
+    public PickaxeItem(IItemTier p_i48478_1_, int p_i48478_2_, float p_i48478_3_, Item.Properties p_i48478_4_) {
+-      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, field_150915_c, p_i48478_4_);
++      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, field_150915_c, p_i48478_4_.addToolType(net.minecraftforge.common.ToolType.PICKAXE, p_i48478_1_.func_200925_d()));
+    }
+ 
+    public boolean func_150897_b(BlockState p_150897_1_) {
+       int i = this.func_200891_e().func_200925_d();
+-      if (!p_150897_1_.func_203425_a(Blocks.field_150343_Z) && !p_150897_1_.func_203425_a(Blocks.field_235399_ni_) && !p_150897_1_.func_203425_a(Blocks.field_235397_ng_) && !p_150897_1_.func_203425_a(Blocks.field_235400_nj_) && !p_150897_1_.func_203425_a(Blocks.field_235398_nh_)) {
+-         if (!p_150897_1_.func_203425_a(Blocks.field_150484_ah) && !p_150897_1_.func_203425_a(Blocks.field_150482_ag) && !p_150897_1_.func_203425_a(Blocks.field_150412_bA) && !p_150897_1_.func_203425_a(Blocks.field_150475_bE) && !p_150897_1_.func_203425_a(Blocks.field_150340_R) && !p_150897_1_.func_203425_a(Blocks.field_150352_o) && !p_150897_1_.func_203425_a(Blocks.field_150450_ax)) {
+-            if (!p_150897_1_.func_203425_a(Blocks.field_150339_S) && !p_150897_1_.func_203425_a(Blocks.field_150366_p) && !p_150897_1_.func_203425_a(Blocks.field_150368_y) && !p_150897_1_.func_203425_a(Blocks.field_150369_x)) {
+-               Material material = p_150897_1_.func_185904_a();
+-               return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g || p_150897_1_.func_203425_a(Blocks.field_235334_I_);
+-            } else {
+-               return i >= 1;
+-            }
+-         } else {
+-            return i >= 2;
+-         }
+-      } else {
+-         return i >= 3;
++      if (p_150897_1_.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
++         return i >= p_150897_1_.getHarvestLevel();
+       }
++      Material material = p_150897_1_.func_185904_a();
++      return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g;
+    }
+ 
+    public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {

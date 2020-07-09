@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/screen/MultiplayerScreen.java
++++ b/net/minecraft/client/gui/screen/MultiplayerScreen.java
+@@ -241,6 +241,11 @@
+ 
+    }
+ 
++   @Override
++   public void func_231175_as__() {
++      this.field_230706_i_.func_147108_a(this.field_146798_g);
++   }
++
+    public ServerPinger func_146789_i() {
+       return this.field_146797_f;
+    }

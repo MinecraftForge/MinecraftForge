@@ -1,0 +1,67 @@
+--- a/net/minecraft/data/TagsProvider.java
++++ b/net/minecraft/data/TagsProvider.java
+@@ -28,11 +28,17 @@
+    protected final DataGenerator field_200433_a;
+    protected final Registry<T> field_200435_c;
+    protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
++   protected String modId;
+ 
++   @Deprecated//Forge, Use ModID version.
+    protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_) {
+-      this.field_200433_a = p_i49827_1_;
+-      this.field_200435_c = p_i49827_2_;
++       this(p_i49827_1_, p_i49827_2_, "vanilla");
+    }
++   protected TagsProvider(DataGenerator generatorIn, Registry<T> registryIn, String modId) {
++      this.field_200433_a = generatorIn;
++      this.field_200435_c = registryIn;
++      this.modId = modId;
++   }
+ 
+    protected abstract void func_200432_c();
+ 
+@@ -53,6 +59,7 @@
+          } else {
+             JsonObject jsonobject = p_240524_5_.func_232965_c_();
+             Path path = this.func_200431_a(p_240524_4_);
++            if (path == null) return; //Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
+ 
+             try {
+                String s = field_200437_e.toJson((JsonElement)jsonobject);
+@@ -78,7 +85,7 @@
+ 
+    protected TagsProvider.Builder<T> func_240522_a_(ITag.INamedTag<T> p_240522_1_) {
+       ITag.Builder itag$builder = this.func_240525_b_(p_240522_1_);
+-      return new TagsProvider.Builder<>(itag$builder, this.field_200435_c, "vanilla");
++      return new TagsProvider.Builder<>(itag$builder, this.field_200435_c, modId);
+    }
+ 
+    protected ITag.Builder func_240525_b_(ITag.INamedTag<T> p_240525_1_) {
+@@ -87,7 +94,7 @@
+       });
+    }
+ 
+-   public static class Builder<T> {
++   public static class Builder<T> implements net.minecraftforge.common.extensions.IForgeTagBuilder<T> {
+       private final ITag.Builder field_240528_a_;
+       private final Registry<T> field_240529_b_;
+       private final String field_240530_c_;
+@@ -115,5 +122,18 @@
+          });
+          return this;
+       }
++
++      public TagsProvider.Builder<T> add(ITag.ITagEntry tag) {
++          field_240528_a_.func_232955_a_(tag, field_240530_c_);
++          return this;
++      }
++
++      public ITag.Builder getInternalBuilder() {
++          return field_240528_a_;
++      }
++
++      public String getModID() {
++          return field_240530_c_;
++      }
+    }
+ }

@@ -1,0 +1,54 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "#chest": "entity/chest/normal",
+            "base": "blocks/stone",
+            "front": "blocks/log_oak",
+            "chamber": "blocks/redstone_block",
+            "trunk": "blocks/end_stone"
+        }/*,
+        "model": "forgedebugmodelloaderregistry:chest.b3d",
+        "custom": {
+            "mesh": ["Base", "Lid"]
+        }*/
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block",
+            "model": "forgedebugmodelanimation:engine",
+            "submodel": {
+                "ring": { "model": "forgedebugmodelanimation:engine_ring" }
+            }
+        }],
+        "facing": {
+            "down":  { "transform": { "rotation": { "x": 90  } } },
+            "up":    { "transform": { "rotation": { "x": 270 } } },
+            "north": { "transform": { "rotation": { "y": 180 } } },
+            "south": { "transform": "identity"                   },
+            "west":  { "transform": { "rotation": { "y": 90  } } },
+            "east":  { "transform": { "rotation": { "y": 270 } } }
+        },
+        "static": {
+            "true": {
+                /*"custom": {
+                    "mesh": ["Base"]
+                }*/
+                "model": "forgedebugmodelanimation:engine"
+            },
+            "false": {
+                /*"custom": {
+                    "mesh": ["Lid"]
+                }*/
+                "model": "forgedebugmodelanimation:engine_ring"
+            }
+        },
+        "entity": [{
+            "model": "forgedebugmodelanimation:engine",
+            "submodel": {
+                "ring": { "model": "forgedebugmodelanimation:engine_ring" }
+            }
+        }]
+    }
+}

@@ -1,0 +1,42 @@
+--- a/net/minecraft/block/RedstoneWireBlock.java
++++ b/net/minecraft/block/RedstoneWireBlock.java
+@@ -184,7 +184,7 @@
+       BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
+       if (p_235545_4_) {
+          boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
+-         if (flag && func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177984_a()))) {
++         if (flag && canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
+             if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
+                return RedstoneSide.UP;
+             }
+@@ -193,7 +193,7 @@
+          }
+       }
+ 
+-      return !func_176343_a(blockstate, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177977_b()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      return !canConnectTo(blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
+    }
+ 
+    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+@@ -335,11 +335,7 @@
+       }
+    }
+ 
+-   protected static boolean func_176346_d(BlockState p_176346_0_) {
+-      return func_176343_a(p_176346_0_, (Direction)null);
+-   }
+-
+-   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
++   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
+       if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
+          return true;
+       } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
+@@ -348,7 +344,7 @@
+       } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
+          return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
+       } else {
+-         return p_176343_0_.func_185897_m() && p_176343_1_ != null;
++         return p_176343_0_.canConnectRedstone(world, pos, p_176343_1_) && p_176343_1_ != null;
+       }
+    }
+ 

@@ -1,0 +1,92 @@
+--- a/net/minecraft/item/ItemGroup.java
++++ b/net/minecraft/item/ItemGroup.java
+@@ -104,11 +104,14 @@
+    private EnchantmentType[] field_111230_s = new EnchantmentType[0];
+    private ItemStack field_151245_t;
+ 
++   public ItemGroup(String label) {
++       this(-1, label);
++   }
++
+    public ItemGroup(int p_i1853_1_, String p_i1853_2_) {
+-      this.field_78033_n = p_i1853_1_;
+       this.field_78034_o = p_i1853_2_;
+       this.field_151245_t = ItemStack.field_190927_a;
+-      field_78032_a[p_i1853_1_] = this;
++      this.field_78033_n = addGroupSafe(p_i1853_1_, this);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -179,11 +182,13 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public int func_78020_k() {
++      if (field_78033_n > 11) return ((field_78033_n - 12) % 10) % 5;
+       return this.field_78033_n % 6;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public boolean func_78023_l() {
++      if (field_78033_n > 11) return ((field_78033_n - 12) % 10) < 5;
+       return this.field_78033_n < 6;
+    }
+ 
+@@ -220,4 +225,58 @@
+       }
+ 
+    }
++
++   public int getTabPage() {
++      return field_78033_n < 12 ? 0 : ((field_78033_n - 12) / 10) + 1;
++   }
++
++   public boolean hasSearchBar() {
++      return field_78033_n == field_78027_g.field_78033_n;
++   }
++
++   /**
++    * Gets the width of the search bar of the creative tab, use this if your
++    * creative tab name overflows together with a custom texture.
++    *
++    * @return The width of the search bar, 89 by default
++    */
++   public int getSearchbarWidth() {
++      return 89;
++   }
++
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraft.util.ResourceLocation getBackgroundImage() {
++      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
++   }
++
++   private static final net.minecraft.util.ResourceLocation CREATIVE_INVENTORY_TABS = new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraft.util.ResourceLocation getTabsImage() {
++      return CREATIVE_INVENTORY_TABS;
++   }
++
++   public int getLabelColor() {
++      return 4210752;
++   }
++
++   public int getSlotColor() {
++      return -2130706433;
++   }
++   
++   public static synchronized int getGroupCountSafe() {
++      return ItemGroup.field_78032_a.length;
++   }
++   
++   private static synchronized int addGroupSafe(int index, ItemGroup newGroup) {
++      if(index == -1) {
++         index = field_78032_a.length;
++      }
++      if (index >= field_78032_a.length) {
++         ItemGroup[] tmp = new ItemGroup[index + 1];
++         System.arraycopy(field_78032_a, 0, tmp, 0, field_78032_a.length);
++         field_78032_a = tmp;
++      }
++      field_78032_a[index] = newGroup;
++      return index;
++   }
+ }

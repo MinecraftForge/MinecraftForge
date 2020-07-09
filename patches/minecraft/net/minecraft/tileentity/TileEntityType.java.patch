@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/TileEntityType.java
++++ b/net/minecraft/tileentity/TileEntityType.java
+@@ -16,7 +16,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class TileEntityType<T extends TileEntity> {
++public class TileEntityType<T extends TileEntity> extends net.minecraftforge.registries.ForgeRegistryEntry<TileEntityType<?>> {
+    private static final Logger field_206866_A = LogManager.getLogger();
+    public static final TileEntityType<FurnaceTileEntity> field_200971_b = func_200966_a("furnace", TileEntityType.Builder.func_223042_a(FurnaceTileEntity::new, Blocks.field_150460_al));
+    public static final TileEntityType<ChestTileEntity> field_200972_c = func_200966_a("chest", TileEntityType.Builder.func_223042_a(ChestTileEntity::new, Blocks.field_150486_ae));

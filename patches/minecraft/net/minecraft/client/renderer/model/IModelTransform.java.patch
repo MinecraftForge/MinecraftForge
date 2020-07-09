@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/model/IModelTransform.java
++++ b/net/minecraft/client/renderer/model/IModelTransform.java
+@@ -5,7 +5,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface IModelTransform {
++public interface IModelTransform extends net.minecraftforge.client.extensions.IForgeModelTransform {
+    default TransformationMatrix func_225615_b_() {
+       return TransformationMatrix.func_227983_a_();
+    }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/potion/Potion.java
++++ b/net/minecraft/potion/Potion.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class Potion {
++public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
+    private final String field_185179_d;
+    private final ImmutableList<EffectInstance> field_185180_e;
+ 

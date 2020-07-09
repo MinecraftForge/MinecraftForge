@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/client/CClickWindowPacket.java
++++ b/net/minecraft/network/play/client/CClickWindowPacket.java
+@@ -49,7 +49,7 @@
+       p_148840_1_.writeByte(this.field_149553_c);
+       p_148840_1_.writeShort(this.field_149550_d);
+       p_148840_1_.func_179249_a(this.field_149549_f);
+-      p_148840_1_.func_150788_a(this.field_149551_e);
++      p_148840_1_.writeItemStack(this.field_149551_e, false); //Forge: Include full tag for C->S
+    }
+ 
+    public int func_149548_c() {

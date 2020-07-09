@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/storage/DimensionSavedDataManager.java
++++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
+@@ -47,9 +47,13 @@
+    @Nullable
+    public <T extends WorldSavedData> T func_215753_b(Supplier<T> p_215753_1_, String p_215753_2_) {
+       WorldSavedData worldsaveddata = this.field_212778_c.get(p_215753_2_);
++      if (worldsaveddata == net.minecraftforge.common.util.DummyWorldSaveData.DUMMY) return null;
+       if (worldsaveddata == null && !this.field_212778_c.containsKey(p_215753_2_)) {
+          worldsaveddata = this.func_223409_c(p_215753_1_, p_215753_2_);
+          this.field_212778_c.put(p_215753_2_, worldsaveddata);
++      } else if (worldsaveddata == null) {
++         this.field_212778_c.put(p_215753_2_, net.minecraftforge.common.util.DummyWorldSaveData.DUMMY);
++         return null;
+       }
+ 
+       return (T)worldsaveddata;

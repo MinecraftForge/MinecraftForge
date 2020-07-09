@@ -1,108 +1,74 @@
---- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
-+++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -10,8 +10,11 @@
- import net.minecraft.block.Block;
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.nbt.NBTTagCompound;
-+import net.minecraft.network.INetworkManager;
- import net.minecraft.network.packet.Packet;
-+import net.minecraft.network.packet.Packet132TileEntityData;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.world.World;
+--- a/net/minecraft/tileentity/TileEntity.java
++++ b/net/minecraft/tileentity/TileEntity.java
+@@ -16,7 +16,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
- public class TileEntity
-@@ -308,4 +311,93 @@
-         addMapping(TileEntityHopper.class, "Hopper");
-         addMapping(TileEntityComparator.class, "Comparator");
-     }
+-public abstract class TileEntity {
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
+    private static final Logger field_145852_a = LogManager.getLogger();
+    private final TileEntityType<?> field_200663_e;
+    @Nullable
+@@ -26,9 +26,12 @@
+    @Nullable
+    private BlockState field_195045_e;
+    private boolean field_222816_g;
++   private CompoundNBT customTileData;
+ 
+    public TileEntity(TileEntityType<?> p_i48289_1_) {
++      super(TileEntity.class);
+       this.field_200663_e = p_i48289_1_;
++      this.gatherCapabilities();
+    }
+ 
+    @Nullable
+@@ -47,6 +50,8 @@
+ 
+    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+       this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
++      if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
++      if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps")) deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
+    }
+ 
+    public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
+@@ -62,6 +67,8 @@
+          p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+          p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+          p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
++         if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
+          return p_189516_1_;
+       }
+    }
+@@ -94,7 +101,7 @@
+       if (this.field_145850_b != null) {
+          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+          this.field_145850_b.func_175646_b(this.field_174879_c, this);
+-         if (!this.field_195045_e.func_196958_f()) {
++         if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
+             this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
+          }
+       }
+@@ -133,6 +140,8 @@
+ 
+    public void func_145843_s() {
+       this.field_145846_f = true;
++      this.invalidateCaps();
++      requestModelDataUpdate();
+    }
+ 
+    public void func_145829_t() {
+@@ -175,6 +184,13 @@
+       return this.field_200663_e;
+    }
+ 
++   @Override
++   public CompoundNBT getTileData() {
++      if (this.customTileData == null)
++         this.customTileData = new CompoundNBT();
++      return this.customTileData;
++   }
 +
-+    // -- BEGIN FORGE PATCHES --
-+    /**
-+     * Determines if this TileEntity requires update calls.
-+     * @return True if you want updateEntity() to be called, false if not
-+     */
-+    public boolean canUpdate()
-+    {
-+        return true;
-+    }
-+
-+    /**
-+     * Called when you receive a TileEntityData packet for the location this
-+     * TileEntity is currently in. On the client, the NetworkManager will always
-+     * be the remote server. On the server, it will be whomever is responsible for
-+     * sending the packet.
-+     *
-+     * @param net The NetworkManager the packet originated from
-+     * @param pkt The data packet
-+     */
-+    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
-+    {
-+    }
-+
-+    /**
-+     * Called when the chunk this TileEntity is on is Unloaded.
-+     */
-+    public void onChunkUnload()
-+    {
-+    }
-+
-+    /**
-+     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
-+     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
-+     *
-+     * @param oldID The old ID of the block
-+     * @param newID The new ID of the block (May be the same)
-+     * @param oldMeta The old metadata of the block
-+     * @param newMeta The new metadata of the block (May be the same)
-+     * @param world Current world
-+     * @param x X Postion
-+     * @param y Y Position
-+     * @param z Z Position
-+     * @return True to remove the old tile entity, false to keep it in tact {and create a new one if the new values specify to}
-+     */
-+    public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z)
-+    {
-+        return true;
-+    }
-+
-+    public boolean shouldRenderInPass(int pass)
-+    {
-+        return pass == 0;
-+    }
-+    /**
-+     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
-+     */
-+    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.getBoundingBox(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-+
-+    /**
-+     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
-+     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
-+     * at this location.
-+     *
-+     * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
-+     */
-+    @SideOnly(Side.CLIENT)
-+    public AxisAlignedBB getRenderBoundingBox()
-+    {
-+        AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-+        Block type = getBlockType();
-+        if (type == Block.enchantmentTable)
-+        {
-+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
-+        }
-+        else if (type == Block.chest || type == Block.chestTrapped)
-+        {
-+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
-+        }
-+        else if (type != null && type != Block.beacon)
-+        {
-+            AxisAlignedBB cbb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
-+            if (cbb != null)
-+            {
-+                bb = cbb;
-+            }
-+        }
-+        return bb;
-+    }
- }
+    public void func_222814_r() {
+       if (!this.field_222816_g) {
+          this.field_222816_g = true;

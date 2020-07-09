@@ -1,0 +1,83 @@
+--- a/net/minecraft/client/renderer/FirstPersonRenderer.java
++++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
+@@ -208,7 +208,7 @@
+       boolean flag1 = true;
+       if (p_228396_4_.func_184587_cr()) {
+          ItemStack itemstack = p_228396_4_.func_184607_cu();
+-         if (itemstack.func_77973_b() == Items.field_151031_f || itemstack.func_77973_b() == Items.field_222114_py) {
++         if (itemstack.func_77973_b() instanceof net.minecraft.item.ShootableItem) {
+             flag = p_228396_4_.func_184600_cs() == Hand.MAIN_HAND;
+             flag1 = !flag;
+          }
+@@ -216,18 +216,18 @@
+          Hand hand1 = p_228396_4_.func_184600_cs();
+          if (hand1 == Hand.MAIN_HAND) {
+             ItemStack itemstack1 = p_228396_4_.func_184592_cb();
+-            if (itemstack1.func_77973_b() == Items.field_222114_py && CrossbowItem.func_220012_d(itemstack1)) {
++            if (itemstack1.func_77973_b() instanceof CrossbowItem && CrossbowItem.func_220012_d(itemstack1)) {
+                flag1 = false;
+             }
+          }
+       } else {
+          ItemStack itemstack2 = p_228396_4_.func_184614_ca();
+          ItemStack itemstack3 = p_228396_4_.func_184592_cb();
+-         if (itemstack2.func_77973_b() == Items.field_222114_py && CrossbowItem.func_220012_d(itemstack2)) {
++         if (itemstack2.func_77973_b() instanceof CrossbowItem && CrossbowItem.func_220012_d(itemstack2)) {
+             flag1 = !flag;
+          }
+ 
+-         if (itemstack3.func_77973_b() == Items.field_222114_py && CrossbowItem.func_220012_d(itemstack3)) {
++         if (itemstack3.func_77973_b() instanceof CrossbowItem && CrossbowItem.func_220012_d(itemstack3)) {
+             flag = !itemstack2.func_190926_b();
+             flag1 = !flag;
+          }
+@@ -240,12 +240,14 @@
+       if (flag) {
+          float f5 = hand == Hand.MAIN_HAND ? f : 0.0F;
+          float f2 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187470_g, this.field_187469_f);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.MAIN_HAND, p_228396_2_, p_228396_3_, p_228396_5_, p_228396_1_, f1, f5, f2, this.field_187467_d))
+          this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.MAIN_HAND, f5, this.field_187467_d, f2, p_228396_2_, p_228396_3_, p_228396_5_);
+       }
+ 
+       if (flag1) {
+          float f6 = hand == Hand.OFF_HAND ? f : 0.0F;
+          float f7 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187472_i, this.field_187471_h);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_228396_2_, p_228396_3_, p_228396_5_, p_228396_1_, f1, f6, f7, this.field_187468_e))
+          this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.OFF_HAND, f6, this.field_187468_e, f7, p_228396_2_, p_228396_3_, p_228396_5_);
+       }
+ 
+@@ -260,13 +262,13 @@
+          if (flag && !p_228405_1_.func_82150_aj()) {
+             this.func_228401_a_(p_228405_8_, p_228405_9_, p_228405_10_, p_228405_7_, p_228405_5_, handside);
+          }
+-      } else if (p_228405_6_.func_77973_b() == Items.field_151098_aY) {
++      } else if (p_228405_6_.func_77973_b() instanceof FilledMapItem) {
+          if (flag && this.field_187468_e.func_190926_b()) {
+             this.func_228400_a_(p_228405_8_, p_228405_9_, p_228405_10_, p_228405_3_, p_228405_7_, p_228405_5_);
+          } else {
+             this.func_228402_a_(p_228405_8_, p_228405_9_, p_228405_10_, p_228405_7_, handside, p_228405_5_, p_228405_6_);
+          }
+-      } else if (p_228405_6_.func_77973_b() == Items.field_222114_py) {
++      } else if (p_228405_6_.func_77973_b() instanceof CrossbowItem) {
+          boolean flag1 = CrossbowItem.func_220012_d(p_228405_6_);
+          boolean flag2 = handside == HandSide.RIGHT;
+          int i = flag2 ? 1 : -1;
+@@ -410,8 +412,16 @@
+          this.field_187471_h = MathHelper.func_76131_a(this.field_187471_h - 0.4F, 0.0F, 1.0F);
+       } else {
+          float f = clientplayerentity.func_184825_o(1.0F);
+-         this.field_187469_f += MathHelper.func_76131_a((this.field_187467_d == itemstack ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
+-         this.field_187471_h += MathHelper.func_76131_a((float)(this.field_187468_e == itemstack1 ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, clientplayerentity.field_71071_by.field_70461_c);
++         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
++
++         if (!requipM && this.field_187467_d != itemstack)
++            this.field_187467_d = itemstack;
++         if (!requipO && this.field_187468_e != itemstack1)
++            this.field_187468_e = itemstack1;
++
++         this.field_187469_f += MathHelper.func_76131_a((!requipM ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++         this.field_187471_h += MathHelper.func_76131_a((float)(!requipO ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
+       }
+ 
+       if (this.field_187469_f < 0.1F) {

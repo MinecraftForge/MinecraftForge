@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/RabbitEntity.java
++++ b/net/minecraft/entity/passive/RabbitEntity.java
+@@ -498,7 +498,7 @@
+ 
+       public boolean func_75250_a() {
+          if (this.field_179496_a <= 0) {
+-            if (!this.field_179500_c.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179500_c.field_70170_p, this.field_179500_c)) {
+                return false;
+             }
+ 

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/carver/WorldCarver.java
++++ b/net/minecraft/world/gen/carver/WorldCarver.java
+@@ -22,7 +22,7 @@
+ import net.minecraft.world.gen.feature.ProbabilityConfig;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
+ 
+-public abstract class WorldCarver<C extends ICarverConfig> {
++public abstract class WorldCarver<C extends ICarverConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<WorldCarver<?>> {
+    public static final WorldCarver<ProbabilityConfig> field_222709_a = func_222699_a("cave", new CaveWorldCarver(ProbabilityConfig.field_236576_b_, 256));
+    public static final WorldCarver<ProbabilityConfig> field_236240_b_ = func_222699_a("nether_cave", new NetherCaveCarver(ProbabilityConfig.field_236576_b_));
+    public static final WorldCarver<ProbabilityConfig> field_222711_c = func_222699_a("canyon", new CanyonWorldCarver(ProbabilityConfig.field_236576_b_));

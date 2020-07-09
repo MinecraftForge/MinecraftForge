@@ -1,0 +1,38 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "particle": "blocks/slime",
+            "all": "examplemod:blocks/slime_flow"
+        },
+        "model": "forge:fluid",
+     	"custom": { "fluid": "slime" },
+     	"uvlock": false
+    },
+    "variants": {
+        "normal": [{
+
+        }],
+        "inventory": [{
+
+        }],
+        "level": {
+            "0": { },
+            "1": { },
+            "2": { },
+            "3": { },
+            "4": { },
+            "5": { },
+            "6": { },
+            "7": { },
+            "8": { },
+            "9": { },
+            "10": { },
+            "11": { },
+            "12": { },
+            "13": { },
+            "14": { },
+            "15": { }
+        }
+    }
+}

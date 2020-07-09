@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/LightTexture.java
++++ b/net/minecraft/client/renderer/LightTexture.java
+@@ -169,7 +169,7 @@
+    }
+ 
+    public static int func_228450_a_(int p_228450_0_) {
+-      return p_228450_0_ >> 4 & '\uffff';
++      return (p_228450_0_ & 0xFFFF) >> 4; // Forge: Fix fullbright quads showing dark artifacts. Reported as MC-169806
+    }
+ 
+    public static int func_228454_b_(int p_228454_0_) {

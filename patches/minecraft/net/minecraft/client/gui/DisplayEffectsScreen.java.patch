@@ -1,0 +1,33 @@
+--- a/net/minecraft/client/gui/DisplayEffectsScreen.java
++++ b/net/minecraft/client/gui/DisplayEffectsScreen.java
+@@ -35,6 +35,9 @@
+          this.field_147003_i = (this.field_230708_k_ - this.field_146999_f) / 2;
+          this.field_147045_u = false;
+       } else {
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent(this)))
++            this.field_147003_i = (this.field_230708_k_ - this.field_146999_f) / 2;
++         else
+          this.field_147003_i = 160 + (this.field_230708_k_ - this.field_146999_f - 200) / 2;
+          this.field_147045_u = true;
+       }
+@@ -59,7 +62,7 @@
+             j = 132 / (collection.size() - 1);
+          }
+ 
+-         Iterable<EffectInstance> iterable = Ordering.natural().sortedCopy(collection);
++         Iterable<EffectInstance> iterable = collection.stream().filter(effectInstance -> effectInstance.shouldRender()).sorted().collect(java.util.stream.Collectors.toList());
+          this.func_238810_a_(p_238811_1_, i, j, iterable);
+          this.func_238812_b_(p_238811_1_, i, j, iterable);
+          this.func_238813_c_(p_238811_1_, i, j, iterable);
+@@ -96,6 +99,11 @@
+       int i = this.field_147009_r;
+ 
+       for(EffectInstance effectinstance : p_238813_4_) {
++         effectinstance.renderInventoryEffect(this, p_238813_1_, p_238813_2_, i, this.func_230927_p_());
++         if (!effectinstance.shouldRenderInvText()) {
++            i += p_238813_3_;
++            continue;
++         }
+          String s = I18n.func_135052_a(effectinstance.func_188419_a().func_76393_a());
+          if (effectinstance.func_76458_c() >= 1 && effectinstance.func_76458_c() <= 9) {
+             s = s + ' ' + I18n.func_135052_a("enchantment.level." + (effectinstance.func_76458_c() + 1));

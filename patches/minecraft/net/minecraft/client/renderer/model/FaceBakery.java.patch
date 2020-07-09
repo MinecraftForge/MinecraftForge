@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/renderer/model/FaceBakery.java
++++ b/net/minecraft/client/renderer/model/FaceBakery.java
+@@ -43,6 +43,7 @@
+          this.func_178408_a(aint, direction);
+       }
+ 
++      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
+       return new BakedQuad(aint, p_228824_3_.field_178245_c, direction, p_228824_4_, p_228824_8_);
+    }
+ 
+@@ -125,8 +126,8 @@
+       p_239288_1_[i + 1] = Float.floatToRawIntBits(p_239288_3_.func_195900_b());
+       p_239288_1_[i + 2] = Float.floatToRawIntBits(p_239288_3_.func_195902_c());
+       p_239288_1_[i + 3] = -1;
+-      p_239288_1_[i + 4] = Float.floatToRawIntBits(p_239288_4_.func_94214_a((double)p_239288_5_.func_178348_a(p_239288_2_)));
+-      p_239288_1_[i + 4 + 1] = Float.floatToRawIntBits(p_239288_4_.func_94207_b((double)p_239288_5_.func_178346_b(p_239288_2_)));
++      p_239288_1_[i + 4] = Float.floatToRawIntBits(p_239288_4_.func_94214_a((double)p_239288_5_.func_178348_a(p_239288_2_) * .999 + p_239288_5_.func_178348_a((p_239288_2_ + 2) % 4) * .001));
++      p_239288_1_[i + 4 + 1] = Float.floatToRawIntBits(p_239288_4_.func_94207_b((double)p_239288_5_.func_178346_b(p_239288_2_) * .999 + p_239288_5_.func_178346_b((p_239288_2_ + 2) % 4) * .001));
+    }
+ 
+    private void func_199336_a(Vector3f p_199336_1_, @Nullable BlockPartRotation p_199336_2_) {

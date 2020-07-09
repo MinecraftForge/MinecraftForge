@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/IWorldReader.java
++++ b/net/minecraft/world/IWorldReader.java
+@@ -68,7 +68,7 @@
+    }
+ 
+    default boolean func_175623_d(BlockPos p_175623_1_) {
+-      return this.func_180495_p(p_175623_1_).func_196958_f();
++      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
+    }
+ 
+    default boolean func_175710_j(BlockPos p_175710_1_) {
+@@ -157,6 +157,10 @@
+       return this.func_217354_b(p_175667_1_.func_177958_n() >> 4, p_175667_1_.func_177952_p() >> 4);
+    }
+ 
++   default boolean isAreaLoaded(BlockPos center, int range) {
++      return this.func_175707_a(center.func_177982_a(-range, -range, -range), center.func_177982_a(range, range, range));
++   }
++
+    @Deprecated
+    default boolean func_175707_a(BlockPos p_175707_1_, BlockPos p_175707_2_) {
+       return this.func_217344_a(p_175707_1_.func_177958_n(), p_175707_1_.func_177956_o(), p_175707_1_.func_177952_p(), p_175707_2_.func_177958_n(), p_175707_2_.func_177956_o(), p_175707_2_.func_177952_p());

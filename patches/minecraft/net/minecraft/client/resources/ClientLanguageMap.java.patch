@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/resources/ClientLanguageMap.java
++++ b/net/minecraft/client/resources/ClientLanguageMap.java
+@@ -116,4 +116,9 @@
+          return p_239500_1_;
+       }
+    }
++   
++   @Override
++   public Map<String, String> getLanguageData() {
++      return field_239495_c_;
++   }
+ }

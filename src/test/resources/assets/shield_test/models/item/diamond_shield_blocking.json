@@ -1,0 +1,30 @@
+{
+	"parent": "shield_test:item/diamond_shield",
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [ 45, 135, 0 ],
+            "translation": [ 3.51, 11, -2 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 45, 135, 0 ],
+            "translation": [ 13.51, 3, 5 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, 180, -5 ],
+            "translation": [ -15, 5, -11 ],
+            "scale": [ 1.25, 1.25, 1.25 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 0, 180, -5 ],
+            "translation": [ 5, 5, -11 ],
+            "scale": [ 1.25, 1.25, 1.25 ]
+        },
+        "gui": {
+            "rotation": [ 15, -25, -5 ],
+            "translation": [ 2, 3, 0 ],
+            "scale": [ 0.65, 0.65, 0.65 ]
+        }
+    }
+}

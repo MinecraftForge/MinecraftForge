@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/BreakBlockGoal.java
++++ b/net/minecraft/entity/ai/goal/BreakBlockGoal.java
+@@ -32,7 +32,7 @@
+    }
+ 
+    public boolean func_75250_a() {
+-      if (!this.field_203118_g.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++      if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.field_203118_g.field_70170_p, this.field_179494_b, this.field_203118_g)) {
+          return false;
+       } else if (this.field_179496_a > 0) {
+          --this.field_179496_a;

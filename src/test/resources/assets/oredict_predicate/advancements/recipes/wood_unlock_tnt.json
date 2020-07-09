@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [ "minecraft:tnt" ]
+  },
+  "criteria": {
+    "has_wood": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "plankWood"
+          }
+        ]
+      }
+    },
+    "mod_enabled": {
+      "trigger": "oredict_predicate:is_enabled",
+      "conditions": {}
+    }
+  },
+  "requirements": [["has_wood"], ["mod_enabled"]]
+}

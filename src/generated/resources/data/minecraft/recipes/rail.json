@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "X#X",
+    "X X"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "minecraft:rail",
+    "count": 16
+  }
+}

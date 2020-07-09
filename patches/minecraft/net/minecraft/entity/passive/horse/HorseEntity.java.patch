@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/horse/HorseEntity.java
++++ b/net/minecraft/entity/passive/horse/HorseEntity.java
+@@ -138,6 +138,8 @@
+          this.func_184185_a(SoundEvents.field_187705_cn, p_190680_1_.func_185843_a() * 0.6F, p_190680_1_.func_185847_b());
+       }
+ 
++      ItemStack stack = this.field_110296_bG.func_70301_a(1);
++      if (func_190682_f(stack)) stack.onHorseArmorTick(field_70170_p, this);
+    }
+ 
+    protected SoundEvent func_184639_G() {

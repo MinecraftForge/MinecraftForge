@@ -1,0 +1,15 @@
+--- a/net/minecraft/item/crafting/IRecipe.java
++++ b/net/minecraft/item/crafting/IRecipe.java
+@@ -21,9 +21,9 @@
+       NonNullList<ItemStack> nonnulllist = NonNullList.func_191197_a(p_179532_1_.func_70302_i_(), ItemStack.field_190927_a);
+ 
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+-         Item item = p_179532_1_.func_70301_a(i).func_77973_b();
+-         if (item.func_77634_r()) {
+-            nonnulllist.set(i, new ItemStack(item.func_77668_q()));
++         ItemStack item = p_179532_1_.func_70301_a(i);
++         if (item.hasContainerItem()) {
++            nonnulllist.set(i, item.getContainerItem());
+          }
+       }
+ 

@@ -1,0 +1,28 @@
+--- a/net/minecraft/item/ShearsItem.java
++++ b/net/minecraft/item/ShearsItem.java
+@@ -34,4 +34,25 @@
+          return 15.0F;
+       }
+    }
++
++   @Override
++   public net.minecraft.util.ActionResultType func_111207_a(ItemStack stack, net.minecraft.entity.player.PlayerEntity playerIn, LivingEntity entity, net.minecraft.util.Hand hand) {
++      if (entity.field_70170_p.field_72995_K) return net.minecraft.util.ActionResultType.PASS;
++      if (entity instanceof net.minecraftforge.common.IForgeShearable) {
++          net.minecraftforge.common.IForgeShearable target = (net.minecraftforge.common.IForgeShearable)entity;
++         BlockPos pos = new BlockPos(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_());
++         if (target.isShearable(stack, entity.field_70170_p, pos)) {
++            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.field_70170_p, pos,
++                    net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.enchantment.Enchantments.field_185308_t, stack));
++            java.util.Random rand = new java.util.Random();
++            drops.forEach(d -> {
++               net.minecraft.entity.item.ItemEntity ent = entity.func_70099_a(d, 1.0F);
++               ent.func_213317_d(ent.func_213322_ci().func_72441_c((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
++            });
++            stack.func_222118_a(1, entity, e -> e.func_213334_d(hand));
++         }
++         return net.minecraft.util.ActionResultType.SUCCESS;
++      }
++      return net.minecraft.util.ActionResultType.PASS;
++   }
+ }

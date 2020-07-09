@@ -1,303 +1,367 @@
---- ../src_base/minecraft/net/minecraft/entity/Entity.java
-+++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,7 +1,10 @@
- package net.minecraft.entity;
+--- a/net/minecraft/entity/Entity.java
++++ b/net/minecraft/entity/Entity.java
+@@ -107,12 +107,13 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
-+import cpw.mods.fml.common.FMLLog;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
-+import java.util.HashMap;
- import java.util.List;
- import java.util.Random;
- import java.util.UUID;
-@@ -13,8 +16,13 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.enchantment.EnchantmentProtection;
- import net.minecraft.entity.effect.EntityLightningBolt;
-+import net.minecraft.entity.item.EntityBoat;
- import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.item.EntityItemFrame;
-+import net.minecraft.entity.item.EntityMinecart;
-+import net.minecraft.entity.item.EntityPainting;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.item.Item;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagDouble;
-@@ -26,12 +34,16 @@
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.Direction;
- import net.minecraft.util.MathHelper;
-+import net.minecraft.util.MovingObjectPosition;
- import net.minecraft.util.ReportedException;
- import net.minecraft.util.StatCollector;
- import net.minecraft.util.Vec3;
- import net.minecraft.world.Explosion;
- import net.minecraft.world.World;
- import net.minecraft.world.WorldServer;
-+import net.minecraftforge.common.IExtendedEntityProperties;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.EntityEvent;
+-public abstract class Entity implements INameable, ICommandSource {
++public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
+    protected static final Logger field_184243_a = LogManager.getLogger();
+    private static final AtomicInteger field_213331_b = new AtomicInteger();
+    private static final List<ItemStack> field_190535_b = Collections.emptyList();
+    private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+    private static double field_70155_l = 1.0D;
++   @Deprecated // Forge: Use the getter to allow overriding in mods
+    private final EntityType<?> field_200606_g;
+    private int field_145783_c = field_213331_b.incrementAndGet();
+    public boolean field_70156_m;
+@@ -138,6 +139,7 @@
+    public boolean field_70124_G;
+    public boolean field_70133_I;
+    protected Vector3d field_213328_B = Vector3d.field_186680_a;
++   @Deprecated //Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
+    public boolean field_70128_L;
+    public float field_70141_P;
+    public float field_70140_Q;
+@@ -198,6 +200,7 @@
+    private float field_213326_aJ;
  
- public abstract class Entity
- {
-@@ -218,6 +230,13 @@
-     private boolean invulnerable;
-     private UUID entityUniqueID;
-     public EnumEntitySize myEntitySize;
-+    /** Forge: Used to store custom data for each entity. */
-+    private NBTTagCompound customEntityData;
-+    public boolean captureDrops = false;
-+    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
-+    private UUID persistentID;
-+
-+    private HashMap<String, IExtendedEntityProperties> extendedProperties;
+    public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
++      super(Entity.class);
+       this.field_200606_g = p_i48580_1_;
+       this.field_70170_p = p_i48580_2_;
+       this.field_213325_aI = p_i48580_1_.func_220334_j();
+@@ -213,7 +216,9 @@
+       this.field_70180_af.func_187214_a(field_189655_aD, false);
+       this.field_70180_af.func_187214_a(field_213330_X, Pose.STANDING);
+       this.func_70088_a();
+-      this.field_213326_aJ = this.func_213316_a(Pose.STANDING, this.field_213325_aI);
++      this.field_213326_aJ = getEyeHeightForge(Pose.STANDING, this.field_213325_aI);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++      this.gatherCapabilities();
+    }
  
-     public Entity(World par1World)
-     {
-@@ -245,6 +264,15 @@
-         this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
-         this.dataWatcher.addObject(1, Short.valueOf((short)300));
-         this.entityInit();
-+
-+        extendedProperties = new HashMap<String, IExtendedEntityProperties>();
-+
-+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructing(this));
-+
-+        for (IExtendedEntityProperties props : this.extendedProperties.values())
-+        {
-+            props.init(this, par1World);
-+        }
-     }
+    @OnlyIn(Dist.CLIENT)
+@@ -305,7 +310,13 @@
+    }
  
-     protected abstract void entityInit();
-@@ -1515,6 +1543,21 @@
-             par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
-             par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
-             par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
-+            if (customEntityData != null)
-+            {
-+                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
-+            }
+    public void func_70106_y() {
++      this.remove(false);
++   }
 +
-+            for (String identifier : this.extendedProperties.keySet()){
-+                try{
-+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.saveNBTData(par1NBTTagCompound);
-+                }catch (Throwable t){
-+                    FMLLog.severe("Failed to save extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
-             this.writeEntityToNBT(par1NBTTagCompound);
++   public void remove(boolean keepData) {
+       this.field_70128_L = true;
++      if (!keepData)
++         this.invalidateCaps();
+    }
  
-             if (this.ridingEntity != null)
-@@ -1585,6 +1628,26 @@
+    public void func_213301_b(Pose p_213301_1_) {
+@@ -330,6 +341,7 @@
  
-             this.setPosition(this.posX, this.posY, this.posZ);
-             this.setRotation(this.rotationYaw, this.rotationPitch);
-+            if (par1NBTTagCompound.hasKey("ForgeData"))
-+            {
-+                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
-+            }
-+
-+            for (String identifier : this.extendedProperties.keySet()){
-+                try{
-+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(par1NBTTagCompound);
-+                }catch (Throwable t){
-+                    FMLLog.severe("Failed to load extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
-+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
-+            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
-+            {
-+                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
-+            }
-             this.readEntityFromNBT(par1NBTTagCompound);
-         }
-         catch (Throwable throwable)
-@@ -1687,7 +1750,14 @@
-         {
-             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-             entityitem.delayBeforeCanPickup = 10;
--            this.worldObj.spawnEntityInWorld(entityitem);
-+            if (captureDrops)
-+            {
-+                capturedDrops.add(entityitem);
-+            }
-+            else
-+            {
-+                this.worldObj.spawnEntityInWorld(entityitem);
-+            }
-             return entityitem;
-         }
-     }
-@@ -1985,7 +2055,7 @@
-      */
-     public boolean isRiding()
-     {
--        return this.ridingEntity != null;
-+        return this.ridingEntity != null && ridingEntity.shouldRiderSit();
-     }
+    public void func_70107_b(double p_70107_1_, double p_70107_3_, double p_70107_5_) {
+       this.func_226288_n_(p_70107_1_, p_70107_3_, p_70107_5_);
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
+       float f = this.field_213325_aI.field_220315_a / 2.0F;
+       float f1 = this.field_213325_aI.field_220316_b;
+       this.func_174826_a(new AxisAlignedBB(p_70107_1_ - (double)f, p_70107_3_, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ + (double)f1, p_70107_5_ + (double)f));
+@@ -542,7 +554,7 @@
  
-     /**
-@@ -2344,7 +2414,7 @@
+             this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vector3d)) * 0.6D);
+             this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
+-            if (this.field_82151_R > this.field_70150_b && !blockstate.func_196958_f()) {
++            if (this.field_82151_R > this.field_70150_b && !blockstate.isAir(this.field_70170_p, blockpos)) {
+                this.field_70150_b = this.func_203009_ad();
+                if (this.func_70090_H()) {
+                   Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
+@@ -557,7 +569,7 @@
+                } else {
+                   this.func_180429_a(blockpos, blockstate);
+                }
+-            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.func_196958_f()) {
++            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.isAir(this.field_70170_p, blockpos)) {
+                this.field_191959_ay = this.func_191954_d(this.field_82151_R);
+             }
+          }
+@@ -574,8 +586,9 @@
  
-     public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
-     {
--        return par6Block.getExplosionResistance(this);
-+        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
-     }
+          float f2 = this.func_225515_ai_();
+          this.func_213317_d(this.func_213322_ci().func_216372_d((double)f2, 1.0D, (double)f2));
+-         if (this.field_70170_p.func_234939_c_(this.func_174813_aQ().func_186664_h(0.001D)).noneMatch((p_233572_0_) -> {
+-            return p_233572_0_.func_235714_a_(BlockTags.field_232872_am_) || p_233572_0_.func_203425_a(Blocks.field_150353_l);
++         if (BlockPos.func_239581_a_(this.func_174813_aQ().func_186664_h(0.001D)).noneMatch((p_233572_0_) -> {
++            BlockState state = field_70170_p.func_180495_p(p_233572_0_);
++            return state.func_235714_a_(BlockTags.field_232872_am_) || state.func_203425_a(Blocks.field_150353_l) || state.isBurning(field_70170_p, p_233572_0_);
+          }) && this.field_190534_ay <= 0) {
+             this.func_241209_g_(-this.func_190531_bD());
+          }
+@@ -594,11 +607,10 @@
+       int j = MathHelper.func_76128_c(this.field_233557_ao_.field_72448_b - (double)0.2F);
+       int k = MathHelper.func_76128_c(this.field_233557_ao_.field_72449_c);
+       BlockPos blockpos = new BlockPos(i, j, k);
+-      if (this.field_70170_p.func_180495_p(blockpos).func_196958_f()) {
++      if (this.field_70170_p.func_175623_d(blockpos)) {
+          BlockPos blockpos1 = blockpos.func_177977_b();
+          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos1);
+-         Block block = blockstate.func_177230_c();
+-         if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock) {
++         if (blockstate.collisionExtendsVertically(this.field_70170_p, blockpos1, this)) {
+             return blockpos1;
+          }
+       }
+@@ -784,6 +796,7 @@
+    public void func_174829_m() {
+       AxisAlignedBB axisalignedbb = this.func_174813_aQ();
+       this.func_226288_n_((axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D, axisalignedbb.field_72338_b, (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D);
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
+    }
  
-     public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2407,4 +2477,145 @@
-     {
-         return this.getEntityName();
-     }
+    protected SoundEvent func_184184_Z() {
+@@ -832,7 +845,7 @@
+    protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
+       if (!p_180429_2_.func_185904_a().func_76224_d()) {
+          BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
+-         SoundType soundtype = blockstate.func_203425_a(Blocks.field_150433_aE) ? blockstate.func_215695_r() : p_180429_2_.func_215695_r();
++         SoundType soundtype = blockstate.func_203425_a(Blocks.field_150433_aE) ? blockstate.getSoundType(field_70170_p, p_180429_1_, this) : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
+          this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
+       }
+    }
+@@ -1048,9 +1061,10 @@
+       int k = MathHelper.func_76128_c(this.func_226281_cx_());
+       BlockPos blockpos = new BlockPos(i, j, k);
+       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
++      if(!blockstate.addRunningEffects(field_70170_p, blockpos, this))
+       if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
+          Vector3d vector3d = this.func_213322_ci();
+-         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.func_226277_ct_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vector3d.field_72450_a * -4.0D, 1.5D, vector3d.field_72449_c * -4.0D);
++         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(blockpos), this.func_226277_ct_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vector3d.field_72450_a * -4.0D, 1.5D, vector3d.field_72449_c * -4.0D);
+       }
+ 
+    }
+@@ -1356,6 +1370,7 @@
+          if (this.field_184238_ar) {
+             p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
+          }
++         p_189511_1_.func_74757_a("CanUpdate", canUpdate);
+ 
+          if (!this.field_184236_aF.isEmpty()) {
+             ListNBT listnbt = new ListNBT();
+@@ -1367,6 +1382,10 @@
+             p_189511_1_.func_218657_a("Tags", listnbt);
+          }
+ 
++         CompoundNBT caps = serializeCaps();
++         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
++         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
 +
-+    /* ================================== Forge Start =====================================*/
-+    /**
-+     * Returns a NBTTagCompound that can be used to store custom data for this entity.
-+     * It will be written, and read from disc, so it persists over world saves.
-+     * @return A NBTTagCompound
-+     */
-+    public NBTTagCompound getEntityData()
-+    {
-+        if (customEntityData == null)
-+        {
-+            customEntityData = new NBTTagCompound();
-+        }
-+        return customEntityData;
-+    }
-+
-+    /**
-+     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
-+     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
-+     */
-+    public boolean shouldRiderSit()
-+    {
-+        return true;
-+    }
-+
-+    /**
-+     * Called when a user uses the creative pick block button on this entity.
-+     *
-+     * @param target The full target the player is looking at
-+     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
-+     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
-+    {
-+        if (this instanceof EntityPainting)
-+        {
-+            return new ItemStack(Item.painting);
-+        }
-+        else if (this instanceof EntityMinecart)
-+        {
-+            return ((EntityMinecart)this).getCartItem();
-+        }
-+        else if (this instanceof EntityBoat)
-+        {
-+            return new ItemStack(Item.boat);
-+        }
-+        else if (this instanceof EntityItemFrame)
-+        {
-+            ItemStack held = ((EntityItemFrame)this).getDisplayedItem();
-+            if (held == null)
-+            {
-+                return new ItemStack(Item.itemFrame);
+          this.func_213281_b(p_189511_1_);
+          if (this.func_184207_aI()) {
+             ListNBT listnbt1 = new ListNBT();
+@@ -1437,6 +1456,9 @@
+                this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
+                this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
+                this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
++               if (p_70020_1_.func_150297_b("ForgeData", 10)) persistentData = p_70020_1_.func_74775_l("ForgeData");
++               if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
++               if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
+                if (p_70020_1_.func_150297_b("Tags", 9)) {
+                   this.field_184236_aF.clear();
+                   ListNBT listnbt3 = p_70020_1_.func_150295_c("Tags", 8);
+@@ -1525,6 +1547,8 @@
+       } else {
+          ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
+          itementity.func_174869_p();
++         if (captureDrops() != null) captureDrops().add(itementity);
++         else
+          this.field_70170_p.func_217376_c(itementity);
+          return itementity;
+       }
+@@ -1558,6 +1582,7 @@
+ 
+    public void func_70098_U() {
+       this.func_213317_d(Vector3d.field_186680_a);
++      if (canUpdate())
+       this.func_70071_h_();
+       if (this.func_184218_aH()) {
+          this.func_184187_bx().func_184232_k(this);
+@@ -1603,6 +1628,7 @@
+          }
+       }
+ 
++      if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_184205_1_, true)) return false;
+       if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
+          if (this.func_184218_aH()) {
+             this.func_184210_p();
+@@ -1635,6 +1661,7 @@
+    public void func_233575_bb_() {
+       if (this.field_184239_as != null) {
+          Entity entity = this.field_184239_as;
++         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
+          this.field_184239_as = null;
+          entity.func_184225_p(this);
+       }
+@@ -1799,6 +1826,7 @@
+       return !this.func_184188_bt().isEmpty();
+    }
+ 
++   @Deprecated //Forge: Use rider sensitive version
+    public boolean func_205710_ba() {
+       return true;
+    }
+@@ -2015,7 +2043,7 @@
+    }
+ 
+    protected ITextComponent func_225513_by_() {
+-      return this.field_200606_g.func_212546_e();
++      return this.func_200600_R().func_212546_e(); // Forge: Use getter to allow overriding by mods
+    }
+ 
+    public boolean func_70028_i(Entity p_70028_1_) {
+@@ -2072,10 +2100,15 @@
+ 
+    @Nullable
+    public Entity func_241206_a_(ServerWorld p_241206_1_) {
++      return this.changeDimension(p_241206_1_, p_241206_1_.func_85176_s());
++   }
++   @Nullable
++   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       if (this.field_70170_p instanceof ServerWorld && !this.field_70128_L) {
+          this.field_70170_p.func_217381_Z().func_76320_a("changeDimension");
+          this.func_213319_R();
+          this.field_70170_p.func_217381_Z().func_76320_a("reposition");
++         Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
+          Vector3d vector3d = this.func_213322_ci();
+          float f = 0.0F;
+          BlockPos blockpos;
+@@ -2105,6 +2138,7 @@
+             d1 = MathHelper.func_151237_a(d1, d4, d6);
+             Vector3d vector3d1 = this.func_181014_aG();
+             blockpos = new BlockPos(d0, this.func_226278_cu_(), d1);
++            if (spawnPortal) {
+             BlockPattern.PortalInfo blockpattern$portalinfo = p_241206_1_.func_85176_s().func_222272_a(blockpos, vector3d, this.func_181012_aH(), vector3d1.field_72450_a, vector3d1.field_72448_b, this instanceof PlayerEntity);
+             if (blockpattern$portalinfo == null) {
+                return null;
+@@ -2113,6 +2147,7 @@
+             blockpos = new BlockPos(blockpattern$portalinfo.field_222505_a);
+             vector3d = blockpattern$portalinfo.field_222506_b;
+             f = (float)blockpattern$portalinfo.field_222507_c;
 +            }
-+            else
-+            {
-+                return held.copy();
-+            }
-+        }
-+        else
-+        {
-+            int id = EntityList.getEntityID(this);
-+            if (id > 0 && EntityList.entityEggs.containsKey(id))
-+            {
-+                return new ItemStack(Item.monsterPlacer, 1, id);
-+            }
-+        }
-+        return null;
-+    }
+          }
+ 
+          this.field_70170_p.func_217381_Z().func_219895_b("reloading");
+@@ -2126,13 +2161,15 @@
+                ServerWorld.func_241121_a_(p_241206_1_);
+             }
+          }
++         return entity;
++         });//Forge: End vanilla logic
+ 
+          this.func_241204_bJ_();
+          this.field_70170_p.func_217381_Z().func_76319_b();
+          ((ServerWorld)this.field_70170_p).func_82742_i();
+          p_241206_1_.func_82742_i();
+          this.field_70170_p.func_217381_Z().func_76319_b();
+-         return entity;
++         return transportedEntity;
+       } else {
+          return null;
+       }
+@@ -2159,10 +2196,12 @@
+    }
+ 
+    public Vector3d func_181014_aG() {
++      if (this.field_181017_ao == null) return Vector3d.field_186680_a;
+       return this.field_181017_ao;
+    }
+ 
+    public Direction func_181012_aH() {
++      if (this.field_181018_ap == null) return Direction.NORTH;
+       return this.field_181018_ap;
+    }
+ 
+@@ -2295,7 +2334,7 @@
+       Pose pose = this.func_213283_Z();
+       EntitySize entitysize1 = this.func_213305_a(pose);
+       this.field_213325_aI = entitysize1;
+-      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
++      this.field_213326_aJ = getEyeHeightForge(pose, entitysize1);
+       if (entitysize1.field_220315_a < entitysize.field_220315_a) {
+          double d0 = (double)entitysize1.field_220315_a / 2.0D;
+          this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
+@@ -2769,6 +2808,7 @@
+ 
+          this.field_233555_aA_ = true;
+       }
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded.
+ 
+    }
+ 
+@@ -2779,4 +2819,69 @@
+    public interface IMoveCallback {
+       void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
+    }
 +
-+    public UUID getPersistentID()
-+    {
-+        return entityUniqueID;
-+    }
++   /* ================================== Forge Start =====================================*/
 +
-+    /**
-+     * Reset the entity ID to a new value. Not to be used from Mod code
-+     */
-+    public final void resetEntityId()
-+    {
-+        this.entityId = nextEntityID++;
-+    }
++   private boolean canUpdate = true;
++   @Override
++   public void canUpdate(boolean value) {
++      this.canUpdate = value;
++   }
++   @Override
++   public boolean canUpdate() {
++      return this.canUpdate;
++   }
++   private Collection<ItemEntity> captureDrops = null;
++   @Override
++   public Collection<ItemEntity> captureDrops() {
++      return captureDrops;
++   }
++   @Override
++   public Collection<ItemEntity> captureDrops(Collection<ItemEntity> value) {
++      Collection<ItemEntity> ret = captureDrops;
++      this.captureDrops = value;
++      return ret;
++   }
++   private CompoundNBT persistentData;
++   @Override
++   public CompoundNBT getPersistentData() {
++      if (persistentData == null)
++         persistentData = new CompoundNBT();
++      return persistentData;
++   }
++   @Override
++   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
++      return field_70170_p.field_73012_v.nextFloat() < fallDistance - 0.5F
++              && this instanceof LivingEntity
++              && (this instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(field_70170_p, this))
++              && this.func_213311_cf() * this.func_213311_cf() * this.func_213302_cg() > 0.512F;
++   }
 +
-+    public boolean shouldRenderInPass(int pass)
-+    {
-+        return pass == 0;
-+    }
++   /**
++    * Internal use for keeping track of entities that are tracked by a world, to
++    * allow guarantees that entity position changes will force a chunk load, avoiding
++    * potential issues with entity desyncing and bad chunk data.
++    */
++   private boolean isAddedToWorld;
 +
-+    /**
-+     * Returns true if the entity is of the @link{EnumCreatureType} provided
-+     * @param type The EnumCreatureType type this entity is evaluating
-+     * @param forSpawnCount If this is being invoked to check spawn count caps.
-+     * @return If the creature is of the type provided
-+     */
-+    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
-+    {
-+        return type.getCreatureClass().isAssignableFrom(this.getClass());
-+    }
++   @Override
++   public final boolean isAddedToWorld() { return this.isAddedToWorld; }
 +
-+    /**
-+     * Register the instance of IExtendedProperties into the entity's collection.
-+     * @param identifier The identifier which you can use to retrieve these properties for the entity.
-+     * @param properties The instanceof IExtendedProperties to register
-+     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
-+     */
-+    public String registerExtendedProperties(String identifier, IExtendedEntityProperties properties)
-+    {
-+        if (identifier == null)
-+        {
-+            FMLLog.warning("Someone is attempting to register extended properties using a null identifier.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
-+        if (properties == null)
-+        {
-+            FMLLog.warning("Someone is attempting to register null extended properties.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
++   @Override
++   public void onAddedToWorld() { this.isAddedToWorld = true; }
 +
-+        String baseIdentifier = identifier;
-+        int identifierModCount = 1;
-+        while (this.extendedProperties.containsKey(identifier))
-+        {
-+            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
-+        }
++   @Override
++   public void onRemovedFromWorld() { this.isAddedToWorld = false; }
 +
-+        if (baseIdentifier != identifier)
-+        {
-+            FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
-+        }
++   @Override
++   public void revive() {
++      this.field_70128_L = false;
++      this.reviveCaps();
++   }
 +
-+        this.extendedProperties.put(identifier, properties);
-+        return identifier;
-+    }
-+
-+    /**
-+     * Gets the extended properties identified by the passed in key
-+     * @param identifier The key that identifies the extended properties.
-+     * @return The instance of IExtendedProperties that was found, or null.
-+     */
-+    public IExtendedEntityProperties getExtendedProperties(String identifier)
-+    {
-+        return this.extendedProperties.get(identifier);
-+    }
++   private float getEyeHeightForge(Pose pose, EntitySize size) {
++      net.minecraftforge.event.entity.EntityEvent.EyeHeight evt = new net.minecraftforge.event.entity.EntityEvent.EyeHeight(this, pose, size, this.func_213316_a(pose, size));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
++      return evt.getNewHeight();
++   }
  }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/RangedBowAttackGoal.java
++++ b/net/minecraft/entity/ai/goal/RangedBowAttackGoal.java
+@@ -36,7 +36,7 @@
+    }
+ 
+    protected boolean func_188498_f() {
+-      return this.field_188499_a.func_233631_a_(Items.field_151031_f);
++      return this.field_188499_a.func_233634_a_(item -> item instanceof BowItem);
+    }
+ 
+    public boolean func_75253_b() {

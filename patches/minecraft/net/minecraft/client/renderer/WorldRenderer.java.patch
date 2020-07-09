@@ -1,64 +1,126 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -23,7 +23,7 @@
-     /** Reference to the World object. */
-     public World worldObj;
-     private int glRenderList = -1;
--    private static Tessellator tessellator = Tessellator.instance;
-+    //private static Tessellator tessellator = Tessellator.instance;
-     public static int chunksUpdated;
-     public int posX;
-     public int posY;
-@@ -192,15 +192,16 @@
-                                         GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
-                                         GL11.glScalef(f, f, f);
-                                         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
--                                        tessellator.startDrawingQuads();
--                                        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
-+                                        //ForgeHooksClient.beforeRenderPass(l1); Noop fo now, TODO: Event if anyone needs
-+                                        Tessellator.instance.startDrawingQuads();
-+                                        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
-                                     }
+--- a/net/minecraft/client/renderer/WorldRenderer.java
++++ b/net/minecraft/client/renderer/WorldRenderer.java
+@@ -812,7 +812,7 @@
+             this.field_147595_R = true;
+             BlockPos blockpos2 = chunkrenderdispatcher$chunkrender4.func_178568_j().func_177982_a(8, 8, 8);
+             boolean flag1 = blockpos2.func_177951_i(blockpos) < 768.0D;
+-            if (!chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag1) {
++            if (net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() || !chunkrenderdispatcher$chunkrender4.func_188281_o() && !flag1) {
+                this.field_175009_l.add(chunkrenderdispatcher$chunkrender4);
+             } else {
+                this.field_72777_q.func_213239_aq().func_76320_a("build near");
+@@ -897,13 +897,13 @@
+       float f = p_228426_7_.func_205001_m();
+       boolean flag1 = this.field_72777_q.field_71441_e.func_239132_a_().func_230493_a_(MathHelper.func_76128_c(d0), MathHelper.func_76128_c(d1)) || this.field_72777_q.field_71456_v.func_184046_j().func_184056_f();
+       if (this.field_72777_q.field_71474_y.field_151451_c >= 4) {
+-         FogRenderer.func_228372_a_(p_228426_6_, FogRenderer.FogType.FOG_SKY, f, flag1);
++         FogRenderer.setupFog(p_228426_6_, FogRenderer.FogType.FOG_SKY, f, flag1, p_228426_2_);
+          iprofiler.func_219895_b("sky");
+          this.func_228424_a_(p_228426_1_, p_228426_2_);
+       }
  
-                                     Block block = Block.blocksList[l2];
+       iprofiler.func_219895_b("fog");
+-      FogRenderer.func_228372_a_(p_228426_6_, FogRenderer.FogType.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1);
++      FogRenderer.setupFog(p_228426_6_, FogRenderer.FogType.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1, p_228426_2_);
+       iprofiler.func_219895_b("terrain_setup");
+       this.func_228437_a_(p_228426_6_, clippinghelper, flag, this.field_228409_ai_++, this.field_72777_q.field_71439_g.func_175149_v());
+       iprofiler.func_219895_b("updatechunks");
+@@ -924,7 +924,9 @@
+       this.func_174967_a(p_228426_3_ + l1);
+       iprofiler.func_219895_b("terrain");
+       this.func_228441_a_(RenderType.func_228639_c_(), p_228426_1_, d0, d1, d2);
++      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).setBlurMipmap(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
+       this.func_228441_a_(RenderType.func_228641_d_(), p_228426_1_, d0, d1, d2);
++      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).restoreLastBlurMipmap();
+       this.func_228441_a_(RenderType.func_228643_e_(), p_228426_1_, d0, d1, d2);
+       if (this.field_72769_h.func_239132_a_().func_239217_c_()) {
+          RenderHelper.func_237533_a_(p_228426_1_.func_227866_c_().func_227870_a_());
+@@ -994,6 +996,7 @@
+          List<TileEntity> list = worldrenderer$localrenderinformationcontainer.field_178036_a.func_178571_g().func_178485_b();
+          if (!list.isEmpty()) {
+             for(TileEntity tileentity1 : list) {
++               if(!clippinghelper.func_228957_a_(tileentity1.getRenderBoundingBox())) continue;
+                BlockPos blockpos3 = tileentity1.func_174877_v();
+                IRenderTypeBuffer irendertypebuffer1 = irendertypebuffer$impl;
+                p_228426_1_.func_227860_a_();
+@@ -1019,6 +1022,7 @@
  
-                                     if (block != null)
-                                     {
--                                        if (l1 == 0 && block.hasTileEntity())
-+                                        if (l1 == 0 && block.hasTileEntity(chunkcache.getBlockMetadata(k2, i2, j2)))
-                                         {
-                                             TileEntity tileentity = chunkcache.getBlockTileEntity(k2, i2, j2);
+       synchronized(this.field_181024_n) {
+          for(TileEntity tileentity : this.field_181024_n) {
++            if(!clippinghelper.func_228957_a_(tileentity.getRenderBoundingBox())) continue;
+             BlockPos blockpos2 = tileentity.func_174877_v();
+             p_228426_1_.func_227860_a_();
+             p_228426_1_.func_227861_a_((double)blockpos2.func_177958_n() - d0, (double)blockpos2.func_177956_o() - d1, (double)blockpos2.func_177952_p() - d2);
+@@ -1069,7 +1073,8 @@
+          iprofiler.func_219895_b("outline");
+          BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
+          BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
+-         if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
++         if (!blockstate.isAir(this.field_72769_h, blockpos) && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
+             IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
+             this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
+          }
+@@ -2056,7 +2061,12 @@
+       this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
+    }
  
-@@ -212,14 +213,15 @@
++   @Deprecated // Forge: use item aware function below
+    public void func_184377_a(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_) {
++      this.playRecord(p_184377_1_, p_184377_2_, p_184377_1_ == null? null : MusicDiscItem.func_185074_a(p_184377_1_));
++   }
++
++   public void playRecord(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_, @Nullable MusicDiscItem musicDiscItem) {
+       ISound isound = this.field_147593_P.get(p_184377_2_);
+       if (isound != null) {
+          this.field_72777_q.func_147118_V().func_147683_b(isound);
+@@ -2064,7 +2074,7 @@
+       }
  
-                                         int i3 = block.getRenderBlockPass();
+       if (p_184377_1_ != null) {
+-         MusicDiscItem musicdiscitem = MusicDiscItem.func_185074_a(p_184377_1_);
++         MusicDiscItem musicdiscitem = musicDiscItem;
+          if (musicdiscitem != null) {
+             this.field_72777_q.field_71456_v.func_238451_a_(musicdiscitem.func_234801_g_());
+          }
+@@ -2212,7 +2222,7 @@
+          break;
+       case 1010:
+          if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
+-            this.func_184377_a(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_);
++            this.playRecord(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_, (MusicDiscItem) Item.func_150899_d(p_180439_4_));
+          } else {
+             this.func_184377_a((SoundEvent)null, p_180439_3_);
+          }
+@@ -2362,8 +2372,8 @@
+          break;
+       case 2001:
+          BlockState blockstate = Block.func_196257_b(p_180439_4_);
+-         if (!blockstate.func_196958_f()) {
+-            SoundType soundtype = blockstate.func_215695_r();
++         if (!blockstate.isAir(this.field_72769_h, p_180439_3_)) {
++            SoundType soundtype = blockstate.getSoundType(this.field_72769_h, p_180439_3_, null);
+             this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
+          }
  
--                                        if (i3 != l1)
-+                                        if (i3 > l1)
-                                         {
-                                             flag = true;
-                                         }
--                                        else if (i3 == l1)
-+                                        if (!block.canRenderInPass(l1))
-                                         {
--                                            flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
-+                                            continue;
-                                         }
-+                                        flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
-                                     }
-                                 }
-                             }
-@@ -228,10 +230,11 @@
+@@ -2511,7 +2521,7 @@
+       } else {
+          int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
+          int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
+-         int k = p_228420_1_.func_185906_d();
++         int k = p_228420_1_.getLightValue(p_228420_0_, p_228420_2_);
+          if (j < k) {
+             j = k;
+          }
+@@ -2550,6 +2560,11 @@
+       return this.field_239226_J_;
+    }
  
-                     if (flag2)
-                     {
--                        this.bytesDrawn += tessellator.draw();
-+                        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
-+                        this.bytesDrawn += Tessellator.instance.draw();
-                         GL11.glPopMatrix();
-                         GL11.glEndList();
--                        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
-+                        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
-                     }
-                     else
-                     {
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.MODELS;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    class LocalRenderInformationContainer {
+       private final ChunkRenderDispatcher.ChunkRender field_178036_a;

@@ -1,0 +1,68 @@
+--- a/net/minecraft/client/renderer/entity/ItemRenderer.java
++++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
+@@ -54,17 +54,14 @@
+       int j = this.func_177078_a(itemstack);
+       float f = 0.25F;
+       float f1 = MathHelper.func_76126_a(((float)p_225623_1_.func_174872_o() + p_225623_3_) / 10.0F + p_225623_1_.field_70290_d) * 0.1F + 0.1F;
+-      float f2 = ibakedmodel.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.func_195900_b();
++      float f2 = shouldBob() ? ibakedmodel.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.func_195900_b() : 0;
+       p_225623_4_.func_227861_a_(0.0D, (double)(f1 + 0.25F * f2), 0.0D);
+       float f3 = p_225623_1_.func_234272_a_(p_225623_3_);
+       p_225623_4_.func_227863_a_(Vector3f.field_229181_d_.func_229193_c_(f3));
+-      float f4 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.func_195899_a();
+-      float f5 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.func_195900_b();
+-      float f6 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.func_195902_c();
+       if (!flag) {
+-         float f7 = -0.0F * (float)(j - 1) * 0.5F * f4;
+-         float f8 = -0.0F * (float)(j - 1) * 0.5F * f5;
+-         float f9 = -0.09375F * (float)(j - 1) * 0.5F * f6;
++         float f7 = -0.0F * (float)(j - 1) * 0.5F;
++         float f8 = -0.0F * (float)(j - 1) * 0.5F;
++         float f9 = -0.09375F * (float)(j - 1) * 0.5F;
+          p_225623_4_.func_227861_a_((double)f7, (double)f8, (double)f9);
+       }
+ 
+@@ -75,18 +72,18 @@
+                float f11 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f13 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f10 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+-               p_225623_4_.func_227861_a_((double)f11, (double)f13, (double)f10);
++               p_225623_4_.func_227861_a_(shouldSpreadItems() ? f11 : 0, shouldSpreadItems() ? f13 : 0, shouldSpreadItems() ? f10 : 0);
+             } else {
+                float f12 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+                float f14 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+-               p_225623_4_.func_227861_a_((double)f12, (double)f14, 0.0D);
++               p_225623_4_.func_227861_a_(shouldSpreadItems() ? f12 : 0, shouldSpreadItems() ? f14 : 0, 0.0D);
+             }
+          }
+ 
+          this.field_177080_a.func_229111_a_(itemstack, ItemCameraTransforms.TransformType.GROUND, false, p_225623_4_, p_225623_5_, p_225623_6_, OverlayTexture.field_229196_a_, ibakedmodel);
+          p_225623_4_.func_227865_b_();
+          if (!flag) {
+-            p_225623_4_.func_227861_a_((double)(0.0F * f4), (double)(0.0F * f5), (double)(0.09375F * f6));
++            p_225623_4_.func_227861_a_(0.0, 0.0, 0.09375F);
+          }
+       }
+ 
+@@ -97,4 +94,21 @@
+    public ResourceLocation func_110775_a(ItemEntity p_110775_1_) {
+       return AtlasTexture.field_110575_b;
+    }
++   
++   /*==================================== FORGE START ===========================================*/
++
++   /**
++    * @return If items should spread out when rendered in 3D
++    */
++   public boolean shouldSpreadItems() {
++      return true;
++   }
++
++   /**
++    * @return If items should have a bob effect
++    */
++   public boolean shouldBob() {
++      return true;
++   }
++   /*==================================== FORGE END =============================================*/
+ }

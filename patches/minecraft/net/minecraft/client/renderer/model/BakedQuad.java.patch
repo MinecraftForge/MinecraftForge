@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/renderer/model/BakedQuad.java
++++ b/net/minecraft/client/renderer/model/BakedQuad.java
+@@ -6,7 +6,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class BakedQuad {
++public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer {
+    protected final int[] field_178215_a;
+    protected final int field_178213_b;
+    protected final Direction field_178214_c;
+@@ -37,6 +37,15 @@
+       return this.field_178214_c;
+    }
+ 
++   @Override
++   public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) {
++      net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
++   }
++
++   public TextureAtlasSprite func_187508_a() {
++      return field_187509_d;
++   }
++
+    public boolean func_239287_f_() {
+       return this.field_239286_e_;
+    }

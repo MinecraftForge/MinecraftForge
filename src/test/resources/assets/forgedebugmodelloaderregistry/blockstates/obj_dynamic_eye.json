@@ -1,0 +1,21 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "forgedebugmodelloaderregistry:eye.obj"
+     },
+    "variants": {
+        "": [{
+            "transform": {
+                "thirdperson": {
+                    "translation": [0, 0.09375, -0.171875],
+                    "rotation": [ { "y": -45}, {"x": 10}, {"z": 170} ],
+                    "scale": 0.375
+                },
+                "gui": {
+                    "rotation": [ {"y": 90} ]
+                }
+            }
+        }]
+    }
+}

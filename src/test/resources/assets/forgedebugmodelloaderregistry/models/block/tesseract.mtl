@@ -1,0 +1,4 @@
+newmtl lambert7SG
+Kd 1.00 1.00 1.00
+Ka 1.00 1.00 1.00
+map_Kd minecraft:block/redstone_block

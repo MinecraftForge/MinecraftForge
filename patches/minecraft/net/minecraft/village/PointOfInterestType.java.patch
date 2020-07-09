@@ -1,0 +1,11 @@
+--- a/net/minecraft/village/PointOfInterestType.java
++++ b/net/minecraft/village/PointOfInterestType.java
+@@ -21,7 +21,7 @@
+ import net.minecraft.util.Util;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class PointOfInterestType {
++public class PointOfInterestType extends net.minecraftforge.registries.ForgeRegistryEntry<PointOfInterestType> {
+    private static final Supplier<Set<PointOfInterestType>> field_234168_y_ = Suppliers.memoize(() -> {
+       return Registry.field_218370_L.func_201756_e().map(VillagerProfession::func_221149_b).collect(Collectors.toSet());
+    });

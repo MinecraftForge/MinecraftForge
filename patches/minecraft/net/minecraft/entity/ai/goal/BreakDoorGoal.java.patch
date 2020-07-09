@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/BreakDoorGoal.java
++++ b/net/minecraft/entity/ai/goal/BreakDoorGoal.java
+@@ -29,7 +29,7 @@
+    public boolean func_75250_a() {
+       if (!super.func_75250_a()) {
+          return false;
+-      } else if (!this.field_75356_a.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++      } else if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.field_75356_a.field_70170_p, this.field_179507_b, this.field_75356_a)) {
+          return false;
+       } else {
+          return this.func_220696_a(this.field_75356_a.field_70170_p.func_175659_aa()) && !this.func_195922_f();

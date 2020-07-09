@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/chunk/ChunkStatus.java
++++ b/net/minecraft/world/chunk/ChunkStatus.java
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.server.ServerWorldLightManager;
+ 
+-public class ChunkStatus {
++public class ChunkStatus extends net.minecraftforge.registries.ForgeRegistryEntry<ChunkStatus> {
+    private static final EnumSet<Heightmap.Type> field_222618_n = EnumSet.of(Heightmap.Type.OCEAN_FLOOR_WG, Heightmap.Type.WORLD_SURFACE_WG);
+    private static final EnumSet<Heightmap.Type> field_222619_o = EnumSet.of(Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE, Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES);
+    private static final ChunkStatus.ILoadingWorker field_223211_p = (p_222588_0_, p_222588_1_, p_222588_2_, p_222588_3_, p_222588_4_, p_222588_5_) -> {

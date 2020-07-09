@@ -1,0 +1,14 @@
+--- a/net/minecraft/tileentity/ShulkerBoxTileEntity.java
++++ b/net/minecraft/tileentity/ShulkerBoxTileEntity.java
+@@ -284,6 +284,11 @@
+       return this.field_190599_i == ShulkerBoxTileEntity.AnimationStatus.CLOSED;
+    }
+ 
++   @Override
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
++   }
++
+    public static enum AnimationStatus {
+       CLOSED,
+       OPENING,

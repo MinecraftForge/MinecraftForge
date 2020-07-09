@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
++++ b/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
+@@ -33,7 +33,13 @@
+             BlockPos blockpos = new BlockPos(p_225623_1_.func_226277_ct_(), p_225623_1_.func_174813_aQ().field_72337_e, p_225623_1_.func_226281_cx_());
+             p_225623_4_.func_227861_a_(-0.5D, 0.0D, -0.5D);
+             BlockRendererDispatcher blockrendererdispatcher = Minecraft.func_71410_x().func_175602_ab();
+-            blockrendererdispatcher.func_175019_b().func_228802_a_(world, blockrendererdispatcher.func_184389_a(blockstate), blockstate, blockpos, p_225623_4_, p_225623_5_.getBuffer(RenderTypeLookup.func_239221_b_(blockstate)), false, new Random(), blockstate.func_209533_a(p_225623_1_.func_184531_j()), OverlayTexture.field_229196_a_);
++            for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.func_228661_n_()) {
++               if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
++                  net.minecraftforge.client.ForgeHooksClient.setRenderLayer(type);
++                  blockrendererdispatcher.func_175019_b().func_228802_a_(world, blockrendererdispatcher.func_184389_a(blockstate), blockstate, blockpos, p_225623_4_, p_225623_5_.getBuffer(type), false, new Random(), blockstate.func_209533_a(p_225623_1_.func_184531_j()), OverlayTexture.field_229196_a_);
++               }
++            }
++            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+             p_225623_4_.func_227865_b_();
+             super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
+          }

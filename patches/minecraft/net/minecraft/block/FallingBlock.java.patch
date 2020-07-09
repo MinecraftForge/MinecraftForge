@@ -1,0 +1,20 @@
+--- a/net/minecraft/block/FallingBlock.java
++++ b/net/minecraft/block/FallingBlock.java
+@@ -30,7 +30,7 @@
+    }
+ 
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+-      if (func_185759_i(p_225534_2_.func_180495_p(p_225534_3_.func_177977_b())) && p_225534_3_.func_177956_o() >= 0) {
++      if (p_225534_2_.func_175623_d(p_225534_3_.func_177977_b()) || func_185759_i(p_225534_2_.func_180495_p(p_225534_3_.func_177977_b())) && p_225534_3_.func_177956_o() >= 0) {
+          FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.func_177958_n() + 0.5D, (double)p_225534_3_.func_177956_o(), (double)p_225534_3_.func_177952_p() + 0.5D, p_225534_2_.func_180495_p(p_225534_3_));
+          this.func_149829_a(fallingblockentity);
+          p_225534_2_.func_217376_c(fallingblockentity);
+@@ -59,7 +59,7 @@
+    public void func_180655_c(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_) {
+       if (p_180655_4_.nextInt(16) == 0) {
+          BlockPos blockpos = p_180655_3_.func_177977_b();
+-         if (func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
++         if (p_180655_2_.func_175623_d(blockpos) || func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
+             double d0 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
+             double d1 = (double)p_180655_3_.func_177956_o() - 0.05D;
+             double d2 = (double)p_180655_3_.func_177952_p() + p_180655_4_.nextDouble();

@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
+@@ -61,8 +61,12 @@
+    }
+ 
+    private void func_228876_a_(BlockPos p_228876_1_, BlockState p_228876_2_, MatrixStack p_228876_3_, IRenderTypeBuffer p_228876_4_, World p_228876_5_, boolean p_228876_6_, int p_228876_7_) {
+-      RenderType rendertype = RenderTypeLookup.func_239221_b_(p_228876_2_);
++      net.minecraft.client.renderer.RenderType.func_228661_n_().stream().filter(t -> RenderTypeLookup.canRenderInLayer(p_228876_2_, t)).forEach(rendertype -> {
++      net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
+       IVertexBuilder ivertexbuilder = p_228876_4_.getBuffer(rendertype);
++      if (field_178462_c == null) field_178462_c = Minecraft.func_71410_x().func_175602_ab();
+       this.field_178462_c.func_175019_b().func_228802_a_(p_228876_5_, this.field_178462_c.func_184389_a(p_228876_2_), p_228876_2_, p_228876_1_, p_228876_3_, ivertexbuilder, p_228876_6_, new Random(), p_228876_2_.func_209533_a(p_228876_1_), p_228876_7_);
++      });
++      net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+    }
+ }

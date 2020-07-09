@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "minecraft:iron_chestplate"
+  }
+}

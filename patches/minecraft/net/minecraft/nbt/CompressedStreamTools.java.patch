@@ -1,18 +1,16 @@
---- ../src_base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
-+++ ../src_work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
-@@ -140,7 +140,6 @@
-         NBTBase.writeNamedTag(par0NBTTagCompound, par1DataOutput);
-     }
+--- a/net/minecraft/nbt/CompressedStreamTools.java
++++ b/net/minecraft/nbt/CompressedStreamTools.java
+@@ -92,10 +92,12 @@
  
--    @SideOnly(Side.CLIENT)
-     public static void write(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
-     {
-         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par1File));
-@@ -155,7 +154,6 @@
-         }
-     }
+    private static INBT func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) throws IOException {
+       byte b0 = p_152455_0_.readByte();
++      p_152455_2_.func_152450_a(8); // Forge: Count everything!
+       if (b0 == 0) {
+          return EndNBT.field_229686_b_;
+       } else {
+-         p_152455_0_.readUTF();
++         p_152455_2_.readUTF(p_152455_0_.readUTF()); //Forge: Count this string.
++         p_152455_2_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
  
--    @SideOnly(Side.CLIENT)
-     public static NBTTagCompound read(File par0File) throws IOException
-     {
-         if (!par0File.exists())
+          try {
+             return NBTTypes.func_229710_a_(b0).func_225649_b_(p_152455_0_, p_152455_1_, p_152455_2_);

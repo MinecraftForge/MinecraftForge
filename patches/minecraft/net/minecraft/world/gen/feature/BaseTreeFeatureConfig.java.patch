@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
++++ b/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
+@@ -32,6 +32,7 @@
+          return p_236684_0_.field_236682_l_;
+       })).apply(p_236683_0_, BaseTreeFeatureConfig::new);
+    });
++   //TODO: Review this, see if we can hook in the sapling into the Codec
+    public final BlockStateProvider field_227368_m_;
+    public final BlockStateProvider field_227369_n_;
+    public final List<TreeDecorator> field_227370_o_;

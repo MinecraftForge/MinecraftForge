@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/renderer/texture/AtlasTexture.java
++++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
+@@ -78,6 +78,7 @@
+          }
+       }
+ 
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
+    }
+ 
+    public AtlasTexture.SheetData func_229220_a_(IResourceManager p_229220_1_, Stream<ResourceLocation> p_229220_2_, IProfiler p_229220_3_, int p_229220_4_) {
+@@ -92,6 +93,7 @@
+       int j = Integer.MAX_VALUE;
+       int k = 1 << p_229220_4_;
+       p_229220_3_.func_219895_b("extracting_frames");
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this, set);
+ 
+       for(TextureAtlasSprite.Info textureatlassprite$info : this.func_215256_a(p_229220_1_, set)) {
+          j = Math.min(j, Math.min(textureatlassprite$info.func_229250_b_(), textureatlassprite$info.func_229252_c_()));
+@@ -106,7 +108,8 @@
+ 
+       int i1 = Math.min(j, k);
+       int j1 = MathHelper.func_151239_c(i1);
+-      int k1;
++      int k1 = p_229220_4_;
++      if (false) // FORGE: do not lower the mipmap level
+       if (j1 < p_229220_4_) {
+          field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_229214_j_, p_229220_4_, j1, i1);
+          k1 = j1;

@@ -1,0 +1,9 @@
+--- a/net/minecraft/inventory/container/FurnaceResultSlot.java
++++ b/net/minecraft/inventory/container/FurnaceResultSlot.java
+@@ -44,5 +44,6 @@
+       }
+ 
+       this.field_75228_b = 0;
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.field_75229_a, p_75208_1_);
+    }
+ }

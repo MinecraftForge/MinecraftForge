@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/chunk/IChunk.java
++++ b/net/minecraft/world/chunk/IChunk.java
+@@ -145,4 +145,9 @@
+    boolean func_217310_r();
+ 
+    void func_217305_b(boolean p_217305_1_);
++
++   @Nullable
++   default net.minecraft.world.IWorld getWorldForge() {
++      return null;
++   }
+ }

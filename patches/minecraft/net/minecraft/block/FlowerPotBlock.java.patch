@@ -1,0 +1,88 @@
+--- a/net/minecraft/block/FlowerPotBlock.java
++++ b/net/minecraft/block/FlowerPotBlock.java
+@@ -24,12 +24,35 @@
+    protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+    private final Block field_196452_c;
+ 
++   @Deprecated // Mods should use the constructor below
+    public FlowerPotBlock(Block p_i48395_1_, AbstractBlock.Properties p_i48395_2_) {
+-      super(p_i48395_2_);
+-      this.field_196452_c = p_i48395_1_;
+-      field_196451_b.put(p_i48395_1_, this);
++       this(Blocks.field_150457_bL == null ? null : () -> (FlowerPotBlock) Blocks.field_150457_bL.delegate.get(), () -> p_i48395_1_.delegate.get(), p_i48395_2_);
++       if (Blocks.field_150457_bL != null) {
++           ((FlowerPotBlock)Blocks.field_150457_bL).addPlant(p_i48395_1_.getRegistryName(), () -> this);
++       }
+    }
+ 
++   /**
++    * For mod use, eliminates the need to extend this class, and prevents modded
++    * flower pots from altering vanilla behavior.
++    *
++    * @param emptyPot    The empty pot for this pot, or null for self.
++    * @param p_i48395_1_ The flower block.
++    * @param properties
++    */
++   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, AbstractBlock.Properties properties) {
++      super(properties);
++      this.field_196452_c = null; // Unused, redirected by coremod
++      this.flowerDelegate = p_i48395_1_;
++      if (emptyPot == null) {
++         this.fullPots = Maps.newHashMap();
++         this.emptyPot = null;
++      } else {
++         this.fullPots = java.util.Collections.emptyMap();
++         this.emptyPot = emptyPot;
++      }
++   }
++
+    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
+       return field_196450_a;
+    }
+@@ -41,7 +64,7 @@
+    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+       ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
+       Item item = itemstack.func_77973_b();
+-      Block block = item instanceof BlockItem ? field_196451_b.getOrDefault(((BlockItem)item).func_179223_d(), Blocks.field_150350_a) : Blocks.field_150350_a;
++      Block block = item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).func_179223_d().getRegistryName(), Blocks.field_150350_a.delegate).get() : Blocks.field_150350_a;
+       boolean flag = block == Blocks.field_150350_a;
+       boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
+       if (flag != flag1) {
+@@ -59,7 +82,7 @@
+                p_225533_4_.func_71019_a(itemstack1, false);
+             }
+ 
+-            p_225533_2_.func_180501_a(p_225533_3_, Blocks.field_150457_bL.func_176223_P(), 3);
++            p_225533_2_.func_180501_a(p_225533_3_, getEmptyPot().func_176223_P(), 3);
+          }
+ 
+          return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
+@@ -77,10 +100,27 @@
+    }
+ 
+    public Block func_220276_d() {
+-      return this.field_196452_c;
++      return flowerDelegate.get();
+    }
+ 
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return false;
+    }
++
++   //Forge Start
++   private final Map<net.minecraft.util.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
++   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
++   private final java.util.function.Supplier<? extends Block> flowerDelegate;
++
++   public FlowerPotBlock getEmptyPot() {
++       return emptyPot == null ? this : emptyPot.get();
++   }
++
++   public void addPlant(net.minecraft.util.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
++       if (getEmptyPot() != this) {
++           throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
++       }
++       fullPots.put(flower, fullPot);
++   }
++   //Forge End
+ }

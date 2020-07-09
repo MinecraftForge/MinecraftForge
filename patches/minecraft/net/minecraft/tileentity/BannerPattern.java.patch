@@ -1,0 +1,26 @@
+--- a/net/minecraft/tileentity/BannerPattern.java
++++ b/net/minecraft/tileentity/BannerPattern.java
+@@ -12,7 +12,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.commons.lang3.tuple.Pair;
+ 
+-public enum BannerPattern {
++public enum BannerPattern implements net.minecraftforge.common.IExtensibleEnum {
+    BASE("base", "b", false),
+    SQUARE_BOTTOM_LEFT("square_bottom_left", "bl"),
+    SQUARE_BOTTOM_RIGHT("square_bottom_right", "br"),
+@@ -102,6 +102,14 @@
+       return null;
+    }
+ 
++   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean p_i231861_5_) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
+    public static class Builder {
+       private final List<Pair<BannerPattern, DyeColor>> field_222478_a = Lists.newArrayList();
+ 

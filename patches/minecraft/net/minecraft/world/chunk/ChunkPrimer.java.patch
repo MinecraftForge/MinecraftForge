@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/chunk/ChunkPrimer.java
++++ b/net/minecraft/world/chunk/ChunkPrimer.java
+@@ -138,13 +138,13 @@
+          if (this.field_201661_i[j >> 4] == Chunk.field_186036_a && p_177436_2_.func_203425_a(Blocks.field_150350_a)) {
+             return p_177436_2_;
+          } else {
+-            if (p_177436_2_.func_185906_d() > 0) {
++            if (p_177436_2_.getLightValue(this, p_177436_1_) > 0) {
+                this.field_201663_k.add(new BlockPos((i & 15) + this.func_76632_l().func_180334_c(), j, (k & 15) + this.func_76632_l().func_180333_d()));
+             }
+ 
+             ChunkSection chunksection = this.func_217332_a(j >> 4);
+             BlockState blockstate = chunksection.func_222629_a(i & 15, j & 15, k & 15, p_177436_2_);
+-            if (this.field_201658_f.func_209003_a(ChunkStatus.field_222613_i) && p_177436_2_ != blockstate && (p_177436_2_.func_200016_a(this, p_177436_1_) != blockstate.func_200016_a(this, p_177436_1_) || p_177436_2_.func_185906_d() != blockstate.func_185906_d() || p_177436_2_.func_215691_g() || blockstate.func_215691_g())) {
++            if (this.field_201658_f.func_209003_a(ChunkStatus.field_222613_i) && p_177436_2_ != blockstate && (p_177436_2_.func_200016_a(this, p_177436_1_) != blockstate.func_200016_a(this, p_177436_1_) || p_177436_2_.getLightValue(this, p_177436_1_) != blockstate.getLightValue(this, p_177436_1_) || p_177436_2_.func_215691_g() || blockstate.func_215691_g())) {
+                WorldLightManager worldlightmanager = this.func_217307_e();
+                worldlightmanager.func_215568_a(p_177436_1_);
+             }

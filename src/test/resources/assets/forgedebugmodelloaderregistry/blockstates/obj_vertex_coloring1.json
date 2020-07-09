@@ -1,0 +1,12 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "forgedebugmodelloaderregistry:vertex_coloring.obj"
+     },
+    "variants": {
+        "": [{
+            "transform": "forge:default-block"
+        }]
+    }
+}

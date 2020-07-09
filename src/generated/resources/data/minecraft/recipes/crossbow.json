@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#\u0026#",
+    "~$~",
+    " # "
+  ],
+  "key": {
+    "~": {
+      "item": "minecraft:string"
+    },
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "\u0026": {
+      "tag": "forge:ingots/iron"
+    },
+    "$": {
+      "item": "minecraft:tripwire_hook"
+    }
+  },
+  "result": {
+    "item": "minecraft:crossbow"
+  }
+}

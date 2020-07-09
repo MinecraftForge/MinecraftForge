@@ -1,0 +1,56 @@
+--- a/net/minecraft/client/renderer/GameRenderer.java
++++ b/net/minecraft/client/renderer/GameRenderer.java
+@@ -132,6 +132,8 @@
+          this.func_175069_a(new ResourceLocation("shaders/post/spider.json"));
+       } else if (p_175066_1_ instanceof EndermanEntity) {
+          this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
++      } else {
++         net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_, this);
+       }
+ 
+    }
+@@ -307,7 +309,7 @@
+             d0 = d0 * 60.0D / 70.0D;
+          }
+ 
+-         return d0;
++         return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, p_215311_1_, p_215311_2_, d0);
+       }
+    }
+ 
+@@ -476,7 +478,7 @@
+             }
+          } else if (this.field_78531_r.field_71462_r != null) {
+             try {
+-               this.field_78531_r.field_71462_r.func_230430_a_(matrixstack, i, j, this.field_78531_r.func_193989_ak());
++               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, matrixstack, i, j, this.field_78531_r.func_193989_ak());
+             } catch (Throwable throwable) {
+                CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Rendering screen");
+                CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Screen render details");
+@@ -589,9 +591,16 @@
+       Matrix4f matrix4f = matrixstack.func_227866_c_().func_227870_a_();
+       this.func_228379_a_(matrix4f);
+       activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), this.field_78531_r.field_71474_y.field_74320_O > 0, this.field_78531_r.field_71474_y.field_74320_O == 2, p_228378_1_);
++
++      net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, activerenderinfo, p_228378_1_);
++      activerenderinfo.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
++      p_228378_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_(cameraSetup.getRoll()));
++
+       p_228378_4_.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(activerenderinfo.func_216777_e()));
+       p_228378_4_.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(activerenderinfo.func_216778_f() + 180.0F));
+       this.field_78531_r.field_71438_f.func_228426_a_(p_228378_4_, p_228378_1_, p_228378_2_, flag, activerenderinfo, this, this.field_78513_d, matrix4f);
++      this.field_78531_r.func_213239_aq().func_219895_b("forge_render_last");
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.field_78531_r.field_71438_f, p_228378_4_, p_228378_1_, matrix4f, p_228378_2_);
+       this.field_78531_r.func_213239_aq().func_219895_b("hand");
+       if (this.field_175074_C) {
+          RenderSystem.clear(256, Minecraft.field_142025_a);
+@@ -671,4 +680,9 @@
+    public OverlayTexture func_228385_m_() {
+       return this.field_228375_t_;
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.SHADERS;
++   }
+ }

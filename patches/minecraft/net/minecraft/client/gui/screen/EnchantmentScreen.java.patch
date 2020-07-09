@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/gui/screen/EnchantmentScreen.java
++++ b/net/minecraft/client/gui/screen/EnchantmentScreen.java
+@@ -149,7 +149,7 @@
+             int i2 = 86 - this.field_230712_o_.func_78256_a(s);
+             ITextProperties itextproperties = EnchantmentNameParts.func_178176_a().func_238816_a_(this.field_230712_o_, i2);
+             int j2 = 6839882;
+-            if ((l < i1 + 1 || this.field_230706_i_.field_71439_g.field_71068_ca < l1) && !this.field_230706_i_.field_71439_g.field_71075_bZ.field_75098_d) {
++            if (((l < i1 + 1 || this.field_230706_i_.field_71439_g.field_71068_ca < l1) && !this.field_230706_i_.field_71439_g.field_71075_bZ.field_75098_d) || this.field_147002_h.field_185001_h[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
+                this.func_238474_b_(p_230450_1_, j1, j + 14 + 19 * i1, 0, 185, 108, 19);
+                this.func_238474_b_(p_230450_1_, j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
+                this.field_230712_o_.func_238418_a_(itextproperties, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
+@@ -188,10 +188,13 @@
+          Enchantment enchantment = Enchantment.func_185262_c((this.field_147002_h).field_185001_h[j]);
+          int l = (this.field_147002_h).field_185002_i[j];
+          int i1 = j + 1;
+-         if (this.func_195359_a(60, 14 + 19 * j, 108, 17, (double)p_230430_2_, (double)p_230430_3_) && k > 0 && l >= 0 && enchantment != null) {
++         if (this.func_195359_a(60, 14 + 19 * j, 108, 17, (double)p_230430_2_, (double)p_230430_3_) && k > 0) {
+             List<ITextComponent> list = Lists.newArrayList();
+-            list.add((new TranslationTextComponent("container.enchant.clue", enchantment.func_200305_d(l))).func_240699_a_(TextFormatting.WHITE));
+-            if (!flag) {
++            list.add((new TranslationTextComponent("container.enchant.clue", enchantment == null ? "" : enchantment.func_200305_d(l))).func_240699_a_(TextFormatting.WHITE));
++            if(enchantment == null) {
++               list.add(new StringTextComponent(""));
++               list.add(new TranslationTextComponent("forge.container.enchant.limitedEnchantability").func_240699_a_(TextFormatting.RED));
++            } else if (!flag) {
+                list.add(StringTextComponent.field_240750_d_);
+                if (this.field_230706_i_.field_71439_g.field_71068_ca < k) {
+                   list.add((new TranslationTextComponent("container.enchant.level.requirement", (this.field_147002_h).field_75167_g[j])).func_240699_a_(TextFormatting.RED));

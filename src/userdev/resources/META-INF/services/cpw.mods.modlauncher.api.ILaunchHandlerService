@@ -1,0 +1,6 @@
+net.minecraftforge.userdev.FMLUserdevClientLaunchProvider
+net.minecraftforge.userdev.FMLUserdevServerLaunchProvider
+net.minecraftforge.userdev.FMLUserdevDataLaunchProvider
+net.minecraftforge.userdev.FMLDevClientLaunchProvider
+net.minecraftforge.userdev.FMLDevServerLaunchProvider
+net.minecraftforge.userdev.FMLDevDataLaunchProvider

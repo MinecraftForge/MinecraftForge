@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/resources/FoliageColorReloadListener.java
++++ b/net/minecraft/client/resources/FoliageColorReloadListener.java
+@@ -23,4 +23,9 @@
+    protected void func_212853_a_(int[] p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
+       FoliageColors.func_77467_a(p_212853_1_);
+    }
++
++   //@Override //Forge: TODO: Filtered resource reloading
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.TEXTURES;
++   }
+ }

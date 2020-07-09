@@ -1,0 +1,209 @@
+{
+  "variants": {
+    "facing=north,half=top,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "x": 180,
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=top,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "x": 180,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=top,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "x": 180,
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=top,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "x": 180,
+      "uvlock": true
+    },
+    "facing=north,half=bottom,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=bottom,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=bottom,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=bottom,shape=straight": {
+      "model": "data_gen_test:block/acacia_stairs"
+    },
+    "facing=north,half=top,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=top,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=top,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=top,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "uvlock": true
+    },
+    "facing=north,half=bottom,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=south,half=bottom,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner"
+    },
+    "facing=west,half=bottom,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=east,half=bottom,shape=inner_left": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=north,half=top,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "uvlock": true
+    },
+    "facing=south,half=top,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west,half=top,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=east,half=top,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "x": 180,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=north,half=bottom,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=bottom,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=bottom,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=bottom,shape=inner_right": {
+      "model": "data_gen_test:block/acacia_stairs_inner"
+    },
+    "facing=north,half=top,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=top,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=top,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=top,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "uvlock": true
+    },
+    "facing=north,half=bottom,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=south,half=bottom,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer"
+    },
+    "facing=west,half=bottom,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=east,half=bottom,shape=outer_left": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=north,half=top,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "uvlock": true
+    },
+    "facing=south,half=top,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west,half=top,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=east,half=top,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "x": 180,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=north,half=bottom,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=south,half=bottom,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=west,half=bottom,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=east,half=bottom,shape=outer_right": {
+      "model": "data_gen_test:block/acacia_stairs_outer"
+    }
+  }
+}

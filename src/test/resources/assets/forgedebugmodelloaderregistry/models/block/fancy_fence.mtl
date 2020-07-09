@@ -1,0 +1,3 @@
+newmtl fancy_fence:Default
+Kd 1.00 1.00 1.00
+map_Kd forgedebugmodelloaderregistry:white

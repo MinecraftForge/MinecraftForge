@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item_model_generation_test:items/pattern_test"
+  }
+}

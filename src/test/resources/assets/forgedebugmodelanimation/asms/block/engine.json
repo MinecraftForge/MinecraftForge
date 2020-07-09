@@ -1,0 +1,26 @@
+{
+  "parameters": {
+    "world_to_cycle": [ "/", "#cycle_length" ],
+    "round_cycle": [ "compose", [ "R", "#cycle_length" ] , "#click_time" ],
+    "end_cycle": [ "-", "#round_cycle" ]
+  },
+  "clips": {
+    "default": "forgedebugmodelanimation:block/engine_ring@default",
+    "starting": [ "trigger_positive", "#default", "#end_cycle", "!transition:moving" ],
+    "moving": [ "apply", "forgedebugmodelanimation:block/engine_ring@moving", "#world_to_cycle" ],
+    "stopping": [ "trigger_positive", "#moving", "#end_cycle", "!transition:default" ]
+  },
+  "states": [
+    "default",
+    "starting",
+    "moving",
+    "stopping"
+  ],
+  "transitions": {
+    "default": "starting",
+    "starting": [ "moving" ],
+    "moving": "stopping",
+    "stopping": "default"
+  },
+  "start_state": "moving"
+}

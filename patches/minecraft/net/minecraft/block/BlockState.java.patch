@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockState.java
++++ b/net/minecraft/block/BlockState.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.state.Property;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class BlockState extends AbstractBlock.AbstractBlockState {
++public class BlockState extends AbstractBlock.AbstractBlockState implements net.minecraftforge.common.extensions.IForgeBlockState {
+    public static final Codec<BlockState> field_235877_b_ = func_235897_a_(Registry.field_212618_g, Block::func_176223_P).stable();
+ 
+    public BlockState(Block p_i231876_1_, ImmutableMap<Property<?>, Comparable<?>> p_i231876_2_, MapCodec<BlockState> p_i231876_3_) {

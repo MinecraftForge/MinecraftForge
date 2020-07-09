@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "not an array": "conditions property must be an array"
+  },
+  "type": "crafting_shaped",
+  "group": "planks",
+  "pattern": [
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:log2",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "minecraft:planks",
+    "data": 4,
+    "count": 4
+  }
+}

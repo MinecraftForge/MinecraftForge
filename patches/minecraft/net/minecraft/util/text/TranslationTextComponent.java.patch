@@ -1,0 +1,13 @@
+--- a/net/minecraft/util/text/TranslationTextComponent.java
++++ b/net/minecraft/util/text/TranslationTextComponent.java
+@@ -88,6 +88,10 @@
+             }
+          }
+ 
++         if (j == 0) {
++            // if we failed to match above, lets try the messageformat handler instead.
++            j = net.minecraftforge.fml.TextComponentMessageFormatHandler.handle(this, this.field_150278_b, this.field_150277_e, p_240758_1_);
++         }
+          if (j < p_240758_1_.length()) {
+             String s3 = p_240758_1_.substring(j);
+             if (s3.indexOf(37) != -1) {

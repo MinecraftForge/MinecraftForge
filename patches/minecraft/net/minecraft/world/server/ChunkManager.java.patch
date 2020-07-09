@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/server/ChunkManager.java
++++ b/net/minecraft/world/server/ChunkManager.java
+@@ -406,6 +406,7 @@
+             if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
+                if (p_219185_5_ instanceof Chunk) {
+                   ((Chunk)p_219185_5_).func_177417_c(false);
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload((Chunk)p_219185_5_));
+                }
+ 
+                this.func_219229_a(p_219185_5_);
+@@ -607,6 +608,7 @@
+                if (list != null) {
+                   list.forEach(chunk::func_76622_b);
+                }
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+             }
+ 
+             return chunk;
+@@ -684,6 +686,7 @@
+ 
+             this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
+             CompoundNBT compoundnbt = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_219229_1_, p_219229_1_.getWorldForge() != null ? p_219229_1_.getWorldForge() : this.field_219255_i, compoundnbt));
+             this.func_219100_a(chunkpos, compoundnbt);
+             this.func_241088_a_(chunkpos, chunkstatus.func_202129_d());
+             return true;
+@@ -740,6 +743,7 @@
+ 
+    protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
+       if (p_219199_1_.field_70170_p == this.field_219255_i) {
++         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_219199_4_, p_219199_5_, p_219199_1_, p_219199_2_, this.field_219255_i);
+          if (p_219199_5_ && !p_219199_4_) {
+             ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
+             if (chunkholder != null) {

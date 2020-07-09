@@ -1,0 +1,18 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "forgedebugmodelloaderregistry:direction_test.obj",
+        "transform": "forge:default-block"
+    },
+    "variants": {
+        "facing": {
+            "down": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "x": 90},
+            "up": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "x": 270},
+            "north": {"model": "forgedebugmodelloaderregistry:direction_test.obj"},
+            "south": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "y": 180},
+            "west": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "y": 270},
+            "east": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "y": 90}
+        }
+    }
+}

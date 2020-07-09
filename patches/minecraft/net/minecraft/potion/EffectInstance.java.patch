@@ -1,0 +1,85 @@
+--- a/net/minecraft/potion/EffectInstance.java
++++ b/net/minecraft/potion/EffectInstance.java
+@@ -9,7 +9,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class EffectInstance implements Comparable<EffectInstance> {
++public class EffectInstance implements Comparable<EffectInstance>, net.minecraftforge.common.extensions.IForgeEffectInstance {
+    private static final Logger field_180155_a = LogManager.getLogger();
+    private final Effect field_188420_b;
+    private int field_76460_b;
+@@ -64,6 +64,7 @@
+       this.field_82724_e = p_230117_1_.field_82724_e;
+       this.field_188421_h = p_230117_1_.field_188421_h;
+       this.field_205349_i = p_230117_1_.field_205349_i;
++      this.curativeItems = p_230117_1_.curativeItems == null ? null : new java.util.ArrayList<net.minecraft.item.ItemStack>(p_230117_1_.curativeItems);
+    }
+ 
+    public boolean func_199308_a(EffectInstance p_199308_1_) {
+@@ -112,7 +113,7 @@
+    }
+ 
+    public Effect func_188419_a() {
+-      return this.field_188420_b;
++      return this.field_188420_b == null ? null : this.field_188420_b.delegate.get();
+    }
+ 
+    public int func_76459_b() {
+@@ -230,11 +231,12 @@
+          this.field_230115_j_.func_82719_a(compoundnbt);
+          p_230119_1_.func_218657_a("HiddenEffect", compoundnbt);
+       }
++      writeCurativeItems(p_230119_1_);
+ 
+    }
+ 
+    public static EffectInstance func_82722_b(CompoundNBT p_82722_0_) {
+-      int i = p_82722_0_.func_74771_c("Id");
++      int i = p_82722_0_.func_74771_c("Id") & 0xFF;
+       Effect effect = Effect.func_188412_a(i);
+       return effect == null ? null : func_230116_a_(effect, p_82722_0_);
+    }
+@@ -258,7 +260,7 @@
+          effectinstance = func_230116_a_(p_230116_0_, p_230116_1_.func_74775_l("HiddenEffect"));
+       }
+ 
+-      return new EffectInstance(p_230116_0_, j, i < 0 ? 0 : i, flag, flag1, flag2, effectinstance);
++      return readCurativeItems(new EffectInstance(p_230116_0_, j, i < 0 ? 0 : i, flag, flag1, flag2, effectinstance), p_230116_1_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -273,6 +275,32 @@
+ 
+    public int compareTo(EffectInstance p_compareTo_1_) {
+       int i = 32147;
+-      return (this.func_76459_b() <= 32147 || p_compareTo_1_.func_76459_b() <= 32147) && (!this.func_82720_e() || !p_compareTo_1_.func_82720_e()) ? ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_76459_b(), p_compareTo_1_.func_76459_b()).compare(this.func_188419_a().func_76401_j(), p_compareTo_1_.func_188419_a().func_76401_j()).result() : ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_188419_a().func_76401_j(), p_compareTo_1_.func_188419_a().func_76401_j()).result();
++      return (this.func_76459_b() <= 32147 || p_compareTo_1_.func_76459_b() <= 32147) && (!this.func_82720_e() || !p_compareTo_1_.func_82720_e()) ? ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_76459_b(), p_compareTo_1_.func_76459_b()).compare(this.func_188419_a().getGuiSortColor(this), p_compareTo_1_.func_188419_a().getGuiSortColor(this)).result() : ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_188419_a().getGuiSortColor(this), p_compareTo_1_.func_188419_a().getGuiSortColor(this)).result();
+    }
++
++   //======================= FORGE START ===========================
++   private java.util.List<net.minecraft.item.ItemStack> curativeItems;
++
++   @Override
++   public java.util.List<net.minecraft.item.ItemStack> getCurativeItems() {
++      if (this.curativeItems == null) //Lazy load this so that we don't create a circular dep on Items.
++         this.curativeItems = func_188419_a().getCurativeItems();
++      return this.curativeItems;
++   }
++   @Override
++   public void setCurativeItems(java.util.List<net.minecraft.item.ItemStack> curativeItems) {
++      this.curativeItems = curativeItems;
++   }
++   private static EffectInstance readCurativeItems(EffectInstance effect, CompoundNBT nbt) {
++      if (nbt.func_150297_b("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST)) {
++         java.util.List<net.minecraft.item.ItemStack> items = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++         net.minecraft.nbt.ListNBT list = nbt.func_150295_c("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
++         for (int i = 0; i < list.size(); i++) {
++            items.add(net.minecraft.item.ItemStack.func_199557_a(list.func_150305_b(i)));
++         }
++         effect.setCurativeItems(items);
++      }
++
++      return effect;
++   }
+ }

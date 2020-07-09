@@ -1,0 +1,18 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "forge:forgebucket",
+      "textures": {
+        "base": "minecraft:items/potion_bottle_empty",
+        "fluid": "minecraft:items/potion_overlay",
+        "cover": "minecraft:items/potion_bottle_empty"
+      },
+      "transform": "forge:default-item",
+      "custom": {
+        "fluid": "water",
+        "flipGas": false
+      }
+    }
+  }
+}

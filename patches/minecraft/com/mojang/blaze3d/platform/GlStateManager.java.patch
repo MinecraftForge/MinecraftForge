@@ -1,0 +1,20 @@
+--- a/com/mojang/blaze3d/platform/GlStateManager.java
++++ b/com/mojang/blaze3d/platform/GlStateManager.java
+@@ -556,10 +556,17 @@
+       GL13.glClientActiveTexture(p_227747_0_);
+    }
+ 
++   /* Stores the last values sent into glMultiTexCoord2f */
++   public static float lastBrightnessX = 0.0f;
++   public static float lastBrightnessY = 0.0f;
+    @Deprecated
+    public static void func_227640_a_(int p_227640_0_, float p_227640_1_, float p_227640_2_) {
+       RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+       GL13.glMultiTexCoord2f(p_227640_0_, p_227640_1_, p_227640_2_);
++      if (p_227640_0_ == GL13.GL_TEXTURE1) {
++          lastBrightnessX = p_227640_1_;
++          lastBrightnessY = p_227640_2_;
++       }
+    }
+ 
+    public static void func_227706_d_(int p_227706_0_, int p_227706_1_, int p_227706_2_, int p_227706_3_) {

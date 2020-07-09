@@ -1,0 +1,20 @@
+--- a/net/minecraft/command/arguments/BlockStateParser.java
++++ b/net/minecraft/command/arguments/BlockStateParser.java
+@@ -170,7 +170,7 @@
+ 
+    private boolean func_212598_k(TagCollection<Block> p_212598_1_) {
+       if (this.field_197270_l != null) {
+-         return this.field_197270_l.func_177230_c().func_235695_q_();
++         return this.field_197270_l.hasTileEntity();
+       } else {
+          if (this.field_199833_p != null) {
+             ITag<Block> itag = p_212598_1_.func_199910_a(this.field_199833_p);
+@@ -293,7 +293,7 @@
+             p_197255_1_.suggest(String.valueOf('['));
+          }
+ 
+-         if (this.field_197270_l.func_177230_c().func_235695_q_()) {
++         if (this.field_197270_l.hasTileEntity()) {
+             p_197255_1_.suggest(String.valueOf('{'));
+          }
+       }

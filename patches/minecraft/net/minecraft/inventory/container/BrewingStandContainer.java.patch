@@ -1,0 +1,29 @@
+--- a/net/minecraft/inventory/container/BrewingStandContainer.java
++++ b/net/minecraft/inventory/container/BrewingStandContainer.java
+@@ -143,7 +143,7 @@
+       }
+ 
+       public boolean func_75214_a(ItemStack p_75214_1_) {
+-         return PotionBrewing.func_185205_a(p_75214_1_);
++         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
+       }
+ 
+       public int func_75219_a() {
+@@ -167,6 +167,7 @@
+       public ItemStack func_190901_a(PlayerEntity p_190901_1_, ItemStack p_190901_2_) {
+          Potion potion = PotionUtils.func_185191_c(p_190901_2_);
+          if (p_190901_1_ instanceof ServerPlayerEntity) {
++            net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_190901_1_, p_190901_2_);
+             CriteriaTriggers.field_192130_j.func_192173_a((ServerPlayerEntity)p_190901_1_, potion);
+          }
+ 
+@@ -175,8 +176,7 @@
+       }
+ 
+       public static boolean func_75243_a_(ItemStack p_75243_0_) {
+-         Item item = p_75243_0_.func_77973_b();
+-         return item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo;
++         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_75243_0_);
+       }
+    }
+ }

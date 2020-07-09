@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/foliageplacer/FoliagePlacerType.java
++++ b/net/minecraft/world/gen/foliageplacer/FoliagePlacerType.java
+@@ -3,7 +3,7 @@
+ import com.mojang.serialization.Codec;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class FoliagePlacerType<P extends FoliagePlacer> {
++public class FoliagePlacerType<P extends FoliagePlacer> extends net.minecraftforge.registries.ForgeRegistryEntry<FoliagePlacerType<?>> {
+    public static final FoliagePlacerType<BlobFoliagePlacer> field_227386_a_ = func_236773_a_("blob_foliage_placer", BlobFoliagePlacer.field_236738_a_);
+    public static final FoliagePlacerType<SpruceFoliagePlacer> field_227387_b_ = func_236773_a_("spruce_foliage_placer", SpruceFoliagePlacer.field_236790_a_);
+    public static final FoliagePlacerType<PineFoliagePlacer> field_227388_c_ = func_236773_a_("pine_foliage_placer", PineFoliagePlacer.field_236784_a_);

@@ -1,0 +1,45 @@
+--- a/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
++++ b/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
+@@ -50,7 +50,7 @@
+       if (!flag) {
+          BlockRendererDispatcher blockrendererdispatcher = this.field_147917_g.func_175602_ab();
+          ModelManager modelmanager = blockrendererdispatcher.func_175023_a().func_178126_b();
+-         ModelResourceLocation modelresourcelocation = p_225623_1_.func_82335_i().func_77973_b() == Items.field_151098_aY ? field_209586_g : field_209585_f;
++         ModelResourceLocation modelresourcelocation = p_225623_1_.func_82335_i().func_77973_b() instanceof FilledMapItem ? field_209586_g : field_209585_f;
+          p_225623_4_.func_227860_a_();
+          p_225623_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
+          blockrendererdispatcher.func_175019_b().func_228804_a_(p_225623_4_.func_227866_c_(), p_225623_5_.getBuffer(Atlases.func_228782_g_()), (BlockState)null, modelmanager.func_174953_a(modelresourcelocation), 1.0F, 1.0F, 1.0F, p_225623_6_, OverlayTexture.field_229196_a_);
+@@ -59,21 +59,21 @@
+ 
+       ItemStack itemstack = p_225623_1_.func_82335_i();
+       if (!itemstack.func_190926_b()) {
+-         boolean flag1 = itemstack.func_77973_b() == Items.field_151098_aY;
++         MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_225623_1_.field_70170_p);
+          if (flag) {
+             p_225623_4_.func_227861_a_(0.0D, 0.0D, 0.5D);
+          } else {
+             p_225623_4_.func_227861_a_(0.0D, 0.0D, 0.4375D);
+          }
+ 
+-         int i = flag1 ? p_225623_1_.func_82333_j() % 4 * 2 : p_225623_1_.func_82333_j();
++         int i = mapdata != null ? p_225623_1_.func_82333_j() % 4 * 2 : p_225623_1_.func_82333_j();
+          p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_((float)i * 360.0F / 8.0F));
+-         if (flag1) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_225623_1_, this, p_225623_4_, p_225623_5_, p_225623_6_))) {
++         if (mapdata != null) {
+             p_225623_4_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_(180.0F));
+             float f = 0.0078125F;
+             p_225623_4_.func_227862_a_(0.0078125F, 0.0078125F, 0.0078125F);
+             p_225623_4_.func_227861_a_(-64.0D, -64.0D, 0.0D);
+-            MapData mapdata = FilledMapItem.func_195950_a(itemstack, p_225623_1_.field_70170_p);
+             p_225623_4_.func_227861_a_(0.0D, 0.0D, -1.0D);
+             if (mapdata != null) {
+                this.field_147917_g.field_71460_t.func_147701_i().func_228086_a_(p_225623_4_, p_225623_5_, mapdata, true, p_225623_6_);
+@@ -82,6 +82,7 @@
+             p_225623_4_.func_227862_a_(0.5F, 0.5F, 0.5F);
+             this.field_177074_h.func_229110_a_(itemstack, ItemCameraTransforms.TransformType.FIXED, p_225623_6_, OverlayTexture.field_229196_a_, p_225623_4_, p_225623_5_);
+          }
++         }
+       }
+ 
+       p_225623_4_.func_227865_b_();

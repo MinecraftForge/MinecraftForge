@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/brain/schedule/Schedule.java
++++ b/net/minecraft/entity/ai/brain/schedule/Schedule.java
+@@ -8,7 +8,7 @@
+ import java.util.stream.Collectors;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class Schedule {
++public class Schedule extends net.minecraftforge.registries.ForgeRegistryEntry<Schedule> {
+    public static final Schedule field_221383_a = func_221380_a("empty").func_221402_a(0, Activity.field_221366_b).func_221404_a();
+    public static final Schedule field_221384_b = func_221380_a("simple").func_221402_a(5000, Activity.field_221367_c).func_221402_a(11000, Activity.field_221369_e).func_221404_a();
+    public static final Schedule field_221385_c = func_221380_a("villager_baby").func_221402_a(10, Activity.field_221366_b).func_221402_a(3000, Activity.field_221368_d).func_221402_a(6000, Activity.field_221366_b).func_221402_a(10000, Activity.field_221368_d).func_221402_a(12000, Activity.field_221369_e).func_221404_a();

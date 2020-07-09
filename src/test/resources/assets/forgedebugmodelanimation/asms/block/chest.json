@@ -1,0 +1,37 @@
+{
+  "parameters": {
+    "end_anim": [ "compose", [ "+", 1 ] , "#click_time" ],
+    "trigger_anim": [ "-", "#end_anim" ],
+    "progress": [ "-", "#click_time" ]
+  },
+  "clips": {
+    "model": "forgedebugmodelloaderregistry:block/chest.b3d@main",
+    "closed": [ "apply", "#model", 0 ],
+    "opening": [
+      "trigger_positive",
+      [ "slerp", "#closed", "#open", "#identity", "#progress" ],
+      "#trigger_anim",
+      "!transition:open"
+    ],
+    "open": [ "apply", "#model", 10 ],
+    "closing": [
+      "trigger_positive",
+      [ "slerp", "#open", "#closed", "#identity", "#progress" ],
+      "#trigger_anim",
+      "!transition:closed"
+    ]
+  },
+  "states": [
+    "closed",
+    "opening",
+    "open",
+    "closing"
+  ],
+  "transitions": {
+    "closed": "opening",
+    "opening": "open",
+    "open": "closing",
+    "closing": "closed"
+  },
+  "start_state": "closed"
+}

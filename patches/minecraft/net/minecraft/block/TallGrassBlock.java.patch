@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/TallGrassBlock.java
++++ b/net/minecraft/block/TallGrassBlock.java
+@@ -8,7 +8,7 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
+ 
+-public class TallGrassBlock extends BushBlock implements IGrowable {
++public class TallGrassBlock extends BushBlock implements IGrowable, net.minecraftforge.common.IForgeShearable {
+    protected static final VoxelShape field_196389_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+ 
+    public TallGrassBlock(AbstractBlock.Properties p_i48310_1_) {

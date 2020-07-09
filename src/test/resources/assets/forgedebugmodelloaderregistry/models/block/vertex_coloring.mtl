@@ -1,0 +1,31 @@
+newmtl red
+Kd 1 0 0
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl orange
+Kd 1 0.5 0
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl yellow
+Kd 1 1 0
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl yellow-green
+Kd 0.5 1 0
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl green
+Kd 0 1 0
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl green-blue
+Kd 0 1 1
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl blue
+Kd 0 0 1
+map_Kd forgedebugmodelloaderregistry:white
+
+newmtl purple
+Kd 1 0 1
+map_Kd forgedebugmodelloaderregistry:white

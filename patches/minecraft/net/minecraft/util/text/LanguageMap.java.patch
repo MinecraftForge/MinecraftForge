@@ -1,0 +1,32 @@
+--- a/net/minecraft/util/text/LanguageMap.java
++++ b/net/minecraft/util/text/LanguageMap.java
+@@ -36,7 +36,8 @@
+          field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
+       }
+ 
+-      final Map<String, String> map = builder.build();
++      final Map<String, String> map = new java.util.HashMap<>(builder.build());
++      net.minecraftforge.fml.server.LanguageHook.captureLanguageMap(map);
+       return new LanguageMap() {
+          public String func_230503_a_(String p_230503_1_) {
+             return map.getOrDefault(p_230503_1_, p_230503_1_);
+@@ -54,6 +55,11 @@
+          public String func_230504_a_(String p_230504_1_, boolean p_230504_2_) {
+             return p_230504_1_;
+          }
++         
++         @Override
++         public Map<String, String> getLanguageData() {
++            return map;
++         }
+       };
+    }
+ 
+@@ -84,4 +90,7 @@
+    public abstract boolean func_230505_b_();
+ 
+    public abstract String func_230504_a_(String p_230504_1_, boolean p_230504_2_);
++   
++   // FORGE START
++   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
+ }

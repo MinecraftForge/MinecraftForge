@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
+@@ -111,6 +111,8 @@
+    }
+ 
+    public ActionResultType func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
++      ActionResultType ret = super.func_184230_a(p_184230_1_, p_184230_2_);
++      if (ret.func_226246_a_()) return ret;
+       ItemStack itemstack = p_184230_1_.func_184586_b(p_184230_2_);
+       if (field_195407_e.test(itemstack) && this.field_94110_c + 3600 <= 32000) {
+          if (!p_184230_1_.field_71075_bZ.field_75098_d) {

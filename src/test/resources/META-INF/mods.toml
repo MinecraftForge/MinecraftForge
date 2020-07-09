@@ -1,0 +1,72 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+
+[[mods]]
+	modId="containertypetest"
+[[mods]]
+    modId="potion_event_test"
+[[mods]]
+    modId="base_block_place_event_test"
+[[mods]]
+    modId="farmland_trample_test"
+[[mods]]
+
+    modId="neighbor_notify_event_test"
+[[mods]]
+    modId="block_place_event_test"
+[[mods]]
+    modId="slipperiness_test"
+[[mods]]
+    modId="custom_slime_block_test"
+[[mods]]
+    modId="client_chat_event_test"
+[[mods]]
+    modId="command_event_test"
+[[mods]]
+    modId="entity_selector_test"
+[[mods]]
+    modId="gravity_attribute_test"
+[[mods]]
+    modId="new_fluid_test"
+[[mods]]
+    modId="data_gen_test"
+[[mods]]
+    modId="piston_event_test"
+[[mods]]
+    modId="flower_pot_test"
+[[mods]]
+    modId="player_xp_event_test"
+[[mods]]
+    modId="new_model_loader_test"
+[[mods]]
+    modId="forgedebugmultilayermodel"
+[[mods]]
+    modId="chunkwatchworldtest"
+[[mods]]
+    modId="trsr_transformer_test"
+[[mods]]
+    modId="nameplate_render_test"
+[[mods]]
+    modId="global_loot_test"
+[[dependencies.global_loot_test]]
+    modId="forge"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
+[[mods]]
+    modId="custom_plant_type_test"
+[[mods]]
+    modId="chunk_data_event_save_null_world_test"
+[[mods]]
+    modId="composite_model_test"
+[[mods]]
+    modId="music_disc_test"
+[[mods]]
+    modId="stencil_enable_test"
+[[mods]]
+    modId="deferred_registry_test"
+[[mods]]
+    modId="create_entity_classification_test"
+[[mods]]
+    modId="ender_mask_test"

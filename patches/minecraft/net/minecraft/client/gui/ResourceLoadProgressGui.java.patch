@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/ResourceLoadProgressGui.java
++++ b/net/minecraft/client/gui/ResourceLoadProgressGui.java
+@@ -97,6 +97,7 @@
+       int l1 = (int)((double)this.field_212974_b.func_228018_at_().func_198087_p() * 0.8325D);
+       float f3 = this.field_212975_c.func_219555_b();
+       this.field_212978_f = MathHelper.func_76131_a(this.field_212978_f * 0.95F + f3 * 0.050000012F, 0.0F, 1.0F);
++      net.minecraftforge.fml.client.ClientModLoader.renderProgressText();
+       if (f < 1.0F) {
+          this.func_238629_a_(p_230430_1_, i / 2 - k1, l1 - 5, i / 2 + k1, l1 + 5, 1.0F - MathHelper.func_76131_a(f, 0.0F, 1.0F));
+       }
+@@ -106,6 +107,7 @@
+       }
+ 
+       if (this.field_212979_g == -1L && this.field_212975_c.func_219554_d() && (!this.field_212977_e || f1 >= 2.0F)) {
++         this.field_212979_g = Util.func_211177_b(); // Moved up to guard against inf loops caused by callback
+          try {
+             this.field_212975_c.func_219556_e();
+             this.field_212976_d.accept(Optional.empty());
+@@ -113,7 +115,6 @@
+             this.field_212976_d.accept(Optional.of(throwable));
+          }
+ 
+-         this.field_212979_g = Util.func_211177_b();
+          if (this.field_212974_b.field_71462_r != null) {
+             this.field_212974_b.field_71462_r.func_231158_b_(this.field_212974_b, this.field_212974_b.func_228018_at_().func_198107_o(), this.field_212974_b.func_228018_at_().func_198087_p());
+          }

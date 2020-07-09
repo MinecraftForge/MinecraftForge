@@ -1,0 +1,28 @@
+--- a/net/minecraft/loot/LootContext.java
++++ b/net/minecraft/loot/LootContext.java
+@@ -94,6 +94,10 @@
+       return this.field_186499_b;
+    }
+ 
++   public int getLootingModifier() {
++      return net.minecraftforge.common.ForgeHooks.getLootingLevel(func_216031_c(LootParameters.field_216281_a), func_216031_c(LootParameters.field_216284_d), func_216031_c(LootParameters.field_216283_c));
++   }
++
+    public static class Builder {
+       private final ServerWorld field_186474_a;
+       private final Map<LootParameter<?>, Object> field_216025_b = Maps.newIdentityHashMap();
+@@ -105,6 +109,14 @@
+          this.field_186474_a = p_i46993_1_;
+       }
+ 
++      public Builder(LootContext context) {
++         this.field_186474_a = context.field_186499_b;
++         this.field_216025_b.putAll(context.field_216036_f);
++         this.field_216026_c.putAll(context.field_216037_g);
++         this.field_216027_d = context.field_216035_a;
++         this.field_186475_b = context.field_186498_a;
++      }
++
+       public LootContext.Builder func_216023_a(Random p_216023_1_) {
+          this.field_216027_d = p_216023_1_;
+          return this;
