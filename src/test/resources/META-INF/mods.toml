@@ -70,3 +70,5 @@ loaderVersion="[28,)"
     modId="create_entity_classification_test"
 [[mods]]
     modId="ender_mask_test"
+[[mods]]
+    modId="render_local_player_test"
