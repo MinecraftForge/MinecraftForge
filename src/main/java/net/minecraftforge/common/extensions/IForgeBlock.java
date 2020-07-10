@@ -489,22 +489,6 @@ public interface IForgeBlock
         return  false;
     }
 
-   /**
-    * Determines if this block can be used as the base of a beacon.
-    *
-    * @param world The current world
-    * @param pos Block position in world
-    * @param beacon Beacon position in world
-    * @return True, to support the beacon, and make it active with this block.
-    */
-    default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
-    {
-        return  state.getBlock() == Blocks.IRON_BLOCK ||
-                state.getBlock() == Blocks.GOLD_BLOCK ||
-                state.getBlock() == Blocks.DIAMOND_BLOCK ||
-                state.getBlock() == Blocks.EMERALD_BLOCK;
-    }
-
     /**
      * Determines if this block can be used as the frame of a conduit.
      *

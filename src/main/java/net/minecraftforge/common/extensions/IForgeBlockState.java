@@ -408,19 +408,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().isFertile(getBlockState(), world, pos);
     }
 
-   /**
-    * Determines if this block can be used as the base of a beacon.
-    *
-    * @param world The current world
-    * @param pos Block position in world
-    * @param beacon Beacon position in world
-    * @return True, to support the beacon, and make it active with this block.
-    */
-    default boolean isBeaconBase(IWorldReader world, BlockPos pos, BlockPos beacon)
-    {
-        return getBlockState().getBlock().isBeaconBase(getBlockState(), world, pos, beacon);
-    }
-
     /**
      * Determines if this block can be used as the frame of a conduit.
      *
