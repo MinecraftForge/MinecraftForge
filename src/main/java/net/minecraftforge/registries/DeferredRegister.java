@@ -155,11 +155,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     public void register(IEventBus bus)
     {
         bus.addListener(this::addEntries);
-        if (this.type == null) {
-            if (this.registryFactory != null)
-                bus.addListener(this::createRegistry);
-            else
-                bus.addListener(EventPriority.LOWEST, this::captureRegistry);
+        if (this.type == null && this.registryFactory != null) {
+            bus.addListener(this::createRegistry);
         }
     }
 
@@ -173,6 +170,14 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private void addEntries(RegistryEvent.Register<?> event)
     {
+        if (this.type == null && this.registryFactory == null)
+        {
+            //If there is no type yet and we don't have a registry factory, attempt to capture the registry
+            //Note: This will only ever get run on the first registry event, as after that time,
+            // the type will no longer be null. This is needed here rather than during the NewRegistry event
+            // to ensure that mods can properly use deferred registers for custom registries added by other mods
+            captureRegistry();
+        }
         if (this.type != null && event.getGenericType() == this.type.getRegistrySuperType())
         {
             this.seenRegisterEvent = true;
@@ -191,7 +196,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         this.type = this.registryFactory.get().create();
     }
 
-    private void captureRegistry(RegistryEvent.NewRegistry event)
+    private void captureRegistry()
     {
         if (this.superType != null)
         {
