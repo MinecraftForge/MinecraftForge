@@ -640,17 +640,6 @@ public interface IForgeItem
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
-     *
-     * @param stack the ItemStack
-     * @return true if this Item can be used
-     */
-    default boolean isBeaconPayment(ItemStack stack)
-    {
-        return Tags.Items.BEACON_PAYMENT.func_230235_a_(stack.getItem());
-    }
-
-    /**
      * Determine if the player switching between these two item stacks
      *
      * @param oldStack    The old stack that was equipped
