@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/LootTableProvider.java
 +++ b/net/minecraft/data/LootTableProvider.java
-@@ -42,7 +42,7 @@
+@@ -43,7 +43,7 @@
     public void func_200398_a(DirectoryCache p_200398_1_) {
        Path path = this.field_218443_d.func_200391_b();
        Map<ResourceLocation, LootTable> map = Maps.newHashMap();
@@ -9,7 +9,7 @@
           p_218438_1_.getFirst().get().accept((p_218437_2_, p_218437_3_) -> {
              if (map.put(p_218437_2_, p_218437_3_.func_216039_a(p_218438_1_.getSecond()).func_216038_b()) != null) {
                 throw new IllegalStateException("Duplicate loot table " + p_218437_2_);
-@@ -53,13 +53,8 @@
+@@ -54,13 +54,8 @@
           return null;
        }, map::get);
  
@@ -24,7 +24,7 @@
        Multimap<String, String> multimap = validationtracker.func_227527_a_();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_229440_0_, p_229440_1_) -> {
-@@ -80,6 +75,20 @@
+@@ -81,6 +76,20 @@
        }
     }
  

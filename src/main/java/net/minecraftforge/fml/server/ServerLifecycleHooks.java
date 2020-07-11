@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,22 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import net.minecraft.resources.IPackNameDecorator;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.storage.FolderName;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.network.ConnectionType;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.FMLStatusPing;
+import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -43,11 +58,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -57,10 +67,6 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.network.ConnectionType;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -70,12 +76,13 @@ public class ServerLifecycleHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker SERVERHOOKS = MarkerManager.getMarker("SERVERHOOKS");
+    private static final FolderName SERVERCONFIG = new FolderName("serverconfig");
     private static volatile CountDownLatch exitLatch = null;
     private static MinecraftServer currentServer;
 
     private static Path getServerConfigPath(final MinecraftServer server)
     {
-        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
+        final Path serverConfig = server.func_240776_a_(SERVERCONFIG);
         FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
         return serverConfig;
     }
@@ -83,9 +90,11 @@ public class ServerLifecycleHooks
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
+        currentServer.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
+        // on the dedi server we need to force the stuff to setup properly
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, ()->()->SidedProvider.setServer(()->(DedicatedServer)server));
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
-        ResourcePackLoader.loadResourcePacks(currentServer.getResourcePacks(), ServerLifecycleHooks::buildPackFinder);
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
 
@@ -203,17 +212,19 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    private static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
+    //INTERNAL MODDERS DO NOT USE
+    @Deprecated
+    public static <T extends ResourcePackInfo> ResourcePackLoader.IPackInfoFinder<T> buildPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
-    private static <T extends ResourcePackInfo> void serverPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Map<String, T> packList, ResourcePackInfo.IFactory<? extends T> factory) {
+    private static <T extends ResourcePackInfo> void serverPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Consumer<T> consumer, ResourcePackInfo.IFactory<? extends T> factory) {
         for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+            final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.field_232625_a_);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
@@ -221,7 +232,7 @@ public class ServerLifecycleHooks
             }
             packSetter.accept(e.getValue(), packInfo);
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
-            packList.put(name, packInfo);
+            consumer.accept(packInfo);
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,11 +31,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.Stat;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+
+import java.util.UUID;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayerEntity
@@ -45,9 +47,10 @@ public class FakePlayer extends ServerPlayerEntity
         super(world.getServer(), world, name, new PlayerInteractionManager(world));
     }
 
-    @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
+    @Override public Vector3d getPositionVec(){ return new Vector3d(0, 0, 0); }
+    @Override public BlockPos func_233580_cy_(){ return BlockPos.ZERO; }
     @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
-    @Override public void sendMessage(ITextComponent component) {}
+    @Override public void sendMessage(ITextComponent component, UUID p_145747_2_) {}
     @Override public void addStat(Stat par1StatBase, int par2){}
     //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isInvulnerableTo(DamageSource source){ return true; }

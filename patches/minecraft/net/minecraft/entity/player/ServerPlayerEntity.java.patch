@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/player/ServerPlayerEntity.java
 +++ b/net/minecraft/entity/player/ServerPlayerEntity.java
-@@ -432,6 +432,7 @@
+@@ -464,6 +464,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
@@ -8,87 +8,82 @@
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
        if (flag) {
           ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-@@ -550,13 +551,15 @@
-       return this.field_71133_b.func_71219_W();
+@@ -596,13 +597,14 @@
     }
  
-+   @Override
     @Nullable
--   public Entity func_212321_a(DimensionType p_212321_1_) {
-+   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
+-   public Entity func_241206_a_(ServerWorld p_241206_1_) {
++   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_241206_1_.func_234923_W_())) return null;
        this.field_184851_cj = true;
-       DimensionType dimensiontype = this.field_71093_bK;
--      if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_) {
-+      if (dimensiontype == DimensionType.field_223229_c_ && p_212321_1_ == DimensionType.field_223227_a_ && teleporter instanceof net.minecraft.world.Teleporter) { //Forge: Fix non-vanilla teleporters triggering end credits
+       ServerWorld serverworld = this.func_71121_q();
+       RegistryKey<World> registrykey = serverworld.func_234923_W_();
+-      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_) {
++      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_ && teleporter instanceof net.minecraft.world.Teleporter) { //Forge: Fix non-vanilla teleporters triggering end credits
           this.func_213319_R();
 -         this.func_71121_q().func_217434_e(this);
 +         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
           if (!this.field_71136_j) {
              this.field_71136_j = true;
-             this.field_71135_a.func_147359_a(new SChangeGameStatePacket(4, this.field_192040_cp ? 0.0F : 1.0F));
-@@ -569,12 +572,14 @@
-          this.field_71093_bK = p_212321_1_;
-          ServerWorld serverworld1 = this.field_71133_b.func_71218_a(p_212321_1_);
-          WorldInfo worldinfo = serverworld1.func_72912_H();
-+         net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(this.field_71135_a.field_147371_a, this);
-          this.field_71135_a.func_147359_a(new SRespawnPacket(p_212321_1_, WorldInfo.func_227498_c_(worldinfo.func_76063_b()), worldinfo.func_76067_t(), this.field_71134_c.func_73081_b()));
-          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+             this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
+@@ -616,8 +618,9 @@
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
           PlayerList playerlist = this.field_71133_b.func_184103_al();
           playerlist.func_187243_f(this);
 -         serverworld.func_217434_e(this);
 -         this.field_70128_L = false;
 +         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
 +         this.revive();
-+         Entity e = teleporter.placeEntity(this, serverworld, serverworld1, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
++         Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
           double d0 = this.func_226277_ct_();
           double d1 = this.func_226278_cu_();
           double d2 = this.func_226281_cx_();
-@@ -583,13 +588,11 @@
-          double d3 = 8.0D;
-          float f2 = f1;
-          serverworld.func_217381_Z().func_76320_a("moving");
-+         double moveFactor = serverworld.func_201675_m().getMovementFactor() / serverworld1.func_201675_m().getMovementFactor();
-+         d0 *= moveFactor;
-+         d2 *= moveFactor;
-          if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223228_b_) {
-             this.field_193110_cw = this.func_213303_ch();
--            d0 /= 8.0D;
--            d2 /= 8.0D;
--         } else if (dimensiontype == DimensionType.field_223228_b_ && p_212321_1_ == DimensionType.field_223227_a_) {
--            d0 *= 8.0D;
--            d2 *= 8.0D;
-          } else if (dimensiontype == DimensionType.field_223227_a_ && p_212321_1_ == DimensionType.field_223229_c_) {
-             BlockPos blockpos = serverworld1.func_180504_m();
-             d0 = (double)blockpos.func_177958_n();
-@@ -630,7 +633,7 @@
- 
+@@ -666,7 +669,7 @@
+             ServerWorld.func_241121_a_(p_241206_1_);
              this.func_70012_b((double)i, (double)j, (double)k, f1, 0.0F);
-             this.func_213317_d(Vec3d.field_186680_a);
--         } else if (!serverworld1.func_85176_s().func_222268_a(this, f2)) {
-+         } else if (spawnPortal && !serverworld1.func_85176_s().func_222268_a(this, f2)) {
-             serverworld1.func_85176_s().func_85188_a(this);
-             serverworld1.func_85176_s().func_222268_a(this, f2);
+             this.func_213317_d(Vector3d.field_186680_a);
+-         } else if (!p_241206_1_.func_85176_s().func_222268_a(this, f2)) {
++         } else if (spawnPortal && !p_241206_1_.func_85176_s().func_222268_a(this, f2)) {
+             p_241206_1_.func_85176_s().func_85188_a(this);
+             p_241206_1_.func_85176_s().func_222268_a(this, f2);
           }
-@@ -640,6 +643,9 @@
-          serverworld1.func_217447_b(this);
+@@ -676,6 +679,9 @@
+          p_241206_1_.func_217447_b(this);
           this.func_213846_b(serverworld);
           this.field_71135_a.func_147364_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), f1, f);
 +         return this;//forge: this is part of the ITeleporter patch
 +         });//Forge: End vanilla logic
 +         if (e != this) throw new java.lang.IllegalArgumentException(String.format("Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
-          this.field_71134_c.func_73080_a(serverworld1);
+          this.field_71134_c.func_73080_a(p_241206_1_);
           this.field_71135_a.func_147359_a(new SPlayerAbilitiesPacket(this.field_71075_bZ));
-          playerlist.func_72354_b(this, serverworld1);
-@@ -653,6 +659,7 @@
+          playerlist.func_72354_b(this, p_241206_1_);
+@@ -689,6 +695,7 @@
           this.field_71144_ck = -1;
           this.field_71149_ch = -1.0F;
           this.field_71146_ci = -1;
-+         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, dimensiontype, p_212321_1_);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, p_241206_1_.func_234923_W_());
           return this;
        }
     }
-@@ -788,6 +795,7 @@
+@@ -731,6 +738,9 @@
+    }
+ 
+    public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
++      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_213819_1_);
++      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++      if (ret != null) return Either.left(ret);
+       Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
+       if (!this.func_70608_bn() && this.func_70089_S()) {
+          if (!this.field_70170_p.func_230315_m_().func_236043_f_()) {
+@@ -775,6 +785,7 @@
+    }
+ 
+    private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_) {
++      if (p_241147_2_ == null) return false;
+       return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.func_177972_a(p_241147_2_.func_176734_d()));
+    }
+ 
+@@ -874,6 +885,7 @@
              this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
              container.func_75132_a(this);
              this.field_71070_bA = container;
@@ -96,7 +91,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -806,6 +814,7 @@
+@@ -892,6 +904,7 @@
        this.field_71135_a.func_147359_a(new SOpenHorseWindowPacket(this.field_71139_cq, p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
        this.field_71070_bA = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
        this.field_71070_bA.func_75132_a(this);
@@ -104,7 +99,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -863,6 +872,7 @@
+@@ -949,6 +962,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -112,17 +107,10 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -989,6 +999,20 @@
+@@ -1075,6 +1089,13 @@
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
-+
-+      this.spawnPosMap = p_193104_1_.spawnPosMap;
-+      this.spawnForcedMap = p_193104_1_.spawnForcedMap;
-+      if(p_193104_1_.field_71093_bK != DimensionType.field_223227_a_) {
-+          this.field_71077_c = p_193104_1_.field_71077_c;
-+          this.field_82248_d = p_193104_1_.field_82248_d;
-+      }
 +
 +      //Copy over a section of the Entity Data from the old player.
 +      //Allows mods to specify data that persists after players respawn.
@@ -133,19 +121,24 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1207,15 +1231,17 @@
+@@ -1181,6 +1202,7 @@
+       this.field_71140_co = p_147100_1_.func_149520_f();
+       this.func_184212_Q().func_187227_b(field_184827_bp, (byte)p_147100_1_.func_149521_d());
+       this.func_184212_Q().func_187227_b(field_184828_bq, (byte)(p_147100_1_.func_186991_f() == HandSide.LEFT ? 0 : 1));
++      this.language = p_147100_1_.getLanguage();
+    }
+ 
+    public ChatVisibility func_147096_v() {
+@@ -1291,14 +1313,14 @@
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
 -      } else {
-+      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.field_73011_w.func_186058_p())) {
-+         DimensionType oldDimension = this.field_71093_bK;
++      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.func_234923_W_())) {
           ServerWorld serverworld = this.func_71121_q();
-          this.field_71093_bK = p_200619_1_.field_73011_w.func_186058_p();
-          WorldInfo worldinfo = p_200619_1_.func_72912_H();
-+         net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(this.field_71135_a.field_147371_a, this);
-          this.field_71135_a.func_147359_a(new SRespawnPacket(this.field_71093_bK, WorldInfo.func_227498_c_(worldinfo.func_76063_b()), worldinfo.func_76067_t(), this.field_71134_c.func_73081_b()));
-          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+          IWorldInfo iworldinfo = p_200619_1_.func_72912_H();
+          this.field_71135_a.func_147359_a(new SRespawnPacket(p_200619_1_.func_234922_V_(), p_200619_1_.func_234923_W_(), BiomeManager.func_235200_a_(p_200619_1_.func_72905_C()), this.field_71134_c.func_73081_b(), this.field_71134_c.func_241815_c_(), p_200619_1_.func_234925_Z_(), p_200619_1_.func_241109_A_(), true));
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
           this.field_71133_b.func_184103_al().func_187243_f(this);
 -         serverworld.func_217434_e(this);
 -         this.field_70128_L = false;
@@ -154,15 +147,15 @@
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);
           p_200619_1_.func_217446_a(this);
-@@ -1224,6 +1250,7 @@
+@@ -1307,6 +1329,7 @@
           this.field_71134_c.func_73080_a(p_200619_1_);
           this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
           this.field_71133_b.func_184103_al().func_72385_f(this);
-+         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, oldDimension, this.field_71093_bK);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, serverworld.func_234923_W_(), p_200619_1_.func_234923_W_());
        }
  
     }
-@@ -1261,6 +1288,8 @@
+@@ -1375,6 +1398,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -171,3 +164,17 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
+@@ -1388,4 +1413,13 @@
+          return itementity;
+       }
+    }
++
++   private String language = "en_us";
++   /**
++    * Returns the language last reported by the player as their local language.
++    * Defaults to en_us if the value is unknown.
++    */
++   public String getLanguage() {
++      return this.language;
++   }
+ }

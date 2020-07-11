@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -68,8 +69,8 @@ import java.util.function.Function;
 public class NewModelLoaderTest
 {
     public static final String MODID = "new_model_loader_test";
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
             new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
@@ -122,6 +123,10 @@ public class NewModelLoaderTest
             new Item(new Item.Properties().group(ItemGroup.MISC))
     );
 
+    public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
+            new Item(new Item.Properties().group(ItemGroup.MISC))
+    );
+
     public NewModelLoaderTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -154,7 +159,7 @@ public class NewModelLoaderTest
     static class TestModel implements ISimpleModelGeometry<TestModel>
     {
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<net.minecraft.client.renderer.model.Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             TextureAtlasSprite texture = spriteGetter.apply(owner.resolveTexture("particle"));
 
@@ -198,7 +203,7 @@ public class NewModelLoaderTest
         }
 
         @Override
-        public Collection<net.minecraft.client.renderer.model.Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return Collections.singleton(owner.resolveTexture("particle"));
         }

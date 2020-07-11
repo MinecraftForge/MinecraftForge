@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,10 +40,6 @@ public enum EarlyProgressVisualization {
         return visualization.handOffWindow(width, height, title, monitor);
     }
 
-    public boolean replacedWindow() {
-        return visualization.replacedWindow();
-    }
-
     interface Visualization {
         Runnable start();
 
@@ -55,8 +51,6 @@ public enum EarlyProgressVisualization {
                 }
             }.getAsLong();
         }
-
-        default boolean replacedWindow() { return false; }
     }
 
     private static class NoVisualization implements Visualization {

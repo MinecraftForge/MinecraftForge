@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/OverlayRenderer.java
 +++ b/net/minecraft/client/renderer/OverlayRenderer.java
-@@ -25,18 +25,21 @@
+@@ -27,18 +27,21 @@
        RenderSystem.disableAlphaTest();
        PlayerEntity playerentity = p_228734_0_.field_71439_g;
        if (!playerentity.field_70145_X) {
@@ -25,7 +25,7 @@
              func_228737_c_(p_228734_0_, p_228734_1_);
           }
        }
-@@ -46,6 +49,11 @@
+@@ -48,6 +51,11 @@
  
     @Nullable
     private static BlockState func_230018_a_(PlayerEntity p_230018_0_) {
@@ -37,7 +37,7 @@
        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
        for(int i = 0; i < 8; ++i) {
-@@ -55,7 +63,7 @@
+@@ -57,7 +65,7 @@
           blockpos$mutable.func_189532_c(d0, d1, d2);
           BlockState blockstate = p_230018_0_.field_70170_p.func_180495_p(blockpos$mutable);
           if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE && blockstate.func_215696_m(p_230018_0_.field_70170_p, blockpos$mutable)) {

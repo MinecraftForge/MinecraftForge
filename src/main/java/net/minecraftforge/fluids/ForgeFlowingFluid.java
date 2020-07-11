@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer;
@@ -90,7 +90,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     protected void beforeReplacingBlock(IWorld worldIn, BlockPos pos, BlockState state)
     {
-        TileEntity tileentity = state.getBlock().hasTileEntity() ? worldIn.getTileEntity(pos) : null;
+        TileEntity tileentity = state.getBlock().hasTileEntity(state) ? worldIn.getTileEntity(pos) : null;
         Block.spawnDrops(state, worldIn.getWorld(), pos, tileentity);
     }
 
@@ -113,7 +113,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean canDisplace(IFluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canDisplace(FluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
         return direction == Direction.DOWN && !isEquivalentTo(fluidIn);
@@ -132,7 +132,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected BlockState getBlockState(IFluidState state)
+    protected BlockState getBlockState(FluidState state)
     {
         if (block != null)
             return block.get().getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
@@ -158,16 +158,16 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             setDefaultState(getStateContainer().getBaseState().with(LEVEL_1_8, 7));
         }
 
-        protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
+        protected void fillStateContainer(StateContainer.Builder<Fluid, FluidState> builder) {
             super.fillStateContainer(builder);
             builder.add(LEVEL_1_8);
         }
 
-        public int getLevel(IFluidState state) {
+        public int getLevel(FluidState state) {
             return state.get(LEVEL_1_8);
         }
 
-        public boolean isSource(IFluidState state) {
+        public boolean isSource(FluidState state) {
             return false;
         }
     }
@@ -179,11 +179,11 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             super(properties);
         }
 
-        public int getLevel(IFluidState state) {
+        public int getLevel(FluidState state) {
             return 8;
         }
 
-        public boolean isSource(IFluidState state) {
+        public boolean isSource(FluidState state) {
             return true;
         }
     }

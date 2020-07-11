@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.Ingredient.IItemList;
 import net.minecraft.item.crafting.Ingredient.TagList;
 import net.minecraft.item.crafting.Ingredient.SingleItemList;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -52,7 +53,7 @@ import net.minecraftforge.common.Tags;
 
 public class ForgeRecipeProvider extends RecipeProvider
 {
-    private Map<Item, Tag<Item>> replacements = new HashMap<>();
+    private Map<Item, ITag<Item>> replacements = new HashMap<>();
     private Set<ResourceLocation> excludes = new HashSet<>();
 
     public ForgeRecipeProvider(DataGenerator generatorIn)
@@ -65,7 +66,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         excludes.add(item.asItem().getRegistryName());
     }
 
-    private void replace(IItemProvider item, Tag<Item> tag)
+    private void replace(IItemProvider item, ITag<Item> tag)
     {
         replacements.put(item.asItem(), tag);
     }
@@ -152,13 +153,13 @@ public class ForgeRecipeProvider extends RecipeProvider
 
         boolean modified = false;
         List<IItemList> items = new ArrayList<>();
-        IItemList[] vanillaItems = getField(Ingredient.class, vanilla, 3);
+        IItemList[] vanillaItems = getField(Ingredient.class, vanilla, 2); //This will probably crash between versions, if null fix index
         for (IItemList entry : vanillaItems)
         {
             if (entry instanceof SingleItemList)
             {
                 ItemStack stack = entry.getStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-                Tag<Item> replacement = replacements.get(stack.getItem());
+                ITag<Item> replacement = replacements.get(stack.getItem());
                 if (replacement != null)
                 {
                     items.add(new TagList(replacement));

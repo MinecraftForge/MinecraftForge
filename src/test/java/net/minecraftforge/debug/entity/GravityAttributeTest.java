@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraftforge.common.ForgeMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,9 +35,9 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -57,7 +59,7 @@ public class GravityAttributeTest
     private static Logger logger = LogManager.getLogger();
     private int ticks;
     private static final UUID REDUCED_GRAVITY_ID = UUID.fromString("DEB06000-7979-4242-8888-00000DEB0600");
-    private static final AttributeModifier REDUCED_GRAVITY = (new AttributeModifier(REDUCED_GRAVITY_ID, "Reduced gravity", (double)-0.80, Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier REDUCED_GRAVITY = (new AttributeModifier(REDUCED_GRAVITY_ID, "Reduced gravity", (double)-0.80, Operation.MULTIPLY_TOTAL));
 
 
     public GravityAttributeTest()
@@ -98,12 +100,12 @@ public class GravityAttributeTest
 
                 for(LivingEntity liv : list)
                 {
-                    IAttributeInstance grav = liv.getAttribute(LivingEntity.ENTITY_GRAVITY);
-                    boolean inPlains = liv.world.getBiome(liv.getPosition()).getCategory() == Category.PLAINS;
+                    ModifiableAttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+                    boolean inPlains = liv.world.getBiome(liv.func_233580_cy_()).getCategory() == Category.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);
-                        grav.applyModifier(REDUCED_GRAVITY);
+                        grav.func_233767_b_(REDUCED_GRAVITY);
                     }
                     else if (!inPlains && grav.hasModifier(REDUCED_GRAVITY))
                     {
@@ -132,12 +134,12 @@ public class GravityAttributeTest
         }
 
         @Override
-        public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
+        public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
         {
             @SuppressWarnings("deprecation")
-            Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
+            Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot);
             if (slot == EquipmentSlotType.MAINHAND)
-                multimap.put(LivingEntity.ENTITY_GRAVITY.getName(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
+                multimap.put(ForgeMod.ENTITY_GRAVITY.get(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
 
             return multimap;
         }

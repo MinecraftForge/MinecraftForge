@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -79,6 +79,8 @@ public class FMLServiceProvider implements ITransformationService
         FMLPaths.setup(environment);
         LOGGER.debug(CORE, "Loading configuration");
         FMLConfig.load();
+        LOGGER.debug(CORE, "Preparing ModFile");
+        environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile.buildFactory());
         arguments = new HashMap<>();
         arguments.put("modLists", modListsArgumentList);
         arguments.put("mods", modsArgumentList);

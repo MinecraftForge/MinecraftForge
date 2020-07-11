@@ -24,10 +24,10 @@
     @Nullable
 @@ -47,6 +50,8 @@
  
-    public void func_145839_a(CompoundNBT p_145839_1_) {
-       this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
-+      if (p_145839_1_.func_74764_b("ForgeData")) this.customTileData = p_145839_1_.func_74775_l("ForgeData");
-+      if (getCapabilities() != null && p_145839_1_.func_74764_b("ForgeCaps")) deserializeCaps(p_145839_1_.func_74775_l("ForgeCaps"));
+    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+       this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
++      if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
++      if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps")) deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
@@ -49,7 +49,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -140,6 +147,8 @@
+@@ -133,6 +140,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -58,7 +58,7 @@
     }
  
     public void func_145829_t() {
-@@ -182,6 +191,13 @@
+@@ -175,6 +184,13 @@
        return this.field_200663_e;
     }
  

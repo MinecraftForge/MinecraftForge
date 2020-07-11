@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class ItemFishedEvent extends PlayerEvent
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingBobberEntity hook)
     {
-        super(hook.getAngler());
+        super(hook.func_234606_i_());
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;

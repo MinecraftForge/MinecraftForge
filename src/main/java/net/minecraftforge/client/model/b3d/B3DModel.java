@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,8 +39,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.*;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.*;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -249,8 +248,8 @@ public class B3DModel
                 String path = readString();
                 int flags = buf.getInt();
                 int blend = buf.getInt();
-                Vec2f pos = new Vec2f(buf.getFloat(), buf.getFloat());
-                Vec2f scale = new Vec2f(buf.getFloat(), buf.getFloat());
+                Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
+                Vector2f scale = new Vector2f(buf.getFloat(), buf.getFloat());
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
             }
@@ -529,15 +528,15 @@ public class B3DModel
 
     public static class Texture
     {
-        public static final Texture White = new Texture("builtin/white", 0, 0, new Vec2f(0, 0), new Vec2f(1, 1), 0);
+        public static final Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private final String path;
         private final int flags;
         private final int blend;
-        private final Vec2f pos;
-        private final Vec2f scale;
+        private final Vector2f pos;
+        private final Vector2f scale;
         private final float rot;
 
-        public Texture(String path, int flags, int blend, Vec2f pos, Vec2f scale, float rot)
+        public Texture(String path, int flags, int blend, Vector2f pos, Vector2f scale, float rot)
         {
             this.path = path;
             this.flags = flags;
@@ -562,12 +561,12 @@ public class B3DModel
             return blend;
         }
 
-        public Vec2f getPos()
+        public Vector2f getPos()
         {
             return pos;
         }
 
-        public Vec2f getScale()
+        public Vector2f getScale()
         {
             return scale;
         }

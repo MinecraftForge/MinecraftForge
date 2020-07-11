@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,8 +60,8 @@ public class ConfigCommand {
                 File f = new File(configFileName);
                 context.getSource().sendFeedback(new TranslationTextComponent("commands.config.getwithtype",
                         modId, type,
-                        new StringTextComponent(f.getName()).applyTextStyle(TextFormatting.UNDERLINE).
-                                applyTextStyle((style) -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
+                        new StringTextComponent(f.getName()).func_240701_a_(TextFormatting.UNDERLINE).
+                        func_240700_a_((style) -> style.func_240715_a_(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                 ), true);
             } else {
                 context.getSource().sendFeedback(new TranslationTextComponent("commands.config.noconfig", modId, type),

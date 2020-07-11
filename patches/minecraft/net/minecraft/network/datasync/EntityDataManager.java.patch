@@ -14,5 +14,5 @@
 +               if (field_190303_a.isDebugEnabled()) field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
 +               else field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass);
              }
-          } catch (ClassNotFoundException var5) {
-             ;
+          } catch (ClassNotFoundException classnotfoundexception) {
+          }

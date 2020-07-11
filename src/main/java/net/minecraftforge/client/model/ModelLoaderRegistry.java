@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
@@ -36,6 +35,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -56,6 +56,7 @@ public class ModelLoaderRegistry
 {
     public static final String WHITE_TEXTURE = "forge:white";
 
+    private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
     private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
     private static volatile boolean registryFrozen = false;
 
@@ -68,6 +69,7 @@ public class ModelLoaderRegistry
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
@@ -141,7 +143,7 @@ public class ModelLoaderRegistry
     private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
             Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
 
-    public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner)
+    public static RenderMaterial resolveTexture(@Nullable String tex, IModelConfiguration owner)
     {
         if (tex == null)
             return blockMaterial(WHITE_TEXTURE);
@@ -163,14 +165,14 @@ public class ModelLoaderRegistry
         return blockMaterial(tex);
     }
 
-    public static Material blockMaterial(String location)
+    public static RenderMaterial blockMaterial(String location)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
     }
 
-    public static Material blockMaterial(ResourceLocation location)
+    public static RenderMaterial blockMaterial(ResourceLocation location)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
     }
 
     @Nullable
@@ -244,7 +246,7 @@ public class ModelLoaderRegistry
         }
     }
 
-    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
+    public static IBakedModel bakeHelper(BlockModel blockModel, ModelBakery modelBakery, BlockModel otherModel, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation, boolean guiLight3d)
     {
         IBakedModel model;
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
@@ -255,7 +257,16 @@ public class ModelLoaderRegistry
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
         else
-            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+        {
+            // handle vanilla item models here, since vanilla has a shortcut for them
+            if (blockModel.getRootModel() == ModelBakery.MODEL_GENERATED) {
+                model = ITEM_MODEL_GENERATOR.makeItemModel(spriteGetter, blockModel).bakeModel(modelBakery, blockModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+            else
+            {
+                model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+        }
 
         if (customModelState != null && !model.doesHandlePerspectives())
             model = new PerspectiveMapWrapper(model, customModelState);
@@ -273,7 +284,7 @@ public class ModelLoaderRegistry
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(BlockPart blockpart : elements) {
                 for(Direction direction : blockpart.mapFaces.keySet()) {
@@ -291,13 +302,13 @@ public class ModelLoaderRegistry
         }
 
         @Override
-        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
-            Set<Material> textures = Sets.newHashSet();
+            Set<RenderMaterial> textures = Sets.newHashSet();
 
             for(BlockPart part : elements) {
                 for(BlockPartFace face : part.mapFaces.values()) {
-                    Material texture = owner.resolveTexture(face.texture);
+                    RenderMaterial texture = owner.resolveTexture(face.texture);
                     if (Objects.equals(texture, MissingTextureSprite.getLocation().toString())) {
                         missingTextureErrors.add(Pair.of(face.texture, owner.getModelName()));
                     }

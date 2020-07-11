@@ -1,15 +1,13 @@
 --- a/net/minecraft/advancements/AdvancementManager.java
 +++ b/net/minecraft/advancements/AdvancementManager.java
-@@ -36,7 +36,11 @@
-       Map<ResourceLocation, Advancement.Builder> map = Maps.newHashMap();
-       p_212853_1_.forEach((p_223387_1_, p_223387_2_) -> {
+@@ -36,6 +36,10 @@
           try {
--            Advancement.Builder advancement$builder = field_192783_b.fromJson(p_223387_2_, Advancement.Builder.class);
-+            Advancement.Builder advancement$builder = net.minecraftforge.common.crafting.ConditionalAdvancement.read(field_192783_b, p_223387_1_, p_223387_2_);
+             JsonObject jsonobject = JSONUtils.func_151210_l(p_240923_3_, "advancement");
+             Advancement.Builder advancement$builder = Advancement.Builder.func_241043_a_(jsonobject, new ConditionArrayParser(p_240923_2_, this.field_240922_d_));
 +            if (advancement$builder == null) {
-+               field_192782_a.info("Skipping loading advancement {} as it's conditions were not met", p_223387_1_);
-+               return;
++                field_192782_a.debug("Skipping loading advancement {} as it's conditions were not met", p_240923_2_);
++                return;
 +            }
-             map.put(p_223387_1_, advancement$builder);
+             map.put(p_240923_2_, advancement$builder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             field_192782_a.error("Parsing error loading custom advancement {}: {}", p_223387_1_, jsonparseexception.getMessage());
+             field_192782_a.error("Parsing error loading custom advancement {}: {}", p_240923_2_, jsonparseexception.getMessage());

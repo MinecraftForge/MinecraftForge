@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ public class CommandEventTest
         if (nodes.size() > 0 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("give"))
         {
             String msg = source.getName() + " used the give command: " + event.getParseResults().getReader().getString();
-            source.getServer().getPlayerList().getPlayers().forEach(PlayerEntityMP -> PlayerEntityMP.sendMessage(new StringTextComponent(msg)));
+            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new StringTextComponent(msg), player.getUniqueID()));
             return;
         }
 

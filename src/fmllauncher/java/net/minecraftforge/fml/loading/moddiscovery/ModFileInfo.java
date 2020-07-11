@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,25 +20,30 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
-public class ModFileInfo implements IModFileInfo
+public class ModFileInfo implements IModFileInfo, IConfigurable
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final UnmodifiableConfig config;
+    private final IConfigurable config;
     private final ModFile modFile;
     private final URL issueURL;
     private final String modLoader;
@@ -47,32 +52,31 @@ public class ModFileInfo implements IModFileInfo
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
 
-    ModFileInfo(final ModFile modFile, final UnmodifiableConfig config)
+    ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
         this.modFile = modFile;
         this.config = config;
-        this.modLoader = config.<String>getOptional("modLoader").
+        this.modLoader = config.<String>getConfigElement("modLoader").
                 orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
-        this.modLoaderVersion = config.<String>getOptional("loaderVersion").
+        this.modLoaderVersion = config.<String>getConfigElement("loaderVersion").
                 map(MavenVersionAdapter::createFromVersionSpec).
                 orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
-        this.showAsResourcePack = config.<Boolean>getOrElse("showAsResourcePack", false);
-        this.properties = config.<UnmodifiableConfig>getOptional("properties").
+        this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
+        this.properties = config.<UnmodifiableConfig>getConfigElement("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
-        if (config.contains("mods") && !(config.get("mods") instanceof Collection)) {
-            throw new InvalidModFileException("Mods list is not a list.", this);
-        }
-        final ArrayList<UnmodifiableConfig> modConfigs = config.getOrElse("mods", ArrayList::new);
+        this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
+        final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs.isEmpty()) {
             throw new InvalidModFileException("Missing mods list", this);
         }
-        this.mods = modConfigs.stream().map(mi-> new ModInfo(this, mi)).collect(Collectors.toList());
-        this.issueURL = config.<String>getOptional("issueTrackerURL").map(StringUtils::toURL).orElse(null);
+        this.mods = modConfigs.stream()
+                .map(mi-> new ModInfo(this, mi))
+                .collect(Collectors.toList());
         LOGGER.debug(LOADING, "Found valid mod file {} with {} mods - versions {}",
                 this.modFile::getFileName,
-                () -> mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
-                () -> mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+                () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
+                () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
     }
 
     @Override
@@ -84,12 +88,6 @@ public class ModFileInfo implements IModFileInfo
     public ModFile getFile()
     {
         return this.modFile;
-    }
-
-    @Override
-    public UnmodifiableConfig getConfig()
-    {
-        return this.config;
     }
 
     @Override
@@ -116,5 +114,15 @@ public class ModFileInfo implements IModFileInfo
     @Override
     public boolean showAsResourcePack() {
         return this.showAsResourcePack;
+    }
+
+    @Override
+    public <T> Optional<T> getConfigElement(final String... key) {
+        return this.config.getConfigElement(key);
+    }
+
+    @Override
+    public List<? extends IConfigurable> getConfigList(final String... key) {
+        return this.config.getConfigList(key);
     }
 }

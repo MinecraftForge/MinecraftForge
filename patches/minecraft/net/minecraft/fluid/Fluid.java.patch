@@ -6,15 +6,15 @@
  
 -public abstract class Fluid {
 +public abstract class Fluid extends net.minecraftforge.registries.ForgeRegistryEntry<Fluid> implements net.minecraftforge.common.extensions.IForgeFluid {
-    public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
-    protected final StateContainer<Fluid, IFluidState> field_207202_e;
-    private IFluidState field_207200_b;
+    public static final ObjectIntIdentityMap<FluidState> field_207201_d = new ObjectIntIdentityMap<>();
+    protected final StateContainer<Fluid, FluidState> field_207202_e;
+    private FluidState field_207200_b;
 @@ -98,4 +98,26 @@
     }
  
-    public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
+    public abstract VoxelShape func_215664_b(FluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);
 +
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Fluid> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.FluidTags::getGeneration, net.minecraft.tags.FluidTags::func_226157_a_);
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Fluid> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.FluidTags::func_226157_a_);
 +   @Override
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();

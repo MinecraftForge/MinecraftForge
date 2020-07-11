@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -154,11 +153,11 @@ class CommandTrack
                     if (entity == null)
                         return new TranslationTextComponent("commands.forge.tracking.invalid");
 
-                    BlockPos pos = entity.getPosition();
+                    BlockPos pos = entity.func_233580_cy_();
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
 
-                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), DimensionType.getKey(entity.world.dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), entity.world.func_234923_W_().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -178,7 +177,7 @@ class CommandTrack
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
-                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), DimensionType.getKey(te.getWorld().dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), te.getWorld().func_234923_W_().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

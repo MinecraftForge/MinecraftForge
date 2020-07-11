@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,35 +21,36 @@ package net.minecraftforge.common.util;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
 
 public class ReverseTagWrapper<T>
 {
     private final T target;
-    private final IntSupplier genSupplier;
     private final Supplier<TagCollection<T>> colSupplier;
 
-    private int generation = -1;
+    //This map is immutable we track its identity change.
+    private Map<ResourceLocation, ITag<T>> colCache;
     private Set<ResourceLocation> cache = null;
 
-    public ReverseTagWrapper(T target, IntSupplier genSupplier, Supplier<TagCollection<T>> colSupplier)
+    public ReverseTagWrapper(T target, Supplier<TagCollection<T>> colSupplier)
     {
         this.target = target;
-        this.genSupplier = genSupplier;
         this.colSupplier = colSupplier;
     }
 
     public Set<ResourceLocation> getTagNames()
     {
-        if (cache == null || generation != genSupplier.getAsInt())
+        TagCollection<T> collection = colSupplier.get();
+        if (cache == null || colCache != collection.getTagMap()) // Identity equals.
         {
-            this.cache = Collections.unmodifiableSet(new HashSet<>(colSupplier.get().getOwningTags(target)));
-            this.generation = genSupplier.getAsInt();
+            this.cache = Collections.unmodifiableSet(new HashSet<>(collection.getOwningTags(target)));
+            this.colCache = collection.getTagMap();
         }
         return this.cache;
     }

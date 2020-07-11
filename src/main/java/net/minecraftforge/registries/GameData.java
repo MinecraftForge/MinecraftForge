@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.schedule.Schedule;
@@ -53,9 +55,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -66,7 +66,6 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
@@ -109,56 +108,55 @@ public class GameData
 
     // Vanilla registries
     // Names used here match those in net.minecraft.util.Registry
-    
+
     // Game objects
-    public static final ResourceLocation BLOCKS = new ResourceLocation("block");
-    public static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
-    public static final ResourceLocation ITEMS = new ResourceLocation("item");
-    public static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
-    public static final ResourceLocation BIOMES = new ResourceLocation("biome");
-    public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
-    public static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
-    public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
-    public static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
-    public static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
-    public static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
-    public static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
-    public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
-    public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
-    public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
-    
+    private static final ResourceLocation BLOCKS = new ResourceLocation("block");
+    private static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
+    private static final ResourceLocation ITEMS = new ResourceLocation("item");
+    private static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
+    private static final ResourceLocation BIOMES = new ResourceLocation("biome");
+    private static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
+    private static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
+    private static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
+    private static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
+    private static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
+    private static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
+    private static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
+    private static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
+    private static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
+    private static final ResourceLocation ATTRIBUTES = new ResourceLocation("attribute");
+    private static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
+
     // Villages
-    public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
-    public static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
-    public static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
-    public static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
-    public static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
-    public static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
+    private static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
+    private static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
+    private static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
+    private static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
+    private static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
+    private static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
 
     // Worldgen
-    public static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
-    public static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
-    public static final ResourceLocation FEATURES = new ResourceLocation("feature");
-    public static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
-    public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
-    public static final ResourceLocation CHUNK_GENERATOR_TYPES = new ResourceLocation("chunk_generator_type");
-    public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
-    public static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
-    public static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
-    public static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
-    public static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
+    private static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
+    private static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
+    private static final ResourceLocation FEATURES = new ResourceLocation("feature");
+    private static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
+    private static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
+    private static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
+    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("structure_feature");
+    private static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
+    private static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
+    private static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
+    private static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
 
     // Custom forge registries
-    public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
-    public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
-    public static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
+    private static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
+    private static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
-    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("minecraft:structure_feature");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
@@ -180,7 +178,7 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        
+
         // Game objects
         makeRegistry(BLOCKS, Block.class, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
         makeRegistry(FLUIDS, Fluid.class, new ResourceLocation("empty")).create();
@@ -196,8 +194,9 @@ public class GameData
         makeRegistry(CONTAINERS, ContainerType.class).disableSaving().create();
         makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
         makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
+        makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES, StatType.class).create();
-        
+
         // Villagers
         makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();
         makeRegistry(POI_TYPES, PointOfInterestType.class, new ResourceLocation("unemployed")).disableSync().create();
@@ -211,16 +210,14 @@ public class GameData
         makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
         makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
-        makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
-        makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
+        makeRegistry(STRUCTURE_FEATURES, Structure.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, FoliagePlacerType.class).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, TreeDecoratorType.class).disableSaving().disableSync().create();
 
         // Custom forge registries
-        makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
     }
@@ -275,13 +272,7 @@ public class GameData
     {
         return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
-    
-    @SuppressWarnings("unchecked")
-    public static Registry<Structure<?>> getStructureFeatures()
-    {
-        return (Registry<Structure<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURE_FEATURES, Registry.class);
-    }
-    
+
     @SuppressWarnings("unchecked")
     public static BiMap<String, Structure<?>> getStructureMap()
     {
@@ -378,7 +369,7 @@ public class GameData
     }
 
     //Lets us clear the map so we can rebuild it.
-    static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
+    private static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
     {
         void clear()
         {
@@ -535,74 +526,16 @@ public class GameData
         }
     }
 
-/*
-    private static class RecipeCallbacks implements IForgeRegistry.ValidateCallback<IRecipe>, IForgeRegistry.MissingFactory<IRecipe>
-    {
-        static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+    private static class AttributeCallbacks implements IForgeRegistry.ValidateCallback<Attribute> {
+
+        static final AttributeCallbacks INSTANCE = new AttributeCallbacks();
 
         @Override
-        public void onValidate(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, int id, ResourceLocation key, IRecipe obj)
+        public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
-            if (stage != RegistryManager.ACTIVE) return;
-            // verify the recipe output yields a registered item
-            Item item = obj.getRecipeOutput().getItem();
-            if (!stage.getRegistry(Item.class).containsValue(item))
-            {
-                throw new IllegalStateException(String.format("Recipe %s (%s) produces unregistered item %s (%s)", key, obj, item.getRegistryName(), item));
-            }
-        }
-
-        @Override
-        public IRecipe createMissing(ResourceLocation key, boolean isNetwork)
-        {
-            return isNetwork ? new DummyRecipe().setRegistryName(key) : null;
-        }
-        private static class DummyRecipe implements IRecipe
-        {
-            private static ItemStack result = new ItemStack(Items.DIAMOND, 64);
-            private ResourceLocation name;
-
-            @Override
-            public IRecipe setRegistryName(ResourceLocation name) {
-                this.name = name;
-                return this;
-            }
-            @Override public ResourceLocation getRegistryName() { return name; }
-            @Override public Class<IRecipe> getRegistryType() { return IRecipe.class; }
-            @Override public boolean matches(InventoryCrafting inv, World worldIn) { return false; } //dirt?
-            @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
-            @Override public boolean canFit(int width, int height) { return false; }
-            @Override public ItemStack getRecipeOutput() { return result; }
-            @Override public boolean isDynamic() { return true; }
+            GlobalEntityTypeAttributes.func_233834_a_();
         }
     }
-
-
-    private static ForgeRegistry<EntityEntry> entityRegistry;
-    public static ForgeRegistry<EntityEntry> getEntityRegistry() { return entityRegistry; }
-    public static void registerEntity(int id, ResourceLocation key, Class<? extends Entity> clazz, String oldName)
-    {
-        RegistryNamespaced<ResourceLocation, EntityEntry> reg = getWrapper(EntityEntry.class);
-        reg.register(id, key, new EntityEntry(clazz, oldName));
-    }
-
-    private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>
-    {
-        static final EntityCallbacks INSTANCE = new EntityCallbacks();
-
-        @Override
-        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
-        {
-            if (entry instanceof EntityEntryBuilder.BuiltEntityEntry)
-            {
-                ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
-            }
-            if (entry.getEgg() != null)
-                EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
-            }
-        }
-    }
-*/
 
     private static class SerializerCallbacks implements IForgeRegistry.AddCallback<DataSerializerEntry>, IForgeRegistry.ClearCallback<DataSerializerEntry>, IForgeRegistry.CreateCallback<DataSerializerEntry>
     {
@@ -629,41 +562,20 @@ public class GameData
             owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
         }
     }
-    
-    private static class FeatureCallbacks implements IForgeRegistry.AddCallback<Feature<?>>, IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
+
+    private static class FeatureCallbacks implements IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
     {
         static final FeatureCallbacks INSTANCE = new FeatureCallbacks();
-        
-        @Override
-        public void onAdd(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage, int id, Feature<?> obj, Feature<?> oldObj)
-        {
-            if (obj instanceof Structure)
-            {
-                Structure<?> structure = (Structure<?>) obj;
-                String key = structure.getStructureName().toLowerCase(Locale.ROOT);
-                
-                @SuppressWarnings("unchecked")
-                Registry<Structure<?>> reg = owner.getSlaveMap(STRUCTURE_FEATURES, Registry.class);
-                Registry.register(reg, key, structure);
-                
-                @SuppressWarnings("unchecked")
-                BiMap<String, Structure<?>> map = owner.getSlaveMap(STRUCTURES, BiMap.class);
-                if (oldObj != null && oldObj instanceof Structure) map.remove(((Structure<?>)oldObj).getStructureName());
-                map.put(key, structure);
-            }
-        }
-        
+
         @Override
         public void onClear(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            owner.getSlaveMap(STRUCTURE_FEATURES, ClearableRegistry.class).clear();
             owner.getSlaveMap(STRUCTURES, BiMap.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
         {
-            owner.setSlaveMap(STRUCTURE_FEATURES, new ClearableRegistry<>(owner.getRegistryName()));
             owner.setSlaveMap(STRUCTURES, HashBiMap.create());
         }
     }
@@ -715,7 +627,7 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
-        
+
         // Update legacy names
         snapshot = snapshot.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey()) // FIXME Registries need dependency ordering, this makes sure blocks are done before items (for ItemCallbacks) but it's lazy as hell
@@ -841,27 +753,6 @@ public class GameData
                         .confirm();
                 if (!confirmed)
                     StartupQuery.abort();
-
-/*
-                try
-                {
-                    String skip = System.getProperty("fml.doNotBackup");
-                    if (skip == null || !"true".equals(skip))
-                    {
-                        ZipperUtil.backupWorld();
-                    }
-                    else
-                    {
-                        for (int x = 0; x < 10; x++)
-                            LOGGER.error(GD, "!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
-                    }
-                }
-                catch (IOException e)
-                {
-                    StartupQuery.notify("The world backup couldn't be created.\n\n" + e);
-                    StartupQuery.abort();
-                }
-*/
             }
 
             if (!defaulted.isEmpty())

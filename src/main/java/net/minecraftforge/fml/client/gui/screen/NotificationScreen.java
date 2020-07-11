@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.Minecraft;
@@ -41,22 +42,22 @@ public class NotificationScreen extends Screen
         protected int getContentHeight()
         {
             int height = 0;
-            height += (textLines.length * font.FONT_HEIGHT) + 4;
+            height += (textLines.length * field_230712_o_.FONT_HEIGHT) + 4;
             if (height < this.height - 50)
                 height = this.height - 50;
             return height;
         }
 
         @Override
-        protected void drawPanel(int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY)
+        protected void drawPanel(MatrixStack mStack, int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY)
         {
-            drawCenteredLines(relativeY, textLines);
+            drawCenteredLines(mStack, relativeY, textLines);
         }
 
         @Override
         protected int getScrollAmount()
         {
-            return font.FONT_HEIGHT * 3;
+            return field_230712_o_.FONT_HEIGHT * 3;
         }
     }
 
@@ -80,53 +81,53 @@ public class NotificationScreen extends Screen
     }
 
     @Override
-    public void init()
+    public void func_231160_c_()
     {
-        super.init();
-        int panelY = PADDING + headerLines.length * font.FONT_HEIGHT + PADDING;
-        int panelHeight = this.height - PADDING - 20 - panelY;
+        super.func_231160_c_();
+        int panelY = PADDING + headerLines.length * field_230712_o_.FONT_HEIGHT + PADDING;
+        int panelHeight = this.field_230709_l_ - PADDING - 20 - panelY;
         if (!action.isEmpty()) {
-            panelHeight = panelHeight - font.FONT_HEIGHT - PADDING; 
+            panelHeight = panelHeight - field_230712_o_.FONT_HEIGHT - PADDING;
         }
-        textPanel = new TextPanel(this.minecraft, this.width - (PADDING * 2), panelHeight, panelY, PADDING);
-        this.children.add(textPanel);
+        textPanel = new TextPanel(this.field_230706_i_, this.field_230708_k_ - (PADDING * 2), panelHeight, panelY, PADDING);
+        this.field_230705_e_.add(textPanel);
         addConfirmationButtons();
     }
 
     protected void addConfirmationButtons() {
-        this.buttons.add(new Button(this.width / 2 - 100, this.height - PADDING - 20, 200, 20, I18n.format("gui.done"), b -> {
-            NotificationScreen.this.minecraft.displayGuiScreen(null);
+        this.field_230710_m_.add(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ - PADDING - 20, 200, 20, new TranslationTextComponent("gui.done"), b -> {
+            NotificationScreen.this.field_230706_i_.displayGuiScreen(null);
             query.finish();
         }));
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
+        this.func_230446_a_(mStack);
 
-        drawCenteredLines(PADDING, headerLines);
+        drawCenteredLines(mStack, PADDING, headerLines);
 
         if (textPanel != null)
         {
-            textPanel.render(mouseX, mouseY, partialTicks);
+            textPanel.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
         }
 
         if (!action.isEmpty())
         {
-            drawCenteredString(font, action, this.width / 2, this.height - PADDING - 20 - font.FONT_HEIGHT, -1);
+            func_238471_a_(mStack, field_230712_o_, action, this.field_230708_k_ / 2, this.field_230709_l_ - PADDING - 20 - field_230712_o_.FONT_HEIGHT, -1);
         }
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
     }
 
-    protected void drawCenteredLines(int yStart, String... lines)
+    protected void drawCenteredLines(MatrixStack mStack, int yStart, String... lines)
     {
         for (String line : lines)
         {
             if (!line.isEmpty())
-                this.drawCenteredString(font, line, this.width / 2, yStart, 0xFFFFFF);
-            yStart += font.FONT_HEIGHT;
+                this.func_238471_a_(mStack, field_230712_o_, line, this.field_230708_k_ / 2, yStart, 0xFFFFFF);
+            yStart += field_230712_o_.FONT_HEIGHT;
         }
     }
 }

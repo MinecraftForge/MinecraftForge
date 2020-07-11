@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.loot.LootContext;
 
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.

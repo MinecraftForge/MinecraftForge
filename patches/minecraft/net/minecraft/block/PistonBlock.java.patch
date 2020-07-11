@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PistonBlock.java
 +++ b/net/minecraft/block/PistonBlock.java
-@@ -166,6 +166,7 @@
+@@ -158,6 +158,7 @@
        }
  
        if (p_189539_4_ == 0) {
@@ -8,7 +8,7 @@
           if (!this.func_176319_a(p_189539_2_, p_189539_3_, direction, true)) {
              return false;
           }
-@@ -173,6 +174,7 @@
+@@ -165,6 +166,7 @@
           p_189539_2_.func_180501_a(p_189539_3_, p_189539_1_.func_206870_a(field_176320_b, Boolean.valueOf(true)), 67);
           p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, SoundEvents.field_187715_dR, SoundCategory.BLOCKS, 0.5F, p_189539_2_.field_73012_v.nextFloat() * 0.25F + 0.6F);
        } else if (p_189539_4_ == 1 || p_189539_4_ == 2) {
@@ -16,16 +16,7 @@
           TileEntity tileentity1 = p_189539_2_.func_175625_s(p_189539_3_.func_177972_a(direction));
           if (tileentity1 instanceof PistonTileEntity) {
              ((PistonTileEntity)tileentity1).func_145866_f();
-@@ -197,7 +199,7 @@
-             }
- 
-             if (!flag1) {
--               if (p_189539_4_ != 1 || blockstate.func_196958_f() || !func_185646_a(blockstate, p_189539_2_, blockpos, direction.func_176734_d(), false, direction) || blockstate.func_185905_o() != PushReaction.NORMAL && block != Blocks.field_150331_J && block != Blocks.field_150320_F) {
-+               if (p_189539_4_ != 1 || blockstate.isAir(p_189539_2_, blockpos) || !func_185646_a(blockstate, p_189539_2_, blockpos, direction.func_176734_d(), false, direction) || blockstate.func_185905_o() != PushReaction.NORMAL && block != Blocks.field_150331_J && block != Blocks.field_150320_F) {
-                   p_189539_2_.func_217377_a(p_189539_3_.func_177972_a(direction), false);
-                } else {
-                   this.func_176319_a(p_189539_2_, p_189539_3_, direction, false);
-@@ -210,6 +212,7 @@
+@@ -204,6 +206,7 @@
           p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, SoundEvents.field_187712_dQ, SoundCategory.BLOCKS, 0.5F, p_189539_2_.field_73012_v.nextFloat() * 0.15F + 0.6F);
        }
  
@@ -33,25 +24,25 @@
        return true;
     }
  
-@@ -238,7 +241,7 @@
+@@ -230,7 +233,7 @@
+                   return false;
+                }
+ 
+-               return !p_185646_0_.func_177230_c().func_235695_q_();
++               return !p_185646_0_.hasTileEntity();
+             } else {
                 return false;
              }
- 
--            return !block.func_149716_u();
-+            return !p_185646_0_.hasTileEntity();
-          } else {
-             return false;
-          }
-@@ -276,7 +279,7 @@
-          for(int j = list2.size() - 1; j >= 0; --j) {
-             BlockPos blockpos2 = list2.get(j);
+@@ -271,7 +274,7 @@
+          for(int k = list2.size() - 1; k >= 0; --k) {
+             BlockPos blockpos2 = list2.get(k);
              BlockState blockstate1 = p_176319_1_.func_180495_p(blockpos2);
--            TileEntity tileentity = blockstate1.func_177230_c().func_149716_u() ? p_176319_1_.func_175625_s(blockpos2) : null;
+-            TileEntity tileentity = blockstate1.func_177230_c().func_235695_q_() ? p_176319_1_.func_175625_s(blockpos2) : null;
 +            TileEntity tileentity = blockstate1.hasTileEntity() ? p_176319_1_.func_175625_s(blockpos2) : null;
              func_220059_a(blockstate1, p_176319_1_, blockpos2, tileentity);
              p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
-             --k;
-@@ -340,6 +343,10 @@
+             ablockstate[j++] = blockstate1;
+@@ -335,6 +338,10 @@
        return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
     }
  

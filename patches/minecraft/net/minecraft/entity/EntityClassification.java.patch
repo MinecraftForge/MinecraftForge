@@ -1,20 +1,22 @@
 --- a/net/minecraft/entity/EntityClassification.java
 +++ b/net/minecraft/entity/EntityClassification.java
-@@ -4,7 +4,7 @@
- import java.util.Map;
+@@ -6,7 +6,7 @@
  import java.util.stream.Collectors;
+ import net.minecraft.util.IStringSerializable;
  
--public enum EntityClassification {
-+public enum EntityClassification implements net.minecraftforge.common.IExtensibleEnum {
-    MONSTER("monster", 70, false, false),
-    CREATURE("creature", 10, true, true),
-    AMBIENT("ambient", 15, true, false),
-@@ -41,4 +41,8 @@
-    public boolean func_82705_e() {
+-public enum EntityClassification implements IStringSerializable {
++public enum EntityClassification implements IStringSerializable, net.minecraftforge.common.IExtensibleEnum {
+    MONSTER("monster", 70, false, false, 128),
+    CREATURE("creature", 10, true, true, 128),
+    AMBIENT("ambient", 15, true, false, 128),
+@@ -57,6 +57,10 @@
        return this.field_82707_i;
     }
-+
-+   public static EntityClassification create(String name, String p_i50381_3_, int p_i50381_4_, boolean p_i50381_5_, boolean p_i50381_6_) {
+ 
++   public static EntityClassification create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
- }
++
+    public int func_233671_f_() {
+       return this.field_233669_n_;
+    }

@@ -9,7 +9,7 @@
 +   }
 +
     public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-       if (p_220082_4_.func_177230_c() != p_220082_1_.func_177230_c()) {
+       if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c())) {
           if (p_220082_2_.func_175640_z(p_220082_3_)) {
 -            func_196534_a(p_220082_2_, p_220082_3_);
 +            catchFire(p_220082_1_, p_220082_2_, p_220082_3_, null, null);
@@ -56,9 +56,9 @@
           p_225533_2_.func_180501_a(p_225533_3_, Blocks.field_150350_a.func_176223_P(), 11);
           if (!p_225533_4_.func_184812_l_()) {
              if (item == Items.field_151033_d) {
-@@ -103,7 +109,7 @@
-          Entity entity = abstractarrowentity.func_212360_k();
-          if (abstractarrowentity.func_70027_ad()) {
+@@ -102,7 +108,7 @@
+          Entity entity = p_220066_4_.func_234616_v_();
+          if (p_220066_4_.func_70027_ad()) {
              BlockPos blockpos = p_220066_3_.func_216350_a();
 -            func_196535_a(p_220066_1_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            catchFire(p_220066_2_, p_220066_1_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);

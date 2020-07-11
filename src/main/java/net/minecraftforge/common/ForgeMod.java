@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,12 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.IWorldInfo;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
@@ -30,6 +35,8 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -44,8 +51,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.SaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -61,6 +66,7 @@ import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
+import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -82,6 +88,14 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
 
+    private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "forge");
+
+    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
+    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, Float.MAX_VALUE).func_233753_a_(true));
+    public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).func_233753_a_(true));
+
+    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute( "generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_233753_a_(true));
+
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
     {
@@ -99,6 +113,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.register(this);
+        ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
@@ -108,6 +123,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
+
+        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
+        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -116,9 +135,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
-        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
-        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-        MinecraftForge.EVENT_BUS.register(this);
 
         VersionChecker.startVersionCheck();
 
@@ -143,21 +159,24 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo)
     {
         CompoundNBT forgeData = new CompoundNBT();
         CompoundNBT dims = new CompoundNBT();
-        DimensionManager.writeRegistry(dims);
+        //TODO Dimensions
+//        DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
             forgeData.put("dims", dims);
         return forgeData;
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
+    public void readData(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo, CompoundNBT tag)
     {
-        if (tag.contains("dims", 10))
-            DimensionManager.readRegistry(tag.getCompound("dims"));
+        //TODO Dimensions
+//        if (tag.contains("dims", 10))
+//            DimensionManager.readRegistry(tag.getCompound("dims"));
+//        DimensionManager.processScheduledDeletions(levelSave);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)
@@ -176,9 +195,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeServer())
         {
+            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen);
             gen.addProvider(new ForgeBlockTagsProvider(gen));
-            gen.addProvider(new ForgeItemTagsProvider(gen));
+            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags));
             gen.addProvider(new ForgeRecipeProvider(gen));
+            gen.addProvider(new ForgeLootTableProvider(gen));
         }
     }
 

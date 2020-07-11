@@ -1,0 +1,119 @@
+--- a/net/minecraft/loot/LootPool.java
++++ b/net/minecraft/loot/LootPool.java
+@@ -25,17 +25,19 @@
+ import org.apache.commons.lang3.mutable.MutableInt;
+ 
+ public class LootPool {
+-   private final LootEntry[] field_186453_a;
+-   private final ILootCondition[] field_186454_b;
++   private final String name;
++   private final List<LootEntry> field_186453_a;
++   private final List<ILootCondition> field_186454_b;
+    private final Predicate<LootContext> field_216101_c;
+    private final ILootFunction[] field_216102_d;
+    private final BiFunction<ItemStack, LootContext, ItemStack> field_216103_e;
+    private IRandomRange field_186455_c;
+    private RandomValueRange field_186456_d;
+ 
+-   private LootPool(LootEntry[] p_i51268_1_, ILootCondition[] p_i51268_2_, ILootFunction[] p_i51268_3_, IRandomRange p_i51268_4_, RandomValueRange p_i51268_5_) {
+-      this.field_186453_a = p_i51268_1_;
+-      this.field_186454_b = p_i51268_2_;
++   private LootPool(LootEntry[] p_i51268_1_, ILootCondition[] p_i51268_2_, ILootFunction[] p_i51268_3_, IRandomRange p_i51268_4_, RandomValueRange p_i51268_5_, String name) {
++      this.name = name;
++      this.field_186453_a = Lists.newArrayList(p_i51268_1_);
++      this.field_186454_b = Lists.newArrayList(p_i51268_2_);
+       this.field_216101_c = LootConditionManager.func_216305_a(p_i51268_2_);
+       this.field_216102_d = p_i51268_3_;
+       this.field_216103_e = LootFunctionManager.func_216241_a(p_i51268_3_);
+@@ -92,19 +94,33 @@
+    }
+ 
+    public void func_227505_a_(ValidationTracker p_227505_1_) {
+-      for(int i = 0; i < this.field_186454_b.length; ++i) {
+-         this.field_186454_b[i].func_225580_a_(p_227505_1_.func_227534_b_(".condition[" + i + "]"));
++      for(int i = 0; i < this.field_186454_b.size(); ++i) {
++         this.field_186454_b.get(i).func_225580_a_(p_227505_1_.func_227534_b_(".condition[" + i + "]"));
+       }
+ 
+       for(int j = 0; j < this.field_216102_d.length; ++j) {
+          this.field_216102_d[j].func_225580_a_(p_227505_1_.func_227534_b_(".functions[" + j + "]"));
+       }
+ 
+-      for(int k = 0; k < this.field_186453_a.length; ++k) {
+-         this.field_186453_a[k].func_225579_a_(p_227505_1_.func_227534_b_(".entries[" + k + "]"));
++      for(int k = 0; k < this.field_186453_a.size(); ++k) {
++         this.field_186453_a.get(k).func_225579_a_(p_227505_1_.func_227534_b_(".entries[" + k + "]"));
+       }
+ 
+    }
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() { this.isFrozen = true; }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootPool after being frozen!");
++   }
++   public String getName(){ return this.name; }
++   public IRandomRange getRolls()      { return this.field_186455_c; }
++   public IRandomRange getBonusRolls() { return this.field_186456_d; }
++   public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
++   public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
++   //======================== FORGE END ===============================================
+ 
+    public static LootPool.Builder func_216096_a() {
+       return new LootPool.Builder();
+@@ -116,6 +132,7 @@
+       private final List<ILootFunction> field_216049_c = Lists.newArrayList();
+       private IRandomRange field_216050_d = new RandomValueRange(1.0F);
+       private RandomValueRange field_216051_e = new RandomValueRange(0.0F, 0.0F);
++      private String name;
+ 
+       public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
+          this.field_216050_d = p_216046_1_;
+@@ -141,11 +158,21 @@
+          return this;
+       }
+ 
++      public LootPool.Builder name(String name) {
++         this.name = name;
++         return this;
++      }
++
++      public LootPool.Builder bonusRolls(float min, float max) {
++         this.field_216051_e = new RandomValueRange(min, max);
++         return this;
++      }
++
+       public LootPool func_216044_b() {
+          if (this.field_216050_d == null) {
+             throw new IllegalArgumentException("Rolls not set");
+          } else {
+-            return new LootPool(this.field_216047_a.toArray(new LootEntry[0]), this.field_216048_b.toArray(new ILootCondition[0]), this.field_216049_c.toArray(new ILootFunction[0]), this.field_216050_d, this.field_216051_e);
++            return new LootPool(this.field_216047_a.toArray(new LootEntry[0]), this.field_216048_b.toArray(new ILootCondition[0]), this.field_216049_c.toArray(new ILootFunction[0]), this.field_216050_d, this.field_216051_e, name);
+          }
+       }
+    }
+@@ -158,18 +185,20 @@
+          ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
+          IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
+          RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);
+-         return new LootPool(alootentry, ailootcondition, ailootfunction, irandomrange, randomvaluerange);
++         return new LootPool(alootentry, ailootcondition, ailootfunction, irandomrange, randomvaluerange, net.minecraftforge.common.ForgeHooks.readPoolName(jsonobject));
+       }
+ 
+       public JsonElement serialize(LootPool p_serialize_1_, Type p_serialize_2_, JsonSerializationContext p_serialize_3_) {
+          JsonObject jsonobject = new JsonObject();
++         if (p_serialize_1_.name != null && !p_serialize_1_.name.startsWith("custom#"))
++            jsonobject.add("name", p_serialize_3_.serialize(p_serialize_1_.name));
+          jsonobject.add("rolls", RandomRanges.func_216131_a(p_serialize_1_.field_186455_c, p_serialize_3_));
+          jsonobject.add("entries", p_serialize_3_.serialize(p_serialize_1_.field_186453_a));
+          if (p_serialize_1_.field_186456_d.func_186509_a() != 0.0F && p_serialize_1_.field_186456_d.func_186512_b() != 0.0F) {
+             jsonobject.add("bonus_rolls", p_serialize_3_.serialize(p_serialize_1_.field_186456_d));
+          }
+ 
+-         if (!ArrayUtils.isEmpty((Object[])p_serialize_1_.field_186454_b)) {
++         if (!p_serialize_1_.field_186454_b.isEmpty()) {
+             jsonobject.add("conditions", p_serialize_3_.serialize(p_serialize_1_.field_186454_b));
+          }
+ 

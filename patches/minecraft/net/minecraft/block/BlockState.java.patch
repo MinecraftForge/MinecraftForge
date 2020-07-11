@@ -1,26 +1,11 @@
 --- a/net/minecraft/block/BlockState.java
 +++ b/net/minecraft/block/BlockState.java
-@@ -51,7 +51,7 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -6,7 +6,7 @@
+ import net.minecraft.state.Property;
+ import net.minecraft.util.registry.Registry;
  
--public class BlockState extends StateHolder<Block, BlockState> implements IStateHolder<BlockState> {
-+public class BlockState extends StateHolder<Block, BlockState> implements IStateHolder<BlockState>, net.minecraftforge.common.extensions.IForgeBlockState {
-    @Nullable
-    private BlockState.Cache field_215707_c;
-    private final int field_215708_d;
-@@ -106,10 +106,14 @@
-       return this.field_215708_d;
-    }
+-public class BlockState extends AbstractBlock.AbstractBlockState {
++public class BlockState extends AbstractBlock.AbstractBlockState implements net.minecraftforge.common.extensions.IForgeBlockState {
+    public static final Codec<BlockState> field_235877_b_ = func_235897_a_(Registry.field_212618_g, Block::func_176223_P).stable();
  
-+   /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos) */
-+   @Deprecated
-    public boolean func_196958_f() {
-       return this.func_177230_c().func_196261_e(this);
-    }
- 
-+   /** @deprecated use {@link BlockState#rotate(IWorld, BlockPos, Rotation) */
-+   @Deprecated
-    public MaterialColor func_185909_g(IBlockReader p_185909_1_, BlockPos p_185909_2_) {
-       return this.func_177230_c().func_180659_g(this, p_185909_1_, p_185909_2_);
-    }
+    public BlockState(Block p_i231876_1_, ImmutableMap<Property<?>, Comparable<?>> p_i231876_2_, MapCodec<BlockState> p_i231876_3_) {

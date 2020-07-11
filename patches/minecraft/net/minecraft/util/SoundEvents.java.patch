@@ -7,4 +7,4 @@
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class SoundEvents {
     public static final SoundEvent field_187674_a = func_219592_a("ambient.cave");
-    public static final SoundEvent field_204326_e = func_219592_a("ambient.underwater.enter");
+    public static final SoundEvent field_232692_b_ = func_219592_a("ambient.basalt_deltas.additions");

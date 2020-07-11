@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -73,12 +73,12 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
     {
-        private final Vec3d localPos;
+        private final Vector3d localPos;
         private final Entity target;
 
-        public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vec3d localPos)
+        public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vector3d localPos)
         {
-            super(player, hand, new BlockPos(target), null);
+            super(player, hand, target.func_233580_cy_(), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -89,7 +89,7 @@ public class PlayerInteractEvent extends PlayerEvent
          * [-width / 2, width / 2] while Y values will be in the range [0, height]
          * @return The local position
          */
-        public Vec3d getLocalPos()
+        public Vector3d getLocalPos()
         {
             return localPos;
         }
@@ -118,7 +118,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteract(PlayerEntity player, Hand hand, Entity target)
         {
-            super(player, hand, new BlockPos(target), null);
+            super(player, hand, target.func_233580_cy_(), null);
             this.target = target;
         }
 
@@ -210,7 +210,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickItem(PlayerEntity player, Hand hand)
         {
-            super(player, hand, new BlockPos(player), null);
+            super(player, hand, player.func_233580_cy_(), null);
         }
     }
 
@@ -223,7 +223,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(PlayerEntity player, Hand hand)
         {
-            super(player, hand, new BlockPos(player), null);
+            super(player, hand, player.func_233580_cy_(), null);
         }
     }
 
@@ -297,7 +297,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public LeftClickEmpty(PlayerEntity player)
         {
-            super(player, Hand.MAIN_HAND, new BlockPos(player), null);
+            super(player, Hand.MAIN_HAND, player.func_233580_cy_(), null);
         }
     }
 

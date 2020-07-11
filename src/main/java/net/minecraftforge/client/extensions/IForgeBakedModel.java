@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,22 +19,28 @@
 
 package net.minecraftforge.client.extensions;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
 
 public interface IForgeBakedModel
@@ -66,7 +72,7 @@ public interface IForgeBakedModel
         return net.minecraftforge.client.ForgeHooksClient.handlePerspective(getBakedModel(), cameraTransformType, mat);
     }
 
-    default @Nonnull IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
+    default @Nonnull IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
     {
         return tileData;
     }
@@ -74,5 +80,21 @@ public interface IForgeBakedModel
     default TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
     {
         return getBakedModel().getParticleTexture();
+    }
+
+    /**
+     * Override to true, to tell forge to call the getLayerModels method below.
+     */
+    default boolean isLayered()
+    {
+        return false;
+    }
+
+    /**
+     * If {@see isLayered()} returns true, this is called to get the list of layers to draw.
+     */
+    default List<Pair<IBakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
+    {
+        return Collections.singletonList(Pair.of(getBakedModel(), RenderTypeLookup.func_239219_a_(itemStack, fabulous)));
     }
 }

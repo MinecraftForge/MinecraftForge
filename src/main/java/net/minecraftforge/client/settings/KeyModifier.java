@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.InputMappings;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
@@ -49,15 +51,14 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasControlDown();
+            return Screen.func_231172_r_();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            String keyName = defaultLogic.get();
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-            return I18n.format(localizationFormatKey, keyName);
+            return new TranslationTextComponent(localizationFormatKey, defaultLogic.get());
         }
     },
     SHIFT {
@@ -70,13 +71,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasShiftDown();
+            return Screen.func_231173_s_();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.shift", defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
@@ -89,13 +90,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.hasAltDown();
+            return Screen.func_231174_t_();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input keyCode, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input keyCode, Supplier<ITextComponent> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.alt", defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {
@@ -122,7 +123,7 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
+        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
             return defaultLogic.get();
         }
@@ -170,5 +171,5 @@ public enum KeyModifier {
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-    public abstract String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic);
+    public abstract ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic);
 }

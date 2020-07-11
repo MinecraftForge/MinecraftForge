@@ -1,39 +1,39 @@
 --- a/net/minecraft/client/gui/widget/Widget.java
 +++ b/net/minecraft/client/gui/widget/Widget.java
 @@ -111,7 +111,7 @@
-       this.blit(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-       this.blit(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-       this.renderBg(minecraft, p_renderButton_1_, p_renderButton_2_);
--      int j = this.active ? 16777215 : 10526880;
+       this.func_238474_b_(p_230431_1_, this.field_230690_l_, this.field_230691_m_, 0, 46 + i * 20, this.field_230688_j_ / 2, this.field_230689_k_);
+       this.func_238474_b_(p_230431_1_, this.field_230690_l_ + this.field_230688_j_ / 2, this.field_230691_m_, 200 - this.field_230688_j_ / 2, 46 + i * 20, this.field_230688_j_ / 2, this.field_230689_k_);
+       this.func_230441_a_(p_230431_1_, minecraft, p_230431_2_, p_230431_3_);
+-      int j = this.field_230693_o_ ? 16777215 : 10526880;
 +      int j = getFGColor();
-       this.drawCenteredString(fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.func_76123_f(this.alpha * 255.0F) << 24);
+       this.func_238472_a_(p_230431_1_, fontrenderer, this.func_230458_i_(), this.field_230690_l_ + this.field_230688_j_ / 2, this.field_230691_m_ + (this.field_230689_k_ - 8) / 2, j | MathHelper.func_76123_f(this.field_230695_q_ * 255.0F) << 24);
     }
  
 @@ -206,6 +206,14 @@
-       this.width = p_setWidth_1_;
+       this.field_230688_j_ = p_230991_1_;
     }
  
 +   public int getHeight() {
-+      return this.height;
++      return this.field_230689_k_;
 +   }
 +
 +   public void setHeight(int value) {
-+      this.height = value;
++      this.field_230689_k_ = value;
 +   }
 +
-    public void setAlpha(float p_setAlpha_1_) {
-       this.alpha = p_setAlpha_1_;
+    public void func_230986_a_(float p_230986_1_) {
+       this.field_230695_q_ = p_230986_1_;
     }
 @@ -233,4 +241,17 @@
-    protected void setFocused(boolean p_setFocused_1_) {
-       this.focused = p_setFocused_1_;
+    protected void func_230996_d_(boolean p_230996_1_) {
+       this.field_230686_c_ = p_230996_1_;
     }
 +
 +   public static final int UNSET_FG_COLOR = -1;
 +   protected int packedFGColor = UNSET_FG_COLOR;
 +   public int getFGColor() {
 +      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
-+      return this.active ? 16777215 : 10526880; // White : Light Grey
++      return this.field_230693_o_ ? 16777215 : 10526880; // White : Light Grey
 +   }
 +   public void setFGColor(int color) {
 +      this.packedFGColor = color;

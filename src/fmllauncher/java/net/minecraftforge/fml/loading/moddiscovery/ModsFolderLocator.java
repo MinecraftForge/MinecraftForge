@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,7 +65,7 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
                 .filter(p->!excluded.contains(p))
                 .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
                 .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
-                .map(p->new ModFile(p, this))
+                .map(p->ModFile.newFMLInstance(p, this))
                 .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
                 .collect(Collectors.toList());
     }

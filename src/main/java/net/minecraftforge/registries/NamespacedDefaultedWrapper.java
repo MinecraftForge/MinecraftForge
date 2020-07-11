@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,10 +29,13 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.DefaultedRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mojang.serialization.Lifecycle;
 
 class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry
 {
@@ -42,19 +45,19 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     private NamespacedDefaultedWrapper(ForgeRegistry<T> owner)
     {
-        super(owner.getRegistryName().toString());
+        super("empty", RegistryKey.<T>func_240904_a_(owner.getRegistryName()), Lifecycle.experimental());
         this.delegate = owner;
     }
 
     @Override
-    public <V extends T> V register(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, RegistryKey<T> key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
         Validate.notNull(value);
 
         if (value.getRegistryName() == null)
-            value.setRegistryName(key);
+            value.setRegistryName(key.func_240901_a_());
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
@@ -64,7 +67,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V register(ResourceLocation key, V value)
+    public <V extends T> V register(RegistryKey<T> key, V value)
     {
         return register(-1, key, value);
     }
@@ -110,6 +113,12 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
+    public boolean func_230518_b_(int id)
+    {
+    	return this.getByValue(id) != null;
+    }
+
+    @Override
     public Iterator<T> iterator()
     {
         return this.delegate.iterator();
@@ -133,12 +142,6 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     public ResourceLocation getDefaultKey()
     {
         return this.delegate.getDefaultKey();
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return this.delegate.isEmpty();
     }
 
     //internal

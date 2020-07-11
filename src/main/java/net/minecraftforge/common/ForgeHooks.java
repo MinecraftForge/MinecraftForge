@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,8 +29,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -47,7 +49,11 @@ import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.*;
-import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.tags.ITag;
+import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -84,27 +90,17 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.Tag;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.*;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IntIdentityHashBiMap;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameType;
@@ -112,10 +108,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -175,23 +168,17 @@ public class ForgeHooks
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);
-        if (state.getMaterial().isToolNotRequired())
-        {
+        if (!state.func_235783_q_())
             return true;
-        }
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
         if (stack.isEmpty() || tool == null)
-        {
-            return player.canHarvestBlock(state);
-        }
+            return player.func_234569_d_(state);
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
         if (toolLevel < 0)
-        {
-            return player.canHarvestBlock(state);
-        }
+            return player.func_234569_d_(state);
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
     }
@@ -228,7 +215,8 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        blocks = getPrivateValue(AxeItem.class, null, 0);
+        //TODO Axes check Material and Blocks now.
+        blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
 
         //This is taken from ItemAxe, if that changes update here.
@@ -256,10 +244,10 @@ public class ForgeHooks
             if (state.isAir(world, pos))
                 return false;
 
-            if (isCreative && Screen.hasControlDown() && state.hasTileEntity())
+            if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
-            result = state.getBlock().getPickBlock(state, target, world, pos, player);
+            result = state.getPickBlock(target, world, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -467,7 +455,7 @@ public class ForgeHooks
         // Includes ipv4 and domain pattern
         // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
         // without a protocol or path.
-        ITextComponent ichat = null;
+        IFormattableTextComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
 
@@ -484,11 +472,11 @@ public class ForgeHooks
                 if (ichat == null)
                     ichat = new StringTextComponent(part);
                 else
-                    ichat.appendText(part);
+                    ichat.func_240702_b_(part);
             }
             lastEnd = end;
             String url = string.substring(start, end);
-            ITextComponent link = new StringTextComponent(url);
+            IFormattableTextComponent link = new StringTextComponent(url);
 
             try
             {
@@ -500,7 +488,7 @@ public class ForgeHooks
                         if (ichat == null)
                             ichat = new StringTextComponent(url);
                         else
-                            ichat.appendText(url);
+                            ichat.func_240702_b_(url);
                         continue;
                     }
                     url = "http://" + url;
@@ -510,18 +498,16 @@ public class ForgeHooks
             {
                 // Bad syntax bail out!
                 if (ichat == null) ichat = new StringTextComponent(url);
-                else ichat.appendText(url);
+                else ichat.func_240702_b_(url);
                 continue;
             }
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
-            link.getStyle().setClickEvent(click);
-            link.getStyle().setUnderlined(true);
-            link.getStyle().setColor(TextFormatting.BLUE);
+            link.func_230530_a_(link.getStyle().func_240715_a_(click).setUnderlined(true).func_240718_a_(Color.func_240744_a_(TextFormatting.BLUE)));
             if (ichat == null)
                 ichat = new StringTextComponent("");
-            ichat.appendSibling(link);
+            ichat.func_230529_a_(link);
         }
 
         // Append the rest of the message.
@@ -529,7 +515,7 @@ public class ForgeHooks
         if (ichat == null)
             ichat = new StringTextComponent(end);
         else if (end.length() > 0)
-            ichat.appendText(string.substring(lastEnd));
+            ichat.func_230529_a_(new StringTextComponent(string.substring(lastEnd)));
         return ichat;
     }
 
@@ -613,7 +599,7 @@ public class ForgeHooks
 
         world.captureBlockSnapshots = false;
 
-        if (ret == ActionResultType.SUCCESS)
+        if (ret.isSuccessOrConsume())
         {
             // save new item data
             int newSize = itemstack.getCount();
@@ -664,12 +650,12 @@ public class ForgeHooks
                     int updateFlag = snap.getFlag();
                     BlockState oldBlock = snap.getReplacedBlock();
                     BlockState newBlock = world.getBlockState(snap.getPos());
-                    if (!newBlock.getBlock().hasTileEntity(newBlock)) // Containers get placed automatically
+                    if (!newBlock.hasTileEntity()) // Containers get placed automatically
                     {
                         newBlock.onBlockAdded(world, snap.getPos(), oldBlock, false);
                     }
 
-                    world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
+                    world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
                 player.addStat(Stats.ITEM_USED.get(item));
             }
@@ -730,7 +716,7 @@ public class ForgeHooks
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
     }
 
-    public static boolean onTravelToDimension(Entity entity, DimensionType dimension)
+    public static boolean onTravelToDimension(Entity entity, RegistryKey<World> dimension)
     {
         EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
         MinecraftForge.EVENT_BUS.post(event);
@@ -747,11 +733,11 @@ public class ForgeHooks
 
     public static ActionResultType onInteractEntityAt(PlayerEntity player, Entity entity, RayTraceResult ray, Hand hand)
     {
-        Vec3d vec3d = ray.getHitVec().subtract(entity.getPositionVec());
+        Vector3d vec3d = ray.getHitVec().subtract(entity.getPositionVec());
         return onInteractEntityAt(player, entity, vec3d, hand);
     }
 
-    public static ActionResultType onInteractEntityAt(PlayerEntity player, Entity entity, Vec3d vec3d, Hand hand)
+    public static ActionResultType onInteractEntityAt(PlayerEntity player, Entity entity, Vector3d vec3d, Hand hand)
     {
         PlayerInteractEvent.EntityInteractSpecific evt = new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d);
         MinecraftForge.EVENT_BUS.post(evt);
@@ -808,7 +794,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonObject data, boolean custom, LootTableManager lootTableManager)
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom, LootTableManager lootTableManager)
     {
         Deque<LootTableContext> que = lootContext.get();
         if (que == null)
@@ -834,7 +820,7 @@ public class ForgeHooks
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
         if (ret != null)
-            ret.freeze();
+           ret.freeze();
 
         return ret;
     }
@@ -1067,7 +1053,7 @@ public class ForgeHooks
         }
 
         @Override
-        public IFluidState getFluidState(BlockPos pos) {
+        public FluidState getFluidState(BlockPos pos) {
             return Fluids.EMPTY.getDefaultState();
         }
 
@@ -1085,8 +1071,7 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
-    @SuppressWarnings("deprecation")
-    public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Function<ResourceLocation, Optional<T>> valueGetter, JsonObject json)
+    public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
         if (json.has("optional"))
         {
@@ -1094,9 +1079,9 @@ public class ForgeHooks
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                    builder.addOptional(valueGetter, Collections.singleton(new ResourceLocation(s)));
+                    list.add(ForgeHooks.makeOptionalTag(true, Collections.singleton(new ResourceLocation(s))));
                 else
-                    builder.addOptionalTag(new ResourceLocation(s.substring(1)));
+                    list.add(ForgeHooks.makeOptionalTag(false, Collections.singleton(new ResourceLocation(s.substring(1)))));
             }
         }
 
@@ -1105,19 +1090,12 @@ public class ForgeHooks
             for (JsonElement entry : JSONUtils.getJsonArray(json, "remove"))
             {
                 String s = JSONUtils.getString(entry, "value");
+                ITag.ITagEntry dummy;
                 if (!s.startsWith("#"))
-                {
-                    T value = valueGetter.apply(new ResourceLocation(s)).orElse(null);
-                    if (value != null)
-                    {
-                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singleton(value));
-                        builder.remove(dummyEntry);
-                    }
-                } else
-                {
-                    Tag.ITagEntry<T> dummyEntry = new Tag.TagEntry<>(new ResourceLocation(s.substring(1)));
-                    builder.remove(dummyEntry);
-                }
+                    dummy = new ITag.ItemEntry(new ResourceLocation(s));
+                else
+                    dummy = new ITag.TagEntry(new ResourceLocation(s.substring(1)));
+                allList.removeIf(e -> e.func_232968_a_().equals(dummy));
             }
         }
     }
@@ -1189,11 +1167,68 @@ public class ForgeHooks
      * @return The modified list
      */
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
-        LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
+        LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
         for(IGlobalLootModifier mod : man.getAllLootMods()) {
             list = mod.apply(list, context);
         }
         return list;
     }
 
+    @Deprecated//INTERNAL
+    public static IOptionalTagEntry makeOptionalTag(boolean items, Collection<ResourceLocation> locations) {
+        return items ? new OptionalItemTarget(locations) : new OptionalTagTarget(locations);
+    }
+
+    private static class OptionalTagTarget implements IOptionalTagEntry
+    {
+
+        private final Collection<ResourceLocation> referents;
+
+        public OptionalTagTarget(Collection<ResourceLocation> referents)
+        {
+            this.referents = referents;
+        }
+
+        @Override
+        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
+        {
+            referents.stream()
+                    .map(tagLookup)
+                    .filter(Objects::nonNull)
+                    .map(ITag::func_230236_b_)
+                    .flatMap(List::stream)
+                    .forEach(collector);
+            return true;
+        }
+
+        @Override
+        public void func_230237_a_(JsonArray array)
+        {
+            referents.stream().map(e -> "#" + e).forEach(array::add);
+        }
+    }
+
+    private static class OptionalItemTarget implements IOptionalTagEntry
+    {
+
+        private final Collection<ResourceLocation> locations;
+
+        public OptionalItemTarget(Collection<ResourceLocation> locations)
+        {
+            this.locations = locations;
+        }
+
+        @Override
+        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
+        {
+            locations.stream().map(itemLookup).filter(Objects::nonNull).forEach(collector);
+            return true;
+        }
+
+        @Override
+        public void func_230237_a_(JsonArray array)
+        {
+            locations.stream().map(ResourceLocation::toString).forEach(array::add);
+        }
+    }
 }

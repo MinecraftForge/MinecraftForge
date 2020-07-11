@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,11 +93,11 @@ public class PistonEventTest
             {
                 if (pistonHelper.canMove())
                 {
-                    player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())));
+                    player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())), player.getUniqueID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston won't extend"));
+                    player.sendMessage(new StringTextComponent("Piston won't extend"), player.getUniqueID());
                 }
             }
 
@@ -138,11 +138,11 @@ public class PistonEventTest
                     BlockPos targetPos = event.getFaceOffsetPos().offset(event.getDirection());
                     boolean canPush = PistonBlock.canPush(event.getWorld().getBlockState(targetPos), (World) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
                     boolean isAir = event.getWorld().isAirBlock(targetPos);
-                    player.sendMessage(new StringTextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)));
+                    player.sendMessage(new StringTextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUniqueID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston will retract"));
+                    player.sendMessage(new StringTextComponent("Piston will retract"), player.getUniqueID());
                 }
             }
             // Offset twice to see if retraction will pull cobblestone

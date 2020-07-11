@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/IWorldReader.java
 +++ b/net/minecraft/world/IWorldReader.java
-@@ -57,7 +57,7 @@
+@@ -68,7 +68,7 @@
     }
  
     default boolean func_175623_d(BlockPos p_175623_1_) {
@@ -9,7 +9,7 @@
     }
  
     default boolean func_175710_j(BlockPos p_175710_1_) {
-@@ -148,6 +148,10 @@
+@@ -157,6 +157,10 @@
        return this.func_217354_b(p_175667_1_.func_177958_n() >> 4, p_175667_1_.func_177952_p() >> 4);
     }
  

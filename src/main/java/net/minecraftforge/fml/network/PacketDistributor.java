@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,9 +25,10 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.IPacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.LogicalSidedProvider;
 
@@ -55,7 +56,7 @@ public class PacketDistributor<T> {
      * <br/>
      * {@link #with(Supplier)} DimensionType
      */
-    public static final PacketDistributor<DimensionType> DIMENSION = new PacketDistributor<>(PacketDistributor::playerListDimConsumer, NetworkDirection.PLAY_TO_CLIENT);
+    public static final PacketDistributor<RegistryKey<World>> DIMENSION = new PacketDistributor<>(PacketDistributor::playerListDimConsumer, NetworkDirection.PLAY_TO_CLIENT);
     /**
      * Send to everyone near the {@link TargetPoint} specified in the Supplier
      * <br/>
@@ -106,7 +107,7 @@ public class PacketDistributor<T> {
         private final double y;
         private final double z;
         private final double r2;
-        private final DimensionType dim;
+        private final RegistryKey<World> dim;
 
         /**
          * A target point with excluded entity
@@ -118,7 +119,7 @@ public class PacketDistributor<T> {
          * @param r2 Radius
          * @param dim DimensionType
          */
-        public TargetPoint(final ServerPlayerEntity excluded, final double x, final double y, final double z, final double r2, final DimensionType dim) {
+        public TargetPoint(final ServerPlayerEntity excluded, final double x, final double y, final double z, final double r2, final RegistryKey<World> dim) {
             this.excluded = excluded;
             this.x = x;
             this.y = y;
@@ -135,7 +136,7 @@ public class PacketDistributor<T> {
          * @param r2 Radius
          * @param dim DimensionType
          */
-        public TargetPoint(final double x, final double y, final double z, final double r2, final DimensionType dim) {
+        public TargetPoint(final double x, final double y, final double z, final double r2, final RegistryKey<World> dim) {
             this.excluded = null;
             this.x = x;
             this.y = y;
@@ -153,7 +154,7 @@ public class PacketDistributor<T> {
          * @param dim DimensionType
          * @return A TargetPoint supplier
          */
-        public static Supplier<TargetPoint> p(double x, double y, double z, double r2, DimensionType dim) {
+        public static Supplier<TargetPoint> p(double x, double y, double z, double r2, RegistryKey<World> dim) {
             TargetPoint tp = new TargetPoint(x, y, z, r2, dim);
             return ()->tp;
         }
@@ -215,8 +216,8 @@ public class PacketDistributor<T> {
     private Consumer<IPacket<?>> playerConsumer(final Supplier<ServerPlayerEntity> entityPlayerMPSupplier) {
         return p -> entityPlayerMPSupplier.get().connection.netManager.sendPacket(p);
     }
-    private Consumer<IPacket<?>> playerListDimConsumer(final Supplier<DimensionType> dimensionTypeSupplier) {
-        return p->getServer().getPlayerList().sendPacketToAllPlayersInDimension(p, dimensionTypeSupplier.get());
+    private Consumer<IPacket<?>> playerListDimConsumer(final Supplier<RegistryKey<World>> dimensionTypeSupplier) {
+        return p->getServer().getPlayerList().func_232642_a_(p, dimensionTypeSupplier.get());
     }
 
     private Consumer<IPacket<?>> playerListAll(final Supplier<Void> voidSupplier) {

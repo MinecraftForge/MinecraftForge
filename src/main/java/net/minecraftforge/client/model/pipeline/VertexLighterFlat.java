@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,15 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import java.util.List;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -34,15 +35,21 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
-
-import java.util.List;
-import java.util.Objects;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
+import net.minecraft.world.IBlockDisplayReader;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
     protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.NORMAL, 4);
+    
+    // TODO 1.16/1.17 possibly refactor out the need for the "unpacked" format entirely. It's creating more headaches than solutions.
+    // This mess reverses the conversion to float bits done in LightUtil.unpack
+    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.TEX_2SB.getType().getSize() - 1))) - 1) >>> 1;
+    // Max lightmap value, for rescaling
+    private static final int LIGHTMAP_MAX = 0xF0;
+    // Inlined factor for rescaling input lightmap values, "rounded" up to the next float value to avoid precision loss when result is truncated to int
+    private static final float LIGHTMAP_RESCALE = Math.nextAfter((float) LIGHTMAP_PACKING_FACTOR / LIGHTMAP_MAX, LIGHTMAP_PACKING_FACTOR);
 
     protected final BlockInfo blockInfo;
     private int tint = -1;
@@ -198,7 +205,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 z += normal[v][2] * .5f;
             }
 
-            float blockLight = lightmap[v][0], skyLight = lightmap[v][1];
+            float blockLight = lightmap[v][0] * LIGHTMAP_RESCALE, skyLight = lightmap[v][1] * LIGHTMAP_RESCALE;
             updateLightmap(normal[v], lightmap[v], x, y, z);
             if(dataLength[lightmapIndex] > 1)
             {
@@ -222,7 +229,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 switch(element.getUsage())
                 {
                     case POSITION:
-                        final net.minecraft.client.renderer.Vector4f pos = new net.minecraft.client.renderer.Vector4f(
+                        final Vector4f pos = new Vector4f(
                                 position[v][0], position[v][1], position[v][2], 1);
                         pos.transform(pose.getMatrix());
 
@@ -232,7 +239,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         parent.put(e, position[v]);
                         break;
                     case NORMAL:
-                        final net.minecraft.client.renderer.Vector3f norm = new net.minecraft.client.renderer.Vector3f(normal[v]);
+                        final Vector3f norm = new Vector3f(normal[v]);
                         norm.transform(pose.getNormal());
 
                         normal[v][0] = norm.getX();
@@ -306,7 +313,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(ILightReader world)
+    public void setWorld(IBlockDisplayReader world)
     {
         blockInfo.setWorld(world);
     }

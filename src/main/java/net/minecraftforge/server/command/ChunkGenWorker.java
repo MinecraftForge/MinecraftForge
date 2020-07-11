@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,10 +27,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
 public class ChunkGenWorker implements IWorker
@@ -38,7 +37,7 @@ public class ChunkGenWorker implements IWorker
     private final CommandSource listener;
     protected final BlockPos start;
     protected final int total;
-    private final DimensionType dim;
+    private final ServerWorld dim;
     private final Queue<BlockPos> queue;
     private final int notificationFrequency;
     private int lastNotification = 0;
@@ -46,7 +45,7 @@ public class ChunkGenWorker implements IWorker
     private int genned = 0;
     private Boolean keepingLoaded;
 
-    public ChunkGenWorker(CommandSource listener, BlockPos start, int total, DimensionType dim, int interval)
+    public ChunkGenWorker(CommandSource listener, BlockPos start, int total, ServerWorld dim, int interval)
     {
         this.listener = listener;
         this.start = start;
@@ -97,6 +96,7 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean doWork()
     {
+    	/*
         ServerWorld world = DimensionManager.getWorld(listener.getServer(), dim, false, false);
         if (world == null)
         {
@@ -121,7 +121,7 @@ public class ChunkGenWorker implements IWorker
             }
             return false;
         }
-        */
+        * /
 
         BlockPos next = queue.poll();
 
@@ -161,6 +161,7 @@ public class ChunkGenWorker implements IWorker
             }
             return false;
         }
+        */
         return true;
     }
 }

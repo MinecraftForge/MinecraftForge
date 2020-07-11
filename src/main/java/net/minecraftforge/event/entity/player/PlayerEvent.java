@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,8 @@ import java.io.File;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -488,21 +489,21 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class PlayerChangedDimensionEvent extends PlayerEvent {
-        private final DimensionType fromDim;
-        private final DimensionType toDim;
-        public PlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim)
+        private final RegistryKey<World> fromDim;
+        private final RegistryKey<World> toDim;
+        public PlayerChangedDimensionEvent(PlayerEntity player, RegistryKey<World> fromDim, RegistryKey<World> toDim)
         {
             super(player);
             this.fromDim = fromDim;
             this.toDim = toDim;
         }
 
-        public DimensionType getFrom()
+        public RegistryKey<World> getFrom()
         {
             return this.fromDim;
         }
 
-        public DimensionType getTo()
+        public RegistryKey<World> getTo()
         {
             return this.toDim;
         }

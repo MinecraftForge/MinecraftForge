@@ -1,24 +1,32 @@
 --- a/net/minecraft/block/AbstractRailBlock.java
 +++ b/net/minecraft/block/AbstractRailBlock.java
-@@ -36,7 +36,7 @@
-    }
+@@ -13,7 +13,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ 
+-public abstract class AbstractRailBlock extends Block {
++public abstract class AbstractRailBlock extends Block implements net.minecraftforge.common.extensions.IAbstractRailBlock {
+    protected static final VoxelShape field_185590_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
+    protected static final VoxelShape field_190959_b = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
+    private final boolean field_196277_c;
+@@ -37,6 +37,7 @@
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
--      RailShape railshape = p_220053_1_.func_177230_c() == this ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
-+      RailShape railshape = p_220053_1_.func_177230_c() == this ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
+       RailShape railshape = p_220053_1_.func_203425_a(this) ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
++      RailShape railShape2 = p_220053_1_.func_177230_c() == this ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
  
-@@ -56,7 +56,7 @@
+@@ -61,7 +62,7 @@
  
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
        if (!p_220069_2_.field_72995_K) {
 -         RailShape railshape = p_220069_1_.func_177229_b(this.func_176560_l());
 +         RailShape railshape = getRailDirection(p_220069_1_, p_220069_2_, p_220069_3_, null);
-          boolean flag = false;
-          BlockPos blockpos = p_220069_3_.func_177977_b();
-          if (!func_220064_c(p_220069_2_, blockpos)) {
-@@ -115,7 +115,7 @@
+          if (func_235328_a_(p_220069_3_, p_220069_2_, railshape) && !p_220069_2_.func_175623_d(p_220069_3_)) {
+             if (!p_220069_6_) {
+                func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
+@@ -113,7 +114,7 @@
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
        if (!p_196243_5_) {
           super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
@@ -27,70 +35,24 @@
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
  
-@@ -134,5 +134,66 @@
+@@ -132,5 +133,20 @@
        return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
  
-+   //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
-    public abstract IProperty<RailShape> func_176560_l();
++   @Deprecated //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
+    public abstract Property<RailShape> func_176560_l();
 +
 +   /* ======================================== FORGE START =====================================*/
-+   /**
-+    * Return true if the rail can make corners.
-+    * Used by placement logic.
-+    * @param world The world.
-+    * @param pos Block's position in world
-+    * @return True if the rail can make corners.
-+    */
++
++   @Override
 +   public boolean isFlexibleRail(BlockState state, IBlockReader world, BlockPos pos)
 +   {
-+       return !this.field_196277_c;
++      return  !this.field_196277_c;
 +   }
 +
-+   /**
-+    * Returns true if the rail can make up and down slopes.
-+    * Used by placement logic.
-+    * @param world The world.
-+    * @param pos Block's position in world
-+    * @return True if the rail can make slopes.
-+    */
-+   public boolean canMakeSlopes(BlockState state, IBlockReader world, BlockPos pos) {
-+       return true;
-+   }
-+
-+   /**
-+    * Return the rail's direction.
-+    * Can be used to make the cart think the rail is a different shape,
-+    * for example when making diamond junctions or switches.
-+    * The cart parameter will often be null unless it it called from EntityMinecart.
-+    *
-+    * @param world The world.
-+    * @param pos Block's position in world
-+    * @param state The BlockState
-+    * @param cart The cart asking for the metadata, null if it is not called by EntityMinecart.
-+    * @return The direction.
-+    */
++   @Override
 +   public RailShape getRailDirection(BlockState state, IBlockReader world, BlockPos pos, @javax.annotation.Nullable net.minecraft.entity.item.minecart.AbstractMinecartEntity cart) {
-+       return state.func_177229_b(func_176560_l());
++      return state.func_177229_b(func_176560_l());
 +   }
-+
-+   /**
-+    * Returns the max speed of the rail at the specified position.
-+    * @param world The world.
-+    * @param cart The cart on the rail, may be null.
-+    * @param pos Block's position in world
-+    * @return The max speed of the current rail.
-+    */
-+   public float getRailMaxSpeed(BlockState state, World world, BlockPos pos, net.minecraft.entity.item.minecart.AbstractMinecartEntity cart) {
-+       return 0.4f;
-+   }
-+
-+   /**
-+    * This function is called by any minecart that passes over this rail.
-+    * It is called once per update tick that the minecart is on the rail.
-+    * @param world The world.
-+    * @param cart The cart on the rail.
-+    * @param pos Block's position in world
-+    */
-+   public void onMinecartPass(BlockState state, World world, BlockPos pos, net.minecraft.entity.item.minecart.AbstractMinecartEntity cart) { }
++   /* ========================================= FORGE END ======================================*/
  }

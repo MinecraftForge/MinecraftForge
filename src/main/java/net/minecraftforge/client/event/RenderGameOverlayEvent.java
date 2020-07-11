@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.MainWindow;
@@ -29,6 +30,11 @@ import net.minecraft.client.gui.ClientBossInfo;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
+    public MatrixStack getMatrixStack()
+    {
+        return mStack;
+    }
+
     public float getPartialTicks()
     {
         return partialTicks;
@@ -70,19 +76,22 @@ public class RenderGameOverlayEvent extends Event
         VIGNETTE
     }
 
+    private final MatrixStack mStack;
     private final float partialTicks;
     private final MainWindow window;
     private final ElementType type;
 
-    public RenderGameOverlayEvent(float partialTicks, MainWindow window)
+    public RenderGameOverlayEvent(MatrixStack mStack, float partialTicks, MainWindow window)
     {
+        this.mStack = mStack;
         this.partialTicks = partialTicks;
         this.window = window;
         this.type = null;
     }
 
-    private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type)
+    private RenderGameOverlayEvent(MatrixStack mStack, RenderGameOverlayEvent parent, ElementType type)
     {
+        this.mStack = mStack;
         this.partialTicks = parent.getPartialTicks();
         this.window = parent.getWindow();
         this.type = type;
@@ -90,17 +99,17 @@ public class RenderGameOverlayEvent extends Event
 
     public static class Pre extends RenderGameOverlayEvent
     {
-        public Pre(RenderGameOverlayEvent parent, ElementType type)
+        public Pre(MatrixStack mStack, RenderGameOverlayEvent parent, ElementType type)
         {
-            super(parent, type);
+            super(mStack, parent, type);
         }
     }
 
     public static class Post extends RenderGameOverlayEvent
     {
-        public Post(RenderGameOverlayEvent parent, ElementType type)
+        public Post(MatrixStack mStack, RenderGameOverlayEvent parent, ElementType type)
         {
-            super(parent, type);
+            super(mStack, parent, type);
         }
         @Override public boolean isCancelable(){ return false; }
     }
@@ -111,9 +120,9 @@ public class RenderGameOverlayEvent extends Event
         private final int x;
         private final int y;
         private int increment;
-        public BossInfo(RenderGameOverlayEvent parent, ElementType type, ClientBossInfo bossInfo, int x, int y, int increment)
+        public BossInfo(MatrixStack mStack, RenderGameOverlayEvent parent, ElementType type, ClientBossInfo bossInfo, int x, int y, int increment)
         {
-            super(parent, type);
+            super(mStack, parent, type);
             this.bossInfo = bossInfo;
             this.x = x;
             this.y = y;
@@ -166,9 +175,9 @@ public class RenderGameOverlayEvent extends Event
     {
         private final ArrayList<String> left;
         private final ArrayList<String> right;
-        public Text(RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
+        public Text(MatrixStack mStack, RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
         {
-            super(parent, ElementType.TEXT);
+            super(mStack, parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
         }
@@ -189,9 +198,9 @@ public class RenderGameOverlayEvent extends Event
         private int posX;
         private int posY;
 
-        public Chat(RenderGameOverlayEvent parent, int posX, int posY)
+        public Chat(MatrixStack mStack, RenderGameOverlayEvent parent, int posX, int posY)
         {
-            super(parent, ElementType.CHAT);
+            super(mStack, parent, ElementType.CHAT);
             this.setPosX(posX);
             this.setPosY(posY);
         }

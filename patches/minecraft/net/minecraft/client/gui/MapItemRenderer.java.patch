@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/MapItemRenderer.java
 +++ b/net/minecraft/client/gui/MapItemRenderer.java
-@@ -114,6 +114,7 @@
+@@ -115,6 +115,7 @@
  
           for(MapDecoration mapdecoration : this.field_148242_b.field_76203_h.values()) {
              if (!p_228089_3_ || mapdecoration.func_191180_f()) {

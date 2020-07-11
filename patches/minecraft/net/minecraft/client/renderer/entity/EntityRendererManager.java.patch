@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -183,13 +183,15 @@
+@@ -187,7 +187,10 @@
        this.field_178637_m = new PlayerRenderer(this);
        this.field_178636_l.put("default", this.field_178637_m);
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
@@ -11,13 +11,7 @@
        for(EntityType<?> entitytype : Registry.field_212629_r) {
           if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {
              throw new IllegalStateException("No renderer registered for " + Registry.field_212629_r.func_177774_c(entitytype));
-          }
-       }
--
-    }
- 
-    public <T extends Entity> EntityRenderer<? super T> func_78713_a(T p_78713_1_) {
-@@ -445,4 +447,8 @@
+@@ -449,4 +452,8 @@
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
     }

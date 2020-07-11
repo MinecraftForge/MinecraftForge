@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/main/Main.java
++++ b/net/minecraft/client/main/Main.java
+@@ -120,7 +120,7 @@
+       String s7 = func_206236_a(optionset, optionspec);
+       Integer integer = func_206236_a(optionset, optionspec1);
+       CrashReport.func_230188_h_();
+-      Bootstrap.func_151354_b();
++      net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(()->Bootstrap.func_151354_b(), net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
+       Bootstrap.func_218821_c();
+       Util.func_240994_l_();
+       Session session = new Session(optionspec10.value(optionset), s5, optionspec12.value(optionset), optionspec21.value(optionset));

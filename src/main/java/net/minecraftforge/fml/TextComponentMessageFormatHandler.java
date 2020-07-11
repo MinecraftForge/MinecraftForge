@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,17 +19,17 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
 public class TextComponentMessageFormatHandler {
-    public static int handle(final TranslationTextComponent parent, final List<ITextComponent> children, final Object[] formatArgs, final String format) {
+    public static int handle(final TranslationTextComponent parent, final List<ITextProperties> children, final Object[] formatArgs, final String format) {
         try {
             StringTextComponent component = new StringTextComponent(ForgeI18n.parseFormat(format, formatArgs));
-            component.getStyle().setParentStyle(parent.getStyle());
+            component.getStyle().func_240717_a_(parent.getStyle());
             children.add(component);
             return format.length();
         } catch (IllegalArgumentException ex) {

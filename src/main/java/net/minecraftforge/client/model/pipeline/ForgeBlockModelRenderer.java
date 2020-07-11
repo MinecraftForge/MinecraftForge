@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeConfig;
 
@@ -51,7 +51,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelFlat(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean renderModelFlat(IBlockDisplayReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -71,7 +71,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelSmooth(ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean renderModelSmooth(IBlockDisplayReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, IVertexBuilder buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -90,7 +90,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, ILightReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, IBlockDisplayReader world, IBakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         lighter.setWorld(world);
         lighter.setState(state);

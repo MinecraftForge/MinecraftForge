@@ -1,0 +1,96 @@
+--- a/net/minecraft/loot/LootTable.java
++++ b/net/minecraft/loot/LootTable.java
+@@ -31,13 +31,13 @@
+    public static final LootTable field_186464_a = new LootTable(LootParameterSets.field_216260_a, new LootPool[0], new ILootFunction[0]);
+    public static final LootParameterSet field_216126_b = LootParameterSets.field_216266_g;
+    private final LootParameterSet field_216127_d;
+-   private final LootPool[] field_186466_c;
++   private final List<LootPool> field_186466_c;
+    private final ILootFunction[] field_216128_f;
+    private final BiFunction<ItemStack, LootContext, ItemStack> field_216129_g;
+ 
+    private LootTable(LootParameterSet p_i51265_1_, LootPool[] p_i51265_2_, ILootFunction[] p_i51265_3_) {
+       this.field_216127_d = p_i51265_1_;
+-      this.field_186466_c = p_i51265_2_;
++      this.field_186466_c = Lists.newArrayList(p_i51265_2_);
+       this.field_216128_f = p_i51265_3_;
+       this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
+    }
+@@ -75,6 +75,7 @@
+ 
+    }
+ 
++   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
+    public void func_216120_b(LootContext p_216120_1_, Consumer<ItemStack> p_216120_2_) {
+       this.func_216114_a(p_216120_1_, func_216124_a(p_216120_2_));
+    }
+@@ -82,6 +83,7 @@
+    public List<ItemStack> func_216113_a(LootContext p_216113_1_) {
+       List<ItemStack> list = Lists.newArrayList();
+       this.func_216120_b(p_216113_1_, list::add);
++      list = net.minecraftforge.common.ForgeHooks.modifyLoot(list, p_216113_1_);
+       return list;
+    }
+ 
+@@ -90,8 +92,8 @@
+    }
+ 
+    public void func_227506_a_(ValidationTracker p_227506_1_) {
+-      for(int i = 0; i < this.field_186466_c.length; ++i) {
+-         this.field_186466_c[i].func_227505_a_(p_227506_1_.func_227534_b_(".pools[" + i + "]"));
++      for(int i = 0; i < this.field_186466_c.size(); ++i) {
++         this.field_186466_c.get(i).func_227505_a_(p_227506_1_.func_227534_b_(".pools[" + i + "]"));
+       }
+ 
+       for(int j = 0; j < this.field_216128_f.length; ++j) {
+@@ -173,6 +175,41 @@
+       return new LootTable.Builder();
+    }
+ 
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() {
++      this.isFrozen = true;
++      this.field_186466_c.forEach(LootPool::freeze);
++   }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
++   }
++
++   public LootPool getPool(String name) {
++      return field_186466_c.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
++   }
++
++   public LootPool removePool(String name) {
++      checkFrozen();
++      for (LootPool pool : this.field_186466_c) {
++         if (name.equals(pool.getName())) {
++            this.field_186466_c.remove(pool);
++            return pool;
++         }
++      }
++      return null;
++   }
++
++   public void addPool(LootPool pool) {
++      checkFrozen();
++      if (field_186466_c.stream().anyMatch(e -> e == pool || e.getName().equals(pool.getName())))
++         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
++      this.field_186466_c.add(pool);
++   }
++   //======================== FORGE END ===============================================
++
+    public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
+       private final List<LootPool> field_216041_a = Lists.newArrayList();
+       private final List<ILootFunction> field_216042_b = Lists.newArrayList();
+@@ -227,7 +264,7 @@
+             }
+          }
+ 
+-         if (p_serialize_1_.field_186466_c.length > 0) {
++         if (!p_serialize_1_.field_186466_c.isEmpty()) {
+             jsonobject.add("pools", p_serialize_3_.serialize(p_serialize_1_.field_186466_c));
+          }
+ 

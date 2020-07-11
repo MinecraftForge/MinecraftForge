@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/BakedQuad.java
 +++ b/net/minecraft/client/renderer/model/BakedQuad.java
-@@ -6,13 +6,22 @@
+@@ -6,7 +6,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,29 +9,10 @@
     protected final int[] field_178215_a;
     protected final int field_178213_b;
     protected final Direction field_178214_c;
-    protected final TextureAtlasSprite field_187509_d;
- 
-+   /**
-+    * @deprecated Use constructor with the format argument.
-+    */
-+   @Deprecated
-    public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, Direction p_i46574_3_, TextureAtlasSprite p_i46574_4_) {
-+      this(p_i46574_1_, p_i46574_2_, p_i46574_3_, p_i46574_4_, true);
-+   }
-+
-+   public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, Direction p_i46574_3_, TextureAtlasSprite p_i46574_4_, boolean applyDiffuseLighting) {
-+      this.applyDiffuseLighting = applyDiffuseLighting;
-       this.field_178215_a = p_i46574_1_;
-       this.field_178213_b = p_i46574_2_;
-       this.field_178214_c = p_i46574_3_;
-@@ -34,4 +43,20 @@
-    public Direction func_178210_d() {
+@@ -37,6 +37,15 @@
        return this.field_178214_c;
     }
-+
-+   // Forge start
-+   protected final boolean applyDiffuseLighting;
-+
+ 
 +   @Override
 +   public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) {
 +      net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
@@ -41,7 +22,6 @@
 +      return field_187509_d;
 +   }
 +
-+   public boolean shouldApplyDiffuseLighting() {
-+       return applyDiffuseLighting;
-+   }
- }
+    public boolean func_239287_f_() {
+       return this.field_239286_e_;
+    }

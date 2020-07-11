@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ b/net/minecraft/client/renderer/ActiveRenderInfo.java
-@@ -168,4 +168,16 @@
+@@ -170,4 +170,16 @@
        this.field_216791_c = null;
        this.field_216789_a = false;
     }

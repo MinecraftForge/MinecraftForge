@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.event.world;
+/*package net.minecraftforge.event.world;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,7 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * Contains a list of missing entries. Registering an entry with the DimensionManger
  * will remove the matching entry from the missing list.
- */
+ * /
 public class RegisterDimensionsEvent extends Event
 {
     private final Map<ResourceLocation, SavedEntry> missing;
@@ -57,4 +57,4 @@ public class RegisterDimensionsEvent extends Event
     {
         return missing.get(key);
     }
-}
+}*/

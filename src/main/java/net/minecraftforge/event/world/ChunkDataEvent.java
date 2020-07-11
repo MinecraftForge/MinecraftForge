@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -99,12 +99,6 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
-        @Deprecated // remove in 1.16
-        public Save(IChunk chunk, CompoundNBT data)
-        {
-            super(chunk, data);
-        }
-
         public Save(IChunk chunk, IWorld world, CompoundNBT data)
         {
             super(chunk, world, data);

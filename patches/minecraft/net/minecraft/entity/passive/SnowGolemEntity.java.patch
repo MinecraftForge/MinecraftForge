@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/passive/SnowGolemEntity.java
 +++ b/net/minecraft/entity/passive/SnowGolemEntity.java
-@@ -33,7 +33,7 @@
- import net.minecraft.world.GameRules;
- import net.minecraft.world.World;
+@@ -40,7 +40,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
--public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob {
-+public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob, net.minecraftforge.common.IShearable {
+-public class SnowGolemEntity extends GolemEntity implements IShearable, IRangedAttackMob {
++public class SnowGolemEntity extends GolemEntity implements IShearable, IRangedAttackMob, net.minecraftforge.common.IForgeShearable {
     private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(SnowGolemEntity.class, DataSerializers.field_187191_a);
  
     public SnowGolemEntity(EntityType<? extends SnowGolemEntity> p_i50244_1_, World p_i50244_2_) {
-@@ -88,7 +88,7 @@
+@@ -93,7 +93,7 @@
              this.func_70097_a(DamageSource.field_76370_b, 1.0F);
           }
  
@@ -18,7 +18,7 @@
              return;
           }
  
-@@ -99,7 +99,7 @@
+@@ -104,7 +104,7 @@
              j = MathHelper.func_76128_c(this.func_226278_cu_());
              k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
@@ -27,28 +27,33 @@
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }
-@@ -125,7 +125,7 @@
+@@ -130,7 +130,7 @@
  
-    protected boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
-       ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
--      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) {
-+      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_184748_o()) { //Forge: Moved to onSheared
+    protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
+       ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
+-      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) {
++      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { //Forge: Moved to onSheared
+          this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
-             this.func_184747_a(false);
-             itemstack.func_222118_a(1, p_184645_1_, (p_213622_1_) -> {
-@@ -167,4 +167,15 @@
-    protected SoundEvent func_184615_bR() {
-       return SoundEvents.field_187801_fC;
+             itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {
+@@ -190,4 +190,20 @@
+    public Vector3d func_241205_ce_() {
+       return new Vector3d(0.0D, (double)(0.75F * this.func_70047_e()), (double)(this.func_213311_cf() * 0.4F));
     }
 +
 +   @Override
-+   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
-+      return this.func_184748_o();
++   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
++      return func_230262_K__();
 +   }
 +
++   @javax.annotation.Nonnull
 +   @Override
-+   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {
-+      this.func_184747_a(false);
-+      return new java.util.ArrayList<>();
++   public java.util.List<ItemStack> onSheared(@Nullable PlayerEntity player, @javax.annotation.Nonnull ItemStack item, World world, BlockPos pos, int fortune) {
++      world.func_217384_a(null, this, SoundEvents.field_232843_op_, player == null ? SoundCategory.BLOCKS : SoundCategory.PLAYERS, 1.0F, 1.0F);
++      if (!world.func_201670_d()) {
++         func_184747_a(false);
++         return java.util.Collections.singletonList(new ItemStack(Items.field_221689_cG));
++      }
++      return java.util.Collections.emptyList();
 +   }
  }

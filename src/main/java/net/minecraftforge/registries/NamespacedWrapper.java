@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,15 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nullable;
+
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mojang.serialization.Lifecycle;
 
 class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry<T> implements ILockableRegistry
 {
@@ -39,11 +43,12 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
     public NamespacedWrapper(ForgeRegistry<T> owner)
     {
+    	super(RegistryKey.func_240904_a_(owner.getRegistryName()), Lifecycle.experimental());
         this.delegate = owner;
     }
 
     @Override
-    public <V extends T> V register(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, RegistryKey<T> key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -51,7 +56,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
         Validate.notNull(value);
 
         if (value.getRegistryName() == null)
-            value.setRegistryName(key);
+            value.setRegistryName(key.func_240901_a_());
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
@@ -60,7 +65,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <R extends T> R register(ResourceLocation key, R value)
+    public <R extends T> R register(RegistryKey<T> key, R value)
     {
         return register(-1, key, value);
     }
@@ -125,11 +130,13 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
     }
 
+    /*
     @Override
     public boolean isEmpty()
     {
         return this.delegate.isEmpty();
     }
+    */
 
     //internal
     @Override

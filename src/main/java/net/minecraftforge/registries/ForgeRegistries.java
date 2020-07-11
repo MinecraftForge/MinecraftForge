@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.schedule.Schedule;
@@ -41,18 +42,16 @@ import net.minecraft.stats.StatType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -80,8 +79,9 @@ public class ForgeRegistries
     public static final IForgeRegistry<ContainerType<?>> CONTAINERS = RegistryManager.ACTIVE.getRegistry(ContainerType.class);
     public static final IForgeRegistry<PaintingType> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(PaintingType.class);
     public static final IForgeRegistry<IRecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IRecipeSerializer.class);
+    public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Attribute.class);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
-    
+
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<PointOfInterestType> POI_TYPES = RegistryManager.ACTIVE.getRegistry(PointOfInterestType.class);
@@ -95,16 +95,15 @@ public class ForgeRegistries
     public static final IForgeRegistry<SurfaceBuilder<?>> SURFACE_BUILDERS = RegistryManager.ACTIVE.getRegistry(SurfaceBuilder.class);
     public static final IForgeRegistry<Feature<?>> FEATURES = RegistryManager.ACTIVE.getRegistry(Feature.class);
     public static final IForgeRegistry<Placement<?>> DECORATORS = RegistryManager.ACTIVE.getRegistry(Placement.class);
-    public static final IForgeRegistry<BiomeProviderType<?, ?>> BIOME_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(BiomeProviderType.class);
-    public static final IForgeRegistry<ChunkGeneratorType<?, ?>> CHUNK_GENERATOR_TYPES = RegistryManager.ACTIVE.getRegistry(ChunkGeneratorType.class);
+//    public static final IForgeRegistry<ChunkGeneratorType<?, ?>> CHUNK_GENERATOR_TYPES = RegistryManager.ACTIVE.getRegistry(ChunkGeneratorType.class);
     public static final IForgeRegistry<ChunkStatus> CHUNK_STATUS = RegistryManager.ACTIVE.getRegistry(ChunkStatus.class);
+    public static final IForgeRegistry<Structure<?>> STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(Structure.class);
     public static final IForgeRegistry<BlockStateProviderType<?>> BLOCK_STATE_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockStateProviderType.class);
     public static final IForgeRegistry<BlockPlacerType<?>> BLOCK_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockPlacerType.class);
     public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(FoliagePlacerType.class);
     public static final IForgeRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPES = RegistryManager.ACTIVE.getRegistry(TreeDecoratorType.class);
 
     // Custom forge registries
-    public static final IForgeRegistry<ModDimension> MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
-@@ -66,6 +66,7 @@
+@@ -71,6 +71,7 @@
              this.field_198042_g = -1;
           }
  
@@ -8,25 +8,25 @@
           boolean[] aboolean = new boolean[]{false};
           if (this.field_198036_a.field_213279_p == null) {
              if (this.field_198036_a.field_71462_r == null) {
-@@ -77,11 +78,15 @@
+@@ -82,11 +83,15 @@
                 double d1 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
                 if (flag) {
-                   Screen.wrapScreenError(() -> {
--                     aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, i);
+                   Screen.func_231153_a_(() -> {
+-                     aboolean[0] = this.field_198036_a.field_71462_r.func_231044_a_(d0, d1, i);
 +                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPre(this.field_198036_a.field_71462_r, d0, d1, i);
-+                     if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, i);
++                     if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.func_231044_a_(d0, d1, i);
 +                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPost(this.field_198036_a.field_71462_r, d0, d1, i);
                    }, "mouseClicked event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
                 } else {
-                   Screen.wrapScreenError(() -> {
--                     aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, i);
+                   Screen.func_231153_a_(() -> {
+-                     aboolean[0] = this.field_198036_a.field_71462_r.func_231048_c_(d0, d1, i);
 +                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPre(this.field_198036_a.field_71462_r, d0, d1, i);
-+                     if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, i);
++                     if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.func_231048_c_(d0, d1, i);
 +                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPost(this.field_198036_a.field_71462_r, d0, d1, i);
                    }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
                 }
              }
-@@ -105,7 +110,7 @@
+@@ -110,7 +115,7 @@
                 }
              }
           }
@@ -35,18 +35,18 @@
        }
     }
  
-@@ -116,7 +121,9 @@
+@@ -121,7 +126,9 @@
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d2 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
--               this.field_198036_a.field_71462_r.mouseScrolled(d1, d2, d0);
+-               this.field_198036_a.field_71462_r.func_231043_a_(d1, d2, d0);
 +               if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPre(this, this.field_198036_a.field_71462_r, d0)) return;
-+               if (this.field_198036_a.field_71462_r.mouseScrolled(d1, d2, d0)) return;
++               if (this.field_198036_a.field_71462_r.func_231043_a_(d1, d2, d0)) return;
 +               net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPost(this, this.field_198036_a.field_71462_r, d0);
              } else if (this.field_198036_a.field_71439_g != null) {
                 if (this.field_200542_o != 0.0D && Math.signum(d0) != Math.signum(this.field_200542_o)) {
                    this.field_200542_o = 0.0D;
-@@ -129,6 +136,7 @@
+@@ -134,6 +141,7 @@
                 }
  
                 this.field_200542_o -= (double)f1;
@@ -54,18 +54,18 @@
                 if (this.field_198036_a.field_71439_g.func_175149_v()) {
                    if (this.field_198036_a.field_71456_v.func_175187_g().func_175262_a()) {
                       this.field_198036_a.field_71456_v.func_175187_g().func_195621_a((double)(-f1));
-@@ -180,7 +188,9 @@
+@@ -202,7 +210,9 @@
                 double d2 = (p_198022_3_ - this.field_198040_e) * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d3 = (p_198022_5_ - this.field_198041_f) * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
-                Screen.wrapScreenError(() -> {
--                  iguieventlistener.mouseDragged(d0, d1, this.field_198042_g, d2, d3);
+                Screen.func_231153_a_(() -> {
+-                  iguieventlistener.func_231045_a_(d0, d1, this.field_198042_g, d2, d3);
 +                  if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPre(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3)) return;
-+                  if (iguieventlistener.mouseDragged(d0, d1, this.field_198042_g, d2, d3)) return;
++                  if (iguieventlistener.func_231045_a_(d0, d1, this.field_198042_g, d2, d3)) return;
 +                  net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPost(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3);
                 }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
              }
           }
-@@ -245,6 +255,10 @@
+@@ -267,6 +277,10 @@
        return this.field_198039_d;
     }
  
@@ -76,7 +76,7 @@
     public double func_198024_e() {
        return this.field_198040_e;
     }
-@@ -253,6 +267,14 @@
+@@ -275,6 +289,14 @@
        return this.field_198041_f;
     }
  

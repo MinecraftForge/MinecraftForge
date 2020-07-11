@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/chunk/ChunkPrimer.java
 +++ b/net/minecraft/world/chunk/ChunkPrimer.java
-@@ -136,13 +136,13 @@
-          if (this.field_201661_i[j >> 4] == Chunk.field_186036_a && p_177436_2_.func_177230_c() == Blocks.field_150350_a) {
+@@ -138,13 +138,13 @@
+          if (this.field_201661_i[j >> 4] == Chunk.field_186036_a && p_177436_2_.func_203425_a(Blocks.field_150350_a)) {
              return p_177436_2_;
           } else {
 -            if (p_177436_2_.func_185906_d() > 0) {

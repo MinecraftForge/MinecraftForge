@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.google.gson.*;
-import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.MathHelper;
 
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.util.math.vector.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

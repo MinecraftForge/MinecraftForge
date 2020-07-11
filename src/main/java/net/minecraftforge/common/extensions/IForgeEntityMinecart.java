@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ public interface IForgeEntityMinecart
         int y = MathHelper.floor(getMinecart().getPosY());
         int z = MathHelper.floor(getMinecart().getPosZ());
         BlockPos pos = new BlockPos(x, y - 1, z);
-        if (getMinecart().world.getBlockState(pos).isIn(BlockTags.RAILS)) pos = pos.down();
+        if (getMinecart().world.getBlockState(pos).func_235714_a_(BlockTags.RAILS)) pos = pos.down();
         return pos;
     }
 

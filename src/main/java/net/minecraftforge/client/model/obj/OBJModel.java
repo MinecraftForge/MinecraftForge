@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,16 +24,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import joptsimple.internal.Strings;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
@@ -52,17 +52,17 @@ import java.util.stream.Collectors;
 public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
     private static Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
-    private static Vec2f[] DEFAULT_COORDS = {
-            new Vec2f(0, 0),
-            new Vec2f(0, 1),
-            new Vec2f(1, 1),
-            new Vec2f(1, 0),
+    private static Vector2f[] DEFAULT_COORDS = {
+            new Vector2f(0, 0),
+            new Vector2f(0, 1),
+            new Vector2f(1, 1),
+            new Vector2f(1, 0),
     };
 
     private final Map<String, ModelGroup> parts = Maps.newHashMap();
 
     private final List<Vector3f> positions = Lists.newArrayList();
-    private final List<Vec2f> texCoords = Lists.newArrayList();
+    private final List<Vector2f> texCoords = Lists.newArrayList();
     private final List<Vector3f> normals = Lists.newArrayList();
     private final List<Vector4f> colors = Lists.newArrayList();
 
@@ -296,12 +296,12 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
-    public static Vec2f parseVector2(String[] line)
+    public static Vector2f parseVector2(String[] line)
     {
         switch (line.length) {
-            case 1: return new Vec2f(0,0);
-            case 2: return new Vec2f(Float.parseFloat(line[1]), 0);
-            default: return new Vec2f(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
+            case 1: return new Vector2f(0,0);
+            case 2: return new Vector2f(Float.parseFloat(line[1]), 0);
+            default: return new Vector2f(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
         }
     }
 
@@ -366,11 +366,11 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
         builder.setQuadTint(tintIndex);
 
-        Vec2f uv2 = new Vec2f(0, 0);
+        Vector2f uv2 = new Vector2f(0, 0);
         if (ambientToFullbright)
         {
             int fakeLight = (int) ((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
-            uv2 = new Vec2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
+            uv2 = new Vector2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
             builder.setApplyDiffuseLighting(fakeLight == 0);
         }
         else
@@ -387,7 +387,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             int[] index = indices[Math.min(i,indices.length-1)];
             Vector3f pos0 = positions.get(index[0]);
             Vector4f position = new Vector4f(pos0);
-            Vec2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
+            Vector2f texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
             Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
             Vector3f normal = norm0;
             Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
@@ -465,7 +465,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         return Pair.of(builder.build(), cull);
     }
 
-    private void putVertexData(IVertexConsumer consumer, Vector4f position0, Vec2f texCoord0, Vector3f normal0, Vector4f color0, Vec2f uv2, TextureAtlasSprite texture)
+    private void putVertexData(IVertexConsumer consumer, Vector4f position0, Vector2f texCoord0, Vector3f normal0, Vector4f color0, Vector2f uv2, TextureAtlasSprite texture)
     {
         ImmutableList<VertexFormatElement> elements = consumer.getVertexFormat().getElements();
         for(int j=0;j<elements.size();j++)
@@ -524,7 +524,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(ModelMesh mesh : meshes)
             {
@@ -547,7 +547,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
         }
@@ -568,7 +568,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
 
@@ -577,9 +577,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
-            Set<Material> combined = Sets.newHashSet();
+            Set<RenderMaterial> combined = Sets.newHashSet();
             combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
             for (IModelGeometryPart part : getParts())
                 combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));

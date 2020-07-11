@@ -2,7 +2,7 @@
 +++ b/net/minecraft/entity/item/minecart/SpawnerMinecartEntity.java
 @@ -23,6 +23,12 @@
        public BlockPos func_177221_b() {
-          return new BlockPos(SpawnerMinecartEntity.this);
+          return SpawnerMinecartEntity.this.func_233580_cy_();
        }
 +
 +      @Override

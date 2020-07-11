@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -43,14 +44,14 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     private final IModelTransform state;
 
 
-    private final Function<Material, TextureAtlasSprite> bakedTextureGetter;
+    private final Function<RenderMaterial, TextureAtlasSprite> bakedTextureGetter;
 
-    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<Material, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
+    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<RenderMaterial, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
     {
         this(bakery, model, modelLoc, state, bakedTextureGetter, overrides.getOverrides().reverse());
     }
 
-    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<Material, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
+    public AnimationItemOverrideList(ModelBakery bakery, IUnbakedModel model, ResourceLocation modelLoc, IModelTransform state, Function<RenderMaterial, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
         super(bakery, model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides);
         this.bakery = bakery;
@@ -61,7 +62,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     }
 
     @Override
-    public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
+    public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
     {
         return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
             .map(asm ->
@@ -80,6 +81,6 @@ public final class AnimationItemOverrideList extends ItemOverrideList
             })
             // TODO where should uvlock data come from?
             .map(state -> model.bakeModel(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
-            .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
+            .orElseGet(() -> super.func_239290_a_(originalModel, stack, world, entity));
     }
 }

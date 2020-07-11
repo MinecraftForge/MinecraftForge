@@ -21,7 +21,7 @@
        Block block = blockstate.func_177230_c();
        if (block instanceof ISidedInventoryProvider) {
           iinventory = ((ISidedInventoryProvider)block).func_219966_a(blockstate, p_145893_0_, blockpos);
--      } else if (block.func_149716_u()) {
+-      } else if (block.func_235695_q_()) {
 +      } else if (blockstate.hasTileEntity()) {
           TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
           if (tileentity instanceof IInventory) {

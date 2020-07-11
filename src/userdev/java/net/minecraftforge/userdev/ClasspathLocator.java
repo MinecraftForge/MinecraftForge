@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     @Override
     public List<IModFile> scanMods() {
         return modCoords.stream().
-            map(mc -> new ModFile(mc, this)).
+            map(mc -> ModFile.newFMLInstance(mc, this)).
             peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf))).
             collect(Collectors.toList());
     }

@@ -1,12 +1,11 @@
 --- a/net/minecraft/block/StairsBlock.java
 +++ b/net/minecraft/block/StairsBlock.java
-@@ -84,13 +84,24 @@
+@@ -83,13 +83,23 @@
        return voxelshape;
     }
  
-+   // Forge: Use the other constructor that takes a Supplier
-+   @Deprecated
-    protected StairsBlock(BlockState p_i48321_1_, Block.Properties p_i48321_2_) {
++   @Deprecated // Forge: Use the other constructor that takes a Supplier
+    public StairsBlock(BlockState p_i48321_1_, AbstractBlock.Properties p_i48321_2_) {
        super(p_i48321_2_);
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176309_a, Direction.NORTH).func_206870_a(field_176308_b, Half.BOTTOM).func_206870_a(field_176310_M, StairsShape.STRAIGHT).func_206870_a(field_204513_t, Boolean.valueOf(false)));
        this.field_150149_b = p_i48321_1_.func_177230_c();
@@ -14,7 +13,7 @@
 +      this.stateSupplier = () -> p_i48321_1_;
     }
  
-+   public StairsBlock(java.util.function.Supplier<BlockState> state, Block.Properties properties) {
++   public StairsBlock(java.util.function.Supplier<BlockState> state, AbstractBlock.Properties properties) {
 +      super(properties);
 +      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176309_a, Direction.NORTH).func_206870_a(field_176308_b, Half.BOTTOM).func_206870_a(field_176310_M, StairsShape.STRAIGHT).func_206870_a(field_204513_t, Boolean.valueOf(false)));
 +      this.field_150149_b = Blocks.field_150350_a; // These are unused, fields are redirected
@@ -25,11 +24,12 @@
     public boolean func_220074_n(BlockState p_220074_1_) {
        return true;
     }
-@@ -262,4 +273,12 @@
+@@ -265,4 +275,14 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
     }
 +
++   // Forge Start
 +   private final java.util.function.Supplier<BlockState> stateSupplier;
 +   private Block getModelBlock() {
 +       return getModelState().func_177230_c();
@@ -37,4 +37,5 @@
 +   private BlockState getModelState() {
 +       return stateSupplier.get();
 +   }
++   // Forge end
  }

@@ -4,8 +4,8 @@
     }
  
     protected boolean func_188498_f() {
--      return this.field_188499_a.func_213382_a(Items.field_151031_f);
-+      return this.field_188499_a.func_184614_ca().func_77973_b() instanceof BowItem || this.field_188499_a.func_184592_cb().func_77973_b() instanceof BowItem;
+-      return this.field_188499_a.func_233631_a_(Items.field_151031_f);
++      return this.field_188499_a.func_233634_a_(item -> item instanceof BowItem);
     }
  
     public boolean func_75253_b() {

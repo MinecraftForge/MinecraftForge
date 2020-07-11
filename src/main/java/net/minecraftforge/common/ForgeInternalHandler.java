@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -89,12 +91,14 @@ public class ForgeInternalHandler
             FarmlandWaterManager.removeTickets(event.getChunk());
     }
 
+    /*
     @SubscribeEvent
     public void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event)
     {
         if (event.getPlayer() instanceof ServerPlayerEntity)
             DimensionManager.rebuildPlayerMap(((ServerPlayerEntity)event.getPlayer()).server.getPlayerList(), true);
     }
+    */
 
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
@@ -106,6 +110,22 @@ public class ForgeInternalHandler
     public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
+    }
+
+    private static LootModifierManager INSTANCE;
+
+    @SubscribeEvent
+    public void onResourceReload(AddReloadListenerEvent event)
+    {
+        INSTANCE = new LootModifierManager();
+        event.addListener(INSTANCE);
+    }
+
+    static LootModifierManager getLootModifierManager()
+    {
+        if(INSTANCE == null)
+            throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+        return INSTANCE;
     }
 }
 

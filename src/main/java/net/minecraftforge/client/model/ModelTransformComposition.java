@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 package net.minecraftforge.client.model;
 
 import com.google.common.base.Objects;
-import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.client.renderer.model.IModelTransform;
 
 /**

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,14 +28,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -48,6 +54,8 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -68,7 +76,7 @@ public interface IForgeItem
      * ItemStack sensitive version of getItemAttributeModifiers
      */
     @SuppressWarnings("deprecation")
-    default Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
+    default Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
     {
         return getItem().getAttributeModifiers(slot);
     }
@@ -95,7 +103,7 @@ public interface IForgeItem
      * @param displayName the name that will be displayed unless it is changed in
      *                    this method.
      */
-    default String getHighlightTip(ItemStack item, String displayName)
+    default ITextComponent getHighlightTip(ItemStack item, ITextComponent displayName)
     {
         return displayName;
     }
@@ -108,6 +116,29 @@ public interface IForgeItem
     default ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context)
     {
         return ActionResultType.PASS;
+    }
+
+    /**
+     * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
+     *
+     * @return True if this item can be used as "currency" by piglins
+     */
+    default boolean isPiglinCurrency(ItemStack stack)
+    {
+        return stack.getItem() == PiglinTasks.field_234444_a_;
+    }
+
+    /**
+     * Called by Piglins to check if a given item prevents hostility on sight. If this is true the Piglins will be neutral to the entity wearing this item, and will not
+     * attack on sight. Note: This does not prevent Piglins from becoming hostile due to other actions, nor does it make Piglins that are already hostile stop being so.
+     *
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if piglins are neutral to players wearing this item in an armor slot
+     */
+    default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getArmorMaterial() == ArmorMaterial.GOLD;
     }
 
     /**
@@ -609,17 +640,6 @@ public interface IForgeItem
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
-     *
-     * @param stack the ItemStack
-     * @return true if this Item can be used
-     */
-    default boolean isBeaconPayment(ItemStack stack)
-    {
-        return Tags.Items.BEACON_PAYMENT.contains(stack.getItem());
-    }
-
-    /**
      * Determine if the player switching between these two item stacks
      *
      * @param oldStack    The old stack that was equipped
@@ -703,12 +723,13 @@ public interface IForgeItem
         return null;
     }
 
-    default ImmutableMap<String, ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity)
-    {
-        com.google.common.collect.ImmutableMap.Builder<String, ITimeValue> builder = ImmutableMap.builder();
-        getItem().properties.forEach((k,v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
-        return builder.build();
-    }
+    //TODO, properties dont exist anymore
+//    default ImmutableMap<String, ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity)
+//    {
+//        com.google.common.collect.ImmutableMap.Builder<String, ITimeValue> builder = ImmutableMap.builder();
+//        getItem().properties.forEach((k,v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
+//        return builder.build();
+//    }
 
     /**
      * Can this Item disable a shield
@@ -784,4 +805,18 @@ public interface IForgeItem
     default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return amount;
     }
+
+    /**
+     * Whether this Item can be used to hide player head for enderman.
+     *
+     * @param stack the ItemStack
+     * @param player The player watching the enderman
+     * @param endermanEntity The enderman that the player look
+     * @return true if this Item can be used to hide player head for enderman
+     */
+    default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
+    {
+        return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
+    }
+
 }

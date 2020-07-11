@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,8 @@ import com.google.common.collect.Multimap;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.SaveHandler;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
@@ -56,7 +56,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     }
 
     @Override
-    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo)
     {
         CompoundNBT fmlData = new CompoundNBT();
         ListNBT modList = new ListNBT();
@@ -71,7 +71,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         CompoundNBT registries = new CompoundNBT();
         fmlData.put("Registries", registries);
-        LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", info.getWorldName());
+        LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", serverInfo.getWorldName());
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
@@ -81,7 +81,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
+    public void readData(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo, CompoundNBT tag)
     {
         if (tag.contains("LoadingModList"))
         {
@@ -111,7 +111,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         if (tag.contains("ModItemData") || tag.contains("ItemData")) // Pre 1.7
         {
-            StartupQuery.notify("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first");
+            StartupQuery.builder().text("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first").notification();
             StartupQuery.abort();
         }
         else if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
@@ -138,7 +138,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
                 entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
             });
 
-            StartupQuery.notify(buf.toString());
+            StartupQuery.builder().text(buf.toString()).notification();
             StartupQuery.abort();
         }
     }

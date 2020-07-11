@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@ package net.minecraftforge.debug.fluid;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.*;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
@@ -56,9 +56,9 @@ public class NewFluidTest
     public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/mushroom_stem");
     public static final ResourceLocation FLUID_OVERLAY = new ResourceLocation("minecraft:block/obsidian");
 
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
-    public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MODID);
 
     private static ForgeFlowingFluid.Properties makeProperties()
     {
@@ -133,7 +133,7 @@ public class NewFluidTest
         }
 
         @Override
-        public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, IFluidState fluidStateIn) {
+        public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
             if (canContainFluid(worldIn, pos, state, fluidStateIn.getFluid())) {
                 if (!worldIn.isRemote()) {
                     worldIn.setBlockState(pos, state.with(FLUIDLOGGED, true), 3);
@@ -157,7 +157,7 @@ public class NewFluidTest
         }
 
         @Override
-        public IFluidState getFluidState(BlockState state)
+        public FluidState getFluidState(BlockState state)
         {
             return state.get(FLUIDLOGGED) ? test_fluid.get().getDefaultState() : Fluids.EMPTY.getDefaultState();
         }

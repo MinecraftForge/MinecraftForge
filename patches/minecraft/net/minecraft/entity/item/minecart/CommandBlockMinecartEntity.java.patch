@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
+@@ -73,6 +73,8 @@
+    }
+ 
+    public ActionResultType func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
++      ActionResultType ret = super.func_184230_a(p_184230_1_, p_184230_2_);
++      if (ret.func_226246_a_()) return ret;
+       return this.field_145824_a.func_175574_a(p_184230_1_);
+    }
+ 

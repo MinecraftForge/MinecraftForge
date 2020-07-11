@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,11 +32,9 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.FuzzedBiomeMagnifier;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
@@ -79,7 +77,7 @@ public class FMLPlayMessages
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
-            Vec3d vec3d = e.getMotion();
+            Vector3d vec3d = e.getMotion();
             double d1 = MathHelper.clamp(vec3d.x, -3.9D, 3.9D);
             double d2 = MathHelper.clamp(vec3d.y, -3.9D, 3.9D);
             double d3 = MathHelper.clamp(vec3d.z, -3.9D, 3.9D);
@@ -308,62 +306,6 @@ public class FMLPlayMessages
 
         public PacketBuffer getAdditionalData() {
             return additionalData;
-        }
-    }
-
-    public static class DimensionInfoMessage
-    {
-        private ResourceLocation dimName;
-        private boolean skylight;
-        private int id;
-        private ResourceLocation modDimensionName;
-        private PacketBuffer extraData;
-
-        DimensionInfoMessage(DimensionType type) {
-            id = type.getId() + 1;
-            dimName = type.getRegistryName();
-            modDimensionName = type.getModType().getRegistryName();
-            skylight = type.hasSkyLight();
-            extraData = new PacketBuffer(Unpooled.buffer());
-            type.getModType().write(extraData, true);
-        }
-
-        DimensionInfoMessage(final int dimId, final ResourceLocation dimname, final ResourceLocation modDimensionName, final boolean skylight, final PacketBuffer extraData) {
-            id = dimId;
-            this.dimName = dimname;
-            this.modDimensionName = modDimensionName;
-            this.skylight = skylight;
-            this.extraData = extraData;
-        }
-
-        public static DimensionInfoMessage decode(PacketBuffer buffer) {
-            int dimId = buffer.readInt();
-            ResourceLocation dimname = buffer.readResourceLocation();
-            ResourceLocation moddimname = buffer.readResourceLocation();
-            boolean skylight = buffer.readBoolean();
-            PacketBuffer pb = new PacketBuffer(Unpooled.wrappedBuffer(buffer.readByteArray()));
-            return new DimensionInfoMessage(dimId, dimname, moddimname, skylight, pb);
-        }
-
-        public static void encode(DimensionInfoMessage message, PacketBuffer buffer) {
-            buffer.writeInt(message.id);
-            buffer.writeResourceLocation(message.dimName);
-            buffer.writeResourceLocation(message.modDimensionName);
-            buffer.writeBoolean(message.skylight);
-            buffer.writeByteArray(message.extraData.array());
-        }
-
-        private DimensionType makeDummyDimensionType() {
-            final ModDimension modDim = ForgeRegistries.MOD_DIMENSIONS.getValue(modDimensionName);
-            // default to overworld if no moddim found
-            if (modDim == null) return DimensionType.OVERWORLD;
-            modDim.read(extraData, true);
-            return new DimensionType(id, "dummy", "dummy", modDim.getFactory(), skylight, FuzzedBiomeMagnifier.INSTANCE, modDim, extraData);
-        }
-
-        public static boolean handle(final DimensionInfoMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
-            contextSupplier.get().enqueueWork(()-> NetworkHooks.addCachedDimensionType(message.makeDummyDimensionType(), message.dimName));
-            return true;
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@ package net.minecraftforge.common.model.animation;
 
 import java.io.IOException;
 
-import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -61,7 +61,7 @@ import javax.annotation.Nullable;
 public final class Clips
 {
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
     /**
      * Clip that does nothing.
      */
@@ -82,7 +82,7 @@ public final class Clips
         }
 
         @Override
-        public String getName()
+        public String func_176610_l()
         {
             return "identity";
         }
@@ -416,7 +416,7 @@ public final class Clips
         }
 
         @Override
-        public String getName()
+        public String func_176610_l()
         {
             return clipName;
         }
@@ -475,7 +475,7 @@ public final class Clips
                     // IdentityClip + ClipReference
                     if(clip instanceof IStringSerializable)
                     {
-                        out.value("#" + ((IStringSerializable)clip).getName());
+                        out.value("#" + ((IStringSerializable)clip).func_176610_l());
                         return;
                     }
                     else if(clip instanceof TimeClip)

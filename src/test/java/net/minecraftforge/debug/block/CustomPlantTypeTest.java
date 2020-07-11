@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -87,7 +87,7 @@ public class CustomPlantTypeTest
 
     public static class CustomPlantBlock extends FlowerBlock implements IPlantable
     {
-        public static PlantType pt = PlantType.create("CustomPlantType");
+        public static PlantType pt = PlantType.get("custom_plant_type");
 
         public CustomPlantBlock()
         {

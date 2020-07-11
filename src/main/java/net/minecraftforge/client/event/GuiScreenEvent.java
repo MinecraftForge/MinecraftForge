@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraftforge.api.distmarker.Dist;
@@ -127,16 +128,26 @@ public class GuiScreenEvent extends Event
 
     public static class DrawScreenEvent extends GuiScreenEvent
     {
+        private final MatrixStack mStack;
         private final int mouseX;
         private final int mouseY;
         private final float renderPartialTicks;
 
-        public DrawScreenEvent(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+        public DrawScreenEvent(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
         {
             super(gui);
+            this.mStack = mStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
             this.renderPartialTicks = renderPartialTicks;
+        }
+
+        /**
+         * The MatrixStack to render with.
+         */
+        public MatrixStack getMatrixStack()
+        {
+            return mStack;
         }
 
         /**
@@ -170,9 +181,9 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
-                super(gui, mouseX, mouseY, renderPartialTicks);
+                super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
         }
 
@@ -181,9 +192,9 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
-                super(gui, mouseX, mouseY, renderPartialTicks);
+                super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
         }
     }
@@ -194,9 +205,20 @@ public class GuiScreenEvent extends Event
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        public BackgroundDrawnEvent(Screen gui)
+        private final MatrixStack mStack;
+
+        public BackgroundDrawnEvent(Screen gui, MatrixStack mStack)
         {
             super(gui);
+            this.mStack = mStack;
+        }
+
+        /**
+         * The MatrixStack to render with.
+         */
+        public MatrixStack getMatrixStack()
+        {
+            return mStack;
         }
     }
 
@@ -211,72 +233,6 @@ public class GuiScreenEvent extends Event
         public PotionShiftEvent(Screen gui)
         {
             super(gui);
-        }
-    }
-
-    @Deprecated // Remove in 1.16
-    public static class ActionPerformedEvent extends GuiScreenEvent
-    {
-        private Button button;
-        private List<Button> buttonList;
-
-        public ActionPerformedEvent(Screen gui, Button button, List<Button> buttonList)
-        {
-            super(gui);
-            this.setButton(button);
-            this.setButtonList(new ArrayList<Button>(buttonList));
-        }
-
-        /**
-         * The button that was clicked.
-         */
-        public Button getButton()
-        {
-            return button;
-        }
-
-        public void setButton(Button button)
-        {
-            this.button = button;
-        }
-
-        /**
-         * A COPY of the {@link #buttonList} field from the GuiScreen referenced by {@link #gui}.
-         */
-        public List<Button> getButtonList()
-        {
-            return buttonList;
-        }
-
-        public void setButtonList(List<Button> buttonList)
-        {
-            this.buttonList = buttonList;
-        }
-
-        /**
-         * This event fires once it has been determined that a GuiButton object has been clicked.
-         * Cancel this event to bypass {@link GuiScreen#actionPerformed(GuiButton)}.
-         * Replace button with a different button from buttonList to have that button's action executed.
-         */
-        @Cancelable
-        public static class Pre extends ActionPerformedEvent
-        {
-            public Pre(Screen gui, Button button, List<Button> buttonList)
-            {
-                super(gui, button, buttonList);
-            }
-        }
-
-        /**
-         * This event fires after {@link GuiScreen#actionPerformed(GuiButton)} provided that the active
-         * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.
-         */
-        public static class Post extends ActionPerformedEvent
-        {
-            public Post(Screen gui, Button button, List<Button> buttonList)
-            {
-                super(gui, button, buttonList);
-            }
         }
     }
 

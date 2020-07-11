@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,16 +27,16 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.ILightReader;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IBlockDisplayReader;
 
 public class BlockInfo
 {
     private static final Direction[] SIDES = Direction.values();
 
     private final BlockColors colors;
-    private ILightReader world;
+    private IBlockDisplayReader world;
     private BlockState state;
     private BlockPos blockPos;
 
@@ -71,13 +71,13 @@ public class BlockInfo
 
     public void updateShift()
     {
-        Vec3d offset = state.getOffset(world, blockPos);
+        Vector3d offset = state.getOffset(world, blockPos);
         shx = (float) offset.x;
         shy = (float) offset.y;
         shz = (float) offset.z;
     }
 
-    public void setWorld(ILightReader world)
+    public void setWorld(IBlockDisplayReader world)
     {
         this.world = world;
         cachedTint = -1;
@@ -206,7 +206,7 @@ public class BlockInfo
         }
     }
 
-    public ILightReader getWorld()
+    public IBlockDisplayReader getWorld()
     {
         return world;
     }

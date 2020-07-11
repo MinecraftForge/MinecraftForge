@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,10 +66,6 @@ public class GatherDataEvent extends ModLifecycleEvent
         private final boolean flat;
         private List<DataGenerator> generators = new ArrayList<>();
 
-        @Deprecated //Remove in 1.16
-        public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate) {
-            this(mods, path, inputs, server, client, dev, reports, validate, false);
-        }
         public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate, final boolean flat) {
             this.mods = mods;
             this.path = path;

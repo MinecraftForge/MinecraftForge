@@ -10,7 +10,7 @@
        }
  
        this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -127,6 +128,7 @@
+@@ -123,6 +124,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -18,14 +18,14 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -155,13 +157,14 @@
+@@ -151,13 +153,14 @@
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp(p_70100_1_, this))) return;
              p_70100_1_.field_71090_bL = 2;
              p_70100_1_.func_71001_a(this, 1);
-             Entry<EquipmentSlotType, ItemStack> entry = EnchantmentHelper.func_222189_b(Enchantments.field_185296_A, p_70100_1_);
+             Entry<EquipmentSlotType, ItemStack> entry = EnchantmentHelper.func_234844_a_(Enchantments.field_185296_A, p_70100_1_, ItemStack::func_77951_h);
              if (entry != null) {
                 ItemStack itemstack = entry.getValue();
                 if (!itemstack.func_190926_b() && itemstack.func_77951_h()) {

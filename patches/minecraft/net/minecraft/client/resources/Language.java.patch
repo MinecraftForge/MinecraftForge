@@ -4,11 +4,11 @@
        this.field_135037_b = p_i1303_2_;
        this.field_135038_c = p_i1303_3_;
        this.field_135036_d = p_i1303_4_;
-+      String[] splitLangCode = field_135038_c.split("_", 2);
++      String[] splitLangCode = field_135039_a.split("_", 2);
 +      if (splitLangCode.length == 1) { // Vanilla has some languages without underscores
-+          this.javaLocale = new java.util.Locale(field_135039_a);
++         this.javaLocale = new java.util.Locale(field_135039_a);
 +      } else {
-+          this.javaLocale = new java.util.Locale(splitLangCode[0], splitLangCode[1]);
++         this.javaLocale = new java.util.Locale(splitLangCode[0], splitLangCode[1]);
 +      }
     }
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -285,14 +285,16 @@ public class ModLoader
         this.loadingWarnings.add(warning);
     }
 
-    @Deprecated //Remove in 1.16
-    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
-        runDataGenerator(mods, path, inputs, existingPacks, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, false);
+    private static boolean runningDataGen = false;
+
+    public static boolean isDataGenRunning () {
+        return runningDataGen;
     }
 
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
+        runningDataGen = true;
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);

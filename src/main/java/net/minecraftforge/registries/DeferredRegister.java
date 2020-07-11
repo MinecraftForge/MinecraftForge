@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,8 +43,8 @@ import com.google.common.reflect.TypeToken;
  *
  *Example Usage:
  *<pre>
- *   private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
- *   private static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
+ *   private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+ *   private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
  *
  *   public static final RegistryObject<Block> ROCK_BLOCK = BLOCKS.register("rock", () -> new Block(Block.Properties.create(Material.ROCK)));
  *   public static final RegistryObject<Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
@@ -82,6 +82,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private IForgeRegistry<T> type;
     private Supplier<RegistryBuilder<T>> registryFactory;
+    private boolean seenRegisterEvent = false;
 
     private DeferredRegister(Class<T> base, String modid)
     {
@@ -89,8 +90,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         this.modid = modid;
     }
 
-    @Deprecated // Make private in 1.16, Use create. Constructors are an implementation detail.
-    public DeferredRegister(IForgeRegistry<T> reg, String modid)
+    private DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
         this(reg.getRegistrySuperType(), modid);
         this.type = reg;
@@ -106,6 +106,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     @SuppressWarnings("unchecked")
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
     {
+        if (seenRegisterEvent)
+            throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegistryEvent.Register has been fired.");
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
@@ -153,11 +155,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     public void register(IEventBus bus)
     {
         bus.addListener(this::addEntries);
-        if (this.type == null) {
-            if (this.registryFactory != null)
-                bus.addListener(this::createRegistry);
-            else
-                bus.addListener(EventPriority.LOWEST, this::captureRegistry);
+        if (this.type == null && this.registryFactory != null) {
+            bus.addListener(this::createRegistry);
         }
     }
 
@@ -171,8 +170,17 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private void addEntries(RegistryEvent.Register<?> event)
     {
+        if (this.type == null && this.registryFactory == null)
+        {
+            //If there is no type yet and we don't have a registry factory, attempt to capture the registry
+            //Note: This will only ever get run on the first registry event, as after that time,
+            // the type will no longer be null. This is needed here rather than during the NewRegistry event
+            // to ensure that mods can properly use deferred registers for custom registries added by other mods
+            captureRegistry();
+        }
         if (this.type != null && event.getGenericType() == this.type.getRegistrySuperType())
         {
+            this.seenRegisterEvent = true;
             @SuppressWarnings("unchecked")
             IForgeRegistry<T> reg = (IForgeRegistry<T>)event.getRegistry();
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
@@ -188,7 +196,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         this.type = this.registryFactory.get().create();
     }
 
-    private void captureRegistry(RegistryEvent.NewRegistry event)
+    private void captureRegistry()
     {
         if (this.superType != null)
         {

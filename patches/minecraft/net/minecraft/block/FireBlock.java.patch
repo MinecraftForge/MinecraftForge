@@ -1,7 +1,7 @@
 --- a/net/minecraft/block/FireBlock.java
 +++ b/net/minecraft/block/FireBlock.java
-@@ -64,13 +64,13 @@
-    public BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
+@@ -76,13 +76,13 @@
+    protected BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
        BlockPos blockpos = p_196448_2_.func_177977_b();
        BlockState blockstate = p_196448_1_.func_180495_p(blockpos);
 -      if (!this.func_196446_i(blockstate) && !blockstate.func_224755_d(p_196448_1_, blockpos, Direction.UP)) {
@@ -16,23 +16,16 @@
              }
           }
  
-@@ -91,12 +91,14 @@
- 
-    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
-       if (p_225534_2_.func_82736_K().func_223586_b(GameRules.field_223598_a)) {
-+         if (!p_225534_2_.isAreaLoaded(p_225534_3_, 2)) return; // Forge: prevent loading unloaded chunks when spreading fire
-          if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
-             p_225534_2_.func_217377_a(p_225534_3_, false);
+@@ -105,7 +105,7 @@
           }
  
-          Block block = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b()).func_177230_c();
--         boolean flag = p_225534_2_.field_73011_w instanceof EndDimension && block == Blocks.field_150357_h || block == Blocks.field_150424_aL || block == Blocks.field_196814_hQ;
-+         BlockState other = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b());
-+         boolean flag = other.isFireSource(p_225534_2_, p_225534_3_.func_177977_b(), Direction.UP);
+          BlockState blockstate = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b());
+-         boolean flag = blockstate.func_235714_a_(p_225534_2_.func_230315_m_().func_241515_q_());
++         boolean flag = blockstate.isFireSource(p_225534_2_, p_225534_3_, Direction.UP);
           int i = p_225534_1_.func_177229_b(field_176543_a);
           if (!flag && p_225534_2_.func_72896_J() && this.func_176537_d(p_225534_2_, p_225534_3_) && p_225534_4_.nextFloat() < 0.2F + (float)i * 0.03F) {
              p_225534_2_.func_217377_a(p_225534_3_, false);
-@@ -118,7 +120,7 @@
+@@ -126,7 +126,7 @@
                    return;
                 }
  
@@ -41,7 +34,7 @@
                    p_225534_2_.func_217377_a(p_225534_3_, false);
                    return;
                 }
-@@ -126,12 +128,12 @@
+@@ -134,12 +134,12 @@
  
              boolean flag1 = p_225534_2_.func_180502_D(p_225534_3_);
              int k = flag1 ? -50 : 0;
@@ -60,34 +53,29 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -169,16 +171,18 @@
+@@ -177,15 +177,17 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
--   private int func_220274_q(BlockState p_220274_1_) {
 +   @Deprecated //Forge: Use IForgeBlockState.getFlammability, Public for default implementation only.
-+   public int func_220274_q(BlockState p_220274_1_) {
-       return p_220274_1_.func_196959_b(BlockStateProperties.field_208198_y) && p_220274_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149848_b.getInt(p_220274_1_.func_177230_c());
+    public int func_220274_q(BlockState p_220274_1_) {
+       return p_220274_1_.func_235901_b_(BlockStateProperties.field_208198_y) && p_220274_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149848_b.getInt(p_220274_1_.func_177230_c());
     }
  
--   private int func_220275_r(BlockState p_220275_1_) {
 +   @Deprecated //Forge: Use IForgeBlockState.getFireSpreadSpeed
-+   public int func_220275_r(BlockState p_220275_1_) {
-       return p_220275_1_.func_196959_b(BlockStateProperties.field_208198_y) && p_220275_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149849_a.getInt(p_220275_1_.func_177230_c());
+    public int func_220275_r(BlockState p_220275_1_) {
+       return p_220275_1_.func_235901_b_(BlockStateProperties.field_208198_y) && p_220275_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149849_a.getInt(p_220275_1_.func_177230_c());
     }
  
 -   private void func_176536_a(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_) {
--      int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
 +   private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, Direction face) {
-+      int i = p_176536_1_.func_180495_p(p_176536_2_).getFlammability(p_176536_1_, p_176536_2_, face);
+       int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
        if (p_176536_4_.nextInt(p_176536_3_) < i) {
           BlockState blockstate = p_176536_1_.func_180495_p(p_176536_2_);
-          if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
-@@ -188,18 +192,14 @@
-             p_176536_1_.func_217377_a(p_176536_2_, false);
+@@ -197,10 +199,7 @@
           }
  
--         Block block = blockstate.func_177230_c();
+          Block block = blockstate.func_177230_c();
 -         if (block instanceof TNTBlock) {
 -            TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
@@ -96,6 +84,7 @@
        }
  
     }
+@@ -212,7 +211,7 @@
  
     private boolean func_196447_a(IBlockReader p_196447_1_, BlockPos p_196447_2_) {
        for(Direction direction : Direction.values()) {
@@ -104,7 +93,7 @@
              return true;
           }
        }
-@@ -215,13 +215,14 @@
+@@ -228,13 +227,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -117,60 +106,13 @@
     }
  
 +   @Deprecated //Forge: Use canCatchFire with more context
-    public boolean func_196446_i(BlockState p_196446_1_) {
+    protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -246,8 +247,8 @@
- 
-       BlockPos blockpos = p_180655_3_.func_177977_b();
-       BlockState blockstate = p_180655_2_.func_180495_p(blockpos);
--      if (!this.func_196446_i(blockstate) && !blockstate.func_224755_d(p_180655_2_, blockpos, Direction.UP)) {
--         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177976_e()))) {
-+      if (!this.canCatchFire(p_180655_2_, blockpos, Direction.UP) && !Block.func_220056_d(blockstate, p_180655_2_, blockpos, Direction.UP)) {
-+         if (this.canCatchFire(p_180655_2_, blockpos.func_177976_e(), Direction.EAST)) {
-             for(int j = 0; j < 2; ++j) {
-                double d3 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble() * (double)0.1F;
-                double d8 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -256,7 +257,7 @@
-             }
-          }
- 
--         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177974_f()))) {
-+         if (this.canCatchFire(p_180655_2_, p_180655_3_.func_177974_f(), Direction.WEST)) {
-             for(int k = 0; k < 2; ++k) {
-                double d4 = (double)(p_180655_3_.func_177958_n() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
-                double d9 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -265,7 +266,7 @@
-             }
-          }
- 
--         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177978_c()))) {
-+         if (this.canCatchFire(p_180655_2_, p_180655_3_.func_177978_c(), Direction.SOUTH)) {
-             for(int l = 0; l < 2; ++l) {
-                double d5 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
-                double d10 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -274,7 +275,7 @@
-             }
-          }
- 
--         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177968_d()))) {
-+         if (this.canCatchFire(p_180655_2_, p_180655_3_.func_177968_d(), Direction.NORTH)) {
-             for(int i1 = 0; i1 < 2; ++i1) {
-                double d6 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
-                double d11 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -283,7 +284,7 @@
-             }
-          }
- 
--         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177984_a()))) {
-+         if (this.canCatchFire(p_180655_2_, p_180655_3_.func_177984_a(), Direction.DOWN)) {
-             for(int j1 = 0; j1 < 2; ++j1) {
-                double d7 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
-                double d12 = (double)(p_180655_3_.func_177956_o() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
-@@ -307,10 +308,23 @@
+@@ -253,10 +253,23 @@
     }
  
-    public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
+    private void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
 +      if (p_180686_1_ == Blocks.field_150350_a) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
        this.field_149849_a.put(p_180686_1_, p_180686_2_);
        this.field_149848_b.put(p_180686_1_, p_180686_3_);

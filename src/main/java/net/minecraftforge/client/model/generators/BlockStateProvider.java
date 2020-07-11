@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,6 @@ import net.minecraft.block.DoorBlock;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.FourWayBlock;
-import net.minecraft.block.LogBlock;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.SixWayBlock;
@@ -194,7 +193,7 @@ public abstract class BlockStateProvider implements IDataProvider {
         axisBlock(block, blockTexture(block));
     }
 
-    public void logBlock(LogBlock block) {
+    public void logBlock(RotatedPillarBlock block) {
         axisBlock(block, blockTexture(block), extend(blockTexture(block), "_top"));
     }
 

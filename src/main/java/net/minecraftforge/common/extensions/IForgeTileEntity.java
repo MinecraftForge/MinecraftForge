@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
     @Override
     default void deserializeNBT(CompoundNBT nbt)
     {
-        getTileEntity().read(nbt);
+        //TODO re-evaluate
+        deserializeNBT(null, nbt);
+    }
+
+    //    @Override TODO  re-evaluate
+    default void deserializeNBT(BlockState state, CompoundNBT nbt)
+    {
+        getTileEntity().func_230337_a_(state, nbt);
     }
 
     @Override
@@ -72,9 +79,9 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      *
      * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
      */
-     default void handleUpdateTag(CompoundNBT tag)
+     default void handleUpdateTag(BlockState state, CompoundNBT tag)
      {
-         getTileEntity().read(tag);
+         getTileEntity().func_230337_a_(state, tag);
      }
 
     /**
@@ -147,29 +154,6 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
              if (cbb != null) bb = cbb;
          }
          return bb;
-     }
-
-     /**
-      * Checks if this tile entity knows how to render its 'breaking' overlay effect.
-      * If this returns true, The TileEntitySpecialRenderer will be called again with break progress set.
-      * @return True to re-render tile with breaking effect.
-      */
-     default boolean canRenderBreaking()
-     {
-         Block block = getTileEntity().getBlockState().getBlock();
-         return (block instanceof net.minecraft.block.ChestBlock ||
-                 block instanceof net.minecraft.block.EnderChestBlock ||
-                 block instanceof net.minecraft.block.AbstractSignBlock ||
-                 block instanceof net.minecraft.block.SkullBlock);
-     }
-
-     /**
-      * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
-      * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
-      */
-     default boolean hasFastRenderer()
-     {
-         return false;
      }
 
     /**

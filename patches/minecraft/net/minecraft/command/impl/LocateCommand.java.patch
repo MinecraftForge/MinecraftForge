@@ -1,17 +1,21 @@
 --- a/net/minecraft/command/impl/LocateCommand.java
 +++ b/net/minecraft/command/impl/LocateCommand.java
-@@ -50,7 +50,13 @@
-          return func_198534_a(p_204758_0_.getSource(), "Shipwreck");
-       })).then(Commands.func_197057_a("Village").executes((p_218858_0_) -> {
-          return func_198534_a(p_218858_0_.getSource(), "Village");
--      })));
-+      // FORGE: Support modded structures via registry name
-+      })).then(Commands.func_197056_a("structure_type", net.minecraft.command.arguments.ResourceLocationArgument.func_197197_a())
-+              .suggests((ctx, sb) -> net.minecraft.command.ISuggestionProvider.func_197013_a(
-+                      net.minecraftforge.registries.GameData.getStructureFeatures().func_148742_b().stream()
-+                          .map(net.minecraft.util.ResourceLocation::toString), sb))
-+              .executes(ctx -> func_198534_a(ctx.getSource(), ctx.getArgument("structure_type", net.minecraft.util.ResourceLocation.class).toString().replace("minecraft:", ""))
-+      )));
-    }
+@@ -25,11 +25,18 @@
+          return p_198533_0_.func_197034_c(2);
+       });
  
-    private static int func_198534_a(CommandSource p_198534_0_, String p_198534_1_) throws CommandSyntaxException {
++      if (false)
+       for(Entry<String, Structure<?>> entry : Structure.field_236365_a_.entrySet()) {
+          literalargumentbuilder = literalargumentbuilder.then(Commands.func_197057_a(entry.getKey()).executes((p_241056_1_) -> {
+             return func_241053_a_(p_241056_1_.getSource(), entry.getValue());
+          }));
+       }
++      else {
++      for (Structure<?> structureFeature : net.minecraftforge.registries.ForgeRegistries.STRUCTURE_FEATURES) {
++         String name = structureFeature.getRegistryName().toString().replace("minecraft:", "");
++         literalargumentbuilder = literalargumentbuilder.then(Commands.func_197057_a(name)
++               .executes(ctx -> func_241053_a_(ctx.getSource(), structureFeature)));
++      }}
+ 
+       p_198528_0_.register(literalargumentbuilder);
+    }

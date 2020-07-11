@@ -1,80 +1,83 @@
 --- a/net/minecraft/client/gui/screen/Screen.java
 +++ b/net/minecraft/client/gui/screen/Screen.java
-@@ -111,7 +111,10 @@
+@@ -113,7 +113,10 @@
     }
  
-    protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
--      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_);
-+      FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
-+      net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
-+      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+    protected void func_230457_a_(MatrixStack p_230457_1_, ItemStack p_230457_2_, int p_230457_3_, int p_230457_4_) {
+-      this.func_238654_b_(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_);
++      FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
++      net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
++      this.func_238654_b_(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +      net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
     }
  
-    public List<String> getTooltipFromItem(ItemStack p_getTooltipFromItem_1_) {
-@@ -130,7 +133,11 @@
+    public List<ITextComponent> func_231151_a_(ItemStack p_231151_1_) {
+@@ -125,7 +128,11 @@
     }
  
-    public void renderTooltip(List<String> p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
--      if (!p_renderTooltip_1_.isEmpty()) {
-+      renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, font);
+    public void func_238654_b_(MatrixStack p_238654_1_, List<? extends ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_) {
+-      if (!p_238654_2_.isEmpty()) {
++      this.func_238654_b_(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230712_o_);
 +   }
-+   public void renderTooltip(List<String> p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_, FontRenderer font) {
-+      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, width, height, -1, font);
-+      if (false && !p_renderTooltip_1_.isEmpty()) {
-          RenderSystem.disableRescaleNormal();
-          RenderSystem.disableDepthTest();
++   public void func_238654_b_(MatrixStack p_238654_1_, List<? extends ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font) {
++      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230708_k_, field_230709_l_, -1, font);
++      if (false && !p_238654_2_.isEmpty()) {
           int i = 0;
-@@ -308,9 +315,12 @@
+ 
+          for(ITextProperties itextproperties : p_238654_2_) {
+@@ -285,9 +292,12 @@
     }
  
-    public void sendMessage(String p_sendMessage_1_, boolean p_sendMessage_2_) {
-+      p_sendMessage_1_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_sendMessage_1_);
-+      if (p_sendMessage_1_.isEmpty()) return;
-       if (p_sendMessage_2_) {
-          this.minecraft.field_71456_v.func_146158_b().func_146239_a(p_sendMessage_1_);
+    public void func_231159_b_(String p_231159_1_, boolean p_231159_2_) {
++      p_231159_1_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_231159_1_);
++      if (p_231159_1_.isEmpty()) return;
+       if (p_231159_2_) {
+          this.field_230706_i_.field_71456_v.func_146158_b().func_146239_a(p_231159_1_);
        }
 +      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
  
-       this.minecraft.field_71439_g.func_71165_d(p_sendMessage_1_);
+       this.field_230706_i_.field_71439_g.func_71165_d(p_231159_1_);
     }
-@@ -321,10 +331,14 @@
-       this.font = p_init_1_.field_71466_p;
-       this.width = p_init_2_;
-       this.height = p_init_3_;
-+      java.util.function.Consumer<Widget> remove = (b) -> { buttons.remove(b); children.remove(b); };
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttons, this::addButton, remove))) {
-       this.buttons.clear();
-       this.children.clear();
-       this.setFocused((IGuiEventListener)null);
-       this.init();
+@@ -298,10 +308,17 @@
+       this.field_230712_o_ = p_231158_1_.field_71466_p;
+       this.field_230708_k_ = p_231158_2_;
+       this.field_230709_l_ = p_231158_3_;
++      java.util.function.Consumer<Widget> remove = (b) -> {
++         field_230710_m_.remove(b);
++         field_230705_e_.remove(b);
++      };
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.field_230710_m_, this::func_230480_a_, remove))) {
+       this.field_230710_m_.clear();
+       this.field_230705_e_.clear();
+       this.func_231035_a_((IGuiEventListener)null);
+       this.func_231160_c_();
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.buttons, this::addButton, remove));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.field_230710_m_, this::func_230480_a_, remove));
     }
  
-    public void setSize(int p_setSize_1_, int p_setSize_2_) {
-@@ -352,6 +366,7 @@
-    public void renderBackground(int p_renderBackground_1_) {
-       if (this.minecraft.field_71441_e != null) {
-          this.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+    public List<? extends IGuiEventListener> func_231039_at__() {
+@@ -324,6 +341,7 @@
+    public void func_238651_a_(MatrixStack p_238651_1_, int p_238651_2_) {
+       if (this.field_230706_i_.field_71441_e != null) {
+          this.func_238468_a_(p_238651_1_, 0, 0, this.field_230708_k_, this.field_230709_l_, -1072689136, -804253680);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, p_238651_1_));
        } else {
-          this.renderDirtBackground(p_renderBackground_1_);
+          this.func_231165_f_(p_238651_2_);
        }
-@@ -370,6 +385,7 @@
-       bufferbuilder.func_225582_a_((double)this.width, 0.0D, 0.0D).func_225583_a_((float)this.width / 32.0F, (float)p_renderDirtBackground_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
-       bufferbuilder.func_225582_a_(0.0D, 0.0D, 0.0D).func_225583_a_(0.0F, (float)p_renderDirtBackground_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
+@@ -342,6 +360,7 @@
+       bufferbuilder.func_225582_a_((double)this.field_230708_k_, 0.0D, 0.0D).func_225583_a_((float)this.field_230708_k_ / 32.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
+       bufferbuilder.func_225582_a_(0.0D, 0.0D, 0.0D).func_225583_a_(0.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        tessellator.func_78381_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, new MatrixStack()));
     }
  
-    public boolean isPauseScreen() {
-@@ -453,4 +469,8 @@
-    public boolean isMouseOver(double p_isMouseOver_1_, double p_isMouseOver_3_) {
-       return true;
+    public boolean func_231177_au__() {
+@@ -428,4 +447,8 @@
+ 
+    public void func_230476_a_(List<Path> p_230476_1_) {
     }
 +
 +   public Minecraft getMinecraft() {
-+      return this.minecraft;
++      return this.field_230706_i_;
 +   }
  }

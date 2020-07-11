@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -162,7 +162,7 @@ public final class ModelLoader extends ModelBakery
         {
             if (instance == null)
             {
-                instance = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, LOCATION).getSprite();
+                instance = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, LOCATION).getSprite();
             }
             return instance;
         }
@@ -262,9 +262,9 @@ public final class ModelLoader extends ModelBakery
     /**
      * Get the default texture getter the models will be baked with.
      */
-    public static Function<Material, TextureAtlasSprite> defaultTextureGetter()
+    public static Function<RenderMaterial, TextureAtlasSprite> defaultTextureGetter()
     {
-        return Material::getSprite;
+        return RenderMaterial::getSprite;
     }
 
     public static Function<ResourceLocation, IUnbakedModel> defaultModelGetter()

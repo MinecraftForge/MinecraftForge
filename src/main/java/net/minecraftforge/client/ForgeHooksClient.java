@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,55 +19,9 @@
 
 package net.minecraftforge.client;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA;
-import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
-import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL11.glColorPointer;
-import static org.lwjgl.opengl.GL11.glDisableClientState;
-import static org.lwjgl.opengl.GL11.glEnableClientState;
-import static org.lwjgl.opengl.GL11.glMultMatrixf;
-import static org.lwjgl.opengl.GL11.glNormalPointer;
-import static org.lwjgl.opengl.GL11.glTexCoordPointer;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.model.pipeline.LightUtil;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
-import org.lwjgl.opengl.GL13;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -78,31 +32,28 @@ import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelManager;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
@@ -113,41 +64,54 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ILightReader;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.DrawHighlightEvent;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.ScreenshotEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
+import org.lwjgl.opengl.GL13;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA;
+import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class ForgeHooksClient
 {
@@ -172,12 +136,6 @@ public class ForgeHooksClient
                 return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
         }
         return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
-    }
-
-    @Deprecated // TODO: Remove in 1.16
-    public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks)
-    {
-        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
@@ -280,10 +238,11 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getInstance().gameSettings;
         int[] ranges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         int distance = 0;
-        if (settings.fancyGraphics && ranges.length > 0)
-        {
-            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
-        }
+        //TODO, GraphicsFanciness changed, and is getSkyBlendColour used still?
+//        if (settings.fancyGraphics && ranges.length > 0)
+//        {
+//            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
+//        }
 
         int r = 0;
         int g = 0;
@@ -320,16 +279,16 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    public static void renderMainMenu(MainMenuScreen gui, FontRenderer font, int width, int height)
+    public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
-            line = I18n.format("forge.update.beta.2");
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).func_240699_a_(TextFormatting.RED);
+            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            line = new TranslationTextComponent("forge.update.beta.2");
+            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;
@@ -362,11 +321,11 @@ public class ForgeHooksClient
         return worldRenderPass;
     }
 
-    public static void drawScreen(Screen screen, int mouseX, int mouseY, float partialTicks)
+    public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mouseX, mouseY, partialTicks)))
-            screen.render(mouseX, mouseY, partialTicks);
-        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
+        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
+            screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
     }
 
     public static float getFogDensity(FogType type, ActiveRenderInfo info, float partial, float density)
@@ -394,11 +353,11 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    private static final net.minecraft.client.renderer.Matrix4f flipX;
-    private static final net.minecraft.client.renderer.Matrix3f flipXNormal;
+    private static final Matrix4f flipX;
+    private static final Matrix3f flipXNormal;
     static {
         flipX = Matrix4f.makeScale(-1,1,1);
-        flipXNormal = new net.minecraft.client.renderer.Matrix3f(flipX);
+        flipXNormal = new Matrix3f(flipX);
     }
 
     public static IBakedModel handleCameraTransforms(MatrixStack matrixStack, IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
@@ -410,8 +369,8 @@ public class ForgeHooksClient
         if (!stack.clear())
         {
             // Apply the transformation to the real matrix stack, flipping for left hand
-            net.minecraft.client.renderer.Matrix4f tMat = stack.getLast().getMatrix();
-            net.minecraft.client.renderer.Matrix3f nMat = stack.getLast().getNormal();
+            Matrix4f tMat = stack.getLast().getMatrix();
+            Matrix3f nMat = stack.getLast().getNormal();
             if (leftHandHackery)
             {
                 tMat.multiplyBackward(flipX);
@@ -532,7 +491,7 @@ public class ForgeHooksClient
     }*/
 
     @SuppressWarnings("deprecation")
-    public static TextureAtlasSprite[] getFluidSprites(ILightReader world, BlockPos pos, IFluidState fluidStateIn)
+    public static TextureAtlasSprite[] getFluidSprites(IBlockDisplayReader world, BlockPos pos, FluidState fluidStateIn)
     {
         ResourceLocation overlayTexture = fluidStateIn.getFluid().getAttributes().getOverlayTexture();
         return new TextureAtlasSprite[] {
@@ -542,14 +501,14 @@ public class ForgeHooksClient
         };
     }
 
-    public static void gatherFluidTextures(Set<Material> textures)
+    public static void gatherFluidTextures(Set<RenderMaterial> textures)
     {
         ForgeRegistries.FLUIDS.getValues().stream()
                 .flatMap(ForgeHooksClient::getFluidMaterials)
                 .forEach(textures::add);
     }
 
-    public static Stream<Material> getFluidMaterials(Fluid fluid)
+    public static Stream<RenderMaterial> getFluidMaterials(Fluid fluid)
     {
         return fluid.getAttributes().getTextures()
                 .filter(Objects::nonNull)
@@ -557,9 +516,9 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Material getBlockMaterial(ResourceLocation loc)
+    public static RenderMaterial getBlockMaterial(ResourceLocation loc)
     {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
     /**
@@ -631,17 +590,17 @@ public class ForgeHooksClient
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
-    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)
+    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MatrixStack mStack, MainWindow res, ClientBossInfo bossInfo, int x, int y, int increment)
     {
-        RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res),
+        RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(mStack, new RenderGameOverlayEvent(mStack, Animation.getPartialTickTime(), res),
                 BOSSINFO, bossInfo, x, y, increment);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
 
-    public static void bossBarRenderPost(MainWindow res)
+    public static void bossBarRenderPost(MatrixStack mStack, MainWindow res)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
+        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(mStack, new RenderGameOverlayEvent(mStack, Animation.getPartialTickTime(), res), BOSSINFO));
     }
 
     public static ScreenshotEvent onScreenshot(NativeImage image, File screenshotFile)
@@ -814,5 +773,25 @@ public class ForgeHooksClient
         InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static void drawItemLayered(ItemRenderer renderer, IBakedModel modelIn, ItemStack itemStackIn, MatrixStack matrixStackIn,
+                                       IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, boolean fabulous)
+    {
+        for(com.mojang.datafixers.util.Pair<IBakedModel,RenderType> layerModel : modelIn.getLayerModels(itemStackIn, fabulous))
+        {
+            IBakedModel layer = layerModel.getFirst();
+            RenderType rendertype = layerModel.getSecond();
+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype); // neded for compatibility with MultiLayerModels
+            IVertexBuilder ivertexbuilder;
+            if (fabulous)
+            {
+                ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, rendertype, true, itemStackIn.hasEffect());
+            } else {
+                ivertexbuilder = ItemRenderer.getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
+            }
+            renderer.renderModel(layer, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
+        }
+        net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
     }
 }

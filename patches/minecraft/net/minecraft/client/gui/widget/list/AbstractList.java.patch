@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/widget/list/AbstractList.java
 +++ b/net/minecraft/client/gui/widget/list/AbstractList.java
-@@ -450,6 +450,13 @@
-       return flag;
+@@ -471,6 +471,13 @@
+       p_238480_1_.field_230666_a_ = this;
     }
  
-+   public int getWidth() { return this.width; }
-+   public int getHeight() { return this.height; }
-+   public int getTop() { return this.y0; }
-+   public int getBottom() { return this.y1; }
-+   public int getLeft() { return this.x0; }
-+   public int getRight() { return this.x1; }
++   public int getWidth() { return this.field_230670_d_; }
++   public int getHeight() { return this.field_230671_e_; }
++   public int getTop() { return this.field_230672_i_; }
++   public int getBottom() { return this.field_230673_j_; }
++   public int getLeft() { return this.field_230675_l_; }
++   public int getRight() { return this.field_230674_k_; }
 +
     @OnlyIn(Dist.CLIENT)
     public abstract static class AbstractListEntry<E extends AbstractList.AbstractListEntry<E>> implements IGuiEventListener {

@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/storage/MapDecoration.java
 +++ b/net/minecraft/world/storage/MapDecoration.java
-@@ -83,6 +83,16 @@
-       return i;
+@@ -82,6 +82,16 @@
+       return 31 * i + Objects.hashCode(this.field_204310_e);
     }
  
 +   /**

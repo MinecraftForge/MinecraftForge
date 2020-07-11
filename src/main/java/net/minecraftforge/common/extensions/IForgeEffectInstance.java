@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.List;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.item.ItemStack;
@@ -66,13 +67,14 @@ public interface IForgeEffectInstance {
      * This can be used to e.g. render Potion icons from your own texture.
      *
      * @param gui the gui instance
+     * @param mStack The MatrixStack
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z level
      */
     @OnlyIn(Dist.CLIENT)
-    default void renderInventoryEffect(DisplayEffectsScreen<?> gui, int x, int y, float z) {
-        getEffectInstance().getPotion().renderInventoryEffect(getEffectInstance(), gui, x, y, z);
+    default void renderInventoryEffect(DisplayEffectsScreen<?> gui, MatrixStack mStack, int x, int y, float z) {
+        getEffectInstance().getPotion().renderInventoryEffect(getEffectInstance(), gui, mStack, x, y, z);
     }
 
     /**
@@ -80,14 +82,15 @@ public interface IForgeEffectInstance {
      * This can be used to e.g. render Potion icons from your own texture.
      *
      * @param gui the gui instance
+     * @param mStack The MatrixStack
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z level
      * @param alpha the alpha value, blinks when the potion is about to run out
      */
     @OnlyIn(Dist.CLIENT)
-    default void renderHUDEffect(AbstractGui gui, int x, int y, float z, float alpha) {
-        getEffectInstance().getPotion().renderHUDEffect(getEffectInstance(), gui, x, y, z, alpha);
+    default void renderHUDEffect(AbstractGui gui, MatrixStack mStack, int x, int y, float z, float alpha) {
+        getEffectInstance().getPotion().renderHUDEffect(getEffectInstance(), gui, mStack, x, y, z, alpha);
     }
 
     /***

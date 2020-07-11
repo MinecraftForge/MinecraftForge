@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RepairItemRecipe.java
 +++ b/net/minecraft/item/crafting/RepairItemRecipe.java
-@@ -22,7 +22,7 @@
+@@ -27,7 +27,7 @@
              list.add(itemstack);
              if (list.size() > 1) {
                 ItemStack itemstack1 = list.get(0);
@@ -9,7 +9,7 @@
                    return false;
                 }
              }
-@@ -41,7 +41,7 @@
+@@ -46,7 +46,7 @@
              list.add(itemstack);
              if (list.size() > 1) {
                 ItemStack itemstack1 = list.get(0);
@@ -18,7 +18,7 @@
                    return ItemStack.field_190927_a;
                 }
              }
-@@ -51,12 +51,12 @@
+@@ -56,12 +56,12 @@
        if (list.size() == 2) {
           ItemStack itemstack3 = list.get(0);
           ItemStack itemstack4 = list.get(1);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MilkBucketItem.java
 +++ b/net/minecraft/item/MilkBucketItem.java
-@@ -15,6 +15,8 @@
+@@ -16,6 +16,8 @@
     }
  
     public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, LivingEntity p_77654_3_) {
@@ -9,7 +9,7 @@
        if (p_77654_3_ instanceof ServerPlayerEntity) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_77654_3_;
           CriteriaTriggers.field_193138_y.func_193148_a(serverplayerentity, p_77654_1_);
-@@ -25,10 +27,6 @@
+@@ -26,10 +28,6 @@
           p_77654_1_.func_190918_g(1);
        }
  
@@ -21,8 +21,8 @@
     }
  
 @@ -44,4 +42,9 @@
-       p_77659_2_.func_184598_c(p_77659_3_);
-       return ActionResult.func_226248_a_(p_77659_2_.func_184586_b(p_77659_3_));
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+       return DrinkHelper.func_234707_a_(p_77659_1_, p_77659_2_, p_77659_3_);
     }
 +
 +   @Override

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -548,7 +548,7 @@ public class FluidUtil
             return false;
         }
 
-        BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, hand, new BlockRayTraceResult(Vec3d.ZERO, Direction.UP, pos, false))); //TODO: This neds proper context...
+        BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, hand, new BlockRayTraceResult(Vector3d.ZERO, Direction.UP, pos, false))); //TODO: This neds proper context...
 
         // check that we can place the fluid at the destination
         BlockState destBlockState = world.getBlockState(pos);
@@ -560,7 +560,7 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.dimension.doesWaterVaporize() && fluid.getAttributes().doesVaporize(world, pos, resource))
+        if (world.func_230315_m_().func_236040_e_() && fluid.getAttributes().doesVaporize(world, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (!result.isEmpty())

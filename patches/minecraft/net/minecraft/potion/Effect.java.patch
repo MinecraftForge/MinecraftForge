@@ -6,6 +6,6 @@
  
 -public class Effect {
 +public class Effect extends net.minecraftforge.registries.ForgeRegistryEntry<Effect> implements net.minecraftforge.common.extensions.IForgeEffect {
-    private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.newHashMap();
+    private final Map<Attribute, AttributeModifier> field_111188_I = Maps.newHashMap();
     private final EffectType field_220305_b;
     private final int field_76414_N;

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,11 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -239,9 +240,9 @@ public class GuiUtils
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
-    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
     {
-        drawHoveringText(textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
+        drawHoveringText(mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
     /**
@@ -263,29 +264,30 @@ public class GuiUtils
      *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
      */
-    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
+    public static void drawHoveringText(MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
-        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
+        drawHoveringText(cachedTooltipStack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
     }
 
-    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
     {
-        drawHoveringText(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
+        drawHoveringText(stack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
     /**
      * Use this version if calling from somewhere where ItemStack context is available.
      *
-     * @see #drawHoveringText(List, int, int, int, int, int, int, int, int, FontRenderer)
+     * @see #drawHoveringText(MatrixStack, List, int, int, int, int, int, int, int, int, FontRenderer)
      */
-    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY,
+    //TODO, Validate rendering is the same as the original
+    public static void drawHoveringText(@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY,
                                         int screenWidth, int screenHeight, int maxTextWidth,
                                         int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {
-            RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+            RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mStack, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
             if (MinecraftForge.EVENT_BUS.post(event))
                 return;
             mouseX = event.getX();
@@ -299,9 +301,9 @@ public class GuiUtils
             RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
-            for (String textLine : textLines)
+            for (ITextProperties textLine : textLines)
             {
-                int textLineWidth = font.getStringWidth(textLine);
+                int textLineWidth = font.func_238414_a_(textLine);
                 if (textLineWidth > tooltipTextWidth)
                     tooltipTextWidth = textLineWidth;
             }
@@ -332,17 +334,17 @@ public class GuiUtils
             if (needsWrap)
             {
                 int wrappedTooltipWidth = 0;
-                List<String> wrappedTextLines = new ArrayList<String>();
+                List<ITextProperties> wrappedTextLines = new ArrayList<>();
                 for (int i = 0; i < textLines.size(); i++)
                 {
-                    String textLine = textLines.get(i);
-                    List<String> wrappedLine = font.listFormattedStringToWidth(textLine, tooltipTextWidth);
+                    ITextProperties textLine = textLines.get(i);
+                    List<ITextProperties> wrappedLine = font.func_238425_b_(textLine, tooltipTextWidth);
                     if (i == 0)
                         titleLinesCount = wrappedLine.size();
 
-                    for (String line : wrappedLine)
+                    for (ITextProperties line : wrappedLine)
                     {
-                        int lineWidth = font.getStringWidth(line);
+                        int lineWidth = font.func_238414_a_(line);
                         if (lineWidth > wrappedTooltipWidth)
                             wrappedTooltipWidth = lineWidth;
                         wrappedTextLines.add(line);
@@ -372,37 +374,38 @@ public class GuiUtils
             else if (tooltipY + tooltipHeight + 4 > screenHeight)
                 tooltipY = screenHeight - tooltipHeight - 4;
 
-            final int zLevel = 300;
-            RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
+            final int zLevel = 400;
+            RenderTooltipEvent.Color colorEvent = new RenderTooltipEvent.Color(stack, textLines, mStack, tooltipX, tooltipY, font, backgroundColor, borderColorStart, borderColorEnd);
             MinecraftForge.EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
             borderColorStart = colorEvent.getBorderStart();
             borderColorEnd = colorEvent.getBorderEnd();
 
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3, tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
-            drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
+            mStack.push();
+            Matrix4f mat = mStack.getLast().getMatrix();
+            //TODO, lots of unnessesary GL calls here, we can buffer all these together.
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            drawGradientRect(mat, zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            drawGradientRect(mat, zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3, tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            drawGradientRect(mat, zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
+            drawGradientRect(mat, zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
-            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, mStack, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
 
             IRenderTypeBuffer.Impl renderType = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-            MatrixStack textStack = new MatrixStack();
-            textStack.translate(0.0D, 0.0D, (double)zLevel);
-            Matrix4f textLocation = textStack.getLast().getMatrix();
+            mStack.translate(0.0D, 0.0D, zLevel);
 
             int tooltipTop = tooltipY;
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber)
             {
-                String line = textLines.get(lineNumber);
+                ITextProperties line = textLines.get(lineNumber);
                 if (line != null)
-                    font.renderString(line, (float)tooltipX, (float)tooltipY, -1, true, textLocation, renderType, false, 0, 15728880);
+                    font.func_238416_a_(line, (float)tooltipX, (float)tooltipY, -1, true, mat, renderType, false, 0, 15728880);
 
                 if (lineNumber + 1 == titleLinesCount)
                     tooltipY += 2;
@@ -411,15 +414,16 @@ public class GuiUtils
             }
 
             renderType.finish();
+            mStack.pop();
 
-            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, mStack, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
 
             RenderSystem.enableDepthTest();
             RenderSystem.enableRescaleNormal();
         }
     }
 
-    public static void drawGradientRect(int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
+    public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float startAlpha = (float)(startColor >> 24 & 255) / 255.0F;
         float startRed   = (float)(startColor >> 16 & 255) / 255.0F;
@@ -430,33 +434,32 @@ public class GuiUtils
         float endGreen   = (float)(endColor   >>  8 & 255) / 255.0F;
         float endBlue    = (float)(endColor         & 255) / 255.0F;
 
+        RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
-        RenderSystem.disableAlphaTest();
         RenderSystem.defaultBlendFunc();
         RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(right,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
-        buffer.pos(right, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.pos(mat, right,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(mat,  left,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(mat,  left, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.pos(mat, right, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
         tessellator.draw();
 
         RenderSystem.shadeModel(GL11.GL_FLAT);
         RenderSystem.disableBlend();
-        RenderSystem.enableAlphaTest();
         RenderSystem.enableTexture();
     }
 
-    public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
+    public static void drawInscribedRect(MatrixStack mStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
     {
-        drawInscribedRect(x, y, boundsWidth, boundsHeight, rectWidth, rectHeight, true, true);
+        drawInscribedRect(mStack, x, y, boundsWidth, boundsHeight, rectWidth, rectHeight, true, true);
     }
 
-    public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight, boolean centerX, boolean centerY)
+    public static void drawInscribedRect(MatrixStack mStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight, boolean centerX, boolean centerY)
     {
         if (rectWidth * boundsHeight > rectHeight * boundsWidth) {
             int h = boundsHeight;
@@ -468,6 +471,6 @@ public class GuiUtils
             if (centerX) x += (w - boundsWidth) / 2;
         }
 
-        AbstractGui.blit(x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
+        AbstractGui.func_238466_a_(mStack, x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.Matrix3f;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 
 import org.lwjgl.system.MemoryStack;
@@ -42,17 +38,17 @@ public interface IForgeVertexBuilder
 {
     default IVertexBuilder getVertexBuilder() { return (IVertexBuilder)this; }
 
-    // Copy of func_227889_a_, but enables tinting
+    // Copy of addQuad, but enables tinting and per-vertex alpha
     default void addVertexData(MatrixStack.Entry matrixStack, BakedQuad bakedQuad, float red, float green, float blue, int lightmapCoord, int overlayColor, boolean readExistingColor) {
-        getVertexBuilder().addQuad(matrixStack, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
+        addVertexData(matrixStack, bakedQuad, red, green, blue, 1.0f, lightmapCoord, overlayColor, readExistingColor);
     }
 
-    // Copy of func_227889_a_ with alpha support
+    // Copy of addQuad with alpha support
     default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor) {
         addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, false);
     }
 
-    // Copy of func_227889_a_ with alpha support
+    // Copy of addQuad with alpha support
     default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor, boolean readExistingColor) {
         addVertexData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
     }
@@ -60,7 +56,7 @@ public interface IForgeVertexBuilder
     // Copy of addQuad with alpha support
     default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean readExistingColor) {
         int[] aint = bakedQuad.getVertexData();
-        Vec3i faceNormal = bakedQuad.getFace().getDirectionVec();
+        Vector3i faceNormal = bakedQuad.getFace().getDirectionVec();
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
         Matrix4f matrix4f = matrixEntry.getMatrix();
         normal.transform(matrixEntry.getNormal());

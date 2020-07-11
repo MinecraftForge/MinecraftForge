@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,8 +33,11 @@ import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.IModelTransform;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

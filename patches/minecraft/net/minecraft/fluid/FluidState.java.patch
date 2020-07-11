@@ -1,0 +1,19 @@
+--- a/net/minecraft/fluid/FluidState.java
++++ b/net/minecraft/fluid/FluidState.java
+@@ -20,7 +20,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public final class FluidState extends StateHolder<Fluid, FluidState> {
++public final class FluidState extends StateHolder<Fluid, FluidState> implements net.minecraftforge.common.extensions.IForgeFluidState {
+    public static final Codec<FluidState> field_237213_a_ = func_235897_a_(Registry.field_212619_h, Fluid::func_207188_f).stable();
+ 
+    public FluidState(Fluid p_i232145_1_, ImmutableMap<Property<?>, Comparable<?>> p_i232145_2_, MapCodec<FluidState> p_i232145_3_) {
+@@ -101,6 +101,7 @@
+       return this.func_206886_c().func_207185_a(p_206884_1_);
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public float func_210200_l() {
+       return this.func_206886_c().func_210195_d();
+    }

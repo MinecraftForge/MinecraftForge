@@ -13,10 +13,10 @@
        if (p_225533_2_.field_72995_K) {
           return ActionResultType.SUCCESS;
        } else {
--         p_225533_1_ = p_225533_1_.func_177231_a(field_196485_c);
-+         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_225533_2_, p_225533_3_, p_225533_1_, p_225533_1_.func_177229_b(field_196485_c), p_225533_1_.func_177231_a(field_196485_c).func_177229_b(field_196485_c));
+-         p_225533_1_ = p_225533_1_.func_235896_a_(field_196485_c);
++         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_225533_2_, p_225533_3_, p_225533_1_, p_225533_1_.func_177229_b(field_196485_c), p_225533_1_.func_235896_a_(field_196485_c).func_177229_b(field_196485_c));
 +         if (_new == -1) return ActionResultType.FAIL;
-+         p_225533_1_ = (BlockState)p_225533_1_.func_206870_a(field_196485_c, _new);
++         p_225533_1_ = p_225533_1_.func_206870_a(field_196485_c, _new);
           p_225533_2_.func_180501_a(p_225533_3_, p_225533_1_, 3);
           this.func_196482_a(p_225533_2_, p_225533_3_);
           p_225533_4_.func_195066_a(Stats.field_188087_U);
