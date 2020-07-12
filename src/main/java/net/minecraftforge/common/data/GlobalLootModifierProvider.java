@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public abstract class GlobalLootModifierProvider implements IDataProvider
 {
@@ -79,9 +80,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
 
       JsonObject forgeJson = new JsonObject();
       forgeJson.addProperty("replace", this.replace);
-      JsonArray modifiersArray = new JsonArray();
-      entries.forEach(loc -> modifiersArray.add(loc.toString()));
-      forgeJson.add("entries", modifiersArray);
+      forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(ResourceLocation::toString).collect(Collectors.toList())));
 
       IDataProvider.save(GSON, cache, forgeJson, forge);
    }
