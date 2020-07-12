@@ -108,11 +108,115 @@ public class JsonMerger
                 if (settings.has("value"))
                 {
                     second = settings.get("value");
+
+                    for(Map.Entry<String, JsonElement> child : secondObj.entrySet())
+                    {
+                        if (!child.getKey().equals("_forge_combine"))
+                            throw new JsonSyntaxException("Objects must not have content other than '_forge_combine' if they use the 'value' feature.");
+                    }
                 }
             }
         }
 
         return getCombinedInternal(first, second, mode);
+    }
+
+    private static JsonElement getCombinedInternal(JsonElement first, JsonElement second, MergeMode mode)
+    {
+        if (mode == MergeMode.OVERWRITE)
+            return second;
+
+        if (first.isJsonObject())
+        {
+            if (!second.isJsonObject())
+            {
+                throw new JsonSyntaxException("The combining counterpart for a json object must be another json object");
+            }
+
+            if (mode == MergeMode.COMBINE)
+            {
+                return combineObjects(first.getAsJsonObject(), second.getAsJsonObject());
+            }
+
+            throw new JsonSyntaxException(String.format("Invalid combine mode for a json object: %s. Allowed: overwrite, combine", mode));
+        }
+        else if (first.isJsonArray())
+        {
+            switch(mode)
+            {
+                case COMBINE:
+                    return concatenateArrays(first.getAsJsonArray(), second.getAsJsonArray());
+                case ZIP:
+                    return zipArrays(first.getAsJsonArray(), second.getAsJsonArray());
+                default:
+                    throw new JsonSyntaxException(String.format("Invalid combine mode for a json array: %s. Allowed: overwrite, combine, zip", mode));
+            }
+        }
+        else if (first.isJsonNull())
+        {
+            if (mode != MergeMode.COMBINE)
+                throw new JsonSyntaxException(String.format("Invalid combine mode for a json null: %s", mode));
+        }
+        else
+        {
+            if (mode != MergeMode.COMBINE)
+                throw new JsonSyntaxException(String.format("Invalid combine mode for a json primitive: %s", mode));
+        }
+
+        return second;
+    }
+
+    public static JsonElement combineObjects(JsonObject first, JsonObject second)
+    {
+        JsonObject result = new JsonObject();
+        for(Map.Entry<String, JsonElement> entry : first.entrySet())
+        {
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
+            if (second.has(key))
+            {
+                result.add(key, combineJsonElements(value, second.get(key), MergeMode.COMBINE));
+            }
+            else
+            {
+                result.add(key, value);
+            }
+        }
+        for(Map.Entry<String, JsonElement> entry : first.entrySet())
+        {
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
+            if (!result.has(key))
+            {
+                result.add(key, value);
+            }
+        }
+        return result;
+    }
+
+    private static JsonElement zipArrays(JsonArray first, JsonArray second)
+    {
+        JsonArray a = new JsonArray();
+        int end = Math.min(first.size(),second.size());
+        for(int i=0;i<end;i++)
+        {
+            a.add(combineJsonElements(first.get(i), second.get(i), MergeMode.COMBINE));
+        }
+        return null;
+    }
+
+    private static JsonElement concatenateArrays(JsonArray first, JsonArray second)
+    {
+        List<JsonElement> elements = Lists.newArrayList();
+        for(int i=0;i<first.size();i++)
+            elements.add(first.get(i));
+        for(int i=0;i<second.size();i++)
+            processJsonArrayElement(elements, second.get(i));
+
+        JsonArray result = new JsonArray();
+        for (JsonElement element : elements)
+            result.add(element);
+        return result;
     }
 
     private static void processJsonArrayElement(List<JsonElement> parent, JsonElement second)
@@ -318,104 +422,6 @@ public class JsonMerger
         }
 
         return true;
-    }
-
-    private static JsonElement getCombinedInternal(JsonElement first, JsonElement second, MergeMode mode)
-    {
-        if (mode == MergeMode.OVERWRITE)
-            return second;
-
-        if (first.isJsonObject())
-        {
-            if (!second.isJsonObject())
-            {
-                throw new JsonSyntaxException("The combining counterpart for a json object must be another json object");
-            }
-
-            if (mode == MergeMode.COMBINE)
-            {
-                return combineObjects(first.getAsJsonObject(), second.getAsJsonObject());
-            }
-
-            throw new JsonSyntaxException(String.format("Invalid combine mode for a json object: %s. Allowed: overwrite, combine", mode));
-        }
-        else if (first.isJsonArray())
-        {
-            switch(mode)
-            {
-                case COMBINE:
-                    return concatenateArrays(first.getAsJsonArray(), second.getAsJsonArray());
-                case ZIP:
-                    return zipArrays(first.getAsJsonArray(), second.getAsJsonArray());
-                default:
-                    throw new JsonSyntaxException(String.format("Invalid combine mode for a json array: %s. Allowed: overwrite, combine, zip", mode));
-            }
-        }
-        else if (first.isJsonNull())
-        {
-            if (mode != MergeMode.COMBINE)
-                throw new JsonSyntaxException(String.format("Invalid combine mode for a json null: %s", mode));
-        }
-        else
-        {
-            if (mode != MergeMode.COMBINE)
-                throw new JsonSyntaxException(String.format("Invalid combine mode for a json primitive: %s", mode));
-        }
-
-        return second;
-    }
-
-    private static JsonElement zipArrays(JsonArray first, JsonArray second)
-    {
-        JsonArray a = new JsonArray();
-        int end = Math.min(first.size(),second.size());
-        for(int i=0;i<end;i++)
-        {
-            a.add(combineJsonElements(first.get(i), second.get(i), MergeMode.COMBINE));
-        }
-        return null;
-    }
-
-    private static JsonElement concatenateArrays(JsonArray first, JsonArray second)
-    {
-        List<JsonElement> elements = Lists.newArrayList();
-        for(int i=0;i<first.size();i++)
-            elements.add(first.get(i));
-        for(int i=0;i<second.size();i++)
-            processJsonArrayElement(elements, second.get(i));
-
-        JsonArray result = new JsonArray();
-        for (JsonElement element : elements)
-            result.add(element);
-        return result;
-    }
-
-    public static JsonElement combineObjects(JsonObject first, JsonObject second)
-    {
-        JsonObject result = new JsonObject();
-        for(Map.Entry<String, JsonElement> entry : first.entrySet())
-        {
-            String key = entry.getKey();
-            JsonElement value = entry.getValue();
-            if (second.has(key))
-            {
-                result.add(key, combineJsonElements(value, second.get(key), MergeMode.COMBINE));
-            }
-            else
-            {
-                result.add(key, value);
-            }
-        }
-        for(Map.Entry<String, JsonElement> entry : first.entrySet())
-        {
-            String key = entry.getKey();
-            JsonElement value = entry.getValue();
-            if (!result.has(key))
-            {
-                result.add(key, value);
-            }
-        }
-        return result;
     }
 
     public enum MergeMode
