@@ -3,7 +3,6 @@ package net.minecraftforge.common.util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -17,8 +16,6 @@ import java.io.InputStreamReader;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class JsonMerger
 {
@@ -28,45 +25,40 @@ public class JsonMerger
 
     public static JsonElement combineAllJsonResources(IResourceManager resourceManager, ResourceLocation location) throws IOException
     {
-        List<Either<JsonElement, Exception>> results = resourceManager.getAllResources(location).stream().map(res -> {
-            try (
-                    IResource t = res;
+        List<IResource> allResources = resourceManager.getAllResources(location);
+        List<IResource> resourceList = allResources.size() == 1 ? allResources : Lists.reverse(allResources);
+        List<JsonElement> results = Lists.newArrayList();
+        boolean stopping = false;
+        for(IResource resource : resourceList)
+        {
+            if (stopping)
+            {
+                // needed to avoid leaking file handles.
+                resource.close();
+                continue;
+            }
+            try (   IResource t = resource;
                     InputStream is = t.getInputStream();
                     InputStreamReader rd = new InputStreamReader(is))
             {
                 JsonElement jsonElement = SERIALIZER.fromJson(rd, JsonElement.class);
                 if (jsonElement == null) {
                     LOGGER.error("Couldn't load data from {} as it's null or empty", location);
+                    return null;
                 }
-                return Either.<JsonElement, Exception>left(jsonElement);
+
+                results.add(jsonElement);
+
+                if (isOverwriteMode(jsonElement))
+                    stopping = true;
             }
             catch(IOException e)
             {
-                return Either.<JsonElement, Exception>right(e);
-            }
-        }).collect(Collectors.toList());
-
-        JsonElement merged = null;
-        for(Either<JsonElement, Exception> result : results)
-        {
-            Optional<Exception> ex = result.right();
-            if (ex.isPresent())
-            {
-                LOGGER.error("Error reading JSON from {}", location, ex.get());
-                continue;
-            }
-
-            JsonElement next = result.orThrow();
-            if (merged == null)
-            {
-                merged = next;
-            }
-            else
-            {
-                merged = combineJsonElements(merged, next, MergeMode.OVERWRITE);
+                LOGGER.error("Error reading JSON from {}", location, e);
             }
         }
-        return merged;
+
+        return combineAllJsonResources(results.size() == 1 ? results : Lists.reverse(results));
     }
 
     public static JsonElement combineAllJsonResources(List<JsonElement> elements)
@@ -422,6 +414,19 @@ public class JsonMerger
         }
 
         return true;
+    }
+
+    private static boolean isOverwriteMode(JsonElement jsonElement)
+    {
+        if (!jsonElement.isJsonObject())
+            return true;
+        JsonObject obj = jsonElement.getAsJsonObject();
+        if (!obj.has("_forge_combine"))
+            return true;
+        JsonObject settings = obj.getAsJsonObject("_forge_combine");
+        if (!settings.has("mode"))
+            return true;
+        return settings.get("mode").getAsString().equals("overwrite");
     }
 
     public enum MergeMode
