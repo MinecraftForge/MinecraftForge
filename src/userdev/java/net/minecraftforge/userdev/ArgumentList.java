@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
  * A class that attempts to parse command line arguments into key value pairs to allow addition and editing.
  * Can not use JOptSimple as that doesn't parse out the values for keys unless the spec says it has a value.
  */
-class ArgumentList {
+public class ArgumentList {
     private static final Logger LOGGER = LogManager.getLogger();
     private List<Supplier<String[]>> entries = new ArrayList<>();
     private Map<String, EntryValue> values = new HashMap<>();
