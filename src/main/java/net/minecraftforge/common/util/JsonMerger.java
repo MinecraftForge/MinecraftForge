@@ -123,6 +123,7 @@ public class JsonMerger
         JsonElement find = null;
         boolean silent = false;
         boolean exact = false;
+        boolean after = false;
         if (second.isJsonObject())
         {
             JsonObject secondObj = second.getAsJsonObject();
@@ -160,24 +161,42 @@ public class JsonMerger
 
                 if (settings.has("exact"))
                     exact = settings.get("exact").getAsBoolean();
+
+                if (settings.has("after"))
+                    after = settings.get("after").getAsBoolean();
             }
         }
 
         switch(mode)
         {
-            case INSERT:
+            case APPEND:
             {
-                if (index == null)
-                    throw new JsonSyntaxException("Insert mode must specify an index.");
-                parent.add(index, second);
+                parent.add(second);
                 break;
             }
-            case REPLACE:
+            case INSERT:
+            case OVERWRITE:
+            case COMBINE:
             {
                 if (index == null && find == null)
-                    throw new JsonSyntaxException("Replace mode must specify an 'index' or a 'find' search pattern.");
+                    throw new JsonSyntaxException("Insert/replace mode must specify an 'index' or a 'find' search pattern.");
                 if (index != null)
-                    parent.set(index, second);
+                {
+                    switch (mode)
+                    {
+                        case COMBINE:
+                            parent.set(index, combineJsonElements(parent.get(index), second, MergeMode.COMBINE));
+                            break;
+                        case INSERT:
+                            if (after)
+                                throw new JsonSyntaxException("After is not available in indexed insert mode.");
+                            parent.add(index, second);
+                            break;
+                        default:
+                            parent.set(index, second);
+                            break;
+                    }
+                }
                 else
                 {
                     boolean found = false;
@@ -185,7 +204,21 @@ public class JsonMerger
                     {
                         if (compareWithPattern(parent.get(i), find, exact))
                         {
-                            parent.set(i, second);
+                            switch (mode)
+                            {
+                                case COMBINE:
+                                    parent.set(i, combineJsonElements(parent.get(i), second, MergeMode.COMBINE));
+                                    break;
+                                case INSERT:
+                                    if (after)
+                                        parent.add(i+1, second);
+                                    else
+                                        parent.add(i, second);
+                                    break;
+                                default:
+                                    parent.set(i, second);
+                                    break;
+                            }
                             found = true;
                             break;
                         }
@@ -197,11 +230,8 @@ public class JsonMerger
                 }
                 break;
             }
-            case APPEND:
-            {
-                parent.add(second);
-                break;
-            }
+            default:
+                throw new JsonSyntaxException(String.format("Invalid combine mode for children of json arrays: %s. Allowed: append, combine, overwrite, insert", mode));
         }
     }
 
@@ -386,12 +416,14 @@ public class JsonMerger
 
     public enum MergeMode
     {
-        OVERWRITE("overwrite"), /* default vanilla behaviour */
+        OVERWRITE("overwrite"), /* default vanilla behaviour. CHILDREN OF ARRAYS: replaces */
+
         COMBINE("combine"), /* OBJECTS: combines values with same key; ARRAYS: inserts, replaces or appends the elements of the second array into the first */
+
         ZIP("zip"), /* ARRAYS ONLY: zips the arrays, combining each pair of elements */
-        REPLACE("replace"), /* CHILDREN OF ARRAYS ONLY: replaces the specified index */
-        INSERT("insert"), /* CHILDREN OF ARRAYS ONLY: inserts the element at the specified index */
-        APPEND("insert"); /* CHILDREN OF ARRAYS ONLY: inserts the element at the end of the array (DEFAULT) */
+
+        APPEND("append"), /* CHILDREN OF ARRAYS ONLY: inserts the element at the end of the array (DEFAULT) */
+        INSERT("insert"); /* CHILDREN OF ARRAYS ONLY: inserts the element at the specified index */
 
         private final String name;
 

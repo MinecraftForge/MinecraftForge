@@ -6,7 +6,7 @@
     {
       "_forge_combine": {
         "__comment": "Finds and replaces a loot pool that has an entry with an item type that drops leather",
-        "mode": "replace",
+        "mode": "overwrite",
         "find": {
           "entries": [{
             "type": "minecraft:item",
