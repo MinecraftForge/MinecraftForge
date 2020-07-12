@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/resources/JsonReloadListener.java
 +++ b/net/minecraft/client/resources/JsonReloadListener.java
-@@ -61,4 +61,8 @@
+@@ -40,6 +40,7 @@
+          String s = resourcelocation.func_110623_a();
+          ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s.substring(i, s.length() - field_223381_b));
+ 
++         if (net.minecraftforge.common.ForgeHooks.readCombinedJson(map, p_212854_1_, resourcelocation, resourcelocation1))
+          try (
+             IResource iresource = p_212854_1_.func_199002_a(resourcelocation);
+             InputStream inputstream = iresource.func_199027_b();
+@@ -61,4 +62,8 @@
  
        return map;
     }

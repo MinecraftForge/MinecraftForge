@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,6 +53,7 @@ import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
@@ -112,6 +114,7 @@ import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.JsonMerger;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -845,6 +848,26 @@ public class ForgeHooks
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public static boolean readCombinedJson(Map<ResourceLocation, JsonElement> map, IResourceManager resourceManager, ResourceLocation resourcelocation, ResourceLocation resourcelocation1)
+    {
+        try {
+            JsonElement jsonelement = JsonMerger.combineAllJsonResources(resourceManager, resourcelocation);
+            if (jsonelement != null) {
+                JsonElement jsonelement1 = map.put(resourcelocation1, jsonelement);
+                if (jsonelement1 != null) {
+                    throw new IllegalStateException("Duplicate data file ignored with ID " + resourcelocation1);
+                }
+            } else {
+                LOGGER.error("Couldn't load data file {} from {} as it's null or empty", resourcelocation1, resourcelocation);
+            }
+        } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
+            LOGGER.error("Couldn't parse data file {} from {}", resourcelocation1, resourcelocation, jsonparseexception);
+        }
+
+        // cancel vanilla behaviour
+        return false;
     }
 
     private static class LootTableContext
