@@ -20,12 +20,19 @@
 package net.minecraftforge.debug.gameplay.loot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 
+import net.minecraft.advancements.criterion.EnchantmentPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.block.Blocks;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantment.Rarity;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -35,51 +42,84 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.conditions.BlockStateProperty;
 import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.loot.conditions.MatchTool;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
     public static final String MODID = "global_loot_test";
     public static final boolean ENABLE = true;
-    @ObjectHolder(value = MODID)
-    public static final Enchantment smelt = null;
-    public GlobalLootModifiersTest() { }
+
+    public GlobalLootModifiersTest()
+    {
+        if(ENABLE)
+        {
+            GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
+            ENCHANTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+    }
+
+    private static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
+
+    private static final RegistryObject<SmeltingEnchantmentModifier.Serializer> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.Serializer::new);
+    private static final RegistryObject<WheatSeedsConverterModifier.Serializer> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.Serializer::new);
+    private static final RegistryObject<SilkTouchTestModifier.Serializer> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.Serializer::new);
+    private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentType.DIGGER, EquipmentSlotType.MAINHAND));
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
     public static class EventHandlers {
         @SubscribeEvent
-        public static void registerEnchantments(@Nonnull final RegistryEvent.Register<Enchantment> event) {
-            if (ENABLE) {
-                event.getRegistry().register(new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND}).setRegistryName(new ResourceLocation(MODID,"smelt")));
-            }
+        public static void runData(GatherDataEvent event) {
+            event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MODID));
+        }
+    }
+
+    private static class DataProvider extends GlobalLootModifierProvider {
+        public DataProvider(DataGenerator gen, String modid) {
+            super(gen, modid);
         }
 
-        @SubscribeEvent
-        public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
-            if (ENABLE) {
-                event.getRegistry().register(
-                        new WheatSeedsConverterModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"wheat_harvest"))
-                );
-                event.getRegistry().register(new SmeltingEnchantmentModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"smelting")));
-                event.getRegistry().register(new SilkTouchTestModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"silk_touch_bamboo")));
-            }
+        @Override
+        protected void start() {
+            addModifier("smelting", SMELTING.get(),
+                    Collections.singletonList(MatchTool.builder(
+                            ItemPredicate.Builder.create().enchantment(
+                                    new EnchantmentPredicate(SMELT.get(), MinMaxBounds.IntBound.atLeast(1)))).build())
+            );
+
+            addModifier("wheat_harvest", WHEATSEEDS.get(),
+                    ImmutableList.of(
+                            MatchTool.builder(ItemPredicate.Builder.create().item(Items.SHEARS)).build(),
+                            BlockStateProperty.builder(Blocks.WHEAT).build()
+                    ),
+                    json -> {
+                        json.addProperty("seedItem", "minecraft:wheat_seeds");
+                        json.addProperty("numSeeds", 3);
+                        json.addProperty("replacement", "minecraft:wheat");
+                    });
         }
     }
 
@@ -193,7 +233,6 @@ public class GlobalLootModifiersTest {
         }
 
         private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
-
             @Override
             public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
                 int numSeeds = JSONUtils.getInt(object, "numSeeds");
