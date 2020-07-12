@@ -92,34 +92,38 @@ public class GlobalLootModifiersTest {
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
     public static class EventHandlers {
         @SubscribeEvent
-        public static void runData(GatherDataEvent event) {
+        public static void runData(GatherDataEvent event)
+        {
             event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MODID));
         }
     }
 
-    private static class DataProvider extends GlobalLootModifierProvider {
-        public DataProvider(DataGenerator gen, String modid) {
+    private static class DataProvider extends GlobalLootModifierProvider
+    {
+        public DataProvider(DataGenerator gen, String modid)
+        {
             super(gen, modid);
         }
 
         @Override
-        protected void start() {
+        protected void start()
+        {
             addModifier("smelting", SMELTING.get(),
-                    Collections.singletonList(MatchTool.builder(
+                    MatchTool.builder(
                             ItemPredicate.Builder.create().enchantment(
-                                    new EnchantmentPredicate(SMELT.get(), MinMaxBounds.IntBound.atLeast(1)))).build())
+                                    new EnchantmentPredicate(SMELT.get(), MinMaxBounds.IntBound.atLeast(1)))).build()
             );
 
             addModifier("wheat_harvest", WHEATSEEDS.get(),
-                    ImmutableList.of(
-                            MatchTool.builder(ItemPredicate.Builder.create().item(Items.SHEARS)).build(),
-                            BlockStateProperty.builder(Blocks.WHEAT).build()
-                    ),
-                    json -> {
+                    json ->
+                    {
                         json.addProperty("seedItem", "minecraft:wheat_seeds");
                         json.addProperty("numSeeds", 3);
                         json.addProperty("replacement", "minecraft:wheat");
-                    });
+                    },
+                    MatchTool.builder(ItemPredicate.Builder.create().item(Items.SHEARS)).build(),
+                    BlockStateProperty.builder(Blocks.WHEAT).build()
+            );
         }
     }
 

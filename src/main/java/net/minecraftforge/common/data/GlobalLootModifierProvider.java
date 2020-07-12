@@ -6,6 +6,7 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.loot.ConditionArraySerializer;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.LootConditionManager;
 import net.minecraft.loot.functions.ILootFunction;
@@ -28,10 +29,10 @@ import java.util.function.Consumer;
 public abstract class GlobalLootModifierProvider implements IDataProvider
 {
    private static final Logger LOGGER = LogManager.getLogger();
-   private static final Gson GSON = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, LootFunctionManager.func_237450_a_()).registerTypeHierarchyAdapter(ILootCondition.class, LootConditionManager.func_237474_a_()).setPrettyPrinting().create();
+   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
    private final DataGenerator gen;
    private final String modid;
-   private final Map<String, Tuple<GlobalLootModifierSerializer<?>, List<ILootCondition>>> modifiers = new HashMap<>();
+   private final Map<String, Tuple<GlobalLootModifierSerializer<?>, ILootCondition[]>> modifiers = new HashMap<>();
    private final Map<String, Consumer<JsonObject>> extraProperties = new HashMap<>();
    private boolean replace = false;
 
@@ -67,9 +68,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
 
          JsonObject json = new JsonObject();
          json.addProperty("type", pair.getA().getRegistryName().toString());
-         JsonArray conditions = new JsonArray();
-         pair.getB().forEach(cond -> conditions.add(GSON.toJsonTree(cond)));
-         json.add("conditions", conditions);
+         json.add("conditions", ConditionArraySerializer.field_235679_a_.func_235681_a_(pair.getB()));
 
          Consumer<JsonObject> properties = extraProperties.get(name);
          if(properties != null)
@@ -87,12 +86,12 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
       IDataProvider.save(GSON, cache, forgeJson, forge);
    }
 
-   public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, List<ILootCondition> conditions)
+   public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, ILootCondition... conditions)
    {
-      addModifier(modifier, serializer, conditions, null);
+      addModifier(modifier, serializer, null, conditions);
    }
 
-   public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, List<ILootCondition> conditions, @Nullable Consumer<JsonObject> extraProperties)
+   public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, @Nullable Consumer<JsonObject> extraProperties, ILootCondition... conditions)
    {
       this.modifiers.put(modifier, new Tuple<>(serializer, conditions));
       this.extraProperties.put(modifier, extraProperties);
