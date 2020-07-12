@@ -101,6 +101,6 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
    @Override
    public String getName()
    {
-      return "Global Loot Modifiers" + modid;
+      return "Global Loot Modifiers : " + modid;
    }
 }
