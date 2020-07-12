@@ -233,6 +233,7 @@ public class GlobalLootModifiersTest {
         }
 
         private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
+
             @Override
             public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
                 int numSeeds = JSONUtils.getInt(object, "numSeeds");
