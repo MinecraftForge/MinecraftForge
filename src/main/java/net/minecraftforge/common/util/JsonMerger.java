@@ -353,12 +353,16 @@ public class JsonMerger
         }
         else if (first.isJsonNull())
         {
-            throw new JsonSyntaxException(String.format("Invalid combine mode for a json null: %s", mode));
+            if (mode != MergeMode.COMBINE)
+                throw new JsonSyntaxException(String.format("Invalid combine mode for a json null: %s", mode));
         }
         else
         {
-            throw new JsonSyntaxException(String.format("Invalid combine mode for a json primitive: %s", mode));
+            if (mode != MergeMode.COMBINE)
+                throw new JsonSyntaxException(String.format("Invalid combine mode for a json primitive: %s", mode));
         }
+
+        return second;
     }
 
     private static JsonElement zipArrays(JsonArray first, JsonArray second)
