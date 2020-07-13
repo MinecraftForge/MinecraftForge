@@ -22,6 +22,7 @@ package net.minecraftforge.fml.config;
 import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -50,7 +51,13 @@ public class ConfigFileTypeHandler {
                     writingMode(WritingMode.REPLACE).
                     build();
             LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
-            configData.load();
+            try {
+                configData.load();
+            } catch (ParsingException e) {
+                LOGGER.warn("Failed to load TOML config file {}, replacing with defaults: {}", configPath.toString(), e);
+                configData.save();
+                configData.load();
+            }
             LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
             try {
                 FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));

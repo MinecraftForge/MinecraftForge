@@ -21,11 +21,14 @@ package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -54,7 +57,19 @@ public class FMLConfig
                 autosave().autoreload().
                 writingMode(WritingMode.REPLACE).
                 build();
-        configData.load();
+        try {
+            configData.load();
+        }
+        catch (ParsingException parseEx) {
+            LOGGER.warn("Failed to load configuration file {}, replacing with defaults: {}", configFile, parseEx.toString());
+            try {
+                Files.deleteIfExists(configFile);
+            }
+            catch (IOException ioEx) {
+                LOGGER.warn("Could not delete existing configuration file {}: {}", configFile, ioEx.toString());
+            }
+            configData.load();
+        }
         if (!configSpec.isCorrect(configData)) {
             LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
