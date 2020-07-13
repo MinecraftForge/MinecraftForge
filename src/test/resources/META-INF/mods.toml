@@ -72,3 +72,5 @@ loaderVersion="[28,)"
     modId="ender_mask_test"
 [[mods]]
     modId="render_local_player_test"
+[[mods]]
+    modId="raid_enum_test"
