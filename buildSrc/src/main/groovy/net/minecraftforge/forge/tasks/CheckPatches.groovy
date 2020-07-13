@@ -6,6 +6,7 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 public class CheckPatches extends DefaultTask {
@@ -15,14 +16,14 @@ public class CheckPatches extends DefaultTask {
     @TaskAction
     protected void exec() {
         def hasS2SArtifact = [
-                "patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch",
-                "patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch"
+            Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch"),
+            Paths.get("patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch")
         ]
 
         def verified = true;
         project.fileTree(patchDir).each { patch ->
-            def patchPath = project.rootDir.toPath().relativize(patch.toPath()).toString()
-            verified &= verifyPatch(patch, autoFix, patchPath, hasS2SArtifact.contains(patchPath))
+            def patchPath = project.rootDir.toPath().relativize(patch.toPath())
+            verified &= verifyPatch(patch, autoFix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
         }
 
         if (!verified)
@@ -61,19 +62,21 @@ public class CheckPatches extends DefaultTask {
             if (hunk_start_pattern.matcher(line).find()) {
                 if (onlyWhiteSpace) {
                     if (fix || hasS2SArtifact) {
-                        logger.lifecycle("Removing white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+                        logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
                         def toRemove = i - hunksStart;
                         while (toRemove-- > 0)
                             newLines.remove(newLines.size() - 1)
                         didFix = true
                     }
                     else {
-                        logger.lifecycle("Patch contains only white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+                        logger.lifecycle("Patch contains only white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
                         hasProblem = true
                     }
                 }
                 else {
-                    whiteSpaceErrors.each { logger.lifecycle(it) }
+                    if (!whiteSpaceErrors.empty)
+                        hasProblem = true
+                    whiteSpaceErrors.each { error -> logger.lifecycle(error) }
                     whiteSpaceErrors.clear()
                 }
                 hunksStart = i
@@ -101,7 +104,7 @@ public class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // field name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at {}, file: {}", i + 1, patchPath)
+                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
                         hasProblem = true
                     }
 
@@ -113,7 +116,7 @@ public class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // <T> void name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at {}, file: {}", i + 1, patchPath)
+                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
                         hasProblem = true
                     }
 
@@ -125,7 +128,7 @@ public class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // class | interface
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at {}, file: {}", i + 1, patchPath)
+                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
                         hasProblem = true
                     }
                 }
@@ -152,7 +155,7 @@ public class CheckPatches extends DefaultTask {
                     def nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
 
                     if (!prevLineChange && !nextLineChange) {
-                        whiteSpaceErrors.add(String.format("Patch contains white space change in valid hunk at %d (cannot auto fix), file: %s", i + 1, patchPath))
+                        whiteSpaceErrors.add(String.format("Patch contains white space change in valid hunk at line %d (cannot auto fix), file: %s", i + 1, patchPath))
                     }
                 }
 
@@ -179,18 +182,20 @@ public class CheckPatches extends DefaultTask {
 
         if (onlyWhiteSpace) {
             if (fix || hasS2SArtifact) {
-                logger.lifecycle("Removing white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+                logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
                 def toRemove = i - hunksStart;
                 while (toRemove-- > 0)
                     newLines.remove(newLines.size() - 1)
                 didFix = true
             }
             else {
-                logger.lifecycle("Patch contains only white space hunk starting at {}, file: {}", hunksStart + 1, patchPath)
+                logger.lifecycle("Patch contains only white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
                 hasProblem = true
             }
         }
         else {
+            if (!whiteSpaceErrors.empty)
+                hasProblem = true
             whiteSpaceErrors.each { error -> logger.lifecycle(error) }
         }
 

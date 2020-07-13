@@ -4,7 +4,7 @@
        this.func_239136_a_(new BlockPos(8, 64, 8));
        this.func_72966_v();
        this.func_72947_a();
-+      //this.gatherCapabilities(dimension.initCapabilities()); //TODO
++      this.gatherCapabilities();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
     }
  

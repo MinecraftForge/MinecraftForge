@@ -305,16 +305,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
-     *
-     * @return true if this Item can be used
-     */
-    default boolean isBeaconPayment()
-    {
-        return getStack().getItem().isBeaconPayment(getStack());
-    }
-
-    /**
      * Determines if the specific ItemStack can be placed in the specified armor
      * slot, for the entity.
      *
