@@ -1,0 +1,36 @@
+package net.minecraftforge.event;
+
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.command.*;
+import net.minecraft.resources.*;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
+
+
+/**
+ * Commands are rebuilt whenever {@link DataPackRegistries} is recreated.
+ * You can use this event to register your commands whenever the {@link net.minecraft.command.Commands} class in constructed.
+ *
+ * The event is fired on the {@link MinecraftForge#EVENT_BUS}
+ */
+public class RegisterCommandsEvent extends Event
+{
+    private final CommandDispatcher<CommandSource> dispatcher;
+    private final Commands.EnvironmentType environment;
+    
+    public RegisterCommandsEvent(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
+    {
+        this.dispatcher = dispatcher;
+        this.environment = environment;
+    }
+    
+    public CommandDispatcher<CommandSource> getDispatcher()
+    {
+        return dispatcher;
+    }
+    
+    public Commands.EnvironmentType getEnvironment()
+    {
+        return environment;
+    }
+}
