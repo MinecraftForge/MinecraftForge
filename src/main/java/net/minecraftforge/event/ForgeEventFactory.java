@@ -128,7 +128,6 @@ import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -670,12 +669,6 @@ public class ForgeEventFactory
     public static boolean onEntityDestroyBlock(LivingEntity entity, BlockPos pos, BlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
-    }
-
-    public static boolean gatherCollisionBoxes(World world, Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> outList)
-    {
-        MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
-        return outList.isEmpty();
     }
 
     public static boolean getMobGriefingEvent(World world, Entity entity)
