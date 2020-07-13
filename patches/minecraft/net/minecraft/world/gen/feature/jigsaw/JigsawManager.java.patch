@@ -1,0 +1,73 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/JigsawManager.java
++++ b/net/minecraft/world/gen/feature/jigsaw/JigsawManager.java
+@@ -35,6 +35,10 @@
+    private static final Logger field_214892_b = LogManager.getLogger();
+ 
+    public static void func_242837_a(DynamicRegistries p_242837_0_, VillageConfig p_242837_1_, JigsawManager.IPieceFactory p_242837_2_, ChunkGenerator p_242837_3_, TemplateManager p_242837_4_, BlockPos p_242837_5_, List<? super AbstractVillagePiece> p_242837_6_, Random p_242837_7_, boolean p_242837_8_, boolean p_242837_9_) {
++      func_242837_a(p_242837_0_, p_242837_1_, com.google.common.collect.Maps.newHashMap(), p_242837_2_, p_242837_3_, p_242837_4_, p_242837_5_, p_242837_6_, p_242837_7_, p_242837_8_, p_242837_9_);
++   }
++
++   public static void func_242837_a(DynamicRegistries p_242837_0_, VillageConfig p_242837_1_, java.util.Map<ResourceLocation, Object> assemblerSettings, JigsawManager.IPieceFactory p_242837_2_, ChunkGenerator p_242837_3_, TemplateManager p_242837_4_, BlockPos p_242837_5_, List<? super AbstractVillagePiece> p_242837_6_, Random p_242837_7_, boolean p_242837_8_, boolean p_242837_9_) {
+       Structure.func_236397_g_();
+       MutableRegistry<JigsawPattern> mutableregistry = p_242837_0_.func_243612_b(Registry.field_243555_ax);
+       Rotation rotation = Rotation.func_222466_a(p_242837_7_);
+@@ -57,7 +61,7 @@
+       if (p_242837_1_.func_236534_a_() > 0) {
+          int i1 = 80;
+          AxisAlignedBB axisalignedbb = new AxisAlignedBB((double)(i - 80), (double)(k - 80), (double)(j - 80), (double)(i + 80 + 1), (double)(k + 80 + 1), (double)(j + 80 + 1));
+-         JigsawManager.Assembler jigsawmanager$assembler = new JigsawManager.Assembler(mutableregistry, p_242837_1_.func_236534_a_(), p_242837_2_, p_242837_3_, p_242837_4_, p_242837_6_, p_242837_7_);
++         JigsawManager.Assembler jigsawmanager$assembler = new JigsawManager.Assembler(mutableregistry, p_242837_1_.func_236534_a_(), assemblerSettings, p_242837_2_, p_242837_3_, p_242837_4_, p_242837_6_, p_242837_7_);
+          jigsawmanager$assembler.field_214888_g.addLast(new JigsawManager.Entry(abstractvillagepiece, new MutableObject<>(VoxelShapes.func_197878_a(VoxelShapes.func_197881_a(axisalignedbb), VoxelShapes.func_197881_a(AxisAlignedBB.func_216363_a(mutableboundingbox)), IBooleanFunction.field_223234_e_)), k + 80, 0));
+ 
+          while(!jigsawmanager$assembler.field_214888_g.isEmpty()) {
+@@ -69,8 +73,12 @@
+    }
+ 
+    public static void func_242838_a(DynamicRegistries p_242838_0_, AbstractVillagePiece p_242838_1_, int p_242838_2_, JigsawManager.IPieceFactory p_242838_3_, ChunkGenerator p_242838_4_, TemplateManager p_242838_5_, List<? super AbstractVillagePiece> p_242838_6_, Random p_242838_7_) {
++      func_242838_a(p_242838_0_, p_242838_1_, p_242838_2_, com.google.common.collect.Maps.newHashMap(), p_242838_3_, p_242838_4_, p_242838_5_, p_242838_6_, p_242838_7_);
++   }
++
++   public static void func_242838_a(DynamicRegistries p_242838_0_, AbstractVillagePiece p_242838_1_, int p_242838_2_, java.util.Map<ResourceLocation, Object> assemblerSettings, JigsawManager.IPieceFactory p_242838_3_, ChunkGenerator p_242838_4_, TemplateManager p_242838_5_, List<? super AbstractVillagePiece> p_242838_6_, Random p_242838_7_) {
+       MutableRegistry<JigsawPattern> mutableregistry = p_242838_0_.func_243612_b(Registry.field_243555_ax);
+-      JigsawManager.Assembler jigsawmanager$assembler = new JigsawManager.Assembler(mutableregistry, p_242838_2_, p_242838_3_, p_242838_4_, p_242838_5_, p_242838_6_, p_242838_7_);
++      JigsawManager.Assembler jigsawmanager$assembler = new JigsawManager.Assembler(mutableregistry, p_242838_2_, assemblerSettings, p_242838_3_, p_242838_4_, p_242838_5_, p_242838_6_, p_242838_7_);
+       jigsawmanager$assembler.field_214888_g.addLast(new JigsawManager.Entry(p_242838_1_, new MutableObject<>(VoxelShapes.field_216389_a), 0, 0));
+ 
+       while(!jigsawmanager$assembler.field_214888_g.isEmpty()) {
+@@ -83,6 +91,7 @@
+    static final class Assembler {
+       private final Registry<JigsawPattern> field_242839_a;
+       private final int field_214882_a;
++      private final java.util.Map<ResourceLocation, Object> assemblerSettings;
+       private final JigsawManager.IPieceFactory field_214883_b;
+       private final ChunkGenerator field_214884_c;
+       private final TemplateManager field_214885_d;
+@@ -90,9 +99,10 @@
+       private final Random field_214887_f;
+       private final Deque<JigsawManager.Entry> field_214888_g = Queues.newArrayDeque();
+ 
+-      private Assembler(Registry<JigsawPattern> p_i242005_1_, int p_i242005_2_, JigsawManager.IPieceFactory p_i242005_3_, ChunkGenerator p_i242005_4_, TemplateManager p_i242005_5_, List<? super AbstractVillagePiece> p_i242005_6_, Random p_i242005_7_) {
++      private Assembler(Registry<JigsawPattern> p_i242005_1_, int p_i242005_2_, java.util.Map<ResourceLocation, Object> assemblerSettings, JigsawManager.IPieceFactory p_i242005_3_, ChunkGenerator p_i242005_4_, TemplateManager p_i242005_5_, List<? super AbstractVillagePiece> p_i242005_6_, Random p_i242005_7_) {
+          this.field_242839_a = p_i242005_1_;
+          this.field_214882_a = p_i242005_2_;
++         this.assemblerSettings = assemblerSettings;
+          this.field_214883_b = p_i242005_3_;
+          this.field_214884_c = p_i242005_4_;
+          this.field_214885_d = p_i242005_5_;
+@@ -140,6 +150,7 @@
+                   List<JigsawPiece> list = Lists.newArrayList();
+                   if (p_236831_4_ != this.field_214882_a) {
+                      list.addAll(optional.get().func_214943_b(this.field_214887_f));
++                     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.JigsawPieceEvent(list, resourcelocation, blockpos1, this.assemblerSettings, this.field_242839_a, this.field_214887_f, p_236831_4_));
+                   }
+ 
+                   list.addAll(optional1.get().func_214943_b(this.field_214887_f));
+@@ -205,7 +216,7 @@
+                                  mutableboundingbox3.field_78894_e = mutableboundingbox3.field_78895_b + k2;
+                               }
+ 
+-                              if (!VoxelShapes.func_197879_c(mutableobject1.getValue(), VoxelShapes.func_197881_a(AxisAlignedBB.func_216363_a(mutableboundingbox3).func_186664_h(0.25D)), IBooleanFunction.field_223232_c_)) {
++                              if ((boolean) assemblerSettings.getOrDefault(new ResourceLocation("forge:force_piece_placement"), false) || !VoxelShapes.func_197879_c(mutableobject1.getValue(), VoxelShapes.func_197881_a(AxisAlignedBB.func_216363_a(mutableboundingbox3).func_186664_h(0.25D)), IBooleanFunction.field_223232_c_)) {
+                                  mutableobject1.setValue(VoxelShapes.func_197882_b(mutableobject1.getValue(), VoxelShapes.func_197881_a(AxisAlignedBB.func_216363_a(mutableboundingbox3)), IBooleanFunction.field_223234_e_));
+                                  int j3 = p_236831_1_.func_214830_d();
+                                  int l2;
