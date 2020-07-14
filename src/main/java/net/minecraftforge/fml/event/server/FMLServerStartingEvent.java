@@ -25,7 +25,7 @@ import net.minecraft.server.MinecraftServer;
  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
  * This event allows for customizations of the server.
  *
- * If you need to add commands or change recipes, see {@link net.minecraftforge.event.RegisterCommandsEvent} and {@link net.minecraftforge.event.AddReloadListenerEvent} respectively.
+ * If you need to add commands use {@link net.minecraftforge.event.RegisterCommandsEvent}.
  *
  * @author cpw
  */
