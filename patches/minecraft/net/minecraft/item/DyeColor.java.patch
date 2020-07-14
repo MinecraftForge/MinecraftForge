@@ -4,7 +4,7 @@
     private final int field_196066_w;
     private final float[] field_193352_x;
     private final int field_196067_y;
-+   private final net.minecraft.tags.ITag.INamedTag<Item> tag;
++   private final net.minecraft.tags.ITag<Item> tag;
     private final int field_218390_z;
  
     private DyeColor(int p_i50049_3_, String p_i50049_4_, int p_i50049_5_, MaterialColor p_i50049_6_, int p_i50049_7_, int p_i50049_8_) {
@@ -25,7 +25,7 @@
 +      return field_193351_w;
 +   }
 +
-+   public net.minecraft.tags.ITag.INamedTag<Item> getTag() {
++   public net.minecraft.tags.ITag<Item> getTag() {
 +      return tag;
 +   }
 +

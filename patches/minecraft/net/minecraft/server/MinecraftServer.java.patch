@@ -144,15 +144,23 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -1284,6 +1304,7 @@
+@@ -1284,10 +1304,13 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList<ResourcePackInfo> p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
 +      net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
        p_240772_0_.func_198983_a();
++      DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
++      p_240772_1_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
        if (p_240772_2_) {
-          p_240772_0_.func_198985_a(Collections.singleton("vanilla"));
-@@ -1437,6 +1458,31 @@
+-         p_240772_0_.func_198985_a(Collections.singleton("vanilla"));
+-         return new DatapackCodec(ImmutableList.of("vanilla"), ImmutableList.of());
++         p_240772_0_.func_198985_a(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
++         return new DatapackCodec(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of());
+       } else {
+          Set<String> set = Sets.newLinkedHashSet();
+ 
+@@ -1437,6 +1460,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -184,7 +192,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1564,4 +1610,8 @@
+@@ -1564,4 +1612,8 @@
     public IServerConfiguration func_240793_aU_() {
        return this.field_240768_i_;
     }

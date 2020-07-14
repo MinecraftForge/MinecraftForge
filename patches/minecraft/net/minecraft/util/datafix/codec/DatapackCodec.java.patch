@@ -1,12 +1,29 @@
 --- a/net/minecraft/util/datafix/codec/DatapackCodec.java
 +++ b/net/minecraft/util/datafix/codec/DatapackCodec.java
-@@ -29,4 +29,9 @@
+@@ -6,7 +6,7 @@
+ import java.util.List;
+ 
+ public class DatapackCodec {
+-   public static final DatapackCodec field_234880_a_ = new DatapackCodec(ImmutableList.of("vanilla"), ImmutableList.of());
++   public static final DatapackCodec field_234880_a_ = new DatapackCodec(com.google.common.collect.Lists.newArrayList("vanilla"), ImmutableList.of());
+    public static final Codec<DatapackCodec> field_234881_b_ = RecordCodecBuilder.create((p_234886_0_) -> {
+       return p_234886_0_.group(Codec.STRING.listOf().fieldOf("Enabled").forGetter((p_234888_0_) -> {
+          return p_234888_0_.field_234882_c_;
+@@ -18,7 +18,7 @@
+    private final List<String> field_234883_d_;
+ 
+    public DatapackCodec(List<String> p_i231607_1_, List<String> p_i231607_2_) {
+-      this.field_234882_c_ = ImmutableList.copyOf(p_i231607_1_);
++      this.field_234882_c_ = com.google.common.collect.Lists.newArrayList(p_i231607_1_);
+       this.field_234883_d_ = ImmutableList.copyOf(p_i231607_2_);
+    }
+ 
+@@ -29,4 +29,8 @@
     public List<String> func_234887_b_() {
        return this.field_234883_d_;
     }
 +
-+   @Deprecated //Forge internal
-+   public static DatapackCodec getModdedDefault() {
-+      return new DatapackCodec(ImmutableList.<String>builder().add("vanilla").addAll(net.minecraftforge.fml.packs.ResourcePackLoader.getPackNames()).build(), ImmutableList.of());
++   public void addModPacks(List<String> modPacks) {
++      if(!field_234882_c_.containsAll(modPacks)) field_234882_c_.addAll(modPacks.stream().filter(p->!field_234882_c_.contains(p)).collect(java.util.stream.Collectors.toList()));
 +   }
  }
