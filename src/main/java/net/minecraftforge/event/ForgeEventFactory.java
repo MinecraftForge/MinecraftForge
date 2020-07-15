@@ -27,9 +27,12 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -723,5 +726,11 @@ public class ForgeEventFactory
         AddReloadListenerEvent event = new AddReloadListenerEvent(dataPackRegistries);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
+    }
+    
+    public static void onCommandRegister(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
+    {
+        RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }
