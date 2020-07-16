@@ -62,7 +62,7 @@ class CommandTps
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().toString(), dim.func_234922_V_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.basic", dim.func_234922_V_().func_240901_a_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }
