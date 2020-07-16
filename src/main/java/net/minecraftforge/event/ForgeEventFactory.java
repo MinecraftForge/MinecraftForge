@@ -457,7 +457,8 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, multiplier));
     }
 
-    public static boolean onPlayerSpawnSet(PlayerEntity player, RegistryKey<World> world, BlockPos pos, boolean forced) {
+    public static boolean onPlayerSpawnSet(PlayerEntity player, RegistryKey<World> world, BlockPos pos, boolean forced)
+    {
         return MinecraftForge.EVENT_BUS.post(new PlayerSetSpawnEvent(player, world, pos, forced));
     }
 
