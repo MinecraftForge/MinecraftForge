@@ -27,9 +27,12 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -129,7 +132,6 @@ import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -680,12 +682,6 @@ public class ForgeEventFactory
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
     }
 
-    public static boolean gatherCollisionBoxes(World world, Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> outList)
-    {
-        MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
-        return outList.isEmpty();
-    }
-
     public static boolean getMobGriefingEvent(World world, Entity entity)
     {
         EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
@@ -738,5 +734,11 @@ public class ForgeEventFactory
         AddReloadListenerEvent event = new AddReloadListenerEvent(dataPackRegistries);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
+    }
+    
+    public static void onCommandRegister(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
+    {
+        RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

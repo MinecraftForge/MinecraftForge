@@ -71,4 +71,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="raid_enum_test"
+[[mods]]
     modId="particle_world_handle_event_test"

@@ -20,7 +20,15 @@
           }
  
           if (this.func_184207_aI() && this.field_190688_bE) {
-@@ -1010,4 +1011,22 @@
+@@ -693,6 +694,7 @@
+                this.func_213293_j(vector3d.field_72450_a, d1, vector3d.field_72449_c);
+                this.func_110255_k(true);
+                this.field_70160_al = true;
++               net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+                if (f1 > 0.0F) {
+                   float f2 = MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F));
+                   float f3 = MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F));
+@@ -1010,4 +1012,22 @@
        this.func_230273_eI_();
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
