@@ -44,7 +44,7 @@ public class CommandModList {
                                                     modFile.getModInfos().get(0).getModId(),
                                                     modFile.getModInfos().get(0).getVersion(),
                                                     modFile.getModInfos().size())).
-                                        collect(Collectors.joining("\n• ","• ", ""))),
+                                        collect(Collectors.joining("\n\u2022 ","\n\u2022 ", ""))),
                                     false);
                             return 0;
                         }
