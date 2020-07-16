@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class JsonMerger
 {
@@ -161,20 +162,25 @@ public class JsonMerger
     public static JsonElement combineObjects(JsonObject first, JsonObject second)
     {
         JsonObject result = new JsonObject();
+        List<String> keysToDelete = Lists.newArrayList();
         for(Map.Entry<String, JsonElement> entry : first.entrySet())
         {
             String key = entry.getKey();
             JsonElement value = entry.getValue();
             if (second.has(key))
             {
-                result.add(key, combineJsonElements(value, second.get(key), MergeMode.COMBINE));
+                JsonElement secondElement = second.get(key);
+                if (getMode(secondElement, MergeMode.COMBINE) == MergeMode.DELETE)
+                    keysToDelete.add(key);
+                else
+                    result.add(key, combineJsonElements(value, secondElement, MergeMode.COMBINE));
             }
             else
             {
                 result.add(key, value);
             }
         }
-        for(Map.Entry<String, JsonElement> entry : first.entrySet())
+        for(Map.Entry<String, JsonElement> entry : second.entrySet())
         {
             String key = entry.getKey();
             JsonElement value = entry.getValue();
@@ -182,6 +188,10 @@ public class JsonMerger
             {
                 result.add(key, value);
             }
+        }
+        for(String key : keysToDelete)
+        {
+            result.remove(key);
         }
         return result;
     }
@@ -242,6 +252,8 @@ public class JsonMerger
 
                 if (settings.has("index"))
                 {
+                    if (mode == MergeMode.APPEND)
+                        throw new JsonSyntaxException("Index is noy available in append mode.");
                     index = settings.get("index").getAsInt();
                 }
 
@@ -249,6 +261,8 @@ public class JsonMerger
                 {
                     if (index != null)
                         throw new JsonSyntaxException("Array replace option 'find' can not be used at the same time as 'index'.");
+                    if (mode == MergeMode.APPEND)
+                        throw new JsonSyntaxException("Find is noy available in append mode.");
                     find = settings.get("find");
                 }
 
@@ -256,78 +270,75 @@ public class JsonMerger
                     silent = settings.get("silent").getAsBoolean();
 
                 if (settings.has("exact"))
+                {
                     exact = settings.get("exact").getAsBoolean();
+                    if (exact && find == null)
+                        throw new JsonSyntaxException("Exact is only available when using find.");
+                }
 
                 if (settings.has("after"))
+                {
                     after = settings.get("after").getAsBoolean();
+
+                    if (after && mode != MergeMode.INSERT)
+                        throw new JsonSyntaxException("After is only available in insert mode.");
+                }
             }
         }
 
-        switch(mode)
+        switch (mode)
         {
             case APPEND:
-            {
                 parent.add(second);
                 break;
-            }
             case INSERT:
-            case OVERWRITE:
-            case COMBINE:
-            {
-                if (index == null && find == null)
-                    throw new JsonSyntaxException("Insert/replace mode must specify an 'index' or a 'find' search pattern.");
-                if (index != null)
-                {
-                    switch (mode)
-                    {
-                        case COMBINE:
-                            parent.set(index, combineJsonElements(parent.get(index), second, MergeMode.COMBINE));
-                            break;
-                        case INSERT:
-                            if (after)
-                                throw new JsonSyntaxException("After is not available in indexed insert mode.");
-                            parent.add(index, second);
-                            break;
-                        default:
-                            parent.set(index, second);
-                            break;
-                    }
-                }
-                else
-                {
-                    boolean found = false;
-                    for(int i=0;i<parent.size();i++)
-                    {
-                        if (compareWithPattern(parent.get(i), find, exact))
-                        {
-                            switch (mode)
-                            {
-                                case COMBINE:
-                                    parent.set(i, combineJsonElements(parent.get(i), second, MergeMode.COMBINE));
-                                    break;
-                                case INSERT:
-                                    if (after)
-                                        parent.add(i+1, second);
-                                    else
-                                        parent.add(i, second);
-                                    break;
-                                default:
-                                    parent.set(i, second);
-                                    break;
-                            }
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found && !silent)
-                    {
-                        LOGGER.warn("Replace pattern did not find a target while looking for: {}", find.toString());
-                    }
-                }
+                processArrayOperation(parent, second, index, find, exact, silent, after, parent::add);
                 break;
-            }
+            case OVERWRITE:
+                processArrayOperation(parent, second, index, find, exact, silent, after, parent::set);
+                break;
+            case COMBINE:
+                processArrayOperation(parent, second, index, find, exact, silent, after, (i,e) ->
+                        parent.set(i, combineJsonElements(parent.get(i), e, MergeMode.COMBINE)));
+                break;
+            case DELETE:
+                processArrayOperation(parent, second, index, find, exact, silent, after, (i,e) ->
+                        parent.remove(i));
+                break;
             default:
                 throw new JsonSyntaxException(String.format("Invalid combine mode for children of json arrays: %s. Allowed: append, combine, overwrite, insert", mode));
+        }
+    }
+
+    private static void processArrayOperation(List<JsonElement> parent, JsonElement second,
+                                              Integer index, JsonElement find, boolean exact, boolean silent,
+                                              boolean after, BiConsumer<Integer, JsonElement> operation)
+    {
+        if (index == null && find == null)
+            throw new JsonSyntaxException("Modes other than append mode must specify an 'index' or a 'find' search pattern.");
+        if (index != null)
+        {
+            if (after)
+                throw new JsonSyntaxException("After is not available when index is used.");
+            operation.accept(index, second);
+        }
+        else
+        {
+            boolean found = false;
+            for (int i = 0; i < parent.size(); i++)
+            {
+                if (compareWithPattern(parent.get(i), find, exact))
+                {
+                    if (after) i++;
+                    operation.accept(i, second);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && !silent)
+            {
+                LOGGER.warn("Search pattern did not find a target while looking for: {}", find.toString());
+            }
         }
     }
 
@@ -418,15 +429,24 @@ public class JsonMerger
 
     private static boolean isOverwriteMode(JsonElement jsonElement)
     {
+        return getMode(jsonElement, MergeMode.OVERWRITE) == MergeMode.OVERWRITE;
+    }
+
+    private static MergeMode getMode(JsonElement jsonElement, MergeMode fallback)
+    {
         if (!jsonElement.isJsonObject())
-            return true;
+            return fallback;
         JsonObject obj = jsonElement.getAsJsonObject();
         if (!obj.has("_forge_combine"))
-            return true;
+            return fallback;
         JsonObject settings = obj.getAsJsonObject("_forge_combine");
         if (!settings.has("mode"))
-            return true;
-        return settings.get("mode").getAsString().equals("overwrite");
+            return fallback;
+        String modeName = settings.get("mode").getAsString();
+        MergeMode mode = MergeMode.byName(modeName);
+        if (mode == null)
+            throw new JsonSyntaxException(String.format("Unknown combine mode: %s",  modeName));
+        return mode;
     }
 
     public enum MergeMode
@@ -438,7 +458,9 @@ public class JsonMerger
         ZIP("zip"), /* ARRAYS ONLY: zips the arrays, combining each pair of elements */
 
         APPEND("append"), /* CHILDREN OF ARRAYS ONLY: inserts the element at the end of the array (DEFAULT) */
-        INSERT("insert"); /* CHILDREN OF ARRAYS ONLY: inserts the element at the specified index */
+        INSERT("insert"),/* CHILDREN OF ARRAYS ONLY: inserts the element at the specified index */
+
+        DELETE("delete"); /* CHILDREN OF ARRAYS AND OBJECTS: deletes the specified element */
 
         private final String name;
 
