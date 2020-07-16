@@ -52,7 +52,7 @@ public class OceanBiomeTest {
 
     public static void setup(FMLCommonSetupEvent event)
     {
-        if(!ENABLE) return;
+        if (!ENABLE) return;
         /**
          * Adds a new ocean for the NORMAL, COLD, and FROZEN types
          */
@@ -64,7 +64,7 @@ public class OceanBiomeTest {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class TestBiomes
     {
-        public static final DeferredRegister<Biome> BIOMES = new DeferredRegister<>(ForgeRegistries.BIOMES, MODID);
+        public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, MODID);
         public static final RegistryObject<Biome> TEST_OCEAN1 = BIOMES.register("test_ocean1", () -> new TestOceanBiome(13550382, false));
         public static final RegistryObject<Biome> TEST_OCEAN1_DEEP = BIOMES.register("test_ocean1_deep", () -> new TestOceanBiome(16777006, true));
         public static final RegistryObject<Biome> TEST_OCEAN2 = BIOMES.register("test_ocean2", () -> new TestOceanBiome(16777215, false));

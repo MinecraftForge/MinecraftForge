@@ -1204,7 +1204,7 @@ public class ForgeHooks
     public static BiomeManager.OceanBiomeEntry getWeightedOceanBiomeEntry(BiomeManager.OceanType type, INoiseRandom context)
     {
         List<BiomeManager.OceanBiomeEntry> biomeList = BiomeManager.getOceanBiomes(type);
-        if(biomeList.isEmpty()) biomeList = BiomeManager.getOceanBiomes(BiomeManager.OceanType.NORMAL);
+        if (biomeList.isEmpty()) biomeList = BiomeManager.getOceanBiomes(BiomeManager.OceanType.NORMAL);
         return WeightedRandom.getRandomItem(biomeList, context.random(WeightedRandom.getTotalWeight(biomeList)));
     }
 
@@ -1212,9 +1212,9 @@ public class ForgeHooks
     {
         Biome[] mixedOceans = new Biome[3];
         Biome ocean = Registry.BIOME.getByValue(oceanId);
-        List<BiomeManager.OceanBiomeEntry> warmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanType.WARM, false);
-        List<BiomeManager.OceanBiomeEntry> frozenMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanType.FROZEN, false);
-        List<BiomeManager.OceanBiomeEntry> nonWarmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, null, true);
+        List<BiomeManager.OceanBiomeEntry> warmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanFinderType.WARM);
+        List<BiomeManager.OceanBiomeEntry> frozenMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanFinderType.FROZEN);
+        List<BiomeManager.OceanBiomeEntry> nonWarmMixedOceans = BiomeManager.getOceanBiomesContainingBiome(ocean, BiomeManager.OceanFinderType.NON_WARM);
 
         mixedOceans[0] = warmMixedOceans.isEmpty() ? null : WeightedRandom.getRandomItem(warmMixedOceans, context.random(WeightedRandom.getTotalWeight(warmMixedOceans))).mixOcean;
         mixedOceans[1] = frozenMixedOceans.isEmpty() ? null : WeightedRandom.getRandomItem(frozenMixedOceans, context.random(WeightedRandom.getTotalWeight(frozenMixedOceans))).mixOcean;
@@ -1224,7 +1224,7 @@ public class ForgeHooks
 
     public static int getDeepOceanIdForShallowOcean(int oceanId, INoiseRandom context)
     {
-        List<BiomeManager.OceanBiomeEntry> oceanBiomes = BiomeManager.getOceanBiomesContainingBiome(Registry.BIOME.getByValue(oceanId), null, false);
+        List<BiomeManager.OceanBiomeEntry> oceanBiomes = BiomeManager.getOceanBiomesContainingBiome(Registry.BIOME.getByValue(oceanId), BiomeManager.OceanFinderType.ANY);
         return oceanBiomes.isEmpty() ? Registry.BIOME.getId(Biomes.DEEP_OCEAN) : Registry.BIOME.getId((WeightedRandom.getRandomItem(oceanBiomes, context.random(WeightedRandom.getTotalWeight(oceanBiomes))).deepOcean));
     }
 

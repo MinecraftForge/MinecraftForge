@@ -19,13 +19,13 @@
 
 package net.minecraftforge.common;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import com.google.common.collect.ImmutableList;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import net.minecraft.util.Util;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
@@ -38,9 +38,11 @@ public class BiomeManager
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
     @Deprecated //Don't call this field, use the proper methods in this class to add and get ocean biomes
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-    private static List<OceanBiomeEntry>[] forgeOceanBiomes = setupOceanBiomes();
+    private static EnumMap<OceanType, List<OceanBiomeEntry>> forgeOceanBiomes = setupOceanBiomes();
+    private static Map<Biome, EnumMap<OceanFinderType, List<OceanBiomeEntry>>> cachedContainedOceans = Maps.newHashMap();
 
-    static {
+    static
+    {
         oceanBiomes.add(Biomes.OCEAN);
         oceanBiomes.add(Biomes.DEEP_OCEAN);
         oceanBiomes.add(Biomes.FROZEN_OCEAN);
@@ -81,15 +83,16 @@ public class BiomeManager
         return currentBiomes;
     }
 
-    private static List<OceanBiomeEntry>[] setupOceanBiomes()
+    private static EnumMap<OceanType, List<OceanBiomeEntry>> setupOceanBiomes()
     {
-        List<OceanBiomeEntry>[] currentBiomes = new List[OceanType.values().length];
-        currentBiomes[OceanType.WARM.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.LUKEWARM_OCEAN, 10));
-        currentBiomes[OceanType.LUKEWARM.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, 10));
-        currentBiomes[OceanType.FROZEN.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN, Biomes.COLD_OCEAN, 10));
-        currentBiomes[OceanType.COLD.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, 10));
-        currentBiomes[OceanType.NORMAL.ordinal()] = Lists.newArrayList(new OceanBiomeEntry(Biomes.OCEAN, Biomes.DEEP_OCEAN, Biomes.DEEP_OCEAN, 10));
-        return currentBiomes;
+        return Util.make(Maps.newEnumMap(OceanType.class), (map) ->
+        {
+            map.put(OceanType.WARM, Lists.newArrayList(new OceanBiomeEntry(Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.LUKEWARM_OCEAN, 10)));
+            map.put(OceanType.LUKEWARM, Lists.newArrayList(new OceanBiomeEntry(Biomes.LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, 10)));
+            map.put(OceanType.FROZEN, Lists.newArrayList(new OceanBiomeEntry(Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN, Biomes.COLD_OCEAN, 10)));
+            map.put(OceanType.COLD, Lists.newArrayList(new OceanBiomeEntry(Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, 10)));
+            map.put(OceanType.NORMAL, Lists.newArrayList(new OceanBiomeEntry(Biomes.OCEAN, Biomes.DEEP_OCEAN, Biomes.DEEP_OCEAN, 10)));
+        });
     }
 
     public static void addSpawnBiome(Biome biome)
@@ -138,12 +141,12 @@ public class BiomeManager
     {
         synchronized (BiomeManager.class)
         {
-            forgeOceanBiomes[type.ordinal()].add(entry);
+            forgeOceanBiomes.get(type).add(entry);
         }
     }
 
     /**
-     * Removes an OceanBiomeEntry for a type of ocean.
+     * Removes an {@link OceanBiomeEntry} for a type of ocean.
      * This method should be called to remove a OceanBiomeEntry from a type of ocean.
      * This method is threadsafe.
      *
@@ -152,14 +155,38 @@ public class BiomeManager
      */
     public static void removeOceanBiome(OceanType type, OceanBiomeEntry entry)
     {
-        int idx = type.ordinal();
         synchronized (BiomeManager.class)
         {
-            if(type == OceanType.NORMAL && forgeOceanBiomes[idx].size() <= 1)
-            {
-                throw new IllegalStateException("At least one NORMAL type ocean biome entry must be present");
+            if (forgeOceanBiomes.get(type).remove(entry)) {
+                if (type == OceanType.NORMAL && forgeOceanBiomes.get(type).isEmpty())
+                {
+                    throw new IllegalStateException("At least one NORMAL type ocean biome entry must be present");
+                }
             }
-            forgeOceanBiomes[idx].remove(entry);
+        }
+    }
+
+    /**
+     * Removes all the ocean biome entries with a biome as their 'main' biome.
+     * This method should be called to remove all the ocean biome entries with a biome as their 'main' biome.
+     * This method is threadsafe.
+     *
+     * @param type The type of ocean for this biome.
+     * @param biome The biome to remove.
+     */
+    public static void removeOceanBiome(OceanType type, Biome biome)
+    {
+        synchronized (BiomeManager.class)
+        {
+            List<OceanBiomeEntry> entries = Lists.newArrayList();
+            for (OceanBiomeEntry entry : forgeOceanBiomes.get(type))
+            {
+                if (entry.biome == biome)
+                {
+                    entries.add(entry);
+                }
+            }
+            entries.forEach(entry -> removeOceanBiome(type, entry));
         }
     }
 
@@ -184,7 +211,7 @@ public class BiomeManager
     {
         synchronized (BiomeManager.class)
         {
-            return ImmutableList.copyOf(forgeOceanBiomes[type.ordinal()]);
+            return ImmutableList.copyOf(forgeOceanBiomes.get(type));
         }
     }
 
@@ -194,27 +221,38 @@ public class BiomeManager
      * This method is threadsafe.
      *
      * @param biome The biome to check for.
-     * @param type A specific OceanType to also check for or null for any OceanType.
-     * @param excludeWarm True to exclude WARM OceanType (used internally for mixing oceans)
+     * @param finderType The type of {@link OceanFinderType} to use for getting specific contained biomes
+     *
      * @return An ImmutableList of ocean biome entries that meet the conditions specified in the params.
      */
-    public static ImmutableList<OceanBiomeEntry> getOceanBiomesContainingBiome(Biome biome, @Nullable OceanType type, boolean excludeWarm)
+    public static ImmutableList<OceanBiomeEntry> getOceanBiomesContainingBiome(Biome biome, OceanFinderType finderType)
     {
-        OceanType[] values = type != null ? new OceanType[] {type} : OceanType.values();
-        ImmutableList.Builder<OceanBiomeEntry> list = ImmutableList.builder();
         synchronized (BiomeManager.class)
         {
-            for(OceanType types : values)
+            EnumMap<OceanFinderType, List<OceanBiomeEntry>> cachedEntries = cachedContainedOceans.get(biome);
+            if (cachedEntries != null)
             {
-                for(OceanBiomeEntry entry : getOceanBiomes(types))
+                List<OceanBiomeEntry> entries = cachedEntries.get(finderType);
+                if (entries != null)
                 {
-                    if(entry.biome == biome && (excludeWarm ? type != OceanType.WARM : true))
+                    return ImmutableList.copyOf(entries);
+                }
+            }
+
+            OceanType[] oceanTypes = finderType.type != null ? new OceanType[] {finderType.type} : OceanType.values();
+            List<OceanBiomeEntry> entries = Lists.newArrayList();
+            for (OceanType type : oceanTypes)
+            {
+                for (OceanBiomeEntry entry : getOceanBiomes(type))
+                {
+                    if (entry.biome == biome && (!finderType.excludeWarm || type != OceanType.WARM))
                     {
-                        list.add(entry);
+                        entries.add(entry);
                     }
                 }
             }
-            return list.build();
+            cachedContainedOceans.put(biome, Util.make(cachedEntries != null ? Maps.newEnumMap(cachedEntries) : Maps.newEnumMap(OceanFinderType.class), map -> map.put(finderType, entries)));
+            return ImmutableList.copyOf(entries);
         }
     }
 
@@ -231,11 +269,11 @@ public class BiomeManager
     {
         synchronized (BiomeManager.class)
         {
-            for(OceanType type : OceanType.values())
+            for (OceanType type : OceanType.values())
             {
-                for(OceanBiomeEntry entry : getOceanBiomes(type))
+                for (OceanBiomeEntry entry : getOceanBiomes(type))
                 {
-                    if((shallow && entry.biome == biome) || (!shallow && (entry.biome == biome || entry.deepOcean == biome)))
+                    if ((shallow && entry.biome == biome) || (!shallow && (entry.biome == biome || entry.deepOcean == biome)))
                     {
                         return true;
                     }
@@ -271,6 +309,33 @@ public class BiomeManager
     public static enum OceanType
     {
         WARM, LUKEWARM, FROZEN, COLD, NORMAL;
+    }
+
+    /**
+     * Used to find ocean entries containing a biome with certain conditions.
+     * This is used internally for ocean biome layers.
+     * @see BiomeManager#getOceanBiomesContainingBiome(Biome, OceanFinderType)
+     */
+    public static enum OceanFinderType
+    {
+        ANY(null, false),
+        WARM(OceanType.WARM, false),
+        FROZEN(OceanType.FROZEN, false),
+        NON_WARM(null, true);
+
+        @Nullable
+        public final OceanType type;
+        public final boolean excludeWarm;
+
+        /**
+         * @param type Type of ocean to specifically look for, or null for any ocean type.
+         * @param excludeWarm If this finder should exclude warm ocean types.
+         */
+        OceanFinderType(@Nullable OceanType type, boolean excludeWarm)
+        {
+            this.type = type;
+            this.excludeWarm = excludeWarm;
+        }
     }
 
     public static class BiomeEntry extends WeightedRandom.Item
