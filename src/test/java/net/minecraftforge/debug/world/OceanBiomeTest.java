@@ -54,6 +54,11 @@ public class OceanBiomeTest {
     {
         if (!ENABLE) return;
         /**
+         * Removes Vanilla frozen oceans
+         */
+        BiomeManager.removeOceanBiome(BiomeManager.OceanType.FROZEN, Biomes.FROZEN_OCEAN);
+
+        /**
          * Adds a new ocean for the NORMAL, COLD, and FROZEN types
          */
         BiomeManager.addOceanBiome(BiomeManager.OceanType.NORMAL, new BiomeManager.OceanBiomeEntry(TestBiomes.TEST_OCEAN1.get(), TestBiomes.TEST_OCEAN1_DEEP.get(), TestBiomes.TEST_OCEAN1_DEEP.get(), 10));

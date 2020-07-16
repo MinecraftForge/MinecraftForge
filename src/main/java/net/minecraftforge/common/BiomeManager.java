@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -171,22 +172,14 @@ public class BiomeManager
      * This method should be called to remove all the ocean biome entries with a biome as their 'main' biome.
      * This method is threadsafe.
      *
-     * @param type The type of ocean for this biome.
+     * @param type The type of ocean for the biome.
      * @param biome The biome to remove.
      */
     public static void removeOceanBiome(OceanType type, Biome biome)
     {
         synchronized (BiomeManager.class)
         {
-            List<OceanBiomeEntry> entries = Lists.newArrayList();
-            for (OceanBiomeEntry entry : forgeOceanBiomes.get(type))
-            {
-                if (entry.biome == biome)
-                {
-                    entries.add(entry);
-                }
-            }
-            entries.forEach(entry -> removeOceanBiome(type, entry));
+            forgeOceanBiomes.get(type).stream().filter(entry -> entry.biome == biome).collect(Collectors.toList()).forEach(entry -> removeOceanBiome(type, entry));
         }
     }
 
