@@ -21,6 +21,7 @@ package net.minecraftforge.server.command;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import java.util.ArrayList;
@@ -50,8 +51,8 @@ public class CommandDimensions
                     ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), false);
                 });
                 */
-                ctx.getSource().getServer().func_240770_D_().stream().sorted().forEach(key -> {
-                	ctx.getSource().sendFeedback(new StringTextComponent(key.func_240901_a_().toString()), false);
+                ctx.getSource().getServer().func_240770_D_().stream().map(RegistryKey::func_240901_a_).sorted().forEach(key -> {
+                	ctx.getSource().sendFeedback(new StringTextComponent(key.toString()), false);
                 });
                 return 0;
             });
