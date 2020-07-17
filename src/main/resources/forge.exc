@@ -4,6 +4,7 @@ net/minecraft/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/uti
 net/minecraft/block/PoweredRailBlock.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
 net/minecraft/block/RedstoneWireBlock.canConnectTo(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/Direction;)Z=|p_176343_0_,world,pos,p_176343_1_
 
+net/minecraft/client/gui/screen/Screen.renderToolTip(Lcom/mojang/blaze3d/matrix/MatrixStack;Ljava/util/List;IILnet/minecraft/client/gui/FontRenderer;)V=|p_238654_1_,p_238654_2_,p_238654_3_,p_238654_4_,font
 net/minecraft/client/gui/ScreenManager.getScreenFactory(Lnet/minecraft/inventory/container/ContainerType;Lnet/minecraft/client/Minecraft;ILnet/minecraft/util/text/ITextComponent;)Ljava/util/Optional;=|p_216909_0_,p_216909_1_,p_216909_2_,p_216909_3_
 
 net/minecraft/client/renderer/BlockModelRenderer.renderModel(Lnet/minecraft/world/ILightReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lcom/mojang/blaze3d/matrix/MatrixStack;Lcom/mojang/blaze3d/vertex/IVertexBuilder;ZLjava/util/Random;JILnet/minecraftforge/client/model/data/IModelData;)Z=|p_228802_1_,p_228802_2_,p_228802_3_,p_228802_4_,p_228802_5_,p_228802_6_,p_228802_7_,p_228802_8_,p_228802_9_,p_228802_11_,modelData

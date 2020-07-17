@@ -11,12 +11,3 @@
              if (this.field_213934_g.size() <= 1) {
                 beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
                 this.field_213934_g.add(beacontileentity$beamsegment);
-@@ -184,7 +184,7 @@
- 
-          for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
-             for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
--               if (!this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).func_235714_a_(BlockTags.field_232875_ap_)) {
-+               if (!this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).isBeaconBase(this.field_145850_b, new BlockPos(k, j, l), func_174877_v())) {
-                   flag = false;
-                   break;
-                }
