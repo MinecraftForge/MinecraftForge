@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.sounds.generators;
+package net.minecraftforge.common.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -303,10 +303,11 @@ public final class SoundDefinition
         {
             if (this.canBeInShortForm())
             {
-                return new JsonPrimitive(this.name.toString());
+                return new JsonPrimitive(this.stripMcPrefix(this.name));
             }
+
             final JsonObject object = new JsonObject();
-            object.addProperty("name", this.name.toString());
+            object.addProperty("name", this.stripMcPrefix(this.name));
             if (this.type != DEFAULT_TYPE) object.addProperty("type", this.type.jsonString);
             if (this.volume != DEFAULT_VOLUME) object.addProperty("volume", this.volume);
             if (this.pitch != DEFAULT_PITCH) object.addProperty("pitch", this.pitch);
@@ -326,6 +327,11 @@ public final class SoundDefinition
                     this.stream == DEFAULT_STREAM &&
                     this.attenuationDistance == DEFAULT_ATTENUATION_DISTANCE &&
                     this.preload == DEFAULT_PRELOAD;
+        }
+
+        private String stripMcPrefix(final ResourceLocation name)
+        {
+            return "minecraft".equals(name.getNamespace()) ? name.getPath() : name.toString();
         }
     }
 

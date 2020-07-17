@@ -34,8 +34,8 @@ import java.util.stream.Stream;
 
 import net.minecraft.block.*;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.client.sounds.generators.SoundDefinition;
-import net.minecraftforge.client.sounds.generators.SoundDefinitionsProvider;
+import net.minecraftforge.common.data.SoundDefinition;
+import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;

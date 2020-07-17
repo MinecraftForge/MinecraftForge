@@ -19,7 +19,7 @@
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-package net.minecraftforge.client.sounds.generators;
+package net.minecraftforge.common.data;
 
 import mcp.MethodsReturnNonnullByDefault;
 import javax.annotation.ParametersAreNonnullByDefault;
