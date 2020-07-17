@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,17 +19,19 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public final class PlantType
 {
     private static final Pattern INVALID_CHARACTERS = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
-    private static final Map<String, PlantType> VALUES = new HashMap<>();
+    private static final Map<String, PlantType> VALUES = new ConcurrentHashMap<>();
 
     public static final PlantType PLAINS = get("plains");
     public static final PlantType DESERT = get("desert");
@@ -41,20 +43,21 @@ public final class PlantType
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
-     * and return this custom type in {@link IPlantable#getPlantType(IBlockAccess, BlockPos)}.
+     * and return this custom type in {@link IPlantable#getPlantType(IBlockReader, BlockPos)}.
      *
      * <p>If your new plant grows on blocks like any one of them above, never create a new {@link PlantType}.
-     * This enumeration is only functioning in
-     * {@link net.minecraft.block.Block#canSustainPlant(IBlockState, IWorldReader, BlockPos, EnumFacing, IPlantable)},
+     * This Type is only functioning in
+     * {@link net.minecraft.block.Block#canSustainPlant(BlockState, IBlockReader, BlockPos, Direction, IPlantable)},
      * which you are supposed to override this function in your new block and create a new plant type to grow on that block.
      *
-     * <p>You can create an instance of your plant type in your API and let your/others mods access it. It will be faster than calling this method.
+     * This method can be called during parallel loading
      * @param name the name of the type of plant, you had better follow the style above
      * @return the acquired {@link PlantType}, a new one if not found.
      */
     public static PlantType get(String name)
     {
-        return VALUES.computeIfAbsent(name, e -> {
+        return VALUES.computeIfAbsent(name, e ->
+        {
             if (INVALID_CHARACTERS.matcher(e).find())
                 throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
             return new PlantType(e);

@@ -10,7 +10,7 @@
     public static final VoxelShape field_235510_c_ = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
  
 +   @Deprecated  // Forge: Use the constructor that takes a supplier
-    protected FlowingFluidBlock(FlowingFluid p_i49014_1_, AbstractBlock.Properties p_i49014_2_) {
+    public FlowingFluidBlock(FlowingFluid p_i49014_1_, AbstractBlock.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
 @@ -47,8 +48,21 @@

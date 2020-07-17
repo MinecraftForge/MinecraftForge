@@ -6,7 +6,7 @@
  
 -public class BushBlock extends Block {
 +public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
-    protected BushBlock(AbstractBlock.Properties p_i48437_1_) {
+    public BushBlock(AbstractBlock.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
 @@ -22,6 +22,8 @@

@@ -8,24 +8,7 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -98,7 +99,9 @@
-          field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-       }
- 
-+      net.minecraftforge.fml.server.ServerModLoader.begin(this);
-       field_155771_h.info("Loading properties");
-+      this.field_71340_o.func_219033_a(properties -> ServerProperties.func_218985_a(java.nio.file.Paths.get("server.properties")));
-       ServerProperties serverproperties = this.field_71340_o.func_219034_a();
-       if (this.func_71264_H()) {
-          this.func_71189_e("127.0.0.1");
-@@ -153,17 +156,20 @@
-       if (!PreYggdrasilConverter.func_219587_e(this)) {
-          return false;
-       } else {
-+         net.minecraftforge.fml.server.ServerModLoader.end();
-          this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
-          long i = Util.func_211178_c();
-          this.func_71191_d(serverproperties.field_219026_t);
+@@ -159,11 +160,13 @@
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -39,25 +22,21 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +181,7 @@
+@@ -189,11 +192,12 @@
           }
  
-          if (serverproperties.field_219030_x) {
-+         net.minecraftforge.fml.server.ServerModLoader.end();
-             field_155771_h.info("Starting remote control listener");
-             this.field_71339_n = new MainThread(this);
-             this.field_71339_n.func_72602_a();
-@@ -193,7 +200,8 @@
+          Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
++         // <3 you Grum for this, saves us ~30 patch files! --^
+          if (serverproperties.field_241079_P_) {
              ServerInfoMBean.func_233490_a_(this);
           }
  
 -         return true;
-+         // <3 you Grum for this, saves us ~30 patch files! --^
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -506,6 +514,11 @@
+@@ -506,6 +510,11 @@
        return false;
     }
  

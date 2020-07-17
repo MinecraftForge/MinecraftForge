@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -114,7 +114,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::gatherData);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
-        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
@@ -123,6 +122,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
+
+        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
+        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -131,9 +134,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
-        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
-        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-        MinecraftForge.EVENT_BUS.register(this);
 
         VersionChecker.startVersionCheck();
 
@@ -144,12 +144,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
         ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
         */
-    }
-
-    public void serverStarting(FMLServerStartingEvent evt)
-    {
-        new ForgeCommand(evt.getCommandDispatcher());
-        ConfigCommand.register(evt.getCommandDispatcher());
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)

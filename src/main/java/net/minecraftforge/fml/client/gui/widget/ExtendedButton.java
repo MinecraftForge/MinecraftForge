@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,7 +58,7 @@ public class ExtendedButton extends Button
             GuiUtils.drawContinuousTexturedBox(field_230687_i_, this.field_230690_l_, this.field_230691_m_, 0, 46 + k * 20, this.field_230688_j_, this.field_230689_k_, 200, 20, 2, 3, 2, 2, this.func_230927_p_());
             this.func_230441_a_(mStack, mc, mouseX, mouseY);
 
-            ITextComponent buttonText = this.func_230442_c_();
+            ITextComponent buttonText = this.func_230458_i_();
             int strWidth = mc.fontRenderer.func_238414_a_(buttonText);
             int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
 

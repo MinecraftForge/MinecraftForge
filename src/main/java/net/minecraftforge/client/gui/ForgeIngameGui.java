@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -695,7 +695,7 @@ public class ForgeIngameGui extends IngameGui
 
     protected void renderTitle(int width, int height, float partialTicks, MatrixStack mStack)
     {
-        if (titlesTimer > 0)
+        if (displayedTitle != null && titlesTimer > 0)
         {
             mc.getProfiler().startSection("titleAndSubtitle");
             float age = (float)this.titlesTimer - partialTicks;
@@ -721,10 +721,13 @@ public class ForgeIngameGui extends IngameGui
                 int l = opacity << 24 & -16777216;
                 this.getFontRenderer().func_238407_a_(mStack, this.displayedTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedTitle) / 2), -10.0F, 16777215 | l);
                 RenderSystem.popMatrix();
-                RenderSystem.pushMatrix();
-                RenderSystem.scalef(2.0F, 2.0F, 2.0F);
-                this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
-                RenderSystem.popMatrix();
+                if (this.displayedSubTitle != null)
+                {
+                    RenderSystem.pushMatrix();
+                    RenderSystem.scalef(2.0F, 2.0F, 2.0F);
+                    this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
+                    RenderSystem.popMatrix();
+                }
                 RenderSystem.disableBlend();
                 RenderSystem.popMatrix();
             }

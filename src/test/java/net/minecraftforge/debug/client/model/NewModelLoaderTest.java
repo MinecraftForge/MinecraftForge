@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -120,6 +120,10 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
+            new Item(new Item.Properties().group(ItemGroup.MISC))
+    );
+
+    public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
             new Item(new Item.Properties().group(ItemGroup.MISC))
     );
 

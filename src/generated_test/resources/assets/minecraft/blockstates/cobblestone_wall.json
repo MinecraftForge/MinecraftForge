@@ -10,7 +10,7 @@
     },
     {
       "when": {
-        "north": "true"
+        "north": "low"
       },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_side",
@@ -19,7 +19,7 @@
     },
     {
       "when": {
-        "south": "true"
+        "south": "low"
       },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_side",
@@ -29,7 +29,7 @@
     },
     {
       "when": {
-        "west": "true"
+        "west": "low"
       },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_side",
@@ -39,7 +39,7 @@
     },
     {
       "when": {
-        "east": "true"
+        "east": "low"
       },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_side",

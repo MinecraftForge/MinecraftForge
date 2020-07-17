@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,10 +31,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockDisplayReader;
+import net.minecraftforge.client.model.data.*;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
 
@@ -45,20 +44,20 @@ import java.util.function.Function;
 
 public class CompositeModel implements IDynamicBakedModel
 {
-    public static final ModelProperty<SubmodelModelData> SUBMODEL_DATA = new ModelProperty<>();
-
     private final ImmutableMap<String, IBakedModel> bakedParts;
     private final boolean isAmbientOcclusion;
     private final boolean isGui3d;
+    private final boolean isSideLit;
     private final TextureAtlasSprite particle;
     private final ItemOverrideList overrides;
     private final IModelTransform transforms;
 
-    public CompositeModel(boolean isGui3d, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, IModelTransform combinedTransform, ItemOverrideList overrides)
+    public CompositeModel(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, IBakedModel> bakedParts, IModelTransform combinedTransform, ItemOverrideList overrides)
     {
         this.bakedParts = bakedParts;
         this.isAmbientOcclusion = isAmbientOcclusion;
         this.isGui3d = isGui3d;
+        this.isSideLit = isSideLit;
         this.particle = particle;
         this.overrides = overrides;
         this.transforms = combinedTransform;
@@ -71,10 +70,21 @@ public class CompositeModel implements IDynamicBakedModel
         List<BakedQuad> quads = new ArrayList<>();
         for(Map.Entry<String, IBakedModel> entry : bakedParts.entrySet())
         {
-            // TODO: Some way to provide submodel data?
-            quads.addAll(entry.getValue().getQuads(state, side, rand, getSubmodelData(extraData, entry.getKey())));
+            quads.addAll(entry.getValue().getQuads(state, side, rand, CompositeModelData.get(extraData, entry.getKey())));
         }
         return quads;
+    }
+
+    @Nonnull
+    @Override
+    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
+    {
+        CompositeModelData composite = new CompositeModelData();
+        for(Map.Entry<String, IBakedModel> entry : bakedParts.entrySet())
+        {
+            composite.putSubmodelData(entry.getKey(), entry.getValue().getModelData(world, pos, state, ModelDataWrapper.wrap(tileData)));
+        }
+        return composite;
     }
 
     @Override
@@ -92,8 +102,7 @@ public class CompositeModel implements IDynamicBakedModel
     @Override
     public boolean func_230044_c_()
     {
-        // TODO: Forge: Auto-generated method stub
-        return false;
+        return isSideLit;
     }
 
     @Override
@@ -130,29 +139,6 @@ public class CompositeModel implements IDynamicBakedModel
     public IBakedModel getPart(String name)
     {
         return bakedParts.get(name);
-    }
-
-    private IModelData getSubmodelData(IModelData extraData, String name)
-    {
-        SubmodelModelData data = extraData.getData(SUBMODEL_DATA);
-        if (data == null)
-            return EmptyModelData.INSTANCE;
-        return data.getSubmodelData(name);
-    }
-
-    public static class SubmodelModelData
-    {
-        private final Map<String, IModelData> parts = new HashMap<>();
-
-        public IModelData getSubmodelData(String name)
-        {
-            return parts.getOrDefault(name, EmptyModelData.INSTANCE);
-        }
-
-        public void putSubmodelData(String name, IModelData data)
-        {
-            parts.put(name, data);
-        }
     }
 
     private static class Submodel implements IModelGeometryPart
@@ -228,7 +214,7 @@ public class CompositeModel implements IDynamicBakedModel
                     continue;
                 bakedParts.put(part.getKey(), submodel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation));
             }
-            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
+            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), owner.isSideLit(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }
 
         @Override
@@ -271,6 +257,118 @@ public class CompositeModel implements IDynamicBakedModel
                         modelTransform));
             }
             return new Geometry(parts.build());
+        }
+    }
+
+    /**
+     * A model data container which stores data for child components.
+     */
+    public static class CompositeModelData extends ModelDataMap
+    {
+        public static final ModelProperty<CompositeModelData> SUBMODEL_DATA = new ModelProperty<>();
+
+        /**
+         * Helper to get the CompositeModelData from an unknown IModelData instance.
+         * @param modelData The undetermined instance to get data from
+         * @return An optional representing the composite data, if present.
+         */
+        public static Optional<CompositeModelData> get(IModelData modelData)
+        {
+            return Optional.ofNullable(modelData.getData(SUBMODEL_DATA));
+        }
+
+        /**
+         * Helper to get child data from an unknown IModelData instance.
+         * @param modelData The undetermined instance to get data from
+         * @param name The name of the child part to get data for.
+         * @return The data for the child, or empty if not available.
+         */
+        public static IModelData get(IModelData modelData, String name)
+        {
+            return get(modelData).map(data -> data.getSubmodelData(name))
+                    .orElse(EmptyModelData.INSTANCE);
+        }
+
+        // Implementation
+
+        private final Map<String, IModelData> parts = new HashMap<>();
+
+        public IModelData getSubmodelData(String name)
+        {
+            if (parts.containsKey(name))
+                return parts.get(name);
+            return EmptyModelData.INSTANCE;
+        }
+
+        public void putSubmodelData(String name, IModelData data)
+        {
+            parts.put(name, data);
+        }
+
+        @Override
+        public boolean hasProperty(ModelProperty<?> prop)
+        {
+            return prop == SUBMODEL_DATA ||super.hasProperty(prop);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Nullable
+        @Override
+        public <T> T getData(ModelProperty<T> prop)
+        {
+            if (prop == SUBMODEL_DATA)
+                return (T)this;
+            return super.getData(prop);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Nullable
+        @Override
+        public <T> T setData(ModelProperty<T> prop, T data)
+        {
+            if (prop == SUBMODEL_DATA)
+                return (T)this;
+            return super.setData(prop, data);
+        }
+    }
+
+    /**
+     * Wrapper for an IModelData instance which allows forwarding queries to the parent,
+     * but stores any new/modified values itself, avoiding modifications to the parent.
+     */
+    private static class ModelDataWrapper extends ModelDataMap
+    {
+        private final IModelData parent;
+
+        public static IModelData wrap(IModelData parent)
+        {
+            return new ModelDataWrapper(parent);
+        }
+
+        private ModelDataWrapper(IModelData parent)
+        {
+            this.parent = parent;
+        }
+
+        @Override
+        public boolean hasProperty(ModelProperty<?> prop)
+        {
+            return super.hasProperty(prop) || parent.hasProperty(prop);
+        }
+
+        @Nullable
+        @Override
+        public <T> T getData(ModelProperty<T> prop)
+        {
+            return super.hasProperty(prop) ? super.getData(prop) : parent.getData(prop);
+        }
+
+        @Nullable
+        @Override
+        public <T> T setData(ModelProperty<T> prop, T data)
+        {
+            // We do not want to delegate setting to the parent
+            return super.setData(prop, data);
         }
     }
 }

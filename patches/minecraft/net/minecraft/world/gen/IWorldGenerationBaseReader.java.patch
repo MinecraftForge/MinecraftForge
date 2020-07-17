@@ -1,8 +1,0 @@
---- a/net/minecraft/world/gen/IWorldGenerationBaseReader.java
-+++ b/net/minecraft/world/gen/IWorldGenerationBaseReader.java
-@@ -8,4 +8,5 @@
-    boolean func_217375_a(BlockPos p_217375_1_, Predicate<BlockState> p_217375_2_);
- 
-    BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_);
-+
- }

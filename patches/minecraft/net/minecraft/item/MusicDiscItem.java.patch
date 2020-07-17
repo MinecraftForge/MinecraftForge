@@ -12,7 +12,7 @@
 +   private final java.util.function.Supplier<SoundEvent> soundSupplier;
  
 +   @Deprecated // Forge: Use the constructor that takes a supplier instead
-    protected MusicDiscItem(int p_i48475_1_, SoundEvent p_i48475_2_, Item.Properties p_i48475_3_) {
+    public MusicDiscItem(int p_i48475_1_, SoundEvent p_i48475_2_, Item.Properties p_i48475_3_) {
        super(p_i48475_3_);
        this.field_195977_c = p_i48475_1_;
        this.field_185076_b = p_i48475_2_;
