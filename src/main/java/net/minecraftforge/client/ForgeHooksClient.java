@@ -169,6 +169,7 @@ public class ForgeHooksClient
     public static void dispatchRenderWorldLast(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldLastEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        renderTypeBuffers.getBufferSource().finish();
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)

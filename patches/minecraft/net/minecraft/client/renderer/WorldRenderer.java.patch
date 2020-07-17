@@ -80,14 +80,14 @@
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
           }
-@@ -1079,6 +1087,7 @@
-       RenderSystem.multMatrix(p_228426_1_.func_227866_c_().func_227870_a_());
-       this.field_72777_q.field_184132_p.func_229019_a_(p_228426_1_, irendertypebuffer$impl, d0, d1, d2);
+@@ -1149,6 +1157,7 @@
+       RenderSystem.disableBlend();
        RenderSystem.popMatrix();
+       FogRenderer.func_228370_a_();
 +      net.minecraftforge.client.ForgeHooksClient.dispatchRenderWorldLast(this, p_228426_1_, p_228426_2_, clippinghelper, p_228426_6_, this.field_228415_m_);
-       irendertypebuffer$impl.func_228462_a_(Atlases.func_228785_j_());
-       irendertypebuffer$impl.func_228462_a_(Atlases.func_228768_a_());
-       irendertypebuffer$impl.func_228462_a_(Atlases.func_228776_b_());
+    }
+ 
+    private void func_228423_a_(MatrixStack p_228423_1_) {
 @@ -1218,6 +1227,7 @@
           }
        }
