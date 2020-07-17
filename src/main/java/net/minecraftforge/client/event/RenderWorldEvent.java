@@ -26,8 +26,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.ClippingHelper;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraftforge.common.MinecraftForge;
 
+/**
+ * Abstract class for all world rendering events.
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ */
 public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final WorldRenderer context;
@@ -77,6 +82,11 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         return renderTypeBuffers;
     }
 
+    /**
+     * Event fired before first rendering call. Can be used to check which terrain needs updating.
+     * <br>
+     * If {@link System#nanoTime} is greater than <code>finishTimeNano</code> then you should quit this event immediately.
+     */
     public static class RenderWorldTerrainUpdateEvent extends RenderWorldEvent
     {
         private final long finishTimeNano;
@@ -93,6 +103,9 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         }
     }
 
+    /**
+     * Event fired for each block layer being rendered.
+     */
     public static class RenderWorldBlockLayerEvent extends RenderWorldEvent
     {
         private final RenderType blockLayer;
@@ -109,6 +122,9 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         }
     }
 
+    /**
+     * Event fired before end of entity rendering.
+     */
     public static class RenderWorldEntitiesEvent extends RenderWorldEvent
     {
         public RenderWorldEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
@@ -117,6 +133,9 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         }
     }
 
+    /**
+     * Event fired before end of tile entity rendering.
+     */
     public static class RenderWorldTileEntitiesEvent extends RenderWorldEvent
     {
         public RenderWorldTileEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
@@ -125,6 +144,9 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         }
     }
 
+    /**
+     * Event fired after entire World is rendered.
+     */
     public static class RenderWorldLastEvent extends RenderWorldEvent
     {
         public RenderWorldLastEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
