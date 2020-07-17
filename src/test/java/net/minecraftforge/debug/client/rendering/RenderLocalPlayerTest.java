@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 public class RenderLocalPlayerTest
 {
     public static final String MODID = "render_local_player_test";
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void onItemRightClickEntity(final PlayerInteractEvent.EntityInteract event)
