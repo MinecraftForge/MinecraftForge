@@ -23,6 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
@@ -149,6 +150,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private float yaw;
         private float pitch;
         private float roll;
+        private Quaternion postRotation;
 
         public CameraSetup(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float yaw, float pitch, float roll)
         {
@@ -156,6 +158,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
             this.setYaw(yaw);
             this.setPitch(pitch);
             this.setRoll(roll);
+            this.postRotation = Quaternion.ONE;
         }
 
         public float getYaw() { return yaw; }
@@ -164,6 +167,8 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         public void setPitch(float pitch) { this.pitch = pitch; }
         public float getRoll() { return roll; }
         public void setRoll(float roll) { this.roll = roll; }
+        public Quaternion getPostRotation() {return postRotation;}
+        public void setPostRotation(Quaternion postRotation) {this.postRotation = postRotation;}
     }
 
     /**
