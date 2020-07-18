@@ -253,7 +253,7 @@ public class JsonMerger
                 if (settings.has("index"))
                 {
                     if (mode == MergeMode.APPEND)
-                        throw new JsonSyntaxException("Index is noy available in append mode.");
+                        throw new JsonSyntaxException("Index is not available in append mode.");
                     index = settings.get("index").getAsInt();
                 }
 
@@ -262,7 +262,7 @@ public class JsonMerger
                     if (index != null)
                         throw new JsonSyntaxException("Array replace option 'find' can not be used at the same time as 'index'.");
                     if (mode == MergeMode.APPEND)
-                        throw new JsonSyntaxException("Find is noy available in append mode.");
+                        throw new JsonSyntaxException("Find is not available in append mode.");
                     find = settings.get("find");
                 }
 
