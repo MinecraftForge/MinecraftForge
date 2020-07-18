@@ -22,6 +22,8 @@ package net.minecraftforge.fml.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.config.IConfigSpecFactory;
+import net.minecraftforge.common.config.ModConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
@@ -29,34 +31,36 @@ import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
-public class ModConfig
+public class ModConfig<S extends ModConfigSpec>
 {
     private final Type type;
-    private final ForgeConfigSpec spec;
+    private final S spec;
     private final String fileName;
     private final ModContainer container;
     private final ConfigFileTypeHandler configHandler;
     private CommentedConfig configData;
     private Callable<Void> saveHandler;
 
-    public ModConfig(final Type type, final ForgeConfigSpec spec, final ModContainer container, final String fileName) {
+    public ModConfig(final Type type, final IConfigSpecFactory<S> specFactory, final ModContainer container, final String fileName) {
         this.type = type;
-        this.spec = spec;
         this.fileName = fileName;
         this.container = container;
+        this.spec = specFactory.create(this);
         this.configHandler = ConfigFileTypeHandler.TOML;
         ConfigTracker.INSTANCE.trackConfig(this);
     }
 
-    public ModConfig(final Type type, final ForgeConfigSpec spec, final ModContainer activeContainer) {
-        this(type, spec, activeContainer, defaultConfigName(type, activeContainer.getModId()));
+    public ModConfig(final Type type, final IConfigSpecFactory<S> specFactory, final ModContainer activeContainer) {
+        this(type, specFactory, activeContainer, defaultConfigName(type, activeContainer.getModId()));
     }
 
     private static String defaultConfigName(Type type, String modId) {
         // config file name would be "forge-client.toml" and "forge-server.toml"
         return String.format("%s-%s.toml", modId, type.extension());
     }
+
     public Type getType() {
         return type;
     }
@@ -69,8 +73,12 @@ public class ModConfig
         return configHandler;
     }
 
-    public ForgeConfigSpec getSpec() {
+    public S getSpec() {
         return spec;
+    }
+
+    public ModContainer getContainer() {
+        return container;
     }
 
     public String getModId() {
@@ -83,7 +91,7 @@ public class ModConfig
 
     void setConfigData(final CommentedConfig configData) {
         this.configData = configData;
-        this.spec.setConfig(this.configData);
+        this.spec.correctConfig(this.configData);
     }
 
     void fireEvent(final ModConfigEvent configEvent) {

@@ -19,9 +19,15 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.config.IConfigSpecFactory;
+import net.minecraftforge.common.config.ModConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.Type;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ModLoadingContext
@@ -58,12 +64,47 @@ public class ModLoadingContext
         getActiveContainer().registerExtensionPoint(point, extension);
     }
 
-    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
-        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
+    /**
+     * Register a new {@link ModConfig} with the given type.
+     * This method will return the {@link ModConfigSpec} created for the ModConfig.
+     *
+     * @param type the {@link ModConfig.Type}
+     * @return the {@link ModConfigSpec}
+     */
+    public ModConfigSpec registerConfig(ModConfig.Type type) {
+        return registerConfig(type, Function.identity());
     }
 
-    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec, String fileName) {
-        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
+    /**
+     * Register a new config and call the given function after the {@link ModConfig} has been created.
+     * This method will use the default {@link IConfigSpecFactory#createSpec(ModConfig)} method.
+     *
+     * @param type the {@link ModConfig.Type}
+     * @param func the {@link Function} that turns a {@link ModConfigSpec} into another object
+     * @return a new object as determined by the given Function
+     */
+    public <K extends ModConfigSpec, V> V registerConfig(ModConfig.Type type, Function<K, V> func) {
+        return registerConfig(type, IConfigSpecFactory::createSpec, func);
+    }
+
+    /**
+     * Register a new config and call the given function after the {@link ModConfig} has been created.
+     *
+     * @param type the {@link ModConfig.Type}
+     * @param spec the {@link IConfigSpecFactory} to use
+     * @param func the {@link Function} that turns a {@link ModConfigSpec} into another object
+     * @return a new object as determined by the given Function
+     */
+    public <K extends ModConfigSpec, V> V registerConfig(ModConfig.Type type, IConfigSpecFactory<K> spec, Function<K, V> func) {
+        ModConfig<K> modConfig = new ModConfig<K>(type, spec, getActiveContainer());
+        getActiveContainer().addConfig(modConfig);
+        return func.apply((K) modConfig.getSpec());
+    }
+
+    public <K extends ModConfigSpec, V> V registerConfig(ModConfig.Type type, IConfigSpecFactory<K> spec, String fileName, Function<K, V> func) {
+        ModConfig<K> modConfig = new ModConfig<>(type, spec,getActiveContainer(), fileName);
+        getActiveContainer().addConfig(modConfig);
+        return func.apply((K) modConfig.getSpec());
     }
 
 

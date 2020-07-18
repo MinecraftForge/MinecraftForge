@@ -64,6 +64,11 @@ import com.google.common.collect.ObjectArrays;
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
  * and other things Forge configs would find useful.
  */
+
+/**
+ * @deprecated Use {@link net.minecraftforge.common.config.ModConfigSpec} instead.
+ */
+@Deprecated
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> //TODO: Remove extends and pipe everything through getSpec/getValues?
 {
     private Map<List<String>, String> levelComments = new HashMap<>();
@@ -231,6 +236,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return count;
     }
 
+    @Deprecated
     public static class Builder
     {
         private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
@@ -538,6 +544,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    @Deprecated
     private static class BuilderContext
     {
         private @Nonnull String[] comment = new String[0];
@@ -585,6 +592,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     @SuppressWarnings("unused")
+    @Deprecated
     private static class Range<V extends Comparable<? super V>> implements Predicate<Object>
     {
         private final Class<? extends V> clazz;
@@ -646,6 +654,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    @Deprecated
     public static class ValueSpec
     {
         private final String comment;
@@ -688,6 +697,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    @Deprecated
     public static class ConfigValue<T>
     {
         private final Builder parent;
@@ -742,6 +752,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    @Deprecated
     public static class BooleanValue extends ConfigValue<Boolean>
     {
         BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier)
@@ -749,7 +760,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             super(parent, path, defaultSupplier);
         }
     }
-
+    @Deprecated
     public static class IntValue extends ConfigValue<Integer>
     {
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
@@ -763,7 +774,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return config.getIntOrElse(path, () -> defaultSupplier.get());
         }
     }
-
+    @Deprecated
     public static class LongValue extends ConfigValue<Long>
     {
         LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier)
@@ -777,7 +788,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return config.getLongOrElse(path, () -> defaultSupplier.get());
         }
     }
-
+    @Deprecated
     public static class DoubleValue extends ConfigValue<Double>
     {
         DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier)
@@ -792,7 +803,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return n == null ? defaultSupplier.get() : n.doubleValue();
         }
     }
-
+    @Deprecated
     public static class EnumValue<T extends Enum<T>> extends ConfigValue<T>
     {
         private final EnumGetMethod converter;

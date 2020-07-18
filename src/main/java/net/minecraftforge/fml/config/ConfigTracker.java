@@ -128,8 +128,7 @@ public class ConfigTracker {
     public void loadDefaultServerConfigs() {
         configSets.get(ModConfig.Type.SERVER).forEach(modConfig -> {
             final CommentedConfig commentedConfig = CommentedConfig.inMemory();
-            modConfig.getSpec().correct(commentedConfig);
-            modConfig.setConfigData(commentedConfig);
+            modConfig.setConfigData(commentedConfig); // setConfigData corrects the config
             modConfig.fireEvent(new ModConfig.Loading(modConfig));
         });
     }
