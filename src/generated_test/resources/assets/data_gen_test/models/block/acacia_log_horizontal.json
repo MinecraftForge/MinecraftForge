@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_column",
+  "parent": "minecraft:block/cube_column_horizontal",
   "textures": {
     "side": "minecraft:block/acacia_log",
     "end": "minecraft:block/acacia_log_top"

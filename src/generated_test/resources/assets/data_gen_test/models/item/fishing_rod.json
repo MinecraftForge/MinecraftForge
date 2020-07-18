@@ -1,14 +1,14 @@
 {
-  "parent": "item/handheld_rod",
+  "parent": "minecraft:item/handheld_rod",
   "textures": {
-    "layer0": "item/fishing_rod"
+    "layer0": "minecraft:item/fishing_rod"
   },
   "overrides": [
     {
       "predicate": {
-        "cast": 1.0
+        "minecraft:cast": 1.0
       },
-      "model": "item/fishing_rod_cast"
+      "model": "minecraft:item/fishing_rod_cast"
     }
   ]
 }
