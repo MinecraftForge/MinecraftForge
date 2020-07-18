@@ -288,19 +288,23 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1704,7 +1745,10 @@
+@@ -1702,9 +1743,13 @@
+    public Scoreboard func_96123_co() {
+       return this.field_70170_p.func_96441_U();
     }
- 
+-
++   
     public ITextComponent func_145748_c_() {
 -      IFormattableTextComponent iformattabletextcomponent = ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.func_200200_C_());
++      if(this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +      IFormattableTextComponent iformattabletextcomponent = new StringTextComponent("");
 +      iformattabletextcomponent = prefixes.stream().reduce(iformattabletextcomponent, IFormattableTextComponent::func_230529_a_);
-+      iformattabletextcomponent = iformattabletextcomponent.func_230529_a_(ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.func_200200_C_()));
++      iformattabletextcomponent = iformattabletextcomponent.func_230529_a_(ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.displayname));
 +      iformattabletextcomponent = suffixes.stream().reduce(iformattabletextcomponent, IFormattableTextComponent::func_230529_a_);
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1956,4 +2000,37 @@
+@@ -1956,4 +2001,45 @@
           return this.field_221260_g;
        }
     }
@@ -312,6 +316,14 @@
 +
 +   public Collection<IFormattableTextComponent> getSuffixes() {
 +       return this.suffixes;
++   }
++   
++   private ITextComponent displayname = null;
++   /**
++    * Force the displayed name to refresh
++    */
++   public void refreshDisplayName() {
++       this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +   }
 +
 +   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
