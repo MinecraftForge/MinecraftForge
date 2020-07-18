@@ -1,7 +1,7 @@
 {
   "variants": {
     "axis=x": {
-      "model": "data_gen_test:block/acacia_log",
+      "model": "data_gen_test:block/acacia_log_horizontal",
       "x": 90,
       "y": 90
     },
@@ -9,7 +9,7 @@
       "model": "data_gen_test:block/acacia_log"
     },
     "axis=z": {
-      "model": "data_gen_test:block/acacia_log",
+      "model": "data_gen_test:block/acacia_log_horizontal",
       "x": 90
     }
   }

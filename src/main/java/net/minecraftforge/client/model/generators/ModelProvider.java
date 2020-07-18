@@ -173,6 +173,12 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
                 .texture("end", end);
     }
 
+    public T cubeColumnHorizontal(String name, ResourceLocation side, ResourceLocation end) {
+        return withExistingParent(name, BLOCK_FOLDER + "/cube_column_horizontal")
+                .texture("side", side)
+                .texture("end", end);
+    }
+
     public T orientableVertical(String name, ResourceLocation side, ResourceLocation front) {
         return withExistingParent(name, BLOCK_FOLDER + "/orientable_vertical")
                 .texture("side", side)
@@ -257,6 +263,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T wallSide(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
+    
+    public T wallSideTall(String name, ResourceLocation wall) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_wall_side_tall", "wall", wall);
+    }
 
     public T wallInventory(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/wall_inventory", "wall", wall);
@@ -339,7 +349,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     public T torchWall(String name, ResourceLocation torch) {
-        return singleTexture(name, BLOCK_FOLDER + "/torch_wall", "torch", torch);
+        return singleTexture(name, BLOCK_FOLDER + "/template_torch_wall", "torch", torch);
     }
 
     public T carpet(String name, ResourceLocation wool) {
