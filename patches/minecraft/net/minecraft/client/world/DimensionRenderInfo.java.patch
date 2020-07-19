@@ -10,11 +10,10 @@
  
     public DimensionRenderInfo(float p_i241259_1_, boolean p_i241259_2_, DimensionRenderInfo.FogType p_i241259_3_, boolean p_i241259_4_, boolean p_i241259_5_) {
        this.field_239210_c_ = p_i241259_1_;
-@@ -83,7 +86,29 @@
+@@ -83,6 +86,28 @@
        return this.field_239212_e_;
     }
  
--   @OnlyIn(Dist.CLIENT)
 +   public void setWeatherRenderHandler(net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler) {
 +      this.weatherRenderHandler = weatherRenderHandler;
 +   }
@@ -37,7 +36,6 @@
 +      return skyRenderHandler;
 +   }
 +
-+    @OnlyIn(Dist.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static class End extends DimensionRenderInfo {
        public End() {
-          super(Float.NaN, false, DimensionRenderInfo.FogType.END, true, false);
