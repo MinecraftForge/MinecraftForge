@@ -156,7 +156,8 @@ public class PlayerEvent extends LivingEvent
         private final ITextComponent username;
         private ITextComponent displayname;
 
-        public NameFormat(PlayerEntity player, ITextComponent username) {
+        public NameFormat(PlayerEntity player, ITextComponent username) 
+        {
             super(player);
             this.username = username;
             this.setDisplayname(username);

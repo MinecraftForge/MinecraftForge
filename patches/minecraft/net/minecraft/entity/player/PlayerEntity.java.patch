@@ -296,7 +296,7 @@
 +   
     public ITextComponent func_145748_c_() {
 -      IFormattableTextComponent iformattabletextcomponent = ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.func_200200_C_());
-+      if(this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
++      if (this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +      IFormattableTextComponent iformattabletextcomponent = new StringTextComponent("");
 +      iformattabletextcomponent = prefixes.stream().reduce(iformattabletextcomponent, IFormattableTextComponent::func_230529_a_);
 +      iformattabletextcomponent = iformattabletextcomponent.func_230529_a_(ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.displayname));
@@ -323,7 +323,7 @@
 +    * Force the displayed name to refresh
 +    */
 +   public void refreshDisplayName() {
-+       this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
++      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +   }
 +
 +   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
