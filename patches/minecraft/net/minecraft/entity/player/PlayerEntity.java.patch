@@ -288,12 +288,9 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1702,9 +1743,13 @@
-    public Scoreboard func_96123_co() {
-       return this.field_70170_p.func_96441_U();
+@@ -1704,7 +1745,11 @@
     }
--
-+   
+ 
     public ITextComponent func_145748_c_() {
 -      IFormattableTextComponent iformattabletextcomponent = ScorePlayerTeam.func_237500_a_(this.func_96124_cp(), this.func_200200_C_());
 +      if (this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
@@ -320,7 +317,7 @@
 +   
 +   private ITextComponent displayname = null;
 +   /**
-+    * Force the displayed name to refresh
++    * Force the displayed name to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.NameFormat}, using the real player name as event parameter.
 +    */
 +   public void refreshDisplayName() {
 +      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
