@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client;
 
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
+/**
+ * Call {@link net.minecraft.client.world.DimensionRenderInfo#setWeatherRenderHandler(IWeatherRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all weather rendering with your own.
+ * This includes rain and snow.
+ */
 @FunctionalInterface
-public interface IRenderHandler
-{
-    @OnlyIn(Dist.CLIENT)
+public interface IWeatherRenderHandler {
     void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc);
 }
