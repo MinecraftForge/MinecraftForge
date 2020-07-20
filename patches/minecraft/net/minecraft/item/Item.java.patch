@@ -125,7 +125,7 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
        private boolean field_234688_g_;
-+      private boolean canRepair;
++      private boolean canRepair = true;
 +      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +      private java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister;
  

@@ -35,7 +35,7 @@
              } else {
                 ivertexbuilder = func_229113_a_(p_229111_5_, rendertype, true, p_229111_1_.func_77962_s());
              }
--
+ 
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
 +            }
           } else {

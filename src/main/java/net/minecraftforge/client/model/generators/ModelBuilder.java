@@ -198,7 +198,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     public JsonObject toJson() {
         JsonObject root = new JsonObject();
         if (this.parent != null) {
-            root.addProperty("parent", serializeLoc(this.parent.getLocation()));
+            root.addProperty("parent", this.parent.getLocation().toString());
         }
 
         if (!this.ambientOcclusion) {
@@ -296,14 +296,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         if (tex.charAt(0) == '#') {
             return tex;
         }
-        return serializeLoc(new ResourceLocation(tex));
-    }
-
-    String serializeLoc(ResourceLocation loc) {
-        if (loc.getNamespace().equals("minecraft")) {
-            return loc.getPath();
-        }
-        return loc.toString();
+        return new ResourceLocation(tex).toString();
     }
 
     private JsonArray serializeVector3f(Vector3f vec) {

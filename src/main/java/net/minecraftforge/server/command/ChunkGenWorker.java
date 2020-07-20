@@ -96,21 +96,8 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean doWork()
     {
-    	/*
-        ServerWorld world = DimensionManager.getWorld(listener.getServer(), dim, false, false);
-        if (world == null)
-        {
-            world = DimensionManager.initWorld(listener.getServer(), dim);
-            if (world == null)
-            {
-                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.dim_fail", dim), true);
-                queue.clear();
-                return false;
-            }
-        }
-
         /* TODO: Check how many things are pending save, and slow down world gen if to many
-        AnvilChunkLoader loader = world.getChunkProvider().chunkLoader instanceof AnvilChunkLoader ? (AnvilChunkLoader)world.getChunkProvider().chunkLoader : null;
+        AnvilChunkLoader loader = dim.getChunkProvider().chunkLoader instanceof AnvilChunkLoader ? (AnvilChunkLoader)world.getChunkProvider().chunkLoader : null;
         if (loader != null && loader.getPendingSaveCount() > 100)
         {
 
@@ -121,17 +108,17 @@ public class ChunkGenWorker implements IWorker
             }
             return false;
         }
-        * /
+        */
 
         BlockPos next = queue.poll();
 
         if (next != null)
         {
             // While we work we don't want to cause world load spam so pause unloading the world.
+            /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.
             if (keepingLoaded == null)
-            {
                 keepingLoaded = DimensionManager.keepLoaded(dim, true);
-            }
+            */
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
             {
@@ -143,10 +130,10 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            if (!world.chunkExists(x, z)) { //Chunk is unloaded
-                IChunk chunk = world.getChunk(x, z, ChunkStatus.EMPTY, true);
+            if (!dim.chunkExists(x, z)) { //Chunk is unloaded
+                IChunk chunk = dim.getChunk(x, z, ChunkStatus.EMPTY, true);
                 if (!chunk.getStatus().isAtLeast(ChunkStatus.FULL)) {
-                    chunk = world.getChunk(x, z, ChunkStatus.FULL);
+                    chunk = dim.getChunk(x, z, ChunkStatus.FULL);
                     genned++; //There isn't a way to check if the chunk is actually created just if it was loaded
                 }
             }
@@ -154,14 +141,13 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, DimensionType.getKey(dim)), true);
+            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim.func_234923_W_().func_240901_a_()), true);
+            /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.
             if (keepingLoaded != null && !keepingLoaded)
-            {
                 DimensionManager.keepLoaded(dim, false);
-            }
+            */
             return false;
         }
-        */
         return true;
     }
 }

@@ -7,7 +7,7 @@
 -      this.func_238654_b_(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_);
 +      FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
 +      net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
-+      this.func_238654_b_(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
++      this.renderToolTip(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +      net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
     }
  
@@ -17,9 +17,9 @@
  
     public void func_238654_b_(MatrixStack p_238654_1_, List<? extends ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_) {
 -      if (!p_238654_2_.isEmpty()) {
-+      this.func_238654_b_(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230712_o_);
++      this.renderToolTip(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230712_o_);
 +   }
-+   public void func_238654_b_(MatrixStack p_238654_1_, List<? extends ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font) {
++   public void renderToolTip(MatrixStack p_238654_1_, List<? extends ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font) {
 +      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230708_k_, field_230709_l_, -1, font);
 +      if (false && !p_238654_2_.isEmpty()) {
           int i = 0;
