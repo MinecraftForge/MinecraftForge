@@ -71,7 +71,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
@@ -245,16 +244,11 @@ public class ForgeEventFactory
         return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
     }
 
-    public static String getPlayerDisplayName(PlayerEntity player, String username)
-    {
-        return getPlayerDisplayName(player, new StringTextComponent(username)).getString();
-    }
-    
     public static ITextComponent getPlayerDisplayName(PlayerEntity player, ITextComponent username)
     {
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getDisplaynameComponent();
+        return event.getDisplayname();
     }
 
     public static float fireBlockHarvesting(NonNullList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player)
