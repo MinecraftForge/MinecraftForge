@@ -44,6 +44,7 @@ class CommandTps
                 for (ServerWorld dim : ctx.getSource().getServer().getWorlds())
                     sendTime(ctx.getSource(), dim);
 
+                @SuppressWarnings("resource")
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
@@ -62,7 +63,7 @@ class CommandTps
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().toString(), dim.func_234922_V_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().func_240901_a_().toString(), dim.func_234922_V_().func_240901_a_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }

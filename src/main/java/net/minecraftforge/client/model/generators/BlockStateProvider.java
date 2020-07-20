@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -54,9 +55,11 @@ import net.minecraft.block.SlabBlock;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.TrapDoorBlock;
 import net.minecraft.block.WallBlock;
+import net.minecraft.block.WallHeight;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.state.Property;
 import net.minecraft.state.properties.AttachFace;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoorHingeSide;
@@ -202,17 +205,17 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     public void axisBlock(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end) {
-        axisBlock(block, models().cubeColumn(name(block), side, end));
+        axisBlock(block, models().cubeColumn(name(block), side, end), models().cubeColumnHorizontal(name(block) + "_horizontal", side, end));
     }
 
-    public void axisBlock(RotatedPillarBlock block, ModelFile model) {
+    public void axisBlock(RotatedPillarBlock block, ModelFile vertical, ModelFile horizontal) {
         getVariantBuilder(block)
             .partialState().with(RotatedPillarBlock.AXIS, Axis.Y)
-                .modelForState().modelFile(model).addModel()
+                .modelForState().modelFile(vertical).addModel()
             .partialState().with(RotatedPillarBlock.AXIS, Axis.Z)
-                .modelForState().modelFile(model).rotationX(90).addModel()
+                .modelForState().modelFile(horizontal).rotationX(90).addModel()
             .partialState().with(RotatedPillarBlock.AXIS, Axis.X)
-                .modelForState().modelFile(model).rotationX(90).rotationY(90).addModel();
+                .modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel();
     }
 
     private static final int DEFAULT_ANGLE_OFFSET = 180;
@@ -417,14 +420,35 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
-        wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture));
+        wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
+    
+    public static final ImmutableMap<Direction, Property<WallHeight>> WALL_PROPS = ImmutableMap.<Direction, Property<WallHeight>>builder()
+    		.put(Direction.EAST,  BlockStateProperties.field_235908_S_)
+    		.put(Direction.NORTH, BlockStateProperties.field_235909_T_)
+    		.put(Direction.SOUTH, BlockStateProperties.field_235910_U_)
+    		.put(Direction.WEST,  BlockStateProperties.field_235911_V_)
+    		.build();
 
-    public void wallBlock(WallBlock block, ModelFile post, ModelFile side) {
+    public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel()
                     .condition(WallBlock.UP, true).end();
-        fourWayMultipart(builder, side);
+        WALL_PROPS.entrySet().stream()
+        	.filter(e -> e.getKey().getAxis().isHorizontal())
+        	.forEach(e -> {
+        		wallSidePart(builder, side, e, WallHeight.LOW);
+        		wallSidePart(builder, sideTall, e, WallHeight.TALL);
+        	});
+    }
+    
+    private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallHeight>> entry, WallHeight height) {
+        builder.part()
+        	.modelFile(model)
+        		.rotationY((((int) entry.getKey().getHorizontalAngle()) + 180) % 360)
+        		.uvLock(true)
+        		.addModel()
+    		.condition(entry.getValue(), height);
     }
 
     public void paneBlock(PaneBlock block, ResourceLocation pane, ResourceLocation edge) {

@@ -144,7 +144,15 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -1284,10 +1304,13 @@
+@@ -1275,6 +1295,7 @@
+          this.func_184103_al().func_193244_w();
+          this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
+          this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
++         this.func_184103_al().func_181057_v().forEach(this.func_184103_al()::func_187243_f); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
+       }, this);
+       if (this.func_213162_bc()) {
+          this.func_213161_c(completablefuture::isDone);
+@@ -1284,6 +1305,7 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList<ResourcePackInfo> p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
