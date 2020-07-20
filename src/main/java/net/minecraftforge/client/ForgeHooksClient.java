@@ -139,21 +139,14 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
-    private static float partialTicksHolder;
-    private static ClippingHelper clippinghelperHolder;
-    private static ActiveRenderInfo activeRenderInfoInHolder;
-
     public static void dispatchRenderWorldTerrainUpdate(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers, long finishTimeNano)
     {
-        partialTicksHolder = partialTicks;
-        clippinghelperHolder = clippinghelper;
-        activeRenderInfoInHolder = activeRenderInfoIn;
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldTerrainUpdateEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers, finishTimeNano));
     }
 
-    public static void dispatchRenderWorldBlockLayer(WorldRenderer context, MatrixStack mStack, RenderTypeBuffers renderTypeBuffers, RenderType blockLayer)
+    public static void dispatchRenderWorldBlockLayer(WorldRenderer context, MatrixStack mStack, RenderTypeBuffers renderTypeBuffers, RenderType blockLayer, double cameraX, double cameraY, double cameraZ)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldBlockLayerEvent(context, mStack, partialTicksHolder, clippinghelperHolder, activeRenderInfoInHolder, renderTypeBuffers, blockLayer));
+        MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldBlockLayerEvent(context, mStack, renderTypeBuffers, blockLayer, cameraX, cameraY, cameraZ));
     }
 
     public static void dispatchRenderWorldEntities(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
@@ -164,6 +157,12 @@ public class ForgeHooksClient
     public static void dispatchRenderWorldTileEntities(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldTileEntitiesEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+    }
+
+    public static void dispatchRenderWorldPreWeather(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldPreWeatherEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        renderTypeBuffers.getBufferSource().finish();
     }
 
     public static void dispatchRenderWorldLast(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)

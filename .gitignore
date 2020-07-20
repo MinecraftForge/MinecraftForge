@@ -4,6 +4,9 @@
 **/.classpath
 *.project
 
+#vscode
+/.vscode
+
 #In case people make their workspace in the repo
 /eclipse/
 

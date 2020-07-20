@@ -37,18 +37,12 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
 {
     private final WorldRenderer context;
     private final MatrixStack mStack;
-    private final float partialTicks;
-    private final ClippingHelper clippinghelper;
-    private final ActiveRenderInfo activeRenderInfoIn;
     private final RenderTypeBuffers renderTypeBuffers;
 
-    private RenderWorldEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+    private RenderWorldEvent(WorldRenderer context, MatrixStack mStack, RenderTypeBuffers renderTypeBuffers)
     {
         this.context = context;
         this.mStack = mStack;
-        this.partialTicks = partialTicks;
-        this.clippinghelper = clippinghelper;
-        this.activeRenderInfoIn = activeRenderInfoIn;
         this.renderTypeBuffers = renderTypeBuffers;
     }
 
@@ -62,24 +56,39 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
         return mStack;
     }
 
-    public float getPartialTicks()
-    {
-        return partialTicks;
-    }
-
-    public ClippingHelper getClippinghelper()
-    {
-        return clippinghelper;
-    }
-
-    public ActiveRenderInfo getActiveRenderInfoIn()
-    {
-        return activeRenderInfoIn;
-    }
-
     public RenderTypeBuffers getRenderTypeBuffers()
     {
         return renderTypeBuffers;
+    }
+
+    public static class InnerRenderWorldEvent extends RenderWorldEvent
+    {
+        private final float partialTicks;
+        private final ClippingHelper clippingHelper;
+        private final ActiveRenderInfo activeRenderInfo;
+
+        private InnerRenderWorldEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
+        {
+            super(context, mStack, renderTypeBuffers);
+            this.partialTicks = partialTicks;
+            this.clippingHelper = clippingHelper;
+            this.activeRenderInfo = activeRenderInfo;
+        }
+
+        public float getPartialTicks()
+        {
+            return partialTicks;
+        }
+    
+        public ClippingHelper getClippingHelper()
+        {
+            return clippingHelper;
+        }
+    
+        public ActiveRenderInfo getActiveRenderInfo()
+        {
+            return activeRenderInfo;
+        }
     }
 
     /**
@@ -87,13 +96,13 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
      * <br>
      * If {@link System#nanoTime} is greater than <code>finishTimeNano</code> then you should quit this event immediately.
      */
-    public static class RenderWorldTerrainUpdateEvent extends RenderWorldEvent
+    public static class RenderWorldTerrainUpdateEvent extends InnerRenderWorldEvent
     {
         private final long finishTimeNano;
 
-        public RenderWorldTerrainUpdateEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers, long finishTimeNano)
+        public RenderWorldTerrainUpdateEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers, long finishTimeNano)
         {
-            super(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers);
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
             this.finishTimeNano = finishTimeNano;
         }
 
@@ -109,49 +118,81 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
     public static class RenderWorldBlockLayerEvent extends RenderWorldEvent
     {
         private final RenderType blockLayer;
+        private final double cameraX;
+        private final double cameraY;
+        private final double cameraZ;
 
-        public RenderWorldBlockLayerEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers, RenderType blockLayer)
+        public RenderWorldBlockLayerEvent(WorldRenderer context, MatrixStack mStack, RenderTypeBuffers renderTypeBuffers, RenderType blockLayer, double cameraX, double cameraY, double cameraZ)
         {
-            super(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers);
+            super(context, mStack, renderTypeBuffers);
             this.blockLayer = blockLayer;
+            this.cameraX = cameraX;
+            this.cameraY = cameraY;
+            this.cameraZ = cameraZ;
         }
 
         public RenderType getBlockLayer()
         {
             return blockLayer;
         }
+
+        public double getCameraX()
+        {
+            return cameraX;
+        }
+
+        public double getCameraY()
+        {
+            return cameraY;
+        }
+
+        public double getCameraZ()
+        {
+            return cameraZ;
+        }
     }
 
     /**
      * Event fired before end of entity rendering.
      */
-    public static class RenderWorldEntitiesEvent extends RenderWorldEvent
+    public static class RenderWorldEntitiesEvent extends InnerRenderWorldEvent
     {
-        public RenderWorldEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+        public RenderWorldEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
         {
-            super(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers);
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
         }
     }
 
     /**
      * Event fired before end of tile entity rendering.
      */
-    public static class RenderWorldTileEntitiesEvent extends RenderWorldEvent
+    public static class RenderWorldTileEntitiesEvent extends InnerRenderWorldEvent
     {
-        public RenderWorldTileEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+        public RenderWorldTileEntitiesEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
         {
-            super(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers);
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
+        }
+    }
+
+    /**
+     * Event fired before weather and clouds are rendered.
+     */
+    public static class RenderWorldPreWeatherEvent extends InnerRenderWorldEvent
+    {
+        public RenderWorldPreWeatherEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
+        {
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
         }
     }
 
     /**
      * Event fired after entire World is rendered.
      */
-    public static class RenderWorldLastEvent extends RenderWorldEvent
+    public static class RenderWorldLastEvent extends InnerRenderWorldEvent
     {
-        public RenderWorldLastEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+        public RenderWorldLastEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
         {
-            super(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers);
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
         }
     }
 }
