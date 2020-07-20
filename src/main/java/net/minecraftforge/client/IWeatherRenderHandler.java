@@ -20,6 +20,7 @@
 package net.minecraftforge.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.world.ClientWorld;
 
 /**
@@ -28,5 +29,5 @@ import net.minecraft.client.world.ClientWorld;
  */
 @FunctionalInterface
 public interface IWeatherRenderHandler {
-    void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc);
+    void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc, LightTexture lightmapIn, double xIn, double yIn, double zIn);
 }

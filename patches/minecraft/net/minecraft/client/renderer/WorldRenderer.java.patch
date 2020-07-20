@@ -6,7 +6,7 @@
     private void func_228438_a_(LightTexture p_228438_1_, float p_228438_2_, double p_228438_3_, double p_228438_5_, double p_228438_7_) {
 +      net.minecraftforge.client.IWeatherRenderHandler renderHandler = this.field_72777_q.field_71441_e.func_239132_a_().getWeatherRenderHandler();
 +      if (renderHandler != null) {
-+         renderHandler.render(field_72773_u, p_228438_2_, this.field_72777_q.field_71441_e, field_72777_q);
++         renderHandler.render(field_72773_u, p_228438_2_, this.field_72777_q.field_71441_e, field_72777_q, p_228438_1_, p_228438_3_, p_228438_5_, p_228438_7_);
 +         return;
 +      }
        float f = this.field_72777_q.field_71441_e.func_72867_j(p_228438_2_);
@@ -91,7 +91,7 @@
     public void func_228425_a_(MatrixStack p_228425_1_, float p_228425_2_, double p_228425_3_, double p_228425_5_, double p_228425_7_) {
 +      net.minecraftforge.client.ICloudRenderHandler renderHandler = this.field_72777_q.field_71441_e.func_239132_a_().getCloudRenderHandler();
 +      if (renderHandler != null) {
-+         renderHandler.render(field_72773_u, p_228425_2_, p_228425_1_, this.field_72777_q.field_71441_e, field_72777_q);
++         renderHandler.render(field_72773_u, p_228425_2_, p_228425_1_, this.field_72777_q.field_71441_e, field_72777_q, p_228425_3_, p_228425_5_, p_228425_7_);
 +         return;
 +      }
        float f = this.field_72769_h.func_239132_a_().func_239213_a_();
