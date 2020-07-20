@@ -374,11 +374,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
     @Nullable
     default CompoundNBT getShareTag()
     {
-	    CompoundNBT shareTag = getStack().getItem().getShareTag(getStack());
+        CompoundNBT shareTag = getStack().getItem().getShareTag(getStack());
         CompoundNBT capabilityShareTags = this.serializeShareTag();
-        if(capabilityShareTags != null)
+        if (capabilityShareTags != null)
         {
-            if(shareTag == null)
+            if (shareTag == null)
             {
                 shareTag = new CompoundNBT();
             }
@@ -396,11 +396,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
      */
     default void readShareTag(@Nullable CompoundNBT nbt)
     {
-        if(nbt != null && nbt.contains("ForgeCaps", Constants.NBT.TAG_COMPOUND))
+        if (nbt != null && nbt.contains("ForgeCaps", Constants.NBT.TAG_COMPOUND))
         {
             this.deserializeShareTag(nbt.getCompound("ForgeCaps"));
             nbt.remove("ForgeCaps");
-            if(nbt.size() == 0)
+            if (nbt.size() == 0)
             {
                 return;
             }
