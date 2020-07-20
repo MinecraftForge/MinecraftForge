@@ -34,6 +34,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -138,9 +139,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * NameFormat is fired when a player's display name is retrieved.<br>
      * This event is fired whenever a player's name is retrieved in
-     * {@link EntityPlayer#getDisplayName()} or {@link EntityPlayer#refreshDisplayName()}.<br>
+     * {@link PlayerEntity#getDisplayName()} for the first time or if {@link PlayerEntity#refreshDisplayName()} is called.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
+     * This event is fired via {@link ForgeEventFactory#getPlayerDisplayName(PlayerEntity, String)} or {@link ForgeEventFactory#getPlayerDisplayName(PlayerEntity, ITextComponent)}.<br>
      * <br>
      * {@link #username} contains the username of the player.
      * {@link #displayname} contains the display name of the player.
@@ -153,29 +154,57 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        private final ITextComponent username;
-        private ITextComponent displayname;
-
-        public NameFormat(PlayerEntity player, ITextComponent username) 
+        private final String username;
+        private String displayname;
+        private final ITextComponent usernameComponent;
+        private ITextComponent displaynameComponent;
+        
+        public NameFormat(PlayerEntity player, String username) 
         {
             super(player);
             this.username = username;
-            this.setDisplayname(username);
+            this.usernameComponent = new StringTextComponent(username);
+            this.setDisplaynameComponent(new StringTextComponent(username));
+        }
+        
+        public NameFormat(PlayerEntity player, ITextComponent username) 
+        {
+            super(player);
+            this.username = username.getString();
+            this.usernameComponent = username;
+            this.setDisplaynameComponent(username);
         }
 
-        public ITextComponent getUsername()
+        public String getUsername()
         {
             return username;
         }
 
-        public ITextComponent getDisplayname()
+        public String getDisplayname()
         {
             return displayname;
         }
 
-        public void setDisplayname(ITextComponent displayname)
+        public void setDisplayname(String displayname)
         {
             this.displayname = displayname;
+            this.displaynameComponent = new StringTextComponent(displayname);
+        }
+        
+        public ITextComponent getUsernameComponent()
+        {
+            return usernameComponent;
+        }
+
+        public ITextComponent getDisplaynameComponent()
+        {
+            return displaynameComponent;
+        }
+
+        public void setDisplaynameComponent(ITextComponent displayname)
+        {
+            this.displayname = displayname.getString();
+            this.displaynameComponent = displayname;
         }
     }
 
