@@ -1,0 +1,20 @@
+--- a/net/minecraft/util/datafix/codec/DatapackCodec.java
++++ b/net/minecraft/util/datafix/codec/DatapackCodec.java
+@@ -18,7 +18,7 @@
+    private final List<String> field_234883_d_;
+ 
+    public DatapackCodec(List<String> p_i231607_1_, List<String> p_i231607_2_) {
+-      this.field_234882_c_ = ImmutableList.copyOf(p_i231607_1_);
++      this.field_234882_c_ = com.google.common.collect.Lists.newArrayList(p_i231607_1_);
+       this.field_234883_d_ = ImmutableList.copyOf(p_i231607_2_);
+    }
+ 
+@@ -29,4 +29,8 @@
+    public List<String> func_234887_b_() {
+       return this.field_234883_d_;
+    }
++
++   public void addModPacks(List<String> modPacks) {
++      field_234882_c_.addAll(modPacks.stream().filter(p->!field_234882_c_.contains(p)).collect(java.util.stream.Collectors.toList()));
++   }
+ }
