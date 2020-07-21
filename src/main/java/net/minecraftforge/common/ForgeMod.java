@@ -189,7 +189,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         if (event.includeServer())
         {
             ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen);
-            gen.addProvider(new ForgeBlockTagsProvider(gen));
+            gen.addProvider(blockTags);
             gen.addProvider(new ForgeItemTagsProvider(gen, blockTags));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
