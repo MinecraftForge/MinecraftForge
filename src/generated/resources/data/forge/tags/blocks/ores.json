@@ -5,9 +5,11 @@
     "#forge:ores/diamond",
     "#forge:ores/emerald",
     "#forge:ores/gold",
+    "#forge:ores/nether_gold",
     "#forge:ores/iron",
     "#forge:ores/lapis",
     "#forge:ores/redstone",
-    "#forge:ores/quartz"
+    "#forge:ores/quartz",
+    "#forge:ores/netherite"
   ]
 }
