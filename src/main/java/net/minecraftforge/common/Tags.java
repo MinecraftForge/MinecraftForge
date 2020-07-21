@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
@@ -52,10 +53,10 @@ public class Tags
         public static final ITag.INamedTag<Block> DIRT = tag("dirt");
         public static final ITag.INamedTag<Block> END_STONES = tag("end_stones");
         public static final ITag.INamedTag<Block> FENCE_GATES = tag("fence_gates");
-        public static final ITag.INamedTag<Block> FENCE_GATES_WOODEN = defaulted("fence_gates/wooden", net.minecraft.block.Blocks.OAK_FENCE_GATE, net.minecraft.block.Blocks.BIRCH_FENCE_GATE, net.minecraft.block.Blocks.SPRUCE_FENCE_GATE, net.minecraft.block.Blocks.JUNGLE_FENCE_GATE, net.minecraft.block.Blocks.DARK_OAK_FENCE_GATE, net.minecraft.block.Blocks.ACACIA_FENCE_GATE);
+        public static final ITag.INamedTag<Block> FENCE_GATES_WOODEN = defaulted("fence_gates/wooden", net.minecraft.block.Blocks.OAK_FENCE_GATE, net.minecraft.block.Blocks.BIRCH_FENCE_GATE, net.minecraft.block.Blocks.SPRUCE_FENCE_GATE, net.minecraft.block.Blocks.JUNGLE_FENCE_GATE, net.minecraft.block.Blocks.DARK_OAK_FENCE_GATE, net.minecraft.block.Blocks.ACACIA_FENCE_GATE, net.minecraft.block.Blocks.field_235354_mM_, net.minecraft.block.Blocks.field_235355_mN_);
         public static final ITag.INamedTag<Block> FENCES = tag("fences");
         public static final ITag.INamedTag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
-        public static final ITag.INamedTag<Block> FENCES_WOODEN = defaulted("fences/wooden", net.minecraft.block.Blocks.OAK_FENCE, net.minecraft.block.Blocks.BIRCH_FENCE, net.minecraft.block.Blocks.SPRUCE_FENCE, net.minecraft.block.Blocks.JUNGLE_FENCE, net.minecraft.block.Blocks.DARK_OAK_FENCE, net.minecraft.block.Blocks.ACACIA_FENCE);
+        public static final ITag.INamedTag<Block> FENCES_WOODEN = defaulted("fences/wooden", net.minecraft.block.Blocks.OAK_FENCE, net.minecraft.block.Blocks.BIRCH_FENCE, net.minecraft.block.Blocks.SPRUCE_FENCE, net.minecraft.block.Blocks.JUNGLE_FENCE, net.minecraft.block.Blocks.DARK_OAK_FENCE, net.minecraft.block.Blocks.ACACIA_FENCE, net.minecraft.block.Blocks.field_235350_mI_, net.minecraft.block.Blocks.field_235351_mJ_);
 
         public static final ITag.INamedTag<Block> GLASS = tag("glass");
         public static final ITag.INamedTag<Block> GLASS_BLACK = tag("glass/black");
@@ -103,12 +104,12 @@ public class Tags
         public static final ITag.INamedTag<Block> ORES_DIAMOND = tag("ores/diamond");
         public static final ITag.INamedTag<Block> ORES_EMERALD = tag("ores/emerald");
         public static final ITag.INamedTag<Block> ORES_GOLD = tag("ores/gold");
-        public static final ITag.INamedTag<Block> ORES_NETHER_GOLD = tag("ores/nether_gold");
         public static final ITag.INamedTag<Block> ORES_IRON = tag("ores/iron");
         public static final ITag.INamedTag<Block> ORES_LAPIS = tag("ores/lapis");
+        public static final ITag.INamedTag<Block> ORES_NETHERITE = tag("ores/netherite");
+        public static final ITag.INamedTag<Block> ORES_NETHER_GOLD = tag("ores/nether_gold");
         public static final ITag.INamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final ITag.INamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
-        public static final ITag.INamedTag<Block> ORES_NETHERITE = tag("ores/netherite");
 
         public static final ITag.INamedTag<Block> SAND = tag("sand");
         public static final ITag.INamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -125,9 +126,9 @@ public class Tags
         public static final ITag.INamedTag<Block> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
         public static final ITag.INamedTag<Block> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
         public static final ITag.INamedTag<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
+        public static final ITag.INamedTag<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final ITag.INamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final ITag.INamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
-        public static final ITag.INamedTag<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
 
         private static ITag.INamedTag<Block> tag(String name)
         {
@@ -259,12 +260,12 @@ public class Tags
         public static final ITag.INamedTag<Item> ORES_DIAMOND = tag("ores/diamond");
         public static final ITag.INamedTag<Item> ORES_EMERALD = tag("ores/emerald");
         public static final ITag.INamedTag<Item> ORES_GOLD = tag("ores/gold");
-        public static final ITag.INamedTag<Item> ORES_NETHER_GOLD = tag("ores/nether_gold");
         public static final ITag.INamedTag<Item> ORES_IRON = tag("ores/iron");
         public static final ITag.INamedTag<Item> ORES_LAPIS = tag("ores/lapis");
+        public static final ITag.INamedTag<Item> ORES_NETHERITE = tag("ores/netherite");
+        public static final ITag.INamedTag<Item> ORES_NETHER_GOLD = tag("ores/nether_gold");
         public static final ITag.INamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final ITag.INamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
-        public static final ITag.INamedTag<Item> ORES_NETHERITE = tag("ores/netherite");
         public static final ITag.INamedTag<Item> RODS = tag("rods");
         public static final ITag.INamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final ITag.INamedTag<Item> RODS_WOODEN = tag("rods/wooden");
@@ -291,9 +292,9 @@ public class Tags
         public static final ITag.INamedTag<Item> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
         public static final ITag.INamedTag<Item> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
         public static final ITag.INamedTag<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
+        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final ITag.INamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final ITag.INamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
-        public static final ITag.INamedTag<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final ITag.INamedTag<Item> STRING = tag("string");
 
         private static ITag.INamedTag<Item> tag(String name)

@@ -61,10 +61,10 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         func_240522_a_(DIRT).func_240534_a_(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM);
         func_240522_a_(END_STONES).func_240534_a_(Blocks.END_STONE);
         func_240522_a_(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
-        func_240522_a_(FENCE_GATES_WOODEN).func_240534_a_(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE);
+        func_240522_a_(FENCE_GATES_WOODEN).func_240534_a_(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.field_235354_mM_, Blocks.field_235355_mN_);
         func_240522_a_(FENCES).addTags(FENCES_NETHER_BRICK, FENCES_WOODEN);
         func_240522_a_(FENCES_NETHER_BRICK).func_240534_a_(Blocks.NETHER_BRICK_FENCE);
-        func_240522_a_(FENCES_WOODEN).func_240534_a_(Blocks.OAK_FENCE, Blocks.SPRUCE_FENCE, Blocks.BIRCH_FENCE, Blocks.JUNGLE_FENCE, Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE);
+        func_240522_a_(FENCES_WOODEN).func_240534_a_(Blocks.OAK_FENCE, Blocks.SPRUCE_FENCE, Blocks.BIRCH_FENCE, Blocks.JUNGLE_FENCE, Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE,  Blocks.field_235350_mI_, Blocks.field_235351_mJ_);
         func_240522_a_(GLASS).addTags(GLASS_COLORLESS, STAINED_GLASS);
         func_240522_a_(GLASS_COLORLESS).func_240534_a_(Blocks.GLASS);
         addColored(func_240522_a_(STAINED_GLASS)::func_240534_a_, GLASS, "{color}_stained_glass");
