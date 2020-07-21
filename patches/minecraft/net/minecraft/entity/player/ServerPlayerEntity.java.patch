@@ -75,6 +75,15 @@
        Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.func_70608_bn() && this.func_70089_S()) {
           if (!this.field_70170_p.func_230315_m_().func_236043_f_()) {
+@@ -741,7 +751,7 @@
+             return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
+          } else {
+             this.func_241153_a_(this.field_70170_p.func_234923_W_(), p_213819_1_, false, true);
+-            if (this.field_70170_p.func_72935_r()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
+                return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+             } else {
+                if (!this.func_184812_l_()) {
 @@ -775,6 +785,7 @@
     }
  
