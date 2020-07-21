@@ -248,7 +248,6 @@ public class Tags
         public static final ITag.INamedTag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
         public static final ITag.INamedTag<Item> LEATHER = tag("leather");
         public static final ITag.INamedTag<Item> MUSHROOMS = tag("mushrooms");
-        public static final ITag.INamedTag<Item> MUSIC_DISCS = tag("music_discs");
         public static final ITag.INamedTag<Item> NETHER_STARS = tag("nether_stars");
         public static final ITag.INamedTag<Item> NETHERRACK = tag("netherrack");
         public static final ITag.INamedTag<Item> NUGGETS = tag("nuggets");
