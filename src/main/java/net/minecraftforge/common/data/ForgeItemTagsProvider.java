@@ -114,7 +114,6 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240521_a_(Tags.Blocks.ORES_DIAMOND, Tags.Items.ORES_DIAMOND);
         func_240521_a_(Tags.Blocks.ORES_EMERALD, Tags.Items.ORES_EMERALD);
         func_240521_a_(Tags.Blocks.ORES_GOLD, Tags.Items.ORES_GOLD);
-        func_240521_a_(Tags.Blocks.ORES_NETHER_GOLD, Tags.Items.ORES_NETHER_GOLD);
         func_240521_a_(Tags.Blocks.ORES_IRON, Tags.Items.ORES_IRON);
         func_240521_a_(Tags.Blocks.ORES_LAPIS, Tags.Items.ORES_LAPIS);
         func_240521_a_(Tags.Blocks.ORES_QUARTZ, Tags.Items.ORES_QUARTZ);

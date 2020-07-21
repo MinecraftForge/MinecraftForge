@@ -21,6 +21,7 @@ package net.minecraftforge.common.data;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.DyeColor;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -74,12 +75,11 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         func_240522_a_(GRAVEL).func_240534_a_(Blocks.GRAVEL);
         func_240522_a_(NETHERRACK).func_240534_a_(Blocks.NETHERRACK);
         func_240522_a_(OBSIDIAN).func_240534_a_(Blocks.OBSIDIAN);
-        func_240522_a_(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_NETHER_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE);
+        func_240522_a_(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE);
         func_240522_a_(ORES_COAL).func_240534_a_(Blocks.COAL_ORE);
         func_240522_a_(ORES_DIAMOND).func_240534_a_(Blocks.DIAMOND_ORE);
         func_240522_a_(ORES_EMERALD).func_240534_a_(Blocks.EMERALD_ORE);
-        func_240522_a_(ORES_GOLD).func_240534_a_(Blocks.GOLD_ORE);
-        func_240522_a_(ORES_NETHER_GOLD).func_240534_a_(Blocks.field_235334_I_);
+        func_240522_a_(ORES_GOLD).func_240531_a_(BlockTags.field_232866_P_);
         func_240522_a_(ORES_IRON).func_240534_a_(Blocks.IRON_ORE);
         func_240522_a_(ORES_LAPIS).func_240534_a_(Blocks.LAPIS_ORE);
         func_240522_a_(ORES_QUARTZ).func_240534_a_(Blocks.NETHER_QUARTZ_ORE);
