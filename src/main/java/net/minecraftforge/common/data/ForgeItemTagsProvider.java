@@ -95,14 +95,15 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240521_a_(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
         func_240522_a_(Tags.Items.GUNPOWDER).func_240534_a_(Items.GUNPOWDER);
         func_240522_a_(Tags.Items.HEADS).func_240534_a_(Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.PLAYER_HEAD, Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.ZOMBIE_HEAD);
-        func_240522_a_(Tags.Items.INGOTS).addTags(Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_BRICK, Tags.Items.INGOTS_NETHER_BRICK);
+        func_240522_a_(Tags.Items.INGOTS).addTags(Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_BRICK, Tags.Items.INGOTS_NETHER_BRICK, Tags.Items.INGOTS_NETHERITE);
         func_240522_a_(Tags.Items.INGOTS_BRICK).func_240534_a_(Items.BRICK);
         func_240522_a_(Tags.Items.INGOTS_GOLD).func_240534_a_(Items.GOLD_INGOT);
         func_240522_a_(Tags.Items.INGOTS_IRON).func_240534_a_(Items.IRON_INGOT);
+        func_240522_a_(Tags.Items.INGOTS_NETHERITE).func_240534_a_(Items.field_234759_km_);
         func_240522_a_(Tags.Items.INGOTS_NETHER_BRICK).func_240534_a_(Items.NETHER_BRICK);
         func_240522_a_(Tags.Items.LEATHER).func_240534_a_(Items.LEATHER);
         func_240522_a_(Tags.Items.MUSHROOMS).func_240534_a_(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
-        func_240522_a_(Tags.Items.MUSIC_DISCS).func_240534_a_(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP, Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD, Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT);
+        func_240522_a_(Tags.Items.MUSIC_DISCS).func_240534_a_(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP, Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD, Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT, Items.field_234775_qK_);
         func_240522_a_(Tags.Items.NETHER_STARS).func_240534_a_(Items.NETHER_STAR);
         func_240521_a_(Tags.Blocks.NETHERRACK, Tags.Items.NETHERRACK);
         func_240522_a_(Tags.Items.NUGGETS).addTags(Tags.Items.NUGGETS_IRON, Tags.Items.NUGGETS_GOLD);
@@ -114,10 +115,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240521_a_(Tags.Blocks.ORES_DIAMOND, Tags.Items.ORES_DIAMOND);
         func_240521_a_(Tags.Blocks.ORES_EMERALD, Tags.Items.ORES_EMERALD);
         func_240521_a_(Tags.Blocks.ORES_GOLD, Tags.Items.ORES_GOLD);
+        func_240521_a_(Tags.Blocks.ORES_NETHER_GOLD, Tags.Items.ORES_NETHER_GOLD);
         func_240521_a_(Tags.Blocks.ORES_IRON, Tags.Items.ORES_IRON);
         func_240521_a_(Tags.Blocks.ORES_LAPIS, Tags.Items.ORES_LAPIS);
         func_240521_a_(Tags.Blocks.ORES_QUARTZ, Tags.Items.ORES_QUARTZ);
         func_240521_a_(Tags.Blocks.ORES_REDSTONE, Tags.Items.ORES_REDSTONE);
+        func_240521_a_(Tags.Blocks.ORES_NETHERITE, Tags.Items.ORES_NETHERITE);
         func_240522_a_(Tags.Items.RODS).addTags(Tags.Items.RODS_BLAZE, Tags.Items.RODS_WOODEN);
         func_240522_a_(Tags.Items.RODS_BLAZE).func_240534_a_(Items.BLAZE_ROD);
         func_240522_a_(Tags.Items.RODS_WOODEN).func_240534_a_(Items.STICK);
@@ -144,6 +147,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240521_a_(Tags.Blocks.STORAGE_BLOCKS_LAPIS, Tags.Items.STORAGE_BLOCKS_LAPIS);
         func_240521_a_(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         func_240521_a_(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
+        func_240521_a_(Tags.Blocks.STORAGE_BLOCKS_NETHERITE, Tags.Items.STORAGE_BLOCKS_NETHERITE);
         func_240522_a_(Tags.Items.STRING).func_240534_a_(Items.STRING);
     }
 
