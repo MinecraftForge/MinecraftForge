@@ -10,21 +10,20 @@ import java.util.function.Predicate;
 
 /**
  * PlayerFindAmmoEvent is fired when a shootable item tries to find ammo on the player.
- * This event is fired whenever a shootable item attempts to find ammo using
- * {@link PlayerEntity#findAmmo(ItemStack)}
- *
- * This event fires after the original vanilla order, aka: Hands -> Inventory -> This.<br>
+ * This event is fired whenever a shootable item attempts to find ammo using {@link PlayerEntity#findAmmo(ItemStack)}.<br>
+ * <br>
+ * This event fires after the original vanilla order, aka: Hand -> PlayerInventory -> This.<br>
  * <br>
  * {@link #shootable} contains the {@link net.minecraft.item.ShootableItem} in it's ItemStack form.
  * {@link #ammoPredicate} contains the {@link ShootableItem#getAmmoPredicate()} instance.<br>
  * <br>
  * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.
- *
+ * This event should be cancelled if an ammo has been supplied by an inventory.<br>
  * <br>
  * This event does not have a result. {@link net.minecraftforge.eventbus.api.Event.HasResult}<br>
  * <br>
- * This event is fired from {@link PlayerEntity#findAmmo(ItemStack)}<br>
- * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+ * This event is fired from {@link PlayerEntity#findAmmo(ItemStack)}.<br>
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  * <br>
  */
     @Cancelable
