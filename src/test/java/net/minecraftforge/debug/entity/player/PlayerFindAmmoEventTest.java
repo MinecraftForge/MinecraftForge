@@ -38,7 +38,6 @@ public class PlayerFindAmmoEventTest
         {
             logger.info("Set found ammo to Event");
             event.setAmmo(ammo);
-            event.setCanceled(true);
         }
     }
 }
