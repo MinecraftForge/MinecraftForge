@@ -27,14 +27,19 @@ public class PlayerFindAmmoEventTest
         for (int i = 0; i < inventory.getSizeInventory() && ammo.isEmpty(); i++)
         {
             ItemStack stack = inventory.getStackInSlot(i);
-            if (event.getAmmoPredicate().test(stack)) {
+            if (event.getAmmoPredicate().test(stack))
+            {
                 logger.info("Found valid ammo in player Ender Chest");
                 ammo = stack;
                 break;
             }
         }
         if (!ammo.isEmpty())
+        {
             logger.info("Set found ammo to Event");
-        event.setAmmo(ammo);
+            event.setAmmo(ammo);
+            event.setCanceled(true);
+        }
+
     }
 }
