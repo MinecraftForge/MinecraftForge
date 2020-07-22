@@ -26,8 +26,8 @@ import java.util.function.Predicate;
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  * <br>
  */
-    @Cancelable
-    public class PlayerFindAmmoEvent extends PlayerEvent
+@Cancelable
+public class PlayerFindAmmoEvent extends PlayerEvent
 {
     @Nonnull
     private final ItemStack shootable;
