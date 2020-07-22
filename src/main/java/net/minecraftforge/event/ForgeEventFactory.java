@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,6 +119,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.entity.player.PlayerFindAmmoEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
@@ -721,5 +723,12 @@ public class ForgeEventFactory
         SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
+    }
+
+    public static ItemStack onFindAmmo(PlayerEntity playerEntity, ItemStack shootable, Predicate<ItemStack> ammoPredicate)
+    {
+        PlayerFindAmmoEvent event = new PlayerFindAmmoEvent(playerEntity, shootable, ammoPredicate);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getAmmo();
     }
 }

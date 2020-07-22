@@ -458,7 +458,18 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -2029,4 +2157,45 @@
+@@ -1989,6 +2117,10 @@
+                }
+             }
+ 
++            ItemStack ammo = net.minecraftforge.event.ForgeEventFactory.onFindAmmo(this, p_213356_1_, predicate);
++            if (!ammo.func_190926_b())
++               return ammo;
++
+             return this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a;
+          }
+       }
+@@ -2029,4 +2161,45 @@
           return this.field_221260_g;
        }
     }
