@@ -71,7 +71,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
@@ -647,15 +646,6 @@ public class GameData
 
                 for (ResourceLocation s : missingRegs)
                     text.append(s).append("\n");
-
-                boolean confirmed = StartupQuery.builder()
-                        .header(header)
-                        .text(text.toString())
-                        .action("Continue anyway?")
-                        .confirm();
-
-                if (!confirmed)
-                    StartupQuery.abort();
             }
         }
 
@@ -745,14 +735,6 @@ public class GameData
                     entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
                     buf.append("\n");
                 });
-
-                boolean confirmed = StartupQuery.builder()
-                        .header(header)
-                        .text(buf.toString())
-                        .action("Remove entries and continue?")
-                        .confirm();
-                if (!confirmed)
-                    StartupQuery.abort();
             }
 
             if (!defaulted.isEmpty())

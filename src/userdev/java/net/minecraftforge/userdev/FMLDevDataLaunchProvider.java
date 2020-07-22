@@ -64,4 +64,8 @@ public class FMLDevDataLaunchProvider extends FMLDevServerLaunchProvider impleme
         return "mcp";
     }
 
+    @Override
+    public boolean isData() {
+        return true;
+    }
 }

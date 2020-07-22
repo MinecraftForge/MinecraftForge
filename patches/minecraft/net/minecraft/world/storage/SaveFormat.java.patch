@@ -11,7 +11,7 @@
        return (p_237261_2_, p_237261_3_) -> {
           try {
              CompoundNBT compoundnbt = CompressedStreamTools.func_74796_a(new FileInputStream(p_237261_2_));
-@@ -180,7 +184,12 @@
+@@ -180,7 +184,10 @@
              Pair<DimensionGeneratorSettings, Lifecycle> pair = func_237259_a_(dynamic, p_237261_3_, i);
              VersionData versiondata = VersionData.func_237324_a_(dynamic);
              WorldSettings worldsettings = WorldSettings.func_234951_a_(dynamic, p_237270_1_);
@@ -20,12 +20,10 @@
 +            if (levelSave != null)
 +                net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataLoad(levelSave, info, compoundnbt);
 +            return info;
-+         } catch (net.minecraftforge.fml.StartupQuery.AbortedException e) {
-+             throw e;
           } catch (Exception exception) {
              field_215785_a.error("Exception reading {}", p_237261_2_, exception);
              return null;
-@@ -301,7 +310,7 @@
+@@ -301,7 +308,7 @@
        @Nullable
        public IServerConfiguration func_237284_a_(DynamicOps<INBT> p_237284_1_, DatapackCodec p_237284_2_) {
           this.func_237301_i_();
@@ -34,7 +32,7 @@
        }
  
        @Nullable
-@@ -322,6 +331,8 @@
+@@ -322,6 +329,8 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           compoundnbt1.func_218657_a("Data", compoundnbt);
  
@@ -43,7 +41,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_74799_a(compoundnbt1, new FileOutputStream(file2));
-@@ -339,6 +350,10 @@
+@@ -339,6 +348,10 @@
           return this.field_237279_c_.resolve("icon.png").toFile();
        }
  

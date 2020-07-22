@@ -154,4 +154,8 @@ public abstract class FMLCommonLaunchHandler
     public boolean isProduction() {
         return false;
     }
+
+    public boolean isData() {
+        return false;
+    };
 }
