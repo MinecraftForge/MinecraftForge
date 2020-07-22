@@ -1,0 +1,13 @@
+--- a/net/minecraft/loot/ItemLootEntry.java
++++ b/net/minecraft/loot/ItemLootEntry.java
+@@ -29,6 +29,10 @@
+       p_216154_1_.accept(new ItemStack(this.field_186368_a));
+    }
+ 
++   public Item getItem() {
++      return field_186368_a;
++   }
++
+    public static StandaloneLootEntry.Builder<?> func_216168_a(IItemProvider p_216168_0_) {
+       return func_216156_a((p_216169_1_, p_216169_2_, p_216169_3_, p_216169_4_) -> {
+          return new ItemLootEntry(p_216168_0_.func_199767_j(), p_216169_1_, p_216169_2_, p_216169_3_, p_216169_4_);

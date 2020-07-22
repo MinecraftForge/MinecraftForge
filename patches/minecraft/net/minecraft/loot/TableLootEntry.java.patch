@@ -1,0 +1,13 @@
+--- a/net/minecraft/loot/TableLootEntry.java
++++ b/net/minecraft/loot/TableLootEntry.java
+@@ -42,6 +42,10 @@
+       }
+    }
+ 
++   public ResourceLocation getTable() {
++      return field_186371_a;
++   }
++
+    public static StandaloneLootEntry.Builder<?> func_216171_a(ResourceLocation p_216171_0_) {
+       return func_216156_a((p_216173_1_, p_216173_2_, p_216173_3_, p_216173_4_) -> {
+          return new TableLootEntry(p_216171_0_, p_216173_1_, p_216173_2_, p_216173_3_, p_216173_4_);

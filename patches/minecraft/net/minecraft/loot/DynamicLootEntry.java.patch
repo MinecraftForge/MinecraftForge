@@ -1,0 +1,13 @@
+--- a/net/minecraft/loot/DynamicLootEntry.java
++++ b/net/minecraft/loot/DynamicLootEntry.java
+@@ -26,6 +26,10 @@
+       p_216154_2_.func_216034_a(this.field_216166_h, p_216154_1_);
+    }
+ 
++   public ResourceLocation getName() {
++      return field_216166_h;
++   }
++
+    public static StandaloneLootEntry.Builder<?> func_216162_a(ResourceLocation p_216162_0_) {
+       return func_216156_a((p_216164_1_, p_216164_2_, p_216164_3_, p_216164_4_) -> {
+          return new DynamicLootEntry(p_216162_0_, p_216164_1_, p_216164_2_, p_216164_3_, p_216164_4_);

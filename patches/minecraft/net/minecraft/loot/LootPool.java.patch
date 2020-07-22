@@ -25,7 +25,7 @@
        this.field_216101_c = LootConditionManager.func_216305_a(p_i51268_2_);
        this.field_216102_d = p_i51268_3_;
        this.field_216103_e = LootFunctionManager.func_216241_a(p_i51268_3_);
-@@ -92,19 +94,33 @@
+@@ -92,20 +94,125 @@
     }
  
     public void func_227505_a_(ValidationTracker p_227505_1_) {
@@ -59,11 +59,103 @@
 +   public IRandomRange getBonusRolls() { return this.field_186456_d; }
 +   public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
 +   public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
-+   //======================== FORGE END ===============================================
  
++   public ItemLootEntry getItemLootEntry(net.minecraft.item.Item item) {
++      return (ItemLootEntry)field_186453_a.stream().filter(e -> e instanceof ItemLootEntry).filter(e -> item.equals(((ItemLootEntry)e).getItem())).findFirst().orElse(null);
++   }
++
++   public TableLootEntry getTableLootEntry(net.minecraft.util.ResourceLocation table) {
++      return (TableLootEntry)field_186453_a.stream().filter(e -> e instanceof TableLootEntry).filter(e -> table.equals(((TableLootEntry)e).getTable())).findFirst().orElse(null);
++   }
++
++   public DynamicLootEntry getDynamicLootEntry(net.minecraft.util.ResourceLocation name) {
++      return (DynamicLootEntry)field_186453_a.stream().filter(e -> e instanceof DynamicLootEntry).filter(e -> name.equals(((DynamicLootEntry)e).getName())).findFirst().orElse(null);
++   }
++
++   public TagLootEntry getTagLootEntry(net.minecraft.tags.ITag<net.minecraft.item.Item> tag) {
++      return (TagLootEntry)field_186453_a.stream().filter(e -> e instanceof TagLootEntry).filter(e -> tag.equals(((TagLootEntry)e).getTag())).findFirst().orElse(null);
++   }
++
++   public ItemLootEntry removeItemLootEntry(net.minecraft.item.Item item) {
++      checkFrozen();
++      for (LootEntry entry : this.field_186453_a) {
++         if (entry instanceof ItemLootEntry && item.equals(((ItemLootEntry)entry).getItem())) {
++            this.field_186453_a.remove(entry);
++            return (ItemLootEntry)entry;
++         }
++      }
++      return null;
++   }
++
++   public TableLootEntry removeTableLootEntry(net.minecraft.util.ResourceLocation table) {
++      checkFrozen();
++      for (LootEntry entry : this.field_186453_a) {
++         if (entry instanceof TableLootEntry && table.equals(((TableLootEntry)entry).getTable())) {
++            this.field_186453_a.remove(entry);
++            return (TableLootEntry)entry;
++         }
++      }
++      return null;
++   }
++
++   public DynamicLootEntry removeDynamicLootEntry(net.minecraft.util.ResourceLocation name) {
++      checkFrozen();
++      for (LootEntry entry : this.field_186453_a) {
++         if (entry instanceof DynamicLootEntry && name.equals(((DynamicLootEntry)entry).getName())) {
++            this.field_186453_a.remove(entry);
++            return (DynamicLootEntry)entry;
++         }
++      }
++      return null;
++   }
++
++   public TagLootEntry removeTagLootEntry(net.minecraft.tags.ITag<net.minecraft.item.Item> tag) {
++      checkFrozen();
++      for (LootEntry entry : this.field_186453_a) {
++         if (entry instanceof TagLootEntry && tag.equals(((TagLootEntry)entry).getTag())) {
++            this.field_186453_a.remove(entry);
++            return (TagLootEntry)entry;
++         }
++      }
++      return null;
++   }
++
++   public void addEntry(ItemLootEntry entry) {
++      checkFrozen();
++      if (field_186453_a.stream().anyMatch(e -> e instanceof ItemLootEntry && (e == entry || ((ItemLootEntry)e).getItem().equals(entry.getItem()))))
++         throw new RuntimeException("Attempted to add a duplicate entry to pool: " + entry.getItem().getRegistryName().toString());
++      this.field_186453_a.add(entry);
++   }
++
++   public void addEntry(TableLootEntry entry) {
++      checkFrozen();
++      if (field_186453_a.stream().anyMatch(e -> e instanceof TableLootEntry && (e == entry || ((TableLootEntry)e).getTable().equals(entry.getTable()))))
++         throw new RuntimeException("Attempted to add a duplicate entry to pool: " + entry.getTable().toString());
++      this.field_186453_a.add(entry);
++   }
++
++   public void addEntry(DynamicLootEntry entry) {
++      checkFrozen();
++      if (field_186453_a.stream().anyMatch(e -> e instanceof DynamicLootEntry && (e == entry || ((DynamicLootEntry)e).getName().equals(entry.getName()))))
++         throw new RuntimeException("Attempted to add a duplicate entry to pool: " + entry.getName().toString());
++      this.field_186453_a.add(entry);
++   }
++
++   public void addEntry(TagLootEntry entry) {
++      checkFrozen();
++      if (field_186453_a.stream().anyMatch(e -> e instanceof TagLootEntry && (e == entry || ((TagLootEntry)e).getTag().equals(entry.getTag()))))
++         if (entry.getTag() instanceof net.minecraft.tags.ITag.INamedTag)
++            throw new RuntimeException("Attempted to add a duplicate entry to pool: " + ((net.minecraft.tags.ITag.INamedTag<net.minecraft.item.Item>)entry.getTag()).func_230234_a_().toString());
++         else
++            throw new RuntimeException("Attempted to add a duplicate entry to pool");
++      this.field_186453_a.add(entry);
++   }
++   //======================== FORGE END ===============================================
++
     public static LootPool.Builder func_216096_a() {
        return new LootPool.Builder();
-@@ -116,6 +132,7 @@
+    }
+@@ -116,6 +223,7 @@
        private final List<ILootFunction> field_216049_c = Lists.newArrayList();
        private IRandomRange field_216050_d = new RandomValueRange(1.0F);
        private RandomValueRange field_216051_e = new RandomValueRange(0.0F, 0.0F);
@@ -71,7 +163,7 @@
  
        public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
           this.field_216050_d = p_216046_1_;
-@@ -141,11 +158,21 @@
+@@ -141,11 +249,21 @@
           return this;
        }
  
@@ -94,7 +186,7 @@
           }
        }
     }
-@@ -158,18 +185,20 @@
+@@ -158,18 +276,20 @@
           ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
           IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
           RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);

@@ -1,0 +1,13 @@
+--- a/net/minecraft/loot/TagLootEntry.java
++++ b/net/minecraft/loot/TagLootEntry.java
+@@ -54,6 +54,10 @@
+       return this.field_216181_h ? this.func_216179_a(p_expand_1_, p_expand_2_) : super.expand(p_expand_1_, p_expand_2_);
+    }
+ 
++   public ITag<Item> getTag() {
++      return field_216180_c;
++   }
++
+    public static StandaloneLootEntry.Builder<?> func_216176_b(ITag<Item> p_216176_0_) {
+       return func_216156_a((p_216177_1_, p_216177_2_, p_216177_3_, p_216177_4_) -> {
+          return new TagLootEntry(p_216176_0_, true, p_216177_1_, p_216177_2_, p_216177_3_, p_216177_4_);
