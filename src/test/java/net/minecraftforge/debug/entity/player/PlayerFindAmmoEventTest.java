@@ -18,7 +18,7 @@ public class PlayerFindAmmoEventTest
     @SubscribeEvent
     public static void onPlayerFindAmmo(PlayerFindAmmoEvent event)
     {
-        if (!ENABLE) return;
+        if (!ENABLE || event.isCanceled()) return;
         logger.info("The PlayerFindAmmoEvent has been called!");
         PlayerEntity player = event.getPlayer();
         logger.info("Starting search of player Ender Chest for Ammo");
