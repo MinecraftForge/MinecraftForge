@@ -21,7 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
