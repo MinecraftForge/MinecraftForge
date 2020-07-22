@@ -17,8 +17,7 @@ import java.util.function.Predicate;
  * {@link #shootable} contains the {@link net.minecraft.item.ShootableItem} in it's ItemStack form.
  * {@link #ammoPredicate} contains the {@link ShootableItem#getAmmoPredicate()} instance.<br>
  * <br>
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.
- * This event should be cancelled if an ammo has been supplied by an inventory.<br>
+ * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * <br>
  * This event does not have a result. {@link net.minecraftforge.eventbus.api.Event.HasResult}<br>
  * <br>
@@ -26,7 +25,6 @@ import java.util.function.Predicate;
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  * <br>
  */
-@Cancelable
 public class PlayerFindAmmoEvent extends PlayerEvent
 {
     @Nonnull
