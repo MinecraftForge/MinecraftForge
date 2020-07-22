@@ -49,12 +49,8 @@ import java.util.function.Predicate;
     @Nonnull
     public Predicate<ItemStack> getAmmoPredicate() { return ammoPredicate; }
 
-    public void setAmmo(@Nonnull ItemStack ammo) {
-        this.ammo = ammo;
-    }
+    public void setAmmo(@Nonnull ItemStack ammo) { this.ammo = ammo; }
 
     @Nonnull
-    public ItemStack getAmmo() {
-        return ammo;
-    }
+    public ItemStack getAmmo() { return ammo; }
 }
