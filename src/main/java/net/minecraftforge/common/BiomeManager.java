@@ -29,6 +29,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.gen.INoiseRandom;
 
 import javax.annotation.Nullable;
 
@@ -152,6 +153,16 @@ public class BiomeManager
 
             this.biome = biome;
         }
+    }
+
+    public static BiomeEntry getWeightedBiomeEntry(BiomeType type, INoiseRandom context)
+    {
+        List<BiomeEntry> biomeList = biomes[type.ordinal()];
+
+        int totalWeight = WeightedRandom.getTotalWeight(biomeList);
+        int weight = isTypeListModded(type) ? context.random(totalWeight) : context.random(totalWeight / 10) * 10;
+
+        return WeightedRandom.getRandomItem(biomeList, weight);
     }
 
     private static class TrackedList<E> extends ArrayList<E>
