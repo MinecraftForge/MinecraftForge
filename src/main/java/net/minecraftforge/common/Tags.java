@@ -20,8 +20,10 @@
 package net.minecraftforge.common;
 
 import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -272,5 +274,16 @@ public class Tags
         {
             return new ItemTags.Wrapper(new ResourceLocation("forge", name));
         }
+    }
+
+    public static class Fluids
+    {
+        public static final Tag<Fluid> FLUID = tag("fluid");
+
+        private static Tag<Fluid> tag(String name)
+        {
+            return new FluidTags.Wrapper(new ResourceLocation("forge", name));
+        }
+
     }
 }
