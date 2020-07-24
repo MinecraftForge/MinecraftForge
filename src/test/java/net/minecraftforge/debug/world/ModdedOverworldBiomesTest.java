@@ -21,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModdedOverworldBiomesTest
 {
     public static final String MOD_ID = "modded_overworld_biomes_test";
+    public static final boolean ENABLE = true;
 
     private static DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, MOD_ID);
     private static RegistryObject<Biome> redBiome = BIOMES.register("red_biome", () -> new Biome(new Biome.Builder()
@@ -39,9 +40,11 @@ public class ModdedOverworldBiomesTest
 
     public ModdedOverworldBiomesTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        BIOMES.register(modBus);
+        if (ENABLE) {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+            IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+            BIOMES.register(modBus);
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event)
