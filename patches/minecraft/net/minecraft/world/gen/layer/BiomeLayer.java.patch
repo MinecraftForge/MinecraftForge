@@ -1,21 +1,9 @@
 --- a/net/minecraft/world/gen/layer/BiomeLayer.java
 +++ b/net/minecraft/world/gen/layer/BiomeLayer.java
-@@ -22,18 +22,34 @@
-    private static final int field_202740_n = Registry.field_212624_m.func_148757_b(Biomes.field_76780_h);
-    private static final int field_202741_o = Registry.field_212624_m.func_148757_b(Biomes.field_76768_g);
-    private static final int field_202742_p = Registry.field_212624_m.func_148757_b(Biomes.field_150584_S);
--   private static final int[] field_202743_q = new int[]{field_202728_b, field_202730_d, field_202729_c, field_202740_n, field_202736_j, field_202741_o};
--   private static final int[] field_202744_r = new int[]{field_202728_b, field_202728_b, field_202728_b, field_202739_m, field_202739_m, field_202736_j};
--   private static final int[] field_202745_s = new int[]{field_202730_d, field_202738_l, field_202729_c, field_202736_j, field_202727_a, field_202740_n};
--   private static final int[] field_202746_t = new int[]{field_202730_d, field_202729_c, field_202741_o, field_202736_j};
--   private static final int[] field_202747_u = new int[]{field_202731_e, field_202731_e, field_202731_e, field_202742_p};
--   private int[] field_151623_c = field_202744_r;
-+   @Deprecated private static final int[] field_202743_q = new int[]{field_202728_b, field_202730_d, field_202729_c, field_202740_n, field_202736_j, field_202741_o};
-+   @Deprecated private static final int[] field_202744_r = new int[]{field_202728_b, field_202728_b, field_202728_b, field_202739_m, field_202739_m, field_202736_j};
-+   @Deprecated private static final int[] field_202745_s = new int[]{field_202730_d, field_202738_l, field_202729_c, field_202736_j, field_202727_a, field_202740_n};
-+   @Deprecated private static final int[] field_202746_t = new int[]{field_202730_d, field_202729_c, field_202741_o, field_202736_j};
-+   @Deprecated private static final int[] field_202747_u = new int[]{field_202731_e, field_202731_e, field_202731_e, field_202742_p};
-+   @Deprecated private int[] field_151623_c = field_202744_r;
+@@ -28,12 +28,28 @@
+    private static final int[] field_202746_t = new int[]{field_202730_d, field_202729_c, field_202741_o, field_202736_j};
+    private static final int[] field_202747_u = new int[]{field_202731_e, field_202731_e, field_202731_e, field_202742_p};
+    private int[] field_151623_c = field_202744_r;
 +   private java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry>[] biomes = new java.util.ArrayList[net.minecraftforge.common.BiomeManager.BiomeType.values().length];
  
     public BiomeLayer(boolean p_i232147_1_) {
