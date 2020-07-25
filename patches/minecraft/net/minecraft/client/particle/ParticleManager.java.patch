@@ -39,7 +39,7 @@
        this.field_187241_h.add(p_78873_1_);
     }
  
-@@ -305,14 +306,18 @@
+@@ -305,14 +306,21 @@
  
     public void func_228345_a_(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_) {
        p_228345_3_.func_205109_c();
@@ -62,7 +62,7 @@
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -351,7 +356,7 @@
+@@ -351,7 +359,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
@@ -71,7 +71,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_228348_3_, p_228348_5_, p_228348_7_, p_228348_9_, p_228348_11_, p_228348_13_) -> {
-@@ -423,6 +428,12 @@
+@@ -423,6 +431,12 @@
        return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
     }
  
