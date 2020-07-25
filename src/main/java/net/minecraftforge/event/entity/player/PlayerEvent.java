@@ -136,9 +136,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * NameFormat is fired when a player's display name is retrieved.<br>
      * This event is fired whenever a player's name is retrieved in
-     * {@link EntityPlayer#getDisplayName()} or {@link EntityPlayer#refreshDisplayName()}.<br>
+     * {@link PlayerEntity#getDisplayName()} for the first time or if {@link PlayerEntity#refreshDisplayName()} is called.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
+     * This event is fired via {@link ForgeEventFactory#getPlayerDisplayName(PlayerEntity, String)}.<br>
      * <br>
      * {@link #username} contains the username of the player.
      * {@link #displayname} contains the display name of the player.
