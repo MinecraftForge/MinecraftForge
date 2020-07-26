@@ -778,4 +778,21 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
     }
+    
+    /**
+     * Returns the state that this block should transform into when right clicked by a tool.
+     * Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * Return null if vanilla behavior should be disabled.
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param player The player clicking the block
+     * @param stack The stack being used by the player
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack)
+    {
+    	return getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack);
+    }
 }
