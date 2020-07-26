@@ -69,4 +69,8 @@ loaderVersion="[28,)"
 [[mods]]
     modId="create_entity_classification_test"
 [[mods]]
+    modId="ender_mask_test"
+[[mods]]
+    modId="raid_enum_test"
+[[mods]]
     modId="datapack_discovery_test"

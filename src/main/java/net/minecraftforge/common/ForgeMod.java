@@ -114,7 +114,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::gatherData);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
-        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
@@ -145,12 +144,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
         ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
         */
-    }
-
-    public void serverStarting(FMLServerStartingEvent evt)
-    {
-        new ForgeCommand(evt.getCommandDispatcher());
-        ConfigCommand.register(evt.getCommandDispatcher());
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
@@ -196,7 +189,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         if (event.includeServer())
         {
             ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen);
-            gen.addProvider(new ForgeBlockTagsProvider(gen));
+            gen.addProvider(blockTags);
             gen.addProvider(new ForgeItemTagsProvider(gen, blockTags));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));

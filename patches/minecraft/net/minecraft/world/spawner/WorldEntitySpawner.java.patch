@@ -49,7 +49,14 @@
           BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
           FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
           BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -312,8 +322,6 @@
+@@ -306,14 +316,12 @@
+          case ON_GROUND:
+          default:
+             BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
+-            if (!blockstate1.func_215688_a(p_209382_1_, blockpos1, p_209382_3_)) {
++            if (!blockstate1.canCreatureSpawn(p_209382_1_, blockpos1, p_209382_0_, p_209382_3_)) {
+                return false;
+             } else {
                 return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
              }
           }

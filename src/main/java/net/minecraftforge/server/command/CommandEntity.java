@@ -69,7 +69,7 @@ class CommandEntity
             return Commands.literal("list")
                 .requires(cs->cs.hasPermissionLevel(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
-                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString), builder))
+                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
                     .then(Commands.argument("dim", DimensionArgument.getDimension())
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim").func_234923_W_()))
                     )

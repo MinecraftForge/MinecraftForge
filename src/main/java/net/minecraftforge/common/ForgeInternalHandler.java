@@ -25,7 +25,10 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -37,6 +40,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.server.command.ForgeCommand;
+import net.minecraftforge.server.command.ConfigCommand;
 
 public class ForgeInternalHandler
 {
@@ -108,6 +113,29 @@ public class ForgeInternalHandler
     public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
+    }
+
+    @SubscribeEvent
+    public void onCommandsRegister(RegisterCommandsEvent event)
+    {
+        new ForgeCommand(event.getDispatcher());
+        ConfigCommand.register(event.getDispatcher());
+    }
+    
+    private static LootModifierManager INSTANCE;
+
+    @SubscribeEvent
+    public void onResourceReload(AddReloadListenerEvent event)
+    {
+        INSTANCE = new LootModifierManager();
+        event.addListener(INSTANCE);
+    }
+
+    static LootModifierManager getLootModifierManager()
+    {
+        if(INSTANCE == null)
+            throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+        return INSTANCE;
     }
 }
 

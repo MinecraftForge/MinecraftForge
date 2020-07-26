@@ -9,14 +9,3 @@
           builder.put(Attributes.field_233820_c_, new AttributeModifier(uuid, "Armor knockback resistance", (double)this.field_234655_c_, AttributeModifier.Operation.ADDITION));
        }
  
-@@ -113,6 +113,10 @@
-       return this.field_77879_b;
-    }
- 
-+   public float getToughness() {
-+      return this.field_189415_e;
-+   }
-+
-    public float func_234657_f_() {
-       return this.field_189415_e;
-    }

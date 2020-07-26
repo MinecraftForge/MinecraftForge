@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/Style.java
 +++ b/net/minecraft/util/text/Style.java
-@@ -120,6 +120,18 @@
+@@ -118,6 +118,18 @@
        return new Style(this.field_150247_b, this.field_150248_c, p_240722_1_, this.field_150246_e, this.field_150243_f, this.field_150244_g, this.field_150251_h, this.field_150252_i, this.field_179990_j, this.field_240710_l_);
     }
  

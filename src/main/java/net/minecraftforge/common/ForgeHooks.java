@@ -109,6 +109,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -137,6 +139,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -245,7 +248,7 @@ public class ForgeHooks
             if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
-            result = state.getBlock().getPickBlock(state, target, world, pos, player);
+            result = state.getPickBlock(target, world, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -1165,12 +1168,10 @@ public class ForgeHooks
      * @return The modified list
      */
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
-    	/*
-        LootModifierManager man = context.getWorld().getServer().getLootModifierManager();
+        LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
         for(IGlobalLootModifier mod : man.getAllLootMods()) {
             list = mod.apply(list, context);
         }
-        */
         return list;
     }
 
@@ -1230,5 +1231,20 @@ public class ForgeHooks
         {
             locations.stream().map(ResourceLocation::toString).forEach(array::add);
         }
+    }
+
+    public static List<String> getModPacks()
+    {
+        List<String> modpacks = ResourcePackLoader.getPackNames();
+        if(modpacks.isEmpty())
+            throw new IllegalStateException("Attempted to retrieve mod packs before they were loaded in!");
+        return modpacks;
+    }
+
+    public static List<String> getModPacksWithVanilla()
+    {
+        List<String> modpacks = getModPacks();
+        modpacks.add("vanilla");
+        return modpacks;
     }
 }

@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
@@ -36,7 +37,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -111,6 +116,29 @@ public interface IForgeItem
     default ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context)
     {
         return ActionResultType.PASS;
+    }
+
+    /**
+     * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
+     *
+     * @return True if this item can be used as "currency" by piglins
+     */
+    default boolean isPiglinCurrency(ItemStack stack)
+    {
+        return stack.getItem() == PiglinTasks.field_234444_a_;
+    }
+
+    /**
+     * Called by Piglins to check if a given item prevents hostility on sight. If this is true the Piglins will be neutral to the entity wearing this item, and will not
+     * attack on sight. Note: This does not prevent Piglins from becoming hostile due to other actions, nor does it make Piglins that are already hostile stop being so.
+     *
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if piglins are neutral to players wearing this item in an armor slot
+     */
+    default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getArmorMaterial() == ArmorMaterial.GOLD;
     }
 
     /**
@@ -612,17 +640,6 @@ public interface IForgeItem
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
-     *
-     * @param stack the ItemStack
-     * @return true if this Item can be used
-     */
-    default boolean isBeaconPayment(ItemStack stack)
-    {
-        return Tags.Items.BEACON_PAYMENT.func_230235_a_(stack.getItem());
-    }
-
-    /**
      * Determine if the player switching between these two item stacks
      *
      * @param oldStack    The old stack that was equipped
@@ -788,4 +805,18 @@ public interface IForgeItem
     default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return amount;
     }
+
+    /**
+     * Whether this Item can be used to hide player head for enderman.
+     *
+     * @param stack the ItemStack
+     * @param player The player watching the enderman
+     * @param endermanEntity The enderman that the player look
+     * @return true if this Item can be used to hide player head for enderman
+     */
+    default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
+    {
+        return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
+    }
+
 }

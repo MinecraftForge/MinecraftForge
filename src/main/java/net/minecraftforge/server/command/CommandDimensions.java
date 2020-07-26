@@ -21,8 +21,11 @@ package net.minecraftforge.server.command;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,19 +42,13 @@ public class CommandDimensions
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .executes(ctx -> {
                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.dimensions.list"), true);
-                /*
-                Map<String, List<String>> types = new HashMap<>();
-                for (DimensionType dim : DimensionType.getAll()) {
-                    String key = dim.getModType() == null ? "Vanilla" : dim.getModType().getRegistryName().toString();
-                    types.computeIfAbsent(key, k -> new ArrayList<>()).add(DimensionType.getKey(dim).toString());
+                Map<ResourceLocation, List<ResourceLocation>> types = new HashMap<>();
+                for (ServerWorld dim : ctx.getSource().getServer().getWorlds()) {
+                    types.computeIfAbsent(dim.func_234922_V_().func_240901_a_(), k -> new ArrayList<>()).add(dim.func_234923_W_().func_240901_a_());
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().sorted().collect(Collectors.joining(", "))), false);
-                });
-                */
-                ctx.getSource().getServer().func_240770_D_().stream().sorted().forEach(key -> {
-                	ctx.getSource().sendFeedback(new StringTextComponent(key.func_240901_a_().toString()), false);
+                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
                 });
                 return 0;
             });

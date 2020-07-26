@@ -58,7 +58,7 @@ public enum KeyModifier {
         public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-            return new TranslationTextComponent(localizationFormatKey).func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
+            return new TranslationTextComponent(localizationFormatKey, defaultLogic.get());
         }
     },
     SHIFT {
@@ -77,7 +77,7 @@ public enum KeyModifier {
         @Override
         public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            return new TranslationTextComponent("forge.controlsgui.shift").func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
@@ -96,7 +96,7 @@ public enum KeyModifier {
         @Override
         public ITextComponent getCombinedName(InputMappings.Input keyCode, Supplier<ITextComponent> defaultLogic)
         {
-            return new TranslationTextComponent("forge.controlsgui.alt").func_240702_b_(" + ").func_230529_a_(defaultLogic.get());
+            return new TranslationTextComponent("forge.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {
