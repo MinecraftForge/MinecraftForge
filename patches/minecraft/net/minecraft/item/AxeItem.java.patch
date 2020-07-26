@@ -9,3 +9,18 @@
     }
  
     public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {
+@@ -34,12 +34,12 @@
+       World world = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a();
+       BlockState blockstate = world.func_180495_p(blockpos);
+-      Block block = field_203176_a.get(blockstate.func_177230_c());
++      net.minecraftforge.common.stripping.IAxeStrippingMap block = net.minecraftforge.common.stripping.AxeStrippingMapRegistry.getStrippingMap(blockstate);
+       if (block != null) {
+          PlayerEntity playerentity = p_195939_1_.func_195999_j();
+          world.func_184133_a(playerentity, blockpos, SoundEvents.field_203255_y, SoundCategory.BLOCKS, 1.0F, 1.0F);
+          if (!world.field_72995_K) {
+-            world.func_180501_a(blockpos, block.func_176223_P().func_206870_a(RotatedPillarBlock.field_176298_M, blockstate.func_177229_b(RotatedPillarBlock.field_176298_M)), 11);
++            world.func_180501_a(blockpos, block.getStrippedState(blockstate), 11);
+             if (playerentity != null) {
+                p_195939_1_.func_195996_i().func_222118_a(1, playerentity, (p_220040_1_) -> {
+                   p_220040_1_.func_213334_d(p_195939_1_.func_221531_n());
