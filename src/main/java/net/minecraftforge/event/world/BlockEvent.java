@@ -458,33 +458,21 @@ public class BlockEvent extends Event
 
     	private final PlayerEntity player;
     	private final ItemStack stack;
-    	private BlockState finalState;
+    	private BlockState state;
     	
 		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack) {
 			super(world, pos, originalState);
 			this.player = player;
 			this.stack = stack;
-			this.finalState = originalState;
+			this.state = originalState;
 		}
 		
-		public PlayerEntity getPlayer()
-		{
-			return player;
-		}
+		public PlayerEntity getPlayer() { return player; }
 		
-		public ItemStack getHeldItemStack()
-		{
-			return stack;
-		}
+		public ItemStack getHeldItemStack() { return stack; }
 		
-		public void setFinalState(BlockState finalState)
-		{
-			this.finalState = finalState;
-		}
+		public void setFinalState(BlockState finalState) { this.state = finalState; }
 		
-		public BlockState getFinalState()
-		{
-			return finalState;
-		}
+		public BlockState getFinalState() { return state; }
     }
 }
