@@ -15,6 +15,6 @@ public class AxeStrippingTest {
 	
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		AxeStrippingMapRegistry.addStrippingMap(Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE);
-		AxeStrippingMapRegistry.addStrippingMap(Blocks.HAY_BLOCK, Blocks.PURPUR_PILLAR);
+		AxeStrippingMapRegistry.addStrippingMap(Blocks.PURPUR_PILLAR, Blocks.HAY_BLOCK);
 	}
 }
