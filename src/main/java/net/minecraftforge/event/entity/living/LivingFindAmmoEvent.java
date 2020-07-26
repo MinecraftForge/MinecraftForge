@@ -1,15 +1,18 @@
-package net.minecraftforge.event.entity.player;
+package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShootableItem;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * PlayerFindAmmoEvent is fired when a shootable item tries to find ammo on the player.
+ * LivingFindAmmoEvent is fired when a shootable item tries to find ammo on the player.
  * This event is fired whenever a shootable item attempts to find ammo using {@link PlayerEntity#findAmmo(ItemStack)}.<br>
  * <br>
  * This event fires after the original vanilla order, aka: Hand -> PlayerInventory -> This event.<br>
@@ -21,11 +24,11 @@ import java.util.function.Predicate;
  * <br>
  * This event does not have a result. {@linkplain net.minecraftforge.eventbus.api.Event.HasResult}<br>
  * <br>
- * This event is fired from {@link PlayerEntity#findAmmo(ItemStack)}.<br>
+ * This event is fired from {@link LivingEntity#findAmmo(ItemStack)}.<br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  * <br>
  */
-public class PlayerFindAmmoEvent extends PlayerEvent
+public class LivingFindAmmoEvent extends LivingEvent
 {
     @Nonnull
     private final ItemStack shootable;
@@ -33,12 +36,15 @@ public class PlayerFindAmmoEvent extends PlayerEvent
     private final Predicate<ItemStack> ammoPredicate;
     @Nonnull
     private ItemStack ammo = ItemStack.EMPTY;
+    @Nonnull
+    private Consumer<ItemStack> consumer;
 
-    public PlayerFindAmmoEvent(PlayerEntity player, @Nonnull ItemStack shootable, @Nonnull Predicate<ItemStack> ammoPredicate)
+    public LivingFindAmmoEvent(LivingEntity shooter, @Nonnull ItemStack shootable, @Nonnull Predicate<ItemStack> ammoPredicate)
     {
-        super(player);
+        super(shooter);
         this.shootable = shootable;
         this.ammoPredicate = ammoPredicate;
+        consumer = stack -> {};
     }
 
     @Nonnull
@@ -47,8 +53,15 @@ public class PlayerFindAmmoEvent extends PlayerEvent
     @Nonnull
     public Predicate<ItemStack> getAmmoPredicate() { return ammoPredicate; }
 
-    public void setAmmo(@Nonnull ItemStack ammo) { this.ammo = ammo; }
+    public void setAmmo(@Nonnull ItemStack ammo, @Nonnull Consumer<ItemStack> consumer)
+    {
+        this.ammo = ammo;
+        this.consumer = consumer;
+    }
 
     @Nonnull
     public ItemStack getAmmo() { return ammo; }
+
+    @Nonnull
+    public Consumer<ItemStack> getConsumer() { return consumer; }
 }

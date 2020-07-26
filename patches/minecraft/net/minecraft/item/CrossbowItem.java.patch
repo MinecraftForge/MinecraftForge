@@ -1,0 +1,39 @@
+--- a/net/minecraft/item/CrossbowItem.java
++++ b/net/minecraft/item/CrossbowItem.java
+@@ -58,7 +58,7 @@
+          func_220014_a(p_77659_1_, p_77659_2_, p_77659_3_, itemstack, func_220013_l(itemstack), 1.0F);
+          func_220011_a(itemstack, false);
+          return ActionResult.func_226249_b_(itemstack);
+-      } else if (!p_77659_2_.func_213356_f(itemstack).func_190926_b()) {
++      } else if (!net.minecraftforge.common.ForgeHooks.findAmmo(itemstack, p_77659_2_).getKey().func_190926_b()) {
+          if (!func_220012_d(itemstack)) {
+             this.field_220034_c = false;
+             this.field_220035_d = false;
+@@ -74,7 +74,8 @@
+    public void func_77615_a(ItemStack p_77615_1_, World p_77615_2_, LivingEntity p_77615_3_, int p_77615_4_) {
+       int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
+       float f = func_220031_a(i, p_77615_1_);
+-      if (f >= 1.0F && !func_220012_d(p_77615_1_) && func_220021_a(p_77615_3_, p_77615_1_)) {
++      org.apache.commons.lang3.tuple.Pair<ItemStack, java.util.function.Consumer<ItemStack>> pair = net.minecraftforge.common.ForgeHooks.findAmmo(p_77615_1_, p_77615_3_);
++      if (f >= 1.0F && !func_220012_d(p_77615_1_) && net.minecraftforge.common.ForgeHooks.handleCrossbowCharging(pair, p_77615_1_, p_77615_3_)) {
+          func_220011_a(p_77615_1_, true);
+          SoundCategory soundcategory = p_77615_3_ instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
+          p_77615_2_.func_184148_a((PlayerEntity)null, p_77615_3_.func_226277_ct_(), p_77615_3_.func_226278_cu_(), p_77615_3_.func_226281_cx_(), SoundEvents.field_219610_bB, soundcategory, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.5F + 1.0F) + 0.2F);
+@@ -82,6 +83,8 @@
+ 
+    }
+ 
++   /**@deprecated Forge: Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   @Deprecated
+    private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) {
+       int i = EnchantmentHelper.func_77506_a(Enchantments.field_222192_G, p_220021_1_);
+       int j = i == 0 ? 1 : 3;
+@@ -107,6 +110,8 @@
+       return true;
+    }
+ 
++   /**@deprecated Forge: Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   @Deprecated
+    private static boolean func_220023_a(LivingEntity p_220023_0_, ItemStack p_220023_1_, ItemStack p_220023_2_, boolean p_220023_3_, boolean p_220023_4_) {
+       if (p_220023_2_.func_190926_b()) {
+          return false;
