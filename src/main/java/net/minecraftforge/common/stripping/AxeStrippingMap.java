@@ -12,10 +12,10 @@ import net.minecraft.state.StateHolder;
 
 public class AxeStrippingMap<T extends Block, V extends T> implements IAxeStrippingMap {
 
-	@Nonnull private final V inputBlock;
-	@Nonnull private final T outputBlock;
+	@Nonnull private final T inputBlock;
+	@Nonnull private final V outputBlock;
 	
-	public AxeStrippingMap(V input, T output) {
+	public AxeStrippingMap(T input, V output) {
 		this.inputBlock = input;
 		this.outputBlock = output;
 	}

@@ -28,7 +28,7 @@ public class AxeStrippingMapRegistry {
 	 * 			The resulting stripped Block.
 	 * @return True if the stripping map was added.
 	 */
-	public static <T extends Block, V extends T> boolean addStrippingMap(V input, T output) {
+	public static <T extends Block, V extends T> boolean addStrippingMap(T input, V output) {
 		return addStrippingMap(new AxeStrippingMap<>(input, output));
 	}
 	
