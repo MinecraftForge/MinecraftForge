@@ -906,6 +906,8 @@ public interface IForgeBlock
     @Nullable
     default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack)
     {
+    	BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack);
+    	if(eventState != state) return eventState;
     	Set<ToolType> tool = stack.getToolTypes();
     	if(tool.contains(ToolType.AXE)) {
     		Block block = AxeItem.BLOCK_STRIPPING_MAP.get(state.getBlock());
