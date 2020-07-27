@@ -1,0 +1,13 @@
+--- a/net/minecraft/block/RailBlock.java
++++ b/net/minecraft/block/RailBlock.java
+@@ -49,6 +49,10 @@
+             return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_EAST);
+          case NORTH_EAST:
+             return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_WEST);
++             //Forge fix: MC-196102
++         case NORTH_SOUTH:
++         case EAST_WEST:
++            return p_185499_1_;
+          }
+       case COUNTERCLOCKWISE_90:
+          switch((RailShape)p_185499_1_.func_177229_b(field_176565_b)) {
