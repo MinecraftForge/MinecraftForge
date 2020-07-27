@@ -17,25 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftforge.client.extensions;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.client.ForgeHooksClient;
 
-@Mod("stencil_enable_test")
-public class StencilEnableTest {
-    public static boolean ENABLED = false;
+public interface IForgeMinecraft
+{
+    default Minecraft getSelf() { return (Minecraft)this; }
 
-    public StencilEnableTest() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+    default void pushGuiLayer(Screen screen) {
+        ForgeHooksClient.pushGuiLayer(getSelf(), screen);
     }
 
-    private void clientSetup(FMLClientSetupEvent event) {
-        if (ENABLED)
-            DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+    default void popGuiLayer() {
+        ForgeHooksClient.popGuiLayer(getSelf());
     }
 }

@@ -72,3 +72,6 @@ loaderVersion="[28,)"
     modId="ender_mask_test"
 [[mods]]
     modId="raid_enum_test"
+[[mods]]
+    modId="gui_layer_test"
+

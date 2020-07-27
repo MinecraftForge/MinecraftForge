@@ -30,6 +30,7 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.*;
@@ -70,6 +71,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockDisplayReader;
@@ -105,6 +107,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
@@ -118,6 +121,55 @@ public class ForgeHooksClient
     private static final Logger LOGGER = LogManager.getLogger();
 
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+    /**
+     * Contains the *extra* GUI layers.
+     * The current top layer stays in Minecraft#currentScreen, and the rest serve as a background for it.
+     */
+    private static final Stack<Screen> guiLayers = new Stack<>();
+
+    public static void clearGuiLayers(Minecraft minecraft)
+    {
+        while(guiLayers.size() > 0)
+            popGuiLayerInternal(minecraft);
+    }
+
+    private static void popGuiLayerInternal(Minecraft minecraft)
+    {
+        if (minecraft.currentScreen != null)
+            minecraft.currentScreen.func_231164_f_(); // onClose
+        minecraft.currentScreen = guiLayers.pop();
+    }
+
+    public static void pushGuiLayer(Minecraft minecraft, Screen screen)
+    {
+        if (minecraft.currentScreen != null)
+            guiLayers.push(minecraft.currentScreen);
+        minecraft.currentScreen = Objects.requireNonNull(screen);
+        screen.func_231158_b_(minecraft, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight());
+        NarratorChatListener.INSTANCE.say(screen.func_231167_h_());
+    }
+
+    public static void popGuiLayer(Minecraft minecraft)
+    {
+        if (guiLayers.size() == 0)
+        {
+            minecraft.displayGuiScreen(null);
+            return;
+        }
+
+        popGuiLayerInternal(minecraft);
+        if (minecraft.currentScreen != null)
+            NarratorChatListener.INSTANCE.say(minecraft.currentScreen.func_231167_h_());
+    }
+
+    public static float getGuiFarPlane()
+    {
+        // 1000 units for the overlay background,
+        // and 2000 units for each layered Screen,
+
+        return 1000.0F + 2000.0F * (1 + guiLayers.size());
+    }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlotType slot, String type)
     {
@@ -322,6 +374,17 @@ public class ForgeHooksClient
     }
 
     public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
+    {
+        mStack.push();
+        guiLayers.forEach(layer -> {
+            drawScreenInternal(layer, mStack, -1, -1, partialTicks);
+            mStack.translate(0,0,2000);
+        });
+        drawScreenInternal(screen, mStack, mouseX, mouseY, partialTicks);
+        mStack.pop();
+    }
+
+    private static void drawScreenInternal(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
             screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
