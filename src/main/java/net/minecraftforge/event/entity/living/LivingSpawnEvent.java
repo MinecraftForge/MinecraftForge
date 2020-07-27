@@ -165,7 +165,7 @@ public class LivingSpawnEvent extends LivingEvent
      * This event does not have a {@link HasResult}<br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class InitalSpawn extends LivingSpawnEvent
+    public static class InitialSpawn extends LivingSpawnEvent
     {
         private final SpawnReason spawnReason;
         @Nullable
@@ -174,7 +174,7 @@ public class LivingSpawnEvent extends LivingEvent
         private final CompoundNBT dataTag;
         private final DifficultyInstance difficultyIn;
     	
-        public InitalSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) 
+        public InitialSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) 
         {
 			super(entity, world, x, y, z);
 			this.spawnReason = spawnReason;

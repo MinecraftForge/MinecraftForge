@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent.InitialSpawn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -19,7 +20,7 @@ public class InitialSpawnTest
     }
     
     @SubscribeEvent
-    public static void doStuff(LivingSpawnEvent.InitalSpawn event) 
+    public static void doStuff(LivingSpawnEvent.InitialSpawn event) 
     {
       if (event.getEntity() instanceof CowEntity && ENABLE)
       {

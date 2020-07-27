@@ -207,9 +207,9 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnReason));
     }
     
-    public static boolean doInitalSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    public static boolean doInitialSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.InitalSpawn(entity, world, x, y, z, difficultyIn, spawnReason, spawnDataIn, dataTag));
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.InitialSpawn(entity, world, x, y, z, difficultyIn, spawnReason, spawnDataIn, dataTag));
     }
 
     public static Result canEntityDespawn(MobEntity entity)
