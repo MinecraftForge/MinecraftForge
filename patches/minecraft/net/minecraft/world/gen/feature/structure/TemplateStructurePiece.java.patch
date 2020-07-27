@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/structure/TemplateStructurePiece.java
++++ b/net/minecraft/world/gen/feature/structure/TemplateStructurePiece.java
+@@ -58,6 +58,7 @@
+             if (template$blockinfo.field_186244_c != null) {
+                StructureMode structuremode = StructureMode.valueOf(template$blockinfo.field_186244_c.func_74779_i("mode"));
+                if (structuremode == StructureMode.DATA) {
++                  if(!net.minecraftforge.common.ForgeHooks.onStructureDataMarker(this, template$blockinfo.field_186244_c.func_74779_i("metadata"), template$blockinfo.field_186242_a, p_230383_1_, p_230383_4_, p_230383_5_))
+                   this.func_186175_a(template$blockinfo.field_186244_c.func_74779_i("metadata"), template$blockinfo.field_186242_a, p_230383_1_, p_230383_4_, p_230383_5_);
+                }
+             }
