@@ -22,15 +22,7 @@ package net.minecraftforge.common;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -90,17 +82,13 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameType;
@@ -137,6 +125,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.world.StructureDataMarkerEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
@@ -1065,6 +1054,11 @@ public class ForgeHooks
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
+    }
+
+    public static boolean onStructureDataMarker(TemplateStructurePiece structurePiece, String function, BlockPos pos, IWorld world, Random rand, MutableBoundingBox sbb) {
+        StructureDataMarkerEvent event = new StructureDataMarkerEvent(structurePiece, function, pos, world, rand, sbb);
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {
