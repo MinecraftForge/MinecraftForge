@@ -56,10 +56,12 @@
                 }
  
                 playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(this));
-@@ -110,6 +119,10 @@
+@@ -109,7 +118,11 @@
+ 
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
-       boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
+-      boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
++      boolean flag = !net.minecraftforge.common.ForgeHooks.findAmmo(itemstack, p_77659_2_).getKey().func_190926_b();
 +
 +      ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_77659_1_, p_77659_2_, p_77659_3_, flag);
 +      if (ret != null) return ret;
