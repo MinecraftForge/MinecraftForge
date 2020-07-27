@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber()
 public class InitialSpawnTest 
 {
-    public static final Boolean ENABLE = true;
+    public static final Boolean ENABLE = false;
 	
     public InitialSpawnTest()
     {

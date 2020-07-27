@@ -159,10 +159,11 @@ public class LivingSpawnEvent extends LivingEvent
     
     /**
      * This event is fired when an entity is initially spawned.<br>
-     * This allows you to do things after the entity is first spawned, for example, skeletons will equip themselves with bows.<br>
-     * This event is fired via the {@link ForgeEventFactory#doInitalSpawn(MobEntity, IWorld, double, double, double, DifficultyInstance, SpawnReason, ILivingEntityData, CompoundNBT).<br>
-     * This event is not cancelable. {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This allows you to do things after the entity is first spawned.<br>
+     * This event is fired via the {@link ForgeEventFactory#doInitalSpawn(MobEntity, IWorld, double, double, double, DifficultyInstance, SpawnReason, ILivingEntityData, CompoundNBT)}.
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * This event does not have a {@link HasResult}<br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     public static class InitalSpawn extends LivingSpawnEvent
