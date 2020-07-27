@@ -10,7 +10,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="farmland_trample_test"
 [[mods]]
-
     modId="neighbor_notify_event_test"
 [[mods]]
     modId="block_place_event_test"
@@ -72,5 +71,9 @@ loaderVersion="[28,)"
     modId="ender_mask_test"
 [[mods]]
     modId="raid_enum_test"
+[[mods]]
+    modId="player_name_event_test"
+[[mods]]
+    modId="modded_overworld_biomes_test"
 [[mods]]
     modId="initial_spawn_test"
