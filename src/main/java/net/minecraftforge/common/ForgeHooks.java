@@ -1264,7 +1264,7 @@ public class ForgeHooks
                     itemstack2 = itemstack;
                 }
                 if (!isCreative) pair.getValue().accept(itemstack);
-                //CrossbowItem.addChargedProjectile(shootable, itemstack2);
+                CrossbowItem.addChargedProjectile(shootable, itemstack2);
                 addedAmmo = true;
             }
             if (!addedAmmo)

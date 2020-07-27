@@ -13,9 +13,3 @@
 @@ -154,7 +155,7 @@
        compoundnbt.func_74757_a("Charged", p_220011_1_);
     }
- 
--   public static void func_220029_b(ItemStack p_220029_0_, ItemStack p_220029_1_) {
-+   private static void func_220029_b(ItemStack p_220029_0_, ItemStack p_220029_1_) {
-       CompoundNBT compoundnbt = p_220029_0_.func_196082_o();
-       ListNBT listnbt;
-       if (compoundnbt.func_150297_b("ChargedProjectiles", 9)) {
