@@ -10,7 +10,8 @@ import net.minecraftforge.eventbus.api.Event;
 import java.util.Random;
 
 @Cancelable
-public class StructureDataMarkerEvent extends Event {
+public class StructureDataMarkerEvent extends Event
+{
 
     public final String function;
     public final BlockPos pos;
@@ -19,7 +20,8 @@ public class StructureDataMarkerEvent extends Event {
     public final MutableBoundingBox sbb;
     public final TemplateStructurePiece structurePiece;
 
-    public StructureDataMarkerEvent(TemplateStructurePiece structurePiece, String function, BlockPos pos, IWorld world, Random rand, MutableBoundingBox sbb) {
+    public StructureDataMarkerEvent(TemplateStructurePiece structurePiece, String function, BlockPos pos, IWorld world, Random rand, MutableBoundingBox sbb)
+    {
         this.function = function;
         this.pos = pos;
         this.world = world;

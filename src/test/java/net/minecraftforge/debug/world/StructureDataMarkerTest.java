@@ -14,14 +14,19 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @Mod("structure_data_marker_event_test")
 @EventBusSubscriber
-public class StructureDataMarkerTest {
+public class StructureDataMarkerTest
+{
 
     @SubscribeEvent
-    public static void onDataMarker(StructureDataMarkerEvent event) {
-        if (event.structurePiece instanceof EndCityPieces.CityTemplate && event.function.startsWith("Chest")) {
+    public static void onDataMarker(StructureDataMarkerEvent event)
+    {
+        if (event.structurePiece instanceof EndCityPieces.CityTemplate && event.function.startsWith("Chest"))
+        {
             // Prevent generation of loot in end cities
             event.setCanceled(true);
-        } else if(event.structurePiece instanceof WoodlandMansionPieces.MansionTemplate && event.function.equals("Warrior")) {
+        }
+        else if (event.structurePiece instanceof WoodlandMansionPieces.MansionTemplate && event.function.equals("Warrior"))
+        {
             // Replace naturally generated vindicators in mansion with wither skeletons
             event.setCanceled(true);
             WitherSkeletonEntity warrior = EntityType.WITHER_SKELETON.create(event.world.getWorld());
