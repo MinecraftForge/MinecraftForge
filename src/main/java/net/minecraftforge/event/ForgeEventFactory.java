@@ -248,7 +248,7 @@ public class ForgeEventFactory
         return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
     }
 
-    public static String getPlayerDisplayName(PlayerEntity player, String username)
+    public static ITextComponent getPlayerDisplayName(PlayerEntity player, ITextComponent username)
     {
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
