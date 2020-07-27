@@ -20,7 +20,6 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -782,24 +781,7 @@ public interface IForgeBlockState
     
     /**
      * Returns the state that this block should transform into when right clicked by a tool.
-     * Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
-     *
-     * @param world The world
-     * @param pos The block position in world
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
-     * @return The resulting state after the action has been performed
-     */
-    @Nullable
-    default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack)
-    {
-    	return getToolModifiedState(world, pos, player, stack, stack.getToolTypes());
-    }
-    
-    /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
      * Return null if vanilla behavior should be disabled.
      *
      * @param world The world
@@ -810,8 +792,8 @@ public interface IForgeBlockState
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes)
+    default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-    	return getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolTypes);
+        return getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
     }
 }

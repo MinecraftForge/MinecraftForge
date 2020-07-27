@@ -1,7 +1,7 @@
 --- a/net/minecraft/item/ShovelItem.java
 +++ b/net/minecraft/item/ShovelItem.java
 @@ -22,7 +22,7 @@
-    public static final Map<Block, BlockState> field_195955_e = Maps.newHashMap(ImmutableMap.of(Blocks.field_196658_i, Blocks.field_185774_da.func_176223_P()));
+    protected static final Map<Block, BlockState> field_195955_e = Maps.newHashMap(ImmutableMap.of(Blocks.field_196658_i, Blocks.field_185774_da.func_176223_P()));
  
     public ShovelItem(IItemTier p_i48469_1_, float p_i48469_2_, float p_i48469_3_, Item.Properties p_i48469_4_) {
 -      super(p_i48469_2_, p_i48469_3_, p_i48469_1_, field_150916_c, p_i48469_4_);
@@ -14,10 +14,25 @@
        } else {
           PlayerEntity playerentity = p_195939_1_.func_195999_j();
 -         BlockState blockstate1 = field_195955_e.get(blockstate.func_177230_c());
-+         BlockState blockstate1 = blockstate.getToolModifiedState(world, blockpos, playerentity, p_195939_1_.func_195996_i());
++         BlockState blockstate1 = getShovelPathingState(blockstate, world, blockpos, playerentity, p_195939_1_.func_195996_i());
           BlockState blockstate2 = null;
 -         if (blockstate1 != null && world.func_180495_p(blockpos.func_177984_a()).func_196958_f()) {
 +         if (blockstate1 != null && world.func_175623_d(blockpos.func_177984_a())) {
              world.func_184133_a(playerentity, blockpos, SoundEvents.field_187771_eN, SoundCategory.BLOCKS, 1.0F, 1.0F);
              blockstate2 = blockstate1;
           } else if (blockstate.func_177230_c() instanceof CampfireBlock && blockstate.func_177229_b(CampfireBlock.field_220101_b)) {
+@@ -67,4 +67,14 @@
+          }
+       }
+    }
++   
++   /* ======================================== FORGE START =====================================*/
++   @javax.annotation.Nullable
++   protected static BlockState getShovelPathingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack)
++   {
++      BlockState finalState = originalState.getToolModifiedState(world, pos, player, stack, net.minecraftforge.common.ToolType.SHOVEL);
++      if(finalState != originalState) return finalState;
++      else return field_195955_e.get(originalState.func_177230_c());
++   }
++   /* ========================================= FORGE END ======================================*/
+ }

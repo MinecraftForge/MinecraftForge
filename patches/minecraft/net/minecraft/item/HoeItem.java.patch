@@ -1,7 +1,7 @@
 --- a/net/minecraft/item/HoeItem.java
 +++ b/net/minecraft/item/HoeItem.java
 @@ -21,14 +21,16 @@
-    public static final Map<Block, BlockState> field_195973_b = Maps.newHashMap(ImmutableMap.of(Blocks.field_196658_i, Blocks.field_150458_ak.func_176223_P(), Blocks.field_185774_da, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150346_d, Blocks.field_150458_ak.func_176223_P(), Blocks.field_196660_k, Blocks.field_150346_d.func_176223_P()));
+    protected static final Map<Block, BlockState> field_195973_b = Maps.newHashMap(ImmutableMap.of(Blocks.field_196658_i, Blocks.field_150458_ak.func_176223_P(), Blocks.field_185774_da, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150346_d, Blocks.field_150458_ak.func_176223_P(), Blocks.field_196660_k, Blocks.field_150346_d.func_176223_P()));
  
     public HoeItem(IItemTier p_i231595_1_, int p_i231595_2_, float p_i231595_3_, Item.Properties p_i231595_4_) {
 -      super((float)p_i231595_2_, p_i231595_3_, p_i231595_1_, field_234683_c_, p_i231595_4_);
@@ -16,7 +16,22 @@
 +      int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(p_195939_1_);
 +      if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
 +      if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_175623_d(blockpos.func_177984_a())) {
-+         BlockState blockstate = world.func_180495_p(blockpos).getToolModifiedState(world, blockpos, p_195939_1_.func_195999_j(), p_195939_1_.func_195996_i());
++         BlockState blockstate = getHoeTillingState(world.func_180495_p(blockpos), world, blockpos, p_195939_1_.func_195999_j(), p_195939_1_.func_195996_i());
           if (blockstate != null) {
              PlayerEntity playerentity = p_195939_1_.func_195999_j();
              world.func_184133_a(playerentity, blockpos, SoundEvents.field_187693_cj, SoundCategory.BLOCKS, 1.0F, 1.0F);
+@@ -47,4 +49,14 @@
+ 
+       return ActionResultType.PASS;
+    }
++   
++   /* ======================================== FORGE START =====================================*/
++   @javax.annotation.Nullable
++   protected static BlockState getHoeTillingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack)
++   {
++      BlockState finalState = originalState.getToolModifiedState(world, pos, player, stack, net.minecraftforge.common.ToolType.HOE);
++      if(finalState != originalState) return finalState;
++      else return field_195973_b.get(originalState.func_177230_c());
++   }
++   /* ========================================= FORGE END ======================================*/
+ }

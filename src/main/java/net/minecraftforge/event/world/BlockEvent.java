@@ -19,10 +19,8 @@
 
 package net.minecraftforge.event.world;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
@@ -450,7 +448,7 @@ public class BlockEvent extends Event
     
     /**
      * Fired when when this block is right clicked by a tool to change its state.
-     * Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
      * 
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -459,27 +457,43 @@ public class BlockEvent extends Event
     public static class BlockToolInteractEvent extends BlockEvent
     {
 
-    	private final PlayerEntity player;
-    	private final ItemStack stack;
-    	private final Set<ToolType> toolTypes;
-    	private BlockState state;
-    	
-		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes) {
-			super(world, pos, originalState);
-			this.player = player;
-			this.stack = stack;
-			this.state = originalState;
-			this.toolTypes = toolTypes;
+        private final PlayerEntity player;
+        private final ItemStack stack;
+        private final ToolType toolType;
+        private BlockState state;
+
+		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
+	    {
+		    super(world, pos, originalState);
+		    this.player = player;
+		    this.stack = stack;
+		    this.state = originalState;
+		    this.toolType = toolType;
 		}
+
+	    public PlayerEntity getPlayer()
+	    { 
+	        return player;
+	    }
 		
-		public PlayerEntity getPlayer() { return player; }
-		
-		public ItemStack getHeldItemStack() { return stack; }
-		
-		public Set<ToolType> getToolTypes() { return Collections.unmodifiableSet(toolTypes); }
-		
-		public void setFinalState(BlockState finalState) { this.state = finalState; }
-		
-		public BlockState getFinalState() { return state; }
+	    public ItemStack getHeldItemStack()
+	    {
+	        return stack;
+	    }
+
+	    public ToolType getToolType()
+	    {
+	        return toolType;
+	    }
+
+	    public void setFinalState(BlockState finalState)
+	    {
+	        this.state = finalState;
+	    }
+
+	    public BlockState getFinalState()
+	    {
+	        return state;
+	    }
     }
 }

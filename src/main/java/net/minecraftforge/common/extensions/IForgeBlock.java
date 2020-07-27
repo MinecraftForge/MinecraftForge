@@ -42,11 +42,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.BedPart;
@@ -893,7 +890,7 @@ public interface IForgeBlock
     
     /**
      * Returns the state that this block should transform into when right clicked by a tool.
-     * Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
      * Return null if vanilla behavior should be disabled.
      *
      * @param state The current state
@@ -904,24 +901,8 @@ public interface IForgeBlock
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes)
+    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-    	BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack, toolTypes);
-    	if(eventState != state) return eventState;
-    	if(toolTypes.contains(ToolType.AXE)) {
-    		Block block = AxeItem.BLOCK_STRIPPING_MAP.get(state.getBlock());
-    		if(block == null && toolTypes.size() == 1) return null;
-    		if(block != null) return block.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
-    	}
-    	if(toolTypes.contains(ToolType.HOE)) {
-    		BlockState modifiedState = HoeItem.HOE_LOOKUP.get(state.getBlock());
-    		if(modifiedState == null && toolTypes.size() == 1) return null;
-    		if(modifiedState != null) return modifiedState;
-    	}
-    	if(toolTypes.contains(ToolType.SHOVEL)) {
-    		BlockState modifiedState = ShovelItem.SHOVEL_LOOKUP.get(state.getBlock());
-    		return modifiedState;
-    	}
-    	return null;
+        return net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack, toolType);
     }
 }

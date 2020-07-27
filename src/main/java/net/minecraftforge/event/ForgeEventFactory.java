@@ -363,10 +363,10 @@ public class ForgeEventFactory
     }
     
     @Nullable
-    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes) {
-    	BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack, toolTypes);
-    	if(MinecraftForge.EVENT_BUS.post(event)) return null;
-    	return event.getFinalState();
+    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+        BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack, toolType);
+        if(MinecraftForge.EVENT_BUS.post(event)) return null;
+        return event.getFinalState();
     }
 
     public static int onApplyBonemeal(@Nonnull PlayerEntity player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack)
