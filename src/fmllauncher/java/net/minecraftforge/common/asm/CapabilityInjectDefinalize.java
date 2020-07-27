@@ -58,10 +58,10 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
-        AtomicBoolean changed = new AtomicBoolean();
+        final AtomicBoolean changed = new AtomicBoolean();
         classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.equals(CAP) && hasHolder(f.visibleAnnotations)).forEach(f ->
         {
             int prev = f.access;
@@ -70,7 +70,7 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
             changed.compareAndSet(false, prev != f.access);
         });
 
-        return changed.get();
+        return changed.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
 }
