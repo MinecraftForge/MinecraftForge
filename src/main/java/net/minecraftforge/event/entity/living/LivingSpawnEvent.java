@@ -176,7 +176,7 @@ public class LivingSpawnEvent extends LivingEvent
     	
         public InitialSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) 
         {
-			super(entity, world, x, y, z);
+            super(entity, world, x, y, z);
             this.spawnReason = spawnReason;
             this.spawnDataIn = spawnDataIn;
             this.dataTag = dataTag;
