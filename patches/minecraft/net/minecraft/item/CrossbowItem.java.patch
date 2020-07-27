@@ -23,7 +23,7 @@
  
     }
  
-+   /**@deprecated Forge: Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
 +   @Deprecated
     private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) {
        int i = EnchantmentHelper.func_77506_a(Enchantments.field_222192_G, p_220021_1_);
@@ -32,7 +32,7 @@
        return true;
     }
  
-+   /**@deprecated Forge: Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
 +   @Deprecated
     private static boolean func_220023_a(LivingEntity p_220023_0_, ItemStack p_220023_1_, ItemStack p_220023_2_, boolean p_220023_3_, boolean p_220023_4_) {
        if (p_220023_2_.func_190926_b()) {

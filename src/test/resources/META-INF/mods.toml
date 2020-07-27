@@ -73,4 +73,4 @@ loaderVersion="[28,)"
 [[mods]]
     modId="raid_enum_test"
 [[mods]]
-    modId="player_find_ammo_event_test"
+    modId="living_find_ammo_event_test"

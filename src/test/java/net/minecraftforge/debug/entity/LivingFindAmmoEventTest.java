@@ -4,21 +4,21 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.TippedArrowItem;
 import net.minecraftforge.event.entity.living.LivingFindAmmoEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("player_find_ammo_event_test")
+@Mod("living_find_ammo_event_test")
 @Mod.EventBusSubscriber
 public class LivingFindAmmoEventTest
 {
     private static final boolean ENABLE = true;
-    private static final Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LivingFindAmmoEvent.class);
+    private static final Logger LOGGER = LogManager.getLogger(LivingFindAmmoEvent.class);
 
     @SubscribeEvent
-    public static void onPlayerFindAmmo(LivingFindAmmoEvent event)
+    public static void onLivingFindAmmo(LivingFindAmmoEvent event)
     {
         if (!ENABLE) return;
         if (event.getEntityLiving() instanceof PlayerEntity)
