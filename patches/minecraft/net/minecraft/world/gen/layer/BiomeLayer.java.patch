@@ -36,24 +36,36 @@
              }
  
 -            return this.field_151623_c[p_202726_1_.func_202696_a(this.field_151623_c.length)];
-+            return Registry.field_212624_m.func_148757_b(net.minecraftforge.common.BiomeManager.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT, p_202726_1_).biome);
++            return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT, p_202726_1_));
           case 2:
              if (i > 0) {
                 return field_202732_f;
              }
  
 -            return field_202745_s[p_202726_1_.func_202696_a(field_202745_s.length)];
-+            return Registry.field_212624_m.func_148757_b(net.minecraftforge.common.BiomeManager.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.WARM, p_202726_1_).biome);
++            return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.WARM, p_202726_1_));
           case 3:
              if (i > 0) {
                 return field_202737_k;
              }
  
 -            return field_202746_t[p_202726_1_.func_202696_a(field_202746_t.length)];
-+            return Registry.field_212624_m.func_148757_b(net.minecraftforge.common.BiomeManager.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.COOL, p_202726_1_).biome);
++            return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.COOL, p_202726_1_));
           case 4:
 -            return field_202747_u[p_202726_1_.func_202696_a(field_202747_u.length)];
-+            return Registry.field_212624_m.func_148757_b(net.minecraftforge.common.BiomeManager.getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.ICY, p_202726_1_).biome);
++            return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.ICY, p_202726_1_));
           default:
              return field_202735_i;
           }
+@@ -68,4 +84,11 @@
+          return p_202726_2_;
+       }
+    }
++
++   private net.minecraft.world.biome.Biome getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType type, INoiseRandom context) {
++      java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry> biomeList = biomes[type.ordinal()];
++      int totalWeight = net.minecraft.util.WeightedRandom.func_76272_a(biomeList);
++      int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type) ? context.func_202696_a(totalWeight) : context.func_202696_a(totalWeight / 10) * 10;
++      return net.minecraft.util.WeightedRandom.func_180166_a(biomeList, weight).biome;
++   }
+ }

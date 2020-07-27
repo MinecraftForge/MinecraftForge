@@ -155,16 +155,6 @@ public class BiomeManager
         }
     }
 
-    public static BiomeEntry getWeightedBiomeEntry(BiomeType type, INoiseRandom context)
-    {
-        List<BiomeEntry> biomeList = biomes[type.ordinal()];
-
-        int totalWeight = WeightedRandom.getTotalWeight(biomeList);
-        int weight = isTypeListModded(type) ? context.random(totalWeight) : context.random(totalWeight / 10) * 10;
-
-        return WeightedRandom.getRandomItem(biomeList, weight);
-    }
-
     private static class TrackedList<E> extends ArrayList<E>
     {
         private static final long serialVersionUID = 1L;
