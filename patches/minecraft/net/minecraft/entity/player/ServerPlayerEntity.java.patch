@@ -155,7 +155,15 @@
        }
  
     }
-@@ -1375,6 +1398,8 @@
+@@ -1325,6 +1348,7 @@
+    }
+ 
+    public void func_241153_a_(RegistryKey<World> p_241153_1_, @Nullable BlockPos p_241153_2_, boolean p_241153_3_, boolean p_241153_4_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_241153_2_ == null ? World.field_234918_g_ : p_241153_1_, p_241153_2_, p_241153_3_)) return;
+       if (p_241153_2_ != null) {
+          boolean flag = p_241153_2_.equals(this.field_241138_cr_) && p_241153_1_.equals(this.field_241137_cq_);
+          if (p_241153_4_ && !flag) {
+@@ -1375,6 +1399,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -164,7 +172,7 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1388,4 +1413,13 @@
+@@ -1388,4 +1414,13 @@
           return itementity;
        }
     }
