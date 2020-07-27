@@ -70,7 +70,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
     public static final String MODID = "global_loot_test";
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
 
     public GlobalLootModifiersTest()
     {
@@ -94,7 +94,8 @@ public class GlobalLootModifiersTest {
         @SubscribeEvent
         public static void runData(GatherDataEvent event)
         {
-            event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MODID));
+            if(ENABLE)
+                event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MODID));
         }
     }
 
