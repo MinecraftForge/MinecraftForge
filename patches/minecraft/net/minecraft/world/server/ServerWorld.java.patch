@@ -141,15 +141,16 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -863,6 +879,7 @@
+@@ -863,6 +879,8 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
 +      p_217484_1_.onRemovedFromWorld();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217484_1_, this));
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -883,15 +900,19 @@
+@@ -883,15 +901,19 @@
           }
        }
  
@@ -170,7 +171,7 @@
        }
     }
  
-@@ -904,8 +925,11 @@
+@@ -904,8 +926,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -184,7 +185,7 @@
        this.func_72854_c();
     }
  
-@@ -924,10 +948,20 @@
+@@ -924,10 +949,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -205,7 +206,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.func_234923_W_(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -963,6 +997,7 @@
+@@ -963,6 +998,7 @@
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable IExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
        Explosion explosion = new Explosion(this, p_230546_1_, p_230546_2_, p_230546_3_, p_230546_4_, p_230546_6_, p_230546_8_, p_230546_10_, p_230546_11_, p_230546_12_);
@@ -213,7 +214,7 @@
        explosion.func_77278_a();
        explosion.func_77279_a(false);
        if (p_230546_12_ == Explosion.Mode.NONE) {
-@@ -1331,4 +1366,14 @@
+@@ -1331,4 +1367,14 @@
           p_241121_0_.func_175656_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P());
        });
     }
