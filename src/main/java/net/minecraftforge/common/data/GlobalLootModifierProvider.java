@@ -31,10 +31,8 @@ import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.common.loot.LootModifier;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -44,9 +42,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Provider for forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
+ *
+ * This provider only requires implementing {@link #start()} and calling {@link #addModifier} from it.
+ */
 public abstract class GlobalLootModifierProvider implements IDataProvider
 {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
     private final String modid;
@@ -60,13 +62,16 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
         this.modid = modid;
     }
 
+    /**
+     * Sets the "replace" key in global_loot_modifiers to true.
+     */
     protected void replacing()
     {
         this.replace = true;
     }
 
     /**
-     * Call {@link #addModifier} here
+     * Call {@link #addModifier} here, which will pass in the necessary information to write the jsons.
      */
     protected abstract void start();
 
@@ -88,9 +93,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
             json.addProperty("type", pair.getA().getRegistryName().toString());
             json.add("conditions", ConditionArraySerializer.field_235679_a_.func_235681_a_(pair.getB()));
 
-            Consumer<JsonObject> properties = extraProperties.get(name);
-            if(properties != null)
-                properties.accept(json);
+            extraProperties.get(name).accept(json);
 
             IDataProvider.save(GSON, cache, json, modifierPath);
         }));
@@ -102,12 +105,28 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
         IDataProvider.save(GSON, cache, forgeJson, forgePath);
     }
 
+    /**
+     * Passes in the data needed to create the file without any extra objects.
+     *
+     * @param modifier      The name of the modifier, which will be the file name.
+     * @param serializer    The serializer of this modifier.
+     * @param conditions    The loot conditions before {@link LootModifier#doApply} is called.
+     */
     public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, ILootCondition... conditions)
     {
-        addModifier(modifier, serializer, null, conditions);
+        addModifier(modifier, serializer, j -> {}, conditions);
     }
 
-    public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, @Nullable Consumer<JsonObject> extraProperties, ILootCondition... conditions)
+    /**
+     * Passes in the data needed to create the file with any extra objects necessary.
+     * They are then available through {@link GlobalLootModifierSerializer#read}
+     *
+     * @param modifier          The name of the modifier, which will be the file name.
+     * @param serializer        The serializer of this modifier.
+     * @param extraProperties   The consumer that will be used to write any extra objects and their value.
+     * @param conditions        The loot conditions before {@link LootModifier#doApply} is called.
+     */
+    public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, Consumer<JsonObject> extraProperties, ILootCondition... conditions)
     {
         this.modifiers.put(modifier, new Tuple<>(serializer, conditions));
         this.extraProperties.put(modifier, extraProperties);
