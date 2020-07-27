@@ -1237,11 +1237,12 @@ public class ForgeHooks
                 if (!notCreativeAndIsArrow && !isCreative && (k > 0))
                 {
                     itemstack2 = itemstack.split(1);
+                    if (itemstack.isEmpty()) pair.getValue().accept(itemstack);
                 } else
                 {
-                    itemstack2 = itemstack;
+                    itemstack2 = itemstack.copy();
+                    if (!isCreative) pair.getValue().accept(itemstack);
                 }
-                if (!isCreative) pair.getValue().accept(itemstack);
                 CrossbowItem.addChargedProjectile(shootable, itemstack2);
                 addedAmmo = true;
             }
