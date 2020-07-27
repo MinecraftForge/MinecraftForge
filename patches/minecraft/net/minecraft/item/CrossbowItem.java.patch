@@ -1,0 +1,21 @@
+--- a/net/minecraft/item/CrossbowItem.java
++++ b/net/minecraft/item/CrossbowItem.java
+@@ -91,7 +91,8 @@
+    public void func_77615_a(ItemStack p_77615_1_, World p_77615_2_, LivingEntity p_77615_3_, int p_77615_4_) {
+       int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
+       float f = func_220031_a(i, p_77615_1_);
+-      if (f >= 1.0F && !func_220012_d(p_77615_1_) && func_220021_a(p_77615_3_, p_77615_1_)) {
++      org.apache.commons.lang3.tuple.Pair<ItemStack, java.util.function.Consumer<ItemStack>> pair = net.minecraftforge.common.ForgeHooks.findAmmo(p_77615_1_, p_77615_3_);
++      if (f >= 1.0F && !func_220012_d(p_77615_1_) && net.minecraftforge.common.ForgeHooks.handleCrossbowCharging(pair, p_77615_1_, p_77615_3_)) {
+          func_220011_a(p_77615_1_, true);
+          SoundCategory soundcategory = p_77615_3_ instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
+          p_77615_2_.func_184148_a((PlayerEntity)null, p_77615_3_.func_226277_ct_(), p_77615_3_.func_226278_cu_(), p_77615_3_.func_226281_cx_(), SoundEvents.field_219610_bB, soundcategory, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.5F + 1.0F) + 0.2F);
+@@ -154,7 +155,7 @@
+       compoundnbt.func_74757_a("Charged", p_220011_1_);
+    }
+ 
+-   public static void func_220029_b(ItemStack p_220029_0_, ItemStack p_220029_1_) {
++   private static void func_220029_b(ItemStack p_220029_0_, ItemStack p_220029_1_) {
+       CompoundNBT compoundnbt = p_220029_0_.func_196082_o();
+       ListNBT listnbt;
+       if (compoundnbt.func_150297_b("ChargedProjectiles", 9)) {

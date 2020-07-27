@@ -9,18 +9,24 @@
           }
        });
        this.func_185043_a(new ResourceLocation("pulling"), (p_210309_0_, p_210309_1_, p_210309_2_) -> {
-@@ -34,18 +34,23 @@
+@@ -33,19 +33,25 @@
+       if (p_77615_3_ instanceof PlayerEntity) {
           PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
           boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
-          ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
+-         ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
+-         if (!itemstack.func_190926_b() || flag) {
+-            if (itemstack.func_190926_b()) {
+-               itemstack = new ItemStack(Items.field_151032_g);
++         org.apache.commons.lang3.tuple.Pair<ItemStack, java.util.function.Consumer<ItemStack>> pair = net.minecraftforge.common.ForgeHooks.findAmmo(p_77615_1_, playerentity);
++         ItemStack itemstack = pair.getKey();
 +
 +         int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
 +         i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, playerentity, i, !itemstack.func_190926_b() || flag);
 +         if (i < 0) return;
 +
-          if (!itemstack.func_190926_b() || flag) {
-             if (itemstack.func_190926_b()) {
-                itemstack = new ItemStack(Items.field_151032_g);
++         if (!pair.getKey().func_190926_b() || flag) {
++            if (pair.getKey().func_190926_b()) {
++               pair = org.apache.commons.lang3.tuple.Pair.of(new ItemStack(Items.field_151032_g), pair.getValue());
              }
  
 -            int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
@@ -35,7 +41,22 @@
                    abstractarrowentity.func_184547_a(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -110,6 +115,10 @@
+@@ -77,10 +83,13 @@
+ 
+                p_77615_2_.func_184148_a((PlayerEntity)null, playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_(), SoundEvents.field_187737_v, SoundCategory.PLAYERS, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                if (!flag1 && !playerentity.field_71075_bZ.field_75098_d) {
++                  pair.getValue().accept(itemstack);
++                  if (false) {
+                   itemstack.func_190918_g(1);
+                   if (itemstack.func_190926_b()) {
+-                     playerentity.field_71071_by.func_184437_d(itemstack);
++                      playerentity.field_71071_by.func_184437_d(itemstack);
+                   }
++                  }
+                }
+ 
+                playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(this));
+@@ -110,6 +119,10 @@
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
@@ -46,7 +67,7 @@
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -121,4 +130,8 @@
+@@ -121,4 +134,8 @@
     public Predicate<ItemStack> func_220004_b() {
        return field_220007_a;
     }

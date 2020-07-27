@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.fluid.*;
+import net.minecraft.item.ArrowItem;
+import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.Items;
+import net.minecraft.item.ShootableItem;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -152,6 +158,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -1179,6 +1186,91 @@ public class ForgeHooks
     {
         VANILLA_BURNS.clear();
         FurnaceTileEntity.getBurnTimes().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
+
+    /**
+     * This method replaces the {@link LivingEntity#findAmmo(ItemStack)} and by extension {@link PlayerEntity#findAmmo(ItemStack)}
+     * The ammo chain goes event -> default behaviour replication
+     * @param stack The "ShootableItem" stack.
+     * @param shooter The LivingEntity shooter
+     * @return returns the found ammo stack and the ammo consumer as a {@link org.apache.commons.lang3.tuple.Pair} object
+     */
+    public static Pair<ItemStack, Consumer<ItemStack>> findAmmo(ItemStack stack, LivingEntity shooter)
+    {
+        if (stack.getItem() instanceof ShootableItem)
+        {
+            ShootableItem shootable = (ShootableItem) stack.getItem();
+            Pair<ItemStack, Consumer<ItemStack>> findAndConsume = ForgeEventFactory.onFindAmmo(shooter, stack, shootable.getAmmoPredicate());
+            if (!findAndConsume.getLeft().isEmpty())
+                return findAndConsume;
+            if (shooter instanceof PlayerEntity)
+            {
+                // Vanilla Player behaviour
+                return Pair.of(shooter.findAmmo(stack), stack1 ->
+                {
+                    // Check due to how the crossbow consumes ammo
+                    if (stack1.isEmpty())
+                    {
+                        ((PlayerEntity)shooter).inventory.deleteStack(stack1);
+                        return;
+                    }
+                    stack1.shrink(1);
+                    if (stack1.isEmpty()) ((PlayerEntity)shooter).inventory.deleteStack(stack1);
+                });
+            }
+            // Vanilla Entity Behaviour
+            return Pair.of(shooter.findAmmo(stack), stack1 -> {});
+        }
+        return Pair.of(ItemStack.EMPTY, stackIn -> {});
+    }
+
+    /**
+     * This method comprises the logic of {@link CrossbowItem#hasAmmo(LivingEntity, ItemStack)} & {@link CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)}
+     * Those two methods are being deprecated in favor of this hook method that in-lines the code.
+     * @param pair The provided Pair of Ammo and Ammo Consumer.
+     * @param shootable The shootable itemstack.
+     * @param shooter The shooter.
+     * @return returns a boolean if it succeeds in charging the crossbow.
+     */
+    public static boolean handleCrossbowCharging(Pair<ItemStack, Consumer<ItemStack>> pair, ItemStack shootable, LivingEntity shooter)
+    {
+        int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.MULTISHOT, shootable);
+        int j = i == 0 ? 1 : 3;
+        boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).abilities.isCreativeMode;
+        ItemStack itemstack = pair.getKey();
+        ItemStack stackCopy = itemstack.copy();
+        for(int k = 0; k < j; ++k)
+        {
+            if (k > 0)
+                itemstack = stackCopy.copy();
+
+            if (itemstack.isEmpty() && isCreative)
+            {
+                itemstack = new ItemStack(Items.ARROW);
+                stackCopy = itemstack.copy();
+            }
+
+            boolean addedAmmo = false;
+
+            if (!itemstack.isEmpty())
+            {
+                boolean notCreativeAndIsArrow = isCreative && itemstack.getItem() instanceof ArrowItem;
+                ItemStack itemstack2;
+                if (!notCreativeAndIsArrow && !isCreative && (k > 0))
+                {
+                    itemstack2 = itemstack.split(1);
+                } else
+                {
+                    itemstack2 = itemstack;
+                }
+                if (!isCreative) pair.getValue().accept(itemstack);
+                //CrossbowItem.addChargedProjectile(shootable, itemstack2);
+                addedAmmo = true;
+            }
+            if (!addedAmmo)
+                return false;
+        }
+        return true;
     }
 
     /**
