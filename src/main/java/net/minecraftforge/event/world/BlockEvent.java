@@ -19,8 +19,10 @@
 
 package net.minecraftforge.event.world;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
@@ -35,6 +37,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -458,18 +461,22 @@ public class BlockEvent extends Event
 
     	private final PlayerEntity player;
     	private final ItemStack stack;
+    	private final Set<ToolType> toolTypes;
     	private BlockState state;
     	
-		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack) {
+		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes) {
 			super(world, pos, originalState);
 			this.player = player;
 			this.stack = stack;
 			this.state = originalState;
+			this.toolTypes = toolTypes;
 		}
 		
 		public PlayerEntity getPlayer() { return player; }
 		
 		public ItemStack getHeldItemStack() { return stack; }
+		
+		public Set<ToolType> getToolTypes() { return Collections.unmodifiableSet(toolTypes); }
 		
 		public void setFinalState(BlockState finalState) { this.state = finalState; }
 		

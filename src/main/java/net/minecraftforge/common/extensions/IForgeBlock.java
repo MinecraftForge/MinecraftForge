@@ -904,22 +904,21 @@ public interface IForgeBlock
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack)
+    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes)
     {
-    	BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack);
+    	BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack, toolTypes);
     	if(eventState != state) return eventState;
-    	Set<ToolType> tool = stack.getToolTypes();
-    	if(tool.contains(ToolType.AXE)) {
+    	if(toolTypes.contains(ToolType.AXE)) {
     		Block block = AxeItem.BLOCK_STRIPPING_MAP.get(state.getBlock());
-    		if(block == null && tool.size() == 1) return null;
+    		if(block == null && toolTypes.size() == 1) return null;
     		if(block != null) return block.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
     	}
-    	if(tool.contains(ToolType.HOE)) {
+    	if(toolTypes.contains(ToolType.HOE)) {
     		BlockState modifiedState = HoeItem.HOE_LOOKUP.get(state.getBlock());
-    		if(modifiedState == null && tool.size() == 1) return null;
+    		if(modifiedState == null && toolTypes.size() == 1) return null;
     		if(modifiedState != null) return modifiedState;
     	}
-    	if(tool.contains(ToolType.SHOVEL)) {
+    	if(toolTypes.contains(ToolType.SHOVEL)) {
     		BlockState modifiedState = ShovelItem.SHOVEL_LOOKUP.get(state.getBlock());
     		return modifiedState;
     	}

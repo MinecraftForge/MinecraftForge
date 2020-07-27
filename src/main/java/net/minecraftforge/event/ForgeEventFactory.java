@@ -88,6 +88,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -362,8 +363,8 @@ public class ForgeEventFactory
     }
     
     @Nullable
-    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
-    	BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack);
+    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, Set<ToolType> toolTypes) {
+    	BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack, toolTypes);
     	if(MinecraftForge.EVENT_BUS.post(event)) return null;
     	return event.getFinalState();
     }
