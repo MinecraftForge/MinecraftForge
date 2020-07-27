@@ -34,8 +34,16 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Tags
 {
+    public static void init ()
+    {
+        Blocks.init();
+        Items.init();
+    }
+
     public static class Blocks
     {
+        private static void init(){}
+
         public static final ITag.INamedTag<Block> CHESTS = tag("chests");
         public static final ITag.INamedTag<Block> CHESTS_ENDER = tag("chests/ender");
         public static final ITag.INamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -132,6 +140,8 @@ public class Tags
 
     public static class Items
     {
+        private static void init(){}
+
         public static final ITag.INamedTag<Item> ARROWS = tag("arrows");
         public static final ITag.INamedTag<Item> BONES = tag("bones");
         public static final ITag.INamedTag<Item> BOOKSHELVES = tag("bookshelves");

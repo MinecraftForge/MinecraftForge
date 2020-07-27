@@ -66,8 +66,6 @@ import net.minecraft.resources.FallbackResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.WorldSummary;
-import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
@@ -181,19 +179,6 @@ public class ClientHooks
     static File getSavesDir()
     {
         return new File(Minecraft.getInstance().gameDir, "saves");
-    }
-
-    public static void tryLoadExistingWorld(WorldSelectionScreen selectWorldGUI, WorldSummary comparator)
-    {
-        try
-        {
-            //TODO
-            //Minecraft.getInstance().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
-        }
-        catch (StartupQuery.AbortedException e)
-        {
-            // ignore
-        }
     }
 
     private static NetworkManager getClientToServerNetworkManager()

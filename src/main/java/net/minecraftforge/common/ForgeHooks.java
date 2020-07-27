@@ -139,6 +139,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -1230,5 +1231,20 @@ public class ForgeHooks
         {
             locations.stream().map(ResourceLocation::toString).forEach(array::add);
         }
+    }
+
+    public static List<String> getModPacks()
+    {
+        List<String> modpacks = ResourcePackLoader.getPackNames();
+        if(modpacks.isEmpty())
+            throw new IllegalStateException("Attempted to retrieve mod packs before they were loaded in!");
+        return modpacks;
+    }
+
+    public static List<String> getModPacksWithVanilla()
+    {
+        List<String> modpacks = getModPacks();
+        modpacks.add("vanilla");
+        return modpacks;
     }
 }
