@@ -75,7 +75,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         func_240522_a_(GRAVEL).func_240534_a_(Blocks.GRAVEL);
         func_240522_a_(NETHERRACK).func_240534_a_(Blocks.NETHERRACK);
         func_240522_a_(OBSIDIAN).func_240534_a_(Blocks.OBSIDIAN);
-        func_240522_a_(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE);
+        func_240522_a_(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE_SCRAP);
         func_240522_a_(ORES_COAL).func_240534_a_(Blocks.COAL_ORE);
         func_240522_a_(ORES_DIAMOND).func_240534_a_(Blocks.DIAMOND_ORE);
         func_240522_a_(ORES_EMERALD).func_240534_a_(Blocks.EMERALD_ORE);
@@ -84,7 +84,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         func_240522_a_(ORES_LAPIS).func_240534_a_(Blocks.LAPIS_ORE);
         func_240522_a_(ORES_QUARTZ).func_240534_a_(Blocks.NETHER_QUARTZ_ORE);
         func_240522_a_(ORES_REDSTONE).func_240534_a_(Blocks.REDSTONE_ORE);
-        func_240522_a_(ORES_NETHERITE).func_240534_a_(Blocks.field_235398_nh_);
+        func_240522_a_(ORES_NETHERITE_SCRAP).func_240534_a_(Blocks.field_235398_nh_);
         func_240522_a_(SAND).addTags(SAND_COLORLESS, SAND_RED);
         func_240522_a_(SAND_COLORLESS).func_240534_a_(Blocks.SAND);
         func_240522_a_(SAND_RED).func_240534_a_(Blocks.RED_SAND);

@@ -33,7 +33,6 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -118,7 +117,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240521_a_(Tags.Blocks.ORES_LAPIS, Tags.Items.ORES_LAPIS);
         func_240521_a_(Tags.Blocks.ORES_QUARTZ, Tags.Items.ORES_QUARTZ);
         func_240521_a_(Tags.Blocks.ORES_REDSTONE, Tags.Items.ORES_REDSTONE);
-        func_240521_a_(Tags.Blocks.ORES_NETHERITE, Tags.Items.ORES_NETHERITE);
+        func_240521_a_(Tags.Blocks.ORES_NETHERITE_SCRAP, Tags.Items.ORES_NETHERITE_SCRAP);
         func_240522_a_(Tags.Items.RODS).addTags(Tags.Items.RODS_BLAZE, Tags.Items.RODS_WOODEN);
         func_240522_a_(Tags.Items.RODS_BLAZE).func_240534_a_(Items.BLAZE_ROD);
         func_240522_a_(Tags.Items.RODS_WOODEN).func_240534_a_(Items.STICK);

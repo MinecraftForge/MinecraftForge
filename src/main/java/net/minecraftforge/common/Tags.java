@@ -106,7 +106,7 @@ public class Tags
         public static final ITag.INamedTag<Block> ORES_GOLD = tag("ores/gold");
         public static final ITag.INamedTag<Block> ORES_IRON = tag("ores/iron");
         public static final ITag.INamedTag<Block> ORES_LAPIS = tag("ores/lapis");
-        public static final ITag.INamedTag<Block> ORES_NETHERITE = tag("ores/netherite");
+        public static final ITag.INamedTag<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final ITag.INamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final ITag.INamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
 
@@ -260,7 +260,7 @@ public class Tags
         public static final ITag.INamedTag<Item> ORES_GOLD = tag("ores/gold");
         public static final ITag.INamedTag<Item> ORES_IRON = tag("ores/iron");
         public static final ITag.INamedTag<Item> ORES_LAPIS = tag("ores/lapis");
-        public static final ITag.INamedTag<Item> ORES_NETHERITE = tag("ores/netherite");
+        public static final ITag.INamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final ITag.INamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final ITag.INamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
         public static final ITag.INamedTag<Item> RODS = tag("rods");
