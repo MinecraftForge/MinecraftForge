@@ -53,7 +53,7 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -177,15 +177,17 @@
+@@ -177,16 +177,18 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
@@ -68,14 +68,17 @@
     }
  
 -   private void func_176536_a(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_) {
+-      int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
 +   private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, Direction face) {
-       int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
++      int i = p_176536_1_.func_180495_p(p_176536_2_).getFlammability(p_176536_1_, p_176536_2_, face);
        if (p_176536_4_.nextInt(p_176536_3_) < i) {
           BlockState blockstate = p_176536_1_.func_180495_p(p_176536_2_);
-@@ -197,10 +199,7 @@
+          if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
+@@ -196,11 +198,7 @@
+             p_176536_1_.func_217377_a(p_176536_2_, false);
           }
  
-          Block block = blockstate.func_177230_c();
+-         Block block = blockstate.func_177230_c();
 -         if (block instanceof TNTBlock) {
 -            TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
@@ -84,7 +87,7 @@
        }
  
     }
-@@ -212,7 +211,7 @@
+@@ -212,7 +210,7 @@
  
     private boolean func_196447_a(IBlockReader p_196447_1_, BlockPos p_196447_2_) {
        for(Direction direction : Direction.values()) {
@@ -93,7 +96,7 @@
              return true;
           }
        }
-@@ -228,13 +227,14 @@
+@@ -228,13 +226,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -109,7 +112,7 @@
     protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -253,10 +253,23 @@
+@@ -253,10 +252,23 @@
     }
  
     private void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
