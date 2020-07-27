@@ -72,4 +72,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="raid_enum_test"
 [[mods]]
+    modId="player_name_event_test"
+[[mods]]
     modId="modded_overworld_biomes_test"
