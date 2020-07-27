@@ -74,4 +74,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="modded_overworld_biomes_test"
 [[mods]]
+    modId="player_name_event_test"
+[[mods]]
     modId="render_local_player_test"
