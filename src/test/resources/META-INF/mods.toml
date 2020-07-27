@@ -69,4 +69,4 @@ loaderVersion="[28,)"
 [[mods]]
     modId="deferred_registry_test"
 [[mods]]
-    modId="player_find_ammo_event_test"
+    modId="living_find_ammo_event_test"
