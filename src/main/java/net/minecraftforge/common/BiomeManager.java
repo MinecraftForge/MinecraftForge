@@ -29,6 +29,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.gen.INoiseRandom;
 
 import javax.annotation.Nullable;
 

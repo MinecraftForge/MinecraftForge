@@ -42,10 +42,7 @@ public class WorldPersistenceHooks
 
     public static void handleWorldDataLoad(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo, CompoundNBT tagCompound)
     {
-        if (EffectiveSide.get() == LogicalSide.SERVER)
-        {
-            worldPersistenceHooks.forEach(wac->wac.readData(levelSave, serverInfo, tagCompound.getCompound(wac.getModId())));
-        }
+        worldPersistenceHooks.forEach(wac->wac.readData(levelSave, serverInfo, tagCompound.getCompound(wac.getModId())));
     }
 
     public interface WorldPersistenceHook

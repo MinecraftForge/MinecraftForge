@@ -62,7 +62,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
         AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
@@ -147,7 +147,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 }
             }
         }
-        return changes.get();
+        return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
     @SuppressWarnings("unchecked")
