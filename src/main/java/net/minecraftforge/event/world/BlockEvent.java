@@ -33,6 +33,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -280,9 +281,9 @@ public class BlockEvent extends Event
     @HasResult
     public static class CreateFluidSourceEvent extends BlockEvent
     {
-        public CreateFluidSourceEvent(World world, BlockPos pos, BlockState state)
+        public CreateFluidSourceEvent(IWorldReader world, BlockPos pos, BlockState state)
         {
-            super(world, pos, state);
+            super((IWorld) world, pos, state);
         }
     }
 

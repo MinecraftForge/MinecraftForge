@@ -29,13 +29,19 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod("finite_water_test")
 @Mod.EventBusSubscriber()
-public class FiniteWaterTest {
+public class FiniteWaterTest
+{
+    private static final boolean ENABLED = true;
+
     @SubscribeEvent
     public static void handleFiniteWaterSource(BlockEvent.CreateFluidSourceEvent event)
     {
-        BlockState state = event.getState();
-        FluidState fluidState = state.getFluidState();
-        if(fluidState.getFluid().isEquivalentTo(Fluids.WATER))
-            event.setResult(Event.Result.DENY);
+        if (ENABLED) {
+            BlockState state = event.getState();
+            FluidState fluidState = state.getFluidState();
+            if (fluidState.getFluid().isEquivalentTo(Fluids.WATER)) {
+                event.setResult(Event.Result.DENY);
+            }
+        }
     }
 }
