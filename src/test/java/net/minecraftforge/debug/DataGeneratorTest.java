@@ -214,7 +214,8 @@ public class DataGeneratorTest
         }
 
         @Override
-        public void registerSounds() {
+        public void registerSounds()
+        {
             // Taken from vanilla's 'sounds.json'. These are supposed to be 1-to-1 copies, but currently
             // automatic testing of those copies cannot be performed due to limitations in the data-gen
             // system, where the additional data pack that vanilla loads from the launcher's assets/

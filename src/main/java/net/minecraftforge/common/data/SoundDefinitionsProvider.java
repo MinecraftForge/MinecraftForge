@@ -241,15 +241,7 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
         if (!valid)
         {
             final String path = name.getNamespace() + ":sounds/" + name.getPath() + ".ogg";
-            if (!"minecraft".equals(name.getNamespace()))
-            {
-                LOGGER.warn("Unable to find corresponding OGG file '{}' for sound event '{}'", path, soundName);
-            }
-            else
-            {
-                LOGGER.warn("Unable to find original Minecraft sound OGG file '{}' for event '{}': assuming it's part of the data pack downloaded by the launcher", path, soundName);
-                return true;
-            }
+            LOGGER.warn("Unable to find corresponding OGG file '{}' for sound event '{}'", path, soundName);
         }
         return valid;
     }
