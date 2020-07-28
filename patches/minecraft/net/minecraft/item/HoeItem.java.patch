@@ -26,7 +26,7 @@
     }
 +
 +   @javax.annotation.Nullable
-+   public static BlockState getHoeTillingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
++   public static BlockState getHoeTillingState(BlockState originalState) {
 +      return field_195973_b.get(originalState.func_177230_c());
 +   }
  }

@@ -27,7 +27,7 @@
     }
 +
 +   @javax.annotation.Nullable
-+   public static BlockState getShovelPathingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
++   public static BlockState getShovelPathingState(BlockState originalState) {
 +      return field_195955_e.get(originalState.func_177230_c());
 +   }
  }

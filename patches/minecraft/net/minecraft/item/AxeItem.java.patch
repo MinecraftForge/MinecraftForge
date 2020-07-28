@@ -30,7 +30,7 @@
     }
 +
 +   @javax.annotation.Nullable
-+   public static BlockState getAxeStrippingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
++   public static BlockState getAxeStrippingState(BlockState originalState) {
 +      Block block = field_203176_a.get(originalState.func_177230_c());
 +      return block != null ? block.func_176223_P().func_206870_a(RotatedPillarBlock.field_176298_M, originalState.func_177229_b(RotatedPillarBlock.field_176298_M)) : null;
 +   }

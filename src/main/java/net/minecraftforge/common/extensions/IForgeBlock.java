@@ -906,8 +906,8 @@ public interface IForgeBlock
     @Nullable
     default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state, world, pos, player, stack);
-        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state, world, pos, player, stack);
-        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state, world, pos, player, stack) : null;
+        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
+        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
+        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
     }
 }
