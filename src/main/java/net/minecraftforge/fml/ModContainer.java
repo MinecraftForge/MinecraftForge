@@ -104,7 +104,6 @@ public abstract class ModContainer
      */
     public final void transitionState(LifecycleEventProvider.LifecycleEvent event, Consumer<List<ModLoadingException>> errorHandler)
     {
-        if (shutdown) return; //TODO: Remove
         if (modLoadingStage == event.fromStage())
         {
             try
@@ -166,11 +165,4 @@ public abstract class ModContainer
      * @param e Event to accept
      */
     protected void acceptEvent(Event e) {}
-
-    //TEMPORARY INTERNAL FUNCTION UNTIL net.minecraftforge.fml.ModList.dispatchParallelEvent is fixed.
-    @Deprecated protected boolean shutdown = false;
-    @Deprecated protected void shutdown()
-    {
-        this.shutdown = true;
-    }
 }
