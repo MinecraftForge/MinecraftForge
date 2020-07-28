@@ -50,11 +50,10 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -972,7 +983,7 @@
-       } else {
+@@ -973,6 +984,7 @@
           this.func_184641_n(false);
        }
--
+ 
 +      net.minecraftforge.event.ForgeEventFactory.doInitialSpawn(this, p_213386_1_, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
        return p_213386_4_;
     }

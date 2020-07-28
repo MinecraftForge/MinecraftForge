@@ -4,7 +4,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent.InitialSpawn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -12,7 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber()
 public class InitialSpawnTest 
 {
-    public static final Boolean ENABLE = false;
+    static boolean ENABLE = false;
 	
     public InitialSpawnTest()
     {
@@ -24,11 +23,11 @@ public class InitialSpawnTest
     {
       if (event.getEntity() instanceof CowEntity && ENABLE)
       {
-    	  CowEntity cow = (CowEntity)event.getEntity();
-    	  SheepEntity sheep = EntityType.SHEEP.create(cow.world);
-    	  sheep.copyLocationAndAnglesFrom(cow);
-    	  cow.startRiding(sheep);
-    	  cow.world.addEntity(sheep);
+       CowEntity cow = (CowEntity)event.getEntity();
+       SheepEntity sheep = EntityType.SHEEP.create(cow.world);
+       sheep.copyLocationAndAnglesFrom(cow);
+       cow.startRiding(sheep);
+       event.getWorld().addEntity(sheep);
       }
     }
 }
