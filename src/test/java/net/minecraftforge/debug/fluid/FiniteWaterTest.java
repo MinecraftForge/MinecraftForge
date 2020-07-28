@@ -42,6 +42,9 @@ public class FiniteWaterTest
             if (fluidState.getFluid().isEquivalentTo(Fluids.WATER)) {
                 event.setResult(Event.Result.DENY);
             }
+            else if (fluidState.getFluid().isEquivalentTo(Fluids.LAVA)) {
+                event.setResult(Event.Result.ALLOW);
+            }
         }
     }
 }
