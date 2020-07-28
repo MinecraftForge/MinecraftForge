@@ -49,6 +49,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -526,6 +527,13 @@ public class ForgeEventFactory
     public static void onPlayerBrewedPotion(PlayerEntity player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
+    }
+
+    public static ServerParticleSpawnEvent onWorldParticleSpawn(IParticleData particle, boolean longDistance, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed)
+    {
+        ServerParticleSpawnEvent event = new ServerParticleSpawnEvent(particle, longDistance, particleCount, speed, posX, posY, posZ, xOffset, yOffset, zOffset);
+        if (MinecraftForge.EVENT_BUS.post(event)) return null;
+        return event;
     }
 
     @OnlyIn(Dist.CLIENT)
