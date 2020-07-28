@@ -171,6 +171,7 @@ public class FMLModContainer extends ModContainer
     @Override
     protected void acceptEvent(final Event e)
     {
+        if (this.shutdown) return;
         this.eventBus.post(e);
     }
 

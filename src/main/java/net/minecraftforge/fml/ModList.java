@@ -141,6 +141,7 @@ public class ModList
         catch (InterruptedException | ExecutionException e)
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing - sleeping 10 seconds to wait for jobs to finish", e);
+            this.mods.forEach(ModContainer::shutdown); //Prevent all future events from being sent out.
             errorHandler.accept(Collections.singletonList(new UncaughtModLoadingException(lifecycleEvent.fromStage(), e)));
             modLoadingThreadPool.awaitQuiescence(10, TimeUnit.SECONDS);
             if (!modLoadingThreadPool.isQuiescent()) {
