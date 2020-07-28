@@ -30,15 +30,13 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -92,7 +90,7 @@ public class FMLModContainer extends ModContainer
 
     }
 
-    private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return new ErroringConsumer<>(); }
+    private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return (s) -> {}; }
 
     private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
     {
@@ -120,7 +118,6 @@ public class FMLModContainer extends ModContainer
     private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         if (getCurrentState() == ModLoadingStage.ERROR) {
             LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
-            this.eventBus.shutdown();
         }
     }
 
@@ -169,46 +166,7 @@ public class FMLModContainer extends ModContainer
     }
 
     @Override
-    protected void acceptEvent(final Event e)
-    {
+    protected void acceptEvent(final Event e) {
         this.eventBus.post(e);
-    }
-
-    private class ErroringConsumer<T> implements Consumer<T>
-    {
-        private List<Consumer<? super T>> children = new ArrayList<>();
-
-        @Override
-        public void accept(T t)
-        {
-            Throwable error = null;
-            for (Consumer<? super T> child : children)
-            {
-                try
-                {
-                    child.accept(t);
-                }
-                catch (Throwable e)
-                {
-                    FMLModContainer.this.modLoadingStage = ModLoadingStage.ERROR;
-                    error = e;
-                }
-            }
-
-            if (error != null)
-            {
-                if (error instanceof RuntimeException)
-                    throw (RuntimeException)error;
-                throw new RuntimeException(error);
-            }
-        }
-
-        @Override
-        public ErroringConsumer<T> andThen(Consumer<? super T> after)
-        {
-            Objects.requireNonNull(after);
-            children.add(after);
-            return this;
-        }
     }
 }
