@@ -77,4 +77,4 @@ license="LGPL v2.1"
 [[mods]]
     modId="modded_overworld_biomes_test"
 [[mods]]
-    modId="finite_water"
+    modId="finite_water_test"

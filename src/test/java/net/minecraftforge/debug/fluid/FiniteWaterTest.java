@@ -27,9 +27,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod("finite_water")
+@Mod("finite_water_test")
 @Mod.EventBusSubscriber()
-public class FiniteWater {
+public class FiniteWaterTest {
     @SubscribeEvent
     public static void handleFiniteWaterSource(BlockEvent.CreateFluidSourceEvent event)
     {
