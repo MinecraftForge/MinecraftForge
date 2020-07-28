@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+
+import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -62,8 +64,16 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.modLoaderVersion = config.<String>getConfigElement("loaderVersion")
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+        String mcVersion = StringSubstitutor.replace("${global.mcVersion}", null);
+        if ("1.16.1".equals(mcVersion)) {
+            this.license = config.<String>getConfigElement("license").orElse("All Rights Reserved (Default License, Modder Please specify)");
+        } else {
+            throw new IllegalStateException("Code exists that should not in " + mcVersion + " Delete other case.");
+        }
+        /* Make license non-optional in >1.16.1, delete the above if, and uncomment the below lines when updating.
         this.license = config.<String>getConfigElement("license")
-                .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
+            .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
+         */
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
         this.properties = config.<UnmodifiableConfig>getConfigElement("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());

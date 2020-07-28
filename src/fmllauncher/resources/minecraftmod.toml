@@ -1,6 +1,6 @@
 modLoader="minecraft"
 loaderVersion="1"
-license="Mojang all rights reserved"
+license="Mojang Studios, All Rights Reserved"
 [[mods]]
     modId="minecraft"
     version="${global.mcVersion}"
