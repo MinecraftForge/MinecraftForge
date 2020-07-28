@@ -1,5 +1,6 @@
 package net.minecraftforge.debug.entity.player;
 
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +16,7 @@ public class PlayerNameEventTest
     public static void onPlayerNameEvent(PlayerEvent.NameFormat event)
     {
         if (!ENABLE) return;
-        event.setDisplayname(TextFormatting.AQUA + "Test Name");
+        event.setDisplaynameComponent(new StringTextComponent("Test Name"));
+        event.setDisplayname(TextFormatting.AQUA + "Test Name"); //Old method also works
     }
 }

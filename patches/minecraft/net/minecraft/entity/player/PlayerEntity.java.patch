@@ -451,10 +451,10 @@
  
     public ITextComponent func_145748_c_() {
 -      ITextComponent itextcomponent = ScorePlayerTeam.func_200541_a(this.func_96124_cp(), this.func_200200_C_());
-+      if (this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_().func_150261_e());
++      if (this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +      ITextComponent itextcomponent = new StringTextComponent("");
 +      prefixes.forEach(e -> itextcomponent.func_150257_a(e));
-+      itextcomponent.func_150257_a(ScorePlayerTeam.func_200541_a(this.func_96124_cp(), new StringTextComponent(this.displayname)));
++      itextcomponent.func_150257_a(ScorePlayerTeam.func_200541_a(this.func_96124_cp(), this.displayname));
 +      suffixes.forEach(e -> itextcomponent.func_150257_a(e));
        return this.func_208016_c(itextcomponent);
     }
@@ -481,12 +481,12 @@
 +       return this.suffixes;
 +   }
 +   
-+   private String displayname = null;
++   private ITextComponent displayname = null;
 +   /**
 +    * Force the displayed name to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.NameFormat}, using the real player name as event parameter.
 +    */
 +   public void refreshDisplayName() {
-+      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_().func_150261_e());
++      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_200200_C_());
 +   }
 +   
 +   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
