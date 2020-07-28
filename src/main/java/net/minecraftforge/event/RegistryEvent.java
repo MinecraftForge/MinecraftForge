@@ -44,7 +44,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
     /**
      * Register new registries when you receive this event, through the {@link RecipeBuilder}
      */
-    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event
+    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
     {
         @Override
         public String toString() {
