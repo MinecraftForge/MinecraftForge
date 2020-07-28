@@ -132,7 +132,7 @@ public class ModList
         DeferredWorkQueue.clear();
         try
         {
-            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler)));
+            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler.andThen(e -> this.mods.forEach(ModContainer::shutdown)))));
             while (ticker != null && !parallelTask.isDone()) {
                 executor.execute(ticker);
             }
