@@ -42,8 +42,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.BedPart;
@@ -903,6 +906,8 @@ public interface IForgeBlock
     @Nullable
     default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-        return net.minecraftforge.event.ForgeEventFactory.onToolUse(state, world, pos, player, stack, toolType);
+        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state, world, pos, player, stack);
+        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state, world, pos, player, stack);
+        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state, world, pos, player, stack) : null;
     }
 }

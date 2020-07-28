@@ -363,7 +363,8 @@ public class ForgeEventFactory
     }
     
     @Nullable
-    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+    public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    {
         BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack, toolType);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
     }

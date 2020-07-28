@@ -794,6 +794,7 @@ public interface IForgeBlockState
     @Nullable
     default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-        return getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(getBlockState(), world, pos, player, stack, toolType);
+        return eventState != getBlockState() ? eventState : getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
     }
 }

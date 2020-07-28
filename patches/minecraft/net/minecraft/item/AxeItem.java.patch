@@ -14,7 +14,7 @@
        BlockPos blockpos = p_195939_1_.func_195995_a();
        BlockState blockstate = world.func_180495_p(blockpos);
 -      Block block = field_203176_a.get(blockstate.func_177230_c());
-+      BlockState block = getAxeStrippingState(blockstate, world, blockpos, p_195939_1_.func_195999_j(), p_195939_1_.func_195996_i());
++      BlockState block = blockstate.getToolModifiedState(world, blockpos, p_195939_1_.func_195999_j(), p_195939_1_.func_195996_i(), net.minecraftforge.common.ToolType.AXE);
        if (block != null) {
           PlayerEntity playerentity = p_195939_1_.func_195999_j();
           world.func_184133_a(playerentity, blockpos, SoundEvents.field_203255_y, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -24,19 +24,14 @@
              if (playerentity != null) {
                 p_195939_1_.func_195996_i().func_222118_a(1, playerentity, (p_220040_1_) -> {
                    p_220040_1_.func_213334_d(p_195939_1_.func_221531_n());
-@@ -52,4 +52,15 @@
+@@ -52,4 +52,10 @@
           return ActionResultType.PASS;
        }
     }
-+   
-+   /* ======================================== FORGE START =====================================*/
++
 +   @javax.annotation.Nullable
-+   protected static BlockState getAxeStrippingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack)
-+   {
-+      BlockState finalState = originalState.getToolModifiedState(world, pos, player, stack, net.minecraftforge.common.ToolType.AXE);
-+      if(finalState != originalState) return finalState;
++   public static BlockState getAxeStrippingState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
 +      Block block = field_203176_a.get(originalState.func_177230_c());
 +      return block != null ? block.func_176223_P().func_206870_a(RotatedPillarBlock.field_176298_M, originalState.func_177229_b(RotatedPillarBlock.field_176298_M)) : null;
 +   }
-+   /* ========================================= FORGE END ======================================*/
  }

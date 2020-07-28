@@ -462,38 +462,51 @@ public class BlockEvent extends Event
         private final ToolType toolType;
         private BlockState state;
 
-		public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
-	    {
-		    super(world, pos, originalState);
-		    this.player = player;
-		    this.stack = stack;
-		    this.state = originalState;
-		    this.toolType = toolType;
-		}
+        public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
+        {
+            super(world, pos, originalState);
+            this.player = player;
+            this.stack = stack;
+            this.state = originalState;
+            this.toolType = toolType;
+        }
 
-	    public PlayerEntity getPlayer()
-	    { 
-	        return player;
-	    }
-		
-	    public ItemStack getHeldItemStack()
-	    {
-	        return stack;
-	    }
+        /**Gets the player using the tool.*/
+        public PlayerEntity getPlayer()
+        {
+            return player;
+        }
 
-	    public ToolType getToolType()
-	    {
-	        return toolType;
+        /**Gets the tool being used.*/
+        public ItemStack getHeldItemStack()
+        {
+            return stack;
 	    }
 
-	    public void setFinalState(BlockState finalState)
-	    {
-	        this.state = finalState;
-	    }
+        /**Gets the current type of the tool being compared against.*/
+        public ToolType getToolType()
+        {
+            return toolType;
+        }
 
-	    public BlockState getFinalState()
-	    {
-	        return state;
-	    }
+        /**
+         * Sets the transformed state after tool use.
+         * If not set, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public void setFinalState(BlockState finalState)
+        {
+            this.state = finalState;
+        }
+
+        /**
+         * Gets the transformed state after tool use.
+         * If setFinalState not called, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public BlockState getFinalState()
+        {
+            return state;
+        }
     }
 }
