@@ -350,6 +350,8 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
+    //TODO: 1.17 Remove
+    @Deprecated
     public static int onHoeUse(ItemUseContext context)
     {
         UseHoeEvent event = new UseHoeEvent(context);
