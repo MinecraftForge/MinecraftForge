@@ -53,7 +53,6 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         super.registerTags();
         filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toSet());
 
-        func_240522_a_(Tags.Items.ARROWS).func_240534_a_(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
         func_240522_a_(Tags.Items.BONES).func_240534_a_(Items.BONE);
         func_240522_a_(Tags.Items.BOOKSHELVES).func_240534_a_(Items.BOOKSHELF);
         func_240521_a_(Tags.Blocks.CHESTS, Tags.Items.CHESTS);

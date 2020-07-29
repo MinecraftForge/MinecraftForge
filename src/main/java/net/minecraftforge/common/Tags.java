@@ -145,7 +145,6 @@ public class Tags
     {
         private static void init(){}
 
-        public static final ITag.INamedTag<Item> ARROWS = tag("arrows");
         public static final ITag.INamedTag<Item> BONES = tag("bones");
         public static final ITag.INamedTag<Item> BOOKSHELVES = tag("bookshelves");
         public static final ITag.INamedTag<Item> CHESTS = tag("chests");
