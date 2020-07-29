@@ -385,21 +385,43 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1075,6 +1137,18 @@
+@@ -1075,6 +1137,40 @@
        return this.field_226689_w_;
     }
  
++   /* ==== FORGE START ==== */
++
 +   private double maxEntityRadius = 2.0D;
++
 +   @Override
 +   public double getMaxEntityRadius() {
 +      return maxEntityRadius;
 +   }
++
 +   @Override
 +   public double increaseMaxEntityRadius(double value) {
 +      if (value > maxEntityRadius)
 +         maxEntityRadius = value;
 +      return maxEntityRadius;
 +   }
++
++   @Deprecated // used in ClientWorld for rendering purposes
++   protected World()
++   {
++      super(World.class);
++      this.field_217407_c = null;
++      this.field_234916_c_ = true;
++      this.field_234921_x_ = null;
++      this.field_72986_A = null;
++      this.field_72984_F = null;
++      this.field_72995_K = true;
++      this.field_175728_M = null;
++      this.field_226689_w_ = null;
++      this.field_73011_w = null;
++      this.field_234915_C_ = null;
++   }
++
++   /* ==== FORGE END ==== */
 +
     public final boolean func_234925_Z_() {
        return this.field_234916_c_;

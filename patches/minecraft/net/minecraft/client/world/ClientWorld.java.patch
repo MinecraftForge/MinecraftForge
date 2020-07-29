@@ -62,3 +62,10 @@
        if (p_217384_1_ == this.field_73037_M.field_71439_g) {
           this.field_73037_M.func_147118_V().func_147682_a(new EntityTickableSound(p_217384_3_, p_217384_4_, p_217384_2_));
        }
+@@ -872,4 +889,6 @@
+          return this.field_239146_c_ ? 1.0D : 0.03125D;
+       }
+    }
++   @Deprecated // Only use for "fake" world rendering purposes, warning: some methods may cause NPE when using this constructor
++   protected ClientWorld() { super(); this.field_73035_a = null; this.field_217430_d = null; this.field_239130_d_ = null; this.field_239131_x_ = null; this.field_239129_E_ = null; }
+ }
