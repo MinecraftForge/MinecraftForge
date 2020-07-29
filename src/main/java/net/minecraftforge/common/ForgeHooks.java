@@ -1217,7 +1217,7 @@ public class ForgeHooks
         boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).abilities.isCreativeMode;
         ItemStack itemstack = pair.getKey();
         ItemStack stackCopy = itemstack.copy();
-        for(int k = 0; k < j; ++k)
+        for (int k = 0; k < j; ++k)
         {
             if (k > 0)
                 itemstack = stackCopy.copy();
