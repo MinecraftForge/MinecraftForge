@@ -23,11 +23,11 @@ public class InitialSpawnTest
     {
       if (event.getEntity() instanceof CowEntity && ENABLE)
       {
-       CowEntity cow = (CowEntity)event.getEntity();
-       SheepEntity sheep = EntityType.SHEEP.create(cow.world);
-       sheep.copyLocationAndAnglesFrom(cow);
-       cow.startRiding(sheep);
-       event.getWorld().addEntity(sheep);
+          CowEntity cow = (CowEntity)event.getEntity();
+          SheepEntity sheep = EntityType.SHEEP.create(cow.world);
+          sheep.copyLocationAndAnglesFrom(cow);
+          cow.startRiding(sheep);
+          event.getWorld().addEntity(sheep);
       }
     }
 }
