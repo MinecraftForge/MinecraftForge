@@ -310,7 +310,7 @@
     }
  
     protected float func_189749_co() {
-@@ -1868,16 +1896,20 @@
+@@ -1868,11 +1896,15 @@
     public void func_213352_e(Vector3d p_213352_1_) {
        if (this.func_70613_aW() || this.func_184186_bw()) {
           double d0 = 0.08D;
@@ -327,12 +327,6 @@
  
           FluidState fluidstate = this.field_70170_p.func_204610_c(this.func_233580_cy_());
           if (this.func_70090_H() && this.func_241208_cS_() && !this.func_230285_a_(fluidstate.func_206886_c())) {
-             double d8 = this.func_226278_cu_();
--            float f5 = this.func_70051_ag() ? 0.9F : this.func_189749_co();
-+            float f5 = this.field_70170_p.func_180495_p(this.func_226270_aj_()).getSlipperiness(field_70170_p, this.func_226270_aj_(), this);
-             float f6 = 0.02F;
-             float f7 = (float)EnchantmentHelper.func_185294_d(this);
-             if (f7 > 3.0F) {
 @@ -1897,6 +1929,7 @@
                 f5 = 0.96F;
              }
@@ -341,6 +335,15 @@
              this.func_213309_a(f6, p_213352_1_);
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              Vector3d vector3d6 = this.func_213322_ci();
+@@ -1975,7 +2008,7 @@
+             }
+          } else {
+             BlockPos blockpos = this.func_226270_aj_();
+-            float f3 = this.field_70170_p.func_180495_p(blockpos).func_177230_c().func_208618_m();
++            float f3 = this.field_70170_p.func_180495_p(this.func_226270_aj_()).getSlipperiness(field_70170_p, this.func_226270_aj_(), this);
+             float f4 = this.field_70122_E ? f3 * 0.91F : 0.91F;
+             Vector3d vector3d5 = this.func_233633_a_(p_213352_1_, f3);
+             double d2 = vector3d5.field_72448_b;
 @@ -2075,6 +2108,7 @@
     }
  
@@ -349,16 +352,15 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2230,6 +2264,8 @@
+@@ -2230,6 +2264,7 @@
  
           ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
-+            if (!itemstack1.equals(itemstack1, true))
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslottype, itemstack, itemstack1));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslottype, itemstack, itemstack1));
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlotType.class);
              }
-@@ -2658,8 +2694,16 @@
+@@ -2658,8 +2693,16 @@
  
     private void func_184608_ct() {
        if (this.func_184587_cr()) {
@@ -377,7 +379,7 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
-@@ -2707,8 +2751,10 @@
+@@ -2707,8 +2750,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -389,7 +391,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
-@@ -2768,6 +2814,9 @@
+@@ -2768,6 +2813,9 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
@@ -399,7 +401,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c);
        }
  
-@@ -2779,7 +2828,9 @@
+@@ -2779,7 +2827,9 @@
        } else {
           if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
              this.func_226293_b_(this.field_184627_bm, 16);
@@ -410,7 +412,7 @@
              this.func_184602_cy();
           }
  
-@@ -2800,7 +2851,11 @@
+@@ -2800,7 +2850,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -422,7 +424,18 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2966,14 +3021,14 @@
+@@ -2949,8 +3003,8 @@
+       }
+ 
+       BlockState blockstate = this.field_70170_p.func_180495_p(p_213342_1_);
+-      if (blockstate.func_177230_c() instanceof BedBlock) {
+-         this.field_70170_p.func_180501_a(p_213342_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(true)), 3);
++      if (blockstate.isBed(field_70170_p, p_213342_1_, this)) {
++         blockstate.setBedOccupied(field_70170_p, p_213342_1_, this, true);
+       }
+ 
+       this.func_213301_b(Pose.SLEEPING);
+@@ -2966,15 +3020,15 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_241350_1_) -> {
@@ -435,11 +448,13 @@
        this.func_213374_dv().filter(this.field_70170_p::func_175667_e).ifPresent((p_241348_1_) -> {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_241348_1_);
 -         if (blockstate.func_177230_c() instanceof BedBlock) {
-+         if (blockstate.isBed(field_70170_p, func_226270_aj_(), this)) {
-             this.field_70170_p.func_180501_a(p_241348_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(false)), 3);
+-            this.field_70170_p.func_180501_a(p_241348_1_, blockstate.func_206870_a(BedBlock.field_176471_b, Boolean.valueOf(false)), 3);
++         if (blockstate.isBed(field_70170_p, p_241348_1_, this)) {
++            blockstate.setBedOccupied(field_70170_p, p_241348_1_, this, false);
              Vector3d vector3d1 = BedBlock.func_220172_a(this.func_200600_R(), this.field_70170_p, p_241348_1_, 0).orElseGet(() -> {
                 BlockPos blockpos = p_241348_1_.func_177984_a();
-@@ -2993,7 +3048,9 @@
+                return new Vector3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
+@@ -2993,7 +3047,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
        BlockPos blockpos = this.func_213374_dv().orElse((BlockPos)null);
@@ -450,7 +465,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -3062,4 +3119,58 @@
+@@ -3062,4 +3118,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

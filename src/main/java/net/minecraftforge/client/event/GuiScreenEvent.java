@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -205,9 +205,20 @@ public class GuiScreenEvent extends Event
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        public BackgroundDrawnEvent(Screen gui)
+        private final MatrixStack mStack;
+
+        public BackgroundDrawnEvent(Screen gui, MatrixStack mStack)
         {
             super(gui);
+            this.mStack = mStack;
+        }
+
+        /**
+         * The MatrixStack to render with.
+         */
+        public MatrixStack getMatrixStack()
+        {
+            return mStack;
         }
     }
 

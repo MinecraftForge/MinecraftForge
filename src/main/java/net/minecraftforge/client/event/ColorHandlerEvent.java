@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,13 @@ package net.minecraftforge.client.event;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
 /**
  * Use these events to register block/item
  * color handlers at the appropriate time.
  */
-public abstract class ColorHandlerEvent extends Event
+public abstract class ColorHandlerEvent extends Event implements IModBusEvent
 {
     public static class Block extends ColorHandlerEvent
     {

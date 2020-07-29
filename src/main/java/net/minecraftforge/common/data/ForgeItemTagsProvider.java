@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         super(gen, blockTagProvider);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void registerTags()
     {
@@ -54,7 +55,6 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toSet());
 
         func_240522_a_(Tags.Items.ARROWS).func_240534_a_(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
-        func_240522_a_(Tags.Items.BEACON_PAYMENT).func_240534_a_(Items.EMERALD, Items.DIAMOND, Items.GOLD_INGOT, Items.IRON_INGOT);
         func_240522_a_(Tags.Items.BONES).func_240534_a_(Items.BONE);
         func_240522_a_(Tags.Items.BOOKSHELVES).func_240534_a_(Items.BOOKSHELF);
         func_240521_a_(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
@@ -130,6 +130,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240522_a_(Tags.Items.SEEDS_MELON).func_240534_a_(Items.MELON_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_PUMPKIN).func_240534_a_(Items.PUMPKIN_SEEDS);
         func_240522_a_(Tags.Items.SEEDS_WHEAT).func_240534_a_(Items.WHEAT_SEEDS);
+        func_240522_a_(Tags.Items.SHEARS).func_240534_a_(Items.SHEARS);
         func_240522_a_(Tags.Items.SLIMEBALLS).func_240534_a_(Items.SLIME_BALL);
         func_240521_a_(Tags.Blocks.STAINED_GLASS, Tags.Items.STAINED_GLASS);
         func_240521_a_(Tags.Blocks.STAINED_GLASS_PANES, Tags.Items.STAINED_GLASS_PANES);

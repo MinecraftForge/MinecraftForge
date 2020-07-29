@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;
@@ -133,7 +134,7 @@ public class ModConfig
         }
     }
 
-    public static class ModConfigEvent extends Event {
+    public static class ModConfigEvent extends Event implements IModBusEvent {
         private final ModConfig config;
 
         ModConfigEvent(final ModConfig config) {

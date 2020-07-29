@@ -13,6 +13,7 @@
   "fml.menu.mods.info.credits":"Credits: {0}",
   "fml.menu.mods.info.authors":"Authors: {0}",
   "fml.menu.mods.info.displayurl":"Homepage: {0}",
+  "fml.menu.mods.info.license":"License: {0}",
   "fml.menu.mods.info.nochildmods":"No child mods found",
   "fml.menu.mods.info.childmods":"Child mods: {0}",
   "fml.menu.mods.info.updateavailable":"Update available: {0}",
@@ -148,10 +149,10 @@
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
   "forge.configgui.disableVersionCheck": "Disable Forge Version Check",
 
-  "forge.controlsgui.shift": "SHIFT",
-  "forge.controlsgui.control": "CTRL",
-  "forge.controlsgui.control.mac": "CMD",
-  "forge.controlsgui.alt": "ALT",
+  "forge.controlsgui.shift": "SHIFT + %s",
+  "forge.controlsgui.control": "CTRL + %s",
+  "forge.controlsgui.control.mac": "CMD + %s",
+  "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
   "attribute.name.generic.reachDistance": "Reach Distance",

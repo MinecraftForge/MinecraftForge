@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,10 +20,11 @@
 package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
 /**
  * Fired when you should call {@link net.minecraft.client.particle.ParticleManager#registerFactory}.
  * Note that your {@code ParticleType}s should still be registered during the usual registry events, this
  * is only for the factories.
  */
-public class ParticleFactoryRegisterEvent extends Event {}
+public class ParticleFactoryRegisterEvent extends Event implements IModBusEvent {}

@@ -181,7 +181,7 @@
 -         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_);
 +         net.minecraft.client.gui.FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
 +         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
-+         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
++         this.renderToolTip(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
        } else {
           super.func_230457_a_(p_230457_1_, p_230457_2_, p_230457_3_, p_230457_4_);

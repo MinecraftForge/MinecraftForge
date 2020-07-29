@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@ public class StartupMessageManager {
     }
 
     enum MessageType {
-        MC(0.0f, 0.0f, 0.0f),
+        MC(1.0f, 1.0f, 1.0f),
         ML(0.0f, 0.0f, 0.5f),
         LOC(0.0f, 0.5f, 0.0f),
         MOD(0.5f, 0.0f, 0.0f);

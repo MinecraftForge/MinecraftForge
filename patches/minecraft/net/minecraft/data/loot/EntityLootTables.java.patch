@@ -32,11 +32,10 @@
              if (resourcelocation != LootTables.field_186419_a && this.field_218587_b.remove(resourcelocation) != null) {
                 break;
              }
-@@ -171,11 +175,19 @@
+@@ -171,6 +175,14 @@
        throw new IllegalStateException(String.format("Weird loottable '%s' for '%s', not a LivingEntity so should not have loot", resourcelocation, Registry.field_212629_r.func_177774_c(entitytype)));
     }
  
--   protected void func_218582_a(EntityType<?> p_218582_1_, LootTable.Builder p_218582_2_) {
 +   protected Iterable<EntityType<?>> getKnownEntities() {
 +      return Registry.field_212629_r;
 +   }
@@ -45,12 +44,6 @@
 +      return !field_222944_b.contains(entitytype) && entitytype.func_220339_d() == EntityClassification.MISC; 
 +   }
 +
-+   private void func_218582_a(EntityType<?> p_218582_1_, LootTable.Builder p_218582_2_) {
+    protected void func_218582_a(EntityType<?> p_218582_1_, LootTable.Builder p_218582_2_) {
        this.func_218585_a(p_218582_1_.func_220348_g(), p_218582_2_);
     }
- 
--   protected void func_218585_a(ResourceLocation p_218585_1_, LootTable.Builder p_218585_2_) {
-+   private void func_218585_a(ResourceLocation p_218585_1_, LootTable.Builder p_218585_2_) {
-       this.field_218587_b.put(p_218585_1_, p_218585_2_);
-    }
- }

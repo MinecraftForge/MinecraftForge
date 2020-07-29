@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,12 +20,13 @@
 package net.minecraftforge.client.event.sound;
 
 import net.minecraft.client.audio.SoundEngine;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
 /**
  * Raised by the SoundManager.loadSoundSettings, this would be a good place for
  * adding your custom sounds to the SoundPool.
  */
-public class SoundLoadEvent extends SoundEvent
+public class SoundLoadEvent extends SoundEvent implements IModBusEvent
 {
     public SoundLoadEvent(SoundEngine manager)
     {

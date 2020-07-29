@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,16 +19,31 @@
 
 package net.minecraftforge.common;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.common.util.ForgeNetworkTagManager;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Tags
 {
+    public static void init ()
+    {
+        Blocks.init();
+        Items.init();
+    }
+
     public static class Blocks
     {
+        private static void init(){}
+
         public static final ITag.INamedTag<Block> CHESTS = tag("chests");
         public static final ITag.INamedTag<Block> CHESTS_ENDER = tag("chests/ender");
         public static final ITag.INamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -37,10 +52,10 @@ public class Tags
         public static final ITag.INamedTag<Block> DIRT = tag("dirt");
         public static final ITag.INamedTag<Block> END_STONES = tag("end_stones");
         public static final ITag.INamedTag<Block> FENCE_GATES = tag("fence_gates");
-        public static final ITag.INamedTag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
+        public static final ITag.INamedTag<Block> FENCE_GATES_WOODEN = defaulted("fence_gates/wooden", net.minecraft.block.Blocks.OAK_FENCE_GATE, net.minecraft.block.Blocks.BIRCH_FENCE_GATE, net.minecraft.block.Blocks.SPRUCE_FENCE_GATE, net.minecraft.block.Blocks.JUNGLE_FENCE_GATE, net.minecraft.block.Blocks.DARK_OAK_FENCE_GATE, net.minecraft.block.Blocks.ACACIA_FENCE_GATE);
         public static final ITag.INamedTag<Block> FENCES = tag("fences");
         public static final ITag.INamedTag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
-        public static final ITag.INamedTag<Block> FENCES_WOODEN = tag("fences/wooden");
+        public static final ITag.INamedTag<Block> FENCES_WOODEN = defaulted("fences/wooden", net.minecraft.block.Blocks.OAK_FENCE, net.minecraft.block.Blocks.BIRCH_FENCE, net.minecraft.block.Blocks.SPRUCE_FENCE, net.minecraft.block.Blocks.JUNGLE_FENCE, net.minecraft.block.Blocks.DARK_OAK_FENCE, net.minecraft.block.Blocks.ACACIA_FENCE);
 
         public static final ITag.INamedTag<Block> GLASS = tag("glass");
         public static final ITag.INamedTag<Block> GLASS_BLACK = tag("glass/black");
@@ -115,12 +130,19 @@ public class Tags
         {
             return BlockTags.makeWrapperTag("forge:" + name);
         }
+
+        @SuppressWarnings("deprecation")
+        private static ITag.INamedTag<Block> defaulted(String name, Block... values)
+        {
+            return ForgeNetworkTagManager.defaulted(Registry.field_239711_l_, tag(name), Arrays.asList(values).stream().map(e -> e.getRegistryName()).collect(Collectors.toSet()));
+        }
     }
 
     public static class Items
     {
+        private static void init(){}
+
         public static final ITag.INamedTag<Item> ARROWS = tag("arrows");
-        public static final ITag.INamedTag<Item> BEACON_PAYMENT = tag("beacon_payment");
         public static final ITag.INamedTag<Item> BONES = tag("bones");
         public static final ITag.INamedTag<Item> BOOKSHELVES = tag("bookshelves");
         public static final ITag.INamedTag<Item> CHESTS = tag("chests");
@@ -162,10 +184,10 @@ public class Tags
         public static final ITag.INamedTag<Item> ENDER_PEARLS = tag("ender_pearls");
         public static final ITag.INamedTag<Item> FEATHERS = tag("feathers");
         public static final ITag.INamedTag<Item> FENCE_GATES = tag("fence_gates");
-        public static final ITag.INamedTag<Item> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
+        public static final ITag.INamedTag<Item> FENCE_GATES_WOODEN = defaulted("fence_gates/wooden", Blocks.FENCE_GATES_WOODEN);
         public static final ITag.INamedTag<Item> FENCES = tag("fences");
         public static final ITag.INamedTag<Item> FENCES_NETHER_BRICK = tag("fences/nether_brick");
-        public static final ITag.INamedTag<Item> FENCES_WOODEN = tag("fences/wooden");
+        public static final ITag.INamedTag<Item> FENCES_WOODEN = defaulted("fences/wooden", Blocks.FENCES_WOODEN);
         public static final ITag.INamedTag<Item> GEMS = tag("gems");
         public static final ITag.INamedTag<Item> GEMS_DIAMOND = tag("gems/diamond");
         public static final ITag.INamedTag<Item> GEMS_EMERALD = tag("gems/emerald");
@@ -270,6 +292,12 @@ public class Tags
         private static ITag.INamedTag<Item> tag(String name)
         {
             return ItemTags.makeWrapperTag("forge:" + name);
+        }
+
+        @SuppressWarnings("deprecation")
+        private static ITag.INamedTag<Item> defaulted(String name, ITag.INamedTag<Block> parent)
+        {
+            return ForgeNetworkTagManager.defaulted(Registry.field_239714_o_, tag(name), RegistryKey.func_240903_a_(Registry.field_239711_l_, parent.func_230234_a_()));
         }
     }
 }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
++++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
+@@ -384,6 +384,7 @@
+       if (path != null) {
+          File file1 = path.toFile();
+          ResourcePackList<ResourcePackInfo> resourcepacklist = new ResourcePackList<>(ResourcePackInfo::new, new ServerPackFinder(), new FolderPackFinder(file1, IPackNameDecorator.field_232625_a_));
++         net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(resourcepacklist, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
+          resourcepacklist.func_198983_a();
+          resourcepacklist.func_198985_a(this.field_238933_b_.func_234884_a_());
+          this.field_230706_i_.func_147108_a(new DataPackScreen(this, resourcepacklist, this::func_241621_a_, file1));

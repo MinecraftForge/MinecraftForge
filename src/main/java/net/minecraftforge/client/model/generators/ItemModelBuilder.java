@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -92,9 +92,9 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
         JsonObject toJson() {
             JsonObject ret = new JsonObject();
             JsonObject predicatesJson = new JsonObject();
-            predicates.forEach((key, val) -> predicatesJson.addProperty(serializeLoc(key), val));
+            predicates.forEach((key, val) -> predicatesJson.addProperty(key.toString(), val));
             ret.add("predicate", predicatesJson);
-            ret.addProperty("model", serializeLoc(model.getLocation()));
+            ret.addProperty("model", model.getLocation().toString());
             return ret;
         }
     }

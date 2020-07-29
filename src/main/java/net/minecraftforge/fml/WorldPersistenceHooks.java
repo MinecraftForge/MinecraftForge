@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,10 +42,7 @@ public class WorldPersistenceHooks
 
     public static void handleWorldDataLoad(SaveFormat.LevelSave levelSave, IServerConfiguration serverInfo, CompoundNBT tagCompound)
     {
-        if (EffectiveSide.get() == LogicalSide.SERVER)
-        {
-            worldPersistenceHooks.forEach(wac->wac.readData(levelSave, serverInfo, tagCompound.getCompound(wac.getModId())));
-        }
+        worldPersistenceHooks.forEach(wac->wac.readData(levelSave, serverInfo, tagCompound.getCompound(wac.getModId())));
     }
 
     public interface WorldPersistenceHook

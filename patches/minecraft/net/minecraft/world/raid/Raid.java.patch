@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/raid/Raid.java
++++ b/net/minecraft/world/raid/Raid.java
+@@ -768,7 +768,7 @@
+       }
+    }
+ 
+-   static enum WaveMember {
++   public static enum WaveMember implements net.minecraftforge.common.IExtensibleEnum {
+       VINDICATOR(EntityType.field_200758_ax, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
+       EVOKER(EntityType.field_200806_t, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
+       PILLAGER(EntityType.field_220350_aJ, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
+@@ -783,5 +783,19 @@
+          this.field_221285_g = p_i50602_3_;
+          this.field_221286_h = p_i50602_4_;
+       }
++      
++      /**
++       * The waveCountsIn integer decides how many entities of the EntityType defined in typeIn will spawn in each wave.
++       * For example, one ravager will always spawn in wave 3.
++       */
++      public static WaveMember create(String name, EntityType<? extends AbstractRaiderEntity> typeIn, int[] waveCountsIn) {
++         throw new IllegalStateException("Enum not extended");
++      }
++      
++      @Override
++      @Deprecated
++      public void init() {
++         field_221284_f = values();
++      }
+    }
+ }

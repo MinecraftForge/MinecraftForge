@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -152,26 +153,27 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        private final String username;
-        private String displayname;
+        private final ITextComponent username;
+        private ITextComponent displayname;
 
-        public NameFormat(PlayerEntity player, String username) {
+        public NameFormat(PlayerEntity player, ITextComponent username) 
+        {
             super(player);
             this.username = username;
             this.setDisplayname(username);
         }
 
-        public String getUsername()
+        public ITextComponent getUsername()
         {
             return username;
         }
 
-        public String getDisplayname()
+        public ITextComponent getDisplayname()
         {
             return displayname;
         }
 
-        public void setDisplayname(String displayname)
+        public void setDisplayname(ITextComponent displayname)
         {
             this.displayname = displayname;
         }

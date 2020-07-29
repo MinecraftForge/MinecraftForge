@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,11 @@ public class ResourcePackLoader
                 map(mf -> new ModFileResourcePack(mf.getFile())).
                 collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
+    }
+
+    public static List<String> getPackNames()
+    {
+        return modResourcePacks.values().stream().map(pack -> pack.getPackInfo().getName()).collect(Collectors.toList());
     }
 
     public static <V> Comparator<Map.Entry<String,V>> getSorter() {

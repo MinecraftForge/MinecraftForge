@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,17 +40,12 @@ public enum SidedProvider
             ()-> { throw new UnsupportedOperationException(); }),
     SIDED_SETUP_EVENT(
             (Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientSetupEvent(c, mc),
-            s-> mc->new FMLDedicatedServerSetupEvent(s, mc),
+            s-> mc->new FMLDedicatedServerSetupEvent(mc),
             ()-> { throw new UnsupportedOperationException(); }),
     STRIPCHARS(
             (Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
             s-> str->str,
-            ()-> str->str),
-    @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data (supplier is coming from StartupQuery)
-    STARTUPQUERY(
-            c->StartupQuery.QueryWrapperClient.clientQuery(c),
-            s->StartupQuery.QueryWrapperServer.dedicatedServerQuery(s),
-            ()-> { throw new UnsupportedOperationException(); });
+            ()-> str->str);
 
     private static Supplier<Minecraft> client;
     private static Supplier<DedicatedServer> server;

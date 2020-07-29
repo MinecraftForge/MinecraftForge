@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -304,16 +305,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
-     * Whether this Item can be used as a payment to activate the vanilla beacon.
-     *
-     * @return true if this Item can be used
-     */
-    default boolean isBeaconPayment()
-    {
-        return getStack().getItem().isBeaconPayment(getStack());
-    }
-
-    /**
      * Determines if the specific ItemStack can be placed in the specified armor
      * slot, for the entity.
      *
@@ -449,5 +440,40 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default boolean isRepairable()
     {
         return getStack().getItem().isRepairable(getStack());
+    }
+
+    /**
+     * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
+     *
+     * @return True if this item can be used as "currency" by piglins
+     */
+    default boolean isPiglinCurrency()
+    {
+        return getStack().getItem().isPiglinCurrency(getStack());
+    }
+
+    /**
+     * Called by Piglins to check if a given item prevents hostility on sight. If this is true the Piglins will be neutral to the entity wearing this item, and will not
+     * attack on sight. Note: This does not prevent Piglins from becoming hostile due to other actions, nor does it make Piglins that are already hostile stop being so.
+     *
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if piglins are neutral to players wearing this item in an armor slot
+     */
+    default boolean makesPiglinsNeutral(LivingEntity wearer)
+    {
+        return getStack().getItem().makesPiglinsNeutral(getStack(), wearer);
+    }
+
+    /**
+     * Whether this Item can be used to hide player head for enderman.
+     *
+     * @param player The player watching the enderman
+     * @param endermanEntity The enderman that the player look
+     * @return true if this Item can be used.
+     */
+    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
+    {
+        return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
     }
 }
