@@ -9,11 +9,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * LivingFindAmmoEvent is fired when a shootable item tries to find ammo on the player.
- * This event is fired whenever a shootable item attempts to find ammo using {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, LivingEntity)}.<br>
+ * LivingFindAmmoEvent is fired when an attempt is made to find ammo.
+ * This event is fired whenever an attempt is made to find ammo using {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, LivingEntity)}.<br>
  * <br>
- * This event fires first in the find order.
- * So Event -> Fallback to Vanilla behaviour.
+ * This event fires as the first point in the findAmmo method logic after the initial check.
+ * If the event returns with a found ammo, the findAmmo method will return the ammo/consumer pair from the event as the result.
+ * If the event doesn't provide a result, then it defaults to vanilla behaviour.
  * <br>
  * {@link #shootable} contains the {@link net.minecraft.item.ShootableItem} in it's ItemStack form.
  * {@link #ammoPredicate} contains the {@link ShootableItem#getAmmoPredicate()} instance.<br>
