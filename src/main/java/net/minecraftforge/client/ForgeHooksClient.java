@@ -130,6 +130,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderWorldPreTranslucentEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -183,6 +184,11 @@ public class ForgeHooksClient
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
+    }
+    
+    public static void dispatchRenderPreTranslucent(WorldRenderer context, ActiveRenderInfo info, MatrixStack mat, IRenderTypeBuffer.Impl buffers, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldPreTranslucentEvent(context, info, mat, buffers, partialTicks, projectionMatrix, finishTimeNano));
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
