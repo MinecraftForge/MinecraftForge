@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This event is fired before and after a screenshot is taken
+ * This event is fired before a screenshot is taken
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * This event is {@link Cancelable}
  *
