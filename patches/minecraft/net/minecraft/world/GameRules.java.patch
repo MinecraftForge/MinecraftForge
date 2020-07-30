@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/GameRules.java
++++ b/net/minecraft/world/GameRules.java
+@@ -219,7 +219,7 @@
+       }
+    }
+ 
+-   public static enum Category {
++   public static enum Category implements net.minecraftforge.common.IExtensibleEnum {
+       PLAYER("gamerule.category.player"),
+       MOBS("gamerule.category.mobs"),
+       SPAWNING("gamerule.category.spawning"),
+@@ -238,6 +238,11 @@
+       public String func_234908_a_() {
+          return this.field_234907_h_;
+       }
++
++      public static Category create(String name, String p_i231613_3_) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
+    }
+ 
+    interface IRule<T extends GameRules.RuleValue<T>> {
