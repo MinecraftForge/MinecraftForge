@@ -233,7 +233,7 @@ public class FMLLoader
     public static void addAccessTransformer(Path atPath, ModFile modName)
     {
         LOGGER.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
-        accessTransformer.addResource(atPath, modName.getFileName());
+        accessTransformer.offerResource(atPath, modName.getFileName());
     }
 
     public static Dist getDist()

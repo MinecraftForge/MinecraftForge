@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 
 import java.util.Collection;
@@ -154,12 +155,23 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      */
     public void register(IEventBus bus)
     {
-        bus.addListener(this::addEntries);
+        bus.register(new EventDispatcher(this));
         if (this.type == null && this.registryFactory != null) {
             bus.addListener(this::createRegistry);
         }
     }
+    public static class EventDispatcher {
+        private final DeferredRegister<?> register;
 
+        public EventDispatcher(final DeferredRegister<?> register) {
+            this.register = register;
+        }
+
+        @SubscribeEvent
+        public void handleEvent(RegistryEvent.Register<?> event) {
+            register.addEntries(event);
+        }
+    }
     /**
      * @return The unmodifiable view of registered entries. Useful for bulk operations on all values.
      */
