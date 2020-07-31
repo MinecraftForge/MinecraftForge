@@ -105,8 +105,9 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Override
-    public boolean isShadedInGui() {
-        return true;
+    public boolean isShadedInGui()
+    {
+        return owner.func_230176_c_().func_230178_a_();
     }
 
     @Override
