@@ -1546,3 +1546,13 @@ task setup() {
 }
 
 
+allprojects {
+    repositories {
+        jcenter()
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(Javadoc) {
+            options.addStringOption("Xdoclint:none","-quiet")
+        }
+    }
+}
