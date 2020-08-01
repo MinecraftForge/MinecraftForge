@@ -869,7 +869,7 @@ project(':forge') {
             patcher.sideAnnotationStrippers.each { f -> 
                 def lines = []
                 f.eachLine { line ->
-                    if (line[0] == '\t') return //Skip any tabed lines, those are ones we add
+                    if (line[0] == '\t') return //Skip any tabbed lines, those are ones we add
                     def idx = line.indexOf('#')
                     if (idx == 0 || line.isEmpty()) {
                         lines.add(line)
@@ -882,11 +882,18 @@ project(':forge') {
                     def (cls, desc) = (line.trim() + '    ').split(' ', -1)
                     cls = cls.replaceAll('\\.', '/')
                     desc = desc.replace('(', ' (')
-                    if (desc.isEmpty() || json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
+
+                    //Class SAS
+                    if(desc.isEmpty()) {
+                        lines.add(cls + (comment == null ? '' : ' ' + comment))
+                        return
+                    }
+
+                    //Method SAS
+                    if (json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
                         println('Invalid: ' + line)
                         return
                     }
-                    
                     def mtd = json[cls]['methods'][desc]
                     lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
                     def children = json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
