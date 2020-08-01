@@ -92,6 +92,24 @@ net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraf
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
 net/minecraft/util/math/vector/Vector3d func_189984_a(Lnet/minecraft/util/math/vector/Vector2f;)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
 net/minecraft/util/math/vector/Vector3d func_189986_a(FF)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
+net/minecraft/util/math/vector/Vector4f # Vector 4f Class
+	net/minecraft/util/math/vector/Vector4f <init>()V
+	net/minecraft/util/math/vector/Vector4f <init>(FFFF)V
+	net/minecraft/util/math/vector/Vector4f <init>(Lnet/minecraft/util/math/vector/Vector3f;)V
+	net/minecraft/util/math/vector/Vector4f equals(Ljava/lang/Object;)Z
+	net/minecraft/util/math/vector/Vector4f func_195909_a(Lnet/minecraft/util/math/vector/Vector3f;)V
+	net/minecraft/util/math/vector/Vector4f func_195910_a()F
+	net/minecraft/util/math/vector/Vector4f func_195911_a(FFFF)V
+	net/minecraft/util/math/vector/Vector4f func_195912_a(Lnet/minecraft/util/math/vector/Quaternion;)V
+	net/minecraft/util/math/vector/Vector4f func_195913_b()F
+	net/minecraft/util/math/vector/Vector4f func_195914_c()F
+	net/minecraft/util/math/vector/Vector4f func_195915_d()F
+	net/minecraft/util/math/vector/Vector4f func_229372_a_(Lnet/minecraft/util/math/vector/Matrix4f;)V
+	net/minecraft/util/math/vector/Vector4f func_229373_a_(Lnet/minecraft/util/math/vector/Vector4f;)F
+	net/minecraft/util/math/vector/Vector4f func_229374_e_()Z
+	net/minecraft/util/math/vector/Vector4f func_229375_f_()V
+	net/minecraft/util/math/vector/Vector4f hashCode()I
+	net/minecraft/util/math/vector/Vector4f toString()Ljava/lang/String;
 net/minecraft/util/text/Style func_240719_a_(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/text/Style; #setFontId
 net/minecraft/util/text/Style func_240723_c_(Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/util/text/Style; #forceFormatting
 # BiomeAmbiance getters, needed for it to be useful during BiomeLoadingEvent to be useful
