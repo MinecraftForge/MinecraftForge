@@ -27,10 +27,8 @@ public class CheckSAS extends DefaultTask {
 					lines.add(line)
 					return
 				}
-
 				def comment = idx == -1 ? null : line.substring(idx)
 				if (idx != -1) line = line.substring(0, idx - 1)
-
 				def (cls, desc) = (line.trim() + '    ').split(' ', -1)
 				cls = cls.replaceAll('\\.', '/')
 				desc = desc.replace('(', ' (')
