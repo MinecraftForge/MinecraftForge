@@ -269,7 +269,7 @@ project(':forge') {
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-				property 'eventbus.checkTypesOnDispatch', 'true'
+                property 'eventbus.checkTypesOnDispatch', 'true'
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
@@ -304,7 +304,7 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
-				property 'eventbus.checkTypesOnDispatch', 'true'
+                property 'eventbus.checkTypesOnDispatch', 'true'
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
