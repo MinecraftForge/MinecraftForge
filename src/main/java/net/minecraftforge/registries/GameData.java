@@ -472,6 +472,8 @@ public class GameData
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<BlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
 
+            // onBake must be re-entrant as it may be called multiple times in a row without onCreate in between
+            blockstateMap.clear();
             for (Block block : owner)
             {
                 for (BlockState state : block.getStateContainer().getValidStates())
