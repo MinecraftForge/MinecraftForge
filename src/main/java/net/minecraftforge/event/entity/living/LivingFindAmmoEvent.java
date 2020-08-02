@@ -1,7 +1,6 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShootableItem;
 
@@ -10,10 +9,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * LivingFindAmmoEvent is fired when a shootable item tries to find ammo on the player.
- * This event is fired whenever a shootable item attempts to find ammo using {@link PlayerEntity#findAmmo(ItemStack)}.<br>
+ * LivingFindAmmoEvent is fired when an attempt is made to find ammo.
+ * This event is fired whenever an attempt is made to find ammo using {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, LivingEntity)}.<br>
  * <br>
- * This event fires after the original vanilla order, aka: Hand -> PlayerInventory -> This event.<br>
+ * This event fires as the first point in the findAmmo method logic after the initial check.
+ * If the event returns with a found ammo, the findAmmo method will return the ammo/consumer pair from the event as the result.
+ * If the event doesn't provide a result, then it defaults to vanilla behaviour.
  * <br>
  * {@link #shootable} contains the {@link net.minecraft.item.ShootableItem} in it's ItemStack form.
  * {@link #ammoPredicate} contains the {@link ShootableItem#getAmmoPredicate()} instance.<br>
@@ -22,7 +23,6 @@ import java.util.function.Predicate;
  * <br>
  * This event does not have a result. {@linkplain net.minecraftforge.eventbus.api.Event.HasResult}<br>
  * <br>
- * This event is fired from {@link LivingEntity#findAmmo(ItemStack)}.<br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  * <br>
  */

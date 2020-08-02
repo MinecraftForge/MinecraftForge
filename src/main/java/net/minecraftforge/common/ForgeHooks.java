@@ -1206,6 +1206,7 @@ public class ForgeHooks
             if (shooter instanceof PlayerEntity)
             {
                 // Vanilla Player behaviour
+                // This behaviour is a mix of code from {@link net.minecraft.item.BowItem#onPlayerStoppedUsing(ItemStack, World, LivingEntity, int)} and {@link net.minecraft.item.CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)}
                 return Pair.of(shooter.findAmmo(stack), stack1 ->
                 {
                     // Check due to how the crossbow consumes ammo
@@ -1218,14 +1219,13 @@ public class ForgeHooks
                     if (stack1.isEmpty()) ((PlayerEntity)shooter).inventory.deleteStack(stack1);
                 });
             }
-            // Vanilla Entity Behaviour
             return Pair.of(shooter.findAmmo(stack), stack1 -> {});
         }
         return Pair.of(ItemStack.EMPTY, stackIn -> {});
     }
 
     /**
-     * This method comprises the logic of {@link CrossbowItem#hasAmmo(LivingEntity, ItemStack)} & {@link CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)}
+     * This method comprises the logic of CrossbowItem#hasAmmo(LivingEntity, ItemStack) & CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)
      * Those two methods are being deprecated in favor of this hook method that in-lines the code.
      * @param pair The provided Pair of Ammo and Ammo Consumer.
      * @param shootable The shootable itemstack.
@@ -1239,7 +1239,7 @@ public class ForgeHooks
         boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).abilities.isCreativeMode;
         ItemStack itemstack = pair.getKey();
         ItemStack stackCopy = itemstack.copy();
-        for(int k = 0; k < j; ++k)
+        for (int k = 0; k < j; ++k)
         {
             if (k > 0)
                 itemstack = stackCopy.copy();
