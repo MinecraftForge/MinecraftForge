@@ -36,6 +36,7 @@ import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -264,11 +265,20 @@ public class ModSorter
         LOGGER.debug(LOADING, "Found {} mod requirements missing ({} mandatory, {} optional)", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing);
 
         if (!missingVersions.isEmpty()) {
+            final Map<String, URL> modURLs = modFiles
+                    .stream()
+                    .map(ModFile::getModInfos)
+                    .flatMap(Collection::stream)
+                    .filter(iModInfo -> iModInfo.getDisplayURL() != null)
+                    .collect(Collectors.toMap(IModInfo::getModId, iModInfo -> iModInfo.getDisplayURL()));
+            
             return missingVersions
                     .stream()
                     .map(mv -> new ExceptionData(mv.isMandatory() ? "fml.modloading.missingdependency" : "fml.modloading.missingdependency.optional",
                             mv.getOwner(), mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
-                            modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null"))))
+                            modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null")),
+                            modURLs.containsKey(mv.getModId()) ? modURLs.get(mv.getModId()).toString() 
+                            : mv.getDisplayURL().toString()))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

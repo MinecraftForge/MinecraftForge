@@ -113,7 +113,7 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
     public static class LoadingEntryList extends ExtendedList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
-            super(parent.minecraft, parent.width, parent.height, 35, parent.height - 50, 2 * parent.minecraft.font.lineHeight + 8);
+            super(parent.minecraft, parent.width, parent.height, 35, parent.height - 50, 3 * parent.minecraft.font.lineHeight + 8);
             boolean both = !errors.isEmpty() && !warnings.isEmpty();
             if (both)
                 addEntry(new LoadingMessageEntry(parent.errorHeader, true));
@@ -156,7 +156,7 @@ public class LoadingErrorScreen extends ErrorScreen {
                 FontRenderer font = Minecraft.getInstance().font;
                 final List<IReorderingProcessor> strings = font.split(message, LoadingEntryList.this.width);
                 int y = top + 2;
-                for (int i = 0; i < Math.min(strings.size(), 2); i++) {
+                for (int i = 0; i < Math.min(strings.size(), 3); i++) {
                     if (center)
                         font.draw(mStack, strings.get(i), left + (width) - font.width(strings.get(i)) / 2F, y, 0xFFFFFF);
                     else

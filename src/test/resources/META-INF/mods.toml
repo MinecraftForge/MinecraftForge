@@ -122,3 +122,23 @@ license="LGPL v2.1"
     modId="enum_argument_test"
 [[mods]]
     modId="entity_teleport_event_test"
+[[mods]]
+    modId="dependency_url_test"
+#    [[dependencies.dependency_url_test]]
+#        modId="dependency_url_test_dependency"
+#        mandatory=true
+#        versionRange="[1,)"
+#        ordering="NONE"
+#        side="BOTH"
+#        displayURL="https://test1.com"
+#    [[dependencies.dependency_url_test]]
+#        modId="outdated_dependency_url_test"
+#        mandatory=true
+#        versionRange="[2,)"
+#        ordering="NONE"
+#        side="BOTH"
+#        displayURL="https://test2.com"
+[[mods]]
+    modId="outdated_dependency_url_test"
+#    version="1"
+#    displayURL="https://test3.com"
