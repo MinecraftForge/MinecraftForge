@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/gen/DebugChunkGenerator.java
 +++ b/net/minecraft/world/gen/DebugChunkGenerator.java
-@@ -101,4 +101,12 @@
+@@ -101,4 +101,10 @@
  
        return blockstate;
     }
 +   
 +   public static void initValidStates() {
-+      field_177464_a = StreamSupport.stream(Registry.field_212618_g.spliterator(), false).flatMap((p_236067_0_) -> {
-+         return p_236067_0_.func_176194_O().func_177619_a().stream();
-+      }).collect(Collectors.toList());
-+      field_177462_b = MathHelper.func_76123_f(MathHelper.func_76129_c((float)field_177464_a.size()));
-+      field_181039_c = MathHelper.func_76123_f((float)field_177464_a.size() / (float)field_177462_b);
++      field_177464_a = StreamSupport.stream(Registry.field_212618_g.spliterator(), false).flatMap(block -> block.func_176194_O().func_177619_a().stream()).collect(Collectors.toList());
++      field_177462_b = MathHelper.func_76123_f(MathHelper.func_76129_c(field_177464_a.size()));
++      field_181039_c = MathHelper.func_76123_f((float) (field_177464_a.size() / field_177462_b));
 +   }
  }
