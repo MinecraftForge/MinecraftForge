@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +55,11 @@ public class FMLConfig
                 autosave().autoreload().
                 writingMode(WritingMode.REPLACE).
                 build();
-        configData.load();
+        try {
+            configData.load();
+        } catch (ParsingException e) {
+            throw new RuntimeException("Failed to load FML config from " + configFile.toString(), e);
+        }
         if (!configSpec.isCorrect(configData)) {
             LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
