@@ -19,7 +19,7 @@
 +   private boolean func_176529_d(IBlockReader p_176529_0_, BlockPos p_176529_1_) {
 +      BlockState plant = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a());
 +      BlockState state = p_176529_0_.func_180495_p(p_176529_1_);
-+      return plant.func_177230_c() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, p_176529_0_, p_176529_1_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.func_177230_c());
++      return plant.func_177230_c() instanceof net.minecraftforge.common.IPlantable && state.canSustainPlant(p_176529_0_, p_176529_1_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.func_177230_c());
     }
  
     private static boolean func_176530_e(IWorldReader p_176530_0_, BlockPos p_176530_1_) {
