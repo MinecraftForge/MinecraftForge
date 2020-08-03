@@ -143,17 +143,18 @@
           i += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           j += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           ++k;
-@@ -584,8 +593,9 @@
+@@ -584,9 +593,10 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
 -               return Registry.field_212629_r.func_177774_c(p_217479_1_.func_200600_R()).toString();
 +               return p_217479_1_.func_200600_R().getRegistryName() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
              });
-+            if (p_217479_1_.canUpdate())
              iprofiler.func_230035_c_("tickNonPassenger");
++            if (p_217479_1_.canUpdate())
              p_217479_1_.func_70071_h_();
              iprofiler.func_76319_b();
+          }
 @@ -652,6 +662,11 @@
     }
  
