@@ -36,7 +36,7 @@
                 return true;
              }
           }
-@@ -589,6 +589,17 @@
+@@ -589,6 +589,22 @@
        }
     }
  
@@ -48,6 +48,11 @@
 +
 +   @Nullable
 +   public Biome getHill(net.minecraft.world.gen.INoiseRandom rand) {
++      return null;
++   }
++
++   @Nullable
++   public Biome getEdge(net.minecraft.world.gen.INoiseRandom rand, Biome northBiome, Biome westBiome, Biome southBiome, Biome eastBiome) {
 +      return null;
 +   }
 +

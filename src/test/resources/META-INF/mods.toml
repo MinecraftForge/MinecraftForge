@@ -78,3 +78,5 @@ license="LGPL v2.1"
     modId="modded_overworld_biomes_test"
 [[mods]]
     modId="tool_interact_test"
+[[mods]]
+    modId="custom_elytra_test"

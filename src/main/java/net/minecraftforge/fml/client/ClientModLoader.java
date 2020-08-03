@@ -56,6 +56,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.BrandingControl;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
@@ -138,7 +139,12 @@ public class ClientModLoader
 
     public static VersionChecker.Status checkForUpdates()
     {
-        return VersionChecker.Status.UP_TO_DATE;
+
+        boolean anyOutdated = ModList.get().getMods().stream()
+                .map(VersionChecker::getResult)
+                .map(result -> result.status)
+                .anyMatch(status -> status == VersionChecker.Status.OUTDATED || status == VersionChecker.Status.BETA_OUTDATED);
+        return anyOutdated ? VersionChecker.Status.OUTDATED : null;
     }
 
     public static boolean completeModLoading()
