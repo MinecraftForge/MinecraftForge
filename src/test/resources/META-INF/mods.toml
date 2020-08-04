@@ -76,6 +76,9 @@ license="LGPL v2.1"
     modId="player_name_event_test"
 [[mods]]
     modId="modded_overworld_biomes_test"
-
+[[mods]]
+    modId="tool_interact_test"
+[[mods]]
+    modId="custom_elytra_test"
 [[mods]]
     modId="living_find_ammo_event_test"

@@ -79,6 +79,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.ShovelItem;
@@ -225,9 +226,12 @@ public class ForgeHooks
         //TODO Axes check Material and Blocks now.
         blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
+        blocks = getPrivateValue(HoeItem.class, null, 0);
+        blocks.forEach(block -> blockToolSetter.accept(block, ToolType.HOE, 0));
 
-        //This is taken from ItemAxe, if that changes update here.
-        blockToolSetter.accept(Blocks.OBSIDIAN, ToolType.PICKAXE, 3);
+        //This is taken from PickaxeItem, if that changes update here.
+        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.field_235399_ni_, Blocks.field_235397_ng_, Blocks.field_235400_nj_, Blocks.field_235398_nh_})
+            blockToolSetter.accept(block, ToolType.PICKAXE, 3);
         for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
             blockToolSetter.accept(block, ToolType.PICKAXE, 2);
         for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
