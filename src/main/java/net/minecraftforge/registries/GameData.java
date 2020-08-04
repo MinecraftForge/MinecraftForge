@@ -56,6 +56,7 @@ import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -472,6 +473,7 @@ public class GameData
 
                 block.getLootTable();
             }
+            DebugChunkGenerator.initValidStates();
         }
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
