@@ -415,6 +415,15 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
+@@ -1519,7 +1636,7 @@
+    public boolean func_226566_ei_() {
+       if (!this.field_70122_E && !this.func_184613_cA() && !this.func_70090_H()) {
+          ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
+-         if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
++         if (itemstack.canElytraFly(this)) {
+             this.func_226567_ej_();
+             return true;
+          }
 @@ -1560,6 +1677,10 @@
     }
  

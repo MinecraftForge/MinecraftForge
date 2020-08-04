@@ -448,4 +448,32 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     {
         return getStack().getItem().isRepairable(getStack());
     }
+
+    /**
+     * Used to determine if the player can use Elytra flight.
+     * This is called Client and Server side.
+     *
+     * @param entity The entity trying to fly.
+     * @return True if the entity can use Elytra flight.
+     */
+    default boolean canElytraFly(LivingEntity entity)
+    {
+        return getStack().getItem().canElytraFly(getStack(), entity);
+    }
+
+    /**
+     * Used to determine if the player can continue Elytra flight,
+     * this is called each tick, and can be used to apply ItemStack damage,
+     * consume Energy, or what have you.
+     * For example the Vanilla implementation of this, applies damage to the
+     * ItemStack every 20 ticks.
+     *
+     * @param entity      The entity currently in Elytra flight.
+     * @param flightTicks The number of ticks the entity has been Elytra flying for.
+     * @return True if the entity should continue Elytra flight or False to stop.
+     */
+    default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
+    {
+        return getStack().getItem().elytraFlightTick(getStack(), entity, flightTicks);
+    }
 }
