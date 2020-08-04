@@ -41,14 +41,15 @@ import net.minecraftforge.common.capabilities.Capability;
  * (map/ifPresent) available, much like {@link Optional}.
  * <p>
  * It also provides the ability to listen for invalidation, via
- * {@link #addListener(Consumer)}. This method is invoked when the provider of
+ * {@link #addListener(NonNullConsumer)}. This method is invoked when the provider of
  * this object calls {@link #invalidate()}.
  * <p>
  * To create an instance of this class, use {@link #of(NonNullSupplier)}. Note
  * that this accepts a {@link NonNullSupplier}, so the result of the supplier
  * must never be null.
  * <p>
- * The empty instance can be retrieved with {@link #empty()}.
+ * The singleton empty instance can be retrieved with {@link #empty()}.
+ * A new empty instance can be created using {@link #newEmpty()}.
  * 
  * @param <T> The type of the optional value.
  */
@@ -78,11 +79,25 @@ public class LazyOptional<T>
     }
 
     /**
+     * Get the singleton empty instance. This instance cannot be invalidated
+     * and as such must only be used when the same query will not return a non-empty value in the future.
+     *
+     * For example: When a TileEntity is queried for a capability that it will never expose, use {@code empty}.
+     * When a TileEntity is queried for a capability that it might expose in the future, use {@link #newEmpty()}.
      * @return The singleton empty instance
      */
     public static <T> LazyOptional<T> empty()
     {
         return EMPTY.cast();
+    }
+
+    /**
+     * Gets a new empty instance. This instance can be invalidated, which means the query should be repeated.
+     * @return a new empty instance.
+     */
+    public static <T> LazyOptional<T> newEmpty()
+    {
+        return new LazyOptional<>(null);
     }
 
     /**
@@ -264,17 +279,13 @@ public class LazyOptional<T>
     /**
      * Register a {@link NonNullConsumer listener} that will be called when this {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
      * <p>
-     * If this {@link LazyOptional} is empty, the listener will be called immediately.
+     * If this {@link LazyOptional} is the singleton empty instance, the listener will never be called.
      */
     public void addListener(NonNullConsumer<LazyOptional<T>> listener)
     {
-        if (isPresent())
+        if (this != EMPTY)
         {
-            this.listeners.add(listener);
-        }
-        else
-        {
-            listener.accept(this);
+            listeners.add(listener);
         }
     }
 
