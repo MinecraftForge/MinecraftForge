@@ -25,25 +25,70 @@
        }
  
        if (this.field_150746_k.eventLoop().inEventLoop()) {
-@@ -255,7 +257,9 @@
+@@ -255,10 +257,17 @@
  
     @OnlyIn(Dist.CLIENT)
     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_) {
-+      if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
++      return createNetworkManagerAndConnect(p_181124_0_, null, p_181124_1_, p_181124_2_, net.minecraft.client.multiplayer.ServerData.TlsMode.DISABLED);
++   }
++
++   @OnlyIn(Dist.CLIENT)
++   public static NetworkManager createNetworkManagerAndConnect(InetAddress address, @Nullable String sniHost, int serverPort, boolean useNativeTransport, net.minecraft.client.multiplayer.ServerData.TlsMode tlsMode) {
++      if (address instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
        final NetworkManager networkmanager = new NetworkManager(PacketDirection.CLIENTBOUND);
 +      networkmanager.activationHandler = net.minecraftforge.fml.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
        LazyValue<? extends EventLoopGroup> lazyvalue;
-       if (Epoll.isAvailable() && p_181124_2_) {
-@@ -282,6 +286,7 @@
+-      if (Epoll.isAvailable() && p_181124_2_) {
++      if (Epoll.isAvailable() && useNativeTransport) {
+          oclass = EpollSocketChannel.class;
+          lazyvalue = field_181125_e;
+       } else {
+@@ -272,16 +281,41 @@
+                p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, true);
+             } catch (ChannelException channelexception) {
+             }
+-
++            if (tlsMode != net.minecraft.client.multiplayer.ServerData.TlsMode.DISABLED) {
++               field_150735_g.info("Enabling SSL support");
++               p_initChannel_1_.pipeline().addLast("ssl", createSslHandler(p_initChannel_1_, tlsMode, sniHost, serverPort));
++            }
+             p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(PacketDirection.CLIENTBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(PacketDirection.SERVERBOUND)).addLast("packet_handler", networkmanager);
+          }
+-      }).channel(oclass).connect(p_181124_0_, p_181124_1_).syncUninterruptibly();
++      }).channel(oclass).connect(address, serverPort).syncUninterruptibly();
+       return networkmanager;
+    }
+ 
     @OnlyIn(Dist.CLIENT)
++   public static io.netty.handler.ssl.SslHandler createSslHandler(Channel channel, net.minecraft.client.multiplayer.ServerData.TlsMode tlsMode, @Nullable String sniHost, int sniPort) {
++      try {
++         io.netty.handler.ssl.SslContextBuilder builder = io.netty.handler.ssl.SslContextBuilder
++                 .forClient();
++
++         if (tlsMode == net.minecraft.client.multiplayer.ServerData.TlsMode.ENABLED_INSECURE) {
++            builder.trustManager(io.netty.handler.ssl.util.InsecureTrustManagerFactory.INSTANCE);
++         }
++
++         if (sniHost != null) {
++            return builder.build().newHandler(channel.alloc(), sniHost, sniPort);
++         } else {
++            return builder.build().newHandler(channel.alloc());
++         }
++      }
++      catch (Exception e) {
++         throw new RuntimeException("Failed to initialize SSL", e);
++      }
++   }
++
++   @OnlyIn(Dist.CLIENT)
     public static NetworkManager func_150722_a(SocketAddress p_150722_0_) {
        final NetworkManager networkmanager = new NetworkManager(PacketDirection.CLIENTBOUND);
 +      networkmanager.activationHandler = net.minecraftforge.fml.network.NetworkHooks::registerClientLoginChannel;
        (new Bootstrap()).group(field_179296_e.func_179281_c()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_initChannel_1_) throws Exception {
              p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
-@@ -373,6 +378,14 @@
+@@ -373,6 +407,14 @@
        return this.field_211397_t;
     }
  

@@ -1,10 +1,80 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -26,6 +26,7 @@
+@@ -26,6 +26,8 @@
     @Nullable
     private String field_147411_m;
     private boolean field_181042_l;
 +   public net.minecraftforge.fml.client.ExtendedServerListData forgeData = null;
++   public TlsMode tlsMode = TlsMode.DISABLED;
  
     public ServerData(String p_i46420_1_, String p_i46420_2_, boolean p_i46420_3_) {
        this.field_78847_a = p_i46420_1_;
+@@ -47,6 +49,8 @@
+          compoundnbt.func_74757_a("acceptTextures", false);
+       }
+ 
++      compoundnbt.func_74778_a("tlsMode", this.tlsMode.name());
++
+       return compoundnbt;
+    }
+ 
+@@ -74,6 +78,14 @@
+          serverdata.func_152584_a(ServerData.ServerResourceMode.PROMPT);
+       }
+ 
++      String tlsMode = p_78837_0_.func_74779_i("tlsMode");
++      if (!tlsMode.isEmpty()) {
++         try {
++            serverdata.tlsMode = TlsMode.valueOf(tlsMode);
++         } catch(Exception e) {
++            serverdata.tlsMode = TlsMode.DISABLED;
++         }
++      }
+       return serverdata;
+    }
+ 
+@@ -90,12 +102,21 @@
+       return this.field_181042_l;
+    }
+ 
++   public void setTlsMode(TlsMode tlsMode) {
++      this.tlsMode = tlsMode;
++   }
++
++   public TlsMode getTlsMode() {
++      return this.tlsMode;
++   }
++
+    public void func_152583_a(ServerData p_152583_1_) {
+       this.field_78845_b = p_152583_1_.field_78845_b;
+       this.field_78847_a = p_152583_1_.field_78847_a;
+       this.func_152584_a(p_152583_1_.func_152586_b());
+       this.field_147411_m = p_152583_1_.field_147411_m;
+       this.field_181042_l = p_152583_1_.field_181042_l;
++      this.tlsMode = p_152583_1_.tlsMode;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -114,4 +135,22 @@
+          return this.field_152594_d;
+       }
+    }
++
++   @OnlyIn(Dist.CLIENT)
++   public static enum TlsMode {
++      DISABLED("disabled"),
++      ENABLED("enabled"),
++      ENABLED_INSECURE("enabledInsecure");
++
++      private final ITextComponent motd;
++
++      private TlsMode(String name) {
++         this.motd = new TranslationTextComponent("addServer.tls." + name);
++      }
++
++      public ITextComponent getMotd() {
++         return this.motd;
++      }
++   }
++
+ }

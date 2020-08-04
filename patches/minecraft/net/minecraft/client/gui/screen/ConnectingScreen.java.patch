@@ -1,0 +1,51 @@
+--- a/net/minecraft/client/gui/screen/ConnectingScreen.java
++++ b/net/minecraft/client/gui/screen/ConnectingScreen.java
+@@ -41,7 +41,7 @@
+       ServerAddress serveraddress = ServerAddress.func_78860_a(p_i1181_3_.field_78845_b);
+       p_i1181_2_.func_213254_o();
+       p_i1181_2_.func_71351_a(p_i1181_3_);
+-      this.func_146367_a(serveraddress.func_78861_a(), serveraddress.func_78864_b());
++      this.connect(serveraddress.func_78861_a(), serveraddress.func_78864_b(), p_i1181_3_.tlsMode);
+    }
+ 
+    public ConnectingScreen(Screen p_i1182_1_, Minecraft p_i1182_2_, String p_i1182_3_, int p_i1182_4_) {
+@@ -49,11 +49,11 @@
+       this.field_230706_i_ = p_i1182_2_;
+       this.field_146374_i = p_i1182_1_;
+       p_i1182_2_.func_213254_o();
+-      this.func_146367_a(p_i1182_3_, p_i1182_4_);
++      this.connect(p_i1182_3_, p_i1182_4_, ServerData.TlsMode.DISABLED);
+    }
+ 
+-   private void func_146367_a(final String p_146367_1_, final int p_146367_2_) {
+-      field_146370_f.info("Connecting to {}, {}", p_146367_1_, p_146367_2_);
++   private void connect(final String ip, final int port, final ServerData.TlsMode tlsMode) {
++      field_146370_f.info("Connecting to {}, {}, tls={}", ip, port, tlsMode);
+       Thread thread = new Thread("Server Connector #" + field_146372_a.incrementAndGet()) {
+          public void run() {
+             InetAddress inetaddress = null;
+@@ -63,12 +63,12 @@
+                   return;
+                }
+ 
+-               inetaddress = InetAddress.getByName(p_146367_1_);
+-               ConnectingScreen.this.field_146371_g = NetworkManager.func_181124_a(inetaddress, p_146367_2_, ConnectingScreen.this.field_230706_i_.field_71474_y.func_181148_f());
++               inetaddress = InetAddress.getByName(ip);
++               ConnectingScreen.this.field_146371_g = NetworkManager.createNetworkManagerAndConnect(inetaddress, ip, port, ConnectingScreen.this.field_230706_i_.field_71474_y.func_181148_f(), tlsMode);
+                ConnectingScreen.this.field_146371_g.func_150719_a(new ClientLoginNetHandler(ConnectingScreen.this.field_146371_g, ConnectingScreen.this.field_230706_i_, ConnectingScreen.this.field_146374_i, (p_209549_1_) -> {
+                   ConnectingScreen.this.func_209514_a(p_209549_1_);
+                }));
+-               ConnectingScreen.this.field_146371_g.func_179290_a(new CHandshakePacket(p_146367_1_, p_146367_2_, ProtocolType.LOGIN));
++               ConnectingScreen.this.field_146371_g.func_179290_a(new CHandshakePacket(ip, port, ProtocolType.LOGIN));
+                ConnectingScreen.this.field_146371_g.func_179290_a(new CLoginStartPacket(ConnectingScreen.this.field_230706_i_.func_110432_I().func_148256_e()));
+             } catch (UnknownHostException unknownhostexception) {
+                if (ConnectingScreen.this.field_146373_h) {
+@@ -85,7 +85,7 @@
+                }
+ 
+                ConnectingScreen.field_146370_f.error("Couldn't connect to server", (Throwable)exception);
+-               String s = inetaddress == null ? exception.toString() : exception.toString().replaceAll(inetaddress + ":" + p_146367_2_, "");
++               String s = inetaddress == null ? exception.toString() : exception.toString().replaceAll(inetaddress + ":" + port, "");
+                ConnectingScreen.this.field_230706_i_.execute(() -> {
+                   ConnectingScreen.this.field_230706_i_.func_147108_a(new DisconnectedScreen(ConnectingScreen.this.field_146374_i, "connect.failed", new TranslationTextComponent("disconnect.genericReason", s)));
+                });

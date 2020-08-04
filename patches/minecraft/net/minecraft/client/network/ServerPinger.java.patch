@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/network/ServerPinger.java
 +++ b/net/minecraft/client/network/ServerPinger.java
+@@ -53,7 +53,7 @@
+ 
+    public void func_147224_a(final ServerData p_147224_1_, final Runnable p_147224_2_) throws UnknownHostException {
+       ServerAddress serveraddress = ServerAddress.func_78860_a(p_147224_1_.field_78845_b);
+-      final NetworkManager networkmanager = NetworkManager.func_181124_a(InetAddress.getByName(serveraddress.func_78861_a()), serveraddress.func_78864_b(), false);
++      final NetworkManager networkmanager = NetworkManager.createNetworkManagerAndConnect(InetAddress.getByName(serveraddress.func_78861_a()), serveraddress.func_78861_a(), serveraddress.func_78864_b(), false, p_147224_1_.tlsMode);
+       this.field_147229_c.add(networkmanager);
+       p_147224_1_.field_78843_d = new TranslationTextComponent("multiplayer.status.pinging");
+       p_147224_1_.field_78844_e = -1L;
 @@ -116,6 +116,7 @@
                    p_147224_2_.run();
                 }

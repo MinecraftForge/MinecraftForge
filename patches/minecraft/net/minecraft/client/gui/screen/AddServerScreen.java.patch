@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/gui/screen/AddServerScreen.java
++++ b/net/minecraft/client/gui/screen/AddServerScreen.java
+@@ -24,6 +24,7 @@
+    private TextFieldWidget field_146308_f;
+    private TextFieldWidget field_146309_g;
+    private Button field_152176_i;
++   private Button buttonTlsMode;
+    private final Screen field_228179_g_;
+    private final Predicate<String> field_181032_r = (p_210141_0_) -> {
+       if (StringUtils.func_151246_b(p_210141_0_)) {
+@@ -72,10 +73,14 @@
+          this.field_146311_h.func_152584_a(ServerData.ServerResourceMode.values()[(this.field_146311_h.func_152586_b().ordinal() + 1) % ServerData.ServerResourceMode.values().length]);
+          this.field_152176_i.func_238482_a_(func_238624_a_(this.field_146311_h.func_152586_b()));
+       }));
+-      this.field_195179_a = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 96 + 18, 200, 20, new TranslationTextComponent("addServer.add"), (p_213030_1_) -> {
++      this.buttonTlsMode = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 96, 200, 20, getForTlsMode(this.field_146311_h.getTlsMode()), (mode) -> {
++         this.field_146311_h.setTlsMode(ServerData.TlsMode.values()[(this.field_146311_h.getTlsMode().ordinal() + 1) % ServerData.TlsMode.values().length]);
++         this.buttonTlsMode.func_238482_a_(getForTlsMode(this.field_146311_h.getTlsMode()));
++      }));
++      this.field_195179_a = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 120, 200, 20, new TranslationTextComponent("addServer.add"), (p_213030_1_) -> {
+          this.func_195172_h();
+       }));
+-      this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 120 + 18, 200, 20, DialogTexts.field_240633_d_, (p_213029_1_) -> {
++      this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 144, 200, 20, DialogTexts.field_240633_d_, (p_213029_1_) -> {
+          this.field_213032_b.accept(false);
+       }));
+       this.func_228180_b_();
+@@ -85,6 +90,10 @@
+       return (new TranslationTextComponent("addServer.resourcePack")).func_240702_b_(": ").func_230529_a_(p_238624_0_.func_152589_a());
+    }
+ 
++   private static ITextComponent getForTlsMode(ServerData.TlsMode tlsMode) {
++      return (new TranslationTextComponent("addServer.tls")).func_240702_b_(": ").func_230529_a_(tlsMode.getMotd());
++   }
++
+    public void func_231152_a_(Minecraft p_231152_1_, int p_231152_2_, int p_231152_3_) {
+       String s = this.field_146308_f.func_146179_b();
+       String s1 = this.field_146309_g.func_146179_b();

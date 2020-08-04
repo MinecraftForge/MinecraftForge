@@ -156,5 +156,10 @@
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
   "attribute.name.generic.reachDistance": "Reach Distance",
-  "attribute.name.forge.swimSpeed": "Swim Speed"
+  "attribute.name.forge.swimSpeed": "Swim Speed",
+
+  "addServer.tls": "TLS",
+  "addServer.tls.disabled": "disabled",
+  "addServer.tls.enabled": "enabled",
+  "addServer.tls.enabledInsecure": "enabled (insecure)"
 }
