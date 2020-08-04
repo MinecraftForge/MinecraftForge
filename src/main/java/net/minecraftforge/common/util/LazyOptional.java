@@ -162,11 +162,11 @@ public class LazyOptional<T>
     }
 
     /**
-     * If non-empty, invoke the specified {@link NonNullConsumer} with the object,
+     * If non-empty and valid, invoke the specified {@link NonNullConsumer} with the object,
      * otherwise do nothing.
      *
-     * @param The {@link NonNullConsumer} to run if this optional is non-empty.
-     * @throws NullPointerException if {@code consumer} is null and this {@link LazyOptional} is non-empty
+     * @param consumer The {@link NonNullConsumer} to run if this optional is non-empty.
+     * @throws NullPointerException if {@code consumer} is null
      */
     public void ifPresent(NonNullConsumer<? super T> consumer)
     {
@@ -279,14 +279,22 @@ public class LazyOptional<T>
     /**
      * Register a {@link NonNullConsumer listener} that will be called when this {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
      * <p>
-     * If this {@link LazyOptional} is the singleton empty instance, the listener will never be called.
+     * If {@link #canBecomeInvalid()} is {@code false}, the listener will never be called.
      */
     public void addListener(NonNullConsumer<LazyOptional<T>> listener)
     {
-        if (this != EMPTY)
+        if (canBecomeInvalid())
         {
             listeners.add(listener);
         }
+    }
+
+    /**
+     * Whether this `LazyOptional` can ever become invalid. This is useful to check if an empty `LazyOptional` might still be invalidated.
+     */
+    public boolean canBecomeInvalid()
+    {
+        return this != EMPTY;
     }
 
     /**
