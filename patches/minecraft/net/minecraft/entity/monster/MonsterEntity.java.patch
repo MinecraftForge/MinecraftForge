@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/monster/MonsterEntity.java
++++ b/net/minecraft/entity/monster/MonsterEntity.java
+@@ -112,6 +112,7 @@
+       return true;
+    }
+ 
++   /**@deprecated Forge: Use the ForgeHook instead! {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, net.minecraft.entity.LivingEntity)} */
+    public ItemStack func_213356_f(ItemStack p_213356_1_) {
+       if (p_213356_1_.func_77973_b() instanceof ShootableItem) {
+          Predicate<ItemStack> predicate = ((ShootableItem)p_213356_1_.func_77973_b()).func_220006_d();

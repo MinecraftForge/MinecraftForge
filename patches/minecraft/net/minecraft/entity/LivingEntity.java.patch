@@ -474,7 +474,15 @@
     }
  
     public boolean func_70094_T() {
-@@ -3062,4 +3120,58 @@
+@@ -3008,6 +3066,7 @@
+       return super.func_213316_a(p_213348_1_, p_213348_2_);
+    }
+ 
++   /**@deprecated Forge: Use the ForgeHook instead! {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, LivingEntity)} */
+    public ItemStack func_213356_f(ItemStack p_213356_1_) {
+       return ItemStack.field_190927_a;
+    }
+@@ -3062,4 +3121,58 @@
     public void func_213334_d(Hand p_213334_1_) {
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

@@ -310,7 +310,15 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1956,4 +2001,45 @@
+@@ -1894,6 +1939,7 @@
+       return ImmutableList.of(Pose.STANDING, Pose.CROUCHING, Pose.SWIMMING);
+    }
+ 
++   /**@deprecated Forge: Use the ForgeHook instead! {@link net.minecraftforge.common.ForgeHooks#findAmmo(ItemStack, LivingEntity)} */
+    public ItemStack func_213356_f(ItemStack p_213356_1_) {
+       if (!(p_213356_1_.func_77973_b() instanceof ShootableItem)) {
+          return ItemStack.field_190927_a;
+@@ -1956,4 +2002,45 @@
           return this.field_221260_g;
        }
     }
