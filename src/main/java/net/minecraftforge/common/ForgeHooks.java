@@ -146,6 +146,8 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
+import net.minecraftforge.items.AmmoHolderHandler;
+import net.minecraftforge.items.CapabilityAmmoHolder;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -1175,35 +1177,42 @@ public class ForgeHooks
      * The ammo chain goes event -> default behaviour replication
      * @param stack The "ShootableItem" stack.
      * @param shooter The LivingEntity shooter
-     * @return returns the found ammo stack and the ammo consumer as a {@link org.apache.commons.lang3.tuple.Pair} object
      */
-    public static Pair<ItemStack, Consumer<ItemStack>> findAmmo(ItemStack stack, LivingEntity shooter)
+    public static void findAmmo(ItemStack stack, PlayerEntity shooter)
     {
         if (stack.getItem() instanceof ShootableItem)
         {
             ShootableItem shootable = (ShootableItem) stack.getItem();
             Pair<ItemStack, Consumer<ItemStack>> findAndConsume = ForgeEventFactory.onFindAmmo(shooter, stack, shootable.getAmmoPredicate());
             if (!findAndConsume.getLeft().isEmpty())
-                return findAndConsume;
-            if (shooter instanceof PlayerEntity)
+            {
+                stack.getCapability(CapabilityAmmoHolder.AMMO_HOLDER_CAPABILITY).ifPresent(iAmmoHolder -> {
+                    iAmmoHolder.setAmmoConsumerPair(findAndConsume.getKey(), findAndConsume.getValue());
+                });
+                return;
+            }
+
+            if (shooter != null)
             {
                 // Vanilla Player behaviour
                 // This behaviour is a mix of code from {@link net.minecraft.item.BowItem#onPlayerStoppedUsing(ItemStack, World, LivingEntity, int)} and {@link net.minecraft.item.CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)}
-                return Pair.of(shooter.findAmmo(stack), stack1 ->
-                {
-                    // Check due to how the crossbow consumes ammo
-                    if (stack1.isEmpty())
+                stack.getCapability(CapabilityAmmoHolder.AMMO_HOLDER_CAPABILITY).ifPresent(iAmmoHolder -> {
+                    iAmmoHolder.setAmmoConsumerPair(shooter.findAmmo(stack),  stack1 ->
                     {
-                        ((PlayerEntity)shooter).inventory.deleteStack(stack1);
-                        return;
-                    }
-                    stack1.shrink(1);
-                    if (stack1.isEmpty()) ((PlayerEntity)shooter).inventory.deleteStack(stack1);
+                        // Check due to how the crossbow consumes ammo
+                        if (stack1.isEmpty())
+                        {
+                            shooter.inventory.deleteStack(stack1);
+                            return;
+                        }
+                        stack1.shrink(1);
+                        if (stack1.isEmpty()) shooter.inventory.deleteStack(stack1);
+                    });
                 });
+                return;
             }
-            return Pair.of(shooter.findAmmo(stack), stack1 -> {});
         }
-        return Pair.of(ItemStack.EMPTY, stackIn -> {});
+        stack.getCapability(CapabilityAmmoHolder.AMMO_HOLDER_CAPABILITY).ifPresent(iAmmoHolder -> iAmmoHolder.setAmmoConsumerPair(ItemStack.EMPTY, stackIn -> {}));
     }
 
     /**
@@ -1214,11 +1223,11 @@ public class ForgeHooks
      * @param shooter The shooter.
      * @return returns a boolean if it succeeds in charging the crossbow.
      */
-    public static boolean handleCrossbowCharging(Pair<ItemStack, Consumer<ItemStack>> pair, ItemStack shootable, LivingEntity shooter)
+    public static boolean handleCrossbowCharging(Pair<ItemStack, Consumer<ItemStack>> pair, ItemStack shootable, PlayerEntity shooter)
     {
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.MULTISHOT, shootable);
         int j = i == 0 ? 1 : 3;
-        boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).abilities.isCreativeMode;
+        boolean isCreative = shooter != null && shooter.abilities.isCreativeMode;
         ItemStack itemstack = pair.getKey();
         ItemStack stackCopy = itemstack.copy();
         for (int k = 0; k < j; ++k)
