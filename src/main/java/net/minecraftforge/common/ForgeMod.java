@@ -32,6 +32,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.items.CapabilityAmmoHolder;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
@@ -127,6 +128,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
+        CapabilityAmmoHolder.register();
 
         VersionChecker.startVersionCheck();
 
