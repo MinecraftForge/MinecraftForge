@@ -19,7 +19,7 @@
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-@@ -109,7 +112,10 @@
+@@ -109,14 +112,18 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -30,8 +30,9 @@
 +      this.capNBT = capNBT;
        this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
        this.field_77994_a = p_i48204_2_;
-       if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
-@@ -117,6 +123,7 @@
+-      if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
++      if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
+          this.func_196085_b(this.func_77952_i());
        }
  
        this.func_190923_F();
@@ -48,7 +49,13 @@
        this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
        this.field_77994_a = p_i47263_1_.func_74771_c("Count");
        if (p_i47263_1_.func_150297_b("tag", 10)) {
-@@ -137,6 +146,7 @@
+@@ -132,11 +141,12 @@
+          this.func_77973_b().func_179215_a(p_i47263_1_);
+       }
+ 
+-      if (this.func_77973_b().func_77645_m()) {
++      if (this.func_77973_b().isDamageable(this)) {
+          this.func_196085_b(this.func_77952_i());
        }
  
        this.func_190923_F();
@@ -118,7 +125,7 @@
  
     public boolean func_77984_f() {
 -      if (!this.field_190928_g && this.func_77973_b().func_77612_l() > 0) {
-+      if (!this.field_190928_g && this.func_77973_b().func_77645_m()) {
++      if (!this.field_190928_g && this.func_77973_b().isDamageable(this)) {
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
@@ -189,6 +196,15 @@
 +         return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
        }
     }
+ 
+@@ -479,7 +502,7 @@
+ 
+    public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
+       this.field_77990_d = p_77982_1_;
+-      if (this.func_77973_b().func_77645_m()) {
++      if (this.func_77973_b().isDamageable(this)) {
+          this.func_196085_b(this.func_77952_i());
+       }
  
 @@ -673,6 +696,7 @@
           }
