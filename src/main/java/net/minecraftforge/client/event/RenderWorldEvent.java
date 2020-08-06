@@ -175,6 +175,17 @@ public abstract class RenderWorldEvent extends net.minecraftforge.eventbus.api.E
     }
 
     /**
+     * Event fired before finishing the source buffer.
+     */
+    public static class RenderWorldEndEvent extends InnerRenderWorldEvent
+    {
+        public RenderWorldEndEvent(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippingHelper, ActiveRenderInfo activeRenderInfo, RenderTypeBuffers renderTypeBuffers)
+        {
+            super(context, mStack, partialTicks, clippingHelper, activeRenderInfo, renderTypeBuffers);
+        }
+    }
+
+    /**
      * Event fired before weather and clouds are rendered.
      */
     public static class RenderWorldPreWeatherEvent extends InnerRenderWorldEvent

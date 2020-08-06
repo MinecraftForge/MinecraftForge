@@ -159,6 +159,11 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldTileEntitiesEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
     }
 
+    public static void dispatchRenderWorldEnd(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldEndEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+    }
+
     public static void dispatchRenderWorldPreWeather(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldPreWeatherEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
