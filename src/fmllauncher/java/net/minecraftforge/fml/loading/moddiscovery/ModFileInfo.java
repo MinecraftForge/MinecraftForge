@@ -75,8 +75,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
             .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
          */
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
-        this.properties = config.<UnmodifiableConfig>getConfigElement("properties").
-                map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
+        this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
