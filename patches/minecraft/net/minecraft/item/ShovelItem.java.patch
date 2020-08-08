@@ -9,12 +9,25 @@
     }
  
     public boolean func_150897_b(BlockState p_150897_1_) {
-@@ -39,7 +39,7 @@
+@@ -37,9 +37,9 @@
+          return ActionResultType.PASS;
+       } else {
           PlayerEntity playerentity = p_195939_1_.func_195999_j();
-          BlockState blockstate1 = field_195955_e.get(blockstate.func_177230_c());
+-         BlockState blockstate1 = field_195955_e.get(blockstate.func_177230_c());
++         BlockState blockstate1 = blockstate.getToolModifiedState(world, blockpos, playerentity, p_195939_1_.func_195996_i(), net.minecraftforge.common.ToolType.SHOVEL);
           BlockState blockstate2 = null;
 -         if (blockstate1 != null && world.func_180495_p(blockpos.func_177984_a()).func_196958_f()) {
 +         if (blockstate1 != null && world.func_175623_d(blockpos.func_177984_a())) {
              world.func_184133_a(playerentity, blockpos, SoundEvents.field_187771_eN, SoundCategory.BLOCKS, 1.0F, 1.0F);
              blockstate2 = blockstate1;
           } else if (blockstate.func_177230_c() instanceof CampfireBlock && blockstate.func_177229_b(CampfireBlock.field_220101_b)) {
+@@ -67,4 +67,9 @@
+          }
+       }
+    }
++
++   @javax.annotation.Nullable
++   public static BlockState getShovelPathingState(BlockState originalState) {
++      return field_195955_e.get(originalState.func_177230_c());
++   }
+ }

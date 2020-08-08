@@ -36,6 +36,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -449,6 +450,70 @@ public class BlockEvent extends Event
         public NetherPortalBlock.Size getPortalSize()
         {
             return size;
+        }
+    }
+    
+    /**
+     * Fired when when this block is right clicked by a tool to change its state.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * 
+     * This event is {@link Cancelable}. If canceled, this will prevent the tool
+     * from changing the block's state.
+     */
+    @Cancelable
+    public static class BlockToolInteractEvent extends BlockEvent
+    {
+
+        private final PlayerEntity player;
+        private final ItemStack stack;
+        private final ToolType toolType;
+        private BlockState state;
+
+        public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
+        {
+            super(world, pos, originalState);
+            this.player = player;
+            this.stack = stack;
+            this.state = originalState;
+            this.toolType = toolType;
+        }
+
+        /**Gets the player using the tool.*/
+        public PlayerEntity getPlayer()
+        {
+            return player;
+        }
+
+        /**Gets the tool being used.*/
+        public ItemStack getHeldItemStack()
+        {
+            return stack;
+	    }
+
+        /**Gets the current type of the tool being compared against.*/
+        public ToolType getToolType()
+        {
+            return toolType;
+        }
+
+        /**
+         * Sets the transformed state after tool use.
+         * If not set, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public void setFinalState(BlockState finalState)
+        {
+            this.state = finalState;
+        }
+
+        /**
+         * Gets the transformed state after tool use.
+         * If setFinalState not called, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public BlockState getFinalState()
+        {
+            return state;
         }
     }
 }
