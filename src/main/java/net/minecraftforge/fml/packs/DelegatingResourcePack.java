@@ -119,9 +119,7 @@ public class DelegatingResourcePack extends ResourcePack
     @Override
     public Set<String> getResourceNamespaces(ResourcePackType type)
     {
-        return delegates.stream()
-                .flatMap(r -> r.getResourceNamespaces(type).stream())
-                .collect(Collectors.toSet());
+        return type == ResourcePackType.CLIENT_RESOURCES ? namespacesAssets.keySet() : namespacesData.keySet();
     }
 
     @Override
