@@ -281,9 +281,15 @@ public class BlockEvent extends Event
     @HasResult
     public static class CreateFluidSourceEvent extends BlockEvent
     {
+        @Deprecated
+        public CreateFluidSourceEvent(World world, BlockPos pos, BlockState state)
+        {
+            super(world, pos, state);
+        }
+
         public CreateFluidSourceEvent(IWorldReader world, BlockPos pos, BlockState state)
         {
-            super((IWorld) world, pos, state);
+            super(world instanceof IWorld ? (IWorld) world : null, pos, state);
         }
     }
 
