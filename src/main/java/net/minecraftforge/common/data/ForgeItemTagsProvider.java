@@ -53,6 +53,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         super.registerTags();
         filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toSet());
 
+        func_240522_a_(Tags.Items.ARROWS).func_240534_a_(Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW);
         func_240522_a_(Tags.Items.BONES).func_240534_a_(Items.BONE);
         func_240522_a_(Tags.Items.BOOKSHELVES).func_240534_a_(Items.BOOKSHELF);
         func_240521_a_(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
@@ -101,6 +102,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         func_240522_a_(Tags.Items.INGOTS_NETHER_BRICK).func_240534_a_(Items.NETHER_BRICK);
         func_240522_a_(Tags.Items.LEATHER).func_240534_a_(Items.LEATHER);
         func_240522_a_(Tags.Items.MUSHROOMS).func_240534_a_(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
+        func_240522_a_(Tags.Items.MUSIC_DISCS).func_240534_a_(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP, Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD, Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT);
         func_240522_a_(Tags.Items.NETHER_STARS).func_240534_a_(Items.NETHER_STAR);
         func_240521_a_(Tags.Blocks.NETHERRACK, Tags.Items.NETHERRACK);
         func_240522_a_(Tags.Items.NUGGETS).addTags(Tags.Items.NUGGETS_IRON, Tags.Items.NUGGETS_GOLD);

@@ -145,6 +145,8 @@ public class Tags
     {
         private static void init(){}
 
+        @Deprecated //Use vanilla tag instead TODO remove in 1.16.2.
+        public static final ITag.INamedTag<Item> ARROWS = tag("arrows");
         public static final ITag.INamedTag<Item> BONES = tag("bones");
         public static final ITag.INamedTag<Item> BOOKSHELVES = tag("bookshelves");
         public static final ITag.INamedTag<Item> CHESTS = tag("chests");
@@ -246,6 +248,8 @@ public class Tags
         public static final ITag.INamedTag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
         public static final ITag.INamedTag<Item> LEATHER = tag("leather");
         public static final ITag.INamedTag<Item> MUSHROOMS = tag("mushrooms");
+        @Deprecated //Use vanilla instead. Vanilla equivalent is creeper_drop_music_discs TODO remove in 1.16.2
+        public static final ITag.INamedTag<Item> MUSIC_DISCS = tag("music_discs");
         public static final ITag.INamedTag<Item> NETHER_STARS = tag("nether_stars");
         public static final ITag.INamedTag<Item> NETHERRACK = tag("netherrack");
         public static final ITag.INamedTag<Item> NUGGETS = tag("nuggets");
