@@ -36,6 +36,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -76,18 +77,23 @@ public class ModelLoaderRegistry
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
     }
 
-    public static void initComplete()
+    /**
+     * INTERNAL METHOD, DO NOT CALL
+     */
+    public static void onModelLoadingStart()
     {
+        net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ModelRegistryEvent());
         registryFrozen = true;
     }
 
     /**
      * Makes system aware of your loader.
+     * <b>Must be called from within {@link ModelRegistryEvent}</b>
      */
     public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
         if (registryFrozen)
-            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use FMLClientSetupEvent or ModelRegistryEvent to register your loaders.");
+            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use ModelRegistryEvent to register your loaders.");
 
         synchronized(loaders)
         {

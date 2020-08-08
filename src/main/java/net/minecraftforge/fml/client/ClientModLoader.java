@@ -48,7 +48,6 @@ import net.minecraft.resources.data.PackMetadataSection;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
@@ -122,11 +121,9 @@ public class ClientModLoader
 
     private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
         RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
-        ModelLoaderRegistry.initComplete();
     }
 
     private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
-        perModContainerEventProcessor.accept(ModelRegistryEvent::new);
     }
 
     private static void finishModLoading(Executor executor)
