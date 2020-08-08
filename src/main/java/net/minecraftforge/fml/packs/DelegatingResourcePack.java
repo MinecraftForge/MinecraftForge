@@ -39,7 +39,7 @@ import net.minecraft.util.ResourceLocation;
 public class DelegatingResourcePack extends ResourcePack
 {
 
-    // TODO: 1.17 remove volatile, make final
+    // TODO: 1.16.2 remove volatile, make final
     private volatile List<IResourcePack> delegates;
     private volatile Map<String, List<IResourcePack>> namespacesAssets;
     private volatile Map<String, List<IResourcePack>> namespacesData;
@@ -82,7 +82,7 @@ public class DelegatingResourcePack extends ResourcePack
         return ImmutableMap.copyOf(map);
     }
 
-    @Deprecated // remove in 1.17
+    @Deprecated // remove in 1.16.2
     public void addDelegate(DelegatableResourcePack pack)
     {
         synchronized (this) // still need to synchronize to prevent issues on concurrent calls to addDelegate

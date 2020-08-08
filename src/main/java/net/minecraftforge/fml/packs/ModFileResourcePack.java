@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
-// TODO: 1.17 just extend ResourcePack
+// TODO: 1.16.2 just extend ResourcePack
 public class ModFileResourcePack extends DelegatableResourcePack
 {
     private final ModFile modFile;
@@ -60,7 +60,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
         return modFile.getFileName();
     }
 
-    @Deprecated // reduce visibility in 1.17
+    @Deprecated // reduce visibility in 1.16.2
     @Override
     public InputStream getInputStream(String name) throws IOException
     {
@@ -68,7 +68,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
-    @Deprecated // reduce visibility in 1.17
+    @Deprecated // reduce visibility in 1.16.2
     @Override
     public boolean resourceExists(String name)
     {
