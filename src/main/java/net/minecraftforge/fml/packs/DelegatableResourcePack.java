@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import net.minecraft.resources.ResourcePack;
 
+@Deprecated // remove in 1.17
 public abstract class DelegatableResourcePack extends ResourcePack
 {
     protected DelegatableResourcePack(File resourcePackFileIn)

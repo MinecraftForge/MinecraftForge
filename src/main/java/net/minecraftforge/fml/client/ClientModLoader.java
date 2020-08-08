@@ -65,7 +65,6 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.screen.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.packs.DelegatableResourcePack;
 import net.minecraftforge.fml.packs.DelegatingResourcePack;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
@@ -192,7 +191,7 @@ public class ClientModLoader
     }
 
     private static <T extends ResourcePackInfo> void clientPackFinder(Map<ModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, ? super T> packSetter, Consumer<T> consumer, ResourcePackInfo.IFactory<? extends T> factory) {
-        List<DelegatableResourcePack> hiddenPacks = new ArrayList<>();
+        List<ModFileResourcePack> hiddenPacks = new ArrayList<>();
         for (Entry<ModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
