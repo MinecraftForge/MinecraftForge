@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber()
 public class FiniteWaterTest
 {
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     @SubscribeEvent
     public static void handleFiniteWaterSource(BlockEvent.CreateFluidSourceEvent event)

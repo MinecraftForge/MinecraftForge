@@ -672,7 +672,7 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
-    public static boolean canCreateFluidSource(IWorldReader world, BlockPos pos, BlockState state, boolean def)
+    public static boolean canCreateFluidSource(IWorld world, BlockPos pos, BlockState state, boolean def)
     {
         CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
         MinecraftForge.EVENT_BUS.post(evt);
