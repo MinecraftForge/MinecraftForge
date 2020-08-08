@@ -38,6 +38,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class DelegatingResourcePack extends ResourcePack
 {
+
+    // TODO: 1.17 remove volatile, make final
     private volatile List<IResourcePack> delegates;
     private volatile Map<String, List<IResourcePack>> namespacesAssets;
     private volatile Map<String, List<IResourcePack>> namespacesData;
