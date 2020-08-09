@@ -883,22 +883,26 @@ project(':forge') {
                     cls = cls.replaceAll('\\.', '/')
                     desc = desc.replace('(', ' (')
 
+
+                    if (json[cls] == null || (!desc.isEmpty() && (json[cls]['methods'] == null || json[cls]['methods'][desc] == null))) {
+                        println('Invalid: ' + line)
+                        return
+                    }
+
                     //Class SAS
-                    if(desc.isEmpty()) {
+                    if (desc.isEmpty()) {
                         lines.add(cls + (comment == null ? '' : ' ' + comment))
+                        if (json[cls]['methods'] != null) {
+                            json[cls]['methods'].each {
+                                findChildMethods(json, cls, it.key).each { lines.add('\t' + it) }
+                            }
+                        }
                         return
                     }
 
                     //Method SAS
-                    if (json[cls] == null || json[cls]['methods'] == null || json[cls]['methods'][desc] == null) {
-                        println('Invalid: ' + line)
-                        return
-                    }
-                    def mtd = json[cls]['methods'][desc]
                     lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
-                    def children = json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
-                    .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
-                    children.each { lines.add('\t' + it) }
+                    findChildMethods(json, cls, desc).each { lines.add('\t' + it) }
                 }
                 f.text = lines.join('\n')
             }
@@ -1544,6 +1548,11 @@ def getClasspath(project, libs, artifact) {
             ret.add(lib.name)
     }
     return ret
+}
+
+def findChildMethods(json, cls, desc) {
+    return json.values().findAll { it['methods'] != null && it['methods'][desc] != null && it['methods'][desc].override == cls }
+    .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
 }
 
 //evaluationDependsOnChildren()
