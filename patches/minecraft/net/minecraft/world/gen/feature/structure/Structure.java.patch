@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Structure<C extends IFeatureConfig> {
-+public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> {
++public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> implements net.minecraftforge.common.extensions.IForgeStructure {
     public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
     private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
     private static final Logger field_208204_b = LogManager.getLogger();

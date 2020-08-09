@@ -35,6 +35,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -93,6 +95,8 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -110,6 +114,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraftforge.common.extensions.IForgeStructure;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -1251,4 +1256,11 @@ public class ForgeHooks
         modpacks.add("vanilla");
         return modpacks;
     }
+
+    public static Map<Structure<?>, StructureSeparationSettings> getAllStructureSeparationSettings()
+    {
+        return ForgeRegistries.STRUCTURE_FEATURES.getValues().stream()
+                .collect(Collectors.toMap(Function.identity(), IForgeStructure::getSeparationSettings));
+    }
+
 }

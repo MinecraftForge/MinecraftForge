@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/settings/DimensionStructuresSettings.java
++++ b/net/minecraft/world/gen/settings/DimensionStructuresSettings.java
+@@ -18,6 +18,7 @@
+          return p_236196_0_.field_236193_d_;
+       })).apply(p_236198_0_, DimensionStructuresSettings::new);
+    });
++   @Deprecated // Use IForgeStructure.getSeparationSettings, ForgeHooks.getAllStructureSeparationSettings
+    public static final ImmutableMap<Structure<?>, StructureSeparationSettings> field_236191_b_ = ImmutableMap.<Structure<?>, StructureSeparationSettings>builder().put(Structure.field_236381_q_, new StructureSeparationSettings(32, 8, 10387312)).put(Structure.field_236370_f_, new StructureSeparationSettings(32, 8, 14357617)).put(Structure.field_236371_g_, new StructureSeparationSettings(32, 8, 14357618)).put(Structure.field_236369_e_, new StructureSeparationSettings(32, 8, 14357619)).put(Structure.field_236374_j_, new StructureSeparationSettings(32, 8, 14357620)).put(Structure.field_236366_b_, new StructureSeparationSettings(32, 8, 165745296)).put(Structure.field_236375_k_, new StructureSeparationSettings(1, 0, 0)).put(Structure.field_236376_l_, new StructureSeparationSettings(32, 5, 10387313)).put(Structure.field_236379_o_, new StructureSeparationSettings(20, 11, 10387313)).put(Structure.field_236368_d_, new StructureSeparationSettings(80, 20, 10387319)).put(Structure.field_236380_p_, new StructureSeparationSettings(1, 0, 0)).put(Structure.field_236367_c_, new StructureSeparationSettings(1, 0, 0)).put(Structure.field_236372_h_, new StructureSeparationSettings(40, 15, 34222645)).put(Structure.field_236373_i_, new StructureSeparationSettings(24, 4, 165745295)).put(Structure.field_236377_m_, new StructureSeparationSettings(20, 8, 14357621)).put(Structure.field_236383_s_, new StructureSeparationSettings(27, 4, 30084232)).put(Structure.field_236378_n_, new StructureSeparationSettings(27, 4, 30084232)).put(Structure.field_236382_r_, new StructureSeparationSettings(2, 1, 14357921)).build();
+    public static final StructureSpreadSettings field_236192_c_;
+    private final Map<Structure<?>, StructureSeparationSettings> field_236193_d_;

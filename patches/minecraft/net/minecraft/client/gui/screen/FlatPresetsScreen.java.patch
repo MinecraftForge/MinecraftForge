@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/FlatPresetsScreen.java
++++ b/net/minecraft/client/gui/screen/FlatPresetsScreen.java
+@@ -223,7 +223,7 @@
+       Map<Structure<?>, StructureSeparationSettings> map = Maps.newHashMap();
+ 
+       for(Structure<?> structure : p_238640_3_) {
+-         map.put(structure, DimensionStructuresSettings.field_236191_b_.get(structure));
++         map.put(structure, structure.getSeparationSettings());
+       }
+ 
+       DimensionStructuresSettings dimensionstructuressettings = new DimensionStructuresSettings(p_238640_4_ ? Optional.of(DimensionStructuresSettings.field_236192_c_) : Optional.empty(), map);
