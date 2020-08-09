@@ -152,6 +152,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -1260,7 +1261,9 @@ public class ForgeHooks
     public static Map<Structure<?>, StructureSeparationSettings> getAllStructureSeparationSettings()
     {
         return ForgeRegistries.STRUCTURE_FEATURES.getValues().stream()
-                .collect(Collectors.toMap(Function.identity(), IForgeStructure::getSeparationSettings));
+                .map(structure -> Pair.of(structure, structure.getSeparationSettings()))
+                .filter(pair -> pair.getRight() != null)
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
 }
