@@ -522,7 +522,7 @@ project(':forge') {
 	
     task checkExcs(type: CheckExcs, dependsOn: jar) {
         binary = jar.archivePath
-		excs = patcher.excs
+        excs = patcher.excs
     }
 	
 	task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
