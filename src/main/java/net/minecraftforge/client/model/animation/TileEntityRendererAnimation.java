@@ -66,7 +66,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         }
         if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
-        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos)
+        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCacheOptional(te.getWorld(), pos)
             .map(IBlockDisplayReader.class::cast).orElseGet(() -> te.getWorld());
         BlockState state = world.getBlockState(pos);
         IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
