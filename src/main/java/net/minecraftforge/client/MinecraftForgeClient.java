@@ -119,7 +119,12 @@ public class MinecraftForgeClient
             regionCache.put(Pair.of(world, position), Optional.ofNullable(cache));
     }
 
-    public static Optional<ChunkRenderCache> getRegionRenderCache(World world, BlockPos pos)
+    public static ChunkRenderCache getRegionRenderCache(World world, BlockPos pos)
+    {
+        return getRegionRenderCacheOptional(world, pos).orElse(null);
+    }
+
+    public static Optional<ChunkRenderCache> getRegionRenderCacheOptional(World world, BlockPos pos)
     {
         int x = pos.getX() & ~0xF;
         int y = pos.getY() & ~0xF;
