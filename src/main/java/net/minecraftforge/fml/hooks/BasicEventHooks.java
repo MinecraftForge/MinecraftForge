@@ -25,6 +25,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -118,5 +119,15 @@ public class BasicEventHooks
     public static void onPostServerTick()
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
+    }
+
+    public static void onPreEnvironmentTick(World world, Chunk chunk, int randomTickSpeed)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, world, chunk, randomTickSpeed));
+    }
+    
+    public static void onPostEnvironmentTick(World world, Chunk chunk, int randomTickSpeed)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, world, chunk, randomTickSpeed));
     }
 }
