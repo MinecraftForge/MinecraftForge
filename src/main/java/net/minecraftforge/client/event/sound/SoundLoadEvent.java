@@ -25,10 +25,7 @@ import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 /**
  * Raised by the SoundManager.loadSoundSettings, this would be a good place for
  * adding your custom sounds to the SoundPool.
- * 
- * TODO: 1.16.2 Remove
  */
-@Deprecated
 public class SoundLoadEvent extends SoundEvent implements IModBusEvent
 {
     public SoundLoadEvent(SoundEngine manager)
