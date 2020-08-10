@@ -41,6 +41,7 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
     {
         private final ISound sound;
         private final SoundSource source;
+        @Deprecated
         private final String name;
 
         public SoundSourceEvent(SoundEngine manager, ISound sound, SoundSource source)
@@ -61,6 +62,8 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
             return source;
         }
 
+        //TODO: 1.16.2 Remove
+        @Deprecated
         public String getName()
         {
             return name;

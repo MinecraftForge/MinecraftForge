@@ -30,6 +30,7 @@ import net.minecraft.client.audio.SoundEngine;
  */
 public class PlaySoundEvent extends SoundEvent
 {
+    @Deprecated
     private final String name;
     private final ISound sound;
     private ISound result;
@@ -42,6 +43,8 @@ public class PlaySoundEvent extends SoundEvent
         this.setResultSound(sound);
     }
 
+    //TODO: 1.16.2 Remove
+    @Deprecated
     public String getName()
     {
         return name;
