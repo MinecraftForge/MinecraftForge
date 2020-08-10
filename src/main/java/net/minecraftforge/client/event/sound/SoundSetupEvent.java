@@ -24,7 +24,10 @@ import net.minecraft.client.audio.SoundEngine;
 /**
  * This event is raised by the SoundManager when it does its first setup of the
  * SoundSystemConfig's codecs, use this function to add your own codecs.
+ * 
+ * TODO: 1.16.2 Remove
  */
+@Deprecated
 public class SoundSetupEvent extends SoundEvent
 {
     public SoundSetupEvent(SoundEngine manager)
