@@ -13,7 +13,7 @@
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
        RailShape railshape = p_220053_1_.func_203425_a(this) ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
-+      RailShape railShape2 = p_220053_1_.func_177230_c() == this ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
++      RailShape railShape2 = p_220053_1_.func_203425_a(this) ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
  
