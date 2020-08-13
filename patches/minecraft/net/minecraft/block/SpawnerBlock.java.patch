@@ -2,7 +2,7 @@
 +++ b/net/minecraft/block/SpawnerBlock.java
 @@ -18,10 +18,13 @@
  
-    public void func_220062_a(BlockState p_220062_1_, World p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
+    public void func_220062_a(BlockState p_220062_1_, ServerWorld p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
        super.func_220062_a(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);
 -      int i = 15 + p_220062_2_.field_73012_v.nextInt(15) + p_220062_2_.field_73012_v.nextInt(15);
 -      this.func_180637_b(p_220062_2_, p_220062_3_, i);

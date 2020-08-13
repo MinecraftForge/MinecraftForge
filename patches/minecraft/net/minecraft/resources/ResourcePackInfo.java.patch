@@ -9,7 +9,7 @@
  
     @Nullable
 @@ -53,7 +54,12 @@
-       return (T)null;
+       return null;
     }
  
 +   @Deprecated

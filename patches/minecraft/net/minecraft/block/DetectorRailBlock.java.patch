@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DetectorRailBlock.java
 +++ b/net/minecraft/block/DetectorRailBlock.java
-@@ -129,6 +129,8 @@
+@@ -131,6 +131,8 @@
           }
  
           List<AbstractMinecartEntity> list1 = this.func_200878_a(p_180641_2_, p_180641_3_, AbstractMinecartEntity.class, EntityPredicates.field_96566_b);

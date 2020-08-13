@@ -195,12 +195,13 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos Block position in world
+     * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
-        return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, sleeper);
+        return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, orientation, sleeper);
     }
 
     /**
@@ -428,7 +429,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return True, to support being part of a nether portal frame, false otherwise.
      */
-    default boolean isPortalFrame(IWorldReader world, BlockPos pos)
+    default boolean isPortalFrame(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isPortalFrame(getBlockState(), world, pos);
     }
@@ -778,7 +779,7 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
     }
-    
+
     /**
      * Returns the state that this block should transform into when right clicked by a tool.
      * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
