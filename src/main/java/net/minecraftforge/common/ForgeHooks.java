@@ -1072,6 +1072,7 @@ public class ForgeHooks
 
     public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
+        //TODO 1.17 remove parsing the forge added "optional" array. Still here for compatibility with previously created tags.
         if (json.has("optional"))
         {
             for (JsonElement entry : JSONUtils.getJsonArray(json, "optional"))

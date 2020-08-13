@@ -2,10 +2,14 @@
   "replace": false,
   "values": [
     "minecraft:diamond_block",
-    "#minecraft:stone_bricks"
-  ],
-  "optional": [
-    "chisel:marble/raw",
-    "#forge:storage_blocks/ruby"
+    "#minecraft:stone_bricks",
+    {
+      "id": "chisel:marble/test1",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/test2",
+      "required": false
+    }
   ]
 }

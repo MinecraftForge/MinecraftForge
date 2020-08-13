@@ -22,12 +22,14 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -179,6 +181,7 @@ public class DataGeneratorTest
 
     public static class Tags extends BlockTagsProvider
     {
+        private Set<ResourceLocation> filter;
 
         public Tags(DataGenerator gen)
         {
@@ -188,6 +191,9 @@ public class DataGeneratorTest
         @Override
         protected void registerTags()
         {
+            super.registerTags();
+            filter = new HashSet<>(this.tagToBuilder.keySet()); // will copy all vanilla tags.
+
             func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .func_240532_a_(Blocks.DIAMOND_BLOCK)
                 .func_240531_a_(BlockTags.STONE_BRICKS)
@@ -206,6 +212,12 @@ public class DataGeneratorTest
                     .func_240532_a_(Blocks.COBBLESTONE)
                     .func_240532_a_(Blocks.DIORITE)
                     .func_240532_a_(Blocks.ANDESITE);
+        }
+
+        @Override
+        protected Path makePath(ResourceLocation id)
+        {
+            return filter != null && filter.contains(id) ? null : super.makePath(id); //To escape saving vanilla tags, but still register them.
         }
     }
 
