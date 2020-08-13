@@ -283,7 +283,7 @@ public class ForgeIngameGui extends IngameGui
 
         ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
 
-        if (this.mc.gameSettings.thirdPersonView == 0 && !itemstack.isEmpty())
+        if (this.mc.gameSettings.func_243230_g().func_243192_a() && !itemstack.isEmpty())
         {
             Item item = itemstack.getItem();
             if (item == Blocks.CARVED_PUMPKIN.asItem())
@@ -684,7 +684,7 @@ public class ForgeIngameGui extends IngameGui
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? MathHelper.hsvToRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
                 func_238448_a_(mStack, fontrenderer, -4, fontrenderer.func_238414_a_(overlayMessage), 16777215 | (opacity << 24));
-                fontrenderer.func_238422_b_(mStack, overlayMessage, -fontrenderer.func_238414_a_(overlayMessage) / 2, -4, color | (opacity << 24));
+                fontrenderer.func_238422_b_(mStack, overlayMessage.func_241878_f(), -fontrenderer.func_238414_a_(overlayMessage) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 RenderSystem.popMatrix();
             }
@@ -719,13 +719,13 @@ public class ForgeIngameGui extends IngameGui
                 RenderSystem.pushMatrix();
                 RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                this.getFontRenderer().func_238407_a_(mStack, this.displayedTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedTitle) / 2), -10.0F, 16777215 | l);
+                this.getFontRenderer().func_238407_a_(mStack, this.displayedTitle.func_241878_f(), (float)(-this.getFontRenderer().func_238414_a_(this.displayedTitle) / 2), -10.0F, 16777215 | l);
                 RenderSystem.popMatrix();
                 if (this.displayedSubTitle != null)
                 {
                     RenderSystem.pushMatrix();
                     RenderSystem.scalef(2.0F, 2.0F, 2.0F);
-                    this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
+                    this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle.func_241878_f(), (float)(-this.getFontRenderer().func_238414_a_(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
                     RenderSystem.popMatrix();
                 }
                 RenderSystem.disableBlend();

@@ -29,6 +29,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.command.CommandSource;
@@ -80,6 +81,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.PlayerData;
 import net.minecraftforge.api.distmarker.Dist;
@@ -233,7 +235,7 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static List<Biome.SpawnListEntry> getPotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<Biome.SpawnListEntry> oldList)
+    public static List<MobSpawnInfo.Spawners> getPotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<MobSpawnInfo.Spawners> oldList)
     {
         WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldList);
         if (MinecraftForge.EVENT_BUS.post(event))
@@ -364,7 +366,7 @@ public class ForgeEventFactory
         }
         return 0;
     }
-    
+
     @Nullable
     public static BlockState onToolUse(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
@@ -662,16 +664,6 @@ public class ForgeEventFactory
         return event.getTable();
     }
 
-    @Deprecated
-    public static boolean canCreateFluidSource(World world, BlockPos pos, BlockState state, boolean def)
-    {
-        CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
-        MinecraftForge.EVENT_BUS.post(evt);
-
-        Result result = evt.getResult();
-        return result == Result.DEFAULT ? def : result == Result.ALLOW;
-    }
-
     public static boolean canCreateFluidSource(IWorld world, BlockPos pos, BlockState state, boolean def)
     {
         CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
@@ -681,9 +673,10 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
-    public static boolean onTrySpawnPortal(IWorld world, BlockPos pos, NetherPortalBlock.Size size)
+    public static Optional<PortalSize> onTrySpawnPortal(IWorld world, BlockPos pos, Optional<PortalSize> size)
     {
-        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
+        if (!size.isPresent()) return size;
+        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
     }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
@@ -751,7 +744,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
     }
-    
+
     public static void onCommandRegister(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
     {
         RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);

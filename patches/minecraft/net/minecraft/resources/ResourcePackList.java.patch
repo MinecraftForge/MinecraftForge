@@ -2,14 +2,14 @@
 +++ b/net/minecraft/resources/ResourcePackList.java
 @@ -22,7 +22,7 @@
  
-    public ResourcePackList(ResourcePackInfo.IFactory<T> p_i231423_1_, IPackFinder... p_i231423_2_) {
+    public ResourcePackList(ResourcePackInfo.IFactory p_i231423_1_, IPackFinder... p_i231423_2_) {
        this.field_198990_d = p_i231423_1_;
 -      this.field_198987_a = ImmutableSet.copyOf(p_i231423_2_);
 +      this.field_198987_a = new java.util.HashSet<>(java.util.Arrays.asList(p_i231423_2_));
     }
  
-    public void func_198983_a() {
-@@ -85,6 +85,10 @@
+    public ResourcePackList(IPackFinder... p_i241886_1_) {
+@@ -89,6 +89,10 @@
        return this.field_198988_b.get(p_198981_1_);
     }
  

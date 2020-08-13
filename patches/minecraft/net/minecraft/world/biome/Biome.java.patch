@@ -1,33 +1,6 @@
 --- a/net/minecraft/world/biome/Biome.java
 +++ b/net/minecraft/world/biome/Biome.java
-@@ -68,7 +68,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
--public class Biome {
-+public class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
-    public static final Logger field_150586_aC = LogManager.getLogger();
-    public static final Codec<Biome> field_235051_b_ = RecordCodecBuilder.create((p_235064_0_) -> {
-       return p_235064_0_.group(Biome.RainType.field_235121_d_.fieldOf("precipitation").forGetter((p_235088_0_) -> {
-@@ -221,7 +221,7 @@
-    }
- 
-    protected void func_201866_a(EntityClassification p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
--      this.field_201880_ax.get(p_201866_1_).add(p_201866_2_);
-+      this.field_201880_ax.computeIfAbsent(p_201866_1_, k -> Lists.newArrayList()).add(p_201866_2_);
-    }
- 
-    protected void func_235059_a_(EntityType<?> p_235059_1_, double p_235059_2_, double p_235059_4_) {
-@@ -229,7 +229,7 @@
-    }
- 
-    public List<Biome.SpawnListEntry> func_76747_a(EntityClassification p_76747_1_) {
--      return this.field_201880_ax.get(p_76747_1_);
-+      return this.field_201880_ax.computeIfAbsent(p_76747_1_, k -> Lists.newArrayList());
-    }
- 
-    @Nullable
-@@ -308,7 +308,7 @@
+@@ -200,7 +200,7 @@
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_226658_a_(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
@@ -36,26 +9,3 @@
                 return true;
              }
           }
-@@ -589,6 +589,22 @@
-       }
-    }
- 
-+   public Biome getRiver() {
-+      if (this == Biomes.field_76774_n) return Biomes.field_76777_m;
-+      if (this == Biomes.field_76789_p || this == Biomes.field_76788_q) return Biomes.field_76788_q;
-+      return Biomes.field_76781_i;
-+   }
-+
-+   @Nullable
-+   public Biome getHill(net.minecraft.world.gen.INoiseRandom rand) {
-+      return null;
-+   }
-+
-+   @Nullable
-+   public Biome getEdge(net.minecraft.world.gen.INoiseRandom rand, Biome northBiome, Biome westBiome, Biome southBiome, Biome eastBiome) {
-+      return null;
-+   }
-+
-    public static class Builder {
-       @Nullable
-       private ConfiguredSurfaceBuilder<?> field_205422_a;

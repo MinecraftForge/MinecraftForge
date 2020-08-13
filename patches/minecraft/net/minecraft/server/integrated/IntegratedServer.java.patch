@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -59,9 +59,10 @@
+@@ -58,9 +58,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");
        this.func_71253_a(CryptManager.func_75891_b());
@@ -12,7 +12,7 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -171,6 +172,7 @@
+@@ -174,6 +175,7 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {
