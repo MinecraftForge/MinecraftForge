@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -22,6 +22,7 @@
+@@ -23,6 +23,7 @@
  
     public ITag.INamedTag<T> func_232937_a_(String p_232937_1_) {
        TagRegistry.NamedTag<T> namedtag = new TagRegistry.NamedTag<>(new ResourceLocation(p_232937_1_));
@@ -8,3 +8,14 @@
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
+@@ -93,5 +94,10 @@
+       public List<T> func_230236_b_() {
+          return this.func_232944_c_().func_230236_b_();
+       }
++
++      @Override
++      public String toString() {
++          return "NamedTag[" + func_230234_a_().toString() + ']';
++      }
+    }
+ }

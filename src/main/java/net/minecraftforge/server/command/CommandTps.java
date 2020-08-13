@@ -25,7 +25,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.DimensionArgument;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 
 class CommandTps
@@ -61,9 +63,10 @@ class CommandTps
         if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
             times = UNLOADED;
 
+        final Registry<DimensionType> reg = cs.func_241861_q().func_243612_b(Registry.field_239698_ad_);
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().func_240901_a_().toString(), dim.func_234922_V_().func_240901_a_().toString(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().func_240901_a_().toString(), reg.getKey(dim.func_230315_m_()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }

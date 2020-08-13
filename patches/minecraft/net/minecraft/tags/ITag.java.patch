@@ -24,7 +24,7 @@
        public <T> Optional<ITag<T>> func_232959_a_(Function<ResourceLocation, ITag<T>> p_232959_1_, Function<ResourceLocation, T> p_232959_2_) {
           ImmutableSet.Builder<T> builder = ImmutableSet.builder();
  
-@@ -108,6 +118,7 @@
+@@ -103,6 +113,7 @@
              this.field_232953_a_.clear();
           }
  
@@ -32,7 +32,7 @@
           list.forEach((p_232958_2_) -> {
              this.field_232953_a_.add(new ITag.Proxy(p_232958_2_, p_232956_2_));
           });
-@@ -119,11 +130,20 @@
+@@ -135,11 +146,20 @@
           JsonArray jsonarray = new JsonArray();
  
           for(ITag.Proxy itag$proxy : this.field_232953_a_) {
@@ -54,15 +54,15 @@
           return jsonobject;
        }
     }
-@@ -162,6 +182,7 @@
+@@ -178,6 +198,7 @@
        public String toString() {
           return this.field_232969_a_.toString();
        }
 +      @Override public boolean equals(Object o) { return o == this || (o instanceof ITag.ItemEntry && java.util.Objects.equals(this.field_232969_a_, ((ITag.ItemEntry) o).field_232969_a_)); }
     }
  
-    public static class Proxy {
-@@ -206,5 +227,6 @@
+    public static class OptionalItemEntry implements ITag.ITagEntry {
+@@ -278,5 +299,6 @@
        public String toString() {
           return "#" + this.field_200163_a;
        }

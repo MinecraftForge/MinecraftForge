@@ -221,7 +221,7 @@ public class DataGeneratorTest
         {
             add(Blocks.STONE, "Stone");
             add(Items.DIAMOND, "Diamond");
-            add(Biomes.BEACH, "Beach");
+            //add(Biomes.BEACH, "Beach");
             add(Effects.POISON, "Poison");
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
@@ -273,8 +273,8 @@ public class DataGeneratorTest
         }
 
         private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model",
-        		"fishing_rod", "fishing_rod_cast" // Vanilla doesn't generate these yet, so they don't match due to having the minecraft domain
-        		);
+                "fishing_rod", "fishing_rod_cast" // Vanilla doesn't generate these yet, so they don't match due to having the minecraft domain
+                );
 
         @Override
         public void act(DirectoryCache cache) throws IOException
@@ -652,23 +652,23 @@ public class DataGeneratorTest
                         }
                     }
                 }
-                
+
                 JsonElement generatedTextures = generated.remove("textures");
                 JsonElement vanillaTextures = existing.remove("textures");
                 if (generatedTextures == null && vanillaTextures != null) {
-                	ret.add("Model " + loc + " is missing textures");
+                    ret.add("Model " + loc + " is missing textures");
                 } else if (generatedTextures != null && vanillaTextures == null) {
-                	ret.add("Model " + loc + " has textures when vanilla equivalent does not");
+                    ret.add("Model " + loc + " has textures when vanilla equivalent does not");
                 } else if (generatedTextures != null) { // Both must be non-null
-                	for (Map.Entry<String, JsonElement> e : generatedTextures.getAsJsonObject().entrySet()) {
-                		String vanillaTexture = vanillaTextures.getAsJsonObject().get(e.getKey()).getAsString();
-                		if (!e.getValue().getAsString().equals(vanillaTexture)) {
-                			ret.add("Texture for variable '" + e.getKey() + "' for model " + loc + " does not match vanilla equivalent");
-                		}
-                	}
-                	if (generatedTextures.getAsJsonObject().size() != vanillaTextures.getAsJsonObject().size()) {
-                		ret.add("Model " + loc + " is missing textures from vanilla equivalent");
-                	}
+                    for (Map.Entry<String, JsonElement> e : generatedTextures.getAsJsonObject().entrySet()) {
+                        String vanillaTexture = vanillaTextures.getAsJsonObject().get(e.getKey()).getAsString();
+                        if (!e.getValue().getAsString().equals(vanillaTexture)) {
+                            ret.add("Texture for variable '" + e.getKey() + "' for model " + loc + " does not match vanilla equivalent");
+                        }
+                    }
+                    if (generatedTextures.getAsJsonObject().size() != vanillaTextures.getAsJsonObject().size()) {
+                        ret.add("Model " + loc + " is missing textures from vanilla equivalent");
+                    }
                 }
 
                 if (!existing.equals(generated)) {

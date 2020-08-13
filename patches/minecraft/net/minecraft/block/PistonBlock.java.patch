@@ -24,16 +24,16 @@
        return true;
     }
  
-@@ -230,7 +233,7 @@
+@@ -234,7 +237,7 @@
                    return false;
                 }
  
 -               return !p_185646_0_.func_177230_c().func_235695_q_();
 +               return !p_185646_0_.hasTileEntity();
-             } else {
-                return false;
              }
-@@ -271,7 +274,7 @@
+          } else {
+             return false;
+@@ -273,7 +276,7 @@
           for(int k = list2.size() - 1; k >= 0; --k) {
              BlockPos blockpos2 = list2.get(k);
              BlockState blockstate1 = p_176319_1_.func_180495_p(blockpos2);
@@ -42,7 +42,7 @@
              func_220059_a(blockstate1, p_176319_1_, blockpos2, tileentity);
              p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
              ablockstate[j++] = blockstate1;
-@@ -335,6 +338,10 @@
+@@ -337,6 +340,10 @@
        return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
     }
  

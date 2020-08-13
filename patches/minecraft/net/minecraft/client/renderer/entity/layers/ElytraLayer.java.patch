@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
-@@ -29,7 +29,7 @@
+@@ -30,7 +30,7 @@
  
     public void func_225628_a_(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
        ItemStack itemstack = p_225628_4_.func_184582_a(EquipmentSlotType.CHEST);
@@ -9,7 +9,7 @@
           ResourceLocation resourcelocation;
           if (p_225628_4_ instanceof AbstractClientPlayerEntity) {
              AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)p_225628_4_;
-@@ -38,10 +38,10 @@
+@@ -39,10 +39,10 @@
              } else if (abstractclientplayerentity.func_152122_n() && abstractclientplayerentity.func_110303_q() != null && abstractclientplayerentity.func_175148_a(PlayerModelPart.CAPE)) {
                 resourcelocation = abstractclientplayerentity.func_110303_q();
              } else {
@@ -22,7 +22,7 @@
           }
  
           p_225628_1_.func_227860_a_();
-@@ -53,4 +53,29 @@
+@@ -54,4 +54,29 @@
           p_225628_1_.func_227865_b_();
        }
     }

@@ -46,8 +46,6 @@ public class ForgeConfig
 
         public final IntValue dimensionUnloadQueueDelay;
 
-        public final IntValue clumpingThreshold;
-
         public final BooleanValue treatEmptyTagsAsAir;
 
         public final BooleanValue fixAdvancementLoading;
@@ -100,12 +98,6 @@ public class ForgeConfig
                     .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
                     .translation("forge.configgui.dimensionUnloadQueueDelay")
                     .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
-
-            clumpingThreshold = builder
-                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024.")
-                    .translation("forge.configgui.clumpingThreshold")
-                    .worldRestart()
-                    .defineInRange("clumpingThreshold", 64, 64, 1024);
 
             treatEmptyTagsAsAir = builder
                     .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
