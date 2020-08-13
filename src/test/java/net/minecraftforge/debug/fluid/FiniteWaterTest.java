@@ -38,7 +38,6 @@ public class FiniteWaterTest
     {
         if (ENABLED)
         {
-            System.out.println("TRIGGERED");
             BlockState state = event.getState();
             FluidState fluidState = state.getFluidState();
             if (fluidState.getFluid().isEquivalentTo(Fluids.WATER))
