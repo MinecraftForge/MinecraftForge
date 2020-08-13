@@ -23,16 +23,12 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.common.base.Throwables;
@@ -40,7 +36,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -109,7 +104,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.data.IOptionalTagEntry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -1084,9 +1078,9 @@ public class ForgeHooks
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                    list.add(ForgeHooks.makeOptionalTag(true, Collections.singleton(new ResourceLocation(s))));
+                    list.add(new ITag.OptionalItemEntry(new ResourceLocation(s)));
                 else
-                    list.add(ForgeHooks.makeOptionalTag(false, Collections.singleton(new ResourceLocation(s.substring(1)))));
+                    list.add(new ITag.OptionalTagEntry(new ResourceLocation(s.substring(1))));
             }
         }
 
@@ -1177,64 +1171,6 @@ public class ForgeHooks
             list = mod.apply(list, context);
         }
         return list;
-    }
-
-    @Deprecated//INTERNAL
-    public static IOptionalTagEntry makeOptionalTag(boolean items, Collection<ResourceLocation> locations) {
-        return items ? new OptionalItemTarget(locations) : new OptionalTagTarget(locations);
-    }
-
-    private static class OptionalTagTarget implements IOptionalTagEntry
-    {
-
-        private final Collection<ResourceLocation> referents;
-
-        public OptionalTagTarget(Collection<ResourceLocation> referents)
-        {
-            this.referents = referents;
-        }
-
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            referents.stream()
-                    .map(tagLookup)
-                    .filter(Objects::nonNull)
-                    .map(ITag::func_230236_b_)
-                    .flatMap(List::stream)
-                    .forEach(collector);
-            return true;
-        }
-
-        @Override
-        public void func_230237_a_(JsonArray array)
-        {
-            referents.stream().map(e -> "#" + e).forEach(array::add);
-        }
-    }
-
-    private static class OptionalItemTarget implements IOptionalTagEntry
-    {
-
-        private final Collection<ResourceLocation> locations;
-
-        public OptionalItemTarget(Collection<ResourceLocation> locations)
-        {
-            this.locations = locations;
-        }
-
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            locations.stream().map(itemLookup).filter(Objects::nonNull).forEach(collector);
-            return true;
-        }
-
-        @Override
-        public void func_230237_a_(JsonArray array)
-        {
-            locations.stream().map(ResourceLocation::toString).forEach(array::add);
-        }
     }
 
     public static List<String> getModPacks()
