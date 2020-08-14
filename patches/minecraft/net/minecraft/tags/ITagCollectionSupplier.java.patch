@@ -1,6 +1,12 @@
 --- a/net/minecraft/tags/ITagCollectionSupplier.java
 +++ b/net/minecraft/tags/ITagCollectionSupplier.java
-@@ -22,6 +22,7 @@
+@@ -19,9 +19,13 @@
+ 
+    ITagCollection<EntityType<?>> func_241838_d();
+ 
++   default java.util.Map<net.minecraft.util.ResourceLocation, ITagCollection<?>> modded() { return com.google.common.collect.ImmutableMap.of(); }
++   default ITagCollection<?> getModdedCollection(net.minecraft.util.ResourceLocation regName) { return modded().get(regName); }
++   default <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> ITagCollection<T> getModdedCollection(net.minecraftforge.registries.IForgeRegistry<T> reg) { return (ITagCollection<T>) getModdedCollection(reg.getRegistryName()); }
     default void func_242212_e() {
        TagRegistryManager.func_242193_a(this);
        Blocks.func_235419_a_();
@@ -8,3 +14,20 @@
     }
  
     default void func_242210_a(PacketBuffer p_242210_1_) {
+@@ -29,6 +33,7 @@
+       this.func_241836_b().func_242203_a(p_242210_1_, Registry.field_212630_s);
+       this.func_241837_c().func_242203_a(p_242210_1_, Registry.field_212619_h);
+       this.func_241838_d().func_242203_a(p_242210_1_, Registry.field_212629_r);
++      net.minecraftforge.resource.ForgeTagHandler.moddedCollectionWrite(p_242210_1_, modded());
+    }
+ 
+    static ITagCollectionSupplier func_242211_b(PacketBuffer p_242211_0_) {
+@@ -36,7 +41,7 @@
+       ITagCollection<Item> itagcollection1 = ITagCollection.func_242204_a(p_242211_0_, Registry.field_212630_s);
+       ITagCollection<Fluid> itagcollection2 = ITagCollection.func_242204_a(p_242211_0_, Registry.field_212619_h);
+       ITagCollection<EntityType<?>> itagcollection3 = ITagCollection.func_242204_a(p_242211_0_, Registry.field_212629_r);
+-      return func_242209_a(itagcollection, itagcollection1, itagcollection2, itagcollection3);
++      return net.minecraftforge.resource.ForgeTagHandler.getModdedTagCollectionSupplier(func_242209_a(itagcollection, itagcollection1, itagcollection2, itagcollection3), net.minecraftforge.resource.ForgeTagHandler.moddedCollectionRead(p_242211_0_));
+    }
+ 
+    static ITagCollectionSupplier func_242209_a(final ITagCollection<Block> p_242209_0_, final ITagCollection<Item> p_242209_1_, final ITagCollection<Fluid> p_242209_2_, final ITagCollection<EntityType<?>> p_242209_3_) {
