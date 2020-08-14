@@ -1,6 +1,13 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
-@@ -16,4 +16,9 @@
+@@ -13,7 +13,16 @@
+       return field_206961_c.func_232937_a_(p_206956_0_);
+    }
+ 
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(ResourceLocation name) {
++       return field_206961_c.createOptional(name, () -> null);
++   }
++
     public static List<? extends ITag.INamedTag<Fluid>> func_241280_c_() {
        return field_206961_c.func_241288_c_();
     }

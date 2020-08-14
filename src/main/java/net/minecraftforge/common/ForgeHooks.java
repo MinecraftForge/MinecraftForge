@@ -156,6 +156,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
@@ -235,6 +236,7 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
+    @SuppressWarnings("resource")
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
