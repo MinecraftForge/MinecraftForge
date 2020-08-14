@@ -675,7 +675,7 @@ public class ForgeEventFactory
     public static Optional<PortalSize> onTrySpawnPortal(IWorld world, BlockPos pos, Optional<PortalSize> size)
     {
         if (!size.isPresent()) return size;
-        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
+        return !MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
     }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
