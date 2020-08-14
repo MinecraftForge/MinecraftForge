@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/settings/PointOfView.java
++++ b/net/minecraft/client/settings/PointOfView.java
+@@ -4,12 +4,12 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public enum PointOfView {
++public enum PointOfView implements net.minecraftforge.common.IExtensibleEnum {
+    FIRST_PERSON(true, false),
+    THIRD_PERSON_BACK(false, false),
+    THIRD_PERSON_FRONT(false, true);
+ 
+-   private static PointOfView[] field_243189_d = values();
++   private PointOfView[] field_243189_d = values();
+    private boolean field_243190_e;
+    private boolean field_243191_f;
+ 
+@@ -29,4 +29,14 @@
+    public PointOfView func_243194_c() {
+       return field_243189_d[(this.ordinal() + 1) % field_243189_d.length];
+    }
++
++   public static PointOfView create(String name, boolean renderOverlays, boolean thirdPersonReverse) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   @Deprecated
++   public void init() {
++      field_243189_d = values();
++   }
+ }
