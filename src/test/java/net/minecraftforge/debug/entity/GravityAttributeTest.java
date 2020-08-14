@@ -74,12 +74,12 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void worldTick(TickEvent.WorldTickEvent event)
     {
-        if (!event.world.isRemote)
+        if (!event.getWorld().isRemote)
         {
             if (ticks++ > 60)
             {
                 ticks = 0;
-                World w = event.world;
+                World w = event.getWorld();
                 List<LivingEntity> list;
                 if(w.isRemote)
                 {

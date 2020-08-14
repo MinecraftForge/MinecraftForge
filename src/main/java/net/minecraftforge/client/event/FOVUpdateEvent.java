@@ -34,7 +34,7 @@ public class FOVUpdateEvent extends Event
     {
         this.entity = entity;
         this.fov = fov;
-        this.setNewfov(MathHelper.lerp(Minecraft.getInstance().gameSettings.field_243227_aN, 1.0F, fov));
+        this.setFOV(MathHelper.lerp(Minecraft.getInstance().gameSettings.field_243227_aN, 1.0F, fov));
     }
 
     public PlayerEntity getEntity()
@@ -42,17 +42,17 @@ public class FOVUpdateEvent extends Event
         return entity;
     }
 
-    public float getFov()
+    public float getOriginalFOV()
     {
         return fov;
     }
 
-    public float getNewfov()
+    public float getFOV()
     {
         return newfov;
     }
 
-    public void setNewfov(float newfov)
+    public void setFOV(float newfov)
     {
         this.newfov = newfov;
     }

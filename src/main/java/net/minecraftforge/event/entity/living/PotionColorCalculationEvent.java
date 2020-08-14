@@ -42,7 +42,7 @@ public class PotionColorCalculationEvent extends LivingEvent
     {
         super(entity);
         this.color = color;
-        this.effectList = effectList;
+        this.effectList = Collections.unmodifiableCollection(effectList);
         this.hideParticle = hideParticle;
     }
 
@@ -73,6 +73,6 @@ public class PotionColorCalculationEvent extends LivingEvent
      */
     public Collection<EffectInstance> getEffects()
     {
-        return Collections.unmodifiableCollection(effectList);
+        return effectList;
     }
 }

@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -30,7 +29,6 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputMappings;
 
@@ -45,11 +43,11 @@ import org.lwjgl.glfw.GLFW;
  * @author bspkrs
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiScreenEvent extends Event
+public class ScreenEvent extends Event
 {
     private final Screen gui;
 
-    public GuiScreenEvent(Screen gui)
+    public ScreenEvent(Screen gui)
     {
         this.gui = gui;
     }
@@ -57,12 +55,12 @@ public class GuiScreenEvent extends Event
     /**
      * The GuiScreen object generating this event.
      */
-    public Screen getGui()
+    public Screen getScreen()
     {
         return gui;
     }
 
-    public static class InitGuiEvent extends GuiScreenEvent
+    public static class InitGuiEvent extends ScreenEvent
     {
         private Consumer<Widget> add;
         private Consumer<Widget> remove;
@@ -126,7 +124,7 @@ public class GuiScreenEvent extends Event
         }
     }
 
-    public static class DrawScreenEvent extends GuiScreenEvent
+    public static class DrawScreenEvent extends ScreenEvent
     {
         private final MatrixStack mStack;
         private final int mouseX;
@@ -169,7 +167,7 @@ public class GuiScreenEvent extends Event
         /**
          * Partial render ticks elapsed.
          */
-        public float getRenderPartialTicks()
+        public float getPartialTicks()
         {
             return renderPartialTicks;
         }
@@ -203,7 +201,7 @@ public class GuiScreenEvent extends Event
      * This event fires at the end of {@link GuiScreen#drawBackground(int)} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
-    public static class BackgroundDrawnEvent extends GuiScreenEvent
+    public static class BackgroundDrawnEvent extends ScreenEvent
     {
         private final MatrixStack mStack;
 
@@ -228,7 +226,7 @@ public class GuiScreenEvent extends Event
      * Cancel this event to prevent the Gui from being moved.
      */
     @Cancelable
-    public static class PotionShiftEvent extends GuiScreenEvent
+    public static class PotionShiftEvent extends ScreenEvent
     {
         public PotionShiftEvent(Screen gui)
         {
@@ -236,7 +234,7 @@ public class GuiScreenEvent extends Event
         }
     }
 
-    public static abstract class MouseInputEvent extends GuiScreenEvent
+    public static abstract class MouseInputEvent extends ScreenEvent
     {
         private final double mouseX;
         private final double mouseY;
@@ -441,7 +439,7 @@ public class GuiScreenEvent extends Event
         }
     }
 
-    public static abstract class KeyboardKeyEvent extends GuiScreenEvent
+    public static abstract class KeyboardKeyEvent extends ScreenEvent
     {
         private final int keyCode;
         private final int scanCode;
@@ -562,7 +560,7 @@ public class GuiScreenEvent extends Event
         }
     }
 
-    public static class KeyboardCharTypedEvent extends GuiScreenEvent
+    public static class KeyboardCharTypedEvent extends ScreenEvent
     {
         private final char codePoint;
         private final int modifiers;

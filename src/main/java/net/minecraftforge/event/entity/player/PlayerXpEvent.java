@@ -55,7 +55,7 @@ public class PlayerXpEvent extends PlayerEvent
             this.orb = orb;
         }
 
-        public ExperienceOrbEntity getOrb()
+        public ExperienceOrbEntity getOrbEntity()
         {
             return orb;
         }

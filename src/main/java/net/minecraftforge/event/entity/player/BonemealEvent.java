@@ -25,6 +25,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +39,7 @@ import javax.annotation.Nonnull;
  * setResult(ALLOW) is the same as the old setHandled()
  */
 @Cancelable
-@net.minecraftforge.eventbus.api.Event.HasResult
+@HasResult
 public class BonemealEvent extends PlayerEvent
 {
 
@@ -47,7 +48,7 @@ public class BonemealEvent extends PlayerEvent
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@Nonnull PlayerEntity player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
+    public BonemealEvent(PlayerEntity player, World world, BlockPos pos, BlockState block, ItemStack stack)
     {
         super(player);
         this.world = world;
@@ -61,7 +62,7 @@ public class BonemealEvent extends PlayerEvent
         return world;
     }
 
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }
@@ -71,7 +72,6 @@ public class BonemealEvent extends PlayerEvent
         return block;
     }
 
-    @Nonnull
     public ItemStack getStack()
     {
         return stack;

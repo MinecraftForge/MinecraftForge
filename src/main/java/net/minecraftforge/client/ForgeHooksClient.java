@@ -76,6 +76,9 @@ import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.render.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.render.RenderHandEvent;
+import net.minecraftforge.client.event.render.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
@@ -107,7 +110,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
+import static net.minecraftforge.client.event.render.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import static net.minecraftforge.fml.VersionChecker.Status.BETA;
 import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
@@ -213,7 +216,7 @@ public class ForgeHooksClient
     {
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
-        return fovUpdateEvent.getNewfov();
+        return fovUpdateEvent.getFOV();
     }
 
     public static double getFOVModifier(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
@@ -323,9 +326,9 @@ public class ForgeHooksClient
 
     public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
+        if (!MinecraftForge.EVENT_BUS.post(new ScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
             screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
-        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
+        MinecraftForge.EVENT_BUS.post(new ScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
     }
 
     public static float getFogDensity(FogType type, ActiveRenderInfo info, float partial, float density)
@@ -622,7 +625,7 @@ public class ForgeHooksClient
 
     public static void onInputUpdate(PlayerEntity player, MovementInput movementInput)
     {
-        MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
+        MinecraftForge.EVENT_BUS.post(new MovementUpdateEvent(player, movementInput));
     }
 
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
@@ -633,37 +636,37 @@ public class ForgeHooksClient
 
     public static boolean onGuiMouseClickedPre(Screen guiScreen, double mouseX, double mouseY, int button)
     {
-        Event event = new GuiScreenEvent.MouseClickedEvent.Pre(guiScreen, mouseX, mouseY, button);
+        Event event = new ScreenEvent.MouseClickedEvent.Pre(guiScreen, mouseX, mouseY, button);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button)
     {
-        Event event = new GuiScreenEvent.MouseClickedEvent.Post(guiScreen, mouseX, mouseY, button);
+        Event event = new ScreenEvent.MouseClickedEvent.Post(guiScreen, mouseX, mouseY, button);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiMouseReleasedPre(Screen guiScreen, double mouseX, double mouseY, int button)
     {
-        Event event = new GuiScreenEvent.MouseReleasedEvent.Pre(guiScreen, mouseX, mouseY, button);
+        Event event = new ScreenEvent.MouseReleasedEvent.Pre(guiScreen, mouseX, mouseY, button);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button)
     {
-        Event event = new GuiScreenEvent.MouseReleasedEvent.Post(guiScreen, mouseX, mouseY, button);
+        Event event = new ScreenEvent.MouseReleasedEvent.Post(guiScreen, mouseX, mouseY, button);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiMouseDragPre(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
     {
-        Event event = new GuiScreenEvent.MouseDragEvent.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
+        Event event = new ScreenEvent.MouseDragEvent.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiMouseDragPost(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
     {
-        Event event = new GuiScreenEvent.MouseDragEvent.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
+        Event event = new ScreenEvent.MouseDragEvent.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
@@ -672,7 +675,7 @@ public class ForgeHooksClient
         MainWindow mainWindow = guiScreen.getMinecraft().getMainWindow();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
-        Event event = new GuiScreenEvent.MouseScrollEvent.Pre(guiScreen, mouseX, mouseY, scrollDelta);
+        Event event = new ScreenEvent.MouseScrollEvent.Pre(guiScreen, mouseX, mouseY, scrollDelta);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
@@ -681,43 +684,43 @@ public class ForgeHooksClient
         MainWindow mainWindow = guiScreen.getMinecraft().getMainWindow();
         double mouseX = mouseHelper.getMouseX() * (double) mainWindow.getScaledWidth() / (double) mainWindow.getWidth();
         double mouseY = mouseHelper.getMouseY() * (double) mainWindow.getScaledHeight() / (double) mainWindow.getHeight();
-        Event event = new GuiScreenEvent.MouseScrollEvent.Post(guiScreen, mouseX, mouseY, scrollDelta);
+        Event event = new ScreenEvent.MouseScrollEvent.Post(guiScreen, mouseX, mouseY, scrollDelta);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiKeyPressedPre(Screen guiScreen, int keyCode, int scanCode, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardKeyPressedEvent.Pre(guiScreen, keyCode, scanCode, modifiers);
+        Event event = new ScreenEvent.KeyboardKeyPressedEvent.Pre(guiScreen, keyCode, scanCode, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiKeyPressedPost(Screen guiScreen, int keyCode, int scanCode, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardKeyPressedEvent.Post(guiScreen, keyCode, scanCode, modifiers);
+        Event event = new ScreenEvent.KeyboardKeyPressedEvent.Post(guiScreen, keyCode, scanCode, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiKeyReleasedPre(Screen guiScreen, int keyCode, int scanCode, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardKeyReleasedEvent.Pre(guiScreen, keyCode, scanCode, modifiers);
+        Event event = new ScreenEvent.KeyboardKeyReleasedEvent.Pre(guiScreen, keyCode, scanCode, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiKeyReleasedPost(Screen guiScreen, int keyCode, int scanCode, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardKeyReleasedEvent.Post(guiScreen, keyCode, scanCode, modifiers);
+        Event event = new ScreenEvent.KeyboardKeyReleasedEvent.Post(guiScreen, keyCode, scanCode, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiCharTypedPre(Screen guiScreen, char codePoint, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Pre(guiScreen, codePoint, modifiers);
+        Event event = new ScreenEvent.KeyboardCharTypedEvent.Pre(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onGuiCharTypedPost(Screen guiScreen, char codePoint, int modifiers)
     {
-        Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
+        Event event = new ScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 

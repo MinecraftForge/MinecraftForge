@@ -37,7 +37,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class DifficultyChangeEvent extends net.minecraftforge.eventbus.api.Event
+public class DifficultyChangeEvent extends Event
 {
     private final Difficulty difficulty;
     private final Difficulty oldDifficulty;

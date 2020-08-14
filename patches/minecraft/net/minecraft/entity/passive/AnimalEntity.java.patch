@@ -24,7 +24,7 @@
        AgeableEntity ageableentity = this.func_241840_a(p_234177_1_, p_234177_2_);
 +      final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(this, p_234177_2_, ageableentity);
 +      final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+      ageableentity = event.getChild();
++      ageableentity = event.getChildEntity();
 +      if (cancelled) {
 +         //Reset the "inLove" state for the animals
 +         this.func_70873_a(6000);

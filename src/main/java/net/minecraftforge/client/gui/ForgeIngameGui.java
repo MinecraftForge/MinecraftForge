@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.gui;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
+import static net.minecraftforge.client.event.render.RenderGameOverlayEvent.ElementType.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +50,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.render.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.render.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;

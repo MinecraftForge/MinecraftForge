@@ -35,7 +35,6 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  */
 public class PotionEvent extends LivingEvent
 {
-    @Nullable
     protected final EffectInstance effect;
     
     public PotionEvent(LivingEntity living, EffectInstance effect)
@@ -46,7 +45,6 @@ public class PotionEvent extends LivingEvent
     /**
      * Retuns the PotionEffect.
      */
-    @Nullable
     public EffectInstance getPotionEffect()
     {
         return effect;
@@ -108,7 +106,7 @@ public class PotionEvent extends LivingEvent
         {
             super(living, effect);
         }
-        
+
         /**
          * @return the PotionEffect.
          */
@@ -127,9 +125,10 @@ public class PotionEvent extends LivingEvent
      */
     public static class PotionAddedEvent extends PotionEvent
     {
+        @Nullable
         private final EffectInstance oldEffect;
         
-        public PotionAddedEvent(LivingEntity living, EffectInstance oldEffect, EffectInstance newEffect)
+        public PotionAddedEvent(LivingEntity living, @Nullable EffectInstance oldEffect, EffectInstance newEffect)
         {
             super(living, newEffect);
             this.oldEffect = oldEffect;
@@ -139,7 +138,6 @@ public class PotionEvent extends LivingEvent
          * @return the added PotionEffect. This is the umerged PotionEffect if the old PotionEffect is not null.
          */
         @Override
-        @Nonnull
         public EffectInstance getPotionEffect()
         {
             return super.getPotionEffect();

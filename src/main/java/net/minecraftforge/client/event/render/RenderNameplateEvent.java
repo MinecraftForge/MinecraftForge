@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -97,7 +97,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The entity renderer that renders the name plate/tag, if it was provided
      */
-    public EntityRenderer<?> getEntityRenderer()
+    public EntityRenderer<?> getRenderer()
     {
         return this.entityRenderer;
     }
@@ -113,7 +113,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The render type buffer used during the rendering of the name plate/tag
      */
-    public IRenderTypeBuffer getRenderTypeBuffer()
+    public IRenderTypeBuffer getBuffers()
     {
         return this.renderTypeBuffer;
     }

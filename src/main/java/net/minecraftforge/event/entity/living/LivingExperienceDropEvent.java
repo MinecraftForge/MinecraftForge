@@ -28,7 +28,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * the amount of experience points dropped or completely prevent dropping of experience
  * by canceling the event.
  */
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class LivingExperienceDropEvent extends LivingEvent 
 {
     private final PlayerEntity attackingPlayer;
@@ -44,17 +44,17 @@ public class LivingExperienceDropEvent extends LivingEvent
         this.originalExperiencePoints = this.droppedExperiencePoints = originalExperience;
     }
 
-    public int getDroppedExperience()
+    public int getExperience()
     {
         return droppedExperiencePoints;
     }
 
-    public void setDroppedExperience(int droppedExperience)
+    public void setExperience(int droppedExperience)
     {
         this.droppedExperiencePoints = droppedExperience;
     }
 
-    public PlayerEntity getAttackingPlayer()
+    public PlayerEntity getAttackerEntity()
     {
         return attackingPlayer;
     }

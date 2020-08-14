@@ -50,7 +50,7 @@ public class ItemTossEvent extends ItemEvent
     /**
      * The player tossing the item.
      */
-    public PlayerEntity getPlayer()
+    public PlayerEntity getPlayerEntity()
     {
         return player;
     }

@@ -48,7 +48,7 @@ import net.minecraft.entity.LivingEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class LivingDropsEvent extends LivingEvent
 {
     private final DamageSource source;
@@ -65,7 +65,7 @@ public class LivingDropsEvent extends LivingEvent
         this.recentlyHit = recentlyHit;
     }
 
-    public DamageSource getSource()
+    public DamageSource getDamageSource()
     {
         return source;
     }

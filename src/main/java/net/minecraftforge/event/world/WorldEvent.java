@@ -123,7 +123,7 @@ public class WorldEvent extends Event
      * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class PotentialSpawns extends WorldEvent
     {
         private final EntityClassification type;
@@ -146,7 +146,7 @@ public class WorldEvent extends Event
             return type;
         }
 
-        public BlockPos getPos()
+        public BlockPos getBlockPos()
         {
             return pos;
         }
@@ -161,7 +161,7 @@ public class WorldEvent extends Event
      * Called by WorldServer when it attempts to create a spawnpoint for a dimension.
      * Canceling the event will prevent the vanilla code from running.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
         private final IServerWorldInfo settings;

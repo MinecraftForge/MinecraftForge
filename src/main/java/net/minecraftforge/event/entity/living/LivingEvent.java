@@ -34,16 +34,15 @@ import net.minecraftforge.event.entity.EntityEvent;
  **/
 public class LivingEvent extends EntityEvent
 {
-    private final LivingEntity entityLiving;
     public LivingEvent(LivingEntity entity)
     {
         super(entity);
-        entityLiving = entity;
     }
 
-    public LivingEntity getEntityLiving()
+    @Override
+    public LivingEntity getEntity()
     {
-        return entityLiving;
+        return (LivingEntity) super.getEntity();
     }
 
     /**

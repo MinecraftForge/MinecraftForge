@@ -55,12 +55,12 @@ public class SaplingGrowTreeEvent extends WorldEvent
         this.pos = pos;
     }
 
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }
 
-    public Random getRand()
+    public Random getRandom()
     {
         return rand;
     }

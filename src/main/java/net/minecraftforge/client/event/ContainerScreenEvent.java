@@ -26,17 +26,17 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Event class for handling GuiContainer specific events.
  */
-public class GuiContainerEvent extends Event
+public class ContainerScreenEvent extends Event
 {
 
-    private final ContainerScreen guiContainer;
+    private final ContainerScreen<?> guiContainer;
 
-    public GuiContainerEvent(ContainerScreen guiContainer)
+    public ContainerScreenEvent(ContainerScreen<?> guiContainer)
     {
         this.guiContainer = guiContainer;
     }
 
-    public ContainerScreen getGuiContainer()
+    public ContainerScreen<?> getContainerScreen()
     {
         return guiContainer;
     }
@@ -47,7 +47,7 @@ public class GuiContainerEvent extends Event
      * This is useful for any slot / item specific overlays.
      * Things that need to be on top of All GUI elements but bellow tooltips and dragged stacks.
      */
-    public static class DrawForeground extends GuiContainerEvent
+    public static class DrawForeground extends ContainerScreenEvent
     {
         private final MatrixStack mStack;
         private final int mouseX;
@@ -61,7 +61,7 @@ public class GuiContainerEvent extends Event
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawForeground(ContainerScreen guiContainer, MatrixStack mStack, int mouseX, int mouseY)
+        public DrawForeground(ContainerScreen<?> guiContainer, MatrixStack mStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.mStack = mStack;
@@ -89,7 +89,7 @@ public class GuiContainerEvent extends Event
      * This event is fired directly after the GuiContainer has draw any background elements,
      * This is useful for drawing new background elements.
      */
-    public static class DrawBackground extends GuiContainerEvent
+    public static class DrawBackground extends ContainerScreenEvent
     {
         private final MatrixStack mStack;
         private final int mouseX;
@@ -103,7 +103,7 @@ public class GuiContainerEvent extends Event
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawBackground(ContainerScreen guiContainer, MatrixStack mStack, int mouseX, int mouseY)
+        public DrawBackground(ContainerScreen<?> guiContainer, MatrixStack mStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.mStack = mStack;

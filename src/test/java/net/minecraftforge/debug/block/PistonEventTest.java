@@ -128,7 +128,7 @@ public class PistonEventTest
         }
         else
         {
-            boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
+            boolean isSticky = event.getWorld().getBlockState(event.getBlockPos()).getBlock() == Blocks.STICKY_PISTON;
 
             PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (event.getWorld().isRemote() && player != null)

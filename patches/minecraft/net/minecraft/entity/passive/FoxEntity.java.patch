@@ -15,7 +15,7 @@
           FoxEntity foxentity = (FoxEntity)this.field_75390_d.func_241840_a(serverworld, this.field_75391_e);
 +         final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(field_75390_d, field_75391_e, foxentity);
 +         final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+         foxentity = (FoxEntity) event.getChild();
++         foxentity = (FoxEntity) event.getChildEntity();
 +         if (cancelled) {
 +            //Reset the "inLove" state for the animals
 +            this.field_75390_d.func_70873_a(6000);

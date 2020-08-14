@@ -50,7 +50,7 @@ public class ArrowLooseEvent extends PlayerEvent
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(PlayerEntity player, @Nonnull ItemStack bow, World world, int charge, boolean hasAmmo)
+    public ArrowLooseEvent(PlayerEntity player, ItemStack bow, World world, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
@@ -59,7 +59,6 @@ public class ArrowLooseEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
-    @Nonnull
     public ItemStack getBow() { return this.bow; }
     public World getWorld() { return this.world; }
     public boolean hasAmmo() { return this.hasAmmo; }

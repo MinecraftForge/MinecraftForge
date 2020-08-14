@@ -53,11 +53,11 @@ public class DrawHighlightEvent extends Event
         this.buffers = buffers;
     }
 
-    public WorldRenderer getContext() { return context; }
-    public ActiveRenderInfo getInfo() { return info; }
-    public RayTraceResult getTarget() { return target; }
+    public WorldRenderer getWorldRenderer() { return context; }
+    public ActiveRenderInfo getActiveRenderInfo() { return info; }
+    public RayTraceResult getRayTraceResult() { return target; }
     public float getPartialTicks() { return partialTicks; }
-    public MatrixStack getMatrix() { return matrix; }
+    public MatrixStack getMatrixStack() { return matrix; }
     public IRenderTypeBuffer getBuffers() { return buffers; }
 
     /**
@@ -72,7 +72,7 @@ public class DrawHighlightEvent extends Event
         }
 
         @Override
-        public BlockRayTraceResult getTarget()
+        public BlockRayTraceResult getRayTraceResult()
         {
             return (BlockRayTraceResult) super.target;
         }
@@ -91,7 +91,7 @@ public class DrawHighlightEvent extends Event
         }
 
         @Override
-        public EntityRayTraceResult getTarget()
+        public EntityRayTraceResult getRayTraceResult()
         {
             return (EntityRayTraceResult) super.target;
         }

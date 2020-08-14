@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.Event;
 public class RenderBlockOverlayEvent extends Event
 {
 
-    public static enum OverlayType {
+    public enum OverlayType {
         FIRE, BLOCK, WATER
     }
     
@@ -57,7 +57,7 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * The player which the overlay will apply to
      */
-    public PlayerEntity getPlayer() { return player; }
+    public PlayerEntity getPlayerEntity() { return player; }
     public MatrixStack getMatrixStack() { return mat; }
     /**
      * The type of overlay to occur
@@ -66,6 +66,6 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
      */
-    public BlockState getBlockForOverlay() { return blockForOverlay; }
+    public BlockState getOverlayBlock() { return blockForOverlay; }
     public BlockPos getBlockPos() { return blockPos; }
 }

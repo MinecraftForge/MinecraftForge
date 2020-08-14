@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -47,9 +47,9 @@ public class RenderItemInFrameEvent extends net.minecraftforge.eventbus.api.Even
     public RenderItemInFrameEvent(ItemFrameEntity itemFrame, ItemFrameRenderer renderItemFrame, MatrixStack matrix,
                                   IRenderTypeBuffer buffers, int light)
     {
-        item = itemFrame.getDisplayedItem();
-        entityItemFrame = itemFrame;
-        renderer = renderItemFrame;
+        this.item = itemFrame.getDisplayedItem();
+        this.entityItemFrame = itemFrame;
+        this.renderer = renderItemFrame;
         this.matrix = matrix;
         this.buffers = buffers;
         this.light = light;
@@ -61,7 +61,7 @@ public class RenderItemInFrameEvent extends net.minecraftforge.eventbus.api.Even
         return item;
     }
 
-    public ItemFrameEntity getEntityItemFrame()
+    public ItemFrameEntity getItemFrameEntity()
     {
         return entityItemFrame;
     }
@@ -79,7 +79,7 @@ public class RenderItemInFrameEvent extends net.minecraftforge.eventbus.api.Even
         return buffers;
     }
 
-    public int getLight() {
+    public int getPackedLight() {
         return light;
     }
 }

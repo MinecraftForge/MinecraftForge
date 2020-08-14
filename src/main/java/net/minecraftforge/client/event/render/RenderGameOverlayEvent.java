@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.gui.ClientBossInfo;
 
-@Cancelable
 public class RenderGameOverlayEvent extends Event
 {
     public MatrixStack getMatrixStack()
@@ -50,7 +49,7 @@ public class RenderGameOverlayEvent extends Event
         return type;
     }
 
-    public static enum ElementType
+    public enum ElementType
     {
         ALL,
         HELMET,
@@ -97,6 +96,7 @@ public class RenderGameOverlayEvent extends Event
         this.type = type;
     }
 
+    @Cancelable
     public static class Pre extends RenderGameOverlayEvent
     {
         public Pre(MatrixStack mStack, RenderGameOverlayEvent parent, ElementType type)
@@ -111,7 +111,6 @@ public class RenderGameOverlayEvent extends Event
         {
             super(mStack, parent, type);
         }
-        @Override public boolean isCancelable(){ return false; }
     }
 
     public static class BossInfo extends Pre

@@ -68,7 +68,7 @@
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
 +      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_213819_1_);
-+      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_213819_1_);
 +      if (ret != null) return Either.left(ret);
        Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.func_70608_bn() && this.func_70089_S()) {

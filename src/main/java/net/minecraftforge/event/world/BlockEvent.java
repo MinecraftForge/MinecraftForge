@@ -22,7 +22,6 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -46,8 +45,6 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
-
 public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
@@ -67,12 +64,12 @@ public class BlockEvent extends Event
         return world;
     }
 
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }
 
-    public BlockState getState()
+    public BlockState getBlockState()
     {
         return state;
     }
@@ -108,10 +105,10 @@ public class BlockEvent extends Event
 
         public int getFortuneLevel() { return fortuneLevel; }
         public List<ItemStack> getDrops() { return drops; }
-        public boolean isSilkTouching() { return isSilkTouching; }
+        public boolean hasSilkTouch() { return isSilkTouching; }
         public float getDropChance() { return dropChance; }
         public void setDropChance(float dropChance) { this.dropChance = dropChance; }
-        public PlayerEntity getHarvester() { return harvester; }
+        public PlayerEntity getPlayerEntity() { return harvester; }
     }
 
     /**
@@ -142,7 +139,7 @@ public class BlockEvent extends Event
             }
         }
 
-        public PlayerEntity getPlayer()
+        public PlayerEntity getPlayerEntity()
         {
             return player;
         }
@@ -293,8 +290,8 @@ public class BlockEvent extends Event
      * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
      * arbitrary code when lava sets blocks on fire, even preventing it.
      *
-     * {@link #getState()} will return the block that was originally going to be placed.
-     * {@link #getPos()} will return the position of the block to be changed.
+     * {@link #getBlockState()} will return the block that was originally going to be placed.
+     * {@link #getBlockPos()} will return the position of the block to be changed.
      */
     @Cancelable
     public static class FluidPlaceBlockEvent extends BlockEvent
@@ -312,7 +309,7 @@ public class BlockEvent extends Event
         }
 
         /**
-         * @return The position of the liquid this event originated from. This may be the same as {@link #getPos()}.
+         * @return The position of the liquid this event originated from. This may be the same as {@link #getBlockPos()}.
          */
         public BlockPos getLiquidPos()
         {
@@ -473,7 +470,7 @@ public class BlockEvent extends Event
         }
 
         /**Gets the player using the tool.*/
-        public PlayerEntity getPlayer()
+        public PlayerEntity getPlayerEntity()
         {
             return player;
         }

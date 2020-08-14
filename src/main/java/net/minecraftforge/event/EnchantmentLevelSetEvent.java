@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.event.enchanting;
+package net.minecraftforge.event;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -71,7 +71,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      * 
      * @return the pos of the enchantment table
      */
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }
@@ -102,7 +102,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      * @return the item being enchanted
      */
     @Nonnull
-    public ItemStack getItem()
+    public ItemStack getItemStack()
     {
         return itemStack;
     }

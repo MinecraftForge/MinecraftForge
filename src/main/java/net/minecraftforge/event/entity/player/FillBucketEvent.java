@@ -25,6 +25,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,19 +39,17 @@ import javax.annotation.Nullable;
  * ItemStack to your inventory and reducing the stack size to process.
  * setResult(ALLOW) is the same as the old setHandled();
  */
-@net.minecraftforge.eventbus.api.Cancelable
-@Event.HasResult
+@Cancelable
+@HasResult
 public class FillBucketEvent extends PlayerEvent
 {
 
     private final ItemStack current;
     private final World world;
-    @Nullable
     private final RayTraceResult target;
-
     private ItemStack result;
 
-    public FillBucketEvent(PlayerEntity player, @Nonnull ItemStack current, World world, @Nullable RayTraceResult target)
+    public FillBucketEvent(PlayerEntity player, ItemStack current, World world, RayTraceResult target)
     {
         super(player);
         this.current = current;
@@ -58,12 +57,9 @@ public class FillBucketEvent extends PlayerEvent
         this.target = target;
     }
 
-    @Nonnull
-    public ItemStack getEmptyBucket() { return this.current; }
+    public ItemStack getEmptyStack() { return this.current; }
     public World getWorld(){ return this.world; }
-    @Nullable
     public RayTraceResult getTarget() { return this.target; }
-    @Nonnull
-    public ItemStack getFilledBucket() { return this.result; }
-    public void setFilledBucket(@Nonnull ItemStack bucket) { this.result = bucket; }
+    public ItemStack getFilledStack() { return this.result; }
+    public void setFilledStack(ItemStack bucket) { this.result = bucket; }
 }

@@ -55,6 +55,6 @@ public class LivingAttackEvent extends LivingEvent
         this.amount = amount;
     }
 
-    public DamageSource getSource() { return source; }
-    public float getAmount() { return amount; }
+    public DamageSource getDamageSource() { return source; }
+    public float getDamageAmount() { return amount; }
 }

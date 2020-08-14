@@ -63,7 +63,7 @@ public class NoteBlockEvent extends BlockEvent
      * get the vanilla note-id, which contains information about both Note and Octave. Most modders should not need this.
      * @return an ID for the note
      */
-    public int getVanillaNoteId()
+    public int getRawNote()
     {
         return noteId;
     }
@@ -139,7 +139,7 @@ public class NoteBlockEvent extends BlockEvent
      * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
-    public static enum Note
+    public enum Note
     {
         F_SHARP,
         G,
@@ -167,7 +167,7 @@ public class NoteBlockEvent extends BlockEvent
      * Together with {@link Note} it fully describes the note.
      *
      */
-    public static enum Octave
+    public enum Octave
     {
         LOW,
         MID,

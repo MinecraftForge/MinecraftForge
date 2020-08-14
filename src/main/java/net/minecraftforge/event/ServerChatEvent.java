@@ -45,7 +45,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final String message, username;
+    private final String message;
     private final ServerPlayerEntity player;
     private ITextComponent component;
     public ServerChatEvent(ServerPlayerEntity player, String message, ITextComponent component)
@@ -53,7 +53,6 @@ public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
         super();
         this.message = message;
         this.player = player;
-        this.username = player.getGameProfile().getName();
         this.component = component;
     }
 
@@ -68,6 +67,6 @@ public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
     }
 
     public String getMessage() { return this.message; }
-    public String getUsername() { return this.username; }
-    public ServerPlayerEntity getPlayer() { return this.player; }
+
+    public ServerPlayerEntity getPlayerEntity() { return this.player; }
 }

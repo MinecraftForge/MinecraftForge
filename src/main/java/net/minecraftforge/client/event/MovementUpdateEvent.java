@@ -17,33 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.event.brewing;
+package net.minecraftforge.client.event;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovementInput;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
-import javax.annotation.Nonnull;
-
 /**
- * This event is called when a player picks up a potion from a brewing stand.
+ * This event is fired after player movement inputs are updated.<br>
+ * Handlers can freely manipulate {@link MovementInput} to cancel movement.<br>
  */
-public class PlayerBrewedPotionEvent extends PlayerEvent
+public class MovementUpdateEvent extends PlayerEvent
 {
-    private final ItemStack stack;
+    private final MovementInput movementInput;
 
-    public PlayerBrewedPotionEvent(PlayerEntity player, @Nonnull ItemStack stack)
+    public MovementUpdateEvent(PlayerEntity player, MovementInput movementInput)
     {
         super(player);
-        this.stack = stack;
+        this.movementInput = movementInput;
     }
 
-    /**
-     * The ItemStack of the potion.
-     */
-    @Nonnull
-    public ItemStack getStack()
+    public MovementInput getMovementInput()
     {
-        return stack;
+        return movementInput;
     }
+
 }

@@ -44,13 +44,13 @@
 +         field_230710_m_.remove(b);
 +         field_230705_e_.remove(b);
 +      };
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.field_230710_m_, this::func_230480_a_, remove))) {
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitGuiEvent.Pre(this, this.field_230710_m_, this::func_230480_a_, remove))) {
        this.field_230710_m_.clear();
        this.field_230705_e_.clear();
        this.func_231035_a_((IGuiEventListener)null);
        this.func_231160_c_();
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.field_230710_m_, this::func_230480_a_, remove));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitGuiEvent.Post(this, this.field_230710_m_, this::func_230480_a_, remove));
     }
  
     public List<? extends IGuiEventListener> func_231039_at__() {
@@ -58,7 +58,7 @@
     public void func_238651_a_(MatrixStack p_238651_1_, int p_238651_2_) {
        if (this.field_230706_i_.field_71441_e != null) {
           this.func_238468_a_(p_238651_1_, 0, 0, this.field_230708_k_, this.field_230709_l_, -1072689136, -804253680);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, p_238651_1_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, p_238651_1_));
        } else {
           this.func_231165_f_(p_238651_2_);
        }
@@ -66,7 +66,7 @@
        bufferbuilder.func_225582_a_((double)this.field_230708_k_, 0.0D, 0.0D).func_225583_a_((float)this.field_230708_k_ / 32.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        bufferbuilder.func_225582_a_(0.0D, 0.0D, 0.0D).func_225583_a_(0.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        tessellator.func_78381_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, new MatrixStack()));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, new MatrixStack()));
     }
  
     public boolean func_231177_au__() {

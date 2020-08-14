@@ -42,17 +42,17 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         this.renderPartialTicks = renderPartialTicks;
     }
 
-    public GameRenderer getRenderer()
+    public GameRenderer getGameRenderer()
     {
         return renderer;
     }
 
-    public ActiveRenderInfo getInfo()
+    public ActiveRenderInfo getActiveRenderInfo()
     {
         return info;
     }
 
-    public double getRenderPartialTicks()
+    public double getPartialTicks()
     {
         return renderPartialTicks;
     }

@@ -49,7 +49,7 @@ public class LivingEquipmentChangeEvent extends LivingEvent
     private final ItemStack from;
     private final ItemStack to;
 
-    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlotType slot, @Nonnull ItemStack from, @Nonnull ItemStack to)
+    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlotType slot, ItemStack from, ItemStack to)
     {
         super(entity);
         this.slot = slot;
@@ -58,8 +58,8 @@ public class LivingEquipmentChangeEvent extends LivingEvent
     }
 
     public EquipmentSlotType getSlot() { return this.slot; }
-    @Nonnull
-    public ItemStack getFrom() { return this.from; }
-    @Nonnull
-    public ItemStack getTo() { return this.to; }
+
+    public ItemStack getOriginalStack() { return this.from; }
+
+    public ItemStack getNewStack() { return this.to; }
 }

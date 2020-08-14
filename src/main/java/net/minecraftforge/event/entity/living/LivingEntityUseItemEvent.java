@@ -28,17 +28,16 @@ import javax.annotation.Nonnull;
 public class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
-    private int duration;
+    protected int duration;
 
-    private LivingEntityUseItemEvent(LivingEntity entity, @Nonnull ItemStack item, int duration)
+    private LivingEntityUseItemEvent(LivingEntity entity, ItemStack item, int duration)
     {
         super(entity);
         this.item = item;
-        this.setDuration(duration);
+        this.duration = duration;
     }
 
-    @Nonnull
-    public ItemStack getItem()
+    public ItemStack getItemStack()
     {
         return item;
     }
@@ -46,11 +45,6 @@ public class LivingEntityUseItemEvent extends LivingEvent
     public int getDuration()
     {
         return duration;
-    }
-
-    public void setDuration(int duration)
-    {
-        this.duration = duration;
     }
 
     /**
@@ -67,9 +61,14 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Start extends LivingEntityUseItemEvent
     {
-        public Start(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Start(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
+        }
+
+        public void setDuration(int duration)
+        {
+            this.duration = duration;
         }
     }
 
@@ -82,9 +81,14 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Tick extends LivingEntityUseItemEvent
     {
-        public Tick(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Tick(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
+        }
+
+        public void setDuration(int duration)
+        {
+            this.duration = duration;
         }
     }
 
@@ -103,7 +107,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Stop extends LivingEntityUseItemEvent
     {
-        public Stop(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Stop(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -124,19 +128,18 @@ public class LivingEntityUseItemEvent extends LivingEvent
     public static class Finish extends LivingEntityUseItemEvent
     {
         private ItemStack result;
-        public Finish(LivingEntity entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result)
+        public Finish(LivingEntity entity, ItemStack item, int duration, ItemStack result)
         {
             super(entity, item, duration);
             this.setResultStack(result);
         }
 
-        @Nonnull
         public ItemStack getResultStack()
         {
             return result;
         }
 
-        public void setResultStack(@Nonnull ItemStack result)
+        public void setResultStack(ItemStack result)
         {
             this.result = result;
         }

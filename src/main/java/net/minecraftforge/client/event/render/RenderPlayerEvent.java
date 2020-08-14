@@ -17,17 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-
-import javax.annotation.Nonnull;
 
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
@@ -48,12 +45,12 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     }
 
     public PlayerRenderer getRenderer() { return renderer; }
-    public float getPartialRenderTick() { return partialRenderTick; }
+    public float getPartialTicks() { return partialRenderTick; }
     public MatrixStack getMatrixStack() { return stack; }
     public IRenderTypeBuffer getBuffers() { return buffers; }
-    public int getLight() { return light; }
+    public int getPackedLight() { return light; }
 
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
         public Pre(PlayerEntity player, PlayerRenderer renderer, float tick, MatrixStack stack, IRenderTypeBuffer buffers, int light) {
@@ -67,5 +64,4 @@ public abstract class RenderPlayerEvent extends PlayerEvent
             super(player, renderer, tick, stack, buffers, light);
         }
     }
-    
 }

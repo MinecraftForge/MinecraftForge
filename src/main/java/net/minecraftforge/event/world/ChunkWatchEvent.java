@@ -51,12 +51,12 @@ public class ChunkWatchEvent extends Event
         this.world = world;
     }
 
-    public ServerPlayerEntity getPlayer()
+    public ServerPlayerEntity getPlayerEntity()
     {
         return this.player;
     }
 
-    public ChunkPos getPos()
+    public ChunkPos getChunkPos()
     {
         return this.pos;
     }

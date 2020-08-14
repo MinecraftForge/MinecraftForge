@@ -328,13 +328,13 @@ public class ForgeHooks
     public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getDamageAmount());
     }
 
     public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount)
     {
         LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getDamageAmount());
     }
 
     public static boolean onLivingDeath(LivingEntity entity, DamageSource src)
@@ -432,8 +432,8 @@ public class ForgeHooks
             return null;
 
         if (!player.world.isRemote)
-            player.getEntityWorld().addEntity(event.getEntityItem());
-        return event.getEntityItem();
+            player.getEntityWorld().addEntity(event.getEntity());
+        return event.getEntity();
     }
 
     @Nullable
@@ -1068,7 +1068,7 @@ public class ForgeHooks
         NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
-        return event.getVanillaNoteId();
+        return event.getRawNote();
     }
 
     public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {

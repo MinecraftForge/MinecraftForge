@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
@@ -41,9 +42,10 @@ public class ArrowNockEvent extends PlayerEvent
     private final Hand hand;
     private final World world;
     private final boolean hasAmmo;
+    @Nullable
     private ActionResult<ItemStack> action;
 
-    public ArrowNockEvent(PlayerEntity player, @Nonnull ItemStack item, Hand hand, World world, boolean hasAmmo)
+    public ArrowNockEvent(PlayerEntity player, ItemStack item, Hand hand, World world, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
@@ -52,16 +54,17 @@ public class ArrowNockEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
-    @Nonnull
     public ItemStack getBow() { return this.bow; }
     public World getWorld() { return this.world; }
     public Hand getHand() { return this.hand; }
     public boolean hasAmmo() { return this.hasAmmo; }
+    @Nullable
     public ActionResult<ItemStack> getAction()
     {
         return this.action;
     }
 
+    @Nullable
     public void setAction(ActionResult<ItemStack> action)
     {
         this.action = action;

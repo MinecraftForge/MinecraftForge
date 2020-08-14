@@ -17,35 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.event;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+
+import javax.annotation.Nonnull;
 
 /**
- * This event is called before any Gui will open.
- * If you don't want this to happen, cancel the event.
- * If you want to override this Gui, simply set the gui variable to your own Gui.
- * 
- * @author jk-5
+ * This event is called when a player picks up a potion from a brewing stand.
  */
-@net.minecraftforge.eventbus.api.Cancelable
-public class GuiOpenEvent extends net.minecraftforge.eventbus.api.Event
+public class PlayerBrewedPotionEvent extends PlayerEvent
 {
-    private Screen gui;
-    public GuiOpenEvent(Screen gui)
+    private final ItemStack stack;
+
+    public PlayerBrewedPotionEvent(PlayerEntity player, @Nonnull ItemStack stack)
     {
-        this.setGui(gui);
+        super(player);
+        this.stack = stack;
     }
 
-    public Screen getGui()
+    /**
+     * The ItemStack of the potion.
+     */
+    @Nonnull
+    public ItemStack getItemStack()
     {
-        return gui;
-    }
-
-    public void setGui(Screen gui)
-    {
-        this.gui = gui;
+        return stack;
     }
 }

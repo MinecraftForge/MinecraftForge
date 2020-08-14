@@ -15,6 +15,6 @@ public class PlayerNameEventTest
     public static void onPlayerNameEvent(PlayerEvent.NameFormat event)
     {
         if (!ENABLE) return;
-        event.setDisplayname(new StringTextComponent("Test Name"));
+        event.setDisplayName(new StringTextComponent("Test Name"));
     }
 }

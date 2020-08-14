@@ -68,38 +68,6 @@ public class EntityEvent extends Event
             super(entity);
         }
     }
-
-    /**
-     * CanUpdate is fired when an Entity is being created. <br>
-     * This event is fired whenever vanilla Minecraft determines that an entity<br>
-     * cannot update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
-     * <br>
-     * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
-     * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
-     * and the entity with then be updated.<br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-     **/
-    public static class CanUpdate extends EntityEvent
-    {
-        private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
-        {
-            super(entity);
-        }
-
-        public boolean getCanUpdate()
-        {
-            return canUpdate;
-        }
-
-        public void setCanUpdate(boolean canUpdate)
-        {
-            this.canUpdate = canUpdate;
-        }
-    }
     
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
@@ -114,28 +82,24 @@ public class EntityEvent extends Event
      **/
     public static class EnteringChunk extends EntityEvent
     {
-        private int newChunkX;
-        private int newChunkZ;
-        private int oldChunkX;
-        private int oldChunkZ;
+        private final int newChunkX;
+        private final int newChunkZ;
+        private final int oldChunkX;
+        private final int oldChunkZ;
 
         public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
         {
             super(entity);
-            this.setNewChunkX(newChunkX);
-            this.setNewChunkZ(newChunkZ);
-            this.setOldChunkX(oldChunkX);
-            this.setOldChunkZ(oldChunkZ);
+            this.newChunkX = newChunkX;
+            this.newChunkZ = newChunkZ;
+            this.oldChunkX = oldChunkX;
+            this.oldChunkZ = oldChunkZ;
         }
 
         public int getNewChunkX() { return newChunkX; }
-        public void setNewChunkX(int newChunkX) { this.newChunkX = newChunkX; }
         public int getNewChunkZ() { return newChunkZ; }
-        public void setNewChunkZ(int newChunkZ) { this.newChunkZ = newChunkZ; }
         public int getOldChunkX() { return oldChunkX; }
-        public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
         public int getOldChunkZ() { return oldChunkZ; }
-        public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
     }
     
     /**

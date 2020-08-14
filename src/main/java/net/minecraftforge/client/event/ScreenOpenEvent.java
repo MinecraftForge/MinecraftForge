@@ -19,27 +19,33 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.MovementInput;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
- * This event is fired after player movement inputs are updated.<br>
- * Handlers can freely manipulate {@link MovementInput} to cancel movement.<br>
+ * This event is called before any Gui will open.
+ * If you don't want this to happen, cancel the event.
+ * If you want to override this Gui, simply set the gui variable to your own Gui.
+ * 
+ * @author jk-5
  */
-public class InputUpdateEvent extends PlayerEvent
+@Cancelable
+public class ScreenOpenEvent extends Event
 {
-    private final MovementInput movementInput;
-
-    public InputUpdateEvent(PlayerEntity player, MovementInput movementInput)
+    private Screen gui;
+    public ScreenOpenEvent(Screen gui)
     {
-        super(player);
-        this.movementInput = movementInput;
+        this.setScreen(gui);
     }
 
-    public MovementInput getMovementInput()
+    public Screen getScreen()
     {
-        return movementInput;
+        return gui;
     }
 
+    public void setScreen(Screen gui)
+    {
+        this.gui = gui;
+    }
 }

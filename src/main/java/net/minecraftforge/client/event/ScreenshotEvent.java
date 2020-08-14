@@ -43,7 +43,7 @@ public class ScreenshotEvent extends Event
 
     public static final ITextComponent DEFAULT_CANCEL_REASON = new StringTextComponent("Screenshot canceled");
 
-    private NativeImage image;
+    private final NativeImage image;
     private File screenshotFile;
 
     private ITextComponent resultMessage = null;

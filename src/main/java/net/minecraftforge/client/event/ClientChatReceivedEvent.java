@@ -37,10 +37,9 @@ public class ClientChatReceivedEvent extends Event
 {
     private ITextComponent message;
     private final ChatType type;
-    @Nullable
     private final UUID senderUUID;
 
-    public ClientChatReceivedEvent(ChatType type, ITextComponent message, @Nullable UUID senderUUID)
+    public ClientChatReceivedEvent(ChatType type, ITextComponent message, UUID senderUUID)
     {
         this.type = type;
         this.message = message;
@@ -66,8 +65,7 @@ public class ClientChatReceivedEvent extends Event
      * The UUID of the player or entity that sent this message, or null if not known.
      * This will be equal to {@link net.minecraft.util.Util#field_240973_b_} for system messages.
      */
-    @Nullable
-    public UUID getSenderUUID()
+    public UUID getUUID()
     {
         return senderUUID;
     }
