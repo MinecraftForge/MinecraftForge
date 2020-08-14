@@ -20,7 +20,7 @@
        return field_243189_d[(this.ordinal() + 1) % field_243189_d.length];
     }
 +
-+   public static PointOfView create(String name, boolean renderOverlays, boolean thirdPersonReverse) {
++   public static PointOfView create(String name, boolean fristPerson, boolean reverseCamera) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
