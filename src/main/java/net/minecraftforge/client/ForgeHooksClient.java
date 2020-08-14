@@ -214,13 +214,13 @@ public class ForgeHooksClient
 */
     public static float getOffsetFOV(PlayerEntity entity, float fov)
     {
-        FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
+        FOVModifierEvent fovUpdateEvent = new FOVModifierEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.getFOV();
     }
 
     public static double getFOVModifier(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
-        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, info, renderPartialTicks, fov);
+        EntityViewRenderEvent.FOVUpdate event = new EntityViewRenderEvent.FOVUpdate(renderer, info, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
     }

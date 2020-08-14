@@ -24,13 +24,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.eventbus.api.Event;
 
-public class FOVUpdateEvent extends Event
+public class FOVModifierEvent extends Event
 {
     private final PlayerEntity entity;
     private final float fov;
     private float newfov;
 
-    public FOVUpdateEvent(PlayerEntity entity, float fov)
+    public FOVModifierEvent(PlayerEntity entity, float fov)
     {
         this.entity = entity;
         this.fov = fov;
