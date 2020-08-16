@@ -625,7 +625,7 @@ public class ForgeHooksClient
 
     public static void onInputUpdate(PlayerEntity player, MovementInput movementInput)
     {
-        MinecraftForge.EVENT_BUS.post(new MovementUpdateEvent(player, movementInput));
+        MinecraftForge.EVENT_BUS.post(new MovementInputUpdateEvent(player, movementInput));
     }
 
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {

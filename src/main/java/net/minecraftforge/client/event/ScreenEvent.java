@@ -53,7 +53,7 @@ public class ScreenEvent extends Event
     }
 
     /**
-     * The GuiScreen object generating this event.
+     * The Screen object generating this event.
      */
     public Screen getScreen()
     {
@@ -94,10 +94,10 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
-         * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
+         * This event fires just after initializing {@link Screen#mc}, {@link Screen#fontRenderer},
+         * {@link Screen#width}, and {@link Screen#height}.<br/><br/>
          *
-         * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
+         * If canceled the following lines are skipped in {@link Screen#setWorldAndResolution(Minecraft, int, int)}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.children.clear();}<br/>
          * {@code this.initGui();}<br/>
@@ -112,8 +112,8 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires right after {@link GuiScreen#initGui()}.
-         * This is a good place to alter a GuiScreen's component layout if desired.
+         * This event fires right after {@link Screen#initGui()}.
+         * This is a good place to alter a Screen's component layout if desired.
          */
         public static class Post extends InitGuiEvent
         {
@@ -173,8 +173,8 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires just before {@link GuiScreen#render(int, int, float)} is called.
-         * Cancel this event to skip {@link GuiScreen#render(int, int, float)}.
+         * This event fires just before {@link Screen#render(int, int, float)} is called.
+         * Cancel this event to skip {@link Screen#render(int, int, float)}.
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -186,7 +186,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires just after {@link GuiScreen#render(int, int, float)} is called.
+         * This event fires just after {@link Screen#render(int, int, float)} is called.
          */
         public static class Post extends DrawScreenEvent
         {
@@ -198,7 +198,7 @@ public class ScreenEvent extends Event
     }
 
     /**
-     * This event fires at the end of {@link GuiScreen#drawBackground(int)} and before the rest of the Gui draws.
+     * This event fires at the end of {@link Screen#drawBackground(int)} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
     public static class BackgroundDrawnEvent extends ScreenEvent
@@ -273,7 +273,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when a mouse click is detected for a GuiScreen, before it is handled.
+         * This event fires when a mouse click is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#mouseClicked(double, double, int)}.
          */
         @Cancelable
@@ -315,7 +315,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when a mouse release is detected for a GuiScreen, before it is handled.
+         * This event fires when a mouse release is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#mouseReleased(double, double, int)}.
          */
         @Cancelable
@@ -371,7 +371,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when a mouse drag is detected for a GuiScreen, before it is handled.
+         * This event fires when a mouse drag is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#mouseDragged(double, double, int, double, double)}.
          */
         @Cancelable
@@ -413,7 +413,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
+         * This event fires when a mouse scroll is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double)}.
          */
         @Cancelable
@@ -500,7 +500,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+         * This event fires when keyboard input is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#keyPressed(int, int, int)}.
          */
         @Cancelable
@@ -534,7 +534,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+         * This event fires when keyboard input is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#keyReleased(int, int, int)}.
          */
         @Cancelable
@@ -594,7 +594,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * This event fires when keyboard character input is detected for a GuiScreen, before it is handled.
+         * This event fires when keyboard character input is detected for a Screen, before it is handled.
          * Cancel this event to bypass {@link IGuiEventListener#charTyped(char, int)}.
          */
         @Cancelable

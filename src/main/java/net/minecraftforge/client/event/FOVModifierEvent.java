@@ -28,7 +28,7 @@ public class FOVModifierEvent extends Event
 {
     private final PlayerEntity entity;
     private final float fov;
-    private float newfov;
+    private float newFOV;
 
     public FOVModifierEvent(PlayerEntity entity, float fov)
     {
@@ -49,11 +49,11 @@ public class FOVModifierEvent extends Event
 
     public float getFOV()
     {
-        return newfov;
+        return newFOV;
     }
 
-    public void setFOV(float newfov)
+    public void setFOV(float newFOV)
     {
-        this.newfov = newfov;
+        this.newFOV = newFOV;
     }
 }
