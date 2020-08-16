@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/FishBucketItem.java
 +++ b/net/minecraft/item/FishBucketItem.java
-@@ -26,11 +26,19 @@
+@@ -27,11 +27,19 @@
  public class FishBucketItem extends BucketItem {
     private final EntityType<?> field_203794_a;
  
@@ -18,9 +18,9 @@
 +   }
 +
     public void func_203792_a(World p_203792_1_, ItemStack p_203792_2_, BlockPos p_203792_3_) {
-       if (!p_203792_1_.field_72995_K) {
-          this.func_205357_b(p_203792_1_, p_203792_2_, p_203792_3_);
-@@ -79,4 +87,9 @@
+       if (p_203792_1_ instanceof ServerWorld) {
+          this.func_205357_b((ServerWorld)p_203792_1_, p_203792_2_, p_203792_3_);
+@@ -80,4 +88,9 @@
        }
  
     }

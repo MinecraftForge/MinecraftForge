@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/StructureStart.java
 +++ b/net/minecraft/world/gen/feature/structure/StructureStart.java
-@@ -83,6 +83,9 @@
+@@ -84,6 +84,9 @@
     public CompoundNBT func_143021_a(int p_143021_1_, int p_143021_2_) {
        CompoundNBT compoundnbt = new CompoundNBT();
        if (this.func_75069_d()) {
