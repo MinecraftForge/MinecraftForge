@@ -39,10 +39,9 @@ import net.minecraft.util.ResourceLocation;
 public class DelegatingResourcePack extends ResourcePack
 {
 
-    // TODO: 1.16.2 remove volatile, make final
-    private volatile List<IResourcePack> delegates;
-    private volatile Map<String, List<IResourcePack>> namespacesAssets;
-    private volatile Map<String, List<IResourcePack>> namespacesData;
+    private final List<IResourcePack> delegates;
+    private final Map<String, List<IResourcePack>> namespacesAssets;
+    private final Map<String, List<IResourcePack>> namespacesData;
 
     private final String name;
     private final PackMetadataSection packInfo;
@@ -58,12 +57,7 @@ public class DelegatingResourcePack extends ResourcePack
         super(new File(id));
         this.name = name;
         this.packInfo = packInfo;
-        this.setPacks(ImmutableList.copyOf(packs));
-    }
-
-    private void setPacks(ImmutableList<IResourcePack> packs)
-    {
-        this.delegates = packs;
+        this.delegates = ImmutableList.copyOf(packs);
         this.namespacesAssets = this.buildNamespaceMap(ResourcePackType.CLIENT_RESOURCES, delegates);
         this.namespacesData = this.buildNamespaceMap(ResourcePackType.SERVER_DATA, delegates);
     }
@@ -80,15 +74,6 @@ public class DelegatingResourcePack extends ResourcePack
         }
         map.replaceAll((k, list) -> ImmutableList.copyOf(list));
         return ImmutableMap.copyOf(map);
-    }
-
-    @Deprecated // remove in 1.16.2
-    public void addDelegate(DelegatableResourcePack pack)
-    {
-        synchronized (this) // still need to synchronize to prevent issues on concurrent calls to addDelegate
-        {
-            this.setPacks(ImmutableList.<IResourcePack>builder().addAll(delegates).add(pack).build());
-        }
     }
 
     @Override

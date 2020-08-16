@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
@@ -38,8 +39,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
-// TODO: 1.16.2 just extend ResourcePack
-public class ModFileResourcePack extends DelegatableResourcePack
+public class ModFileResourcePack extends ResourcePack
 {
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
@@ -60,17 +60,15 @@ public class ModFileResourcePack extends DelegatableResourcePack
         return modFile.getFileName();
     }
 
-    @Deprecated // reduce visibility in 1.16.2
     @Override
-    public InputStream getInputStream(String name) throws IOException
+    protected InputStream getInputStream(String name) throws IOException
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
-    @Deprecated // reduce visibility in 1.16.2
     @Override
-    public boolean resourceExists(String name)
+    protected boolean resourceExists(String name)
     {
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
