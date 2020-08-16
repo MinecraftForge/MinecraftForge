@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowingFluidBlock.java
 +++ b/net/minecraft/block/FlowingFluidBlock.java
-@@ -31,10 +31,11 @@
+@@ -29,10 +29,11 @@
  
  public class FlowingFluidBlock extends Block implements IBucketPickupHandler {
     public static final IntegerProperty field_176367_b = BlockStateProperties.field_208132_ag;
@@ -13,7 +13,7 @@
     public FlowingFluidBlock(FlowingFluid p_i49014_1_, AbstractBlock.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
-@@ -47,8 +48,21 @@
+@@ -45,8 +46,21 @@
  
        this.field_212565_c.add(p_i49014_1_.func_207207_a(8, true));
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
@@ -35,7 +35,7 @@
     public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
        return p_220071_4_.func_216378_a(field_235510_c_, p_220071_3_, true) && p_220071_1_.func_177229_b(field_176367_b) == 0 && p_220071_4_.func_230426_a_(p_220071_2_.func_204610_c(p_220071_3_.func_177984_a()), this.field_204517_c) ? field_235510_c_ : VoxelShapes.func_197880_a();
     }
-@@ -71,6 +85,7 @@
+@@ -69,6 +83,7 @@
  
     public FluidState func_204507_t(BlockState p_204507_1_) {
        int i = p_204507_1_.func_177229_b(field_176367_b);
@@ -43,7 +43,7 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
-@@ -122,13 +137,13 @@
+@@ -120,13 +135,13 @@
                 BlockPos blockpos = p_204515_2_.func_177972_a(direction);
                 if (p_204515_1_.func_204610_c(blockpos).func_206884_a(FluidTags.field_206959_a)) {
                    Block block = p_204515_1_.func_204610_c(p_204515_2_).func_206889_d() ? Blocks.field_150343_Z : Blocks.field_150347_e;
@@ -59,9 +59,9 @@
                    this.func_180688_d(p_204515_1_, p_204515_2_);
                    return false;
                 }
-@@ -166,4 +181,23 @@
+@@ -153,4 +168,23 @@
+          return Fluids.field_204541_a;
        }
- 
     }
 +
 +   // Forge start

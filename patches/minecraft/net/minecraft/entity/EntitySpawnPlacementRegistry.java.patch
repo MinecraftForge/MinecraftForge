@@ -1,7 +1,7 @@
 --- a/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ b/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 @@ -147,10 +147,26 @@
-       boolean test(EntityType<T> p_test_1_, IWorld p_test_2_, SpawnReason p_test_3_, BlockPos p_test_4_, Random p_test_5_);
+       boolean test(EntityType<T> p_test_1_, IServerWorld p_test_2_, SpawnReason p_test_3_, BlockPos p_test_4_, Random p_test_5_);
     }
  
 -   public static enum PlacementType {

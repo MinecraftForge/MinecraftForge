@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/Structure.java
 +++ b/net/minecraft/world/gen/feature/structure/Structure.java
-@@ -35,7 +35,7 @@
+@@ -38,7 +38,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  

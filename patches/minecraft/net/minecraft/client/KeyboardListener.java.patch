@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardListener.java
 +++ b/net/minecraft/client/KeyboardListener.java
-@@ -256,7 +256,9 @@
+@@ -255,7 +255,9 @@
           }
  
           INestedGuiEventHandler inestedguieventhandler = this.field_197972_a.field_71462_r;
@@ -11,7 +11,7 @@
              if (this.field_197972_a.field_71474_y.field_152395_am.func_197976_a(p_197961_3_, p_197961_4_)) {
                 this.field_197972_a.func_228018_at_().func_198077_g();
                 this.field_197972_a.field_71474_y.field_74353_u = this.field_197972_a.func_228018_at_().func_198113_j();
-@@ -275,6 +277,8 @@
+@@ -274,6 +276,8 @@
                 });
                 return;
              }
@@ -20,7 +20,7 @@
           }
  
           boolean flag = inestedguieventhandler == null || !(inestedguieventhandler.func_241217_q_() instanceof TextFieldWidget) || !((TextFieldWidget)inestedguieventhandler.func_241217_q_()).func_212955_f();
-@@ -294,10 +298,14 @@
+@@ -289,10 +293,14 @@
              Screen.func_231153_a_(() -> {
                 if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
                    if (p_197961_5_ == 0) {
@@ -37,7 +37,7 @@
                 }
  
              }, "keyPressed event handler", inestedguieventhandler.getClass().getCanonicalName());
-@@ -350,7 +358,7 @@
+@@ -345,7 +353,7 @@
                 }
              }
           }
@@ -46,7 +46,7 @@
        }
     }
  
-@@ -360,12 +368,16 @@
+@@ -355,12 +363,16 @@
           if (iguieventlistener != null && this.field_197972_a.func_213250_au() == null) {
              if (Character.charCount(p_197963_3_) == 1) {
                 Screen.func_231153_a_(() -> {

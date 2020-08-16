@@ -27,17 +27,7 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
-@@ -107,7 +113,8 @@
-             this.func_213315_a(MoverType.SELF, this.func_213322_ci());
-             float f = 0.98F;
-             if (this.field_70122_E) {
--               f = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).func_177230_c().func_208618_m() * 0.98F;
-+               BlockPos pos = new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_());
-+               f = this.field_70170_p.func_180495_p(pos).getSlipperiness(this.field_70170_p, pos, this) * 0.98F;
-             }
- 
-             this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -140,7 +147,14 @@
+@@ -144,7 +150,14 @@
              }
           }
  
@@ -53,7 +43,7 @@
              this.func_70106_y();
           }
  
-@@ -198,6 +212,8 @@
+@@ -202,6 +215,8 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
@@ -62,7 +52,7 @@
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
        }
-@@ -231,6 +247,7 @@
+@@ -235,6 +250,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -70,7 +60,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
-@@ -252,6 +269,7 @@
+@@ -256,6 +272,7 @@
        p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -78,7 +68,7 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_186854_a("Thrower", this.func_200214_m());
        }
-@@ -272,6 +290,7 @@
+@@ -276,6 +293,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -86,7 +76,7 @@
  
        if (p_70037_1_.func_186855_b("Owner")) {
           this.field_145802_g = p_70037_1_.func_186857_a("Owner");
-@@ -291,10 +310,18 @@
+@@ -295,10 +313,18 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -106,7 +96,7 @@
              p_70100_1_.func_71001_a(this, i);
              if (itemstack.func_190926_b()) {
                 this.func_70106_y();
-@@ -318,8 +345,8 @@
+@@ -322,8 +348,8 @@
     }
  
     @Nullable
@@ -117,7 +107,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -392,7 +419,7 @@
+@@ -396,7 +422,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();

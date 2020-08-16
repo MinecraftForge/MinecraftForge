@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -432,24 +433,24 @@ public class BlockEvent extends Event
     @Cancelable
     public static class PortalSpawnEvent extends BlockEvent
     {
-        private final NetherPortalBlock.Size size;
+        private final PortalSize size;
 
-        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, NetherPortalBlock.Size size)
+        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, PortalSize size)
         {
             super(world, pos, state);
             this.size = size;
         }
 
-        public NetherPortalBlock.Size getPortalSize()
+        public PortalSize getPortalSize()
         {
             return size;
         }
     }
-    
+
     /**
      * Fired when when this block is right clicked by a tool to change its state.
      * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * 
+     *
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
@@ -481,7 +482,7 @@ public class BlockEvent extends Event
         public ItemStack getHeldItemStack()
         {
             return stack;
-	    }
+        }
 
         /**Gets the current type of the tool being compared against.*/
         public ToolType getToolType()
