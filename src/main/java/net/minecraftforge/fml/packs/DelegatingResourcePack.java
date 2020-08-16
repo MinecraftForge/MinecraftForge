@@ -46,12 +46,6 @@ public class DelegatingResourcePack extends ResourcePack
     private final String name;
     private final PackMetadataSection packInfo;
 
-    @Deprecated
-    public DelegatingResourcePack(String id, String name, PackMetadataSection packInfo)
-    {
-        this(id, name, packInfo, Collections.emptyList());
-    }
-
     public DelegatingResourcePack(String id, String name, PackMetadataSection packInfo, List<? extends IResourcePack> packs)
     {
         super(new File(id));
