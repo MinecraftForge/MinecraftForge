@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
     private final String license;
+    private final AtomicReference<Optional<Optional<Manifest>>> manifest = new AtomicReference<>(Optional.empty());
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -113,7 +115,12 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     public Optional<Manifest> getManifest() {
-        return modFile.getLocator().findManifest(modFile.getFilePath());
+        Optional<Optional<Manifest>> manifest = this.manifest.get();
+        if (!manifest.isPresent()) {
+            manifest = Optional.of(modFile.getLocator().findManifest(modFile.getFilePath()));
+            this.manifest.set(manifest);
+        }
+        return manifest.get();
     }
 
     @Override
