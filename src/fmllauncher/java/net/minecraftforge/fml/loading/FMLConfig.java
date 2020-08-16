@@ -55,9 +55,12 @@ public class FMLConfig
                 autosave().autoreload().
                 writingMode(WritingMode.REPLACE).
                 build();
-        try {
+        try
+        {
             configData.load();
-        } catch (ParsingException e) {
+        }
+        catch (ParsingException e)
+        {
             throw new RuntimeException("Failed to load FML config from " + configFile.toString(), e);
         }
         if (!configSpec.isCorrect(configData)) {

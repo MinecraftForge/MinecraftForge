@@ -51,9 +51,12 @@ public class ConfigFileTypeHandler {
                     writingMode(WritingMode.REPLACE).
                     build();
             LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
-            try {
+            try
+            {
                 configData.load();
-            } catch (ParsingException ex) {
+            }
+            catch (ParsingException ex)
+            {
                 throw new ConfigLoadingException(c, ex);
             }
             LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
@@ -104,9 +107,12 @@ public class ConfigFileTypeHandler {
             // Force the regular classloader onto the special thread
             Thread.currentThread().setContextClassLoader(realClassLoader);
             if (!this.modConfig.getSpec().isCorrecting()) {
-                try {
+                try
+                {
                     this.commentedFileConfig.load();
-                } catch (ParsingException ex) {
+                }
+                catch (ParsingException ex)
+                {
                     throw new ConfigLoadingException(modConfig, ex);
                 }
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
