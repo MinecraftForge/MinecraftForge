@@ -77,7 +77,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
-        if (modConfigs.isEmpty()) {
+        if (modConfigs.isEmpty())
+        {
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream()
@@ -113,13 +114,16 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public Map<String, Object> getFileProperties() {
+    public Map<String, Object> getFileProperties()
+    {
         return this.properties;
     }
 
-    public Optional<Manifest> getManifest() {
+    public Optional<Manifest> getManifest()
+    {
         Optional<Manifest> result = manifest;
-        if (result == null) {
+        if (result == null)
+        {
             result = modFile.getLocator().findManifest(modFile.getFilePath());
             manifest = result;
         }
@@ -127,22 +131,26 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public boolean showAsResourcePack() {
+    public boolean showAsResourcePack()
+    {
         return this.showAsResourcePack;
     }
 
     @Override
-    public <T> Optional<T> getConfigElement(final String... key) {
+    public <T> Optional<T> getConfigElement(final String... key)
+    {
         return this.config.getConfigElement(key);
     }
 
     @Override
-    public List<? extends IConfigurable> getConfigList(final String... key) {
+    public List<? extends IConfigurable> getConfigList(final String... key)
+    {
         return this.config.getConfigList(key);
     }
 
     @Override
-    public String getLicense() {
+    public String getLicense()
+    {
         return license;
     }
 }
