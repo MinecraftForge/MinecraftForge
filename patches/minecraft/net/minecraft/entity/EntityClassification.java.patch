@@ -9,14 +9,18 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -57,6 +57,10 @@
-       return this.field_82707_i;
+@@ -64,4 +64,14 @@
+    public int func_233672_g_() {
+       return 32;
     }
- 
++
 +   public static EntityClassification create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
-    public int func_233671_f_() {
-       return this.field_233669_n_;
-    }
++   @Override
++   public void init() {
++      field_220364_f.put(this.field_220365_j, this);
++      field_233667_g_ = IStringSerializable.func_233023_a_(EntityClassification::values, EntityClassification::func_233670_a_);
++   }
+ }

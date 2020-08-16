@@ -23,9 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
 import net.minecraft.resources.IResource;
@@ -34,7 +39,14 @@ import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.resources.VanillaPack;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Unit;
+import net.minecraft.util.Util;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenSettingsExport;
+import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 /**
@@ -46,6 +58,9 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 public class ExistingFileHelper {
 
     private final SimpleReloadableResourceManager clientResources, serverData;
+    private final DynamicRegistries.Impl dynamicRegistries;
+    private WorldSettingsImport<JsonElement> registryParser;
+    private final WorldGenSettingsExport<JsonElement> registrySerializer;
     private final boolean enable;
 
     public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
@@ -59,6 +74,9 @@ public class ExistingFileHelper {
             this.clientResources.addResourcePack(pack);
             this.serverData.addResourcePack(pack);
         };
+        dynamicRegistries = DynamicRegistries.func_239770_b_();
+        registryParser = WorldSettingsImport.func_244335_a(JsonOps.INSTANCE, serverData, dynamicRegistries);
+        registrySerializer = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, dynamicRegistries);
         this.enable = enable;
     }
 
@@ -89,9 +107,26 @@ public class ExistingFileHelper {
         return getManager(type).hasResource(getLocation(loc, pathSuffix, pathPrefix));
     }
 
-    @VisibleForTesting
     public IResource getResource(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) throws IOException {
         return getManager(type).getResource(getLocation(loc, pathSuffix, pathPrefix));
+    }
+
+    public WorldSettingsImport<JsonElement> getRegistryParser() {
+        return registryParser;
+    }
+
+    public WorldGenSettingsExport<JsonElement> getRegistrySerializer() {
+        return registrySerializer;
+    }
+
+    /**
+     * This is not a costly operation because the manager has no listeners.
+     * This is necessary for the manager to be aware of newly created files.
+     */
+    public void reloadResources() {
+        serverData.reloadResourcesAndThen(
+                Runnable::run, Util.getServerExecutor(), serverData.func_230232_b_().collect(Collectors.toList()), CompletableFuture.completedFuture(Unit.INSTANCE)
+        ).join();
     }
 
     /**

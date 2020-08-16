@@ -1,0 +1,43 @@
+{
+  "processors": [
+    {
+      "blocks": [
+        {
+          "Name": "minecraft:air"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
+    },
+    {
+      "processor_type": "minecraft:blackstone_replace"
+    },
+    {
+      "processor_type": "minecraft:lava_submerged_block"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "offset": -10,
+      "processor_type": "minecraft:gravity"
+    },
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:diamond_block"
+          },
+          "input_predicate": {
+            "block": "minecraft:end_stone",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "block_state": {
+              "Name": "minecraft:emerald_block"
+            },
+            "predicate_type": "minecraft:blockstate_match"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    }
+  ]
+}

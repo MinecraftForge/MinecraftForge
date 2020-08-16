@@ -1,0 +1,83 @@
+{
+  "type": "world_data_gen:dim_type_test_0",
+  "generator": {
+    "biome_source": {
+      "humidity_noise": {
+        "firstOctave": -7,
+        "amplitudes": [
+          1.0,
+          1.0
+        ]
+      },
+      "altitude_noise": {
+        "firstOctave": -10,
+        "amplitudes": [
+          -0.9,
+          0.5,
+          1.0
+        ]
+      },
+      "weirdness_noise": {
+        "firstOctave": -7,
+        "amplitudes": [
+          1.0,
+          1.0
+        ]
+      },
+      "seed": -980716794056944712,
+      "biomes": [
+        {
+          "parameters": {
+            "altitude": 1.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.3,
+            "humidity": -0.2
+          },
+          "biome": "world_data_gen:biome_test_0"
+        },
+        {
+          "parameters": {
+            "altitude": 0.6,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.3,
+            "humidity": -0.25
+          },
+          "biome": "world_data_gen:biome_test_1"
+        },
+        {
+          "parameters": {
+            "altitude": 0.05,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.45,
+            "humidity": -0.5
+          },
+          "biome": "world_data_gen:biome_test_2"
+        },
+        {
+          "parameters": {
+            "altitude": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.9,
+            "humidity": -0.75
+          },
+          "biome": "world_data_gen:biome_test_3"
+        }
+      ],
+      "temperature_noise": {
+        "firstOctave": -7,
+        "amplitudes": [
+          1.0,
+          1.0
+        ]
+      },
+      "type": "minecraft:multi_noise"
+    },
+    "seed": -980716794056944712,
+    "settings": "minecraft:overworld",
+    "type": "minecraft:noise"
+  }
+}
