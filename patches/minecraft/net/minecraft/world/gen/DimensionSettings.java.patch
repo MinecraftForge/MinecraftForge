@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/gen/DimensionSettings.java
 +++ b/net/minecraft/world/gen/DimensionSettings.java
-@@ -143,7 +143,7 @@
-       }
+@@ -104,7 +104,7 @@
+    }
  
-       private static DimensionSettings func_236133_a_(DimensionStructuresSettings p_236133_0_, BlockState p_236133_1_, BlockState p_236133_2_, DimensionSettings.Preset p_236133_3_) {
--         Map<Structure<?>, StructureSeparationSettings> map = Maps.newHashMap(DimensionStructuresSettings.field_236191_b_);
-+         Map<Structure<?>, StructureSeparationSettings> map = net.minecraftforge.common.ForgeHooks.getAllStructureSeparationSettings();
-          map.put(Structure.field_236372_h_, new StructureSeparationSettings(25, 10, 34222645));
-          return new DimensionSettings(new DimensionStructuresSettings(Optional.ofNullable(p_236133_0_.func_236199_b_()), map), new NoiseSettings(128, new ScalingSettings(1.0D, 3.0D, 80.0D, 60.0D), new SlideSettings(120, 3, 0), new SlideSettings(320, 4, -1), 1, 2, 0.0D, 0.019921875D, false, false, false, false), p_236133_1_, p_236133_2_, 0, 0, 32, false, Optional.of(p_236133_3_));
-       }
+    private static DimensionSettings func_242741_a(DimensionStructuresSettings p_242741_0_, BlockState p_242741_1_, BlockState p_242741_2_, ResourceLocation p_242741_3_) {
+-      Map<Structure<?>, StructureSeparationSettings> map = Maps.newHashMap(DimensionStructuresSettings.field_236191_b_);
++      Map<Structure<?>, StructureSeparationSettings> map = net.minecraftforge.common.ForgeHooks.getAllStructureSeparationSettings();
+       map.put(Structure.field_236372_h_, new StructureSeparationSettings(25, 10, 34222645));
+       return new DimensionSettings(new DimensionStructuresSettings(Optional.ofNullable(p_242741_0_.func_236199_b_()), map), new NoiseSettings(128, new ScalingSettings(1.0D, 3.0D, 80.0D, 60.0D), new SlideSettings(120, 3, 0), new SlideSettings(320, 4, -1), 1, 2, 0.0D, 0.019921875D, false, false, false, false), p_242741_1_, p_242741_2_, 0, 0, 32, false);
+    }
