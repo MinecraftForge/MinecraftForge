@@ -55,7 +55,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
     private final String license;
-    private final AtomicReference<Optional<Optional<Manifest>>> manifest = new AtomicReference<>(Optional.empty());
+    // Caches the manifest of the mod jar as parsing the manifest can be expensive for
+    // signed jars. The manifest needs to be an Optional<Manifest>, so a nullable Optional
+    // is probably the best option.
+    private volatile Optional<Manifest> manifest = null;
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -115,12 +118,12 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     public Optional<Manifest> getManifest() {
-        Optional<Optional<Manifest>> manifest = this.manifest.get();
-        if (!manifest.isPresent()) {
-            manifest = Optional.of(modFile.getLocator().findManifest(modFile.getFilePath()));
-            this.manifest.set(manifest);
+        Optional<Manifest> result = manifest;
+        if (result == null) {
+            result = modFile.getLocator().findManifest(modFile.getFilePath());
+            manifest = result;
         }
-        return manifest.get();
+        return result;
     }
 
     @Override
