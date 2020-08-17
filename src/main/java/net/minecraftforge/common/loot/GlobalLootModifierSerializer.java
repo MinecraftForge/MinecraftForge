@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.loot;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.loot.ConditionArraySerializer;

@@ -1,5 +1,4 @@
 {
-  "type": "global_loot_test:smelting",
   "conditions": [
     {
       "condition": "minecraft:match_tool",
@@ -14,5 +13,6 @@
         ]
       }
     }
-  ]
+  ],
+  "type": "global_loot_test:smelting"
 }
