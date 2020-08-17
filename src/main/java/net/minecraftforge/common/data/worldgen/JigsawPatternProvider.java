@@ -40,13 +40,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPattern> {
+/**
+ * Referred to JigsawPools or TemplatePools by the wiki.
+ */
+public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPattern>
+{
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, Builder> map = new HashMap<>();
     protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public JigsawPatternProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
+    public JigsawPatternProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
         super(JigsawPattern.field_236852_a_, fileHelper);
         this.generator = generator;
         this.modid = modid;
@@ -55,7 +60,8 @@ public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPa
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -67,30 +73,36 @@ public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPa
         this.fileHelper.reloadResources();
     }
 
-    public void put(ResourceLocation location, Builder builder) {
+    public void put(ResourceLocation location, Builder builder)
+    {
         map.put(location, builder);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Jigsaw Patterns: " + modid;
     }
 
-    public static class Builder {
+    public static class Builder
+    {
         private ResourceLocation name = JigsawPatternRegistry.field_244091_a.func_240901_a_(); //empty
         private ResourceLocation fallBack = JigsawPatternRegistry.field_244091_a.func_240901_a_(); //empty
         private final List<Pair<JigsawPiece, Integer>> weightedList = new ArrayList<>();
 
-        protected JigsawPattern build() {
+        protected JigsawPattern build()
+        {
             return new JigsawPattern(name, fallBack, weightedList);
         }
 
-        public Builder setName(ResourceLocation name) {
+        public Builder setName(ResourceLocation name)
+        {
             this.name = name;
             return this;
         }
 
-        public Builder setFallBack(ResourceLocation fallBack) {
+        public Builder setFallBack(ResourceLocation fallBack)
+        {
             this.fallBack = fallBack;
             return this;
         }
@@ -99,18 +111,21 @@ public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPa
          * JigsawPiece has a bunch of helpers that returns this mess.
          * See {@link PlainsVillagePools} for examples.
          */
-        public Builder addAll(List<Pair<Function<JigsawPattern.PlacementBehaviour, ? extends JigsawPiece>, Integer>> weightedList, JigsawPattern.PlacementBehaviour behaviour) {
+        public Builder addAll(List<Pair<Function<JigsawPattern.PlacementBehaviour, ? extends JigsawPiece>, Integer>> weightedList, JigsawPattern.PlacementBehaviour behaviour)
+        {
             weightedList.forEach(p -> this.weightedList.add(p.mapFirst(f -> f.apply(behaviour))));
             return this;
         }
 
-        public Builder add(JigsawPiece piece, Integer weight) {
+        public Builder add(JigsawPiece piece, Integer weight)
+        {
             weightedList.add(Pair.of(piece, weight));
             return this;
         }
 
-        public Builder addAll(List<Pair<JigsawPiece, Integer>> weightedList) {
-            weightedList.addAll(weightedList);
+        public Builder addAll(List<Pair<JigsawPiece, Integer>> weightedList)
+        {
+            this.weightedList.addAll(weightedList);
             return this;
         }
     }

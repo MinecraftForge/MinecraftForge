@@ -34,12 +34,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalLong;
 
-public abstract class DimensionTypeProvider extends CodecBackedProvider<DimensionType> {
+public abstract class DimensionTypeProvider extends CodecBackedProvider<DimensionType>
+{
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Builder> builders = new HashMap<>();
 
-    public DimensionTypeProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
+    public DimensionTypeProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
         super(DimensionType.field_235997_a_, fileHelper);
         this.generator = generator;
         this.modid = modid;
@@ -48,7 +50,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -60,12 +63,14 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         this.fileHelper.reloadResources();
     }
 
-    protected void put(ResourceLocation name, Builder builder) {
+    protected void put(ResourceLocation name, Builder builder)
+    {
         builders.put(name, builder);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "DimensionTypes: " + modid;
     }
 
@@ -73,7 +78,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
      * Info taken from <a href=https://minecraft.gamepedia.com/Custom_dimension#Dimension_type_syntax>the wiki</a>.
      * The default values are the Overworld's
      */
-    public static class Builder {
+    public static class Builder
+    {
         private OptionalLong fixedTime = OptionalLong.empty();
         private boolean hasSkylight = true;
         private boolean hasCeiling = false;
@@ -89,21 +95,24 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         private ResourceLocation effects = DimensionType.field_242710_a; //if unknown defaults to OW anyway. only 3 exists for vanilla.
         private float ambientLight = 0.0F;
 
-        protected DimensionType build() {
+        protected DimensionType build()
+        {
             return new DimensionType(fixedTime, hasSkylight, hasCeiling, ultraWarm, natural, coordinateScale, piglinSafe, bedWorks, respawnAnchorWorks, hasRaids, logicalHeight, infiniburn, effects, ambientLight);
         }
 
         /**
          * Sets a fixed time for the dimension, Nether is at 18000 and The End is at 6000.
          */
-        public Builder setFixedTime(Long time) {
+        public Builder setFixedTime(Long time)
+        {
             if(time > 24000 || time < 0)
                 throw new IllegalArgumentException("Time range is between 0 and 24000");
             this.fixedTime = OptionalLong.of(time);
             return this;
         }
 
-        public Builder hasSkylight(boolean value) {
+        public Builder hasSkylight(boolean value)
+        {
             this.hasSkylight = value;
             return this;
         }
@@ -111,7 +120,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * Whether the dimension has a bedrock ceiling. True also makes lava spread faster...
          */
-        public Builder hasCeiling(boolean value) {
+        public Builder hasCeiling(boolean value)
+        {
             this.hasCeiling = value;
             return this;
         }
@@ -119,7 +129,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * If true, water evaporates and sponge dries. Lava also spread thinner.
          */
-        public Builder isUltrawarm(boolean value) {
+        public Builder isUltrawarm(boolean value)
+        {
             this.ultraWarm = value;
             return this;
         }
@@ -127,7 +138,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * False makes compasses spin randomly, true makes nether portals spawn zombified piglins.
          */
-        public Builder isNatural(boolean value) {
+        public Builder isNatural(boolean value)
+        {
             this.natural = value;
             return this;
         }
@@ -135,7 +147,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * Scale multiplier when crossing dimensions. Nether has a value of 8.
          */
-        public Builder setCoordinateScale(double scale) {
+        public Builder setCoordinateScale(double scale)
+        {
             if(scale > 3.0E7D || scale < 1.0E-5F)
                 throw new IllegalArgumentException("Scale is too huge or too tiny!");
             this.coordinateScale = scale;
@@ -145,7 +158,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * If false, Piglins become Zombified piglins in this dimension.
          */
-        public Builder arePiglinSafe(boolean value) {
+        public Builder arePiglinSafe(boolean value)
+        {
             this.piglinSafe = value;
             return this;
         }
@@ -153,7 +167,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * If false, clicking on a bed in the dimension will show you an intentional game design.
          */
-        public Builder doBedWorks(boolean value) {
+        public Builder doBedWorks(boolean value)
+        {
             this.bedWorks = value;
             return this;
         }
@@ -161,7 +176,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * If false, clicking on a respawn anchor in the dimension will show you an intentional game design.
          */
-        public Builder doRespawnAnchorWork(boolean value) {
+        public Builder doRespawnAnchorWork(boolean value)
+        {
             this.respawnAnchorWorks = value;
             return this;
         }
@@ -169,7 +185,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * Whether Bad Omen can cause a raid.
          */
-        public Builder hasRaids(boolean value) {
+        public Builder hasRaids(boolean value)
+        {
             this.hasRaids = value;
             return this;
         }
@@ -177,7 +194,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * Sets the maximum height chorus fruit and nether portals can bring players in this dimension.
          */
-        public Builder setLogicalHeigh(int height) {
+        public Builder setLogicalHeigh(int height)
+        {
             if(height > 256 || height < 0)
                 throw new IllegalArgumentException("Height must be between 0 and 256");
             this.logicalHeight = height;
@@ -186,8 +204,10 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
 
         /**
          * Sets the resource location of a tag which will contain all of the blocks that can burn forever in this dimension.
+         * If the tag does not exist, defaults to the overworld infiniburn.
          */
-        public Builder setInfiniburnBlocks(ResourceLocation value) {
+        public Builder setInfiniburnBlocks(ResourceLocation value)
+        {
             this.infiniburn = value;
             return this;
         }
@@ -196,7 +216,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
          * Sets the resource location of an {@link DimensionRenderInfo} that is retrieved through {@link DimensionRenderInfo#field_239208_a_}.
          * If it does not exists, defaults to the Overworld's
          */
-        public Builder setEffects(ResourceLocation value) {
+        public Builder setEffects(ResourceLocation value)
+        {
             this.effects = value;
             return this;
         }
@@ -204,7 +225,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         /**
          * Sets how much light the dimension has. Nether defaults to 0.1, the 2 others are 0.
          */
-        public Builder setAmbientLight(float light) {
+        public Builder setAmbientLight(float light)
+        {
             this.ambientLight = light;
             return this;
         }

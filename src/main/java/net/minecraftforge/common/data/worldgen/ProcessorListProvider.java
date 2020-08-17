@@ -24,6 +24,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.template.IStructureProcessorType;
+import net.minecraft.world.gen.feature.template.ProcessorLists;
 import net.minecraft.world.gen.feature.template.StructureProcessorList;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.data.CodecBackedProvider;
@@ -33,22 +34,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Very simply provider, doesn't need to be implemented.
- * Use {@link #put} as a Builder pattern.
+ * No builder as only a list is needed.
+ * See {@link ProcessorLists} for creation examples.
  */
-public class ProcessorListProvider extends CodecBackedProvider<StructureProcessorList> {
+public abstract class ProcessorListProvider extends CodecBackedProvider<StructureProcessorList>
+{
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, StructureProcessorList> map = new HashMap<>();
 
-    public ProcessorListProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
+    public ProcessorListProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
         super(IStructureProcessorType.field_242921_l, fileHelper);
         this.generator = generator;
         this.modid = modid;
     }
 
+    protected abstract void start();
+
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
+        start();
+
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
@@ -58,13 +66,14 @@ public class ProcessorListProvider extends CodecBackedProvider<StructureProcesso
         this.fileHelper.reloadResources();
     }
 
-    public ProcessorListProvider put(ResourceLocation location, StructureProcessorList inst) {
+    public void put(ResourceLocation location, StructureProcessorList inst)
+    {
         map.put(location, inst);
-        return this;
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Processor Lists: " + modid;
     }
 }

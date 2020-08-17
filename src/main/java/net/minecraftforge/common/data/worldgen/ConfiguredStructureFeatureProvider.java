@@ -35,13 +35,16 @@ import java.util.Map;
 /**
  * No builder for this class as StructureFeatures are simple to create, see {@link Structure}.
  */
-public abstract class ConfiguredStructureFeatureProvider extends CodecBackedProvider<StructureFeature<?,?>> {
+public abstract class ConfiguredStructureFeatureProvider extends CodecBackedProvider<StructureFeature<?,?>>
+{
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, StructureFeature<?, ?>> map = new HashMap<>();
 
-    public ConfiguredStructureFeatureProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
-        super(StructureFeature.field_236267_a_, fileHelper); //TODO This codec is dispatched for the vanilla STRUCTURE_FEATURE registry, and won't affect any mod added structures.
+    public ConfiguredStructureFeatureProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
+        //TODO This codec is dispatched for the vanilla STRUCTURE_FEATURE registry, and won't affect any mod added structures.
+        super(StructureFeature.field_236267_a_, fileHelper);
         this.generator = generator;
         this.modid = modid;
     }
@@ -49,7 +52,8 @@ public abstract class ConfiguredStructureFeatureProvider extends CodecBackedProv
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -61,12 +65,14 @@ public abstract class ConfiguredStructureFeatureProvider extends CodecBackedProv
         this.fileHelper.reloadResources();
     }
 
-    public void put(ResourceLocation location, StructureFeature<?, ?> structure) {
+    public void put(ResourceLocation location, StructureFeature<?, ?> structure)
+    {
         map.put(location, structure);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Configured Structure Features: " + modid;
     }
 }

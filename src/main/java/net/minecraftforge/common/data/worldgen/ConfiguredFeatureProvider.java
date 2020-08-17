@@ -35,13 +35,16 @@ import java.util.Map;
 /**
  * No builder for this class as ConfiguredFeatures are simple to create, see {@link Features}.
  */
-public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<ConfiguredFeature<?,?>> {
+public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<ConfiguredFeature<?,?>>
+{
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, ConfiguredFeature<?, ?>> map = new HashMap<>();
 
-    public ConfiguredFeatureProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
-        super(ConfiguredFeature.field_242763_a, fileHelper); //TODO This codec is dispatched for the vanilla FEATURE registry, and won't affect any mod added features.
+    public ConfiguredFeatureProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
+        //TODO This codec is dispatched for the vanilla FEATURE registry, and won't affect any mod added features.
+        super(ConfiguredFeature.field_242763_a, fileHelper);
         this.generator = generator;
         this.modid = modid;
     }
@@ -49,7 +52,8 @@ public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<Conf
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -61,12 +65,14 @@ public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<Conf
         this.fileHelper.reloadResources();
     }
 
-    public void put(ResourceLocation location, ConfiguredFeature<?, ?> feature) {
+    public void put(ResourceLocation location, ConfiguredFeature<?, ?> feature)
+    {
         map.put(location, feature);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Configured Features: " + modid;
     }
 }

@@ -34,7 +34,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.NetherBiomeProvider;
 import net.minecraft.world.biome.provider.NetherBiomeProvider.Noise;
-import net.minecraft.world.biome.provider.OverworldBiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.NoiseChunkGenerator;
@@ -45,13 +44,19 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 
-public abstract class DimensionProvider extends CodecBackedProvider<Dimension> {
+/**
+ * The builder class is designed for Dimensions using a {@link NoiseChunkGenerator}
+ * and a {@link NetherBiomeProvider}, see {@link Builder} and {@link Builder.NoiseChunkGeneratorBuilder.MultiNoiseBiomeProviderBuilder}
+ */
+public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
+{
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Dimension> map = new HashMap<>();
     protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    protected DimensionProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
+    protected DimensionProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
         super(Dimension.field_236052_a_, fileHelper);
         this.generator = generator;
         this.modid = modid;
@@ -60,7 +65,8 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension> {
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -70,12 +76,14 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension> {
         ));
     }
 
-    public void put(ResourceLocation name, Dimension inst) {
+    public void put(ResourceLocation name, Dimension inst)
+    {
         this.map.put(name, inst);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Dimensions : " + modid;
     }
 
@@ -87,124 +95,150 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension> {
      *
      * More info can be found on <a href=https://minecraft.gamepedia.com/Custom_dimension#Dimension_syntax>the wiki</a>.
      */
-    public class Builder {
+    public class Builder
+    {
         private Supplier<DimensionType> dimType;
         private ChunkGenerator generator;
 
-        public Builder setDimType(DimensionType type) {
+        public Builder setDimType(DimensionType type)
+        {
             this.dimType = () -> type;
             return this;
         }
 
-        public Builder setDimType(Supplier<DimensionType> type) {
+        public Builder setDimType(Supplier<DimensionType> type)
+        {
             this.dimType = type;
             return this;
         }
 
-        public Builder setDimType(ResourceLocation location) {
+        public Builder setDimType(ResourceLocation location)
+        {
             return setDimType(DimensionProvider.this.getFromFile(DimensionType.field_236002_f_, location, Registry.field_239698_ad_));
         }
 
-        public Builder setChunkGenerator(ChunkGenerator generator) {
+        public Builder setChunkGenerator(ChunkGenerator generator)
+        {
             this.generator = generator;
             return this;
         }
 
-        public NoiseChunkGeneratorBuilder buildNoise() {
+        public NoiseChunkGeneratorBuilder buildNoise()
+        {
             return new NoiseChunkGeneratorBuilder();
         }
 
 
-        public Dimension build() {
+        public Dimension build()
+        {
             return new Dimension(dimType, generator);
         }
 
-        public class NoiseChunkGeneratorBuilder {
+        public class NoiseChunkGeneratorBuilder
+        {
             private BiomeProvider provider;
             private long seed = new Random().nextLong();
             private Supplier<DimensionSettings> settings = DimensionSettings::func_242746_i;
 
-            public Builder finish(){
+            public Builder finish()
+            {
                 return Builder.this.setChunkGenerator(new NoiseChunkGenerator(provider, seed,settings));
             }
 
-            public NoiseChunkGeneratorBuilder setSettings(DimensionSettings settings) {
+            public NoiseChunkGeneratorBuilder setSettings(DimensionSettings settings)
+            {
                 this.settings = () -> settings;
                 return this;
             }
 
-            public NoiseChunkGeneratorBuilder setSettings(ResourceLocation location) {
+            public NoiseChunkGeneratorBuilder setSettings(ResourceLocation location)
+            {
                 this.settings = DimensionProvider.this.getFromFile(DimensionSettings.field_236098_b_, location, Registry.field_243549_ar);
                 return this;
             }
 
-            public NoiseChunkGeneratorBuilder setSeed(long seed) {
+            public NoiseChunkGeneratorBuilder setSeed(long seed)
+            {
                 this.seed = seed;
                 return this;
             }
 
-            public NoiseChunkGeneratorBuilder setBiomeProvider(BiomeProvider provider) {
+            public NoiseChunkGeneratorBuilder setBiomeProvider(BiomeProvider provider)
+            {
                 this.provider = provider;
                 return this;
             }
 
-            public MultiNoiseBiomeProviderBuilder buildNoiseBiome() {
+            public MultiNoiseBiomeProviderBuilder buildNoiseBiome()
+            {
                 return new MultiNoiseBiomeProviderBuilder();
             }
 
             /**
              * {@link NetherBiomeProvider} is called MultiNoise in the wiki.
-             * It is the main way of manipulating the biomes of a dimension as the
-             * {@link OverworldBiomeProvider} hardcodes its list of biomes.
+             * It is the main way of manipulating the biomes of a dimension.
              */
-            public class MultiNoiseBiomeProviderBuilder {
-                private final Noise defaultNoise = new Noise(-7, ImmutableList.of(1.0D, 1.0D));
+            public class MultiNoiseBiomeProviderBuilder
+            {
+                /**
+                 * Setting the seed to be by default that of the NoiseChunkGenerator.
+                 */
                 private long seed = NoiseChunkGeneratorBuilder.this.seed;
-                private final List<Pair<Biome.Attributes, Supplier<Biome>>> biomes = new ArrayList<>();
+                private final Noise defaultNoise = new Noise(-7, ImmutableList.of(1.0D, 1.0D));
                 private Noise temperature = defaultNoise;
                 private Noise humidity = defaultNoise;
                 private Noise altitude = defaultNoise;
                 private Noise weirdness = defaultNoise;
+                private final List<Pair<Biome.Attributes, Supplier<Biome>>> biomes = new ArrayList<>();
 
-                public MultiNoiseBiomeProviderBuilder changeSeed(long seed) {
+                public MultiNoiseBiomeProviderBuilder changeSeed(long seed)
+                {
                     this.seed = seed;
                     return this;
                 }
 
-                public MultiNoiseBiomeProviderBuilder changeTemperatureNoise(Noise temperature) {
+                public MultiNoiseBiomeProviderBuilder changeTemperatureNoise(Noise temperature)
+                {
                     this.temperature = temperature;
                     return this;
                 }
 
-                public MultiNoiseBiomeProviderBuilder changeHumidityNoise(Noise humidity) {
+                public MultiNoiseBiomeProviderBuilder changeHumidityNoise(Noise humidity)
+                {
                     this.humidity = humidity;
                     return this;
                 }
 
-                public MultiNoiseBiomeProviderBuilder changeAltitudeNoise(Noise altitude) {
+                public MultiNoiseBiomeProviderBuilder changeAltitudeNoise(Noise altitude)
+                {
                     this.altitude = altitude;
                     return this;
                 }
 
-                public MultiNoiseBiomeProviderBuilder changeWeirdnessNoise(Noise weirdness) {
+                public MultiNoiseBiomeProviderBuilder changeWeirdnessNoise(Noise weirdness)
+                {
                     this.weirdness = weirdness;
                     return this;
                 }
 
-                public AttributeBiomePairBuilder addBiome() {
+                public AttributeBiomePairBuilder addBiome()
+                {
                     return new AttributeBiomePairBuilder();
                 }
 
-                public MultiNoiseBiomeProviderBuilder addPair(Biome.Attributes attribute, Supplier<Biome> biome){
+                public MultiNoiseBiomeProviderBuilder addPair(Biome.Attributes attribute, Supplier<Biome> biome)
+                {
                     biomes.add(Pair.of(attribute, biome));
                     return this;
                 }
 
-                public NoiseChunkGeneratorBuilder finish () {
+                public NoiseChunkGeneratorBuilder finish ()
+                {
                     return NoiseChunkGeneratorBuilder.this.setBiomeProvider(new NetherBiomeProvider(seed, biomes, temperature, humidity, altitude, weirdness));
                 }
 
-                public class AttributeBiomePairBuilder {
+                public class AttributeBiomePairBuilder
+                {
                     private float temperature = 0;
                     private float humidity = 0;
                     private float altitude = 0;
@@ -212,56 +246,66 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension> {
                     private float offset = 0;
                     private Biome biome;
 
-                    public AttributeBiomePairBuilder setBiome(ResourceLocation biome) {
+                    public AttributeBiomePairBuilder setBiome(ResourceLocation biome)
+                    {
                         return setBiome(DimensionProvider.this.getFromFile(Biome.field_235051_b_, biome, Registry.field_239720_u_).get());
                     }
 
-                    public AttributeBiomePairBuilder setBiome(Biome biome) {
+                    public AttributeBiomePairBuilder setBiome(Biome biome)
+                    {
                         this.biome = biome;
                         return this;
                     }
 
-                    public AttributeBiomePairBuilder setTemperature(float temperature) {
+                    public AttributeBiomePairBuilder setTemperature(float temperature)
+                    {
                         checkRange(temperature);
                         this.temperature = temperature;
                         return this;
                     }
 
-                    public AttributeBiomePairBuilder setHumidity(float humidity) {
+                    public AttributeBiomePairBuilder setHumidity(float humidity)
+                    {
                         checkRange(humidity);
                         this.humidity = humidity;
                         return this;
                     }
 
-                    public AttributeBiomePairBuilder setAltitude(float altitude) {
+                    public AttributeBiomePairBuilder setAltitude(float altitude)
+                    {
                         checkRange(altitude);
                         this.altitude = altitude;
                         return this;
                     }
 
-                    public AttributeBiomePairBuilder setWeirdness(float weirdness) {
+                    public AttributeBiomePairBuilder setWeirdness(float weirdness)
+                    {
                         checkRange(weirdness);
                         this.weirdness = weirdness;
                         return this;
                     }
 
-                    public AttributeBiomePairBuilder setOffset(float offset) {
+                    public AttributeBiomePairBuilder setOffset(float offset)
+                    {
                         if(offset < 0 || offset > 1)
                             throw new IllegalStateException("Biome Attribute offset value was out of bounds");
                         this.offset = offset;
                         return this;
                     }
 
-                    public MultiNoiseBiomeProviderBuilder finish() {
+                    public MultiNoiseBiomeProviderBuilder finish()
+                    {
                         Objects.requireNonNull(biome);
                         return MultiNoiseBiomeProviderBuilder.this.addPair(new Biome.Attributes(temperature, humidity, altitude, weirdness, offset), ()->biome);
                     }
 
-                    public AttributeBiomePairBuilder buildNext() {
+                    public AttributeBiomePairBuilder buildNext()
+                    {
                         return finish().addBiome();
                     }
 
-                    private void checkRange(float f) {
+                    private void checkRange(float f)
+                    {
                         if(f < -2 || f > 2)
                             throw new IllegalStateException("Biome Attribute value was out of bounds");
                     }

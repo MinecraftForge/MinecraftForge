@@ -45,12 +45,14 @@ import java.util.Map;
  * See <a href=https://minecraft.gamepedia.com/Custom_world_generation#Biome>the wiki</a> for more details
  * on biome parameters.
  */
-public abstract class BiomeDataProvider extends CodecBackedProvider<Biome> {
+public abstract class BiomeDataProvider extends CodecBackedProvider<Biome>
+{
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Biome> map = new HashMap<>();
 
-    protected BiomeDataProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid) {
+    protected BiomeDataProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    {
         super(Biome.field_242418_b, fileHelper);
         this.generator = generator;
         this.modid = modid;
@@ -59,7 +61,8 @@ public abstract class BiomeDataProvider extends CodecBackedProvider<Biome> {
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void act(DirectoryCache cache)
+    {
         start();
 
         Path path = generator.getOutputFolder();
@@ -71,12 +74,14 @@ public abstract class BiomeDataProvider extends CodecBackedProvider<Biome> {
         this.fileHelper.reloadResources();
     }
 
-    public void put(ResourceLocation location, Biome biome) {
+    public void put(ResourceLocation location, Biome biome)
+    {
         map.put(location, biome);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Biomes : " + modid;
     }
 }

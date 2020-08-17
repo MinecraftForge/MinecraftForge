@@ -23,59 +23,82 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeMaker;
 import net.minecraft.world.biome.provider.NetherBiomeProvider;
-import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.carver.WorldCarver;
 import net.minecraft.world.gen.feature.ProbabilityConfig;
 import net.minecraft.world.gen.feature.template.*;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.data.worldgen.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-import java.util.Random;
-
 @Mod(WorldDataGenTest.MODID)
 @Mod.EventBusSubscriber(modid = WorldDataGenTest.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class WorldDataGenTest {
+public class WorldDataGenTest
+{
     public static final String MODID = "world_data_gen";
 
     @SubscribeEvent
-    public static void gatherDataEvent(GatherDataEvent event) {
+    public static void gatherDataEvent(GatherDataEvent event)
+    {
         DataGenerator generator = event.getGenerator();
-        ExistingFileHelper helper = event.getExistingFileHelper();
-        generator.addProvider(new ConfiguredCarverProvider(generator, helper, MODID)
-                .put(new ResourceLocation(MODID, "carver_test_0"), ConfiguredCarverProvider.getDefault().setCarver(WorldCarver.CANYON).setConfig(new ProbabilityConfig(0.08F)))
-                .put(new ResourceLocation(MODID, "carver_test_1"), ConfiguredCarverProvider.getDefault().setCarver(WorldCarver.field_236240_b_).setConfig(new ProbabilityConfig(0.5F)))
-        );
-        generator.addProvider(new ProcessorListProvider(generator, helper, MODID)
-                .put(new ResourceLocation(MODID, "proc_list_test_0"), new StructureProcessorList(ImmutableList.of(
-                        BlockIgnoreStructureProcessor.AIR,
-                        BlackStoneReplacementProcessor.field_237058_b_,
-                        LavaSubmergingProcessor.field_241532_b_,
-                        new GravityStructureProcessor(Heightmap.Type.OCEAN_FLOOR, -10),
-                        new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new BlockMatchRuleTest(Blocks.END_STONE), new BlockStateMatchRuleTest(Blocks.EMERALD_BLOCK.getDefaultState()), Blocks.DIAMOND_BLOCK.getDefaultState()))))
-                ))
-        );
+        generator.addProvider(new Carvers(event));
+        generator.addProvider(new Procs(event));
         generator.addProvider(new Biomes(event));
         generator.addProvider(new DimType(event));
         generator.addProvider(new Dim(event));
     }
 
-    static class Biomes extends BiomeDataProvider {
-        protected Biomes(GatherDataEvent event) {
+    static class Carvers extends ConfiguredCarverProvider
+    {
+        public Carvers(GatherDataEvent event)
+        {
             super(event.getGenerator(), event.getExistingFileHelper(), MODID);
         }
 
         @Override
-        protected void start() {
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "carver_test_0"), WorldCarver.CANYON.func_242761_a(new ProbabilityConfig(0.08F)));
+            this.put(new ResourceLocation(MODID, "carver_test_1"), WorldCarver.field_236240_b_.func_242761_a(new ProbabilityConfig(0.5F)));
+        }
+    }
+
+    static class Procs extends ProcessorListProvider
+    {
+        public Procs(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getExistingFileHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "proc_list_test_0"), new StructureProcessorList(
+                    ImmutableList.of(
+                            BlockIgnoreStructureProcessor.AIR,
+                            BlackStoneReplacementProcessor.field_237058_b_,
+                            LavaSubmergingProcessor.field_241532_b_,
+                            new GravityStructureProcessor(Heightmap.Type.OCEAN_FLOOR, -10),
+                            new RuleStructureProcessor(ImmutableList.of(new RuleEntry(new BlockMatchRuleTest(Blocks.END_STONE), new BlockStateMatchRuleTest(Blocks.EMERALD_BLOCK.getDefaultState()), Blocks.DIAMOND_BLOCK.getDefaultState())))
+                    )
+            ));
+        }
+    }
+
+    static class Biomes extends BiomeDataProvider
+    {
+        protected Biomes(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getExistingFileHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
             this.put(new ResourceLocation(MODID, "biome_test_0"),
                     BiomeMaker.func_244216_a(1.5F, 0.45F, ConfiguredSurfaceBuilders.field_244169_a, false)
             );
@@ -91,24 +114,30 @@ public class WorldDataGenTest {
         }
     }
 
-    static class DimType extends DimensionTypeProvider {
-        public DimType(GatherDataEvent event) {
+    static class DimType extends DimensionTypeProvider
+    {
+        public DimType(GatherDataEvent event)
+        {
             super(event.getGenerator(), event.getExistingFileHelper(), MODID);
         }
 
         @Override
-        protected void start() {
+        protected void start()
+        {
             this.put(new ResourceLocation(MODID, "dim_type_test_0"), new Builder().doBedWorks(false).doRespawnAnchorWork(false).setFixedTime(500L).setAmbientLight(0.5F).isUltrawarm(true));
         }
     }
 
-    static class Dim extends DimensionProvider {
-        protected Dim(GatherDataEvent event) {
+    static class Dim extends DimensionProvider
+    {
+        protected Dim(GatherDataEvent event)
+        {
             super(event.getGenerator(), event.getExistingFileHelper(), MODID);
         }
 
         @Override
-        protected void start() {
+        protected void start()
+        {
             this.put(new ResourceLocation(MODID, "dim_test_0"), new Builder()
                     .setDimType(new ResourceLocation(MODID, "dim_type_test_0"))
                     .buildNoise()
