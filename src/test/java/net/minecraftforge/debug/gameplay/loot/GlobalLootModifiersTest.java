@@ -19,15 +19,7 @@
 
 package net.minecraftforge.debug.gameplay.loot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
@@ -66,6 +58,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
@@ -109,21 +105,21 @@ public class GlobalLootModifiersTest {
         @Override
         protected void start()
         {
-            addModifier("smelting", SMELTING.get(),
-                    MatchTool.builder(
-                            ItemPredicate.Builder.create().enchantment(
-                                    new EnchantmentPredicate(SMELT.get(), MinMaxBounds.IntBound.atLeast(1)))).build()
+            add("smelting", SMELTING.get(), new SmeltingEnchantmentModifier(
+                    new ILootCondition[]{
+                            MatchTool.builder(
+                                    ItemPredicate.Builder.create().enchantment(
+                                            new EnchantmentPredicate(SMELT.get(), MinMaxBounds.IntBound.atLeast(1))))
+                                    .build()
+                    })
             );
 
-            addModifier("wheat_harvest", WHEATSEEDS.get(),
-                    json ->
-                    {
-                        json.addProperty("seedItem", "minecraft:wheat_seeds");
-                        json.addProperty("numSeeds", 3);
-                        json.addProperty("replacement", "minecraft:wheat");
+            add("wheat_harvest", WHEATSEEDS.get(), new WheatSeedsConverterModifier(
+                    new ILootCondition[] {
+                            MatchTool.builder(ItemPredicate.Builder.create().item(Items.SHEARS)).build(),
+                            BlockStateProperty.builder(Blocks.WHEAT).build()
                     },
-                    MatchTool.builder(ItemPredicate.Builder.create().item(Items.SHEARS)).build(),
-                    BlockStateProperty.builder(Blocks.WHEAT).build()
+                    3, Items.WHEAT_SEEDS, Items.WHEAT)
             );
         }
     }
@@ -164,6 +160,11 @@ public class GlobalLootModifiersTest {
             public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SmeltingEnchantmentModifier(conditionsIn);
             }
+
+            @Override
+            public JsonObject write(SmeltingEnchantmentModifier instance) {
+                return makeConditions(instance.conditions);
+            }
         }
     }
 
@@ -195,6 +196,11 @@ public class GlobalLootModifiersTest {
             @Override
             public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
                 return new SilkTouchTestModifier(conditionsIn);
+            }
+
+            @Override
+            public JsonObject write(SilkTouchTestModifier instance) {
+                return makeConditions(instance.conditions);
             }
         }
     }
@@ -245,6 +251,15 @@ public class GlobalLootModifiersTest {
                 Item seed = ForgeRegistries.ITEMS.getValue(new ResourceLocation((JSONUtils.getString(object, "seedItem"))));
                 Item wheat = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getString(object, "replacement")));
                 return new WheatSeedsConverterModifier(conditionsIn, numSeeds, seed, wheat);
+            }
+
+            @Override
+            public JsonObject write(WheatSeedsConverterModifier instance) {
+                JsonObject json = makeConditions(instance.conditions);
+                json.addProperty("numSeeds", instance.numSeedsToConvert);
+                json.addProperty("seedItem", ForgeRegistries.ITEMS.getKey(instance.itemToCheck).toString());
+                json.addProperty("replacement", ForgeRegistries.ITEMS.getKey(instance.itemReward).toString());
+                return json;
             }
         }
     }

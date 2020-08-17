@@ -26,11 +26,10 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
-import net.minecraft.loot.ConditionArraySerializer;
-import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 
 import java.io.IOException;
@@ -39,21 +38,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * Provider for forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
  *
- * This provider only requires implementing {@link #start()} and calling {@link #addModifier} from it.
+ * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
 public abstract class GlobalLootModifierProvider implements IDataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
     private final String modid;
-    private final Map<String, Tuple<GlobalLootModifierSerializer<?>, ILootCondition[]>> modifiers = new HashMap<>();
-    private final Map<String, Consumer<JsonObject>> extraProperties = new HashMap<>();
+    private final Map<String, Tuple<GlobalLootModifierSerializer<?>, JsonObject>> toSerialize = new HashMap<>();
     private boolean replace = false;
 
     public GlobalLootModifierProvider(DataGenerator gen, String modid)
@@ -71,7 +68,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
     }
 
     /**
-     * Call {@link #addModifier} here, which will pass in the necessary information to write the jsons.
+     * Call {@link #add} here, which will pass in the necessary information to write the jsons.
      */
     protected abstract void start();
 
@@ -84,16 +81,13 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
         String modPath = "data/" + modid + "/loot_modifiers/";
         List<ResourceLocation> entries = new ArrayList<>();
 
-        modifiers.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, pair) ->
+        toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, pair) ->
         {
             entries.add(new ResourceLocation(modid, name));
             Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
 
-            JsonObject json = new JsonObject();
+            JsonObject json = pair.getB();
             json.addProperty("type", pair.getA().getRegistryName().toString());
-            json.add("conditions", ConditionArraySerializer.field_235679_a_.func_235681_a_(pair.getB()));
-
-            extraProperties.get(name).accept(json);
 
             IDataProvider.save(GSON, cache, json, modifierPath);
         }));
@@ -112,24 +106,9 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
      * @param serializer    The serializer of this modifier.
      * @param conditions    The loot conditions before {@link LootModifier#doApply} is called.
      */
-    public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, ILootCondition... conditions)
+    public <T extends IGlobalLootModifier> void add(String modifier, GlobalLootModifierSerializer<T> serializer, T instance)
     {
-        addModifier(modifier, serializer, j -> {}, conditions);
-    }
-
-    /**
-     * Passes in the data needed to create the file with any extra objects necessary.
-     * They are then available through {@link GlobalLootModifierSerializer#read}
-     *
-     * @param modifier          The name of the modifier, which will be the file name.
-     * @param serializer        The serializer of this modifier.
-     * @param extraProperties   The consumer that will be used to write any extra objects and their value.
-     * @param conditions        The loot conditions before {@link LootModifier#doApply} is called.
-     */
-    public void addModifier(String modifier, GlobalLootModifierSerializer<?> serializer, Consumer<JsonObject> extraProperties, ILootCondition... conditions)
-    {
-        this.modifiers.put(modifier, new Tuple<>(serializer, conditions));
-        this.extraProperties.put(modifier, extraProperties);
+        this.toSerialize.put(modifier, new Tuple<>(serializer, serializer.write(instance)));
     }
 
     @Override
