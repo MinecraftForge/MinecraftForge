@@ -23,10 +23,9 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -35,16 +34,16 @@ import java.util.Map;
 /**
  * No builder for this class as StructureFeatures are simple to create, see {@link Structure}.
  */
-public abstract class ConfiguredCarverProvider extends CodecBackedProvider<ConfiguredCarver<?>>
+public abstract class ConfiguredCarverProvider extends RegistryBackedProvider<ConfiguredCarver<?>>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, ConfiguredCarver<?>> builders = new HashMap<>();
 
-    public ConfiguredCarverProvider(DataGenerator generator, ExistingFileHelper helper, String modid)
+    public ConfiguredCarverProvider(DataGenerator generator, RegistryOpsHelper helper, String modid)
     {
         //TODO This codec is dispatched for the vanilla CARVER registry, and won't affect any mod added carvers.
-        super(ConfiguredCarver.field_236235_a_, helper);
+        super(ConfiguredCarver.field_236235_a_, helper, Registry.field_243551_at);
         this.generator = generator;
         this.modid = modid;
     }
@@ -59,10 +58,8 @@ public abstract class ConfiguredCarverProvider extends CodecBackedProvider<Confi
         Path path = generator.getOutputFolder();
 
         builders.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
-                this.save(inst, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_carver/" + name.getPath() + ".json"))
+                this.saveAndRegister(inst, name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_carver/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, ConfiguredCarver<?> inst)

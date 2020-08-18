@@ -24,11 +24,11 @@
           1.0
         ]
       },
-      "seed": -980716794056944712,
+      "seed": 8863734700914211875,
       "biomes": [
         {
           "parameters": {
-            "altitude": 1.0,
+            "altitude": 0.8,
             "weirdness": 0.0,
             "offset": 0.0,
             "temperature": 0.3,
@@ -58,13 +58,23 @@
         },
         {
           "parameters": {
+            "altitude": 0.15,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.05,
+            "humidity": 0.1
+          },
+          "biome": "world_data_gen:biome_test_4"
+        },
+        {
+          "parameters": {
             "altitude": 0.0,
             "weirdness": 0.0,
             "offset": 0.0,
-            "temperature": 0.9,
-            "humidity": -0.75
+            "temperature": 0.0,
+            "humidity": 0.0
           },
-          "biome": "world_data_gen:biome_test_3"
+          "biome": "minecraft:snowy_mountains"
         }
       ],
       "temperature_noise": {
@@ -76,7 +86,7 @@
       },
       "type": "minecraft:multi_noise"
     },
-    "seed": -980716794056944712,
+    "seed": 8863734700914211875,
     "settings": "minecraft:overworld",
     "type": "minecraft:noise"
   }

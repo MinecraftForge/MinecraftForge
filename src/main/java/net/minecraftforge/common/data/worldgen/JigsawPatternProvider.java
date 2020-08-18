@@ -19,19 +19,16 @@
 
 package net.minecraftforge.common.data.worldgen;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPatternRegistry;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.structure.PlainsVillagePools;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,18 +38,17 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Referred to JigsawPools or TemplatePools by the wiki.
+ * Referred to as JigsawPools or TemplatePools by the wiki.
  */
-public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPattern>
+public abstract class JigsawPatternProvider extends RegistryBackedProvider<JigsawPattern>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, Builder> map = new HashMap<>();
-    protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public JigsawPatternProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public JigsawPatternProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(JigsawPattern.field_236852_a_, fileHelper);
+        super(JigsawPattern.field_236852_a_, regOps, Registry.field_243555_ax);
         this.generator = generator;
         this.modid = modid;
     }
@@ -67,10 +63,8 @@ public abstract class JigsawPatternProvider extends CodecBackedProvider<JigsawPa
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, builder) ->
-                this.save(builder.build(), cache, path.resolve("data/" + name.getNamespace() + "/worldgen/template_pool/" + name.getPath() + ".json"))
+                this.saveAndRegister(builder.build(), name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/template_pool/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, Builder builder)

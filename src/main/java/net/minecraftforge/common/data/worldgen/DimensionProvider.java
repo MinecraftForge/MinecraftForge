@@ -20,13 +20,13 @@
 package net.minecraftforge.common.data.worldgen;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
@@ -37,8 +37,6 @@ import net.minecraft.world.biome.provider.NetherBiomeProvider.Noise;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.NoiseChunkGenerator;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -47,17 +45,19 @@ import java.util.function.Supplier;
 /**
  * The builder class is designed for Dimensions using a {@link NoiseChunkGenerator}
  * and a {@link NetherBiomeProvider}, see {@link Builder} and {@link Builder.NoiseChunkGeneratorBuilder.MultiNoiseBiomeProviderBuilder}
+ *
+ * Dimensions do not have a registry in {@link DynamicRegistries} so it is not a {@link RegistryBackedProvider}.
+ * This does not matter because dimensions are the final objects and do not need to be referenced afterwards.
  */
 public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 {
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Dimension> map = new HashMap<>();
-    protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    protected DimensionProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    protected DimensionProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(Dimension.field_236052_a_, fileHelper);
+        super(Dimension.field_236052_a_, regOps);
         this.generator = generator;
         this.modid = modid;
     }
@@ -97,16 +97,10 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
      */
     public class Builder
     {
-        private Supplier<DimensionType> dimType;
+        private DimensionType dimType;
         private ChunkGenerator generator;
 
         public Builder setDimType(DimensionType type)
-        {
-            this.dimType = () -> type;
-            return this;
-        }
-
-        public Builder setDimType(Supplier<DimensionType> type)
         {
             this.dimType = type;
             return this;
@@ -114,7 +108,12 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
         public Builder setDimType(ResourceLocation location)
         {
-            return setDimType(DimensionProvider.this.getFromFile(DimensionType.field_236002_f_, location, Registry.field_239698_ad_));
+            return setDimType(regOps.getObject(Registry.field_239698_ad_, location));
+        }
+
+        public Builder setDimType(RegistryKey<DimensionType> location)
+        {
+            return setDimType(location.func_240901_a_());
         }
 
         public Builder setChunkGenerator(ChunkGenerator generator)
@@ -131,7 +130,7 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
         public Dimension build()
         {
-            return new Dimension(dimType, generator);
+            return new Dimension(() -> dimType, generator);
         }
 
         public class NoiseChunkGeneratorBuilder
@@ -153,8 +152,13 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
             public NoiseChunkGeneratorBuilder setSettings(ResourceLocation location)
             {
-                this.settings = DimensionProvider.this.getFromFile(DimensionSettings.field_236098_b_, location, Registry.field_243549_ar);
+                this.settings = () -> DimensionProvider.this.regOps.getObject(Registry.field_243549_ar, location);
                 return this;
+            }
+
+            public NoiseChunkGeneratorBuilder setSettings(RegistryKey<DimensionSettings> key)
+            {
+                return setSettings(key.func_240901_a_());
             }
 
             public NoiseChunkGeneratorBuilder setSeed(long seed)
@@ -248,7 +252,12 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
                     public AttributeBiomePairBuilder setBiome(ResourceLocation biome)
                     {
-                        return setBiome(DimensionProvider.this.getFromFile(Biome.field_235051_b_, biome, Registry.field_239720_u_).get());
+                        return setBiome(regOps.getObject(Registry.field_239720_u_, biome));
+                    }
+
+                    public AttributeBiomePairBuilder setBiome(RegistryKey<Biome> biome)
+                    {
+                        return setBiome(biome.func_240901_a_());
                     }
 
                     public AttributeBiomePairBuilder setBiome(Biome biome)

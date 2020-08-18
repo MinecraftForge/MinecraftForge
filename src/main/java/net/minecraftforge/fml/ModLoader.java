@@ -25,6 +25,7 @@ import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -106,6 +107,7 @@ public class ModLoader
     private final List<ModLoadingWarning> loadingWarnings;
     private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
     private ExistingFileHelper existingFileHelper;
+    private RegistryOpsHelper regOps;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
 
@@ -299,11 +301,12 @@ public class ModLoader
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
         gatherAndInitializeMods(() -> {});
+        regOps = new RegistryOpsHelper(inputs);
         dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
         dataGeneratorConfig.runAll();
     }
 
     public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
+        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper, regOps);
     }
 }

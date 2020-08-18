@@ -1,22 +1,19 @@
 {
-  "scale": 0.33,
+  "scale": 0.95,
   "effects": {
-    "mood_sound": {
-      "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
-      "block_search_extent": 8,
-      "offset": 2.0
-    },
-    "sky_color": 8233727,
-    "fog_color": 12638463,
-    "water_color": 4159204,
-    "water_fog_color": 329011
+    "grass_color_modifier": "dark_forest",
+    "sky_color": 11129320,
+    "fog_color": 12702427,
+    "water_color": 12312048,
+    "water_fog_color": 9355742
   },
-  "surface_builder": "minecraft:eroded_badlands",
+  "surface_builder": "minecraft:ice_spikes",
   "carvers": {
     "air": [
-      "minecraft:cave",
-      "minecraft:canyon"
+      "world_data_gen:carver_test_1"
+    ],
+    "liquid": [
+      "minecraft:nether_cave"
     ]
   },
   "features": [
@@ -29,48 +26,39 @@
     [
       "minecraft:monster_room"
     ],
-    [],
+    [
+      "minecraft:blue_ice"
+    ],
     [],
     [
-      "minecraft:ore_dirt",
-      "minecraft:ore_gravel",
-      "minecraft:ore_granite",
-      "minecraft:ore_diorite",
-      "minecraft:ore_andesite",
+      "world_data_gen:feature_test_0",
       "minecraft:ore_coal",
       "minecraft:ore_iron",
       "minecraft:ore_gold",
       "minecraft:ore_redstone",
       "minecraft:ore_diamond",
-      "minecraft:ore_lapis",
-      "minecraft:disk_sand",
-      "minecraft:disk_clay",
-      "minecraft:disk_gravel",
-      "minecraft:ore_emerald"
+      "minecraft:ore_lapis"
     ],
     [
       "minecraft:ore_infested"
     ],
     [
-      "minecraft:trees_mountain",
-      "minecraft:flower_default",
-      "minecraft:patch_grass_badlands",
-      "minecraft:brown_mushroom_normal",
-      "minecraft:red_mushroom_normal",
-      "minecraft:patch_sugar_cane",
-      "minecraft:patch_pumpkin",
+      "minecraft:patch_berry_decorated",
+      "minecraft:trees_water",
+      "minecraft:spruce_snowy",
+      "minecraft:spruce_snowy",
+      "minecraft:spruce_snowy",
       "minecraft:spring_water",
-      "minecraft:spring_lava"
-    ],
-    [
-      "minecraft:freeze_top_layer"
+      "minecraft:spring_lava",
+      "minecraft:trees_savanna"
     ]
   ],
   "starts": [
     "minecraft:mineshaft",
-    "minecraft:stronghold",
-    "minecraft:ruined_portal_mountain"
+    "minecraft:shipwreck",
+    "minecraft:village_snowy"
   ],
+  "creature_spawn_probability": 0.25,
   "spawners": {
     "monster": [
       {
@@ -81,19 +69,19 @@
       },
       {
         "type": "minecraft:zombie",
-        "weight": 95,
+        "weight": 200,
         "minCount": 4,
         "maxCount": 4
       },
       {
         "type": "minecraft:zombie_villager",
-        "weight": 5,
+        "weight": 0,
         "minCount": 1,
         "maxCount": 1
       },
       {
         "type": "minecraft:skeleton",
-        "weight": 100,
+        "weight": 200,
         "minCount": 4,
         "maxCount": 4
       },
@@ -120,6 +108,12 @@
         "weight": 5,
         "minCount": 1,
         "maxCount": 1
+      },
+      {
+        "type": "minecraft:enderman",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
       }
     ],
     "creature": [
@@ -148,20 +142,19 @@
         "maxCount": 4
       },
       {
-        "type": "minecraft:llama",
+        "type": "minecraft:horse",
         "weight": 5,
-        "minCount": 4,
+        "minCount": 2,
         "maxCount": 6
-      }
-    ],
-    "ambient": [
+      },
       {
-        "type": "minecraft:bat",
-        "weight": 10,
-        "minCount": 8,
-        "maxCount": 8
+        "type": "minecraft:donkey",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 3
       }
     ],
+    "ambient": [],
     "water_creature": [],
     "water_ambient": [],
     "misc": [],
@@ -169,9 +162,10 @@
   },
   "spawn_costs": {},
   "player_spawn_friendly": false,
-  "precipitation": "rain",
-  "temperature": 0.2,
-  "downfall": 0.3,
-  "category": "extreme_hills",
-  "depth": 0.65
+  "precipitation": "snow",
+  "temperature": -10.0,
+  "temperature_modifier": "frozen",
+  "downfall": 0.1,
+  "category": "icy",
+  "depth": 0.2
 }

@@ -25,30 +25,29 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.ISurfaceBuilderConfig;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Builder class is for the vanilla implementation {@link ISurfaceBuilderConfig}
+ * The Builder class is for the vanilla implementation {@link ISurfaceBuilderConfig}
  */
-public abstract class ConfiguredSurfaceBuildersProvider extends CodecBackedProvider<ConfiguredSurfaceBuilder<?>>
+public abstract class ConfiguredSurfaceBuildersProvider extends RegistryBackedProvider<ConfiguredSurfaceBuilder<?>>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, ConfiguredSurfaceBuilder<?>> map = new HashMap<>();
 
-    public ConfiguredSurfaceBuildersProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public ConfiguredSurfaceBuildersProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla SURFACE_BUILDER registry, and won't affect any mod added SURFACE_BUILDERs.
-        super(ConfiguredSurfaceBuilder.field_237168_a_, fileHelper);
+        super(ConfiguredSurfaceBuilder.field_237168_a_, regOps, Registry.field_243550_as);
         this.generator = generator;
         this.modid = modid;
     }
@@ -63,10 +62,8 @@ public abstract class ConfiguredSurfaceBuildersProvider extends CodecBackedProvi
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
-                this.save(inst, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_surface_builder/" + name.getPath() + ".json"))
+                this.saveAndRegister(inst, name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_surface_builder/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, ConfiguredSurfaceBuilder<?> inst)
@@ -81,7 +78,7 @@ public abstract class ConfiguredSurfaceBuildersProvider extends CodecBackedProvi
     }
 
     /**
-     * Only one implementation of {@link ISurfaceBuilderConfig} exists, this builder is designed for that.
+     * Only one implementation of {@link ISurfaceBuilderConfig} exists by default, this builder is designed for that.
      */
     public static class Builder
     {

@@ -23,9 +23,8 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.*;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -40,20 +39,20 @@ import java.util.Map;
  * The {@link BiomeMaker} also provides helper functions for creating specific biomes.
  *
  * To use newly created objects from other DataProviders, add this provider after the others.
- * See {@link CodecBackedProvider#getFromFile} to retrieve those objects.
+ * See {@link RegistryOpsHelper#getObject} for usage.
  *
  * See <a href=https://minecraft.gamepedia.com/Custom_world_generation#Biome>the wiki</a> for more details
  * on biome parameters.
  */
-public abstract class BiomeDataProvider extends CodecBackedProvider<Biome>
+public abstract class BiomeDataProvider extends RegistryBackedProvider<Biome>
 {
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Biome> map = new HashMap<>();
 
-    protected BiomeDataProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    protected BiomeDataProvider(DataGenerator generator, RegistryOpsHelper helper, String modid)
     {
-        super(Biome.field_242418_b, fileHelper);
+        super(Biome.field_242418_b, helper, Registry.field_239720_u_);
         this.generator = generator;
         this.modid = modid;
     }
@@ -68,10 +67,8 @@ public abstract class BiomeDataProvider extends CodecBackedProvider<Biome>
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
-                this.save(inst, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/biome/" + name.getPath() + ".json"))
+                this.saveAndRegister(inst, name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/biome/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, Biome biome)

@@ -27,12 +27,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.NoiseChunkGenerator;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.*;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,16 +41,16 @@ import java.util.Optional;
 /**
  * Noise Settings is the name on the minecraft wiki.
  */
-public abstract class NoiseSettingsProvider extends CodecBackedProvider<DimensionSettings>
+public abstract class NoiseSettingsProvider extends RegistryBackedProvider<DimensionSettings>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, Builder> builders = new HashMap<>();
     protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public NoiseSettingsProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public NoiseSettingsProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(DimensionSettings.field_236097_a_, fileHelper);
+        super(DimensionSettings.field_236097_a_, regOps, Registry.field_243549_ar);
         this.generator = generator;
         this.modid = modid;
     }
@@ -66,10 +65,8 @@ public abstract class NoiseSettingsProvider extends CodecBackedProvider<Dimensio
         Path path = generator.getOutputFolder();
 
         builders.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, builder) ->
-                this.save(builder.build(), cache, path.resolve("data/" + name.getNamespace() + "/worldgen/noise_settings/" + name.getPath() + ".json"))
+                this.saveAndRegister(builder.build(), name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/noise_settings/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, Builder builder)

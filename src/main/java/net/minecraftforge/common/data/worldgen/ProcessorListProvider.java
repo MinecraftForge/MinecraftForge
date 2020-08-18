@@ -23,11 +23,10 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import net.minecraft.world.gen.feature.template.ProcessorLists;
 import net.minecraft.world.gen.feature.template.StructureProcessorList;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -37,15 +36,15 @@ import java.util.Map;
  * No builder as only a list is needed.
  * See {@link ProcessorLists} for creation examples.
  */
-public abstract class ProcessorListProvider extends CodecBackedProvider<StructureProcessorList>
+public abstract class ProcessorListProvider extends RegistryBackedProvider<StructureProcessorList>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, StructureProcessorList> map = new HashMap<>();
 
-    public ProcessorListProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public ProcessorListProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(IStructureProcessorType.field_242921_l, fileHelper);
+        super(IStructureProcessorType.field_242921_l, regOps, Registry.field_243554_aw);
         this.generator = generator;
         this.modid = modid;
     }
@@ -60,10 +59,8 @@ public abstract class ProcessorListProvider extends CodecBackedProvider<Structur
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
-                this.save(inst, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/processor_list/" + name.getPath() + ".json"))
+                this.saveAndRegister(inst, name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/processor_list/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, StructureProcessorList inst)

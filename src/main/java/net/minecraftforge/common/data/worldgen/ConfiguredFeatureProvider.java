@@ -23,10 +23,9 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Features;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -34,17 +33,18 @@ import java.util.Map;
 
 /**
  * No builder for this class as ConfiguredFeatures are simple to create, see {@link Features}.
+ * See <a href=https://minecraft.gamepedia.com/Custom_world_generation#Features>the wiki</a> for more info.
  */
-public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<ConfiguredFeature<?,?>>
+public abstract class ConfiguredFeatureProvider extends RegistryBackedProvider<ConfiguredFeature<?,?>>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, ConfiguredFeature<?, ?>> map = new HashMap<>();
 
-    public ConfiguredFeatureProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public ConfiguredFeatureProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla FEATURE registry, and won't affect any mod added features.
-        super(ConfiguredFeature.field_242763_a, fileHelper);
+        super(ConfiguredFeature.field_242763_a, regOps, Registry.field_243552_au);
         this.generator = generator;
         this.modid = modid;
     }
@@ -59,10 +59,8 @@ public abstract class ConfiguredFeatureProvider extends CodecBackedProvider<Conf
         Path path = generator.getOutputFolder();
 
         map.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, inst) ->
-                this.save(inst, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_feature/" + name.getPath() + ".json"))
+                this.saveAndRegister(inst, name, cache, path.resolve("data/" + name.getNamespace() + "/worldgen/configured_feature/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     public void put(ResourceLocation location, ConfiguredFeature<?, ?> feature)

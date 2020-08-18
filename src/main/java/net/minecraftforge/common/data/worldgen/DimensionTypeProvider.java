@@ -25,24 +25,23 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.CodecBackedProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalLong;
 
-public abstract class DimensionTypeProvider extends CodecBackedProvider<DimensionType>
+public abstract class DimensionTypeProvider extends RegistryBackedProvider<DimensionType>
 {
     protected final DataGenerator generator;
     protected final String modid;
     protected final Map<ResourceLocation, Builder> builders = new HashMap<>();
 
-    public DimensionTypeProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public DimensionTypeProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(DimensionType.field_235997_a_, fileHelper);
+        super(DimensionType.field_235997_a_, regOps, Registry.field_239698_ad_);
         this.generator = generator;
         this.modid = modid;
     }
@@ -57,10 +56,8 @@ public abstract class DimensionTypeProvider extends CodecBackedProvider<Dimensio
         Path path = generator.getOutputFolder();
 
         builders.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, builder) ->
-                this.save(builder.build(), cache, path.resolve("data/" + name.getNamespace() + "/dimension_type/" + name.getPath() + ".json"))
+                this.saveAndRegister(builder.build(), name, cache, path.resolve("data/" + name.getNamespace() + "/dimension_type/" + name.getPath() + ".json"))
         ));
-
-        this.fileHelper.reloadResources();
     }
 
     protected void put(ResourceLocation name, Builder builder)
