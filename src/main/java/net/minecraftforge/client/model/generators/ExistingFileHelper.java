@@ -19,15 +19,23 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.annotations.VisibleForTesting;
-import net.minecraft.resources.*;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+
+import com.google.common.annotations.VisibleForTesting;
+
+import net.minecraft.resources.FilePack;
+import net.minecraft.resources.FolderPack;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.resources.VanillaPack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 /**
  * Enables data providers to check if other data files currently exist. The
