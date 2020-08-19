@@ -249,13 +249,6 @@ public class ForgeEventFactory
         return event.getDisplayName();
     }
 
-    public static float fireBlockHarvesting(NonNullList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player)
-    {
-        BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getDropChance();
-    }
-
     public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
     {
         BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(world, pos, liquidPos, state);
@@ -661,7 +654,7 @@ public class ForgeEventFactory
     public static Optional<PortalSize> onTrySpawnPortal(IWorld world, BlockPos pos, Optional<PortalSize> size)
     {
         if (!size.isPresent()) return size;
-        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
+        return !MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
     }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
