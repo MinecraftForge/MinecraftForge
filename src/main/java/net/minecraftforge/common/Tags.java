@@ -20,7 +20,7 @@
 package net.minecraftforge.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -45,12 +45,12 @@ public class Tags
         public static final IOptionalNamedTag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
         public static final IOptionalNamedTag<Block> DIRT = tag("dirt");
+        public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
         public static final IOptionalNamedTag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final IOptionalNamedTag<Block> FENCES = tag("fences");
         public static final IOptionalNamedTag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final IOptionalNamedTag<Block> FENCES_WOODEN = tag("fences/wooden");
-        public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
 
         public static final IOptionalNamedTag<Block> GLASS = tag("glass");
         public static final IOptionalNamedTag<Block> GLASS_BLACK = tag("glass/black");
@@ -151,6 +151,24 @@ public class Tags
         public static final IOptionalNamedTag<Item> DUSTS_REDSTONE = tag("dusts/redstone");
         public static final IOptionalNamedTag<Item> DUSTS_GLOWSTONE = tag("dusts/glowstone");
 
+        public static final IOptionalNamedTag<Item> DYES = tag("dyes");
+        public static final IOptionalNamedTag<Item> DYES_BLACK = DyeColor.BLACK.getTag();
+        public static final IOptionalNamedTag<Item> DYES_RED = DyeColor.RED.getTag();
+        public static final IOptionalNamedTag<Item> DYES_GREEN = DyeColor.GREEN.getTag();
+        public static final IOptionalNamedTag<Item> DYES_BROWN = DyeColor.BROWN.getTag();
+        public static final IOptionalNamedTag<Item> DYES_BLUE = DyeColor.BLUE.getTag();
+        public static final IOptionalNamedTag<Item> DYES_PURPLE = DyeColor.PURPLE.getTag();
+        public static final IOptionalNamedTag<Item> DYES_CYAN = DyeColor.CYAN.getTag();
+        public static final IOptionalNamedTag<Item> DYES_LIGHT_GRAY = DyeColor.LIGHT_GRAY.getTag();
+        public static final IOptionalNamedTag<Item> DYES_GRAY = DyeColor.GRAY.getTag();
+        public static final IOptionalNamedTag<Item> DYES_PINK = DyeColor.PINK.getTag();
+        public static final IOptionalNamedTag<Item> DYES_LIME = DyeColor.LIME.getTag();
+        public static final IOptionalNamedTag<Item> DYES_YELLOW = DyeColor.YELLOW.getTag();
+        public static final IOptionalNamedTag<Item> DYES_LIGHT_BLUE = DyeColor.LIGHT_BLUE.getTag();
+        public static final IOptionalNamedTag<Item> DYES_MAGENTA = DyeColor.MAGENTA.getTag();
+        public static final IOptionalNamedTag<Item> DYES_ORANGE = DyeColor.ORANGE.getTag();
+        public static final IOptionalNamedTag<Item> DYES_WHITE = DyeColor.WHITE.getTag();
+
         public static final IOptionalNamedTag<Item> EGGS = tag("eggs");
         public static final IOptionalNamedTag<Item> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Item> ENDER_PEARLS = tag("ender_pearls");
@@ -234,6 +252,10 @@ public class Tags
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
         public static final IOptionalNamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final IOptionalNamedTag<Item> RODS_WOODEN = tag("rods/wooden");
+
+        public static final IOptionalNamedTag<Item> SAND = tag("sand");
+        public static final IOptionalNamedTag<Item> SAND_COLORLESS = tag("sand/colorless");
+        public static final IOptionalNamedTag<Item> SAND_RED = tag("sand/red");
 
         public static final IOptionalNamedTag<Item> SANDSTONE = tag("sandstone");
         public static final IOptionalNamedTag<Item> SEEDS = tag("seeds");
