@@ -1,0 +1,145 @@
+--- a/net/minecraft/util/FoodStats.java
++++ b/net/minecraft/util/FoodStats.java
+@@ -14,64 +_,95 @@
+    private float field_75126_c;
+    private int field_75123_d;
+    private int field_75124_e = 20;
++   // FORGE START
++   private PlayerEntity player;
++   private int starveTimer;
++   // FORGE END
+ 
++   @Deprecated // Forge: Provided for backwards compatibility. Use the Player-specific constructor instead.
+    public FoodStats() {
++      this(null);
++   }
++
++   public FoodStats(PlayerEntity player) {
+       this.field_75125_b = 5.0F;
++      this.player = player;
+    }
+ 
++   @Deprecated // Forge: Don't call this unless the player is not consuming food. Use consume() instead.
+    public void func_75122_a(int p_75122_1_, float p_75122_2_) {
+-      this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, 20);
++      if (net.minecraftforge.event.ForgeEventFactory.onFoodStatsAddition(this.player, new net.minecraftforge.common.hunger.FoodValues(p_75122_1_, p_75122_2_))) return;
++      this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, net.minecraftforge.event.ForgeEventFactory.getMaxHunger(this.player));
+       this.field_75125_b = Math.min(this.field_75125_b + (float)p_75122_1_ * p_75122_2_ * 2.0F, (float)this.field_75127_a);
+    }
+ 
+    public void func_221410_a(Item p_221410_1_, ItemStack p_221410_2_) {
+-      if (p_221410_1_.func_219971_r()) {
+-         Food food = p_221410_1_.func_219967_s();
+-         this.func_75122_a(food.func_221466_a(), food.func_221469_b());
++      net.minecraftforge.common.hunger.FoodValues modifiedFoodValues = net.minecraftforge.common.hunger.FoodValues.get(p_221410_2_, this.player);
++      if (modifiedFoodValues != null) {
++         int prevFoodLevel = this.field_75127_a;
++         float prevSaturationLevel = this.field_75125_b;
++         this.func_75122_a(modifiedFoodValues.getHunger(), modifiedFoodValues.getSaturationModifier());
++         net.minecraftforge.event.ForgeEventFactory.onFoodEaten(modifiedFoodValues, this.field_75127_a - prevFoodLevel, this.field_75125_b - prevSaturationLevel, p_221410_2_, this.player);
+       }
+ 
+    }
+ 
+    public void func_75118_a(PlayerEntity p_75118_1_) {
+-      Difficulty difficulty = p_75118_1_.field_70170_p.func_175659_aa();
++      if (this.player == null) this.player = p_75118_1_; // Safety-check, in-case the class was constructed without the player-specific constructor
+       this.field_75124_e = this.field_75127_a;
+-      if (this.field_75126_c > 4.0F) {
+-         this.field_75126_c -= 4.0F;
+-         if (this.field_75125_b > 0.0F) {
+-            this.field_75125_b = Math.max(this.field_75125_b - 1.0F, 0.0F);
+-         } else if (difficulty != Difficulty.PEACEFUL) {
+-            this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
++      net.minecraftforge.eventbus.api.Event.Result allowExhaustionResult = net.minecraftforge.event.ForgeEventFactory.fireAllowExhaustionEvent(p_75118_1_);
++      float maxExhaustion = net.minecraftforge.event.ForgeEventFactory.getMaxExhaustion(p_75118_1_);
++      if (allowExhaustionResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (allowExhaustionResult == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && this.field_75126_c > maxExhaustion)) {
++         net.minecraftforge.event.hunger.ExhaustionEvent.Exhausted exhaustedEvent = net.minecraftforge.event.ForgeEventFactory.onExhausted(p_75118_1_, maxExhaustion, this.field_75126_c);
++         this.field_75126_c += exhaustedEvent.getDeltaExhaustion();
++         if (!exhaustedEvent.isCanceled()) {
++            this.field_75125_b = Math.max(this.field_75125_b + exhaustedEvent.getDeltaSaturation(), 0.0F);
++            this.field_75127_a = Math.max(this.field_75127_a + exhaustedEvent.getDeltaHunger(), 0);
+          }
+       }
+ 
+       boolean flag = p_75118_1_.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223606_i);
+-      if (flag && this.field_75125_b > 0.0F && p_75118_1_.func_70996_bM() && this.field_75127_a >= 20) {
+-         ++this.field_75123_d;
+-         if (this.field_75123_d >= 10) {
+-            float f = Math.min(this.field_75125_b, 6.0F);
+-            p_75118_1_.func_70691_i(f / 6.0F);
+-            this.func_75113_a(f);
+-            this.field_75123_d = 0;
+-         }
+-      } else if (flag && this.field_75127_a >= 18 && p_75118_1_.func_70996_bM()) {
+-         ++this.field_75123_d;
+-         if (this.field_75123_d >= 80) {
+-            p_75118_1_.func_70691_i(1.0F);
+-            this.func_75113_a(6.0F);
+-            this.field_75123_d = 0;
+-         }
+-      } else if (this.field_75127_a <= 0) {
+-         ++this.field_75123_d;
+-         if (this.field_75123_d >= 80) {
+-            if (p_75118_1_.func_110143_aJ() > 10.0F || difficulty == Difficulty.HARD || p_75118_1_.func_110143_aJ() > 1.0F && difficulty == Difficulty.NORMAL) {
+-               p_75118_1_.func_70097_a(DamageSource.field_76366_f, 1.0F);
+-            }
+-
++      net.minecraftforge.eventbus.api.Event.Result allowSaturatedRegenResult = net.minecraftforge.event.ForgeEventFactory.fireAllowSaturatedRegenEvent(p_75118_1_);
++      boolean shouldDoSaturatedRegen = allowSaturatedRegenResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (allowSaturatedRegenResult == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && flag && this.field_75125_b > 0.0F && p_75118_1_.func_70996_bM() && this.field_75127_a >= 20);
++      net.minecraftforge.eventbus.api.Event.Result allowRegenResult = shouldDoSaturatedRegen ? net.minecraftforge.eventbus.api.Event.Result.DENY : net.minecraftforge.event.ForgeEventFactory.fireAllowRegenEvent(p_75118_1_);
++      boolean shouldDoRegen = allowRegenResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (allowRegenResult == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && flag && this.field_75127_a >= 18 && p_75118_1_.func_70996_bM());
++      if (shouldDoSaturatedRegen) {
++         ++this.field_75123_d;
++         if (this.field_75123_d >= net.minecraftforge.event.ForgeEventFactory.getSaturatedRegenTickPeriod(p_75118_1_)) {
++            net.minecraftforge.event.hunger.HealthRegenEvent.SaturatedRegen saturatedRegenEvent = net.minecraftforge.event.ForgeEventFactory.onSaturatedRegen(p_75118_1_);
++            if (!saturatedRegenEvent.isCanceled()) {
++               p_75118_1_.func_70691_i(saturatedRegenEvent.getDeltaHealth());
++               this.func_75113_a(saturatedRegenEvent.getDeltaExhaustion());
++            }
++            this.field_75123_d = 0;
++         }
++      } else if (shouldDoRegen) {
++         ++this.field_75123_d;
++         if (this.field_75123_d >= net.minecraftforge.event.ForgeEventFactory.getHealthRegenTickPeriod(p_75118_1_)) {
++            net.minecraftforge.event.hunger.HealthRegenEvent.Regen regenEvent = net.minecraftforge.event.ForgeEventFactory.onHealthRegen(p_75118_1_);
++            if (!regenEvent.isCanceled()) {
++               p_75118_1_.func_70691_i(regenEvent.getDeltaHealth());
++               this.func_75113_a(regenEvent.getDeltaExhaustion());
++            }
+             this.field_75123_d = 0;
+          }
+       } else {
+          this.field_75123_d = 0;
+       }
++      net.minecraftforge.eventbus.api.Event.Result allowStarvationResult = net.minecraftforge.event.ForgeEventFactory.fireAllowStarvationEvent(p_75118_1_);
++      if (allowStarvationResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (allowStarvationResult == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && this.field_75127_a <= 0)) {
++         ++this.starveTimer;
++         if (this.starveTimer >= net.minecraftforge.event.ForgeEventFactory.getStarveTickPeriod(p_75118_1_)) {
++            net.minecraftforge.event.hunger.StarvationEvent.Starve starveEvent = net.minecraftforge.event.ForgeEventFactory.onStarvation(p_75118_1_);
++            if (!starveEvent.isCanceled()) {
++               p_75118_1_.func_70097_a(DamageSource.field_76366_f, starveEvent.getStarveDamage());
++            }
++
++            this.starveTimer = 0;
++         }
++      } else {
++         this.starveTimer = 0;
++      }
+ 
+    }
+ 
+@@ -97,11 +_,11 @@
+    }
+ 
+    public boolean func_75121_c() {
+-      return this.field_75127_a < 20;
++      return this.field_75127_a < net.minecraftforge.event.ForgeEventFactory.getMaxHunger(this.player);
+    }
+ 
+    public void func_75113_a(float p_75113_1_) {
+-      this.field_75126_c = Math.min(this.field_75126_c + p_75113_1_, 40.0F);
++      this.field_75126_c = Math.min(this.field_75126_c + p_75113_1_, net.minecraftforge.event.ForgeEventFactory.getExhaustionCap(this.player));
+    }
+ 
+    public float func_75115_e() {

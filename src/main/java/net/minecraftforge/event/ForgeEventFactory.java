@@ -97,6 +97,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.hunger.FoodValues;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
@@ -134,6 +135,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.hunger.*;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
@@ -839,5 +841,143 @@ public class ForgeEventFactory
         EntityTeleportEvent.ChorusFruit event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static int getMaxHunger(PlayerEntity player)
+    {
+        HungerEvent.GetMaxHunger event = new HungerEvent.GetMaxHunger(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getMaxHunger();
+    }
+
+    public static FoodValues getFoodValues(FoodValues originalFoodValues, ItemStack stack, PlayerEntity player)
+    {
+        FoodEvent.GetFoodValues event = new FoodEvent.GetFoodValues(originalFoodValues, stack, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getFoodValues();
+    }
+
+    public static boolean onFoodStatsAddition(PlayerEntity player, FoodValues foodValuesToBeAdded)
+    {
+        FoodEvent.FoodStatsAddition event = new FoodEvent.FoodStatsAddition(foodValuesToBeAdded, player);
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static void onFoodEaten(FoodValues foodValues, int hungerAdded, float saturationAdded, ItemStack stack, PlayerEntity player)
+    {
+        FoodEvent.FoodEaten event = new FoodEvent.FoodEaten(foodValues, hungerAdded, saturationAdded, stack, player);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static float getExhaustionCap(PlayerEntity player)
+    {
+        ExhaustionEvent.GetExhaustionCap event = new ExhaustionEvent.GetExhaustionCap(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getExhaustionLevelCap();
+    }
+
+    public static Result fireAllowExhaustionEvent(PlayerEntity player)
+    {
+        ExhaustionEvent.AllowExhaustion event = new ExhaustionEvent.AllowExhaustion(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static float getMaxExhaustion(PlayerEntity player)
+    {
+        ExhaustionEvent.GetMaxExhaustion event = new ExhaustionEvent.GetMaxExhaustion(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getMaxExhaustionLevel();
+    }
+
+    public static ExhaustionEvent.Exhausted onExhausted(PlayerEntity player, float exhaustionToRemove, float currentExhaustionLevel)
+    {
+        ExhaustionEvent.Exhausted event = new ExhaustionEvent.Exhausted(player, exhaustionToRemove, currentExhaustionLevel);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static Result fireAllowSaturatedRegenEvent(PlayerEntity player)
+    {
+        HealthRegenEvent.AllowSaturatedRegen event = new HealthRegenEvent.AllowSaturatedRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static Result fireAllowRegenEvent(PlayerEntity player)
+    {
+        HealthRegenEvent.AllowRegen event = new HealthRegenEvent.AllowRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static int getSaturatedRegenTickPeriod(PlayerEntity player)
+    {
+        HealthRegenEvent.GetSaturatedRegenTickPeriod event = new HealthRegenEvent.GetSaturatedRegenTickPeriod(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRegenTickPeriod();
+    }
+
+    public static HealthRegenEvent.SaturatedRegen onSaturatedRegen(PlayerEntity player)
+    {
+        HealthRegenEvent.SaturatedRegen event = new HealthRegenEvent.SaturatedRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static int getHealthRegenTickPeriod(PlayerEntity player)
+    {
+        HealthRegenEvent.GetRegenTickPeriod event = new HealthRegenEvent.GetRegenTickPeriod(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRegenTickPeriod();
+    }
+
+    public static HealthRegenEvent.Regen onHealthRegen(PlayerEntity player)
+    {
+        HealthRegenEvent.Regen event = new HealthRegenEvent.Regen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static Result fireAllowStarvationEvent(PlayerEntity player)
+    {
+        StarvationEvent.AllowStarvation event = new StarvationEvent.AllowStarvation(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static int getStarveTickPeriod(PlayerEntity player)
+    {
+        StarvationEvent.GetStarveTickPeriod event = new StarvationEvent.GetStarveTickPeriod(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getStarveTickPeriod();
+    }
+
+    public static StarvationEvent.Starve onStarvation(PlayerEntity player)
+    {
+        StarvationEvent.Starve event = new StarvationEvent.Starve(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static HealthRegenEvent.PeacefulRegen onPeacefulHealthRegen(PlayerEntity player)
+    {
+        HealthRegenEvent.PeacefulRegen event = new HealthRegenEvent.PeacefulRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static HungerRegenEvent.PeacefulRegen onPeacefulHungerRegen(PlayerEntity player)
+    {
+        HungerRegenEvent.PeacefulRegen event = new HungerRegenEvent.PeacefulRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static float onExhaustionAdded(PlayerEntity player, ExhaustionEvent.ExhaustingActions action, float deltaExhaustion)
+    {
+        ExhaustionEvent.ExhaustionAdded event = new ExhaustionEvent.ExhaustionAdded(player, action, deltaExhaustion);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getDeltaExhaustion();
     }
 }

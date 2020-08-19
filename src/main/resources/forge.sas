@@ -97,6 +97,7 @@ net/minecraft/resources/IResourceManager func_219533_b(Lnet/minecraft/util/Resou
 net/minecraft/tags/ITagCollection func_199913_a(Ljava/lang/Object;)Ljava/util/Collection; # getOwningTags
 net/minecraft/util/Direction func_176739_a(Ljava/lang/String;)Lnet/minecraft/util/Direction; # byName
 net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraft/util/Direction$Axis; # byName
+net/minecraft/util/FoodStats func_75119_b(F)V # setFoodSaturationLevel
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
 net/minecraft/util/math/vector/Vector3d func_189984_a(Lnet/minecraft/util/math/vector/Vector2f;)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
 net/minecraft/util/math/vector/Vector3d func_189986_a(FF)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw

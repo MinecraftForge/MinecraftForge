@@ -8,6 +8,15 @@
     public static final EntitySize field_213835_bs = EntitySize.func_220314_b(0.6F, 1.8F);
     private static final Map<Pose, EntitySize> field_213836_b = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, field_213835_bs).put(Pose.SLEEPING, field_213377_as).put(Pose.FALL_FLYING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.func_220314_b(0.6F, 1.5F)).put(Pose.DYING, EntitySize.func_220311_c(0.2F, 0.2F)).build();
     private static final DataParameter<Float> field_184829_a = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_187193_c);
+@@ -123,7 +_,7 @@
+    protected EnderChestInventory field_71078_a = new EnderChestInventory();
+    public final PlayerContainer field_71069_bz;
+    public Container field_71070_bA;
+-   protected FoodStats field_71100_bB = new FoodStats();
++   protected FoodStats field_71100_bB = new FoodStats(this);
+    protected int field_71101_bC;
+    public float field_71107_bF;
+    public float field_71109_bG;
 @@ -150,6 +_,9 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
@@ -63,6 +72,22 @@
        if (this.func_213298_c(Pose.SWIMMING)) {
           Pose pose;
           if (this.func_184613_cA()) {
+@@ -466,11 +_,13 @@
+ 
+       if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223606_i)) {
+          if (this.func_110143_aJ() < this.func_110138_aP() && this.field_70173_aa % 20 == 0) {
+-            this.func_70691_i(1.0F);
++            net.minecraftforge.event.hunger.HealthRegenEvent.PeacefulRegen peacefulHealthRegenEvent = net.minecraftforge.event.ForgeEventFactory.onPeacefulHealthRegen(this);
++            if (!peacefulHealthRegenEvent.isCanceled()) this.func_70691_i(peacefulHealthRegenEvent.getDeltaHealth());
+          }
+ 
+          if (this.field_71100_bB.func_75121_c() && this.field_70173_aa % 10 == 0) {
+-            this.field_71100_bB.func_75114_a(this.field_71100_bB.func_75116_a() + 1);
++            net.minecraftforge.event.hunger.HungerRegenEvent.PeacefulRegen peacefulHungerRegenEvent = net.minecraftforge.event.ForgeEventFactory.onPeacefulHungerRegen(this);
++            if (!peacefulHungerRegenEvent.isCanceled()) this.field_71100_bB.func_75114_a(this.field_71100_bB.func_75116_a() + peacefulHungerRegenEvent.getDeltaHunger());
+          }
+       }
+ 
 @@ -550,6 +_,7 @@
     }
  
@@ -149,7 +174,7 @@
              });
              if (this.field_184627_bm.func_190926_b()) {
                 if (hand == Hand.MAIN_HAND) {
-@@ -847,10 +_,13 @@
+@@ -847,20 +_,23 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
@@ -163,9 +188,11 @@
           float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
-@@ -859,8 +_,8 @@
+          }
+ 
           if (f2 != 0.0F) {
-             this.func_71020_j(p_70665_1_.func_76345_d());
+-            this.func_71020_j(p_70665_1_.func_76345_d());
++            this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.DAMAGE_TAKEN, p_70665_1_.func_76345_d()));
              float f1 = this.func_110143_aJ();
 -            this.func_70606_j(this.func_110143_aJ() - f2);
              this.func_110142_aN().func_94547_a(p_70665_1_, f1, f2);
@@ -247,6 +274,15 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
+@@ -1146,7 +_,7 @@
+                      }
+                   }
+ 
+-                  this.func_71020_j(0.1F);
++                  this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.ATTACK_ENTITY, 0.1F));
+                } else {
+                   this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187724_dU, this.func_184176_by(), 1.0F, 1.0F);
+                   if (flag4) {
 @@ -1170,7 +_,7 @@
        }
  
@@ -285,6 +321,58 @@
        } else {
           boolean flag = block.func_181623_g();
           boolean flag1 = p_242374_0_.func_180495_p(p_242374_1_.func_177984_a()).func_177230_c().func_181623_g();
+@@ -1297,9 +_,9 @@
+       super.func_70664_aZ();
+       this.func_195066_a(Stats.field_75953_u);
+       if (this.func_70051_ag()) {
+-         this.func_71020_j(0.2F);
++         this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.SPRINTING_JUMP, 0.2F));
+       } else {
+-         this.func_71020_j(0.05F);
++         this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.NORMAL_JUMP, 0.05F));
+       }
+ 
+    }
+@@ -1357,19 +_,19 @@
+             int i = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+             if (i > 0) {
+                this.func_195067_a(Stats.field_75946_m, i);
+-               this.func_71020_j(0.01F * (float)i * 0.01F);
++               this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_SWIM, 0.01F * (float)i * 0.01F));
+             }
+          } else if (this.func_208600_a(FluidTags.field_206959_a)) {
+             int j = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+             if (j > 0) {
+                this.func_195067_a(Stats.field_211756_w, j);
+-               this.func_71020_j(0.01F * (float)j * 0.01F);
++               this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_UNDERWATER, 0.01F * (float)j * 0.01F));
+             }
+          } else if (this.func_70090_H()) {
+             int k = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_5_ * p_71000_5_) * 100.0F);
+             if (k > 0) {
+                this.func_195067_a(Stats.field_211755_s, k);
+-               this.func_71020_j(0.01F * (float)k * 0.01F);
++               this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_ONWATER, 0.01F * (float)k * 0.01F));
+             }
+          } else if (this.func_70617_f_()) {
+             if (p_71000_3_ > 0.0D) {
+@@ -1380,13 +_,13 @@
+             if (l > 0) {
+                if (this.func_70051_ag()) {
+                   this.func_195067_a(Stats.field_188102_l, l);
+-                  this.func_71020_j(0.1F * (float)l * 0.01F);
++                  this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_SPRINT, 0.1F * (float)l * 0.01F));
+                } else if (this.func_213453_ef()) {
+                   this.func_195067_a(Stats.field_188101_k, l);
+-                  this.func_71020_j(0.0F * (float)l * 0.01F);
++                  this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_CROUCH, 0.0F * (float)l * 0.01F));
+                } else {
+                   this.func_195067_a(Stats.field_188100_j, l);
+-                  this.func_71020_j(0.0F * (float)l * 0.01F);
++                  this.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_ONLAND, 0.0F * (float)l * 0.01F));
+                }
+             }
+          } else if (this.func_184613_cA()) {
 @@ -1425,6 +_,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {

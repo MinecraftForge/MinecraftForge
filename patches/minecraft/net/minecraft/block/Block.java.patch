@@ -48,6 +48,15 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
+@@ -300,7 +_,7 @@
+ 
+    public void func_180657_a(World p_180657_1_, PlayerEntity p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+       p_180657_2_.func_71029_a(Stats.field_188065_ae.func_199076_b(this));
+-      p_180657_2_.func_71020_j(0.005F);
++      p_180657_2_.func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(p_180657_2_, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.HARVEST_BLOCK, 0.005F));
+       func_220054_a(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_5_, p_180657_2_, p_180657_6_);
+    }
+ 
 @@ -332,6 +_,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }

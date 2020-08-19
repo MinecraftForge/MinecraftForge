@@ -1,0 +1,40 @@
+--- a/net/minecraft/block/CakeBlock.java
++++ b/net/minecraft/block/CakeBlock.java
+@@ -19,7 +_,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ 
+-public class CakeBlock extends Block {
++public class CakeBlock extends Block implements net.minecraftforge.common.hunger.IEdible {
+    public static final IntegerProperty field_176589_a = BlockStateProperties.field_208173_Z;
+    protected static final VoxelShape[] field_196402_b = new VoxelShape[]{Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(3.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(5.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(7.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(9.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(11.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D), Block.func_208617_a(13.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D)};
+ 
+@@ -48,11 +_,11 @@
+    }
+ 
+    private ActionResultType func_226911_a_(IWorld p_226911_1_, BlockPos p_226911_2_, BlockState p_226911_3_, PlayerEntity p_226911_4_) {
+-      if (!p_226911_4_.func_71043_e(false)) {
++      if (!p_226911_4_.func_71043_e(this.canAlwaysEat())) {
+          return ActionResultType.PASS;
+       } else {
+          p_226911_4_.func_195066_a(Stats.field_188076_J);
+-         p_226911_4_.func_71024_bL().func_75122_a(2, 0.1F);
++         p_226911_4_.func_71024_bL().func_221410_a(this.func_199767_j(), new ItemStack(this));
+          int i = p_226911_3_.func_177229_b(field_176589_a);
+          if (i < 6) {
+             p_226911_1_.func_180501_a(p_226911_2_, p_226911_3_.func_206870_a(field_176589_a, Integer.valueOf(i + 1)), 3);
+@@ -87,4 +_,14 @@
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return false;
+    }
++
++   /* ============================== FORGE START ============================== */
++   public net.minecraftforge.common.hunger.FoodValues getFoodValues(ItemStack stack) {
++      return new net.minecraftforge.common.hunger.FoodValues(2, 0.1F);
++   }
++
++   public boolean canAlwaysEat() {
++      return false;
++   }
++   /* =============================== FORGE END =============================== */
+ }
