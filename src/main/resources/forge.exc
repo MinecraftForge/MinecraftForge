@@ -1,4 +1,3 @@
-net/minecraft/block/FarmlandBlock.hasWater(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z=|p_176530_0_,p_176530_1_
 net/minecraft/block/FireBlock.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/Direction;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 net/minecraft/block/FlowerPotBlock.<init>(Lnet/minecraft/block/FlowerPotBlock;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
 net/minecraft/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/block/Block$Properties;)V=|emptyPot,p_i48395_1_,p_i48395_2_
