@@ -56,9 +56,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final Map<String,Object> properties;
     private final String license;
     // Caches the manifest of the mod jar as parsing the manifest can be expensive for
-    // signed jars. The manifest needs to be an Optional<Manifest>, so a nullable Optional
-    // is probably the best option.
-    private volatile Optional<Manifest> manifest = null;
+    // signed jars.
+    private final Optional<Manifest> manifest;
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -88,6 +87,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        this.manifest = modFile.getLocator().findManifest(modFile.getFilePath());
     }
 
     @Override
@@ -121,13 +121,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
 
     public Optional<Manifest> getManifest()
     {
-        Optional<Manifest> result = manifest;
-        if (result == null)
-        {
-            result = modFile.getLocator().findManifest(modFile.getFilePath());
-            manifest = result;
-        }
-        return result;
+        return manifest;
     }
 
     @Override
