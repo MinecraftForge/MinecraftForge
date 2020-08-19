@@ -1,16 +1,23 @@
 package net.minecraftforge.common;
 
+import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITag.Builder;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
@@ -27,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 
 public class ForgeTagHandler
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Set<IForgeRegistry<?>> registries = new HashSet<>();
 
@@ -66,8 +72,7 @@ public class ForgeTagHandler
      * The {@link ITagCollectionSupplier} can be retrieved through {@link World#getTags()} or {@link TagCollectionManager#func_242178_a()} if context is unavailable, when
      * serializing and deserializing something tag based for instance.
      */
-    public static ITagCollectionSupplier getModdedTagCollectionSupplier(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags,
-          ITagCollection<EntityType<?>> entityTypeTags, Map<ResourceLocation, ITagCollection<?>> modded)
+    public static ITagCollectionSupplier getModdedTagCollectionSupplier(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags, Map<ResourceLocation, ITagCollection<?>> modded)
     {
         return new ITagCollectionSupplier()
         {
@@ -103,8 +108,7 @@ public class ForgeTagHandler
         };
     }
 
-    public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags,
-          ITagCollection<EntityType<?>> entityTypeTags)
+    public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         Map<ResourceLocation, ITagCollection<?>> modded = new HashMap<>();
         for (IForgeRegistry<?> reg : registries)
@@ -125,5 +129,19 @@ public class ForgeTagHandler
     private static <T> Map<ResourceLocation, ITag<T>> collectTags(TagRegistry<T> tagRegistry)
     {
         return tagRegistry.func_241288_c_().stream().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag, (a, b) -> b));
+    }
+
+    public static CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, Builder>>>>> getModdedTagReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)
+    {
+        CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, Builder>>>>> moddedResults = CompletableFuture.completedFuture(new ArrayList<>());
+        for (Map.Entry<ResourceLocation, TagCollectionReader<?>> entry : readers.entrySet())
+        {
+            TagCollectionReader<?> reader = entry.getValue();
+            moddedResults = moddedResults.thenCombine(reader.func_242224_a(resourceManager, backgroundExecutor), (results, result) -> {
+                results.add(new Pair<>(entry.getKey(), new Pair<>(reader, result)));
+                return results;
+            });
+        }
+        return moddedResults;
     }
 }
