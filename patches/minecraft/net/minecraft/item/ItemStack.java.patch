@@ -74,7 +74,7 @@
     }
  
     public ActionResultType func_196084_a(ItemUseContext p_196084_1_) {
-+      if (!p_196084_1_.field_196006_g.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      if (!p_196084_1_.func_195991_k().field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
 +      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_));
 +   }
 +
@@ -198,7 +198,7 @@
        return list;
     }
  
-@@ -802,7 +826,7 @@
+@@ -817,7 +841,7 @@
              }
           }
        } else {
@@ -207,7 +207,7 @@
        }
  
        return multimap;
-@@ -939,6 +963,35 @@
+@@ -954,6 +978,35 @@
        return this.func_77973_b().func_219971_r();
     }
  

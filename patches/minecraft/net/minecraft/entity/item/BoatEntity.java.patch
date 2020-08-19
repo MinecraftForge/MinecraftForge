@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -467,7 +467,7 @@
+@@ -468,7 +468,7 @@
                       blockpos$mutable.func_181079_c(l1, k2, i2);
                       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
                       if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$mutable).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,7 +9,7 @@
                          ++k1;
                       }
                    }
-@@ -820,6 +820,16 @@
+@@ -817,6 +817,16 @@
        return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
     }
  
