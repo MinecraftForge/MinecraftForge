@@ -247,6 +247,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_GOLD = tag("ores/gold");
         public static final IOptionalNamedTag<Item> ORES_IRON = tag("ores/iron");
         public static final IOptionalNamedTag<Item> ORES_LAPIS = tag("ores/lapis");
+        public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
