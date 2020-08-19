@@ -34,6 +34,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
@@ -280,11 +281,32 @@ public class BlockEvent extends Event
      * even if the liquid usually does do that (like water).
      */
     @HasResult
-    public static class CreateFluidSourceEvent extends BlockEvent
+    public static class CreateFluidSourceEvent extends Event
     {
-        public CreateFluidSourceEvent(IWorld world, BlockPos pos, BlockState state)
+        private final IWorldReader world;
+        private final BlockPos pos;
+        private final BlockState state;
+
+        public CreateFluidSourceEvent(IWorldReader world, BlockPos pos, BlockState state)
         {
-            super(world, pos, state);
+            this.world = world;
+            this.pos = pos;
+            this.state = state;
+        }
+
+        public IWorldReader getWorld()
+        {
+            return world;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public BlockState getState()
+        {
+            return state;
         }
     }
 
