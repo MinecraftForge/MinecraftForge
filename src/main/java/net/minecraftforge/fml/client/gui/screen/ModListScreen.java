@@ -51,6 +51,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraftforge.client.gui.ScrollPanel;
@@ -130,7 +131,7 @@ public class ModListScreen extends Screen
     class InfoPanel extends ScrollPanel {
         private ResourceLocation logoPath;
         private Size2i logoDims = new Size2i(0, 0);
-        private List<ITextProperties> lines = Collections.emptyList();
+        private List<IReorderingProcessor> lines = Collections.emptyList();
 
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn)
         {
@@ -151,9 +152,9 @@ public class ModListScreen extends Screen
             this.lines = Collections.emptyList();
         }
 
-        private List<ITextProperties> resizeContent(List<String> lines)
+        private List<IReorderingProcessor> resizeContent(List<String> lines)
         {
-            List<ITextProperties> ret = new ArrayList<>();
+            List<IReorderingProcessor> ret = new ArrayList<>();
             for (String line : lines)
             {
                 if (line == null)
@@ -166,7 +167,7 @@ public class ModListScreen extends Screen
                 int maxTextLength = this.width - 12;
                 if (maxTextLength >= 0)
                 {
-                    ret.addAll(field_230712_o_.func_238420_b_().func_238362_b_(chat, maxTextLength, Style.field_240709_b_));
+                    ret.addAll(LanguageMap.getInstance().func_244260_a(field_230712_o_.func_238420_b_().func_238362_b_(chat, maxTextLength, Style.field_240709_b_)));
                 }
             }
             return ret;
@@ -201,7 +202,7 @@ public class ModListScreen extends Screen
                 relativeY += headerHeight + PADDING;
             }
 
-            for (ITextProperties line : lines)
+            for (IReorderingProcessor line : lines)
             {
                 if (line != null)
                 {
@@ -231,10 +232,10 @@ public class ModListScreen extends Screen
             if (lineIdx >= lines.size() || lineIdx < 1)
                 return null;
 
-            ITextProperties line = lines.get(lineIdx-1);
+            IReorderingProcessor line = lines.get(lineIdx-1);
             if (line != null)
             {
-                return field_230712_o_.func_238420_b_().func_238357_a_(line, mouseX);
+                return field_230712_o_.func_238420_b_().func_243239_a(line, mouseX);
             }
             return null;
         }
@@ -375,7 +376,7 @@ public class ModListScreen extends Screen
 
         ITextComponent text = new TranslationTextComponent("fml.menu.mods.search");
         int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().func_238414_a_(text) / 2);
-        getFontRenderer().func_238422_b_(mStack, text, x, search.field_230691_m_ - getFontRenderer().FONT_HEIGHT, 0xFFFFFF);
+        getFontRenderer().func_238422_b_(mStack, text.func_241878_f(), x, search.field_230691_m_ - getFontRenderer().FONT_HEIGHT, 0xFFFFFF);
         this.search.func_230430_a_(mStack, mouseX , mouseY, partialTicks);
         super.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
     }
@@ -457,7 +458,7 @@ public class ModListScreen extends Screen
 
         if (vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED)
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url == null ? "" : vercheck.url));
-
+        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", selectedMod.getOwningFile().getLicense()));
         lines.add(null);
         lines.add(selectedMod.getDescription());
 

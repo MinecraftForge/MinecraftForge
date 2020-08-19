@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/gen/feature/SpringFeature.java
 +++ b/net/minecraft/world/gen/feature/SpringFeature.java
-@@ -20,7 +20,7 @@
+@@ -19,7 +19,7 @@
           return false;
        } else {
-          BlockState blockstate = p_230362_1_.func_180495_p(p_230362_5_);
--         if (!blockstate.func_196958_f() && !p_230362_6_.field_227366_f_.contains(blockstate.func_177230_c())) {
-+         if (!blockstate.isAir(p_230362_1_, p_230362_5_) && !p_230362_6_.field_227366_f_.contains(blockstate.func_177230_c())) {
+          BlockState blockstate = p_241855_1_.func_180495_p(p_241855_4_);
+-         if (!blockstate.func_196958_f() && !p_241855_5_.field_227366_f_.contains(blockstate.func_177230_c())) {
++         if (!blockstate.isAir(p_241855_1_, p_241855_4_) && !p_241855_5_.field_227366_f_.contains(blockstate.func_177230_c())) {
              return false;
           } else {
              int i = 0;

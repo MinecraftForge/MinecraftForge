@@ -29,7 +29,7 @@
 @@ -114,7 +115,7 @@
        public void func_230432_a_(MatrixStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_) {
           boolean flag = KeyBindingList.this.field_148191_k.field_146491_f == this.field_148282_b;
-          KeyBindingList.this.field_230668_b_.field_71466_p.func_238422_b_(p_230432_1_, this.field_148283_c, (float)(p_230432_4_ + 90 - KeyBindingList.this.field_148188_n), (float)(p_230432_3_ + p_230432_6_ / 2 - 9 / 2), 16777215);
+          KeyBindingList.this.field_230668_b_.field_71466_p.func_243248_b(p_230432_1_, this.field_148283_c, (float)(p_230432_4_ + 90 - KeyBindingList.this.field_148188_n), (float)(p_230432_3_ + p_230432_6_ / 2 - 9 / 2), 16777215);
 -         this.field_148281_e.field_230690_l_ = p_230432_4_ + 190;
 +         this.field_148281_e.field_230690_l_ = p_230432_4_ + 190 + 20;
           this.field_148281_e.field_230691_m_ = p_230432_3_;

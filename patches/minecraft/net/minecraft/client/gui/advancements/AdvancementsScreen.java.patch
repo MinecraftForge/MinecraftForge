@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/advancements/AdvancementsScreen.java
-@@ -25,6 +25,7 @@
+@@ -29,6 +29,7 @@
     private final Map<Advancement, AdvancementTabGui> field_191947_i = Maps.newLinkedHashMap();
     private AdvancementTabGui field_191940_s;
     private boolean field_191944_v;
@@ -8,7 +8,7 @@
  
     public AdvancementsScreen(ClientAdvancementManager p_i47383_1_) {
        super(NarratorChatListener.field_216868_a);
-@@ -40,7 +41,13 @@
+@@ -44,7 +45,13 @@
        } else {
           this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
        }
@@ -23,7 +23,7 @@
     }
  
     public void func_231164_f_() {
-@@ -58,7 +65,7 @@
+@@ -62,7 +69,7 @@
           int j = (this.field_230709_l_ - 140) / 2;
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
@@ -32,7 +32,7 @@
                 this.field_191946_h.func_194230_a(advancementtabgui.func_193935_c(), true);
                 break;
              }
-@@ -82,6 +89,12 @@
+@@ -86,6 +93,12 @@
        int i = (this.field_230708_k_ - 252) / 2;
        int j = (this.field_230709_l_ - 140) / 2;
        this.func_230446_a_(p_230430_1_);
@@ -40,12 +40,12 @@
 +          net.minecraft.util.text.ITextComponent page = new net.minecraft.util.text.StringTextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
 +         int width = this.field_230712_o_.func_238414_a_(page);
 +         RenderSystem.disableLighting();
-+         this.field_230712_o_.func_238407_a_(p_230430_1_, page, i + (252 / 2) - (width / 2), j - 44, -1);
++         this.field_230712_o_.func_238407_a_(p_230430_1_, page.func_241878_f(), i + (252 / 2) - (width / 2), j - 44, -1);
 +      }
        this.func_238696_c_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
        this.func_238695_a_(p_230430_1_, i, j);
        this.func_238697_d_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
-@@ -129,6 +142,7 @@
+@@ -132,6 +145,7 @@
           this.field_230706_i_.func_110434_K().func_110577_a(field_191945_g);
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
@@ -53,7 +53,7 @@
              advancementtabgui.func_238683_a_(p_238695_1_, p_238695_2_, p_238695_3_, advancementtabgui == this.field_191940_s);
           }
  
-@@ -136,6 +150,7 @@
+@@ -139,6 +153,7 @@
           RenderSystem.defaultBlendFunc();
  
           for(AdvancementTabGui advancementtabgui1 : this.field_191947_i.values()) {
@@ -61,7 +61,7 @@
              advancementtabgui1.func_191796_a(p_238695_2_, p_238695_3_, this.field_230707_j_);
           }
  
-@@ -158,7 +173,7 @@
+@@ -161,7 +176,7 @@
  
        if (this.field_191947_i.size() > 1) {
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {

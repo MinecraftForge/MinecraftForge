@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/NoiseChunkGenerator.java
 +++ b/net/minecraft/world/gen/NoiseChunkGenerator.java
-@@ -520,8 +520,8 @@
+@@ -525,8 +525,8 @@
                          objectlistiterator1.back(objectlist1.size());
                          BlockState blockstate = this.func_236086_a_(d18, i2);
                          if (blockstate != field_222562_i) {

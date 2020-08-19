@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -132,6 +132,8 @@
+@@ -135,6 +135,8 @@
           this.func_175069_a(new ResourceLocation("shaders/post/spider.json"));
        } else if (p_175066_1_ instanceof EndermanEntity) {
           this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
@@ -9,7 +9,7 @@
        }
  
     }
-@@ -307,7 +309,7 @@
+@@ -310,7 +312,7 @@
              d0 = d0 * 60.0D / 70.0D;
           }
  
@@ -18,7 +18,7 @@
        }
     }
  
-@@ -476,7 +478,7 @@
+@@ -486,7 +488,7 @@
              }
           } else if (this.field_78531_r.field_71462_r != null) {
              try {
@@ -27,10 +27,10 @@
              } catch (Throwable throwable) {
                 CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Screen render details");
-@@ -589,9 +591,16 @@
+@@ -595,9 +597,16 @@
        Matrix4f matrix4f = matrixstack.func_227866_c_().func_227870_a_();
        this.func_228379_a_(matrix4f);
-       activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), this.field_78531_r.field_71474_y.field_74320_O > 0, this.field_78531_r.field_71474_y.field_74320_O == 2, p_228378_1_);
+       activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), !this.field_78531_r.field_71474_y.func_243230_g().func_243192_a(), this.field_78531_r.field_71474_y.func_243230_g().func_243193_b(), p_228378_1_);
 +
 +      net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, activerenderinfo, p_228378_1_);
 +      activerenderinfo.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
@@ -44,7 +44,7 @@
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
           RenderSystem.clear(256, Minecraft.field_142025_a);
-@@ -671,4 +680,9 @@
+@@ -709,4 +718,9 @@
     public OverlayTexture func_228385_m_() {
        return this.field_228375_t_;
     }
