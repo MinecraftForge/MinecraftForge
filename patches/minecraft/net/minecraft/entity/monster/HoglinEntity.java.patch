@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/HoglinEntity.java
 +++ b/net/minecraft/entity/monster/HoglinEntity.java
-@@ -275,8 +275,8 @@
+@@ -279,8 +279,8 @@
        return hoglinentity;
     }
  

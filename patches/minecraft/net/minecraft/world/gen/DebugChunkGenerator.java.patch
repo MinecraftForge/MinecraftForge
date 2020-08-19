@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/DebugChunkGenerator.java
 +++ b/net/minecraft/world/gen/DebugChunkGenerator.java
-@@ -101,4 +101,10 @@
+@@ -103,4 +103,10 @@
  
        return blockstate;
     }

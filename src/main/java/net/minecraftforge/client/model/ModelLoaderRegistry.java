@@ -82,8 +82,12 @@ public class ModelLoaderRegistry
      */
     public static void onModelLoadingStart()
     {
-        net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ModelRegistryEvent());
-        registryFrozen = true;
+        // Minecraft recreates the ModelBakery on resource reload, but this should only run once during init.
+        if (!registryFrozen)
+        {
+            net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ModelRegistryEvent());
+            registryFrozen = true;
+        }
     }
 
     /**

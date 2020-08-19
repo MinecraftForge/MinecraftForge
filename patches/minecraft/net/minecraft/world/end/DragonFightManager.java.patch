@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/end/DragonFightManager.java
 +++ b/net/minecraft/world/end/DragonFightManager.java
-@@ -85,6 +85,7 @@
+@@ -84,6 +84,7 @@
  
           this.field_186117_k = p_i231901_4_.func_74767_n("DragonKilled");
           this.field_186118_l = p_i231901_4_.func_74767_n("PreviouslyKilled");
@@ -8,7 +8,7 @@
           if (p_i231901_4_.func_74767_n("IsRespawning")) {
              this.field_186122_p = DragonSpawnState.START;
           }
-@@ -119,6 +120,7 @@
+@@ -118,6 +119,7 @@
  
        compoundnbt.func_74757_a("DragonKilled", this.field_186117_k);
        compoundnbt.func_74757_a("PreviouslyKilled", this.field_186118_l);
@@ -16,7 +16,7 @@
        if (this.field_186121_o != null) {
           compoundnbt.func_218657_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
        }
-@@ -491,6 +493,13 @@
+@@ -490,6 +492,13 @@
              endercrystalentity.func_184516_a((BlockPos)null);
           }
        }

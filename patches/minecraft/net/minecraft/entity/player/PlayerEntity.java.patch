@@ -15,8 +15,8 @@
 +   private final java.util.Collection<IFormattableTextComponent> prefixes = new java.util.LinkedList<>();
 +   private final java.util.Collection<IFormattableTextComponent> suffixes = new java.util.LinkedList<>();
  
-    public PlayerEntity(World p_i231577_1_, BlockPos p_i231577_2_, GameProfile p_i231577_3_) {
-       super(EntityType.field_200729_aH, p_i231577_1_);
+    public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
+       super(EntityType.field_200729_aH, p_i241920_1_);
 @@ -175,7 +178,7 @@
     }
  
@@ -178,7 +178,7 @@
                       this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                    }
  
-@@ -1007,6 +1032,7 @@
+@@ -1011,6 +1036,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
@@ -186,7 +186,7 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_233637_b_(Attributes.field_233823_f_);
-@@ -1034,8 +1060,10 @@
+@@ -1038,8 +1064,10 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(Effects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof LivingEntity;
                 flag2 = flag2 && !this.func_70051_ag();
@@ -198,7 +198,7 @@
                 }
  
                 f = f + f1;
-@@ -1123,8 +1151,10 @@
+@@ -1127,8 +1155,10 @@
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {
@@ -209,7 +209,7 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1166,7 +1196,7 @@
+@@ -1170,7 +1200,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -218,7 +218,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1192,8 +1222,9 @@
+@@ -1196,8 +1226,9 @@
     public void func_71004_bE() {
     }
  
@@ -230,7 +230,7 @@
        this.field_71069_bz.func_75134_a(this);
        if (this.field_71070_bA != null) {
           this.field_71070_bA.func_75134_a(this);
-@@ -1216,6 +1247,7 @@
+@@ -1220,6 +1251,7 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
@@ -238,18 +238,18 @@
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1238,8 +1270,8 @@
+@@ -1242,8 +1274,8 @@
           }
  
           return optional;
--      } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_234567_0_)) {
--         return BedBlock.func_220172_a(EntityType.field_200729_aH, p_234567_0_, p_234567_1_, 0);
-+      } else if (blockstate.isBed(p_234567_0_, p_234567_1_, null) && BedBlock.func_235330_a_(p_234567_0_)) {
-+         return blockstate.getBedSpawnPosition(EntityType.field_200729_aH, p_234567_0_, p_234567_1_, null);
-       } else if (!p_234567_2_) {
+-      } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_242374_0_)) {
+-         return BedBlock.func_242652_a(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_);
++      } else if (blockstate.isBed(p_242374_0_, p_242374_1_, null) && BedBlock.func_235330_a_(p_242374_0_)) {
++         return blockstate.getBedSpawnPosition(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_, null);
+       } else if (!p_242374_3_) {
           return Optional.empty();
        } else {
-@@ -1421,6 +1453,7 @@
+@@ -1425,6 +1457,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -257,7 +257,7 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1434,7 +1467,7 @@
+@@ -1438,7 +1471,7 @@
     public boolean func_226566_ei_() {
        if (!this.field_70122_E && !this.func_184613_cA() && !this.func_70090_H() && !this.func_70644_a(Effects.field_188424_y)) {
           ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
@@ -266,7 +266,7 @@
              this.func_226567_ej_();
              return true;
           }
-@@ -1475,6 +1508,10 @@
+@@ -1479,6 +1512,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -277,7 +277,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1503,7 +1540,7 @@
+@@ -1507,7 +1544,7 @@
     }
  
     public void func_192024_a(ItemStack p_192024_1_, int p_192024_2_) {
@@ -286,7 +286,7 @@
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
           this.field_71106_cc = 0.0F;
-@@ -1514,6 +1551,10 @@
+@@ -1518,6 +1555,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -297,7 +297,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1704,7 +1745,11 @@
+@@ -1708,7 +1749,11 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -310,7 +310,7 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1956,4 +2001,45 @@
+@@ -1987,4 +2032,45 @@
           return this.field_221260_g;
        }
     }
@@ -323,7 +323,7 @@
 +   public Collection<IFormattableTextComponent> getSuffixes() {
 +       return this.suffixes;
 +   }
-+   
++
 +   private ITextComponent displayname = null;
 +   /**
 +    * Force the displayed name to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.NameFormat}, using the real player name as event parameter.

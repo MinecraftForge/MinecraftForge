@@ -27,7 +27,7 @@ public class InvalidModFileException extends RuntimeException
 
     public InvalidModFileException(String message, IModFileInfo modFileInfo)
     {
-        super(message);
+        super(String.format("%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
         this.modFileInfo = modFileInfo;
     }
 }
