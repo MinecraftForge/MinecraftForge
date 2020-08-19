@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
-@@ -340,7 +340,7 @@
+@@ -347,7 +347,7 @@
                 itemstack.func_190918_g(1);
              }
  

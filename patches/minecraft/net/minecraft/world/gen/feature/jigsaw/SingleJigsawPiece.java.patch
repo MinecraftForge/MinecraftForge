@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/SingleJigsawPiece.java
-@@ -113,7 +113,7 @@
+@@ -106,7 +106,7 @@
        if (!template.func_237146_a_(p_230378_2_, p_230378_5_, p_230378_6_, placementsettings, p_230378_9_, 18)) {
           return false;
        } else {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/WorldSavedData.java
 +++ b/net/minecraft/world/storage/WorldSavedData.java
-@@ -9,7 +9,7 @@
+@@ -8,7 +8,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger field_215159_a = LogManager.getLogger();
     private final String field_76190_i;
     private boolean field_76189_a;
-@@ -53,4 +53,14 @@
+@@ -52,4 +52,14 @@
           this.func_76186_a(false);
        }
     }
