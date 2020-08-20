@@ -13,7 +13,15 @@
     default void func_242212_e() {
        TagRegistryManager.func_242193_a(this);
        Blocks.func_235419_a_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes(this));
     }
  
     default void func_242210_a(PacketBuffer p_242210_1_) {
+@@ -39,6 +40,7 @@
+       return func_242209_a(itagcollection, itagcollection1, itagcollection2, itagcollection3);
+    }
+ 
++   @Deprecated //Forge: Use ForgeTagHandler#getModdedTagCollectionSupplier instead
+    static ITagCollectionSupplier func_242209_a(final ITagCollection<Block> p_242209_0_, final ITagCollection<Item> p_242209_1_, final ITagCollection<Fluid> p_242209_2_, final ITagCollection<EntityType<?>> p_242209_3_) {
+       return new ITagCollectionSupplier() {
+          public ITagCollection<Block> func_241835_a() {

@@ -45,4 +45,20 @@ public class TagsUpdatedEvent extends Event
     {
         return manager;
     }
+
+    public static class VanillaTagTypes extends TagsUpdatedEvent
+    {
+        public VanillaTagTypes(ITagCollectionSupplier manager)
+        {
+            super(manager);
+        }
+    }
+
+    public static class CustomTagTypes extends TagsUpdatedEvent
+    {
+        public CustomTagTypes(ITagCollectionSupplier manager)
+        {
+            super(manager);
+        }
+    }
 }

@@ -20,7 +20,7 @@
           ITagCollection<Fluid> itagcollection2 = this.field_205705_c.func_242226_a(completablefuture2.join());
           ITagCollection<EntityType<?>> itagcollection3 = this.field_215299_d.func_242226_a(completablefuture3.join());
 -         ITagCollectionSupplier itagcollectionsupplier = ITagCollectionSupplier.func_242209_a(itagcollection, itagcollection1, itagcollection2, itagcollection3);
-+         Map<ResourceLocation, ITagCollection<?>> moddedCollections = moddedResults.join().stream().collect(Collectors.toMap(com.mojang.datafixers.util.Pair::getFirst, moddedResultInfo -> moddedResultInfo.getSecond().getFirst().func_242226_a(moddedResultInfo.getSecond().getSecond()), (a, b) -> b));
++         Map<ResourceLocation, ITagCollection<?>> moddedCollections = moddedResults.join().stream().collect(Collectors.toMap(com.mojang.datafixers.util.Pair::getFirst, moddedResultInfo -> moddedResultInfo.getSecond().getFirst().func_242226_a(moddedResultInfo.getSecond().getSecond())));
 +         ITagCollectionSupplier itagcollectionsupplier = net.minecraftforge.common.ForgeTagHandler.getModdedTagCollectionSupplier(itagcollection, itagcollection1, itagcollection2, itagcollection3, moddedCollections);
           Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
           if (!multimap.isEmpty()) {

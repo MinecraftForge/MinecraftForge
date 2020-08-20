@@ -25,7 +25,6 @@ import com.google.common.collect.Maps;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
@@ -42,12 +41,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.FuzzedBiomeMagnifier;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -332,32 +329,23 @@ public class FMLPlayMessages
         public static void encode(SyncCustomTagTypes msg, PacketBuffer buf)
         {
             buf.writeVarInt(msg.moddedTagCollections.size());
-            //mostly copied from ITagCollection.
-            for (Entry<ResourceLocation, ITagCollection<?>> entry : msg.moddedTagCollections.entrySet())
-            {
-                ResourceLocation regName = entry.getKey();
-                //TODO: Make this properly get checked
-                forgeTagCollectionWrite(buf, regName, (ITagCollection) entry.getValue());
-            }
+            msg.moddedTagCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.func_241833_a()));
         }
 
-        //mostly copied from ITagCollection.
-        private static <T extends IForgeRegistryEntry<T>> void forgeTagCollectionWrite(PacketBuffer buffer, ResourceLocation regName, ITagCollection<T> modded)
+        private static <T> void forgeTagCollectionWrite(PacketBuffer buf, ResourceLocation registryName, Map<ResourceLocation, ITag<T>> tags)
         {
-            buffer.writeResourceLocation(regName);
-            Map<ResourceLocation, ITag<T>> map = modded.func_241833_a();
-            buffer.writeVarInt(map.size());
-            for (Map.Entry<ResourceLocation, ITag<T>> entry : map.entrySet())
-            {
-                buffer.writeResourceLocation(entry.getKey());
-                List<T> elements = entry.getValue().func_230236_b_();
-                buffer.writeVarInt(elements.size());
+            buf.writeResourceLocation(registryName);
+            buf.writeVarInt(tags.size());
+            tags.forEach((name, tag) -> {
+                buf.writeResourceLocation(name);
+                List<T> elements = tag.func_230236_b_();
+                buf.writeVarInt(elements.size());
                 for (T element : elements)
                 {
-                    //TODO: What should we write if it is somehow null, maybe we should add a util in IForgePacketBuffer for writing a list of resource locations
-                    buffer.writeResourceLocation(element.getRegistryName());
+                    //TODO: Make this not need to be unchecked
+                    buf.writeResourceLocation(((IForgeRegistryEntry<?>) element).getRegistryName());
                 }
-            }
+            });
         }
 
         public static SyncCustomTagTypes decode(PacketBuffer buf)
@@ -367,48 +355,55 @@ public class FMLPlayMessages
             for (int i = 0; i < size; i++)
             {
                 ResourceLocation regName = buf.readResourceLocation();
-                builder.put(regName, readTagCollection(buf, regName));
+                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
+                if (registry != null)
+                {
+                    builder.put(regName, readTagCollection(buf, registry));
+                }
             }
             return new SyncCustomTagTypes(builder.build());
         }
 
-        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buffer, ResourceLocation regName)
+        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buf, IForgeRegistry<T> registry)
         {
-            IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(regName);
-            Map<ResourceLocation, ITag<T>> map = Maps.newHashMap();
-            int i = buffer.readVarInt();
-            for (int j = 0; j < i; ++j)
+            Map<ResourceLocation, ITag<T>> tags = Maps.newHashMap();
+            int totalTags = buf.readVarInt();
+            for (int i = 0; i < totalTags; i++)
             {
-                ResourceLocation resourcelocation = buffer.readResourceLocation();
-                int k = buffer.readVarInt();
-                ImmutableSet.Builder<T> builder = ImmutableSet.builder();
-                for (int l = 0; l < k; ++l)
+                ImmutableSet.Builder<T> elementBuilder = ImmutableSet.builder();
+                ResourceLocation name = buf.readResourceLocation();
+                int totalElements = buf.readVarInt();
+                for (int j = 0; j < totalElements; j++)
                 {
-                    T value = reg.getValue(buffer.readResourceLocation());
-                    if (value != null)
+                    T element = registry.getValue(buf.readResourceLocation());
+                    if (element != null)
                     {
-                        builder.add(value);
+                        elementBuilder.add(element);
                     }
                 }
-                map.put(resourcelocation, ITag.func_232946_a_(builder.build()));
+                tags.put(name, ITag.func_232946_a_(elementBuilder.build()));
             }
-            return ITagCollection.func_242202_a(map);
+            return ITagCollection.func_242202_a(tags);
         }
 
         public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                //TODO: Implement and create any missing types on the client
+                //TODO: Create any missing types on the client
                 //TODO: Replace existing supplier with one that has our existing types or make it possible to modify to add our custom types
                 //TODO: Also figure out how we want to handle the tags updated event being fired
-                /*Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
+                /*ITagCollectionSupplier tagCollectionSupplier;
+                Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(tagCollectionSupplier);
                 if (!multimap.isEmpty()) {
                     LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", multimap);
-                    this.netManager.closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
+                    ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
                 } else {
-                    this.networkTagManager = itagcollectionsupplier;
-                    if (!this.netManager.isLocalChannel()) {
-                        itagcollectionsupplier.func_242212_e();
+                    this.networkTagManager = tagCollectionSupplier;
+                    if (!ctx.get().getNetworkManager().isLocalChannel()) {
+                        //tagCollectionSupplier.func_242212_e();
+                        //TODO: Evaluate
+                        TagRegistryManager.func_242193_a(tagCollectionSupplier);
+                        MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
                     }
                 }*/
             });

@@ -1,8 +1,8 @@
 package net.minecraftforge.common;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITag.Builder;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ITagCollection;
@@ -29,13 +28,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Set<IForgeRegistry<?>> registries = new HashSet<>();
+    private static final Set<ResourceLocation> registryNames = new HashSet<>();
 
     /**
      * Creates and "registers" (or gets) a TagRegistry based on the passed in IForgeRegistry. This has to be called after RegistryEvents are done.
@@ -47,27 +47,34 @@ public class ForgeTagHandler
      */
     public synchronized static <T extends IForgeRegistryEntry<T>> TagRegistry<T> createTagType(IForgeRegistry<T> reg)
     {
-        //TODO: Don't allow creating "duplicates" of the vanilla tag types
-        if (registries.contains(reg))
+        ResourceLocation registryName = reg.getRegistryName();
+        if (TagRegistryManager.contains(registryName))
         {
-            //TODO: Change logging level if we keep it at all
-            LOGGER.info("Another mod has already added this registry to be a tag!");
-            return (TagRegistry<T>) TagRegistryManager.get(reg.getRegistryName());
+            //TODO: Log that it already existed? (Use different than old one though in case they try to call it on the blocks registry or something)
+            //LOGGER.info("Another mod has already added this registry to be a tag!");
+            return (TagRegistry<T>) TagRegistryManager.get(registryName);
         }
-        registries.add(reg);
-        return TagRegistryManager.func_242196_a(reg.getRegistryName(), itcs -> (ITagCollection<T>) itcs.modded().get(reg.getRegistryName()));
+        registryNames.add(registryName);
+        return TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> (ITagCollection<T>) tagCollectionSupplier.modded().get(registryName));
     }
 
     public static Map<ResourceLocation, TagCollectionReader<?>> createModdedTagReaders()
     {
         LOGGER.debug("Gathering custom tag collection reader from types.");
-        //TODO: Adjust this so that the tags/thing is plural? Like blocks vs block
-        return registries.stream().collect(Collectors.toMap(
-              IForgeRegistry::getRegistryName,
-              reg -> new TagCollectionReader<>(rl -> Optional.ofNullable(reg.getValue(rl)), "tags/" + reg.getRegistryName().getPath(), reg.getRegistryName().getPath())
-        ));
+        ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
+        for (ResourceLocation registryName : registryNames)
+        {
+            IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+            if (registry != null)
+            {
+                //TODO: Adjust this so that the tags/thing is plural? Like blocks vs block
+                builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registryName.getPath(), registryName.getPath()));
+            }
+        }
+        return builder.build();
     }
 
+    //TODO: Update docs and maybe move this to IForgeTagCollectionSupplier?
     /**
      * The {@link ITagCollectionSupplier} can be retrieved through {@link World#getTags()} or {@link TagCollectionManager#func_242178_a()} if context is unavailable, when
      * serializing and deserializing something tag based for instance.
@@ -110,25 +117,21 @@ public class ForgeTagHandler
 
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
-        Map<ResourceLocation, ITagCollection<?>> modded = new HashMap<>();
-        for (IForgeRegistry<?> reg : registries)
+        ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
+        for (ResourceLocation registryName : registryNames)
         {
-            TagRegistry<?> tagRegistry = TagRegistryManager.get(reg.getRegistryName());
+            TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
             {
-                modded.put(reg.getRegistryName(), ITagCollection.func_242202_a(collectTags(tagRegistry)));
+                builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
             }
         }
+        Map<ResourceLocation, ITagCollection<?>> modded = builder.build();
         if (!modded.isEmpty())
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", modded.size());
         }
         return getModdedTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags, modded);
-    }
-
-    private static <T> Map<ResourceLocation, ITag<T>> collectTags(TagRegistry<T> tagRegistry)
-    {
-        return tagRegistry.func_241288_c_().stream().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag, (a, b) -> b));
     }
 
     public static CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, Builder>>>>> getModdedTagReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)
