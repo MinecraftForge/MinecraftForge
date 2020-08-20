@@ -1228,11 +1228,9 @@ public class ForgeHooks
             return e;
         }
 
-        DynamicRegistries.Impl vanillaOnly = DynamicRegistries.func_239770_b_();
-        DynamicRegistries.Impl withModded = DynamicRegistries.func_239770_b_();
-
-        WorldGenSettingsExport<JsonElement> writer = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, vanillaOnly);
-        WorldSettingsImport<JsonElement> reader = WorldSettingsImport.createWithErrorHandler(JsonOps.INSTANCE, datapacks.func_240970_h_(), withModded, true);
+        DynamicRegistries.Impl impl = DynamicRegistries.func_239770_b_();
+        WorldGenSettingsExport<JsonElement> writer = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, impl);
+        WorldSettingsImport<JsonElement> reader = WorldSettingsImport.createWithErrorHandler(JsonOps.INSTANCE, datapacks.func_240970_h_(), impl, true);
 
         ParsingErrorHandler errorHandler = reader.getErrorHandler();
         errorHandler.dumpResults(debugInfo);
@@ -1246,7 +1244,7 @@ public class ForgeHooks
         }
 
         Codec<DimensionGeneratorSettings> worldsCodec = DimensionGeneratorSettings.field_236201_a_;
-        DimensionGeneratorSettings vanilla = DimensionGeneratorSettings.func_242751_a(vanillaOnly.func_230520_a_(), vanillaOnly.func_243612_b(Registry.field_239720_u_), vanillaOnly.func_243612_b(Registry.field_243549_ar));
+        DimensionGeneratorSettings vanilla = DimensionGeneratorSettings.func_242751_a(impl.func_230520_a_(), impl.func_243612_b(Registry.field_239720_u_), impl.func_243612_b(Registry.field_243549_ar));
         DataResult<DimensionGeneratorSettings> modded = worldsCodec.encodeStart(writer, vanilla).flatMap(parsed -> worldsCodec.parse(reader, parsed));
 
         if(modded.error().isPresent())
@@ -1255,8 +1253,7 @@ public class ForgeHooks
             packs.close();
             return new RuntimeException("Some mods prevented generating the settings of world gen!: " + modded.error().get().message());
         }
-
-        debugInfo.accept("Mod packs loaded registry objects properly!");
+        debugInfo.accept("Successfully loaded all mod added registry objects!");
         datapacks.close();
         packs.close();
         return null;
