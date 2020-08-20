@@ -1,0 +1,10 @@
+--- a/net/minecraft/tags/ITagCollectionSupplier.java
++++ b/net/minecraft/tags/ITagCollectionSupplier.java
+@@ -22,6 +22,7 @@
+    default void func_242212_e() {
+       TagRegistryManager.func_242193_a(this);
+       Blocks.func_235419_a_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
+    }
+ 
+    default void func_242210_a(PacketBuffer p_242210_1_) {

@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/DimensionType.java
++++ b/net/minecraft/world/DimensionType.java
+@@ -49,7 +49,7 @@
+          return p_242721_0_.field_242709_C;
+       }), Codec.FLOAT.fieldOf("ambient_light").forGetter((p_236042_0_) -> {
+          return p_236042_0_.field_236017_x_;
+-      })).apply(p_236026_0_, DimensionType::new);
++      }), net.minecraftforge.common.world.DimensionExtra.CODEC.listOf().optionalFieldOf("forge_extras", (java.util.List<net.minecraftforge.common.world.DimensionExtra>)java.util.Collections.EMPTY_LIST).flatXmap(net.minecraftforge.common.world.DimensionExtra::ensureUnique, net.minecraftforge.common.world.DimensionExtra::ensureUnique).forGetter(DimensionType::getExtras)).apply(p_236026_0_, DimensionType::new);
+    });
+    public static final float[] field_235998_b_ = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+    public static final RegistryKey<DimensionType> field_235999_c_ = RegistryKey.func_240903_a_(Registry.field_239698_ad_, new ResourceLocation("overworld"));
+@@ -78,12 +78,21 @@
+    private final ResourceLocation field_242709_C;
+    private final float field_236017_x_;
+    private final transient float[] field_236018_y_;
++   private final java.util.List<net.minecraftforge.common.world.DimensionExtra> extras;
+ 
+    protected DimensionType(OptionalLong p_i241972_1_, boolean p_i241972_2_, boolean p_i241972_3_, boolean p_i241972_4_, boolean p_i241972_5_, double p_i241972_6_, boolean p_i241972_8_, boolean p_i241972_9_, boolean p_i241972_10_, boolean p_i241972_11_, int p_i241972_12_, ResourceLocation p_i241972_13_, ResourceLocation p_i241972_14_, float p_i241972_15_) {
+       this(p_i241972_1_, p_i241972_2_, p_i241972_3_, p_i241972_4_, p_i241972_5_, p_i241972_6_, false, p_i241972_8_, p_i241972_9_, p_i241972_10_, p_i241972_11_, p_i241972_12_, FuzzedBiomeMagnifier.INSTANCE, p_i241972_13_, p_i241972_14_, p_i241972_15_);
+    }
+ 
++   protected DimensionType(OptionalLong p_i241972_1_, boolean p_i241972_2_, boolean p_i241972_3_, boolean p_i241972_4_, boolean p_i241972_5_, double p_i241972_6_, boolean p_i241972_8_, boolean p_i241972_9_, boolean p_i241972_10_, boolean p_i241972_11_, int p_i241972_12_, ResourceLocation p_i241972_13_, ResourceLocation p_i241972_14_, float p_i241972_15_, java.util.List<net.minecraftforge.common.world.DimensionExtra> extras) {
++      this(p_i241972_1_, p_i241972_2_, p_i241972_3_, p_i241972_4_, p_i241972_5_, p_i241972_6_, false, p_i241972_8_, p_i241972_9_, p_i241972_10_, p_i241972_11_, p_i241972_12_, FuzzedBiomeMagnifier.INSTANCE, p_i241972_13_, p_i241972_14_, p_i241972_15_, extras);
++   }
++
+    protected DimensionType(OptionalLong p_i241973_1_, boolean p_i241973_2_, boolean p_i241973_3_, boolean p_i241973_4_, boolean p_i241973_5_, double p_i241973_6_, boolean p_i241973_8_, boolean p_i241973_9_, boolean p_i241973_10_, boolean p_i241973_11_, boolean p_i241973_12_, int p_i241973_13_, IBiomeMagnifier p_i241973_14_, ResourceLocation p_i241973_15_, ResourceLocation p_i241973_16_, float p_i241973_17_) {
++      this(p_i241973_1_, p_i241973_2_, p_i241973_3_, p_i241973_4_, p_i241973_5_, p_i241973_6_, p_i241973_8_, p_i241973_9_, p_i241973_10_, p_i241973_11_, p_i241973_12_, p_i241973_13_, p_i241973_14_, p_i241973_15_, p_i241973_16_, p_i241973_17_, java.util.Collections.EMPTY_LIST);
++   }
++
++   protected DimensionType(OptionalLong p_i241973_1_, boolean p_i241973_2_, boolean p_i241973_3_, boolean p_i241973_4_, boolean p_i241973_5_, double p_i241973_6_, boolean p_i241973_8_, boolean p_i241973_9_, boolean p_i241973_10_, boolean p_i241973_11_, boolean p_i241973_12_, int p_i241973_13_, IBiomeMagnifier p_i241973_14_, ResourceLocation p_i241973_15_, ResourceLocation p_i241973_16_, float p_i241973_17_, java.util.List<net.minecraftforge.common.world.DimensionExtra> extras) {
+       this.field_236010_o_ = p_i241973_1_;
+       this.field_218273_h = p_i241973_2_;
+       this.field_236011_q_ = p_i241973_3_;
+@@ -101,6 +110,7 @@
+       this.field_242709_C = p_i241973_16_;
+       this.field_236017_x_ = p_i241973_17_;
+       this.field_236018_y_ = func_236020_a_(p_i241973_17_);
++      this.extras = extras;
+    }
+ 
+    private static float[] func_236020_a_(float p_236020_0_) {
+@@ -272,4 +282,12 @@
+          return this.field_218273_h == p_242714_1_.field_218273_h && this.field_236011_q_ == p_242714_1_.field_236011_q_ && this.field_236012_r_ == p_242714_1_.field_236012_r_ && this.field_236013_s_ == p_242714_1_.field_236013_s_ && this.field_242713_t == p_242714_1_.field_242713_t && this.field_236015_u_ == p_242714_1_.field_236015_u_ && this.field_241499_s_ == p_242714_1_.field_241499_s_ && this.field_241500_t_ == p_242714_1_.field_241500_t_ && this.field_241501_u_ == p_242714_1_.field_241501_u_ && this.field_241502_v_ == p_242714_1_.field_241502_v_ && this.field_241503_w_ == p_242714_1_.field_241503_w_ && Float.compare(p_242714_1_.field_236017_x_, this.field_236017_x_) == 0 && this.field_236010_o_.equals(p_242714_1_.field_236010_o_) && this.field_227175_i_.equals(p_242714_1_.field_227175_i_) && this.field_241504_y_.equals(p_242714_1_.field_241504_y_) && this.field_242709_C.equals(p_242714_1_.field_242709_C);
+       }
+    }
++
++   private java.util.List<net.minecraftforge.common.world.DimensionExtra> getExtras(){ return extras; }
++   private Optional<net.minecraftforge.common.world.DimensionExtra> getExtra(ResourceLocation name) {
++      return getExtras().stream().filter(e -> e.getCodec().getRegistryName().equals(name)).findAny();
++   }
++   private Optional<net.minecraftforge.common.world.DimensionExtra> getExtra(net.minecraftforge.common.world.DimensionExtraCodec<?> codec) {
++      return getExtras().stream().filter(e -> e.getCodec().equals(codec)).findAny();
++   }
+ }

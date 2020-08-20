@@ -20,6 +20,7 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
+import com.mojang.serialization.Lifecycle;
 
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -48,14 +49,15 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -65,6 +67,7 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.world.DimensionExtraCodec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
@@ -96,6 +99,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 
 /**
  * INTERNAL ONLY
@@ -104,53 +108,6 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 public class GameData
 {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    // Vanilla registries
-    // Names used here match those in net.minecraft.util.Registry
-
-    // Game objects
-    private static final ResourceLocation BLOCKS = new ResourceLocation("block");
-    private static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
-    private static final ResourceLocation ITEMS = new ResourceLocation("item");
-    private static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
-    private static final ResourceLocation BIOMES = new ResourceLocation("biome");
-    private static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
-    private static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
-    private static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
-    private static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
-    private static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
-    private static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
-    private static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
-    private static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
-    private static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
-    private static final ResourceLocation ATTRIBUTES = new ResourceLocation("attribute");
-    private static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
-
-    // Villages
-    private static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
-    private static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
-    private static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
-    private static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
-    private static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
-    private static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
-
-    // Worldgen
-    private static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
-    private static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
-    private static final ResourceLocation FEATURES = new ResourceLocation("feature");
-    private static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
-    private static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
-    private static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
-    private static final ResourceLocation STRUCTURE_FEATURES = new ResourceLocation("structure_feature");
-    private static final ResourceLocation BLOCK_STATE_PROVIDER_TYPES = new ResourceLocation("block_state_provider_type");
-    private static final ResourceLocation BLOCK_PLACER_TYPES = new ResourceLocation("block_placer_type");
-    private static final ResourceLocation FOLIAGE_PLACER_TYPES = new ResourceLocation("foliage_placer_type");
-    private static final ResourceLocation TREE_DECORATOR_TYPES = new ResourceLocation("tree_decorator_type");
-
-    // Custom forge registries
-    private static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
-    private static final ResourceLocation LOOT_MODIFIER_SERIALIZERS = new ResourceLocation("forge:loot_modifier_serializers");
-
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
@@ -166,7 +123,6 @@ public class GameData
         init();
     }
 
-    @SuppressWarnings("unchecked")
     public static void init()
     {
         if (DISABLE_VANILLA_REGISTRIES)
@@ -179,78 +135,81 @@ public class GameData
         hasInit = true;
 
         // Game objects
-        makeRegistry(BLOCKS, Block.class, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
-        makeRegistry(FLUIDS, Fluid.class, new ResourceLocation("empty")).create();
-        makeRegistry(ITEMS, Item.class, new ResourceLocation("air")).addCallback(ItemCallbacks.INSTANCE).legacyName("items").create();
-        makeRegistry(POTIONS, Effect.class).legacyName("potions").create();
-        makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
-        makeRegistry(SOUNDEVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONTYPES, Potion.class, new ResourceLocation("empty")).legacyName("potiontypes").create();
+        makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
+        makeRegistry(FLUIDS, Fluid.class, "empty").create();
+        makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").create();
+        makeRegistry(EFFECTS, Effect.class ).legacyName("potions").create();
+        //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
+        makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
+        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
         makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
-        makeRegistry(ENTITIES, EntityType.class, new ResourceLocation("pig")).legacyName("entities").create();
-        makeRegistry(TILEENTITIES, TileEntityType.class).disableSaving().legacyName("tileentities").create();
-        makeRegistry(PARTICLE_TYPES, ParticleType.class).disableSaving().create();
-        makeRegistry(CONTAINERS, ContainerType.class).disableSaving().create();
-        makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
-        makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
+        makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").create();
+        makeRegistry(TILE_ENTITY_TYPES, c(TileEntityType.class)).disableSaving().legacyName("tileentities").create();
+        makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
+        makeRegistry(CONTAINER_TYPES, c(ContainerType.class)).disableSaving().create();
+        makeRegistry(PAINTING_TYPES, PaintingType.class, "kebab").create();
+        makeRegistry(RECIPE_SERIALIZERS, c(IRecipeSerializer.class)).disableSaving().create();
         makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
-        makeRegistry(STAT_TYPES, StatType.class).create();
+        makeRegistry(STAT_TYPES, c(StatType.class)).create();
 
         // Villagers
-        makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();
-        makeRegistry(POI_TYPES, PointOfInterestType.class, new ResourceLocation("unemployed")).disableSync().create();
-        makeRegistry(MEMORY_MODULE_TYPES, MemoryModuleType.class, new ResourceLocation("dummy")).disableSync().create();
-        makeRegistry(SENSOR_TYPES, SensorType.class, new ResourceLocation("dummy")).disableSaving().disableSync().create();
+        makeRegistry(VILLAGER_PROFESSIONS, VillagerProfession.class, "none").create();
+        makeRegistry(POI_TYPES, PointOfInterestType.class, "unemployed").disableSync().create();
+        makeRegistry(MEMORY_MODULE_TYPES, c(MemoryModuleType.class), "dummy").disableSync().create();
+        makeRegistry(SENSOR_TYPES, c(SensorType.class), "dummy").disableSaving().disableSync().create();
         makeRegistry(SCHEDULES, Schedule.class).disableSaving().disableSync().create();
         makeRegistry(ACTIVITIES, Activity.class).disableSaving().disableSync().create();
 
         // Worldgen
-        makeRegistry(WORLD_CARVERS, WorldCarver.class).disableSaving().disableSync().create();
-        makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
-        makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
-        makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, Structure.class).disableSaving().disableSync().create();
-        makeRegistry(BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class).disableSaving().disableSync().create();
-        makeRegistry(BLOCK_PLACER_TYPES, BlockPlacerType.class).disableSaving().disableSync().create();
-        makeRegistry(FOLIAGE_PLACER_TYPES, FoliagePlacerType.class).disableSaving().disableSync().create();
-        makeRegistry(TREE_DECORATOR_TYPES, TreeDecoratorType.class).disableSaving().disableSync().create();
+        makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
+        makeRegistry(SURFACE_BUILDERS, c(SurfaceBuilder.class)).disableSaving().disableSync().create();
+        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
+        makeRegistry(DECORATORS, c(Placement.class)).disableSaving().disableSync().create();
+        makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
+        makeRegistry(STRUCTURE_FEATURES, c(Structure.class)).disableSaving().disableSync().create();
+        makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
+        makeRegistry(BLOCK_PLACER_TYPES, c(BlockPlacerType.class)).disableSaving().disableSync().create();
+        makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
+        makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Custom forge registries
-        makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
-        makeRegistry(LOOT_MODIFIER_SERIALIZERS, GlobalLootModifierSerializer.class).disableSaving().disableSync().create();
+        makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
+        makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
+        makeRegistry(DIMENSION_EXTRA_CODEC, c(DimensionExtraCodec.class)).disableSaving().disableSync().create();
+    }
+    @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
+    private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
+
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type)
+    {
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+    }
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
+    {
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
+    }
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
+    {
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(new ResourceLocation(_default));
     }
 
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
+    public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
     {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
-    }
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
-    {
-        return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
-    }
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, ResourceLocation _default)
-    {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
-    }
-
-    public static <V extends IForgeRegistryEntry<V>> DefaultedRegistry<V> getWrapperDefaulted(Class<? super V> cls)
-    {
-        IForgeRegistry<V> reg = RegistryManager.ACTIVE.<V>getRegistry(cls);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
+        IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
+        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
         @SuppressWarnings("unchecked")
-        DefaultedRegistry<V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
+        SimpleRegistry<T> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
         return ret;
     }
 
-    public static <V extends IForgeRegistryEntry<V>> SimpleRegistry<V> getWrapper(Class<? super V> cls)
+    public static <T extends IForgeRegistryEntry<T>> DefaultedRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle, String defKey)
     {
-        IForgeRegistry<V> reg = RegistryManager.ACTIVE.<V>getRegistry(cls);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
+        IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
+        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
         @SuppressWarnings("unchecked")
-        SimpleRegistry<V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
+        DefaultedRegistry<T> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
+        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
         return ret;
     }
 
@@ -434,7 +393,7 @@ public class GameData
             final ClearableObjectIntIdentityMap<BlockState> idMap = new ClearableObjectIntIdentityMap<BlockState>()
             {
                 @Override
-                public int get(BlockState key)
+                public int getId(BlockState key)
                 {
                     Integer integer = (Integer)this.identityMap.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
@@ -472,6 +431,7 @@ public class GameData
 
                 block.getLootTable();
             }
+            DebugChunkGenerator.initValidStates();
         }
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
@@ -850,11 +810,11 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS);
-        keys.remove(ITEMS);
+        keys.remove(BLOCKS.func_240901_a_());
+        keys.remove(ITEMS.func_240901_a_());
 
-        keys.add(0, BLOCKS);
-        keys.add(1, ITEMS);
+        keys.add(0, BLOCKS.func_240901_a_());
+        keys.add(1, ITEMS.func_240901_a_());
         for (int i = 0, keysSize = keys.size(); i < keysSize; i++) {
             final ResourceLocation rl = keys.get(i);
             if (!filter.test(rl)) continue;

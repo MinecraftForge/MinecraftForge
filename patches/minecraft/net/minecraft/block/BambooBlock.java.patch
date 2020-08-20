@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BambooBlock.java
 +++ b/net/minecraft/block/BambooBlock.java
-@@ -101,8 +101,9 @@
+@@ -102,8 +102,9 @@
        if (p_225542_1_.func_177229_b(field_220266_f) == 0) {
           if (p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9) {
              int i = this.func_220260_b(p_225542_2_, p_225542_3_) + 1;

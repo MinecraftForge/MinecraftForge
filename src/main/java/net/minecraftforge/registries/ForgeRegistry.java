@@ -295,6 +295,26 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
     }
 
+    @Override
+    public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+    {
+        ResourceLocation location = this.getKey(input);
+        if(location == null)
+            return DataResult.error("Unknown element: " + location + " does not belong in " + this.getRegistryName());
+        return ops.mergeToPrimitive(prefix, ops.createString(location.toString()));
+    }
+
+    @Override
+    public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+    {
+        return ResourceLocation.field_240908_a_.decode(ops, input).flatMap(p ->
+        {
+            V v = this.getValue(p.getFirst());
+            return v == null ? DataResult.error("Unknown registry key : " + p.getFirst()) :
+                    DataResult.success(Pair.of(v, p.getSecond()));
+        });
+    }
+
     @Nullable
     public ResourceLocation getDefaultKey()
     {

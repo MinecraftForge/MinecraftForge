@@ -119,6 +119,7 @@ public abstract class LanguageProvider implements IDataProvider {
         add(key.getName(), name);
     }
 
+    /*
     public void addBiome(Supplier<? extends Biome> key, String name) {
         add(key.get(), name);
     }
@@ -126,6 +127,7 @@ public abstract class LanguageProvider implements IDataProvider {
     public void add(Biome key, String name) {
         add(key.getTranslationKey(), name);
     }
+    */
 
     public void addEffect(Supplier<? extends Effect> key, String name) {
         add(key.get(), name);
