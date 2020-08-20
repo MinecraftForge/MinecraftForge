@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
 +++ b/net/minecraft/world/gen/feature/jigsaw/JigsawPattern.java
-@@ -86,7 +86,7 @@
+@@ -104,7 +104,7 @@
        return this.field_214953_e.size();
     }
  
@@ -9,7 +9,7 @@
        TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityStructureProcessor(Heightmap.Type.WORLD_SURFACE_WG, -1))),
        RIGID("rigid", ImmutableList.of());
  
-@@ -117,5 +117,15 @@
+@@ -135,5 +135,15 @@
        public String func_176610_l() {
           return this.field_214940_d;
        }

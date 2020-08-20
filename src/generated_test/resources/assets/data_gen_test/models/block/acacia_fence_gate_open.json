@@ -1,6 +1,6 @@
 {
-  "parent": "block/template_fence_gate_open",
+  "parent": "minecraft:block/template_fence_gate_open",
   "textures": {
-    "texture": "block/acacia_planks"
+    "texture": "minecraft:block/acacia_planks"
   }
 }

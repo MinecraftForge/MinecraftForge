@@ -45,12 +45,7 @@ public enum SidedProvider
     STRIPCHARS(
             (Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
             s-> str->str,
-            ()-> str->str),
-    @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data (supplier is coming from StartupQuery)
-    STARTUPQUERY(
-            c->StartupQuery.QueryWrapperClient.clientQuery(c),
-            s->StartupQuery.QueryWrapperServer.dedicatedServerQuery(s),
-            ()-> { throw new UnsupportedOperationException(); });
+            ()-> str->str);
 
     private static Supplier<Minecraft> client;
     private static Supplier<DedicatedServer> server;

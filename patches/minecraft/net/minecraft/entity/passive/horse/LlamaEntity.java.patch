@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/horse/LlamaEntity.java
 +++ b/net/minecraft/entity/passive/horse/LlamaEntity.java
-@@ -179,7 +179,7 @@
+@@ -181,7 +181,7 @@
           i = 90;
           j = 6;
           f = 10.0F;

@@ -109,12 +109,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         Multimap<ResourceLocation, ResourceLocation> failedElements = null;
 
-        if (tag.contains("ModItemData") || tag.contains("ItemData")) // Pre 1.7
-        {
-            StartupQuery.builder().text("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first").notification();
-            StartupQuery.abort();
-        }
-        else if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
+        if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
         {
             Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
             CompoundNBT regs = tag.getCompound("Registries");
@@ -137,9 +132,6 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
                 buf.append("Missing ").append(name).append(":\n");
                 entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
             });
-
-            StartupQuery.builder().text(buf.toString()).notification();
-            StartupQuery.abort();
         }
     }
 }

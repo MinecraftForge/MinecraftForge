@@ -20,7 +20,6 @@
 package net.minecraftforge.server.console;
 
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraftforge.fml.StartupQuery;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;

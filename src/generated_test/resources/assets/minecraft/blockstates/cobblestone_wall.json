@@ -10,6 +10,26 @@
     },
     {
       "when": {
+        "east": "low"
+      },
+      "apply": {
+        "model": "data_gen_test:block/cobblestone_wall_side",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "tall"
+      },
+      "apply": {
+        "model": "data_gen_test:block/cobblestone_wall_side_tall",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
         "north": "low"
       },
       "apply": {
@@ -19,10 +39,29 @@
     },
     {
       "when": {
+        "north": "tall"
+      },
+      "apply": {
+        "model": "data_gen_test:block/cobblestone_wall_side_tall",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
         "south": "low"
       },
       "apply": {
         "model": "data_gen_test:block/cobblestone_wall_side",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "tall"
+      },
+      "apply": {
+        "model": "data_gen_test:block/cobblestone_wall_side_tall",
         "y": 180,
         "uvlock": true
       }
@@ -39,11 +78,11 @@
     },
     {
       "when": {
-        "east": "low"
+        "west": "tall"
       },
       "apply": {
-        "model": "data_gen_test:block/cobblestone_wall_side",
-        "y": 90,
+        "model": "data_gen_test:block/cobblestone_wall_side_tall",
+        "y": 270,
         "uvlock": true
       }
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/raid/Raid.java
 +++ b/net/minecraft/world/raid/Raid.java
-@@ -768,7 +768,7 @@
+@@ -769,7 +769,7 @@
        }
     }
  
@@ -9,7 +9,7 @@
        VINDICATOR(EntityType.field_200758_ax, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
        EVOKER(EntityType.field_200806_t, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
        PILLAGER(EntityType.field_220350_aJ, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -783,5 +783,19 @@
+@@ -784,5 +784,19 @@
           this.field_221285_g = p_i50602_3_;
           this.field_221286_h = p_i50602_4_;
        }

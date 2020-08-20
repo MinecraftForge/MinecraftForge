@@ -132,7 +132,7 @@ public class ModList
         DeferredWorkQueue.clear();
         try
         {
-            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler)));
+            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler.andThen(e -> this.mods.forEach(ModContainer::shutdown)))));
             while (ticker != null && !parallelTask.isDone()) {
                 executor.execute(ticker);
             }
@@ -141,6 +141,7 @@ public class ModList
         catch (InterruptedException | ExecutionException e)
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing - sleeping 10 seconds to wait for jobs to finish", e);
+            this.mods.forEach(ModContainer::shutdown); //Prevent all future events from being sent out.
             errorHandler.accept(Collections.singletonList(new UncaughtModLoadingException(lifecycleEvent.fromStage(), e)));
             modLoadingThreadPool.awaitQuiescence(10, TimeUnit.SECONDS);
             if (!modLoadingThreadPool.isQuiescent()) {
@@ -198,6 +199,7 @@ public class ModList
                     map(ModInfo::getOwningFile).
                     filter(Objects::nonNull).
                     map(ModFileInfo::getFile).
+                    distinct().
                     map(ModFile::getScanResult).
                     collect(Collectors.toList());
         }

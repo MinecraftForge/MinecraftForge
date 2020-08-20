@@ -41,7 +41,9 @@ net/minecraft/client/renderer/model/ModelBakery.<init>(Lnet/minecraft/resources/
 net/minecraft/client/renderer/model/ModelBakery.addModelToCache(Lnet/minecraft/util/ResourceLocation;)V=|p_217843_1_
 net/minecraft/client/renderer/model/ModelBakery.getBakedModel(Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/model/IModelTransform;Ljava/util/function/Function;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217845_1_,p_217845_2_,textureGetter
 net/minecraft/client/renderer/model/ModelBakery.processLoading(Lnet/minecraft/profiler/IProfiler;I)V=|p_i226056_3_,p_i226056_4_
+net/minecraft/client/renderer/model/MultipartBakedModel.getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;=|p_200117_1_,p_200117_2_,p_200117_3_,modelData
 net/minecraft/client/renderer/model/VariantList.bake(Lnet/minecraft/client/renderer/model/ModelBakery;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/IModelTransform;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217641_1_,p_217641_2_,p_217641_3_,format
+net/minecraft/client/renderer/model/WeightedBakedModel.getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;=|p_200117_1_,p_200117_2_,p_200117_3_,modelData
 
 net/minecraft/client/renderer/model/multipart/Multipart.bake(Lnet/minecraft/client/renderer/model/ModelBakery;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/IModelTransform;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217641_1_,p_217641_2_,p_217641_3_,format
 
