@@ -27,10 +27,14 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -41,12 +45,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.screen.DirtMessageScreen;
+import net.minecraft.command.Commands;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.resources.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
@@ -86,8 +98,14 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.datafix.codec.DatapackCodec;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenSettingsExport;
+import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.util.text.*;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1189,5 +1207,92 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    @Nullable
+    public static Exception checkDataPacks(Consumer<String> debugInfo, Consumer<String> errors)
+    {
+        ResourcePackList packs = new ResourcePackList(new ServerPackFinder());
+        MinecraftServer.func_240772_a_(packs, DatapackCodec.field_234880_a_, false);
+
+        CompletableFuture<DataPackRegistries> cf = DataPackRegistries.func_240961_a_(packs.func_232623_f_(), Commands.EnvironmentType.INTEGRATED, 2, Runnable::run, Util.getServerExecutor());
+        DataPackRegistries datapacks;
+        try
+        {
+            datapacks = cf.get();
+        }
+        catch (Exception e)
+        {
+            errors.accept("Failed to load standard datapacks from mods! Can not proceed with loading!");
+            packs.close();
+            return e;
+        }
+
+        DynamicRegistries.Impl vanillaOnly = DynamicRegistries.func_239770_b_();
+        DynamicRegistries.Impl withModded = DynamicRegistries.func_239770_b_();
+
+        WorldGenSettingsExport<JsonElement> writer = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, vanillaOnly);
+        WorldSettingsImport<JsonElement> reader = WorldSettingsImport.createWithErrorHandler(JsonOps.INSTANCE, datapacks.func_240970_h_(), withModded, true);
+
+        ParsingErrorHandler errorHandler = reader.getErrorHandler();
+        errorHandler.dumpResults(debugInfo);
+        errorHandler.dumpErrors(errors);
+        Set<String> erroredMods = errorHandler.getErroringMods();
+        if(!erroredMods.isEmpty())
+        {
+            datapacks.close();
+            packs.close();
+            return new RuntimeException("Some mods failed to create their registry objects: " + erroredMods);
+        }
+
+        Codec<DimensionGeneratorSettings> worldsCodec = DimensionGeneratorSettings.field_236201_a_;
+        DimensionGeneratorSettings vanilla = DimensionGeneratorSettings.func_242751_a(vanillaOnly.func_230520_a_(), vanillaOnly.func_243612_b(Registry.field_239720_u_), vanillaOnly.func_243612_b(Registry.field_243549_ar));
+        DataResult<DimensionGeneratorSettings> modded = worldsCodec.encodeStart(writer, vanilla).flatMap(parsed -> worldsCodec.parse(reader, parsed));
+
+        if(modded.error().isPresent())
+        {
+            datapacks.close();
+            packs.close();
+            return new RuntimeException("Some mods prevented generating the settings of world gen!: " + modded.error().get().message());
+        }
+
+        debugInfo.accept("Mod packs loaded registry objects properly!");
+        datapacks.close();
+        packs.close();
+        return null;
+    }
+
+    public static class ParsingErrorHandler
+    {
+        private final List<DataResult<RegistryKey<?>>> results = new ArrayList<>();
+
+        public void add(DataResult<RegistryKey<?>> result)
+        {
+            results.add(result);
+        }
+
+        public void dumpResults(Consumer<String> resultConsumer)
+        {
+            results.stream().filter(dt -> dt.result().isPresent())
+                    .map(dt -> dt.result().get())
+                    .filter(rk -> !rk.func_240901_a_().getNamespace().equals("minecraft"))
+                    .forEach(rk -> resultConsumer.accept("Successfully registered : " + rk.toString()));
+        }
+
+        public void dumpErrors(Consumer<String> onError)
+        {
+            results.stream()
+                    .filter(dt -> dt.error().isPresent())
+                    .forEach(dt -> onError.accept(dt.error().get().message()));
+        }
+
+        public Set<String> getErroringMods()
+        {
+            return results.stream()
+                    .filter(dr -> dr.error().isPresent())
+                    //If an error is present, there will be a partial result and don't care about the error message here
+                    .map(dt -> dt.resultOrPartial(s -> {}).get().func_240901_a_().getNamespace())
+                    .collect(Collectors.toSet());
+        }
     }
 }

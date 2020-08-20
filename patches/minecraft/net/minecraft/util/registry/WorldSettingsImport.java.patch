@@ -1,0 +1,41 @@
+--- a/net/minecraft/util/registry/WorldSettingsImport.java
++++ b/net/minecraft/util/registry/WorldSettingsImport.java
+@@ -43,11 +43,18 @@
+    private final DynamicRegistries.Impl field_240872_d_;
+    private final Map<RegistryKey<? extends Registry<?>>, WorldSettingsImport.ResultMap<?>> field_240873_e_;
+    private final WorldSettingsImport<JsonElement> field_244333_f;
++   private net.minecraftforge.common.ForgeHooks.ParsingErrorHandler errorHandler;
+ 
+    public static <T> WorldSettingsImport<T> func_244335_a(DynamicOps<T> p_244335_0_, IResourceManager p_244335_1_, DynamicRegistries.Impl p_244335_2_) {
+-      return func_244336_a(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_);
++      return createWithErrorHandler(p_244335_0_, p_244335_1_, p_244335_2_, false);
+    }
+ 
++   public static <T> WorldSettingsImport<T> createWithErrorHandler(DynamicOps<T> ops, IResourceManager resources, DynamicRegistries.Impl impl, boolean withModHandler) {
++      WorldSettingsImport<T> wsi = new WorldSettingsImport<>(ops, WorldSettingsImport.IResourceAccess.func_244345_a(resources), impl, Maps.newIdentityHashMap());
++      wsi.errorHandler = withModHandler ? new net.minecraftforge.common.ForgeHooks.ParsingErrorHandler() : null;
++      DynamicRegistries.func_243608_a(impl, wsi);
++      return wsi;
++   }
+    public static <T> WorldSettingsImport<T> func_244336_a(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_) {
+       WorldSettingsImport<T> worldsettingsimport = new WorldSettingsImport<>(p_244336_0_, p_244336_1_, p_244336_2_, Maps.newIdentityHashMap());
+       DynamicRegistries.func_243608_a(p_244336_2_, worldsettingsimport);
+@@ -147,6 +154,10 @@
+                };
+             });
+          }
++         if(errorHandler != null) {
++            if(dataresult2.error().isPresent()) errorHandler.add(DataResult.error("Failed to load \"" + registrykey + "\" : " + dataresult2.error().get().message(), registrykey));
++            else errorHandler.add(DataResult.success(registrykey));
++         }
+ 
+          resultmap.field_240893_a_.put(registrykey, dataresult2);
+          return dataresult2;
+@@ -166,6 +177,7 @@
+          return DataResult.error("Unknown registry: " + p_244340_1_);
+       });
+    }
++   public net.minecraftforge.common.ForgeHooks.ParsingErrorHandler getErrorHandler(){ return errorHandler; }
+ 
+    public interface IResourceAccess {
+       Collection<ResourceLocation> func_241880_a(RegistryKey<? extends Registry<?>> p_241880_1_);
