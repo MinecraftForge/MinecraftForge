@@ -911,4 +911,18 @@ public interface IForgeBlock
         else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
         else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
     }
+    
+    /**
+     * Checks if a player or entity handles movement on this block like scaffolding.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos The block position in world
+     * @param entity The entity on the scaffolding
+     * @return True if the block should act like scaffolding
+     */
+    default boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
+    {
+        return state.isIn(Blocks.SCAFFOLDING) || state.getBlock().isIn(Tags.Blocks.SCAFFOLDING);
+    }
 }

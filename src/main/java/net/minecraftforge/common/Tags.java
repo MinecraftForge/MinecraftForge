@@ -108,6 +108,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> SAND_RED = tag("sand/red");
 
         public static final IOptionalNamedTag<Block> SANDSTONE = tag("sandstone");
+        public static final IOptionalNamedTag<Block> SCAFFOLDING = tag("scaffolding");
         public static final IOptionalNamedTag<Block> STAINED_GLASS = tag("stained_glass");
         public static final IOptionalNamedTag<Block> STAINED_GLASS_PANES = tag("stained_glass_panes");
         public static final IOptionalNamedTag<Block> STONE = tag("stone");
