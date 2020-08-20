@@ -24,6 +24,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -31,7 +36,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
+public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>, Codec<V>
 {
     ResourceLocation getRegistryName();
     Class<V> getRegistrySuperType();
@@ -125,5 +130,17 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     interface MissingFactory<V extends IForgeRegistryEntry<V>>
     {
         V createMissing(ResourceLocation key, boolean isNetwork);
+    }
+
+    @Override
+    default <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+    {
+        throw new UnsupportedOperationException("This forge registry can not decode!");
+    }
+
+    @Override
+    default <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+    {
+        throw new UnsupportedOperationException("This forge registry can not encode!");
     }
 }

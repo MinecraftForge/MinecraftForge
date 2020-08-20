@@ -30,6 +30,10 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Lifecycle;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
@@ -289,6 +293,26 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         if (this.defaultKey != null)
             Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
+    }
+
+    @Override
+    public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+    {
+        ResourceLocation location = this.getKey(input);
+        if(location == null)
+            return DataResult.error("Unknown element: " + location + " does not belong in " + this.getRegistryName());
+        return ops.mergeToPrimitive(prefix, ops.createString(location.toString()));
+    }
+
+    @Override
+    public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+    {
+        return ResourceLocation.field_240908_a_.decode(ops, input).flatMap(p ->
+        {
+            V v = this.getValue(p.getFirst());
+            return v == null ? DataResult.error("Unknown registry key : " + p.getFirst()) :
+                    DataResult.success(Pair.of(v, p.getSecond()));
+        });
     }
 
     @Nullable

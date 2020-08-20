@@ -78,3 +78,5 @@ license="LGPL v2.1"
     modId="tool_interact_test"
 [[mods]]
     modId="custom_elytra_test"
+[[mods]]
+    modId="test_dim_codec"

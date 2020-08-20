@@ -55,6 +55,7 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.world.DimensionExtraCodec;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -108,6 +109,7 @@ public class ForgeRegistries
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
+    public static final IForgeRegistry<DimensionExtraCodec<?>> DIMENSION_EXTRA_CODEC = RegistryManager.ACTIVE.getRegistry(DimensionExtraCodec.class);
 
     public static final class Keys {
         //Vanilla
@@ -146,6 +148,7 @@ public class ForgeRegistries
         //Forge
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
+        public static final RegistryKey<Registry<DimensionExtraCodec<?>>> DIMENSION_EXTRA_CODEC = key("forge:dimension_extra");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
