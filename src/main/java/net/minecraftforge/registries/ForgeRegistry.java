@@ -807,42 +807,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return true;
     }
 
-    @Override
-    public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
-    {
-        ResourceLocation key = getKey(input);
-        if(key == null)
-        {
-            return DataResult.error("Unknown registry element " + input);
-        }
-        T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
-        return ops.mergeToPrimitive(prefix, toMerge).setLifecycle(Lifecycle.experimental());
-    }
-
-    @Override
-    public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
-    {
-        if(ops.compressMaps())
-        {
-            return ops.getNumberValue(input).flatMap(n ->
-            {
-                int id = n.intValue();
-                if(ids.get(id) == null)
-                {
-                    return DataResult.error("Unknown registry id " + n);
-                }
-                V val = getValue(id);
-                return DataResult.success(val, Lifecycle.experimental());
-            }).map(v -> Pair.of(v, ops.empty()));
-        }
-        else
-        {
-            return ResourceLocation.field_240908_a_.decode(ops, input).flatMap(keyValuePair -> !this.containsKey(keyValuePair.getFirst()) ?
-                    DataResult.error("Unknown registry key: " + keyValuePair.getFirst()) :
-                    DataResult.success(keyValuePair.mapFirst(this::getValue)));
-        }
-    }
-
     //Public for tests
     public Snapshot makeSnapshot()
     {
