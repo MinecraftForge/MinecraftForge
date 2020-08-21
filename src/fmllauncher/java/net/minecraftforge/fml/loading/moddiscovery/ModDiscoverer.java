@@ -23,6 +23,7 @@ import cpw.mods.gross.Java9ClassLoaderUtil;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
@@ -110,10 +111,20 @@ public class ModDiscoverer {
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler(modFiles);
         final List<ModFile> mods = modFiles.getOrDefault(IModFile.Type.MOD, Collections.emptyList());
         final List<ModFile> brokenFiles = new ArrayList<>();
+        final List<InvalidModFileException> additionalErrors = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile mod = iterator.next();
-            if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
+            boolean error;
+            try {
+                error = !mod.getLocator().isValid(mod) || !mod.identifyMods();
+            } catch (InvalidModFileException e) {
+                LOGGER.warn(SCAN, "File {} has thrown an exception while parsing", mod.getFilePath(), e);
+                iterator.remove();
+                additionalErrors.add(e);
+                continue;
+            }
+            if (error) {
                 LOGGER.warn(SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
                 iterator.remove();
                 brokenFiles.add(mod);
@@ -121,7 +132,11 @@ public class ModDiscoverer {
         }
         LOGGER.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+mods.size()+" modfiles to load"));
-        final LoadingModList loadingModList = ModSorter.sort(mods);
+        final LoadingModList loadingModList;
+        if (additionalErrors.isEmpty())
+            loadingModList = ModSorter.sort(mods);
+        else
+            loadingModList = LoadingModList.of(mods, Collections.emptyList(), new EarlyLoadingException("Missing license information", null, additionalErrors.stream().map(InvalidModFileException::makeExceptionData).collect(Collectors.toList())));
         loadingModList.addCoreMods();
         loadingModList.addAccessTransformers();
         loadingModList.addForScanning(backgroundScanHandler);

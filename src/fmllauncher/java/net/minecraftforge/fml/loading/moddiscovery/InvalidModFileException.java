@@ -19,15 +19,32 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 
 public class InvalidModFileException extends RuntimeException
 {
     private final IModFileInfo modFileInfo;
+    private final String i18nKey;
 
     public InvalidModFileException(String message, IModFileInfo modFileInfo)
     {
         super(String.format("%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
         this.modFileInfo = modFileInfo;
+        this.i18nKey = null;
+    }
+
+    public InvalidModFileException(String message, String i18nKey, IModFileInfo modFileInfo)
+    {
+        super(String.format("%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
+        this.modFileInfo = modFileInfo;
+        this.i18nKey = i18nKey;
+    }
+
+    public EarlyLoadingException.ExceptionData makeExceptionData() {
+        if (this.i18nKey == null)
+            return new EarlyLoadingException.ExceptionData("fml.modloading.generalerror", this.getMessage());
+        else
+            return new EarlyLoadingException.ExceptionData(i18nKey, ((ModFileInfo)modFileInfo).getFile().getFileName());
     }
 }

@@ -74,7 +74,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.field_230705_e_.clear();
 
         this.errorHeader = new StringTextComponent(TextFormatting.RED + ForgeI18n.parseMessage("fml.loadingerrorscreen.errorheader", this.modLoadErrors.size()) + TextFormatting.RESET);
-        this.warningHeader = new StringTextComponent(TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET);
+        this.warningHeader = new StringTextComponent(TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadWarnings.size()) + TextFormatting.RESET);
 
         int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
         this.func_230480_a_(new ExtendedButton(50, this.field_230709_l_ - yOffset, this.field_230708_k_ / 2 - 55, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getOSType().openFile(modsDir.toFile())));
