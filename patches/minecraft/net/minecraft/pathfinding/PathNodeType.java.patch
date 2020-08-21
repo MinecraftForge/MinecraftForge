@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/PathNodeType.java
 +++ b/net/minecraft/pathfinding/PathNodeType.java
-@@ -34,4 +34,13 @@
+@@ -35,4 +35,13 @@
     public float func_186289_a() {
        return this.field_186307_r;
     }

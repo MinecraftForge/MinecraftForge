@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextProperties;
@@ -240,7 +241,8 @@ public class GuiUtils
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
-    public static void drawHoveringText(MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    /*
+    public static void drawHoveringText(MatrixStack mStack, List<? extends IReorderingProcessor> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
     {
         drawHoveringText(mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
@@ -263,8 +265,8 @@ public class GuiUtils
      * @param borderColorEnd The ending color of the box border. The border color will be smoothly interpolated
      *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
-     */
-    public static void drawHoveringText(MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
+     * /
+    public static void drawHoveringText(MatrixStack mStack, List<? extends IReorderingProcessor> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
         drawHoveringText(cachedTooltipStack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
@@ -279,9 +281,9 @@ public class GuiUtils
      * Use this version if calling from somewhere where ItemStack context is available.
      *
      * @see #drawHoveringText(MatrixStack, List, int, int, int, int, int, int, int, int, FontRenderer)
-     */
+     * /
     //TODO, Validate rendering is the same as the original
-    public static void drawHoveringText(@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY,
+    public static void drawHoveringText(@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends IReorderingProcessor> textLines, int mouseX, int mouseY,
                                         int screenWidth, int screenHeight, int maxTextWidth,
                                         int backgroundColor, int borderColorStart, int borderColorEnd, FontRenderer font)
     {
@@ -301,7 +303,7 @@ public class GuiUtils
             RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
-            for (ITextProperties textLine : textLines)
+            for (IReorderingProcessor textLine : textLines)
             {
                 int textLineWidth = font.func_238414_a_(textLine);
                 if (textLineWidth > tooltipTextWidth)
@@ -422,6 +424,7 @@ public class GuiUtils
             RenderSystem.enableRescaleNormal();
         }
     }
+    */
 
     public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
     {

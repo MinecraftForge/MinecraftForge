@@ -9,24 +9,26 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -79,32 +81,36 @@
+@@ -79,33 +81,38 @@
              optionparser.printHelpOn(System.err);
              return;
           }
 +         Path path1 = Paths.get("eula.txt");
 +         ServerEula servereula = new ServerEula(path1);
-+         if (!optionset.has(optionspec1) && !servereula.func_154346_a()) {
+ 
++         if (!servereula.func_154346_a()) {
 +            field_240759_a_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 +            return;
 +         }
- 
++
           CrashReport.func_230188_h_();
           Bootstrap.func_151354_b();
           Bootstrap.func_218821_c();
           Util.func_240994_l_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.fml.server.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
+          DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
           Path path = Paths.get("server.properties");
-          ServerPropertiesProvider serverpropertiesprovider = new ServerPropertiesProvider(path);
+          ServerPropertiesProvider serverpropertiesprovider = new ServerPropertiesProvider(dynamicregistries$impl, path);
           serverpropertiesprovider.func_219035_b();
 -         Path path1 = Paths.get("eula.txt");
 -         ServerEula servereula = new ServerEula(path1);
@@ -47,13 +49,13 @@
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
 +         if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
-+             field_240759_a_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
-+             return;
++            field_240759_a_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
++            return;
 +         }
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -170,6 +176,7 @@
+@@ -170,6 +177,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);

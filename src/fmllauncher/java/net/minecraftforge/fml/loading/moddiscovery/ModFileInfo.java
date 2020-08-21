@@ -54,6 +54,9 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
     private final String license;
+    // Caches the manifest of the mod jar as parsing the manifest can be expensive for
+    // signed jars.
+    private final Optional<Manifest> manifest;
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -64,23 +67,15 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.modLoaderVersion = config.<String>getConfigElement("loaderVersion")
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
-        String mcVersion = StringSubstitutor.replace("${global.mcVersion}", null);
-        if ("1.16.1".equals(mcVersion)) {
-            this.license = config.<String>getConfigElement("license").orElse("All Rights Reserved (Default License, Modder Please specify)");
-        } else {
-            throw new IllegalStateException("Code exists that should not in " + mcVersion + " Delete other case.");
-        }
-        /* Make license non-optional in >1.16.1, delete the above if, and uncomment the below lines when updating.
         this.license = config.<String>getConfigElement("license")
             .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
-         */
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
-        this.properties = config.<UnmodifiableConfig>getConfigElement("properties").
-                map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
+        this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
-        if (modConfigs.isEmpty()) {
+        if (modConfigs.isEmpty())
+        {
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream()
@@ -90,6 +85,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        this.manifest = modFile.getLocator().findManifest(modFile.getFilePath());
     }
 
     @Override
@@ -116,31 +112,37 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public Map<String, Object> getFileProperties() {
+    public Map<String, Object> getFileProperties()
+    {
         return this.properties;
     }
 
-    public Optional<Manifest> getManifest() {
-        return modFile.getLocator().findManifest(modFile.getFilePath());
+    public Optional<Manifest> getManifest()
+    {
+        return manifest;
     }
 
     @Override
-    public boolean showAsResourcePack() {
+    public boolean showAsResourcePack()
+    {
         return this.showAsResourcePack;
     }
 
     @Override
-    public <T> Optional<T> getConfigElement(final String... key) {
+    public <T> Optional<T> getConfigElement(final String... key)
+    {
         return this.config.getConfigElement(key);
     }
 
     @Override
-    public List<? extends IConfigurable> getConfigList(final String... key) {
+    public List<? extends IConfigurable> getConfigList(final String... key)
+    {
         return this.config.getConfigList(key);
     }
 
     @Override
-    public String getLicense() {
+    public String getLicense()
+    {
         return license;
     }
 }

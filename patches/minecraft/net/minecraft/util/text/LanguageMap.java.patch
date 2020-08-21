@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/LanguageMap.java
 +++ b/net/minecraft/util/text/LanguageMap.java
-@@ -36,7 +36,8 @@
+@@ -40,7 +40,8 @@
           field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
        }
  
@@ -10,9 +10,9 @@
        return new LanguageMap() {
           public String func_230503_a_(String p_230503_1_) {
              return map.getOrDefault(p_230503_1_, p_230503_1_);
-@@ -54,6 +55,11 @@
-          public String func_230504_a_(String p_230504_1_, boolean p_230504_2_) {
-             return p_230504_1_;
+@@ -63,6 +64,11 @@
+                }, Style.field_240709_b_).isPresent();
+             };
           }
 +         
 +         @Override
@@ -22,11 +22,13 @@
        };
     }
  
-@@ -84,4 +90,7 @@
-    public abstract boolean func_230505_b_();
- 
-    public abstract String func_230504_a_(String p_230504_1_, boolean p_230504_2_);
+@@ -84,6 +90,9 @@
+    public static void func_240594_a_(LanguageMap p_240594_0_) {
+       field_240592_d_ = p_240594_0_;
+    }
 +   
 +   // FORGE START
 +   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
- }
+ 
+    public abstract String func_230503_a_(String p_230503_1_);
+ 

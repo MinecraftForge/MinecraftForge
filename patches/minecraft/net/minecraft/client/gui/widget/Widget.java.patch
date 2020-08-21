@@ -6,17 +6,13 @@
        this.func_230441_a_(p_230431_1_, minecraft, p_230431_2_, p_230431_3_);
 -      int j = this.field_230693_o_ ? 16777215 : 10526880;
 +      int j = getFGColor();
-       this.func_238472_a_(p_230431_1_, fontrenderer, this.func_230458_i_(), this.field_230690_l_ + this.field_230688_j_ / 2, this.field_230691_m_ + (this.field_230689_k_ - 8) / 2, j | MathHelper.func_76123_f(this.field_230695_q_ * 255.0F) << 24);
+       func_238472_a_(p_230431_1_, fontrenderer, this.func_230458_i_(), this.field_230690_l_ + this.field_230688_j_ / 2, this.field_230691_m_ + (this.field_230689_k_ - 8) / 2, j | MathHelper.func_76123_f(this.field_230695_q_ * 255.0F) << 24);
     }
  
-@@ -206,6 +206,14 @@
+@@ -206,6 +206,10 @@
        this.field_230688_j_ = p_230991_1_;
     }
  
-+   public int getHeight() {
-+      return this.field_230689_k_;
-+   }
-+
 +   public void setHeight(int value) {
 +      this.field_230689_k_ = value;
 +   }
@@ -24,7 +20,7 @@
     public void func_230986_a_(float p_230986_1_) {
        this.field_230695_q_ = p_230986_1_;
     }
-@@ -233,4 +241,17 @@
+@@ -233,4 +237,17 @@
     protected void func_230996_d_(boolean p_230996_1_) {
        this.field_230686_c_ = p_230996_1_;
     }

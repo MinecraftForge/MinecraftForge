@@ -26,11 +26,10 @@
        }
  
        this.func_147611_b();
-@@ -280,4 +290,30 @@
-       GlStateManager.func_227658_a_(i, p_216493_1_);
+@@ -281,6 +291,32 @@
        this.func_147609_e();
     }
-+
+ 
 +
 +   /*================================ FORGE START ================================================*/
 +   private boolean stencilEnabled = false;
@@ -56,4 +55,7 @@
 +      return this.stencilEnabled;
 +   }
 +   /*================================ FORGE END   ================================================*/
- }
++
+    public int func_242996_f() {
+       return this.field_147617_g;
+    }
