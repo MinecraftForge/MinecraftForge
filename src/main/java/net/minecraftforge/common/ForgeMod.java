@@ -195,7 +195,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
         for (RegistryEvent.MissingMappings.Mapping<SoundEvent> mapping : event.getAllMappings())
         {
-            ResourceLocation regName = mapping.key;
+            ResourceLocation regName = mapping.getKey();
             if (regName != null && regName.getNamespace().equals("minecraft"))
             {
                 String path = regName.getPath();

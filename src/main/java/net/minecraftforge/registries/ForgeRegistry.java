@@ -59,14 +59,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
-
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
@@ -991,14 +983,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 // entry re-mapped, finish the registration with the new name/object, but the old id
                 int currId = getID(remap.getTarget());
                 ResourceLocation newName = pool.getKey(remap.getTarget());
-                LOGGER.debug(REGISTRIES,"  Remapping {} -> {}.", remap.key, newName);
+                LOGGER.debug(REGISTRIES,"  Remapping {} -> {}.", remap.getKey(), newName);
 
-                missing.remove(remap.key);
+                missing.remove(remap.getKey());
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
-                int realId = this.add(remap.id, remap.getTarget());
-                if (realId != remap.id)
-                    LOGGER.warn(REGISTRIES,"Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
-                this.addAlias(remap.key, newName);
+                int realId = this.add(remap.getId(), remap.getTarget());
+                if (realId != remap.getId())
+                    LOGGER.warn(REGISTRIES,"Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.getId(), realId);
+                this.addAlias(remap.getKey(), newName);
 
 
                 if (currId != realId)
@@ -1012,27 +1004,27 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 // block item missing, warn as requested and block the id
                 if (action == MissingMappings.Action.DEFAULT)
                 {
-                    V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
+                    V m = this.missing == null ? null : this.missing.createMissing(remap.getKey(), injectNetworkDummies);
                     if (m == null)
-                        defaulted.add(remap.key);
+                        defaulted.add(remap.getKey());
                     else
-                        this.add(remap.id, m, remap.key.getPath());
+                        this.add(remap.getId(), m, remap.getKey().getPath());
                 }
                 else if (action == MissingMappings.Action.IGNORE)
                 {
-                    LOGGER.debug(REGISTRIES,"Ignoring {}", remap.key);
+                    LOGGER.debug(REGISTRIES,"Ignoring {}", remap.getKey());
                     ignored++;
                 }
                 else if (action == MissingMappings.Action.FAIL)
                 {
-                    LOGGER.debug(REGISTRIES,"Failing {}!", remap.key);
-                    failed.add(remap.key);
+                    LOGGER.debug(REGISTRIES,"Failing {}!", remap.getKey());
+                    failed.add(remap.getKey());
                 }
                 else if (action == MissingMappings.Action.WARN)
                 {
-                    LOGGER.warn(REGISTRIES,"{} may cause world breakage!", remap.key);
+                    LOGGER.warn(REGISTRIES,"{} may cause world breakage!", remap.getKey());
                 }
-                this.block(remap.id);
+                this.block(remap.getId());
             }
         }
 

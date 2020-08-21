@@ -667,10 +667,10 @@ public class GameData
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       lst.forEach(map->sb.append('\t').append(map.getKey()).append(": ").append(map.getId()).append('\n'));
                     }));
                 }
-                event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
+                event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.getKey()));
 
                 final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(name);
                 processMissing(clazz, name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
