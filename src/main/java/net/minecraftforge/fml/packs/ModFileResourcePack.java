@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackFileNotFoundException;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
-public class ModFileResourcePack extends DelegatableResourcePack
+public class ModFileResourcePack extends ResourcePack
 {
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
@@ -61,7 +62,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
     }
 
     @Override
-    public InputStream getInputStream(String name) throws IOException
+    protected InputStream getInputStream(String name) throws IOException
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         if(!Files.exists(path))
@@ -70,7 +71,7 @@ public class ModFileResourcePack extends DelegatableResourcePack
     }
 
     @Override
-    public boolean resourceExists(String name)
+    protected boolean resourceExists(String name)
     {
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
