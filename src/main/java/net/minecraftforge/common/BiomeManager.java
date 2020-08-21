@@ -32,8 +32,6 @@ import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
-//import javax.annotation.Nullable;
-
 public class BiomeManager
 {
 /*
