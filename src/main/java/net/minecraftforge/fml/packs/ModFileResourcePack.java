@@ -19,7 +19,8 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.ResourcePack;
+import net.minecraft.resources.ResourcePack
+import net.minecraft.resources.ResourcePackFileNotFoundException;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
@@ -64,6 +65,8 @@ public class ModFileResourcePack extends ResourcePack
     protected InputStream getInputStream(String name) throws IOException
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
+        if(!Files.exists(path))
+            throw new ResourcePackFileNotFoundException(path.toFile(), name);
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
