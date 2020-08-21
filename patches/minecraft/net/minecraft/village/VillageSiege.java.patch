@@ -1,6 +1,6 @@
 --- a/net/minecraft/village/VillageSiege.java
 +++ b/net/minecraft/village/VillageSiege.java
-@@ -75,7 +75,9 @@
+@@ -78,7 +78,9 @@
                    this.field_75532_g = blockpos.func_177958_n() + MathHelper.func_76141_d(MathHelper.func_76134_b(f) * 32.0F);
                    this.field_75538_h = blockpos.func_177956_o();
                    this.field_75539_i = blockpos.func_177952_p() + MathHelper.func_76141_d(MathHelper.func_76126_a(f) * 32.0F);
@@ -11,7 +11,7 @@
                       this.field_75534_e = 0;
                       this.field_75533_d = 20;
                       break;
-@@ -95,7 +97,7 @@
+@@ -98,7 +100,7 @@
        if (vector3d != null) {
           ZombieEntity zombieentity;
           try {
@@ -19,4 +19,4 @@
 +            zombieentity = EntityType.field_200725_aD.func_200721_a(p_75530_1_); //Forge: Direct Initialization is deprecated, use EntityType.
              zombieentity.func_213386_a(p_75530_1_, p_75530_1_.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.EVENT, (ILivingEntityData)null, (CompoundNBT)null);
           } catch (Exception exception) {
-             exception.printStackTrace();
+             field_242320_a.warn("Failed to create zombie for village siege at {}", vector3d, exception);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/PackLoadingManager.java
 +++ b/net/minecraft/client/gui/screen/PackLoadingManager.java
-@@ -135,6 +135,11 @@
+@@ -134,6 +134,11 @@
        public void func_230468_k_() {
           this.func_238879_a_(1);
        }
@@ -12,7 +12,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -230,5 +235,7 @@
+@@ -229,5 +234,7 @@
        boolean func_230469_o_();
  
        boolean func_230470_p_();
