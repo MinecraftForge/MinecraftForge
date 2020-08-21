@@ -54,6 +54,9 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
     private final String license;
+    // Caches the manifest of the mod jar as parsing the manifest can be expensive for
+    // signed jars.
+    private final Optional<Manifest> manifest;
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -72,7 +75,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
-        if (modConfigs.isEmpty()) {
+        if (modConfigs.isEmpty())
+        {
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream()
@@ -82,6 +86,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        this.manifest = modFile.getLocator().findManifest(modFile.getFilePath());
     }
 
     @Override
@@ -108,31 +113,37 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public Map<String, Object> getFileProperties() {
+    public Map<String, Object> getFileProperties()
+    {
         return this.properties;
     }
 
-    public Optional<Manifest> getManifest() {
-        return modFile.getLocator().findManifest(modFile.getFilePath());
+    public Optional<Manifest> getManifest()
+    {
+        return manifest;
     }
 
     @Override
-    public boolean showAsResourcePack() {
+    public boolean showAsResourcePack()
+    {
         return this.showAsResourcePack;
     }
 
     @Override
-    public <T> Optional<T> getConfigElement(final String... key) {
+    public <T> Optional<T> getConfigElement(final String... key)
+    {
         return this.config.getConfigElement(key);
     }
 
     @Override
-    public List<? extends IConfigurable> getConfigList(final String... key) {
+    public List<? extends IConfigurable> getConfigList(final String... key)
+    {
         return this.config.getConfigList(key);
     }
 
     @Override
-    public String getLicense() {
+    public String getLicense()
+    {
         return license;
     }
 }
