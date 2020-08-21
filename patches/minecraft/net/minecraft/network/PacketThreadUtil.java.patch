@@ -1,0 +1,40 @@
+--- a/net/minecraft/network/PacketThreadUtil.java
++++ b/net/minecraft/network/PacketThreadUtil.java
+@@ -16,6 +16,7 @@
+       if (!p_218797_2_.func_213162_bc()) {
+          p_218797_2_.execute(() -> {
+             if (p_218797_1_.func_147298_b().func_150724_d()) {
++               if (shouldProcess(p_218797_0_, p_218797_1_)) // Fix: MC-164255 (Duplicate of private)
+                p_218797_0_.func_148833_a(p_218797_1_);
+             } else {
+                field_225384_a.debug("Ignoring packet due to disconnection: " + p_218797_0_);
+@@ -25,4 +26,29 @@
+          throw ThreadQuickExitException.field_179886_a;
+       }
+    }
++
++   public static <T extends INetHandler> boolean shouldProcess(IPacket<T> packetIn, T processor) {
++      if (processor instanceof net.minecraft.network.play.ServerPlayNetHandler) {
++         net.minecraft.entity.player.ServerPlayerEntity player = ((net.minecraft.network.play.ServerPlayNetHandler) processor).field_147369_b;
++         if (!player.func_70089_S()) {
++            // Allow CustomPayloads as mods communicate here
++            if (packetIn instanceof net.minecraft.network.play.client.CCustomPayloadPacket) {
++               packetIn.func_148833_a(processor);
++               return true;
++            }
++
++            // Allow the player to respawn
++            if (packetIn instanceof net.minecraft.network.play.client.CClientStatusPacket && ((net.minecraft.network.play.client.CClientStatusPacket) packetIn).func_149435_c() == net.minecraft.network.play.client.CClientStatusPacket.State.PERFORM_RESPAWN) {
++               packetIn.func_148833_a(processor);
++               return true;
++            }
++
++            // Deny anything else
++            return false;
++         }
++      }
++
++      // Anything else is valid
++      return true;
++   }
+ }
