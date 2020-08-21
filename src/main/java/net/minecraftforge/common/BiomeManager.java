@@ -20,21 +20,17 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
-//import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-//import net.minecraft.world.biome.Biomes;
 
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.RegistryKey;
-//import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-//import net.minecraft.world.biome.provider.BiomeProvider;
+
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-//import net.minecraft.world.gen.INoiseRandom;
 
 //import javax.annotation.Nullable;
 
