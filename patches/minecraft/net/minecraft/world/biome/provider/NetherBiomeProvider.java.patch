@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/biome/provider/NetherBiomeProvider.java
++++ b/net/minecraft/world/biome/provider/NetherBiomeProvider.java
+@@ -180,7 +180,7 @@
+    public static class Preset {
+       private static final Map<ResourceLocation, NetherBiomeProvider.Preset> field_235289_c_ = Maps.newHashMap();
+       public static final NetherBiomeProvider.Preset field_235288_b_ = new NetherBiomeProvider.Preset(new ResourceLocation("nether"), (p_242617_0_, p_242617_1_, p_242617_2_) -> {
+-         return new NetherBiomeProvider(p_242617_2_, ImmutableList.of(Pair.of(new Biome.Attributes(0.0F, 0.0F, 0.0F, 0.0F, 0.0F), () -> {
++         return new NetherBiomeProvider(p_242617_2_, net.minecraftforge.common.BiomeManager.getNetherBiomes(p_242617_1_, Pair.of(new Biome.Attributes(0.0F, 0.0F, 0.0F, 0.0F, 0.0F), () -> {
+             return p_242617_1_.func_243576_d(Biomes.field_235254_j_);
+          }), Pair.of(new Biome.Attributes(0.0F, -0.5F, 0.0F, 0.0F, 0.0F), () -> {
+             return p_242617_1_.func_243576_d(Biomes.field_235252_ay_);
