@@ -304,7 +304,7 @@ public abstract class NoiseSettingsProvider extends RegistryBackedProvider<Dimen
              */
             public Builder finish()
             {
-                DimensionStructuresSettings.field_236191_b_.forEach((structure, separation) -> separationSettings.putIfAbsent(structure, separation));
+                DimensionStructuresSettings.field_236191_b_.forEach(separationSettings::putIfAbsent);
                 return Builder.this.setStructureSettings(new DimensionStructuresSettings(strongholdSettings, separationSettings));
             }
 

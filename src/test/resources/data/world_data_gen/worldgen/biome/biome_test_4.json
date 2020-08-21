@@ -7,7 +7,7 @@
     "water_color": 12312048,
     "water_fog_color": 9355742
   },
-  "surface_builder": "minecraft:ice_spikes",
+  "surface_builder": "world_data_gen:ice_surface_builder_test_0",
   "carvers": {
     "air": [
       "world_data_gen:carver_test_1"

@@ -1,0 +1,17 @@
+{
+  "config": {
+    "top_material": {
+      "Name": "minecraft:blue_ice"
+    },
+    "under_material": {
+      "Name": "minecraft:ice"
+    },
+    "underwater_material": {
+      "Properties": {
+        "age": "0"
+      },
+      "Name": "minecraft:frosted_ice"
+    }
+  },
+  "type": "minecraft:frozen_ocean"
+}

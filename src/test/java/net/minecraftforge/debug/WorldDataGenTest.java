@@ -20,7 +20,9 @@
 package net.minecraftforge.debug;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -36,11 +38,17 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.FeatureSpread;
 import net.minecraft.world.gen.feature.ProbabilityConfig;
 import net.minecraft.world.gen.feature.SphereReplaceConfig;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
+import net.minecraft.world.gen.feature.structure.MineshaftConfig;
+import net.minecraft.world.gen.feature.structure.MineshaftStructure;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.gen.feature.template.*;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
+import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.data.worldgen.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,9 +69,98 @@ public class WorldDataGenTest
         generator.addProvider(new Carvers(event));
         generator.addProvider(new Procs(event));
         generator.addProvider(new Features(event));
+        generator.addProvider(new Structs(event));
+        generator.addProvider(new Surface(event));
+        generator.addProvider(new Jigsaws(event));
+        generator.addProvider(new Noise(event));
         generator.addProvider(new BiomeGen(event));
         generator.addProvider(new DimType(event));
         generator.addProvider(new Dim(event));
+    }
+
+    static class Structs extends ConfiguredStructureFeatureProvider
+    {
+        public Structs(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getRegistryOpsHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "configured_struct_test_0"), Structure.field_236367_c_.func_236391_a_(new MineshaftConfig(0.1467f, MineshaftStructure.Type.MESA)));
+        }
+    }
+
+    static class Noise extends NoiseSettingsProvider
+    {
+        public Noise(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getRegistryOpsHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "noise_test_0"), new Builder()
+                    .setDefaultBlock(SNOW_BLOCK.getDefaultState())
+                    .disableMobSpawning(true)
+                    .setSeaLevel(76)
+                    .setupNoise()
+                    .setAmplified(true)
+                    .setRandomDensityOffset(true)
+                    .setDensityFactor(0.823)
+                    .setDensityOffset(0.34)
+                    .setSizeVeritcal(3)
+                    .setSizeHorizontal(1)
+                    .setTopSlide(-45, 4, -3)
+                    .setBottomSlide(5, 0, 0)
+                    .finish()
+                    .setupStructures()
+                    .defaultSettings(false)
+            );
+
+        }
+    }
+
+    static class Surface extends ConfiguredSurfaceBuilderProvider
+    {
+        public Surface(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getRegistryOpsHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "ice_surface_builder_test_0"), new Builder()
+                    .setSurfaceBuilder(SurfaceBuilder.FROZEN_OCEAN)
+                    .setTopMaterial(BLUE_ICE.getDefaultState())
+                    .setUnderMaterial(ICE.getDefaultState())
+                    .setUnderWaterMaterial(FROSTED_ICE.getDefaultState())
+                    .build()
+            );
+        }
+    }
+
+    static class Jigsaws extends JigsawPatternProvider
+    {
+        public Jigsaws(GatherDataEvent event)
+        {
+            super(event.getGenerator(), event.getRegistryOpsHelper(), MODID);
+        }
+
+        @Override
+        protected void start()
+        {
+            this.put(new ResourceLocation(MODID, "jigsaw_pattern_test_0"), new Builder()
+                    .setName(new ResourceLocation(MODID,"boat/ocean/captain_quarters"))
+                    .addAll(ImmutableList.of(
+                            Pair.of(JigsawPiece.func_242845_a(this.regOps.getObject(Registry.field_243552_au, new ResourceLocation(MODID, "feature_test_0"))), 1),
+                            Pair.of(JigsawPiece.func_242861_b("bastion/units/ramparts/ramparts_2", this.regOps.getObject(Registry.field_243554_aw, new ResourceLocation(MODID, "proc_list_test_0")) ), 2)
+                    ), JigsawPattern.PlacementBehaviour.RIGID)
+            );
+        }
     }
 
     static class Features extends ConfiguredFeatureProvider
@@ -164,7 +261,7 @@ public class WorldDataGenTest
             ambience.func_242537_a(BiomeAmbience.GrassColorModifier.DARK_FOREST).func_235239_a_(0xc1d2db).func_235246_b_(0xbbddf0).func_235248_c_(0x8ec1de).func_242539_d(0xa9d1e8);
             biome.func_235097_a_(ambience.func_235238_a_());
 
-            biomeGen.func_242517_a(ConfiguredSurfaceBuilders.field_244180_l);
+            biomeGen.func_242517_a(this.regOps.getObject(Registry.field_243550_as, new ResourceLocation(MODID, "ice_surface_builder_test_0")));
             biomeGen.func_242512_a(GenerationStage.Carving.AIR, regOps.getObject(Registry.field_243551_at ,new ResourceLocation(MODID, "carver_test_1")));
             biomeGen.func_242512_a(GenerationStage.Carving.LIQUID, ConfiguredCarvers.field_243772_f);
             biomeGen.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, regOps.getObject(Registry.field_243552_au, new ResourceLocation(MODID, "feature_test_0")));
@@ -215,6 +312,7 @@ public class WorldDataGenTest
             this.put(new ResourceLocation(MODID, "dim_test_0"), new Builder()
                     .setDimType(new ResourceLocation(MODID, "dim_type_test_0"))
                     .buildNoise()
+                    .setSettings(new ResourceLocation(MODID, "noise_test_0"))
                     .buildNoiseBiome()
                     .changeAltitudeNoise(new NetherBiomeProvider.Noise(-10, ImmutableList.of(-0.9, 0.5D, 1D)))
                     .addBiome()

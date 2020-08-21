@@ -84,7 +84,7 @@ public abstract class JigsawPatternProvider extends RegistryBackedProvider<Jigsa
         private ResourceLocation fallBack = JigsawPatternRegistry.field_244091_a.func_240901_a_(); //empty
         private final List<Pair<JigsawPiece, Integer>> weightedList = new ArrayList<>();
 
-        protected JigsawPattern build()
+        public JigsawPattern build()
         {
             return new JigsawPattern(name, fallBack, weightedList);
         }

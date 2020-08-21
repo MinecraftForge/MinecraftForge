@@ -38,13 +38,13 @@ import java.util.Map;
 /**
  * The Builder class is for the vanilla implementation {@link ISurfaceBuilderConfig}
  */
-public abstract class ConfiguredSurfaceBuildersProvider extends RegistryBackedProvider<ConfiguredSurfaceBuilder<?>>
+public abstract class ConfiguredSurfaceBuilderProvider extends RegistryBackedProvider<ConfiguredSurfaceBuilder<?>>
 {
     private final DataGenerator generator;
     private final String modid;
     protected final Map<ResourceLocation, ConfiguredSurfaceBuilder<?>> map = new HashMap<>();
 
-    public ConfiguredSurfaceBuildersProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
+    public ConfiguredSurfaceBuilderProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla SURFACE_BUILDER registry, and won't affect any mod added SURFACE_BUILDERs.
         super(ConfiguredSurfaceBuilder.field_237168_a_, regOps, Registry.field_243550_as);
@@ -87,7 +87,7 @@ public abstract class ConfiguredSurfaceBuildersProvider extends RegistryBackedPr
         private BlockState underWaterMaterial = Blocks.GRAVEL.getDefaultState();
         private SurfaceBuilder<SurfaceBuilderConfig> surfaceBuilder = SurfaceBuilder.DEFAULT;
 
-        protected ConfiguredSurfaceBuilder<SurfaceBuilderConfig> build()
+        public ConfiguredSurfaceBuilder<SurfaceBuilderConfig> build()
         {
             return surfaceBuilder.func_242929_a(new SurfaceBuilderConfig(topMaterial, underMaterial, underWaterMaterial));
         }

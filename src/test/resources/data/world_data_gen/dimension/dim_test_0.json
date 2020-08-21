@@ -24,7 +24,7 @@
           1.0
         ]
       },
-      "seed": 8863734700914211875,
+      "seed": 2248121505319789444,
       "biomes": [
         {
           "parameters": {
@@ -86,8 +86,8 @@
       },
       "type": "minecraft:multi_noise"
     },
-    "seed": 8863734700914211875,
-    "settings": "minecraft:overworld",
+    "seed": 2248121505319789444,
+    "settings": "world_data_gen:noise_test_0",
     "type": "minecraft:noise"
   }
 }

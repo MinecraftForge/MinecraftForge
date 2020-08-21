@@ -25,7 +25,7 @@ import net.minecraft.data.DirectoryCache;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.feature.structure.StructureFeatures;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * ConfiguredStructureFeature is the wiki's naming of a StructureFeature.
  *
- * No builder for this class as StructureFeatures are simple to create, see {@link Structure}.
+ * No builder for this class as StructureFeatures are simple to create, see {@link StructureFeatures}.
  */
 public abstract class ConfiguredStructureFeatureProvider extends RegistryBackedProvider<StructureFeature<?,?>>
 {

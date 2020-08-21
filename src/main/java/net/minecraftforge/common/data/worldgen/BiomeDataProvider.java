@@ -36,7 +36,7 @@ import java.util.Map;
  * for {@link MobSpawnInfo.Builder} and {@link BiomeGenerationSettings.Builder},
  * which are needed to create a Biome.
  *
- * The {@link BiomeMaker} also provides helper functions for creating specific biomes.
+ * The {@link BiomeMaker} class also provides helper functions for creating specific biomes.
  *
  * To use newly created objects from other DataProviders, add this provider after the others.
  * See {@link RegistryOpsHelper#getObject} for usage.
