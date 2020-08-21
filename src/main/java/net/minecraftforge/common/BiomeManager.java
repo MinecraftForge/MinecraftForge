@@ -22,10 +22,14 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 //import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 //import net.minecraft.world.biome.Biomes;
 
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.RegistryKey;
 //import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 //import net.minecraft.world.biome.provider.BiomeProvider;
@@ -41,7 +45,7 @@ public class BiomeManager
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
 */
-    private static List<Biome> moddedNetherBiomes = new ArrayList<>();
+    private static List<Pair<RegistryKey<Biome>, Biome.Attributes>> moddedNetherBiomes = new ArrayList<>();
 /*
     static
     {
@@ -110,15 +114,15 @@ public class BiomeManager
 */
     /**
      * Adds the specified {@linkplain Biome biome} to the {@linkplain net.minecraft.world.biome.provider.NetherBiomeProvider nether biome provider}.
-     * The specific generation information about how the biome is placed in the nether is handled by the {@linkplain Biome.Attributes attributes} of the biome.<br>
      * This method should be called during {@link FMLCommonSetupEvent}.
      * @param biome the biome to add to the nether.
+     * @param attributes The specific generation information about how the biome is placed in the nether.
      */
-    public static void addNetherBiome(Biome biome)
+    public static void addNetherBiome(RegistryKey<Biome> biome, Biome.Attributes attributes)
     {
         synchronized (moddedNetherBiomes)
         {
-            moddedNetherBiomes.add(biome);
+            moddedNetherBiomes.add(Pair.of(biome, attributes));
         }
     }
 /*
@@ -142,14 +146,16 @@ public class BiomeManager
         return list != null ? ImmutableList.copyOf(list) : null;
     }
 */
-    public static ImmutableList<Biome> getNetherBiomes(ImmutableList<Biome> biomes)
+    public static ImmutableList<Pair<Biome.Attributes, Supplier<Biome>>> getNetherBiomes(Registry<Biome> biomeRegistry, Pair<Biome.Attributes, Supplier<Biome>>... biomes)
     {
-        ImmutableList.Builder<Biome> result = ImmutableList.builder();
-        result.addAll(biomes);
+        ImmutableList.Builder<Pair<Biome.Attributes, Supplier<Biome>>> result = ImmutableList.builder();
+        result.add(biomes);
 
         synchronized (moddedNetherBiomes)
         {
-            result.addAll(moddedNetherBiomes);
+            for (Pair<RegistryKey<Biome>, Biome.Attributes> moddedBiome : moddedNetherBiomes) {
+                result.add(Pair.of(moddedBiome.getSecond(), () -> biomeRegistry.func_243576_d(moddedBiome.getFirst())));
+            }
         }
 
         return result.build();
