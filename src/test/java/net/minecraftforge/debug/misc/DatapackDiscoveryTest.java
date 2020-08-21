@@ -60,7 +60,7 @@ public class DatapackDiscoveryTest
         event.addPackFinder(new IPackFinder()
         {
             @Override
-            public <T extends ResourcePackInfo> void func_230230_a_(Consumer<T> p_230230_1_, ResourcePackInfo.IFactory<T> p_230230_2_)
+            public void func_230230_a_(Consumer<ResourcePackInfo> p_230230_1_, ResourcePackInfo.IFactory p_230230_2_)
             {
                 LOGGER.debug("PackFinder enumerating packs");
                 p_230230_1_.accept(ResourcePackInfo.createResourcePack(NAME, true, TestResourcePack::new,
