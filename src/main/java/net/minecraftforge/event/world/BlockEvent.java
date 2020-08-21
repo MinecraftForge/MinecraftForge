@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -74,43 +75,6 @@ public class BlockEvent extends Event
     public BlockState getState()
     {
         return state;
-    }
-
-    /**
-     * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
-     * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
-     *
-     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
-     * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
-     *
-     * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
-     *
-     * @author cpw
-     */
-    public static class HarvestDropsEvent extends BlockEvent
-    {
-        private final int fortuneLevel;
-        private final NonNullList<ItemStack> drops;
-        private final boolean isSilkTouching;
-        private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
-        private final PlayerEntity harvester; // May be null for non-player harvesting such as explosions or machines
-
-        public HarvestDropsEvent(World world, BlockPos pos, BlockState state, int fortuneLevel, float dropChance, NonNullList<ItemStack> drops, PlayerEntity harvester, boolean isSilkTouching)
-        {
-            super(world, pos, state);
-            this.fortuneLevel = fortuneLevel;
-            this.setDropChance(dropChance);
-            this.drops = drops;
-            this.isSilkTouching = isSilkTouching;
-            this.harvester = harvester;
-        }
-
-        public int getFortuneLevel() { return fortuneLevel; }
-        public List<ItemStack> getDrops() { return drops; }
-        public boolean isSilkTouching() { return isSilkTouching; }
-        public float getDropChance() { return dropChance; }
-        public void setDropChance(float dropChance) { this.dropChance = dropChance; }
-        public PlayerEntity getHarvester() { return harvester; }
     }
 
     /**
@@ -432,24 +396,24 @@ public class BlockEvent extends Event
     @Cancelable
     public static class PortalSpawnEvent extends BlockEvent
     {
-        private final NetherPortalBlock.Size size;
+        private final PortalSize size;
 
-        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, NetherPortalBlock.Size size)
+        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, PortalSize size)
         {
             super(world, pos, state);
             this.size = size;
         }
 
-        public NetherPortalBlock.Size getPortalSize()
+        public PortalSize getPortalSize()
         {
             return size;
         }
     }
-    
+
     /**
      * Fired when when this block is right clicked by a tool to change its state.
      * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * 
+     *
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
@@ -481,7 +445,7 @@ public class BlockEvent extends Event
         public ItemStack getHeldItemStack()
         {
             return stack;
-	    }
+        }
 
         /**Gets the current type of the tool being compared against.*/
         public ToolType getToolType()

@@ -15,4 +15,4 @@
 +
     public void func_230430_a_(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
        this.func_230446_a_(p_230430_1_);
-       this.func_238472_a_(p_230430_1_, this.field_230712_o_, this.field_224229_b, this.field_230708_k_ / 2, 80, 16777215);
+       func_238472_a_(p_230430_1_, this.field_230712_o_, this.field_224229_b, this.field_230708_k_ / 2, 80, 16777215);

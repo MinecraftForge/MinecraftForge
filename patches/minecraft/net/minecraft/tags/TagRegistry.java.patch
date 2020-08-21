@@ -1,10 +1,72 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -22,6 +22,7 @@
+@@ -22,7 +22,15 @@
+    }
  
     public ITag.INamedTag<T> func_232937_a_(String p_232937_1_) {
-       TagRegistry.NamedTag<T> namedtag = new TagRegistry.NamedTag<>(new ResourceLocation(p_232937_1_));
+-      TagRegistry.NamedTag<T> namedtag = new TagRegistry.NamedTag<>(new ResourceLocation(p_232937_1_));
++       return add(new TagRegistry.NamedTag<>(new ResourceLocation(p_232937_1_)));
++   }
++
++   public net.minecraftforge.common.Tags.IOptionalNamedTag<T> createOptional(ResourceLocation key, @Nullable java.util.function.Supplier<Set<T>> defaults) {
++       return add(new TagRegistry.OptionalNamedTag<>(key, defaults));
++   }
++
++   private <R extends TagRegistry.NamedTag<T>> R add(R namedtag) {
 +      namedtag.func_232943_a_(field_232930_b_::func_199910_a);
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
+@@ -56,7 +64,7 @@
+ 
+    public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
+       ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
+-      Set<ResourceLocation> set = this.field_232931_c_.stream().map(TagRegistry.NamedTag::func_230234_a_).collect(Collectors.toSet());
++      Set<ResourceLocation> set = this.field_232931_c_.stream().filter(e -> !(e instanceof OptionalNamedTag)).map(TagRegistry.NamedTag::func_230234_a_).collect(Collectors.toSet());
+       ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
+       return Sets.difference(set, immutableset);
+    }
+@@ -93,5 +101,43 @@
+       public List<T> func_230236_b_() {
+          return this.func_232944_c_().func_230236_b_();
+       }
++
++      @Override
++      public String toString() {
++          return "NamedTag[" + func_230234_a_().toString() + ']';
++      }
+    }
++
++   private static class OptionalNamedTag<T> extends NamedTag<T> implements net.minecraftforge.common.Tags.IOptionalNamedTag<T> {
++      @Nullable
++      private final java.util.function.Supplier<Set<T>> defaults;
++      private boolean defaulted = true;
++
++      private OptionalNamedTag(ResourceLocation name, @Nullable java.util.function.Supplier<Set<T>> defaults) {
++         super(name);
++         this.defaults = defaults;
++      }
++
++      @Override
++      public boolean isDefaulted() {
++         return defaulted;
++      }
++
++      @Override
++      void func_232943_a_(Function<ResourceLocation, ITag<T>> p_232943_1_) {
++         super.func_232943_a_(p_232943_1_);
++         if (this.field_232942_b_ == null) {
++            this.defaulted = true;
++            Set<T> defs = defaults == null ? null : defaults.get();
++            this.field_232942_b_ = defs == null ? Tag.func_241284_a_() : Tag.func_241286_a_(defs);
++         } else {
++            this.defaulted = false;
++         }
++      }
++
++      @Override
++      public String toString() {
++          return "OptionalNamedTag[" + func_230234_a_().toString() + ']';
++      }
++   }
+ }
