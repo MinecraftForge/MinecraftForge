@@ -100,6 +100,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> ORES_GOLD = tag("ores/gold");
         public static final IOptionalNamedTag<Block> ORES_IRON = tag("ores/iron");
         public static final IOptionalNamedTag<Block> ORES_LAPIS = tag("ores/lapis");
+        public static final IOptionalNamedTag<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
 
@@ -118,6 +119,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
@@ -130,7 +132,7 @@ public class Tags
     public static class Items
     {
         private static void init(){}
-        public static final IOptionalNamedTag<Item> ARROWS = tag("arrows");
+
         public static final IOptionalNamedTag<Item> BONES = tag("bones");
         public static final IOptionalNamedTag<Item> BOOKSHELVES = tag("bookshelves");
         public static final IOptionalNamedTag<Item> CHESTS = tag("chests");
@@ -228,10 +230,10 @@ public class Tags
         public static final IOptionalNamedTag<Item> INGOTS_BRICK = tag("ingots/brick");
         public static final IOptionalNamedTag<Item> INGOTS_GOLD = tag("ingots/gold");
         public static final IOptionalNamedTag<Item> INGOTS_IRON = tag("ingots/iron");
+        public static final IOptionalNamedTag<Item> INGOTS_NETHERITE = tag("ingots/netherite");
         public static final IOptionalNamedTag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
         public static final IOptionalNamedTag<Item> LEATHER = tag("leather");
         public static final IOptionalNamedTag<Item> MUSHROOMS = tag("mushrooms");
-        public static final IOptionalNamedTag<Item> MUSIC_DISCS = tag("music_discs");
         public static final IOptionalNamedTag<Item> NETHER_STARS = tag("nether_stars");
         public static final IOptionalNamedTag<Item> NETHERRACK = tag("netherrack");
         public static final IOptionalNamedTag<Item> NUGGETS = tag("nuggets");
@@ -245,6 +247,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_GOLD = tag("ores/gold");
         public static final IOptionalNamedTag<Item> ORES_IRON = tag("ores/iron");
         public static final IOptionalNamedTag<Item> ORES_LAPIS = tag("ores/lapis");
+        public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
@@ -273,6 +276,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Item> STRING = tag("string");
