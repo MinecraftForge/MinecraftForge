@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,7 +91,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     protected void beforeReplacingBlock(IWorld worldIn, BlockPos pos, BlockState state)
     {
         TileEntity tileentity = state.getBlock().hasTileEntity(state) ? worldIn.getTileEntity(pos) : null;
-        Block.spawnDrops(state, worldIn.getWorld(), pos, tileentity);
+        Block.spawnDrops(state, worldIn, pos, tileentity);
     }
 
     @Override

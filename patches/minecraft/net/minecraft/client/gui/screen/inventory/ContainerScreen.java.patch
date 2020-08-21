@@ -105,19 +105,20 @@
                 this.func_184098_a(slot, k, p_231048_5_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 340) || InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 344));
-@@ -534,19 +544,26 @@
+@@ -530,34 +540,39 @@
     }
  
     public boolean func_231046_a_(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
 +      InputMappings.Input mouseKey = InputMappings.func_197954_a(p_231046_1_, p_231046_2_);
        if (super.func_231046_a_(p_231046_1_, p_231046_2_, p_231046_3_)) {
           return true;
--      } else if (p_231046_1_ != 256 && !this.field_230706_i_.field_71474_y.field_151445_Q.func_197976_a(p_231046_1_, p_231046_2_)) {
+-      } else if (this.field_230706_i_.field_71474_y.field_151445_Q.func_197976_a(p_231046_1_, p_231046_2_)) {
++      } else if (this.field_230706_i_.field_71474_y.field_151445_Q.isActiveAndMatches(mouseKey)) {
+          this.func_231175_as__();
+          return true;
+       } else {
 -         this.func_195363_d(p_231046_1_, p_231046_2_);
-+      } else if (p_231046_1_ != 256 && !this.field_230706_i_.field_71474_y.field_151445_Q.isActiveAndMatches(mouseKey)) {
-+         boolean handled = false;// Forge MC-146650: Needs to return true when the key is handled.
-+         if (this.func_195363_d(p_231046_1_, p_231046_2_))
-+            handled = true;
++         boolean handled = this.func_195363_d(p_231046_1_, p_231046_2_);// Forge MC-146650: Needs to return true when the key is handled
           if (this.field_147006_u != null && this.field_147006_u.func_75216_d()) {
 -            if (this.field_230706_i_.field_71474_y.field_74322_I.func_197976_a(p_231046_1_, p_231046_2_)) {
 +            if (this.field_230706_i_.field_71474_y.field_74322_I.isActiveAndMatches(mouseKey)) {
@@ -129,15 +130,13 @@
 +               handled = true;
              }
 +         } else if (this.field_230706_i_.field_71474_y.field_74316_C.isActiveAndMatches(mouseKey)) {
-+            handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
++             handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
           }
  
 -         return true;
 +         return handled;
-       } else {
-          this.field_230706_i_.field_71439_g.func_71053_j();
-          return true;
-@@ -555,13 +572,13 @@
+       }
+    }
  
     protected boolean func_195363_d(int p_195363_1_, int p_195363_2_) {
        if (this.field_230706_i_.field_71439_g.field_71071_by.func_70445_o().func_190926_b() && this.field_147006_u != null) {
@@ -153,11 +152,10 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -592,4 +609,16 @@
-    public T func_212873_a_() {
+@@ -589,6 +604,18 @@
        return this.field_147002_h;
     }
-+
+ 
 +   @javax.annotation.Nullable
 +   public Slot getSlotUnderMouse() { return this.field_147006_u; }
 +   public int getGuiLeft() { return field_147003_i; }
@@ -169,4 +167,7 @@
 +   public int getSlotColor(int index) {
 +      return slotColor;
 +   }
- }
++
+    public void func_231175_as__() {
+       this.field_230706_i_.field_71439_g.func_71053_j();
+       super.func_231175_as__();

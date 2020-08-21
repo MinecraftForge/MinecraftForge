@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,8 +42,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.BedPart;
@@ -239,14 +242,15 @@ public interface IForgeBlock
      * @param state The current state
      * @param world The current world
      * @param pos Block position in world
+     * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
         if (world instanceof World)
         {
-            return BedBlock.func_220172_a(entityType, world,pos,0);
+            return BedBlock.func_242652_a(entityType, world, pos, orientation);
         }
 
         return Optional.empty();
@@ -261,12 +265,9 @@ public interface IForgeBlock
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
      */
-    default void setBedOccupied(BlockState state, IWorldReader world, BlockPos pos, LivingEntity sleeper, boolean occupied)
+    default void setBedOccupied(BlockState state, World world, BlockPos pos, LivingEntity sleeper, boolean occupied)
     {
-        if (world instanceof IWorldWriter)
-        {
-            ((IWorldWriter)world).setBlockState(pos, state.with(BedBlock.OCCUPIED,occupied), 4);
-        }
+        world.setBlockState(pos, state.with(BedBlock.OCCUPIED, occupied), 3);
     }
 
    /**
@@ -282,27 +283,6 @@ public interface IForgeBlock
     {
         return state.get(HorizontalBlock.HORIZONTAL_FACING);
     }
-
-    /**
-     * Determines if the current block is the foot half of the bed.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if the current block is the foot side of a bed.
-     */
-    default boolean isBedFoot(BlockState state, IWorldReader world, BlockPos pos)
-    {
-        return state.get(BedBlock.PART) == BedPart.FOOT;
-    }
-
-    /**
-     * Called when a leaf should start its decay process.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     */
-    default void beginLeaveDecay(BlockState state, IWorldReader world, BlockPos pos) {}
 
     /**
      * Determines this block should be treated as an air block
@@ -348,21 +328,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Determines if the current block is replaceable by Ore veins during world generation.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @param target The generic target block the gen is looking for, Standards define stone
-     *      for overworld generation, and neatherack for the nether.
-     * @return True to allow this block to be replaced by a ore
-     */
-    default boolean isReplaceableOreGen(BlockState state, IWorldReader world, BlockPos pos, Predicate<BlockState> target)
-    {
-        return target.test(state);
-    }
-
-    /**
      * Location sensitive version of getExplosionResistance
      *
      * @param world The current world
@@ -400,17 +365,6 @@ public interface IForgeBlock
     default ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
     {
         return this.getBlock().getItem(world, pos, state);
-    }
-
-    /**
-     * Used by getTopSoilidOrLiquidBlock while placing biome decorations, villages, etc
-     * Also used to determine if the player can spawn in this block.
-     *
-     * @return False to disallow spawning.
-     */
-    default boolean isFoliage(BlockState state, IWorldReader world, BlockPos pos)
-    {
-        return false;
     }
 
     /**
@@ -539,22 +493,6 @@ public interface IForgeBlock
         return  false;
     }
 
-   /**
-    * Determines if this block can be used as the base of a beacon.
-    *
-    * @param world The current world
-    * @param pos Block position in world
-    * @param beacon Beacon position in world
-    * @return True, to support the beacon, and make it active with this block.
-    */
-    default boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon)
-    {
-        return  state.getBlock() == Blocks.IRON_BLOCK ||
-                state.getBlock() == Blocks.GOLD_BLOCK ||
-                state.getBlock() == Blocks.DIAMOND_BLOCK ||
-                state.getBlock() == Blocks.EMERALD_BLOCK;
-    }
-
     /**
      * Determines if this block can be used as the frame of a conduit.
      *
@@ -579,7 +517,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True, to support being part of a nether portal frame, false otherwise.
      */
-    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    default boolean isPortalFrame(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.isIn(Blocks.OBSIDIAN);
     }
@@ -603,29 +541,6 @@ public interface IForgeBlock
         return state.rotate(direction);
     }
 
-    /**
-     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
-     * Note, this is up to the block to decide. It may not be accurate or representative.
-     * @param state The current state
-     * @param world The world
-     * @param pos Block position in world
-     * @return An array of valid axes to rotate around, or null for none or unknown
-     */
-    @Nullable
-    default Direction[] getValidRotations(BlockState state, IBlockReader world, BlockPos pos)
-    {
-        for (Property<?> prop : state.func_235904_r_())
-        {
-            if ((prop.getName().equals("facing") || prop.getName().equals("rotation")) && prop.getValueClass() == Direction.class)
-            {
-                @SuppressWarnings("unchecked")
-                Collection<Direction> values = ((Collection<Direction>)prop.getAllowedValues());
-                return values.toArray(new Direction[values.size()]);
-            }
-        }
-        return null;
-    }
-
    /**
     * Determines the amount of enchanting power this block can provide to an enchanting table.
     * @param world The World
@@ -635,34 +550,6 @@ public interface IForgeBlock
     default float getEnchantPowerBonus(BlockState state, IWorldReader world, BlockPos pos)
     {
         return state.isIn(Blocks.BOOKSHELF) ? 1: 0;
-    }
-
-   /**
-    * //TODO: Re-Evaluate
-    * Gathers how much experience this block drops when broken.
-    *
-    * @param state The current state
-    * @param world The world
-    * @param pos Block position
-    * @param fortune
-    * @return Amount of XP from breaking this block.
-    */
-    @SuppressWarnings("unchecked")
-    default boolean recolorBlock(BlockState state, IWorld world, BlockPos pos, Direction facing, DyeColor color)
-    {
-        for (Property<?> prop : state.func_235904_r_())
-        {
-            if (prop.getName().equals("color") && prop.getValueClass() == DyeColor.class)
-            {
-                DyeColor current = (DyeColor)state.get(prop);
-                if (current != color && prop.getAllowedValues().contains(color))
-                {
-                    world.setBlockState(pos, state.with(((Property<DyeColor>)prop), color), 3);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
    /**
@@ -733,14 +620,6 @@ public interface IForgeBlock
         if (tool == ToolType.PICKAXE && (this.getBlock() == Blocks.REDSTONE_ORE || this.getBlock() == Blocks.REDSTONE_LAMP || this.getBlock() == Blocks.OBSIDIAN))
             return false;
         return tool == getHarvestTool(state);
-    }
-
-    /**
-     * Can return IExtendedBlockState
-     */
-    default BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
-    {
-        return state;
     }
 
     /**
@@ -822,38 +701,6 @@ public interface IForgeBlock
     default BlockState getStateAtViewpoint(BlockState state, IBlockReader world, BlockPos pos, Vector3d viewpoint)
     {
         return state;
-    }
-
-    /** //TODO: Re-Evaluate
-     * Gets the {@link IBlockState} to place
-     * @param world The world the block is being placed in
-     * @param pos The position the block is being placed at
-     * @param facing The side the block is being placed on
-     * @param hitX The X coordinate of the hit vector
-     * @param hitY The Y coordinate of the hit vector
-     * @param hitZ The Z coordinate of the hit vector
-     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
-     * @param placer The entity placing the block
-     * @param hand The player hand used to place this block
-     * @return The state to be placed in the world
-     */
-    default BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand)
-    {
-        return this.getBlock().updatePostPlacement(state, facing, state2, world, pos1, pos2);
-    }
-
-
-    /**
-     * Determines if another block can connect to this block
-     *
-     * @param world The current world
-     * @param pos The position of this block
-     * @param facing The side the connecting block is on
-     * @return True to allow another block to connect to this block
-     */
-    default boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction facing)
-    {
-        return false;
     }
 
     /**
@@ -994,23 +841,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @param start The start vector
-     * @param end The end vector
-     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
-     * @return A result that suits your block
-     */
-    @Nullable
-    default RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original)
-    {
-        return original;
-    }
-
-    /**
      * Determines if this block should drop loot when exploded.
      */
     default boolean canDropFromExplosion(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion)
@@ -1060,5 +890,25 @@ public interface IForgeBlock
     default boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
         return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof LeavesBlock;
+    }
+
+    /**
+     * Returns the state that this block should transform into when right clicked by a tool.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * Return null if vanilla behavior should be disabled.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos The block position in world
+     * @param player The player clicking the block
+     * @param stack The stack being used by the player
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    {
+        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
+        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
+        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
     }
 }

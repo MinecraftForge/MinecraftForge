@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,30 +16,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+/* Biomes are completely redone in 1.16.2, reevaluate*/
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
+//import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+//import net.minecraft.world.biome.Biomes;
 
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.util.WeightedRandom;
+//import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
+//import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+//import net.minecraft.world.gen.INoiseRandom;
 
-import javax.annotation.Nullable;
+//import javax.annotation.Nullable;
 
 public class BiomeManager
 {
+/*
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
+*/
     private static List<Biome> moddedNetherBiomes = new ArrayList<>();
-
+/*
     static
     {
         oceanBiomes.add(Biomes.OCEAN);
@@ -104,7 +107,7 @@ public class BiomeManager
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
         if (list != null) list.add(entry);
     }
-
+*/
     /**
      * Adds the specified {@linkplain Biome biome} to the {@linkplain net.minecraft.world.biome.provider.NetherBiomeProvider nether biome provider}.
      * The specific generation information about how the biome is placed in the nether is handled by the {@linkplain Biome.Attributes attributes} of the biome.<br>
@@ -118,7 +121,7 @@ public class BiomeManager
             moddedNetherBiomes.add(biome);
         }
     }
-
+/*
     public static void removeBiome(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
@@ -138,7 +141,7 @@ public class BiomeManager
 
         return list != null ? ImmutableList.copyOf(list) : null;
     }
-
+*/
     public static ImmutableList<Biome> getNetherBiomes(ImmutableList<Biome> biomes)
     {
         ImmutableList.Builder<Biome> result = ImmutableList.builder();
@@ -151,7 +154,7 @@ public class BiomeManager
 
         return result.build();
     }
-
+/*
     public static boolean isTypeListModded(BiomeType type)
     {
         int idx = type.ordinal();
@@ -268,4 +271,5 @@ public class BiomeManager
             return isModded;
         }
     }
+*/
 }

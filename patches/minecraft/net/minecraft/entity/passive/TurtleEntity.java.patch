@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/TurtleEntity.java
 +++ b/net/minecraft/entity/passive/TurtleEntity.java
-@@ -233,8 +233,8 @@
+@@ -235,8 +235,8 @@
        this.func_184185_a(soundevent, 0.15F, 1.0F);
     }
  

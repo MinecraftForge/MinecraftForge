@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,17 +31,13 @@ public enum EarlyProgressVisualization {
 
     private Visualization visualization;
 
-    public Runnable accept(final Dist dist) {
-        visualization = dist.isClient() && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
+    public Runnable accept(final Dist dist, final boolean isData) {
+        visualization = !isData && dist.isClient() && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
         return visualization.start();
     }
 
     public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitor) {
         return visualization.handOffWindow(width, height, title, monitor);
-    }
-
-    public boolean replacedWindow() {
-        return visualization.replacedWindow();
     }
 
     interface Visualization {
@@ -55,8 +51,6 @@ public enum EarlyProgressVisualization {
                 }
             }.getAsLong();
         }
-
-        default boolean replacedWindow() { return false; }
     }
 
     private static class NoVisualization implements Visualization {

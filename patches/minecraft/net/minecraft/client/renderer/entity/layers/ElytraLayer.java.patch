@@ -1,0 +1,54 @@
+--- a/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
+@@ -30,7 +30,7 @@
+ 
+    public void func_225628_a_(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
+       ItemStack itemstack = p_225628_4_.func_184582_a(EquipmentSlotType.CHEST);
+-      if (itemstack.func_77973_b() == Items.field_185160_cR) {
++      if (shouldRender(itemstack, p_225628_4_)) {
+          ResourceLocation resourcelocation;
+          if (p_225628_4_ instanceof AbstractClientPlayerEntity) {
+             AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)p_225628_4_;
+@@ -39,10 +39,10 @@
+             } else if (abstractclientplayerentity.func_152122_n() && abstractclientplayerentity.func_110303_q() != null && abstractclientplayerentity.func_175148_a(PlayerModelPart.CAPE)) {
+                resourcelocation = abstractclientplayerentity.func_110303_q();
+             } else {
+-               resourcelocation = field_188355_a;
++               resourcelocation = getElytraTexture(itemstack, p_225628_4_);
+             }
+          } else {
+-            resourcelocation = field_188355_a;
++            resourcelocation = getElytraTexture(itemstack, p_225628_4_);
+          }
+ 
+          p_225628_1_.func_227860_a_();
+@@ -54,4 +54,29 @@
+          p_225628_1_.func_227865_b_();
+       }
+    }
++
++   /**
++    * Determines if the ElytraLayer should render.
++    * ItemStack and Entity are provided for modder convenience,
++    * For example, using the same ElytraLayer for multiple custom Elytra.
++    *
++    * @param stack  The Elytra ItemStack
++    * @param entity The entity being rendered.
++    * @return If the ElytraLayer should render.
++    */
++   public boolean shouldRender(ItemStack stack, T entity) {
++      return stack.func_77973_b() == Items.field_185160_cR;
++   }
++
++   /**
++    * Gets the texture to use with this ElytraLayer.
++    * This assumes the vanilla Elytra model.
++    *
++    * @param stack  The Elytra ItemStack.
++    * @param entity The entity being rendered.
++    * @return The texture.
++    */
++   public ResourceLocation getElytraTexture(ItemStack stack, T entity) {
++      return field_188355_a;
++   }
+ }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -52,9 +52,10 @@
+@@ -54,9 +54,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +13,16 @@
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
           return !VoxelShapes.func_197879_c(VoxelShapes.func_197868_b(), p_load_1_, IBooleanFunction.field_223236_g_);
-@@ -270,7 +271,7 @@
+@@ -151,6 +152,8 @@
+       super(p_i48440_1_);
+       StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
+       this.func_206840_a(builder);
++      this.harvestLevel = p_i48440_1_.getHarvestLevel();
++      this.harvestTool = p_i48440_1_.getHarvestTool();
+       this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
+       this.func_180632_j(this.field_176227_L.func_177621_b());
+    }
+@@ -261,7 +264,7 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -22,16 +31,16 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -282,7 +283,7 @@
+@@ -273,7 +276,7 @@
     }
  
-    public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
--      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
-+      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) {
+    public void func_180637_b(ServerWorld p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
+-      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
++      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) {
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -292,6 +293,7 @@
+@@ -283,6 +286,7 @@
  
     }
  
@@ -39,7 +48,7 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
-@@ -341,6 +343,7 @@
+@@ -332,6 +336,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -47,7 +56,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -372,6 +375,7 @@
+@@ -363,6 +368,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -55,7 +64,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -391,6 +395,7 @@
+@@ -382,6 +388,7 @@
        return this.field_196275_y;
     }
  
@@ -63,7 +72,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -400,7 +405,7 @@
+@@ -391,7 +398,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -72,7 +81,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -408,7 +413,7 @@
+@@ -399,7 +406,7 @@
     }
  
     public String toString() {
@@ -81,7 +90,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -419,6 +424,83 @@
+@@ -410,6 +417,83 @@
        return this;
     }
  
@@ -128,7 +137,7 @@
 +      } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
 +         return state.func_203425_a(Blocks.field_150458_ak);
 +      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
-+         return Block.func_220056_d(state, world, pos, Direction.UP);
++         return state.func_224755_d(world, pos, Direction.UP);
 +      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
 +         return this.getBlock() == Blocks.field_196658_i || net.minecraftforge.common.Tags.Blocks.DIRT.func_230235_a_(this) || this.getBlock() == Blocks.field_150458_ak;
 +      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {

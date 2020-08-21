@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -183,7 +183,7 @@ public class FMLLoader
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         production = commonLaunchHandler.isProduction();
-        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist);
+        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
@@ -233,7 +233,7 @@ public class FMLLoader
     public static void addAccessTransformer(Path atPath, ModFile modName)
     {
         LOGGER.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
-        accessTransformer.addResource(atPath, modName.getFileName());
+        accessTransformer.offerResource(atPath, modName.getFileName());
     }
 
     public static Dist getDist()

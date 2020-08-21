@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -56,6 +57,7 @@ public class ModelLoaderRegistry
 {
     public static final String WHITE_TEXTURE = "forge:white";
 
+    private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
     private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
     private static volatile boolean registryFrozen = false;
 
@@ -68,24 +70,34 @@ public class ModelLoaderRegistry
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
     }
 
-    public static void initComplete()
+    /**
+     * INTERNAL METHOD, DO NOT CALL
+     */
+    public static void onModelLoadingStart()
     {
-        registryFrozen = true;
+        // Minecraft recreates the ModelBakery on resource reload, but this should only run once during init.
+        if (!registryFrozen)
+        {
+            net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ModelRegistryEvent());
+            registryFrozen = true;
+        }
     }
 
     /**
      * Makes system aware of your loader.
+     * <b>Must be called from within {@link ModelRegistryEvent}</b>
      */
     public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
         if (registryFrozen)
-            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use FMLClientSetupEvent or ModelRegistryEvent to register your loaders.");
+            throw new IllegalStateException("Can not register model loaders after models have started loading. Please use ModelRegistryEvent to register your loaders.");
 
         synchronized(loaders)
         {
@@ -255,7 +267,16 @@ public class ModelLoaderRegistry
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
         else
-            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+        {
+            // handle vanilla item models here, since vanilla has a shortcut for them
+            if (blockModel.getRootModel() == ModelBakery.MODEL_GENERATED) {
+                model = ITEM_MODEL_GENERATOR.makeItemModel(spriteGetter, blockModel).bakeModel(modelBakery, blockModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+            else
+            {
+                model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+        }
 
         if (customModelState != null && !model.doesHandlePerspectives())
             model = new PerspectiveMapWrapper(model, customModelState);

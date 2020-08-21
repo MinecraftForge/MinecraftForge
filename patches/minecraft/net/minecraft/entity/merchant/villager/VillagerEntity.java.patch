@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
-@@ -240,7 +240,7 @@
+@@ -241,7 +241,7 @@
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
@@ -9,7 +9,7 @@
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
-@@ -628,7 +628,8 @@
+@@ -634,7 +634,8 @@
     }
  
     protected ITextComponent func_225513_by_() {

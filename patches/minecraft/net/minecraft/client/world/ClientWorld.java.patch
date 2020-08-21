@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/world/ClientWorld.java
 +++ b/net/minecraft/client/world/ClientWorld.java
-@@ -103,6 +103,8 @@
-       this.func_239136_a_(new BlockPos(8, 64, 8));
+@@ -104,6 +104,8 @@
+       this.func_239136_a_(new BlockPos(8, 64, 8), 0.0F);
        this.func_72966_v();
        this.func_72947_a();
-+      //this.gatherCapabilities(dimension.initCapabilities()); //TODO
++      this.gatherCapabilities();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
     }
  
     public DimensionRenderInfo func_239132_a_() {
-@@ -185,6 +187,7 @@
+@@ -186,6 +188,7 @@
              this.func_217381_Z().func_194340_a(() -> {
                 return Registry.field_212629_r.func_177774_c(p_217418_1_.func_200600_R()).toString();
              });
@@ -17,7 +17,7 @@
              p_217418_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -284,9 +287,11 @@
+@@ -285,9 +288,11 @@
     }
  
     private void func_217424_b(int p_217424_1_, Entity p_217424_2_) {
@@ -29,15 +29,16 @@
     }
  
     public void func_217413_d(int p_217413_1_) {
-@@ -305,6 +310,7 @@
+@@ -306,6 +311,8 @@
        }
  
        this.field_217431_w.remove(p_217414_1_);
 +      p_217414_1_.onRemovedFromWorld();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217414_1_, this));
     }
  
     public void func_217417_b(Chunk p_217417_1_) {
-@@ -447,6 +453,11 @@
+@@ -448,6 +455,11 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -49,7 +50,7 @@
        if (p_184148_1_ == this.field_73037_M.field_71439_g) {
           this.func_184134_a(p_184148_2_, p_184148_4_, p_184148_6_, p_184148_8_, p_184148_9_, p_184148_10_, p_184148_11_, false);
        }
-@@ -454,6 +465,11 @@
+@@ -455,6 +467,11 @@
     }
  
     public void func_217384_a(@Nullable PlayerEntity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,20 +36,16 @@ import java.util.function.Supplier;
  *
  * Do dedicated server specific activities with this event.
  *
+ * <em>This event is fired before construction of the dedicated server. Use {@link net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent}
+ * or {@link net.minecraftforge.fml.event.server.FMLServerStartingEvent} to do stuff with the server, in both dedicated
+ * and integrated server contexts</em>
+ *
  * This is a parallel dispatch event.
  */
 public class FMLDedicatedServerSetupEvent extends ModLifecycleEvent
 {
-    private final Supplier<DedicatedServer> serverSupplier;
-
-    public FMLDedicatedServerSetupEvent(Supplier<DedicatedServer> server, ModContainer container)
+    public FMLDedicatedServerSetupEvent(ModContainer container)
     {
         super(container);
-        this.serverSupplier = server;
-    }
-
-    public Supplier<DedicatedServer> getServerSupplier()
-    {
-        return serverSupplier;
     }
 }

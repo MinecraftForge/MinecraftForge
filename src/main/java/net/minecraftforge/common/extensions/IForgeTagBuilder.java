@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,6 @@ package net.minecraftforge.common.extensions;
 import net.minecraft.data.TagsProvider;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 //TODO, Tag removal support.
 public interface IForgeTagBuilder<T>
@@ -35,6 +31,7 @@ public interface IForgeTagBuilder<T>
         return (TagsProvider.Builder<T>) this;
     }
 
+    @SuppressWarnings("unchecked")
     default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
@@ -52,23 +49,13 @@ public interface IForgeTagBuilder<T>
         return getBuilder();
     }
 
-    default TagsProvider.Builder<T> addOptional(final ResourceLocation... locations)
+    default TagsProvider.Builder<T> addOptional(final ResourceLocation location)
     {
-        return addOptional(Arrays.asList(locations));
+        return getBuilder().add(new ITag.OptionalItemEntry(location));
     }
 
-    default TagsProvider.Builder<T> addOptional(final Collection<ResourceLocation> locations)
+    default TagsProvider.Builder<T> addOptionalTag(final ResourceLocation location)
     {
-        return getBuilder().add(ForgeHooks.makeOptionalTag(true, locations));
-    }
-
-    default TagsProvider.Builder<T> addOptionalTag(final ResourceLocation... locations)
-    {
-        return addOptionalTag(Arrays.asList(locations));
-    }
-
-    default TagsProvider.Builder<T> addOptionalTag(final Collection<ResourceLocation> locations)
-    {
-        return getBuilder().add(ForgeHooks.makeOptionalTag(false, locations));
+        return getBuilder().add(new ITag.OptionalTagEntry(location));
     }
 }

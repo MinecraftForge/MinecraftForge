@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/piglin/PiglinEntity.java
++++ b/net/minecraft/entity/monster/piglin/PiglinEntity.java
+@@ -307,7 +307,7 @@
+    }
+ 
+    protected void func_234439_n_(ItemStack p_234439_1_) {
+-      if (p_234439_1_.func_77973_b() == PiglinTasks.field_234444_a_) {
++      if (p_234439_1_.isPiglinCurrency()) {
+          this.func_184201_a(EquipmentSlotType.OFFHAND, p_234439_1_);
+          this.func_233663_d_(EquipmentSlotType.OFFHAND);
+       } else {

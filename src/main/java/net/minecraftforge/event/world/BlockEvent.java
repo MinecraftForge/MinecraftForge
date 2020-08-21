@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -35,6 +36,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -73,43 +75,6 @@ public class BlockEvent extends Event
     public BlockState getState()
     {
         return state;
-    }
-
-    /**
-     * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
-     * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
-     *
-     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
-     * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
-     *
-     * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
-     *
-     * @author cpw
-     */
-    public static class HarvestDropsEvent extends BlockEvent
-    {
-        private final int fortuneLevel;
-        private final NonNullList<ItemStack> drops;
-        private final boolean isSilkTouching;
-        private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
-        private final PlayerEntity harvester; // May be null for non-player harvesting such as explosions or machines
-
-        public HarvestDropsEvent(World world, BlockPos pos, BlockState state, int fortuneLevel, float dropChance, NonNullList<ItemStack> drops, PlayerEntity harvester, boolean isSilkTouching)
-        {
-            super(world, pos, state);
-            this.fortuneLevel = fortuneLevel;
-            this.setDropChance(dropChance);
-            this.drops = drops;
-            this.isSilkTouching = isSilkTouching;
-            this.harvester = harvester;
-        }
-
-        public int getFortuneLevel() { return fortuneLevel; }
-        public List<ItemStack> getDrops() { return drops; }
-        public boolean isSilkTouching() { return isSilkTouching; }
-        public float getDropChance() { return dropChance; }
-        public void setDropChance(float dropChance) { this.dropChance = dropChance; }
-        public PlayerEntity getHarvester() { return harvester; }
     }
 
     /**
@@ -431,17 +396,81 @@ public class BlockEvent extends Event
     @Cancelable
     public static class PortalSpawnEvent extends BlockEvent
     {
-        private final NetherPortalBlock.Size size;
+        private final PortalSize size;
 
-        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, NetherPortalBlock.Size size)
+        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, PortalSize size)
         {
             super(world, pos, state);
             this.size = size;
         }
 
-        public NetherPortalBlock.Size getPortalSize()
+        public PortalSize getPortalSize()
         {
             return size;
+        }
+    }
+
+    /**
+     * Fired when when this block is right clicked by a tool to change its state.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     *
+     * This event is {@link Cancelable}. If canceled, this will prevent the tool
+     * from changing the block's state.
+     */
+    @Cancelable
+    public static class BlockToolInteractEvent extends BlockEvent
+    {
+
+        private final PlayerEntity player;
+        private final ItemStack stack;
+        private final ToolType toolType;
+        private BlockState state;
+
+        public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
+        {
+            super(world, pos, originalState);
+            this.player = player;
+            this.stack = stack;
+            this.state = originalState;
+            this.toolType = toolType;
+        }
+
+        /**Gets the player using the tool.*/
+        public PlayerEntity getPlayer()
+        {
+            return player;
+        }
+
+        /**Gets the tool being used.*/
+        public ItemStack getHeldItemStack()
+        {
+            return stack;
+        }
+
+        /**Gets the current type of the tool being compared against.*/
+        public ToolType getToolType()
+        {
+            return toolType;
+        }
+
+        /**
+         * Sets the transformed state after tool use.
+         * If not set, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public void setFinalState(BlockState finalState)
+        {
+            this.state = finalState;
+        }
+
+        /**
+         * Gets the transformed state after tool use.
+         * If setFinalState not called, will return the original state.
+         * This will be bypassed if canceled returning null instead.
+         * */
+        public BlockState getFinalState()
+        {
+            return state;
         }
     }
 }

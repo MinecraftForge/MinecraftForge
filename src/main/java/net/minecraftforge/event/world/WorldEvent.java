@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -128,17 +128,17 @@ public class WorldEvent extends Event
     {
         private final EntityClassification type;
         private final BlockPos pos;
-        private final List<SpawnListEntry> list;
+        private final List<MobSpawnInfo.Spawners> list;
 
-        public PotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<SpawnListEntry> oldList)
+        public PotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<MobSpawnInfo.Spawners> oldList)
         {
             super(world);
             this.pos = pos;
             this.type = type;
             if (oldList != null)
-                this.list = new ArrayList<SpawnListEntry>(oldList);
+                this.list = new ArrayList<>(oldList);
             else
-                this.list = new ArrayList<SpawnListEntry>();
+                this.list = new ArrayList<>();
         }
 
         public EntityClassification getType()
@@ -151,7 +151,7 @@ public class WorldEvent extends Event
             return pos;
         }
 
-        public List<SpawnListEntry> getList()
+        public List<MobSpawnInfo.Spawners> getList()
         {
             return list;
         }

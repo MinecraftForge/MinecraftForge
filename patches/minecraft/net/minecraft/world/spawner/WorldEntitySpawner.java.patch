@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/spawner/WorldEntitySpawner.java
 +++ b/net/minecraft/world/spawner/WorldEntitySpawner.java
-@@ -83,7 +83,7 @@
-          }
+@@ -82,7 +82,7 @@
+          } while(mobentity.func_104002_bU() || mobentity.func_213392_I());
  
           final Entity entity_f = entity;
 -         EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
@@ -9,7 +9,7 @@
           if (entityclassification != EntityClassification.MISC) {
              BlockPos blockpos = entity.func_233580_cy_();
              long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
-@@ -171,13 +171,15 @@
+@@ -169,13 +169,15 @@
                          }
  
                          mobentity.func_70012_b(d0, (double)i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
@@ -20,22 +20,22 @@
                             ilivingentitydata = mobentity.func_213386_a(p_234966_1_, p_234966_1_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
                             ++j;
                             ++l1;
-                            p_234966_1_.func_217376_c(mobentity);
+                            p_234966_1_.func_242417_l(mobentity);
                             p_234966_5_.run(mobentity, p_234966_2_);
 -                           if (j >= mobentity.func_70641_bl()) {
 +                           if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mobentity)) {
                                return;
                             }
  
-@@ -255,6 +257,7 @@
+@@ -253,6 +255,7 @@
           return null;
        } else {
-          List<Biome.SpawnListEntry> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
+          List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
 +         list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_234977_0_, p_234977_3_, p_234977_5_, list);
           return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
        }
     }
-@@ -294,6 +297,13 @@
+@@ -292,6 +295,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;
        } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
@@ -49,7 +49,14 @@
           BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
           FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
           BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -312,8 +322,6 @@
+@@ -304,14 +314,12 @@
+          case ON_GROUND:
+          default:
+             BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
+-            if (!blockstate1.func_215688_a(p_209382_1_, blockpos1, p_209382_3_)) {
++            if (!blockstate1.canCreatureSpawn(p_209382_1_, blockpos1, p_209382_0_, p_209382_3_)) {
+                return false;
+             } else {
                 return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
              }
           }
@@ -58,11 +65,11 @@
        }
     }
  
-@@ -356,6 +364,7 @@
+@@ -355,6 +363,7 @@
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;
 +                        if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null, SpawnReason.CHUNK_GENERATION) == -1) continue;
                          if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
                             ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT)null);
-                            p_77191_0_.func_217376_c(mobentity);
+                            p_77191_0_.func_242417_l(mobentity);

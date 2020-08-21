@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemGroup.java
 +++ b/net/minecraft/item/ItemGroup.java
-@@ -104,11 +104,14 @@
+@@ -107,12 +107,15 @@
     private EnchantmentType[] field_111230_s = new EnchantmentType[0];
     private ItemStack field_151245_t;
  
@@ -11,13 +11,14 @@
     public ItemGroup(int p_i1853_1_, String p_i1853_2_) {
 -      this.field_78033_n = p_i1853_1_;
        this.field_78034_o = p_i1853_2_;
+       this.field_242391_q = new TranslationTextComponent("itemGroup." + p_i1853_2_);
        this.field_151245_t = ItemStack.field_190927_a;
 -      field_78032_a[p_i1853_1_] = this;
 +      this.field_78033_n = addGroupSafe(p_i1853_1_, this);
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -179,11 +182,13 @@
+@@ -178,11 +181,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -31,7 +32,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +225,58 @@
+@@ -219,4 +224,58 @@
        }
  
     }
@@ -72,11 +73,11 @@
 +   public int getSlotColor() {
 +      return -2130706433;
 +   }
-+   
++
 +   public static synchronized int getGroupCountSafe() {
 +      return ItemGroup.field_78032_a.length;
 +   }
-+   
++
 +   private static synchronized int addGroupSafe(int index, ItemGroup newGroup) {
 +      if(index == -1) {
 +         index = field_78032_a.length;

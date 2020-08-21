@@ -1,0 +1,14 @@
+--- a/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
++++ b/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
+@@ -165,9 +165,9 @@
+    }
+ 
+    @Nullable
+-   public Entity func_241206_a_(ServerWorld p_241206_1_) {
++   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.func_213750_eg();
+-      return super.func_241206_a_(p_241206_1_);
++      return super.changeDimension(p_241206_1_, teleporter);
+    }
+ 
+    protected void func_213750_eg() {

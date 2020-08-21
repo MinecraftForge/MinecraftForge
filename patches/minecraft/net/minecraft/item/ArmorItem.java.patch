@@ -1,13 +1,11 @@
 --- a/net/minecraft/item/ArmorItem.java
 +++ b/net/minecraft/item/ArmorItem.java
-@@ -113,6 +113,10 @@
-       return this.field_77879_b;
-    }
+@@ -69,7 +69,7 @@
+       UUID uuid = field_185084_n[p_i48534_2_.func_188454_b()];
+       builder.put(Attributes.field_233826_i_, new AttributeModifier(uuid, "Armor modifier", (double)this.field_77879_b, AttributeModifier.Operation.ADDITION));
+       builder.put(Attributes.field_233827_j_, new AttributeModifier(uuid, "Armor toughness", (double)this.field_189415_e, AttributeModifier.Operation.ADDITION));
+-      if (p_i48534_1_ == ArmorMaterial.NETHERITE) {
++      if (this.field_234655_c_ > 0) {
+          builder.put(Attributes.field_233820_c_, new AttributeModifier(uuid, "Armor knockback resistance", (double)this.field_234655_c_, AttributeModifier.Operation.ADDITION));
+       }
  
-+   public float getToughness() {
-+      return this.field_189415_e;
-+   }
-+
-    public float func_234657_f_() {
-       return this.field_189415_e;
-    }

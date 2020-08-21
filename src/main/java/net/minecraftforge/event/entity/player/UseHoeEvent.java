@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,9 +33,12 @@ import javax.annotation.Nonnull;
  * and damage the hoe.
  *
  * setResult(ALLOW) is the same as the old setHandled();
+ * 
+ * TODO: 1.17 Remove
  */
 @Cancelable
 @HasResult
+@Deprecated
 public class UseHoeEvent extends PlayerEvent
 {
     private final ItemUseContext context;;

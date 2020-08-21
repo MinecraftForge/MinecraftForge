@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -90,8 +92,8 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
             ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
-            font.func_238422_b_(mStack, font.func_238417_a_(name, listWidth),left + 3, top + 2, 0xFFFFFF);
-            font.func_238422_b_(mStack, font.func_238417_a_(version, listWidth), left + 3 , top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
+            font.func_238422_b_(mStack, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name,    listWidth))), left + 3, top + 2, 0xFFFFFF);
+            font.func_238422_b_(mStack, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             if (vercheck.status.shouldDraw())
             {
                 //TODO: Consider adding more icons for visualization

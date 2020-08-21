@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,8 +45,6 @@ public class ForgeConfig
         public final BooleanValue fixVanillaCascading;
 
         public final IntValue dimensionUnloadQueueDelay;
-
-        public final IntValue clumpingThreshold;
 
         public final BooleanValue treatEmptyTagsAsAir;
 
@@ -101,12 +99,6 @@ public class ForgeConfig
                     .translation("forge.configgui.dimensionUnloadQueueDelay")
                     .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
-            clumpingThreshold = builder
-                    .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024.")
-                    .translation("forge.configgui.clumpingThreshold")
-                    .worldRestart()
-                    .defineInRange("clumpingThreshold", 64, 64, 1024);
-
             treatEmptyTagsAsAir = builder
                     .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
                     .translation("forge.configgui.treatEmptyTagsAsAir")
@@ -138,6 +130,8 @@ public class ForgeConfig
         public final BooleanValue selectiveResourceReloadEnabled;
 
         public final BooleanValue showLoadWarnings;
+
+        public final BooleanValue useCombinedDepthStencilAttachment;
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
@@ -183,6 +177,11 @@ public class ForgeConfig
                 .comment("When enabled, Forge will show any warnings that occurred during loading.")
                 .translation("forge.configgui.showLoadWarnings")
                 .define("showLoadWarnings", true);
+
+            useCombinedDepthStencilAttachment = builder
+                    .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
+                    .translation("forge.configgui.useCombinedDepthStencilAttachment")
+                    .define("useCombinedDepthStencilAttachment", false);
 
             builder.pop();
         }

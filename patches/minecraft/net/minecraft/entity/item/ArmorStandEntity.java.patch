@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ArmorStandEntity.java
 +++ b/net/minecraft/entity/item/ArmorStandEntity.java
-@@ -55,7 +55,7 @@
+@@ -60,7 +60,7 @@
     public static final DataParameter<Rotations> field_184806_f = EntityDataManager.func_187226_a(ArmorStandEntity.class, DataSerializers.field_187199_i);
     public static final DataParameter<Rotations> field_184807_g = EntityDataManager.func_187226_a(ArmorStandEntity.class, DataSerializers.field_187199_i);
     private static final Predicate<Entity> field_184798_bv = (p_200617_0_) -> {

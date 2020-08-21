@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,10 +69,10 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
-            return false;
+            return ComputeFlags.NO_REWRITE;
 
         Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -80,7 +80,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
         
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return false;
+            return ComputeFlags.NO_REWRITE;
         }
         
         //Static methods named "create" with first argument as a string
@@ -98,8 +98,8 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             if (args.length == 0 || !args[0].equals(STRING)) {
                 LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
                     sb.append("Enum has create method without String as first parameter:\n");
-                    sb.append("  Enum: " + classType.getDescriptor()).append("\n");
-                    sb.append("  Target: ").append(mtd.name + mtd.desc).append("\n");
+                    sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
+                    sb.append("  Target: ").append(mtd.name).append(mtd.desc).append("\n");
                 }));
                 throw new IllegalStateException("Enum has create method without String as first parameter: " + mtd.name + mtd.desc);
             }
@@ -108,8 +108,8 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             if (!ret.equals(classType)) {
                 LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
                     sb.append("Enum has create method with incorrect return type:\n");
-                    sb.append("  Enum: " + classType.getDescriptor()).append("\n");
-                    sb.append("  Target: ").append(mtd.name + mtd.desc).append("\n");
+                    sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
+                    sb.append("  Target: ").append(mtd.name).append(mtd.desc).append("\n");
                     sb.append("  Found: ").append(ret.getClassName()).append(", Expected: ").append(classType.getClassName());
                 }));
                 throw new IllegalStateException("Enum has create method with incorrect return type: " + mtd.name + mtd.desc);
@@ -223,7 +223,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.areturn(classType);
             }
         });
-        return true;
+        return ComputeFlags.COMPUTE_FRAMES;
     }
 
 }

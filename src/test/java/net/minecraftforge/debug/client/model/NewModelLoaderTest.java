@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
@@ -123,6 +124,10 @@ public class NewModelLoaderTest
             new Item(new Item.Properties().group(ItemGroup.MISC))
     );
 
+    public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
+            new Item(new Item.Properties().group(ItemGroup.MISC))
+    );
+
     public NewModelLoaderTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -130,10 +135,10 @@ public class NewModelLoaderTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
 
-        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::modelRegistry);
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
+    public void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoaderRegistry.registerLoader(new ResourceLocation(MODID, "custom_loader"), new TestLoader());
     }

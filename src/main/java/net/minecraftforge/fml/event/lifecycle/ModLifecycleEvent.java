@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  * Parent type to all ModLifecycle events. This is based on Forge EventBus. They fire through the
  * ModContainer's eventbus instance.
  */
-public class ModLifecycleEvent extends Event
+public class ModLifecycleEvent extends Event implements IModBusEvent
 {
     private final ModContainer container;
 

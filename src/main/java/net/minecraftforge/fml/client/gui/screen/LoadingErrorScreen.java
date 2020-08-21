@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.ErrorScreen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
@@ -100,8 +101,8 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     private void drawMultiLineCenteredString(MatrixStack mStack, FontRenderer fr, ITextComponent str, int x, int y) {
-        for (ITextProperties s : fr.func_238425_b_(str, this.field_230708_k_)) {
-            fr.func_238407_a_(mStack, s, (float) (x - fr.func_238414_a_(s) / 2.0), y, 0xFFFFFF);
+        for (IReorderingProcessor s : fr.func_238425_b_(str, this.field_230708_k_)) {
+            fr.func_238407_a_(mStack, s, (float) (x - fr.func_243245_a(s) / 2.0), y, 0xFFFFFF);
             y+=fr.FONT_HEIGHT;
         }
     }
@@ -148,11 +149,11 @@ public class LoadingErrorScreen extends ErrorScreen {
             @Override
             public void func_230432_a_(MatrixStack mStack, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
                 FontRenderer font = Minecraft.getInstance().fontRenderer;
-                final List<ITextProperties> strings = font.func_238425_b_(message, LoadingEntryList.this.field_230670_d_);
+                final List<IReorderingProcessor> strings = font.func_238425_b_(message, LoadingEntryList.this.field_230670_d_);
                 int y = top + 2;
                 for (int i = 0; i < Math.min(strings.size(), 2); i++) {
                     if (center)
-                        font.func_238422_b_(mStack, strings.get(i), left + (field_230670_d_) - font.func_238414_a_(strings.get(i)) / 2F, y, 0xFFFFFF);
+                        font.func_238422_b_(mStack, strings.get(i), left + (field_230670_d_) - font.func_243245_a(strings.get(i)) / 2F, y, 0xFFFFFF);
                     else
                         font.func_238422_b_(mStack, strings.get(i), left + 5, y, 0xFFFFFF);
                     y += font.FONT_HEIGHT;

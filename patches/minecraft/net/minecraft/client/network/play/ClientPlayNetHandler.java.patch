@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/network/play/ClientPlayNetHandler.java
 +++ b/net/minecraft/client/network/play/ClientPlayNetHandler.java
-@@ -388,6 +388,7 @@
+@@ -384,6 +384,7 @@
  
        this.field_147299_f.field_184132_p.func_217737_a();
        this.field_147299_f.field_71439_g.func_70065_x();
@@ -8,7 +8,7 @@
        int i = p_147282_1_.func_149197_c();
        this.field_147300_g.func_217408_a(i, this.field_147299_f.field_71439_g);
        this.field_147299_f.field_71439_g.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -399,6 +400,7 @@
+@@ -395,6 +396,7 @@
        this.field_147299_f.field_71439_g.func_228355_a_(p_147282_1_.func_229743_k_());
        this.field_147299_f.field_71442_b.func_78746_a(p_147282_1_.func_149198_e());
        this.field_147299_f.field_71442_b.func_241675_a_(p_147282_1_.func_241786_f_());
@@ -16,7 +16,7 @@
        this.field_147299_f.field_71474_y.func_82879_c();
        this.field_147302_e.func_179290_a(new CCustomPayloadPacket(CCustomPayloadPacket.field_210344_a, (new PacketBuffer(Unpooled.buffer())).func_180714_a(ClientBrandRetriever.getClientModName())));
        this.field_147299_f.func_213229_ar().func_216814_a();
-@@ -745,7 +747,7 @@
+@@ -734,7 +736,7 @@
           BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
           TileEntity tileentity = this.field_147300_g.func_175625_s(blockpos);
           if (tileentity != null) {
@@ -25,18 +25,18 @@
           }
        }
  
-@@ -844,7 +846,9 @@
+@@ -815,7 +817,9 @@
  
     public void func_147251_a(SChatPacket p_147251_1_) {
        PacketThreadUtil.func_218797_a(p_147251_1_, this, this.field_147299_f);
 -      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c(), p_147251_1_.func_240810_e_());
-+      net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c());
++      net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c(), p_147251_1_.func_240810_e_());
 +      if (message == null) return;
 +      this.field_147299_f.field_71456_v.func_238450_a_(p_147251_1_.func_192590_c(), message, p_147251_1_.func_240810_e_());
     }
  
     public void func_147279_a(SAnimateHandPacket p_147279_1_) {
-@@ -1034,8 +1038,10 @@
+@@ -1004,8 +1008,10 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }
  
@@ -47,7 +47,7 @@
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
        clientplayerentity1.field_70177_z = -180.0F;
        clientplayerentity1.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -1161,6 +1167,12 @@
+@@ -1131,6 +1137,12 @@
  
        if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
           ((CommandBlockScreen)this.field_147299_f.field_71462_r).func_184075_a();
@@ -60,15 +60,15 @@
        }
  
     }
-@@ -1329,6 +1341,7 @@
-       clientrecipebook.func_199644_c();
+@@ -1299,6 +1311,7 @@
+       clientrecipebook.func_243196_a(this.field_199528_o.func_199510_b());
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
 +      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.field_199528_o);
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1409,7 +1422,7 @@
+@@ -1376,7 +1389,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -77,15 +77,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1426,6 +1439,7 @@
-       }
- 
-       this.field_147299_f.func_213253_a(SearchTreeManager.field_215360_b).func_194040_a();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.field_199725_m));
-    }
- 
-    public void func_175098_a(SCombatPacket p_175098_1_) {
-@@ -1909,10 +1923,12 @@
+@@ -1883,10 +1896,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {

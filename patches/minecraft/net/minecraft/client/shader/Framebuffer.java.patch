@@ -11,22 +11,25 @@
        }
  
        this.func_147607_a(9728);
-@@ -127,7 +130,10 @@
+@@ -127,7 +130,14 @@
        GlStateManager.func_227727_h_(FramebufferConstants.field_227592_a_, this.field_147616_f);
        GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
        if (this.field_147619_e) {
 +         if(!stencilEnabled)
           GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227595_d_, 3553, this.field_147624_h, 0);
-+         else
-+         GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.field_147624_h, 0);
++         else if(net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
++            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.field_147624_h, 0);
++         } else {
++            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.field_147624_h, 0);
++            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.field_147624_h, 0);
++         }
        }
  
        this.func_147611_b();
-@@ -280,4 +286,30 @@
-       GlStateManager.func_227658_a_(i, p_216493_1_);
+@@ -281,6 +291,32 @@
        this.func_147609_e();
     }
-+
+ 
 +
 +   /*================================ FORGE START ================================================*/
 +   private boolean stencilEnabled = false;
@@ -52,4 +55,7 @@
 +      return this.stencilEnabled;
 +   }
 +   /*================================ FORGE END   ================================================*/
- }
++
+    public int func_242996_f() {
+       return this.field_147617_g;
+    }

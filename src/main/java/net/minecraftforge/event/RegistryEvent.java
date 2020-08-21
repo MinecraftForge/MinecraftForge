@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
@@ -35,7 +36,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 /**
  * RegistryEvent supertype.
  */
-public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T>
+public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IModBusEvent
 {
     RegistryEvent(Class<T> clazz) {
         super(clazz);
@@ -43,7 +44,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
     /**
      * Register new registries when you receive this event, through the {@link RecipeBuilder}
      */
-    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event
+    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
     {
         @Override
         public String toString() {

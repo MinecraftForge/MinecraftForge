@@ -1,0 +1,38 @@
+--- a/net/minecraft/entity/monster/piglin/PiglinTasks.java
++++ b/net/minecraft/entity/monster/piglin/PiglinTasks.java
+@@ -232,7 +232,7 @@
+       ItemStack itemstack = p_234477_0_.func_184586_b(Hand.OFF_HAND);
+       p_234477_0_.func_184611_a(Hand.OFF_HAND, ItemStack.field_190927_a);
+       if (p_234477_0_.func_242337_eM()) {
+-         boolean flag = func_234492_b_(itemstack.func_77973_b());
++         boolean flag = itemstack.isPiglinCurrency();
+          if (p_234477_1_ && flag) {
+             func_234475_a_(p_234477_0_, func_234524_k_(p_234477_0_));
+          } else if (!flag) {
+@@ -318,7 +318,7 @@
+          return false;
+       } else if (func_234453_C_(p_234474_0_) && p_234474_0_.func_213375_cj().func_218191_a(MemoryModuleType.field_234103_o_)) {
+          return false;
+-      } else if (func_234492_b_(item)) {
++      } else if (p_234474_1_.isPiglinCurrency()) {
+          return func_234455_E_(p_234474_0_);
+       } else {
+          boolean flag = p_234474_0_.func_234437_l_(p_234474_1_);
+@@ -418,7 +418,7 @@
+    }
+ 
+    protected static boolean func_234489_b_(PiglinEntity p_234489_0_, ItemStack p_234489_1_) {
+-      return !func_234453_C_(p_234489_0_) && !func_234451_A_(p_234489_0_) && p_234489_0_.func_242337_eM() && func_234492_b_(p_234489_1_.func_77973_b());
++      return !func_234453_C_(p_234489_0_) && !func_234451_A_(p_234489_0_) && p_234489_0_.func_242337_eM() && p_234489_1_.isPiglinCurrency();
+    }
+ 
+    protected static void func_234468_a_(PiglinEntity p_234468_0_, LivingEntity p_234468_1_) {
+@@ -519,7 +519,7 @@
+    public static boolean func_234460_a_(LivingEntity p_234460_0_) {
+       for(ItemStack itemstack : p_234460_0_.func_184193_aE()) {
+          Item item = itemstack.func_77973_b();
+-         if (item instanceof ArmorItem && ((ArmorItem)item).func_200880_d() == ArmorMaterial.GOLD) {
++         if (itemstack.makesPiglinsNeutral(p_234460_0_)) {
+             return true;
+          }
+       }

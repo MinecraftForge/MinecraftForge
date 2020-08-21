@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -158,17 +158,28 @@
+@@ -156,17 +156,28 @@
           }
  
           float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
@@ -29,33 +29,30 @@
        RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
     }
  
-@@ -177,10 +188,18 @@
+@@ -174,10 +185,17 @@
+       RenderSystem.fogDensity(0.0F);
        RenderSystem.fogMode(GlStateManager.FogMode.EXP2);
     }
- 
--   public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
-+    @Deprecated // FORGE: Pass in partialTicks
-+    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
-+       setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
-+    }
+-
++   @Deprecated // FORGE: Pass in partialTicks
+    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
++      setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
++   }
 +
-+    public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {
++   public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {
        FluidState fluidstate = p_228372_0_.func_216771_k();
        Entity entity = p_228372_0_.func_216773_g();
-       boolean flag = fluidstate.func_206886_c() != Fluids.field_204541_a;
 +      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_228372_1_, p_228372_0_, partialTicks, 0.1F);
 +      if (hook >= 0) RenderSystem.fogDensity(hook);
 +      else
        if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
           float f = 1.0F;
           f = 0.05F;
-@@ -231,8 +250,8 @@
+@@ -228,6 +246,7 @@
           RenderSystem.fogEnd(f3);
           RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
           RenderSystem.setupNvFogDistance();
 +         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_228372_1_, p_228372_0_, partialTicks, f3);
        }
--
-    }
  
-    public static void func_228373_b_() {
+    }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,12 @@ package net.minecraftforge.client.event;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
 import java.util.Set;
 
 
-public class TextureStitchEvent extends Event
+public class TextureStitchEvent extends Event implements IModBusEvent
 {
     private final AtlasTexture map;
 

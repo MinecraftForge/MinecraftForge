@@ -1,6 +1,6 @@
 {
   "parent": "data_gen_test:item/fishing_rod",
   "textures": {
-    "layer0": "item/fishing_rod_cast"
+    "layer0": "minecraft:item/fishing_rod_cast"
   }
 }
