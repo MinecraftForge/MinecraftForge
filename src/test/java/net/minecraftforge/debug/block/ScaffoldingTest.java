@@ -7,12 +7,16 @@ import net.minecraft.block.ScaffoldingBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -34,6 +38,26 @@ public class ScaffoldingTest
     {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modBus);
+        modBus.addListener(this::gatherData);
+    }
+
+    private void gatherData(final GatherDataEvent event)
+    {
+        if(event.includeServer()) event.getGenerator().addProvider(new ScaffoldingTagsProvider(event.getGenerator()));
+    }
+
+    static class ScaffoldingTagsProvider extends BlockTagsProvider
+    {
+        public ScaffoldingTagsProvider(DataGenerator generatorIn)
+        {
+		    super(generatorIn);
+        }
+
+        @Override
+        protected void registerTags()
+        {
+            this.func_240522_a_(Tags.Blocks.SCAFFOLDING).func_240532_a_(SCAFFOLDING_TAG_TEST.get());
+        }
     }
 
     static class ScaffoldingMethodTestBlock extends ScaffoldingBlock
