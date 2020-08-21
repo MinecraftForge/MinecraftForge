@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.ResourcePack
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackFileNotFoundException;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
