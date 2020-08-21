@@ -121,7 +121,7 @@ public class ConfigFileTypeHandler {
         }
     }
 
-    public static class ConfigLoadingException extends RuntimeException
+    private static class ConfigLoadingException extends RuntimeException
     {
         public ConfigLoadingException(ModConfig config, Exception cause)
         {
