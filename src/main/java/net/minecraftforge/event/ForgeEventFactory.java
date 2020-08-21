@@ -39,6 +39,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
@@ -55,6 +56,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.world.spawner.AbstractSpawner;
@@ -73,6 +75,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
@@ -207,6 +210,11 @@ public class ForgeEventFactory
     public static boolean doSpecialSpawn(MobEntity entity, World world, float x, float y, float z, AbstractSpawner spawner, SpawnReason spawnReason)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnReason));
+    }
+    
+    public static boolean doInitialSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.InitialSpawn(entity, world, x, y, z, difficultyIn, spawnReason, spawnDataIn, dataTag));
     }
 
     public static Result canEntityDespawn(MobEntity entity)

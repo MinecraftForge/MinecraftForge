@@ -20,16 +20,18 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
@@ -152,6 +154,53 @@ public class LivingSpawnEvent extends LivingEvent
         public SpawnReason getSpawnReason()
         {
             return spawnReason;
+        }
+    }
+    
+    /**
+     * This event is fired when an entity is initially spawned.<br>
+     * This allows you to do things after the entity is first spawned.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * This event does not have a {@link HasResult}<br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class InitialSpawn extends LivingSpawnEvent
+    {
+        private final SpawnReason spawnReason;
+        @Nullable
+        private final ILivingEntityData spawnDataIn;
+        @Nullable
+        private final CompoundNBT dataTag;
+        private final DifficultyInstance difficultyIn;
+    	
+        public InitialSpawn(MobEntity entity, IWorld world, double x, double y, double z, DifficultyInstance difficultyIn, SpawnReason spawnReason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) 
+        {
+            super(entity, world, x, y, z);
+            this.spawnReason = spawnReason;
+            this.spawnDataIn = spawnDataIn;
+            this.dataTag = dataTag;
+            this.difficultyIn = difficultyIn;
+        }
+    	
+        public SpawnReason getSpawnReason()
+        {
+            return spawnReason;
+        }
+        
+        public ILivingEntityData getSpawnData() 
+        {
+            return spawnDataIn;
+        }
+        
+        public DifficultyInstance getDifficultyInstance() 
+        {
+            return this.difficultyIn;
+        }
+        
+        public CompoundNBT getDataTag() 
+        {
+            return dataTag;
         }
     }
 
