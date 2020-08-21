@@ -410,6 +410,8 @@ public interface IForgeItem
     }
 
     /**
+     * TODO: Remove 1.17
+     * 
      * Called by RenderBiped and RenderPlayer to determine the armor texture that
      * should be use for the currently equipped item. This will only be called on
      * instances of ItemArmor.
@@ -422,6 +424,7 @@ public interface IForgeItem
      * @param type   The subtype, can be null or "overlay"
      * @return Path of texture to bind, or null to use default
      */
+    @Deprecated
     @Nullable
     default String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type)
     {
@@ -443,6 +446,8 @@ public interface IForgeItem
     }
 
     /**
+     * TODO: Remove 1.17
+     * 
      * Override this method to have an item handle its own armor rendering.
      *
      * @param entityLiving The entity wearing the armor
@@ -451,6 +456,7 @@ public interface IForgeItem
      * @param _default     Original armor model. Will have attributes set.
      * @return A ModelBiped to render instead of the default
      */
+    @Deprecated
     @OnlyIn(Dist.CLIENT)
     @Nullable
     default <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default)

@@ -79,6 +79,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.armor.ArmorModelRegistry;
+import net.minecraftforge.client.model.armor.HorseArmorModel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
@@ -119,9 +121,18 @@ public class ForgeHooksClient
 
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
+    //TODO: Rename to getBipedArmorTexture, pass in LivingEntity
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlotType slot, String type)
     {
-        String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
+        String newResult = ArmorModelRegistry.getBipedArmorTexture((LivingEntity) entity, armor, slot, type).toString();
+        if(newResult != null) return newResult;
+    	String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
+        return result != null ? result : _default;
+    }
+
+    public static ResourceLocation getHorseArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlotType slot, String type, ResourceLocation _default)
+    {
+        ResourceLocation result = ArmorModelRegistry.getHorseArmorTexture(entity, stack, slot, type);
         return result != null ? result : _default;
     }
 
@@ -177,9 +188,18 @@ public class ForgeHooksClient
         renderLayer.set(layer);
     }
 
+    //TODO: Rename to getBipedArmorModel
     public static <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType slot, A _default)
     {
-        A model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
+        A newModel = ArmorModelRegistry.getBipedArmorModel(entityLiving, itemStack, slot, _default);
+        if(newModel != null) return newModel;
+    	A model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
+        return model == null ? _default : model;
+    }
+
+    public static <A extends HorseArmorModel<?>> A getHorseArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlotType slot, A _default)
+    {
+        A model = ArmorModelRegistry.getHorseArmorModel(entity, stack, slot, _default);
         return model == null ? _default : model;
     }
 

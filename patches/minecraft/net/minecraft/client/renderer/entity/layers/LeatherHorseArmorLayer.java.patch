@@ -1,0 +1,36 @@
+--- a/net/minecraft/client/renderer/entity/layers/LeatherHorseArmorLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/LeatherHorseArmorLayer.java
+@@ -16,7 +16,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class LeatherHorseArmorLayer extends LayerRenderer<HorseEntity, HorseModel<HorseEntity>> {
+-   private final HorseModel<HorseEntity> field_215341_a = new HorseModel<>(0.1F);
++   private final net.minecraftforge.client.model.armor.HorseArmorModel<HorseEntity> field_215341_a = new net.minecraftforge.client.model.armor.HorseArmorModel<>(0.1F);
+ 
+    public LeatherHorseArmorLayer(IEntityRenderer<HorseEntity, HorseModel<HorseEntity>> p_i50937_1_) {
+       super(p_i50937_1_);
+@@ -26,9 +26,10 @@
+       ItemStack itemstack = p_225628_4_.func_213803_dV();
+       if (itemstack.func_77973_b() instanceof HorseArmorItem) {
+          HorseArmorItem horsearmoritem = (HorseArmorItem)itemstack.func_77973_b();
+-         this.func_215332_c().func_217111_a(this.field_215341_a);
+-         this.field_215341_a.func_212843_a_(p_225628_4_, p_225628_5_, p_225628_6_, p_225628_7_);
+-         this.field_215341_a.func_225597_a_(p_225628_4_, p_225628_5_, p_225628_6_, p_225628_8_, p_225628_9_, p_225628_10_);
++         net.minecraftforge.client.model.armor.HorseArmorModel<HorseEntity> armorModel = net.minecraftforge.client.ForgeHooksClient.getHorseArmorModel(p_225628_4_, itemstack, net.minecraft.inventory.EquipmentSlotType.CHEST, this.field_215341_a);
++         this.func_215332_c().func_217111_a(armorModel);
++         armorModel.func_212843_a_(p_225628_4_, p_225628_5_, p_225628_6_, p_225628_7_);
++         armorModel.func_225597_a_(p_225628_4_, p_225628_5_, p_225628_6_, p_225628_8_, p_225628_9_, p_225628_10_);
+          float f;
+          float f1;
+          float f2;
+@@ -43,8 +44,8 @@
+             f2 = 1.0F;
+          }
+ 
+-         IVertexBuilder ivertexbuilder = p_225628_2_.getBuffer(RenderType.func_228640_c_(horsearmoritem.func_219976_d()));
+-         this.field_215341_a.func_225598_a_(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.field_229196_a_, f, f1, f2, 1.0F);
++         IVertexBuilder ivertexbuilder = p_225628_2_.getBuffer(RenderType.func_228640_c_(net.minecraftforge.client.ForgeHooksClient.getHorseArmorTexture(p_225628_4_, itemstack, net.minecraft.inventory.EquipmentSlotType.CHEST, null, horsearmoritem.func_219976_d())));
++         armorModel.func_225598_a_(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.field_229196_a_, f, f1, f2, 1.0F);
+       }
+    }
+ }
