@@ -69,8 +69,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="create_entity_classification_test"
 [[mods]]
-	modId="nether_biomes_test"
-[[mods]]
     modId="ender_mask_test"
 [[mods]]
     modId="raid_enum_test"
@@ -80,3 +78,5 @@ license="LGPL v2.1"
     modId="tool_interact_test"
 [[mods]]
     modId="custom_elytra_test"
+[[mods]]
+    modId="nether_biomes_test"
