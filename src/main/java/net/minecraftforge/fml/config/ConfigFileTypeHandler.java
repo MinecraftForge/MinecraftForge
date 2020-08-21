@@ -120,4 +120,12 @@ public class ConfigFileTypeHandler {
             }
         }
     }
+
+    public static class ConfigLoadingException extends RuntimeException
+    {
+        public ConfigLoadingException(ModConfig config, Exception cause)
+        {
+            super("Failed loading config file " + config.getFullPath().toString() + " with type " + config.getType() + " for modid " + config.getModId(), cause);
+        }
+    }
 }
