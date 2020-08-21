@@ -35,6 +35,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
@@ -742,5 +744,12 @@ public class ForgeEventFactory
     {
         RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);
         MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity player, Pose pose, EntitySize size, float eyeHeight)
+    {
+        EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
     }
 }
