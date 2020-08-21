@@ -102,7 +102,7 @@
 +   }
 +
 +   @Override
-+   public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, PlayerEntity player, BlockState blockState) {
++   public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
 +      return toolClasses.getOrDefault(tool, -1);
 +   }
 +

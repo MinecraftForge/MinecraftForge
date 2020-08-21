@@ -99,7 +99,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param state  The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
      */
-    default int getHarvestLevel(ToolType tool, PlayerEntity player, BlockState state)
+    default int getHarvestLevel(ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState state)
     {
         return getStack().getItem().getHarvestLevel(getStack(), tool, player, state);
     }
