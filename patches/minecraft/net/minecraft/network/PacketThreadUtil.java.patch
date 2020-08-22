@@ -8,25 +8,23 @@
                 p_218797_0_.func_148833_a(p_218797_1_);
              } else {
                 field_225384_a.debug("Ignoring packet due to disconnection: " + p_218797_0_);
-@@ -25,4 +26,29 @@
+@@ -25,4 +26,27 @@
           throw ThreadQuickExitException.field_179886_a;
        }
     }
 +
-+   public static <T extends INetHandler> boolean shouldProcess(IPacket<T> packetIn, T processor) {
++   private static <T extends INetHandler> boolean shouldProcess(IPacket<T> packetIn, T processor) {
 +      if (processor instanceof net.minecraft.network.play.ServerPlayNetHandler) {
 +         net.minecraft.entity.player.ServerPlayerEntity player = ((net.minecraft.network.play.ServerPlayNetHandler) processor).field_147369_b;
 +         if (!player.func_70089_S()) {
 +            // Allow CustomPayloads as mods communicate here
 +            if (packetIn instanceof net.minecraft.network.play.client.CCustomPayloadPacket) {
-+               packetIn.func_148833_a(processor);
 +               return true;
 +            }
 +
 +            // Allow the player to respawn
-+            if (packetIn instanceof net.minecraft.network.play.client.CClientStatusPacket && ((net.minecraft.network.play.client.CClientStatusPacket) packetIn).func_149435_c() == net.minecraft.network.play.client.CClientStatusPacket.State.PERFORM_RESPAWN) {
-+               packetIn.func_148833_a(processor);
-+               return true;
++            if (packetIn instanceof net.minecraft.network.play.client.CClientStatusPacket) {
++               return ((net.minecraft.network.play.client.CClientStatusPacket) packetIn).func_149435_c() == net.minecraft.network.play.client.CClientStatusPacket.State.PERFORM_RESPAWN;
 +            }
 +
 +            // Deny anything else
