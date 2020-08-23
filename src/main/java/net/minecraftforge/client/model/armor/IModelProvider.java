@@ -13,7 +13,8 @@ import net.minecraft.util.ResourceLocation;
  * associated with the current item worn. Used to 
  * add armor to biped and horse models.
  */
-public interface IModelProvider
+@FunctionalInterface
+public interface IModelProvider<M extends EntityModel<?>>
 {
 	/**
      * Gets the associated model of an entity or the default if null.
@@ -24,11 +25,7 @@ public interface IModelProvider
      * @param _default The original model (will have attributes set)
      * @return An entity model to render, or null to use the default
      */
-    @Nullable
-    default <M extends EntityModel<?>> M getModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, M _default)
-    {
-        return null;
-    }
+	@Nullable <A extends M> A getModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, A _default);
 
     /**
      * Gets the texture location of the associated model or the default if null.

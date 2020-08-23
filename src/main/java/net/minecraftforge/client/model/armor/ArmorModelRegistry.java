@@ -12,9 +12,24 @@ import net.minecraft.util.ResourceLocation;
 
 public class ArmorModelRegistry
 {
-    private static Map<Item, IModelProvider> bipedArmorModels = new ConcurrentHashMap<>();
-    private static Map<Item, IModelProvider> bipedHorseArmorModels = new ConcurrentHashMap<>();
-    private static final IModelProvider EMPTY = new IModelProvider() {};
+    private static Map<Item, IModelProvider<BipedModel<?>>> bipedArmorModels = new ConcurrentHashMap<>();
+    private static Map<Item, IModelProvider<HorseArmorModel<?>>> bipedHorseArmorModels = new ConcurrentHashMap<>();
+    private static final IModelProvider<BipedModel<?>> EMPTY_BIPED = new IModelProvider<BipedModel<?>>()
+    {
+        @Override
+        public <A extends BipedModel<?>> A getModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, A _default)
+        {
+            return null;
+        }
+    };
+    private static final IModelProvider<HorseArmorModel<?>> EMPTY_HORSE = new IModelProvider<HorseArmorModel<?>>()
+    {
+        @Override
+        public <A extends HorseArmorModel<?>> A getModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, A _default)
+        {
+            return null;
+        }
+    };
 
     /**
      * Attaches a custom biped armor model to an item.
@@ -22,7 +37,7 @@ public class ArmorModelRegistry
      * @param item The associated item
      * @param armorModelProvider The model provider of the armor
      * */
-    public static <A extends BipedModel<?>> void attachBipedArmorModel(Item item, IModelProvider armorModelProvider)
+    public static void attachBipedArmorModel(Item item, IModelProvider<BipedModel<?>> armorModelProvider)
     {
         bipedArmorModels.put(item, armorModelProvider);
     }
@@ -38,7 +53,7 @@ public class ArmorModelRegistry
      * */
     public static <A extends BipedModel<?>> A getBipedArmorModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, A _default)
     {
-        return bipedArmorModels.getOrDefault(stackIn.getItem(), EMPTY).getModel(entityIn, stackIn, armorSlotIn, _default);
+        return bipedArmorModels.getOrDefault(stackIn.getItem(), EMPTY_BIPED).getModel(entityIn, stackIn, armorSlotIn, _default);
     }
 
     /**
@@ -52,7 +67,7 @@ public class ArmorModelRegistry
      * */
     public static ResourceLocation getBipedArmorTexture(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, String textureTypeIn)
     {
-        return bipedArmorModels.getOrDefault(stackIn.getItem(), EMPTY).getTexture(entityIn, stackIn, armorSlotIn, textureTypeIn);
+        return bipedArmorModels.getOrDefault(stackIn.getItem(), EMPTY_BIPED).getTexture(entityIn, stackIn, armorSlotIn, textureTypeIn);
     }
 
     /**
@@ -61,7 +76,7 @@ public class ArmorModelRegistry
      * @param item The associated item
      * @param armorModelProvider The model provider of the armor
      * */
-    public static <A extends HorseArmorModel<?>> void attachHorseArmorModel(Item item, IModelProvider armorModelProvider)
+    public static void attachHorseArmorModel(Item item, IModelProvider<HorseArmorModel<?>> armorModelProvider)
     {
     	bipedHorseArmorModels.put(item, armorModelProvider);
     }
@@ -77,7 +92,7 @@ public class ArmorModelRegistry
      * */
     public static <A extends HorseArmorModel<?>> A getHorseArmorModel(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, A _default)
     {
-        return bipedHorseArmorModels.getOrDefault(stackIn.getItem(), EMPTY).getModel(entityIn, stackIn, armorSlotIn, _default);
+        return bipedHorseArmorModels.getOrDefault(stackIn.getItem(), EMPTY_HORSE).getModel(entityIn, stackIn, armorSlotIn, _default);
     }
 
     /**
@@ -91,6 +106,6 @@ public class ArmorModelRegistry
      * */
     public static ResourceLocation getHorseArmorTexture(LivingEntity entityIn, ItemStack stackIn, EquipmentSlotType armorSlotIn, String textureTypeIn)
     {
-        return bipedHorseArmorModels.getOrDefault(stackIn.getItem(), EMPTY).getTexture(entityIn, stackIn, armorSlotIn, textureTypeIn);
+        return bipedHorseArmorModels.getOrDefault(stackIn.getItem(), EMPTY_HORSE).getTexture(entityIn, stackIn, armorSlotIn, textureTypeIn);
     }
 }
