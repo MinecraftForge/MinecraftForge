@@ -1,0 +1,10 @@
+{
+  "monster" : [
+    {
+      "type" : "minecraft:witch",
+      "weight" : 200,
+      "minCount" : 10,
+      "maxCount" : 30
+    }
+  ]
+}
