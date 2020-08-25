@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/*
 package net.minecraftforge.fml.client.gui.screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
@@ -50,3 +51,4 @@ public class ConfirmationScreen extends NotificationScreen
         ));
     }
 }
+*/

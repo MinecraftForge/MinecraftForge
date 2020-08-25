@@ -20,8 +20,8 @@
 +      else {
        String s1 = JSONUtils.func_151200_h(p_199425_2_, "result");
        ResourceLocation resourcelocation = new ResourceLocation(s1);
--      ItemStack itemstack = new ItemStack(Registry.field_212630_s.func_218349_b(resourcelocation).orElseThrow(() -> {
-+      itemstack = new ItemStack(Registry.field_212630_s.func_218349_b(resourcelocation).orElseThrow(() -> {
+-      ItemStack itemstack = new ItemStack(Registry.field_212630_s.func_241873_b(resourcelocation).orElseThrow(() -> {
++      itemstack = new ItemStack(Registry.field_212630_s.func_241873_b(resourcelocation).orElseThrow(() -> {
           return new IllegalStateException("Item: " + s1 + " does not exist");
        }));
 +      }

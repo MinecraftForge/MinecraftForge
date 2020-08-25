@@ -13,7 +13,7 @@
 @@ -40,7 +43,9 @@
              int i1 = i / 2 - l / 2;
              int j1 = j - 9;
-             this.field_184059_f.field_71466_p.func_238407_a_(p_238484_1_, itextcomponent, (float)i1, (float)j1, 16777215);
+             this.field_184059_f.field_71466_p.func_243246_a(p_238484_1_, itextcomponent, (float)i1, (float)j1, 16777215);
 -            j += 10 + 9;
 +            }
 +            j += event.getIncrement();

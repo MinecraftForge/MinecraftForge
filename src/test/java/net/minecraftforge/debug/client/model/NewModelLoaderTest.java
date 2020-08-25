@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
@@ -134,10 +135,10 @@ public class NewModelLoaderTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
 
-        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::modelRegistry);
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
+    public void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoaderRegistry.registerLoader(new ResourceLocation(MODID, "custom_loader"), new TestLoader());
     }
