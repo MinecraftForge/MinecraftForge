@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.generators;
 import javax.annotation.Nonnull;
 
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * Stub class to extend for block model data providers, eliminates some

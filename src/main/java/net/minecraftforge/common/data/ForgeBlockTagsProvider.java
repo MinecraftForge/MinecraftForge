@@ -32,28 +32,20 @@ import net.minecraft.data.BlockTagsProvider;
 
 import static net.minecraftforge.common.Tags.Blocks.*;
 
-import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class ForgeBlockTagsProvider extends BlockTagsProvider
 {
-    private Set<ResourceLocation> filter = null;
-
-    public ForgeBlockTagsProvider(DataGenerator gen)
+    public ForgeBlockTagsProvider(DataGenerator gen, ExistingFileHelper existingFileHelper)
     {
-        super(gen);
+        super(gen, "forge", existingFileHelper);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void registerTags()
     {
-        super.registerTags();
-        filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toSet());
-
         func_240522_a_(CHESTS).addTags(CHESTS_ENDER, CHESTS_TRAPPED, CHESTS_WOODEN);
         func_240522_a_(CHESTS_ENDER).func_240534_a_(Blocks.ENDER_CHEST);
         func_240522_a_(CHESTS_TRAPPED).func_240534_a_(Blocks.TRAPPED_CHEST);
@@ -129,12 +121,6 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         {
             throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
         }
-    }
-
-    @Override
-    protected Path makePath(ResourceLocation id)
-    {
-        return filter != null && filter.contains(id) ? null : super.makePath(id); //We don't want to save vanilla tags.
     }
 
     @Override

@@ -21,7 +21,7 @@ package net.minecraftforge.fml.event.lifecycle;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModContainer;
 
 import java.nio.file.Path;

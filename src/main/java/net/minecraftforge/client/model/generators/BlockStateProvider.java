@@ -69,6 +69,7 @@ import net.minecraft.state.properties.SlabType;
 import net.minecraft.state.properties.StairsShape;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraft.util.ResourceLocation;
 
 /**
