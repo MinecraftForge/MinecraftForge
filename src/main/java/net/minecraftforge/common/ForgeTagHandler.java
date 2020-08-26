@@ -3,11 +3,9 @@ package net.minecraftforge.common;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -16,7 +14,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.tags.ITag.Builder;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
@@ -27,42 +25,23 @@ import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+//TODO: Store modded tags as static and in this class? And then reference the modded tags via IForgeTagCollectionSupplier but not actually require it
+// to have it in each individual instance?
+//TODO: We can easily make it so that it "nukes" the cache when reloads happen, but how would we best nuke it when connecting to say a vanilla server after
+// having loaded tags, or would that even matter
 public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Set<ResourceLocation> registryNames = new HashSet<>();
-
-    /**
-     * Creates and "registers" (or gets) a TagRegistry based on the passed in IForgeRegistry. This has to be called after RegistryEvents are done.
-     *
-     * @param reg The registry behind the tag type
-     * @param <T> The Tag type
-     *
-     * @return A TagRegistry used to create any tags in code for this type
-     */
-    public synchronized static <T extends IForgeRegistryEntry<T>> TagRegistry<T> createTagType(IForgeRegistry<T> reg)
-    {
-        ResourceLocation registryName = reg.getRegistryName();
-        if (TagRegistryManager.contains(registryName))
-        {
-            //TODO: Log that it already existed? (Use different than old one though in case they try to call it on the blocks registry or something)
-            //LOGGER.info("Another mod has already added this registry to be a tag!");
-            return (TagRegistry<T>) TagRegistryManager.get(registryName);
-        }
-        registryNames.add(registryName);
-        return TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> (ITagCollection<T>) tagCollectionSupplier.modded().get(registryName));
-    }
 
     public static Map<ResourceLocation, TagCollectionReader<?>> createModdedTagReaders()
     {
         LOGGER.debug("Gathering custom tag collection reader from types.");
         ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : registryNames)
+        for (ResourceLocation registryName : TagRegistryManager.getCustomTagTypes())
         {
             IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry != null)
@@ -118,7 +97,7 @@ public class ForgeTagHandler
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : registryNames)
+        for (ResourceLocation registryName : TagRegistryManager.getCustomTagTypes())
         {
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
@@ -134,9 +113,9 @@ public class ForgeTagHandler
         return getModdedTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags, modded);
     }
 
-    public static CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, Builder>>>>> getModdedTagReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)
+    public static CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, ITag.Builder>>>>> getModdedTagReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)
     {
-        CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, Builder>>>>> moddedResults = CompletableFuture.completedFuture(new ArrayList<>());
+        CompletableFuture<List<Pair<ResourceLocation, Pair<TagCollectionReader<?>, Map<ResourceLocation, ITag.Builder>>>>> moddedResults = CompletableFuture.completedFuture(new ArrayList<>());
         for (Map.Entry<ResourceLocation, TagCollectionReader<?>> entry : readers.entrySet())
         {
             TagCollectionReader<?> reader = entry.getValue();

@@ -22,6 +22,7 @@ package net.minecraftforge.fml.network;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,15 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.ITagCollectionSupplier;
+import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
@@ -389,23 +395,27 @@ public class FMLPlayMessages
         public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                //TODO: Create any missing types on the client
                 //TODO: Replace existing supplier with one that has our existing types or make it possible to modify to add our custom types
-                //TODO: Also figure out how we want to handle the tags updated event being fired
-                /*ITagCollectionSupplier tagCollectionSupplier;
-                Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(tagCollectionSupplier);
-                if (!multimap.isEmpty()) {
-                    LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", multimap);
-                    ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
-                } else {
-                    this.networkTagManager = tagCollectionSupplier;
-                    if (!ctx.get().getNetworkManager().isLocalChannel()) {
-                        //tagCollectionSupplier.func_242212_e();
-                        //TODO: Evaluate
-                        TagRegistryManager.func_242193_a(tagCollectionSupplier);
-                        MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
+                if (Minecraft.getInstance().world != null) {
+                    //TODO: Re-evaluate this way of getting the tags
+                    ITagCollectionSupplier tagCollectionSupplier = Minecraft.getInstance().world.getTags();
+                    //TODO: Create any missing types on the client, can use our keys for msg.moddedTagCollections to create a tag type for each
+                    Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(tagCollectionSupplier);
+                    if (!multimap.isEmpty()) {
+                        //TODO: Log
+                        //LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", multimap);
+                        ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
+                    } else {
+                        //this.networkTagManager = tagCollectionSupplier;
+                        //tagCollectionSupplier.updateModdedTags(msg.moddedTagCollections);
+                        if (!ctx.get().getNetworkManager().isLocalChannel()) {
+                            //tagCollectionSupplier.func_242212_e();
+                            //TODO: Evaluate
+                            TagRegistryManager.func_242193_a(tagCollectionSupplier);
+                            MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
+                        }
                     }
-                }*/
+                }
             });
             ctx.get().setPacketHandled(true);
         }
