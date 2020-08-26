@@ -8,6 +8,7 @@
     "#forge:ores/iron",
     "#forge:ores/lapis",
     "#forge:ores/redstone",
-    "#forge:ores/quartz"
+    "#forge:ores/quartz",
+    "#forge:ores/netherite_scrap"
   ]
 }

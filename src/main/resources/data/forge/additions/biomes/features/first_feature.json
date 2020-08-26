@@ -1,4 +1,8 @@
 {
+  "targets" : [
+    "desert",
+    "minecraft:plains"
+  ],
   "features": [
     [],
     [

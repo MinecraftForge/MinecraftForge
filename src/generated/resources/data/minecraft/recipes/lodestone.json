@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "S#S",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:chiseled_stone_bricks"
+    },
+    "#": {
+      "tag": "forge:ingots/netherite"
+    }
+  },
+  "result": {
+    "item": "minecraft:lodestone"
+  }
+}

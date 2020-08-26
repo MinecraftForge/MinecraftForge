@@ -2,6 +2,7 @@ package net.minecraftforge.common.world;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -36,10 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
@@ -56,14 +54,14 @@ public class CodecAdditions
                     Biome.Attributes.field_235104_a_.fieldOf("parameters").forGetter(Pair::getFirst),
                     Biome.field_235051_b_.fieldOf("biome").forGetter(Pair::getSecond)
             ).apply(inst, Pair::of)
-    ).listOf().fieldOf("biomes");
+    ).listOf().fieldOf("noise_biomes");
 
     public static final MapCodec<Map<EntityClassification, List<MobSpawnInfo.Spawners>>> SPAWNERS_CODEC =
             Codec.simpleMap(
                     EntityClassification.field_233667_g_,
                     MobSpawnInfo.Spawners.field_242587_b.listOf().promotePartial(Util.func_240982_a_("Spawn data: ", LOGGER::error)),
                     IStringSerializable.func_233025_a_(EntityClassification.values())
-            ).fieldOf("spawners");
+            ).codec().optionalFieldOf("spawners", ImmutableMap.of());
 
     public static final MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> SPAWN_COSTS_CODEC =
             Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec().optionalFieldOf("spawn_costs", ImmutableMap.of());
@@ -107,10 +105,10 @@ public class CodecAdditions
     {
         if(value instanceof Biome)
             return (E) Biome.basedOn((Biome) value, (RegistryKey<Biome>) key, parser)
-                            .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
-                            .setPartial((Biome)value) //Fall back on the base value.
-                            .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
-                            .orElseThrow(RuntimeException::new); //Impossible
+                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
+                    .setPartial((Biome)value) //Fall back on the base value.
+                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
+                    .orElseThrow(RuntimeException::new); //Impossible
 
 //        if(value instanceof Dimension)
 //            return (E) Dimension.basedOn((Dimension) value, (RegistryKey<Dimension>) key, parser)
@@ -122,7 +120,7 @@ public class CodecAdditions
         return value;
     }
 
-    //Adding a biome to the list of the OverworldBiomeProvider or the NetherBiomeProvider does not add it to the world...
+    //Adding a biome to the list of the OverworldBiomeProvider or the NetherBiomeProvider isn't generating it...... world...
     public static DimensionGeneratorSettings handleWorldGeneration(DimensionGeneratorSettings base, WorldSettingsImport<JsonElement> parser)
     {
         return base;
@@ -149,7 +147,7 @@ public class CodecAdditions
         List<Supplier<Biome>> base = fakeBase.stream().<Supplier<Biome>>map(b -> () -> b).collect(Collectors.toList());
         return parseAddition(base, SIMPLE_BIOMES,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                Pair.of("additions/dimensions", s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/dimensions", key.func_240901_a_().toString()
         );
     }
 
@@ -157,7 +155,8 @@ public class CodecAdditions
     {
         return parseAddition(base, COMPLEX_BIOMES,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                Pair.of("additions/dimensions/noise_biomes/"+key.func_240901_a_().getNamespace(), s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/dimensions/noise_biomes",
+                key.func_240901_a_().toString()
         );
     }
 
@@ -166,8 +165,8 @@ public class CodecAdditions
     /**
      * Merging is done by averaging out the spawns costs if multiple are present for the same key (EntityType)
      * Since the number of the same costs is unknown, the weightmap holds the last known "weight" or defaults to 2.
-     * The "incoming" costs will have a weight of   (weight - 1) / weight
-     * and the cost to merge will have a weight of  1 / weight,
+     * The "incoming" costs will have a weight of  :    (weight - 1) / weight
+     * and the cost to merge will have a weight of :    1 / weight,
      * for a total weight of 1.
      */
     public static void mergeCosts(Map<EntityType<?>, MobSpawnInfo.SpawnCosts> ret, Map<EntityType<?>, MobSpawnInfo.SpawnCosts> merging)
@@ -200,8 +199,8 @@ public class CodecAdditions
         return parseAddition(base, SPAWN_COSTS_CODEC,
                 CodecAdditions::mergeCosts, HashMap::new, ImmutableMap::copyOf,
                 parser,
-                Pair.of("additions/biomes/mob_spawns", s -> s.equals(category.getName()+".json")),
-                Pair.of("additions/biomes/mob_spawns/"+key.func_240901_a_().getNamespace(), s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/biomes/mob_spawns",
+                key.func_240901_a_().toString(), category.getName()
         );
     }
 
@@ -211,14 +210,14 @@ public class CodecAdditions
         return parseAddition(base, SPAWNERS_CODEC,
                 (ret, toAdd) ->
                 {
-                    for(EntityClassification cls : ret.keySet())
-                        ret.get(cls).addAll(toAdd.get(cls));
+                    for(EntityClassification cls : toAdd.keySet())
+                        ret.computeIfAbsent(cls, k -> new ArrayList<>()).addAll(toAdd.get(cls));
                 },
                 imm -> new HashMap<>(imm.entrySet().stream().map(e -> Pair.of(e.getKey(), new ArrayList<>(e.getValue()))).collect(Pair.toMap())), //toMutable
                 mute -> ImmutableMap.copyOf(mute.entrySet().stream().map(e -> Pair.of(e.getKey(), ImmutableList.copyOf(e.getValue()))).collect(Pair.toMap())), //toImmutable
                 parser,
-                Pair.of("additions/biomes/mob_spawns", s -> s.equals(category.getName()+".json")),
-                Pair.of("additions/biomes/mob_spawns/"+key.func_240901_a_().getNamespace(), s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/biomes/mob_spawns",
+                key.func_240901_a_().toString(), category.getName()
         );
     }
 
@@ -227,8 +226,8 @@ public class CodecAdditions
         updateCachingStateFor("features");
         return parseAddition(base , STRUCTURES_CODEC,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                Pair.of("additions/biomes/features", s -> s.equals(category.getName()+".json")),
-                Pair.of("additions/biomes/features/"+key.func_240901_a_().getNamespace(), s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/biomes/features",
+                key.func_240901_a_().toString(), category.getName()
         );
     }
 
@@ -250,10 +249,12 @@ public class CodecAdditions
                 imm -> new ArrayList<>(imm).stream().map(ArrayList::new).collect(Collectors.toList()), //toMutable
                 mute -> ImmutableList.copyOf(mute.stream().map(ImmutableList::copyOf).collect(Collectors.toList())), //toImmutable
                 parser,
-                Pair.of("additions/biomes/features", s -> s.equals(category.getName()+".json")),
-                Pair.of("additions/biomes/features/"+key.func_240901_a_().getNamespace(), s -> s.equals(key.func_240901_a_().getPath()+".json"))
+                "additions/biomes/features",
+                category.getName(), key.func_240901_a_().toString()
         );
     }
+
+    private static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
 
     /**
      * @param base          The base object
@@ -263,24 +264,28 @@ public class CodecAdditions
      * @param toMutable     How to make the object to change mutable (and any object it contains)
      * @param toImmutable   How to make the resulting object immutable again (and any object it contains)
      * @param parser        How to decode the additions
-     * @param finders       How to find the objects.
-     *                      The string corresponds to the intermediate path between the namespace and the file name.
-     *                      The predicate is tested on the file name.
+     * @param folder        The folder where these additions are stored
+     * @param validTargets  One of these string need to match in the "target" array for the addition to apply.
      * @param <E>           The type of this object.
      * @return              A MapCodec of this object.
      */
     public static <E> MapCodec<E> parseAddition(E base, MapCodec<E> decoder, BiConsumer<E, E> merger,
                                                    UnaryOperator<E> toMutable, UnaryOperator<E> toImmutable,
                                                    WorldSettingsImport<JsonElement> parser,
-                                                   Pair<String, Predicate<String>>... finders)
+                                                   String folder, String... validTargets)
     {
         E mutable = toMutable.apply(base);
 
         List<DataResult<E>> results = new ArrayList<>();
+        List<String> targets = Lists.newArrayList(validTargets);
 
         if(cachingState == Caching.USE)
         {
-            cache.forEach(j -> results.add(decoder.decoder().parse(parser, j)));
+            cache.forEach(j ->
+            {
+                if(TARGETS.parse(parser, j).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
+                    results.add(decoder.decoder().parse(parser, j));
+            });
         }
         else
         {
@@ -294,11 +299,7 @@ public class CodecAdditions
                 MinecraftServer.func_240772_a_(packs, new DatapackCodec(ImmutableList.of(), ImmutableList.of()), false);
                 packs.func_232623_f_().forEach(manager::addResourcePack);
 
-                List<ResourceLocation> resources = new ArrayList<>();
-                for(Pair<String, Predicate<String>> finder : finders)
-                    resources.addAll(manager.getAllResourceLocations(finder.getFirst(), finder.getSecond()));
-
-                for (ResourceLocation location : resources)
+                for (ResourceLocation location : manager.getAllResourceLocations(folder, s -> s.endsWith(".json")))
                 {
                     try (
                             IResource resource = manager.getResource(location);
@@ -310,7 +311,9 @@ public class CodecAdditions
                         JsonElement json = jsonParser.parse(reader);
                         if(cachingState == Caching.STORE)
                             cache.add(json);
-                        results.add(decoder.decoder().parse(parser, json));
+
+                        if(TARGETS.parse(parser, json).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
+                            results.add(decoder.decoder().parse(parser, json));
                     }
                     catch (RuntimeException | IOException e)
                     {
