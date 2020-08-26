@@ -35,6 +35,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
@@ -76,6 +78,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
@@ -254,13 +257,6 @@ public class ForgeEventFactory
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
-    }
-
-    public static float fireBlockHarvesting(NonNullList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player)
-    {
-        BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getDropChance();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
@@ -663,7 +659,7 @@ public class ForgeEventFactory
         return event.getTable();
     }
 
-    public static boolean canCreateFluidSource(World world, BlockPos pos, BlockState state, boolean def)
+    public static boolean canCreateFluidSource(IWorldReader world, BlockPos pos, BlockState state, boolean def)
     {
         CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
         MinecraftForge.EVENT_BUS.post(evt);
@@ -748,5 +744,12 @@ public class ForgeEventFactory
     {
         RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);
         MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity player, Pose pose, EntitySize size, float eyeHeight)
+    {
+        EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
     }
 }
