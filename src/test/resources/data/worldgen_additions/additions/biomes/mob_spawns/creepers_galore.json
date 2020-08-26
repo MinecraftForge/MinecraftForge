@@ -1,0 +1,17 @@
+{
+  "targets" : [
+    "savanna",
+    "minecraft:plains",
+    "forest"
+  ],
+  "spawners" : {
+    "monster" : [
+      {
+        "type" : "minecraft:creeper",
+        "weight" : 500,
+        "minCount" : 50,
+        "maxCount" : 80
+      }
+    ]
+  }
+}

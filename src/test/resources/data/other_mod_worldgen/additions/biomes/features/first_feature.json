@@ -1,7 +1,17 @@
 {
   "targets" : [
+    "swamp",
     "desert",
     "minecraft:plains"
+  ],
+  "starts" : [
+    {
+      "config": {
+        "probability": 0.1780,
+        "type": "mesa"
+      },
+      "type": "minecraft:mineshaft"
+    }
   ],
   "features": [
     [],

@@ -45,6 +45,8 @@ public class CodecAdditions
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
+
     //TODO make it only accept res loc references, otherwise the biome is not registered could be problematic?
     // it is not working so not sure what is needed
     public static MapCodec<List<Supplier<Biome>>> SIMPLE_BIOMES = Biome.field_242420_e.fieldOf("biomes");
@@ -64,17 +66,20 @@ public class CodecAdditions
             ).codec().optionalFieldOf("spawners", ImmutableMap.of());
 
     public static final MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> SPAWN_COSTS_CODEC =
-            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec().optionalFieldOf("spawn_costs", ImmutableMap.of());
+            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec()
+                    .optionalFieldOf("spawn_costs", ImmutableMap.of());
 
     /**
      * Feature lists are based on {@link GenerationStage.Decoration}, the object itself is a list of lists,
      * the position of the list is very important as it corresponds to the ordinal of the Decoration associated with the features.
      */
     public static final MapCodec<List<List<Supplier<ConfiguredFeature<?, ?>>>>> FEATURES_CODEC =
-            ConfiguredFeature.field_242764_c.promotePartial(Util.func_240982_a_("Feature: ", LOGGER::error)).listOf().optionalFieldOf("features", ImmutableList.of());
+            ConfiguredFeature.field_242764_c.promotePartial(Util.func_240982_a_("Feature: ", LOGGER::error)).listOf()
+                    .optionalFieldOf("features", ImmutableList.of());
 
     public static final MapCodec<List<Supplier<StructureFeature<?, ?>>>> STRUCTURES_CODEC =
-            StructureFeature.field_242770_c.promotePartial(Util.func_240982_a_("Structure start: ", LOGGER::error)).optionalFieldOf("starts", ImmutableList.of());
+            StructureFeature.field_242770_c.promotePartial(Util.func_240982_a_("Structure start: ", LOGGER::error))
+                    .optionalFieldOf("starts", ImmutableList.of());
 
     public static Codec<DimensionGeneratorSettings> delegateWorldDecoding(Codec<DimensionGeneratorSettings> base)
     {
@@ -254,8 +259,6 @@ public class CodecAdditions
         );
     }
 
-    private static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
-
     /**
      * @param base          The base object
      * @param decoder       How to decode additions of this object
@@ -275,13 +278,12 @@ public class CodecAdditions
                                                    String folder, String... validTargets)
     {
         E mutable = toMutable.apply(base);
-
         List<DataResult<E>> results = new ArrayList<>();
         List<String> targets = Lists.newArrayList(validTargets);
 
         if(cachingState == Caching.USE)
         {
-            cache.forEach(j ->
+            getCurrentCache().forEach(j ->
             {
                 if(TARGETS.parse(parser, j).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
                     results.add(decoder.decoder().parse(parser, j));
@@ -310,7 +312,7 @@ public class CodecAdditions
                         JsonParser jsonParser = new JsonParser();
                         JsonElement json = jsonParser.parse(reader);
                         if(cachingState == Caching.STORE)
-                            cache.add(json);
+                            getCurrentCache().add(json);
 
                         if(TARGETS.parse(parser, json).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
                             results.add(decoder.decoder().parse(parser, json));
@@ -331,22 +333,27 @@ public class CodecAdditions
         return MapCodec.unit(toImmutable.apply(mutable));
     }
 
-    private static final List<JsonElement> cache = new ArrayList<>();
-    private static String last = "";
+    private static final Map<String, List<JsonElement>> caches = new HashMap<>();
+    private static String current = "";
     private static Caching cachingState = Caching.NONE;
 
     private static void updateCachingStateFor(String name)
     {
-        if(name.equals(""))
-            cachingState = Caching.NONE;
-        else if(name.equals(last))
-            cachingState = Caching.USE;
+        if(caches.get(name) == null)
+        {
+            caches.put(name, new ArrayList<>());
+            cachingState = Caching.STORE;
+        }
         else
         {
-            cachingState = Caching.STORE;
-            cache.clear();
+            cachingState = Caching.USE;
         }
-        last = name;
+        current = name;
+    }
+
+    private static List<JsonElement> getCurrentCache()
+    {
+        return caches.get(current);
     }
 
     enum Caching
