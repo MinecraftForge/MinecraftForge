@@ -43,7 +43,7 @@ public class PlaySoundEvent extends SoundEvent
         this.setResultSound(sound);
     }
 
-    //TODO: 1.16.2 Remove
+    //TODO: 1.17 Remove
     @Deprecated
     public String getName()
     {

@@ -62,7 +62,7 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
             return source;
         }
 
-        //TODO: 1.16.2 Remove
+        //TODO: 1.17 Remove
         @Deprecated
         public String getName()
         {
