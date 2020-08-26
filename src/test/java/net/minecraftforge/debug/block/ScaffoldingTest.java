@@ -10,8 +10,13 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -43,7 +48,9 @@ public class ScaffoldingTest
 
     private void gatherData(final GatherDataEvent event)
     {
-        if(event.includeServer()) event.getGenerator().addProvider(new ScaffoldingTagsProvider(event.getGenerator()));
+        DataGenerator gen = event.getGenerator();
+    	if(event.includeClient()) gen.addProvider(new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
+    	if(event.includeServer()) gen.addProvider(new ScaffoldingTagsProvider(gen));
     }
 
     static class ScaffoldingTagsProvider extends BlockTagsProvider
@@ -57,6 +64,21 @@ public class ScaffoldingTest
         protected void registerTags()
         {
             this.func_240522_a_(Tags.Blocks.SCAFFOLDING).func_240532_a_(SCAFFOLDING_TAG_TEST.get());
+        }
+    }
+
+    static class ScaffoldingBlockState extends BlockStateProvider
+    {
+        public ScaffoldingBlockState(DataGenerator gen, String modid, ExistingFileHelper exFileHelper)
+        {
+            super(gen, modid, exFileHelper);
+        }
+
+        @Override
+        protected void registerStatesAndModels()
+        {
+            this.getVariantBuilder(SCAFFOLDING_TAG_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
+            this.getVariantBuilder(SCAFFOLDING_METHOD_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
         }
     }
 
