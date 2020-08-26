@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TripWireHookBlock.java
 +++ b/net/minecraft/block/TripWireHookBlock.java
-@@ -150,8 +150,8 @@
+@@ -150,8 +_,8 @@
              BlockPos blockpos2 = p_176260_2_.func_177967_a(direction, k);
              BlockState blockstate2 = ablockstate[k];
              if (blockstate2 != null) {
