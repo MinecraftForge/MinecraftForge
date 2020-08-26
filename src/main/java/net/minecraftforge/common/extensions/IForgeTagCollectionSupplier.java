@@ -1,24 +1,17 @@
 package net.minecraftforge.common.extensions;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public interface IForgeTagCollectionSupplier
 {
-
-    default Map<ResourceLocation, ITagCollection<?>> modded()
-    {
-        return ImmutableMap.of();
-    }
-
     //TODO: Nullable or error?
     default ITagCollection<?> getModdedCollection(ResourceLocation regName)
     {
-        return modded().get(regName);
+        return ForgeTagHandler.getCustomTagTypes().get(regName);
     }
 
     //TODO: Nullable or error?

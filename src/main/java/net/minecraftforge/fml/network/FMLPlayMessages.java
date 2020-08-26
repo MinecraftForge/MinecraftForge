@@ -45,6 +45,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -325,17 +326,17 @@ public class FMLPlayMessages
 
     public static class SyncCustomTagTypes
     {
-        private final Map<ResourceLocation, ITagCollection<?>> moddedTagCollections;
+        private final Map<ResourceLocation, ITagCollection<?>> customTagTypeCollections;
 
-        SyncCustomTagTypes(Map<ResourceLocation, ITagCollection<?>> moddedTagCollections)
+        SyncCustomTagTypes(Map<ResourceLocation, ITagCollection<?>> customTagTypeCollections)
         {
-            this.moddedTagCollections = moddedTagCollections;
+            this.customTagTypeCollections = customTagTypeCollections;
         }
 
         public static void encode(SyncCustomTagTypes msg, PacketBuffer buf)
         {
-            buf.writeVarInt(msg.moddedTagCollections.size());
-            msg.moddedTagCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.func_241833_a()));
+            buf.writeVarInt(msg.customTagTypeCollections.size());
+            msg.customTagTypeCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.func_241833_a()));
         }
 
         private static <T> void forgeTagCollectionWrite(PacketBuffer buf, ResourceLocation registryName, Map<ResourceLocation, ITag<T>> tags)
@@ -395,19 +396,19 @@ public class FMLPlayMessages
         public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                //TODO: Replace existing supplier with one that has our existing types or make it possible to modify to add our custom types
                 if (Minecraft.getInstance().world != null) {
                     //TODO: Re-evaluate this way of getting the tags
                     ITagCollectionSupplier tagCollectionSupplier = Minecraft.getInstance().world.getTags();
                     //TODO: Create any missing types on the client, can use our keys for msg.moddedTagCollections to create a tag type for each
+                    //TODO: I think we may need to set the custom tag types before we check this?? Or maybe even we should be checking
+                    // the custom tag types slightly separately
                     Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(tagCollectionSupplier);
                     if (!multimap.isEmpty()) {
                         //TODO: Log
                         //LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", multimap);
                         ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
                     } else {
-                        //this.networkTagManager = tagCollectionSupplier;
-                        //tagCollectionSupplier.updateModdedTags(msg.moddedTagCollections);
+                        ForgeTagHandler.updateCustomTagTypes(msg.customTagTypeCollections);
                         if (!ctx.get().getNetworkManager().isLocalChannel()) {
                             //tagCollectionSupplier.func_242212_e();
                             //TODO: Evaluate

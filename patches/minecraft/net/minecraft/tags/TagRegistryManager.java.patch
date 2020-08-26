@@ -36,6 +36,6 @@
 +         return (TagRegistry<T>) field_242190_a.get(registryName);
 +      }
 +      customTagTypes.add(registryName);
-+      return func_242196_a(registryName, tagCollectionSupplier -> (ITagCollection<T>) tagCollectionSupplier.modded().get(registryName));
++      return func_242196_a(registryName, tagCollectionSupplier -> (ITagCollection<T>) tagCollectionSupplier.getModdedCollection(registryName));
 +   }
  }

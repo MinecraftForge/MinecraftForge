@@ -28,8 +28,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.minecraft.tags.ITagCollection;
-import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -212,18 +212,18 @@ public class NetworkHooks
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 
-    public static void syncCustomTagTypes(ITagCollectionSupplier tagCollectionSupplier)
+    public static void syncCustomTagTypes()
     {
-        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = tagCollectionSupplier.modded();
+        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = ForgeTagHandler.getCustomTagTypes();
         if (!moddedTagTypes.isEmpty())
         {
             FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(moddedTagTypes));
         }
     }
 
-    public static void syncCustomTagTypes(ServerPlayerEntity player, ITagCollectionSupplier tagCollectionSupplier)
+    public static void syncCustomTagTypes(ServerPlayerEntity player)
     {
-        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = tagCollectionSupplier.modded();
+        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = ForgeTagHandler.getCustomTagTypes();
         if (!moddedTagTypes.isEmpty())
         {
             FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(moddedTagTypes), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
