@@ -22,12 +22,14 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -179,6 +181,7 @@ public class DataGeneratorTest
 
     public static class Tags extends BlockTagsProvider
     {
+        private Set<ResourceLocation> filter;
 
         public Tags(DataGenerator gen)
         {
@@ -188,6 +191,9 @@ public class DataGeneratorTest
         @Override
         protected void registerTags()
         {
+            super.registerTags();
+            filter = new HashSet<>(this.tagToBuilder.keySet()); // will copy all vanilla tags.
+
             func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .func_240532_a_(Blocks.DIAMOND_BLOCK)
                 .func_240531_a_(BlockTags.STONE_BRICKS)
@@ -207,6 +213,12 @@ public class DataGeneratorTest
                     .func_240532_a_(Blocks.DIORITE)
                     .func_240532_a_(Blocks.ANDESITE);
         }
+
+        @Override
+        protected Path makePath(ResourceLocation id)
+        {
+            return filter != null && filter.contains(id) ? null : super.makePath(id); //To escape saving vanilla tags, but still register them.
+        }
     }
 
     public static class Lang extends LanguageProvider
@@ -221,7 +233,7 @@ public class DataGeneratorTest
         {
             add(Blocks.STONE, "Stone");
             add(Items.DIAMOND, "Diamond");
-            add(Biomes.BEACH, "Beach");
+            //add(Biomes.BEACH, "Beach");
             add(Effects.POISON, "Poison");
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
@@ -272,7 +284,9 @@ public class DataGeneratorTest
                     .texture("layer0", mcLoc("item/fishing_rod_cast"));
         }
 
-        private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model");
+        private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model",
+                "fishing_rod", "fishing_rod_cast" // Vanilla doesn't generate these yet, so they don't match due to having the minecraft domain
+                );
 
         @Override
         public void act(DirectoryCache cache) throws IOException
@@ -436,7 +450,9 @@ public class DataGeneratorTest
         // Testing the outputs
 
         private static final Set<Block> IGNORED_BLOCKS = ImmutableSet.of(Blocks.BIRCH_FENCE_GATE, Blocks.STONE);
-        private static final Set<ResourceLocation> IGNORED_MODELS = ImmutableSet.of();
+        // Vanilla doesn't generate these models yet, so they have minor discrepancies that are hard to test
+        // This list should probably be cleared and investigated after each major version update
+        private static final Set<ResourceLocation> IGNORED_MODELS = ImmutableSet.of(new ResourceLocation(MODID, "block/cube"));
 
         private List<String> errors = new ArrayList<>();
 
@@ -649,6 +665,24 @@ public class DataGeneratorTest
                     }
                 }
 
+                JsonElement generatedTextures = generated.remove("textures");
+                JsonElement vanillaTextures = existing.remove("textures");
+                if (generatedTextures == null && vanillaTextures != null) {
+                    ret.add("Model " + loc + " is missing textures");
+                } else if (generatedTextures != null && vanillaTextures == null) {
+                    ret.add("Model " + loc + " has textures when vanilla equivalent does not");
+                } else if (generatedTextures != null) { // Both must be non-null
+                    for (Map.Entry<String, JsonElement> e : generatedTextures.getAsJsonObject().entrySet()) {
+                        String vanillaTexture = vanillaTextures.getAsJsonObject().get(e.getKey()).getAsString();
+                        if (!e.getValue().getAsString().equals(vanillaTexture)) {
+                            ret.add("Texture for variable '" + e.getKey() + "' for model " + loc + " does not match vanilla equivalent");
+                        }
+                    }
+                    if (generatedTextures.getAsJsonObject().size() != vanillaTextures.getAsJsonObject().size()) {
+                        ret.add("Model " + loc + " is missing textures from vanilla equivalent");
+                    }
+                }
+
                 if (!existing.equals(generated)) {
                     ret.add("Model " + loc + " does not match vanilla equivalent");
                 }
@@ -662,6 +696,6 @@ public class DataGeneratorTest
     private static String toVanillaModel(String model) {
         // We generate our own model jsons to test model building, but otherwise our blockstates should be identical
         // So remove modid to match
-        return model.replaceAll("^\\w+:", "");
+        return model.replaceAll("^\\w+:", "minecraft:");
     }
 }

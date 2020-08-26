@@ -10,7 +10,7 @@
       "tag": "forge:rods/wooden"
     },
     "X": {
-      "tag": "forge:cobblestone"
+      "tag": "minecraft:stone_tool_materials"
     }
   },
   "result": {

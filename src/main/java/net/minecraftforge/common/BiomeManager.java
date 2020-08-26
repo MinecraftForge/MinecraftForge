@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/* Biomes are completely redone in 1.16.2, reevaluate
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.gen.INoiseRandom;
 
 import javax.annotation.Nullable;
 
@@ -240,3 +242,4 @@ public class BiomeManager
         }
     }
 }
+*/

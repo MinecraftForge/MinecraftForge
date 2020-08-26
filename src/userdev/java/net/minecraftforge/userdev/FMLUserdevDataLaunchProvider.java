@@ -58,4 +58,9 @@ public class FMLUserdevDataLaunchProvider extends FMLUserdevLaunchProvider imple
     {
         return Dist.CLIENT;
     }
+
+    @Override
+    public boolean isData() {
+        return true;
+    }
 }

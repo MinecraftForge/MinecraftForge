@@ -1,11 +1,11 @@
 --- a/net/minecraft/block/FireBlock.java
 +++ b/net/minecraft/block/FireBlock.java
-@@ -76,13 +76,13 @@
+@@ -92,13 +92,13 @@
     protected BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
        BlockPos blockpos = p_196448_2_.func_177977_b();
        BlockState blockstate = p_196448_1_.func_180495_p(blockpos);
 -      if (!this.func_196446_i(blockstate) && !blockstate.func_224755_d(p_196448_1_, blockpos, Direction.UP)) {
-+      if (!this.canCatchFire(p_196448_1_, p_196448_2_, Direction.UP) && !Block.func_220056_d(blockstate, p_196448_1_, blockpos, Direction.UP)) {
++      if (!this.canCatchFire(p_196448_1_, p_196448_2_, Direction.UP) && !blockstate.func_224755_d(p_196448_1_, blockpos, Direction.UP)) {
           BlockState blockstate1 = this.func_176223_P();
  
           for(Direction direction : Direction.values()) {
@@ -16,7 +16,7 @@
              }
           }
  
-@@ -105,7 +105,7 @@
+@@ -121,7 +121,7 @@
           }
  
           BlockState blockstate = p_225534_2_.func_180495_p(p_225534_3_.func_177977_b());
@@ -25,7 +25,7 @@
           int i = p_225534_1_.func_177229_b(field_176543_a);
           if (!flag && p_225534_2_.func_72896_J() && this.func_176537_d(p_225534_2_, p_225534_3_) && p_225534_4_.nextFloat() < 0.2F + (float)i * 0.03F) {
              p_225534_2_.func_217377_a(p_225534_3_, false);
-@@ -126,7 +126,7 @@
+@@ -142,7 +142,7 @@
                    return;
                 }
  
@@ -34,7 +34,7 @@
                    p_225534_2_.func_217377_a(p_225534_3_, false);
                    return;
                 }
-@@ -134,12 +134,12 @@
+@@ -150,12 +150,12 @@
  
              boolean flag1 = p_225534_2_.func_180502_D(p_225534_3_);
              int k = flag1 ? -50 : 0;
@@ -53,7 +53,7 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -177,15 +177,17 @@
+@@ -193,16 +193,18 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
@@ -68,14 +68,17 @@
     }
  
 -   private void func_176536_a(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_) {
+-      int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
 +   private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, Direction face) {
-       int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
++      int i = p_176536_1_.func_180495_p(p_176536_2_).getFlammability(p_176536_1_, p_176536_2_, face);
        if (p_176536_4_.nextInt(p_176536_3_) < i) {
           BlockState blockstate = p_176536_1_.func_180495_p(p_176536_2_);
-@@ -197,10 +199,7 @@
+          if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
+@@ -212,11 +214,7 @@
+             p_176536_1_.func_217377_a(p_176536_2_, false);
           }
  
-          Block block = blockstate.func_177230_c();
+-         Block block = blockstate.func_177230_c();
 -         if (block instanceof TNTBlock) {
 -            TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
@@ -84,7 +87,7 @@
        }
  
     }
-@@ -212,7 +211,7 @@
+@@ -228,7 +226,7 @@
  
     private boolean func_196447_a(IBlockReader p_196447_1_, BlockPos p_196447_2_) {
        for(Direction direction : Direction.values()) {
@@ -93,7 +96,7 @@
              return true;
           }
        }
-@@ -228,13 +227,14 @@
+@@ -244,13 +242,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -109,7 +112,7 @@
     protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -253,10 +253,23 @@
+@@ -269,10 +268,23 @@
     }
  
     private void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {

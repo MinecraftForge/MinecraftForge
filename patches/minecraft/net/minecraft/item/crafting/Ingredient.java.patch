@@ -20,7 +20,7 @@
        this.field_199807_b = p_i49381_1_.toArray((p_209360_0_) -> {
           return new Ingredient.IItemList[p_209360_0_];
        });
-+      this.isSimple = !net.minecraftforge.fml.ModLoader.isDataGenRunning() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().func_77645_m()));
++      this.isSimple = !net.minecraftforge.fml.ModLoader.isDataGenRunning() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().isDamageable(stack)));
 +      Ingredient.INSTANCES.add(this);
     }
  
@@ -99,7 +99,7 @@
           }
  
 +         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
-+            list.add(new ItemStack(net.minecraft.block.Blocks.field_180401_cv).func_200302_a(new net.minecraft.util.text.StringTextComponent("Empty Tag: " + TagCollectionManager.func_232928_e_().func_232925_b_().func_232975_b_(this.field_199800_a).toString())));
++            list.add(new ItemStack(net.minecraft.block.Blocks.field_180401_cv).func_200302_a(new net.minecraft.util.text.StringTextComponent("Empty Tag: " + TagCollectionManager.func_242178_a().func_241836_b().func_232975_b_(this.field_199800_a).toString())));
 +         }
           return list;
        }

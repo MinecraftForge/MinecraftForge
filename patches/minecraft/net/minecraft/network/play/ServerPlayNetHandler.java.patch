@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -347,9 +347,11 @@
+@@ -348,9 +348,11 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -12,7 +12,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -366,7 +368,7 @@
+@@ -367,7 +369,7 @@
     }
  
     private boolean func_241162_a_(Entity p_241162_1_) {
@@ -21,7 +21,7 @@
     }
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
-@@ -887,7 +889,9 @@
+@@ -881,7 +883,9 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -32,7 +32,7 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (direction == Direction.UP && !actionresulttype.func_226246_a_() && blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z() - 1 && func_241166_a_(this.field_147369_b, itemstack)) {
                 ITextComponent itextcomponent = (new TranslationTextComponent("build.tooHigh", this.field_147367_d.func_71207_Z())).func_240699_a_(TextFormatting.RED);
-@@ -1020,7 +1024,9 @@
+@@ -1014,7 +1018,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
@@ -43,7 +43,7 @@
              this.field_147367_d.func_184103_al().func_232641_a_(itextcomponent, ChatType.CHAT, this.field_147369_b.func_110124_au());
           }
  
-@@ -1109,6 +1115,7 @@
+@@ -1104,6 +1110,7 @@
              if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT) {
                 optional = Optional.of(this.field_147369_b.func_190775_a(entity, hand));
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
@@ -51,7 +51,7 @@
                 optional = Optional.of(entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand));
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
                 if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b) {
-@@ -1320,6 +1327,8 @@
+@@ -1315,6 +1322,8 @@
     }
  
     public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
