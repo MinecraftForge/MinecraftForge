@@ -57,7 +57,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private long window;
     private Thread renderThread = new Thread(this::renderThreadFunc);
 
-    private boolean running = true;
+    private volatile boolean running = true;
 
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
@@ -272,7 +272,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         while (running) {
-            renderProgress();
+            synchronized (this) {
+                renderProgress();
+            }
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ignored) {
@@ -287,16 +289,27 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         initWindow();
         renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
         renderThread.start();
-        return org.lwjgl.glfw.GLFW::glfwPollEvents;
+        return () -> {
+            synchronized (this) {
+                org.lwjgl.glfw.GLFW.glfwPollEvents();
+            }
+        };
+    }
+
+    @Override
+    public void stopRender() {
+        running = false;
+        try {
+            renderThread.join();
+        } catch (InterruptedException e) {
+            LogManager.getLogger().warn("Interruption while waiting for render thread!", e);
+        }
+        org.lwjgl.glfw.GLFW.glfwPollEvents();
     }
 
     @Override
     public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
-        running = false;
-        try {
-            renderThread.join();
-        } catch (InterruptedException ignored) {
-        }
+        if (running) throw new IllegalStateException();
         glfwSetWindowTitle(window, title.get());
         glfwSetWindowSize(window, width.getAsInt(), height.getAsInt());
         if (monitorSupplier.getAsLong() != 0L)

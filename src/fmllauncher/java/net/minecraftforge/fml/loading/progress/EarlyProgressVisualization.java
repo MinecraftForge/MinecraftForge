@@ -40,6 +40,10 @@ public enum EarlyProgressVisualization {
         return visualization.handOffWindow(width, height, title, monitor);
     }
 
+    public void stopRender() {
+        visualization.stopRender();
+    }
+
     interface Visualization {
         Runnable start();
 
@@ -51,12 +55,19 @@ public enum EarlyProgressVisualization {
                 }
             }.getAsLong();
         }
+
+        void stopRender();
     }
 
     private static class NoVisualization implements Visualization {
         @Override
         public Runnable start() {
             return () -> {};
+        }
+
+        @Override
+        public void stopRender() {
+
         }
     }
 
