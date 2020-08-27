@@ -49,15 +49,15 @@ public class ScaffoldingTest
     private void gatherData(final GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
-    	if(event.includeClient()) gen.addProvider(new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
-    	if(event.includeServer()) gen.addProvider(new ScaffoldingTagsProvider(gen));
+        if(event.includeClient()) gen.addProvider(new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
+        if(event.includeServer()) gen.addProvider(new ScaffoldingTagsProvider(gen));
     }
 
     static class ScaffoldingTagsProvider extends BlockTagsProvider
     {
         public ScaffoldingTagsProvider(DataGenerator generatorIn)
         {
-		    super(generatorIn);
+            super(generatorIn);
         }
 
         @Override
