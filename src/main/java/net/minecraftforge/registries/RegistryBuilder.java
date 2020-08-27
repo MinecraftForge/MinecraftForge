@@ -48,6 +48,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
+    private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -203,6 +204,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> tagFolder(String tagFolder)
+    {
+        this.tagFolder = tagFolder;
+        return this;
+    }
+
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
@@ -323,6 +330,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getAllowModifications()
     {
         return allowModifications;
+    }
+
+    @Nullable
+    public String getTagFolder()
+    {
+        return tagFolder;
     }
 
     @Nullable

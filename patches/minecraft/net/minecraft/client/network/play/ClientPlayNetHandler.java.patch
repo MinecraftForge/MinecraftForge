@@ -77,6 +77,15 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
+@@ -1388,7 +1401,7 @@
+    public void func_199723_a(STagsListPacket p_199723_1_) {
+       PacketThreadUtil.func_218797_a(p_199723_1_, this, this.field_147299_f);
+       ITagCollectionSupplier itagcollectionsupplier = p_199723_1_.func_199858_a();
+-      Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
++      Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.validateVanillaTags(itagcollectionsupplier);
+       if (!multimap.isEmpty()) {
+          field_147301_d.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
+          this.field_147302_e.func_150718_a(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
 @@ -1883,10 +1896,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);

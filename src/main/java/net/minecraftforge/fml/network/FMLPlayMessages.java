@@ -26,6 +26,7 @@ import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
@@ -33,8 +34,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
@@ -396,25 +399,68 @@ public class FMLPlayMessages
         public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                if (Minecraft.getInstance().world != null) {
+                if (Minecraft.getInstance().world != null)
+                {
                     //TODO: Re-evaluate this way of getting the tags
                     ITagCollectionSupplier tagCollectionSupplier = Minecraft.getInstance().world.getTags();
-                    //TODO: Create any missing types on the client, can use our keys for msg.moddedTagCollections to create a tag type for each
-                    //TODO: I think we may need to set the custom tag types before we check this?? Or maybe even we should be checking
-                    // the custom tag types slightly separately
-                    Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(tagCollectionSupplier);
-                    if (!multimap.isEmpty()) {
-                        //TODO: Log
-                        //LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", multimap);
-                        ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
-                    } else {
+                    for (ResourceLocation resourceLocation : msg.customTagTypeCollections.keySet())
+                    {
+                        //Ensure all the custom types exist on the client
+                        TagRegistryManager.getOrCreateCustomTagType((IForgeRegistry<?>) RegistryManager.ACTIVE.getRegistry(resourceLocation));
+                    }
+                    //Validate that all the tags exist using the tag type collections from the packet
+                    // We mimic vanilla in that we validate before updating the actual stored tags so that it can gracefully fallback
+                    // to the last working set of tags
+                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(new ITagCollectionSupplier()
+                    {
+                        @Override
+                        public ITagCollection<Block> func_241835_a()
+                        {
+                            return tagCollectionSupplier.func_241835_a();
+                        }
+
+                        @Override
+                        public ITagCollection<Item> func_241836_b()
+                        {
+                            return tagCollectionSupplier.func_241836_b();
+                        }
+
+                        @Override
+                        public ITagCollection<Fluid> func_241837_c()
+                        {
+                            return tagCollectionSupplier.func_241837_c();
+                        }
+
+                        @Override
+                        public ITagCollection<EntityType<?>> func_241838_d()
+                        {
+                            return tagCollectionSupplier.func_241838_d();
+                        }
+
+                        @Override
+                        public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
+                        {
+                            //Override and use the tags from the packet to test for validation before we actually set them
+                            return msg.customTagTypeCollections;
+                        }
+                    });
+                    if (missingTags.isEmpty())
+                    {
+                        //If we have no missing tags, update the custom tag types
                         ForgeTagHandler.updateCustomTagTypes(msg.customTagTypeCollections);
-                        if (!ctx.get().getNetworkManager().isLocalChannel()) {
-                            //tagCollectionSupplier.func_242212_e();
-                            //TODO: Evaluate
+                        if (!ctx.get().getNetworkManager().isLocalChannel())
+                        {
+                            //And if everything hasn't already been set due to being in single player
+                            // Fetch and update all the tags for our supplier including custom tag types
+                            // And fire an event that the custom tag types have been updated
+                            //TODO: Do we only want to fetch the custom tag types
                             TagRegistryManager.func_242193_a(tagCollectionSupplier);
                             MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
                         }
+                    } else {
+                        //TODO: Log
+                        //LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", missingTags);
+                        ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
                     }
                 }
             });

@@ -8,10 +8,20 @@
  
     public static <T> TagRegistry<T> func_242196_a(ResourceLocation p_242196_0_, Function<ITagCollectionSupplier, ITagCollection<T>> p_242196_1_) {
        TagRegistry<T> tagregistry = new TagRegistry<>(p_242196_1_);
-@@ -51,4 +52,30 @@
+@@ -51,4 +52,40 @@
           throw new IllegalStateException("Missing helper registrations");
        }
     }
++
++   public static Multimap<ResourceLocation, ResourceLocation> validateVanillaTags(ITagCollectionSupplier tagCollectionSupplier) {
++      Multimap<ResourceLocation, ResourceLocation> missingTags = HashMultimap.create();
++      for (java.util.Map.Entry<ResourceLocation, TagRegistry<?>> entry : field_242190_a.entrySet()) {
++         if (!customTagTypes.contains(entry.getKey())) {
++            missingTags.putAll(entry.getKey(), entry.getValue().func_242189_b(tagCollectionSupplier));
++         }
++      }
++      return missingTags;
++   }
 +
 +   @javax.annotation.Nullable
 +   public static TagRegistry<?> get(ResourceLocation rl) {

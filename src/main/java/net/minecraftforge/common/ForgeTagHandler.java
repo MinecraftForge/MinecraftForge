@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2020.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
@@ -22,14 +41,14 @@ import net.minecraft.tags.TagCollectionReader;
 import net.minecraft.tags.TagRegistry;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 //TODO: We can easily make it so that it "nukes" the cache when reloads happen, but how would we best nuke it when connecting to say a vanilla server after
 // having loaded tags, or would that even matter
-//TODO: keep track of generation index, both of vanilla tags and of custom tags
+//TODO: keep track of generation index, both of vanilla tags and of custom tags and make sure that they match
 public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -50,11 +69,14 @@ public class ForgeTagHandler
         ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : TagRegistryManager.getCustomTagTypes())
         {
-            IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+            ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry != null)
             {
-                //TODO: Adjust this so that the tags/thing is plural? Like blocks vs block
-                builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registryName.getPath(), registryName.getPath()));
+                String tagFolder = registry.getTagFolder();
+                if (tagFolder != null)
+                {
+                    builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + tagFolder, registryName.getPath()));
+                }
             }
         }
         return builder.build();

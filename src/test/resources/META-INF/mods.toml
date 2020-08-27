@@ -82,3 +82,5 @@ license="LGPL v2.1"
     modId="finite_water_test"
 [[mods]]
     modId="scaffolding_test"
+[[mods]]
+modId="custom_tag_types_test"

@@ -91,6 +91,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    private final String tagFolder;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -120,6 +121,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
+        this.tagFolder = builder.getTagFolder();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -173,6 +175,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public Class<V> getRegistrySuperType()
     {
         return superType;
+    }
+
+    @Nullable
+    public String getTagFolder()
+    {
+        return tagFolder;
     }
 
     @Override
