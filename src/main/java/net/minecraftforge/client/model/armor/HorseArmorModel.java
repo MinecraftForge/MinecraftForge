@@ -19,8 +19,26 @@ import net.minecraft.util.math.MathHelper;
  * */
 public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel<T> {
 
-    protected final ModelRenderer body;
+    //Body Parts
+	protected final ModelRenderer body;
+    protected final ModelRenderer tail;
+    protected final ModelRenderer saddle;
+
+	//Neck and Head Parts
+    protected final ModelRenderer neck;
     protected final ModelRenderer head;
+    protected final ModelRenderer mane;
+    protected final ModelRenderer snout;
+    protected final ModelRenderer leftEar;
+    protected final ModelRenderer rightEar;
+    protected final ModelRenderer leftBit;
+    protected final ModelRenderer rightBit;
+    protected final ModelRenderer leftRein;
+    protected final ModelRenderer rightRein;
+    protected final ModelRenderer headstall;
+    protected final ModelRenderer noseband;
+    
+    //Leg Parts
     protected final ModelRenderer rightBackLeg;
     protected final ModelRenderer leftBackLeg;
     protected final ModelRenderer rightFrontLeg;
@@ -29,9 +47,10 @@ public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel
     protected final ModelRenderer leftBackChildLeg;
     protected final ModelRenderer rightFrontChildLeg;
     protected final ModelRenderer leftFrontChildLeg;
-    protected final ModelRenderer tail;
-    protected final ImmutableList<ModelRenderer> saddle;
-    protected final ImmutableList<ModelRenderer> reins;
+
+    //Subsets
+    private final ModelRenderer[] tack;
+    private final ModelRenderer[] reins;
 
     public HorseArmorModel(float modelSize)
     {
@@ -51,24 +70,24 @@ public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel
         this.body = new ModelRenderer(this, 0, 32);
         this.body.addBox(-5.0F, -8.0F, -17.0F, 10.0F, 10.0F, 22.0F, 0.05F);
         this.body.setRotationPoint(0.0F, 11.0F, 5.0F);
-        this.head = new ModelRenderer(this, 0, 35);
-        this.head.addBox(-2.05F, -6.0F, -2.0F, 4.0F, 12.0F, 7.0F);
-        this.head.rotateAngleX = ((float)Math.PI / 6F);
-        ModelRenderer modelrenderer = new ModelRenderer(this, 0, 13);
-        modelrenderer.addBox(-3.0F, -11.0F, -2.0F, 6.0F, 5.0F, 7.0F, modelSizeIn);
-        ModelRenderer modelrenderer1 = new ModelRenderer(this, 56, 36);
-        modelrenderer1.addBox(-1.0F, -11.0F, 5.01F, 2.0F, 16.0F, 2.0F, modelSizeIn);
-        ModelRenderer modelrenderer2 = new ModelRenderer(this, 0, 25);
-        modelrenderer2.addBox(-2.0F, -11.0F, -7.0F, 4.0F, 5.0F, 5.0F, modelSizeIn);
-        this.head.addChild(modelrenderer);
-        this.head.addChild(modelrenderer1);
-        this.head.addChild(modelrenderer2);
-        ModelRenderer modelrenderer10 = new ModelRenderer(this, 19, 16);
-        modelrenderer10.addBox(0.55F, -13.0F, 4.0F, 2.0F, 3.0F, 1.0F, -0.001F);
-        ModelRenderer modelrenderer11 = new ModelRenderer(this, 19, 16);
-        modelrenderer11.addBox(-2.55F, -13.0F, 4.0F, 2.0F, 3.0F, 1.0F, -0.001F);
-        this.head.addChild(modelrenderer10);
-        this.head.addChild(modelrenderer11);
+        this.neck = new ModelRenderer(this, 0, 35);
+        this.neck.addBox(-2.05F, -6.0F, -2.0F, 4.0F, 12.0F, 7.0F);
+        this.neck.rotateAngleX = ((float)Math.PI / 6F);
+        this.head = new ModelRenderer(this, 0, 13);
+        this.head.addBox(-3.0F, -11.0F, -2.0F, 6.0F, 5.0F, 7.0F, modelSizeIn);
+        this.mane = new ModelRenderer(this, 56, 36);
+        this.mane.addBox(-1.0F, -11.0F, 5.01F, 2.0F, 16.0F, 2.0F, modelSizeIn);
+        this.snout = new ModelRenderer(this, 0, 25);
+        this.snout.addBox(-2.0F, -11.0F, -7.0F, 4.0F, 5.0F, 5.0F, modelSizeIn);
+        this.neck.addChild(this.head);
+        this.neck.addChild(this.mane);
+        this.neck.addChild(this.snout);
+        this.leftEar = new ModelRenderer(this, 19, 16);
+        this.leftEar.addBox(0.55F, -13.0F, 4.0F, 2.0F, 3.0F, 1.0F, -0.001F);
+        this.rightEar = new ModelRenderer(this, 19, 16);
+        this.rightEar.addBox(-2.55F, -13.0F, 4.0F, 2.0F, 3.0F, 1.0F, -0.001F);
+        this.neck.addChild(this.leftEar);
+        this.neck.addChild(this.rightEar);
         this.rightBackLeg = new ModelRenderer(this, 48, 21);
         this.rightBackLeg.mirror = true;
         this.rightBackLeg.addBox(-3.0F, -1.01F, -1.0F, 4.0F, 11.0F, 4.0F, modelSizeIn);
@@ -102,37 +121,37 @@ public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel
         this.tail.setRotationPoint(0.0F, -5.0F, 2.0F);
         this.tail.rotateAngleX = ((float)Math.PI / 6F);
         this.body.addChild(this.tail);
-        ModelRenderer modelrenderer3 = new ModelRenderer(this, 26, 0);
-        modelrenderer3.addBox(-5.0F, -8.0F, -9.0F, 10.0F, 9.0F, 9.0F, 0.5F);
-        this.body.addChild(modelrenderer3);
-        ModelRenderer modelrenderer4 = new ModelRenderer(this, 29, 5);
-        modelrenderer4.addBox(2.0F, -9.0F, -6.0F, 1.0F, 2.0F, 2.0F, modelSizeIn);
-        this.head.addChild(modelrenderer4);
-        ModelRenderer modelrenderer5 = new ModelRenderer(this, 29, 5);
-        modelrenderer5.addBox(-3.0F, -9.0F, -6.0F, 1.0F, 2.0F, 2.0F, modelSizeIn);
-        this.head.addChild(modelrenderer5);
-        ModelRenderer modelrenderer6 = new ModelRenderer(this, 32, 2);
-        modelrenderer6.addBox(3.1F, -6.0F, -8.0F, 0.0F, 3.0F, 16.0F, modelSizeIn);
-        modelrenderer6.rotateAngleX = (-(float)Math.PI / 6F);
-        this.head.addChild(modelrenderer6);
-        ModelRenderer modelrenderer7 = new ModelRenderer(this, 32, 2);
-        modelrenderer7.addBox(-3.1F, -6.0F, -8.0F, 0.0F, 3.0F, 16.0F, modelSizeIn);
-        modelrenderer7.rotateAngleX = (-(float)Math.PI / 6F);
-        this.head.addChild(modelrenderer7);
-        ModelRenderer modelrenderer8 = new ModelRenderer(this, 1, 1);
-        modelrenderer8.addBox(-3.0F, -11.0F, -1.9F, 6.0F, 5.0F, 6.0F, 0.2F);
-        this.head.addChild(modelrenderer8);
-        ModelRenderer modelrenderer9 = new ModelRenderer(this, 19, 0);
-        modelrenderer9.addBox(-2.0F, -11.0F, -4.0F, 4.0F, 5.0F, 2.0F, 0.2F);
-        this.head.addChild(modelrenderer9);
-        this.saddle = ImmutableList.of(modelrenderer3, modelrenderer4, modelrenderer5, modelrenderer8, modelrenderer9);
-        this.reins = ImmutableList.of(modelrenderer6, modelrenderer7);
+        this.saddle = new ModelRenderer(this, 26, 0);
+        this.saddle.addBox(-5.0F, -8.0F, -9.0F, 10.0F, 9.0F, 9.0F, 0.5F);
+        this.body.addChild(this.saddle);
+        this.leftBit = new ModelRenderer(this, 29, 5);
+        this.leftBit.addBox(2.0F, -9.0F, -6.0F, 1.0F, 2.0F, 2.0F, modelSizeIn);
+        this.neck.addChild(this.leftBit);
+        this.rightBit = new ModelRenderer(this, 29, 5);
+        this.rightBit.addBox(-3.0F, -9.0F, -6.0F, 1.0F, 2.0F, 2.0F, modelSizeIn);
+        this.neck.addChild(this.rightBit);
+        this.leftRein = new ModelRenderer(this, 32, 2);
+        this.leftRein.addBox(3.1F, -6.0F, -8.0F, 0.0F, 3.0F, 16.0F, modelSizeIn);
+        this.leftRein.rotateAngleX = (-(float)Math.PI / 6F);
+        this.neck.addChild(this.leftRein);
+        this.rightRein = new ModelRenderer(this, 32, 2);
+        this.rightRein.addBox(-3.1F, -6.0F, -8.0F, 0.0F, 3.0F, 16.0F, modelSizeIn);
+        this.rightRein.rotateAngleX = (-(float)Math.PI / 6F);
+        this.neck.addChild(this.rightRein);
+        this.headstall = new ModelRenderer(this, 1, 1);
+        this.headstall.addBox(-3.0F, -11.0F, -1.9F, 6.0F, 5.0F, 6.0F, 0.2F);
+        this.neck.addChild(this.headstall);
+        this.noseband = new ModelRenderer(this, 19, 0);
+        this.noseband.addBox(-2.0F, -11.0F, -4.0F, 4.0F, 5.0F, 2.0F, 0.2F);
+        this.neck.addChild(this.noseband);
+        this.tack = new ModelRenderer[] {this.saddle, this.leftBit, this.rightBit, this.headstall, this.noseband};
+        this.reins = new ModelRenderer[] {this.leftRein, this.rightRein};
     }
 
     @Override
     protected Iterable<ModelRenderer> getHeadParts()
     {
-        return ImmutableList.of(this.head);
+        return ImmutableList.of(this.neck);
     }
 
     @Override
@@ -142,12 +161,12 @@ public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel
     }
 
     @Override
-    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netneckYaw, float neckPitch)
     {
         boolean saddled = entityIn.isHorseSaddled();
         boolean ridden = entityIn.isBeingRidden();
 
-        for (ModelRenderer saddlePart : this.saddle) saddlePart.showModel = saddled;
+        for (ModelRenderer saddlePart : this.tack) saddlePart.showModel = saddled;
         for (ModelRenderer rein : this.reins) rein.showModel = saddled && ridden;
 
         this.body.rotationPointY = 11.0F;
@@ -180,19 +199,19 @@ public class HorseArmorModel<T extends AbstractHorseEntity> extends AgeableModel
         float f8 = entityIn.getMouthOpennessAngle(partialTick);
         boolean flag = entityIn.tailCounter != 0;
         float f9 = (float)entityIn.ticksExisted + partialTick;
-        this.head.rotationPointY = 4.0F;
-        this.head.rotationPointZ = -12.0F;
+        this.neck.rotationPointY = 4.0F;
+        this.neck.rotationPointZ = -12.0F;
         this.body.rotateAngleX = 0.0F;
-        this.head.rotateAngleX = ((float)Math.PI / 6F) + f4;
-        this.head.rotateAngleY = f3 * ((float)Math.PI / 180F);
+        this.neck.rotateAngleX = ((float)Math.PI / 6F) + f4;
+        this.neck.rotateAngleY = f3 * ((float)Math.PI / 180F);
         float f10 = entityIn.isInWater() ? 0.2F : 1.0F;
         float f11 = MathHelper.cos(f10 * limbSwing * 0.6662F + (float)Math.PI);
         float f12 = f11 * 0.8F * limbSwingAmount;
         float f13 = (1.0F - Math.max(f6, f5)) * (((float)Math.PI / 6F) + f4 + f8 * MathHelper.sin(f9) * 0.05F);
-        this.head.rotateAngleX = f6 * (0.2617994F + f4) + f5 * (2.1816616F + MathHelper.sin(f9) * 0.05F) + f13;
-        this.head.rotateAngleY = f6 * f3 * ((float)Math.PI / 180F) + (1.0F - Math.max(f6, f5)) * this.head.rotateAngleY;
-        this.head.rotationPointY = f6 * -4.0F + f5 * 11.0F + (1.0F - Math.max(f6, f5)) * this.head.rotationPointY;
-        this.head.rotationPointZ = f6 * -4.0F + f5 * -12.0F + (1.0F - Math.max(f6, f5)) * this.head.rotationPointZ;
+        this.neck.rotateAngleX = f6 * (0.2617994F + f4) + f5 * (2.1816616F + MathHelper.sin(f9) * 0.05F) + f13;
+        this.neck.rotateAngleY = f6 * f3 * ((float)Math.PI / 180F) + (1.0F - Math.max(f6, f5)) * this.neck.rotateAngleY;
+        this.neck.rotationPointY = f6 * -4.0F + f5 * 11.0F + (1.0F - Math.max(f6, f5)) * this.neck.rotationPointY;
+        this.neck.rotationPointZ = f6 * -4.0F + f5 * -12.0F + (1.0F - Math.max(f6, f5)) * this.neck.rotationPointZ;
         this.body.rotateAngleX = f6 * (-(float)Math.PI / 4F) + f7 * this.body.rotateAngleX;
         float f14 = 0.2617994F * f6;
         float f15 = MathHelper.cos(f9 * 0.6F + (float)Math.PI);
