@@ -92,8 +92,16 @@ public class ClientHooks
             boolean fmlNetMatches = fmlver == FMLNetworkConstants.FMLNETVERSION;
             boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
             AtomicBoolean result = new AtomicBoolean(true);
-            ModList.get().forEachModContainer((modid, mc)-> mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).ifPresent(ext->
-                    result.compareAndSet(true, ext.getRight().test(mods.get(modid), true))));
+            final List<String> extraClientMods = new ArrayList<>();
+            ModList.get().forEachModContainer((modid, mc) ->
+                    mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).ifPresent(ext-> {
+                        boolean foundModOnServer = ext.getRight().test(mods.get(modid), true);
+                        result.compareAndSet(true, foundModOnServer);
+                        if (!foundModOnServer) {
+                            extraClientMods.add(modid);
+                        }
+                    })
+            );
             boolean modsMatch = result.get();
 
             final Map<String, String> extraServerMods = mods.entrySet().stream().
@@ -107,9 +115,13 @@ public class ClientHooks
 
             if (!extraServerMods.isEmpty()) {
                 extraReason = "fml.menu.multiplayer.extraservermods";
+                LOGGER.info(CLIENTHOOKS, ForgeI18n.parseMessage(extraReason) + ": {}", extraServerMods.entrySet().stream()
+                        .map(e -> e.getKey() + "@" + e.getValue())
+                        .collect(Collectors.joining(", ")));
             }
             if (!modsMatch) {
                 extraReason = "fml.menu.multiplayer.modsincompatible";
+                LOGGER.info(CLIENTHOOKS, "Client has mods that are missing on server: {}", extraClientMods);
             }
             if (!channelsMatch) {
                 extraReason = "fml.menu.multiplayer.networkincompatible";
