@@ -47,9 +47,6 @@ public class WorldGenAdditions
 
     public static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
 
-    //TODO make it only accept res loc references, otherwise the biome is not registered, which would be problematic?
-    public static MapCodec<List<Supplier<Biome>>> SIMPLE_BIOMES = Biome.field_242420_e.fieldOf("biomes");
-
     public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> COMPLEX_BIOMES = RecordCodecBuilder.<Pair<Biome.Attributes, Supplier<Biome>>>create((inst) ->
             inst.group(
                     Biome.Attributes.field_235104_a_.fieldOf("parameters").forGetter(Pair::getFirst),
@@ -142,16 +139,6 @@ public class WorldGenAdditions
             ret.register(base.getId(entry.getValue()), entry.getKey(), parsed, base.func_241876_d(entry.getValue()));
         }
         return MapCodec.unit(ret);
-    }
-
-    public static MapCodec<List<Supplier<Biome>>> overworldBiomeAdditions(List<Biome> fakeBase, RegistryKey<Dimension> key, WorldSettingsImport<JsonElement> parser)
-    {
-        resetCachingState();
-        List<Supplier<Biome>> base = fakeBase.stream().<Supplier<Biome>>map(b -> () -> b).collect(Collectors.toList());
-        return parseAddition(base, SIMPLE_BIOMES,
-                List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                "additions/dimensions/overworld"
-        );
     }
 
     public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> complexBiomeAdditions(List<Pair<Biome.Attributes, Supplier<Biome>>> base, RegistryKey<Dimension> key, WorldSettingsImport<JsonElement> parser)
