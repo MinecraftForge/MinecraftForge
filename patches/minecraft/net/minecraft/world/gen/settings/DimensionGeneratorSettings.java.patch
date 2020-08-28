@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
++++ b/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
+@@ -41,11 +41,11 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ public class DimensionGeneratorSettings {
+-   public static final Codec<DimensionGeneratorSettings> field_236201_a_ = RecordCodecBuilder.<DimensionGeneratorSettings>create((p_236214_0_) -> {
++   public static final Codec<DimensionGeneratorSettings> field_236201_a_ = net.minecraftforge.common.world.WorldGenAdditions.delegateWorldDecoding(RecordCodecBuilder.<DimensionGeneratorSettings>create((p_236214_0_) -> {
+       return p_236214_0_.group(Codec.LONG.fieldOf("seed").stable().forGetter(DimensionGeneratorSettings::func_236221_b_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(DimensionGeneratorSettings::func_236222_c_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(DimensionGeneratorSettings::func_236223_d_), SimpleRegistry.func_241744_b_(Registry.field_239700_af_, Lifecycle.stable(), Dimension.field_236052_a_).xmap(Dimension::func_236062_a_, Function.identity()).fieldOf("dimensions").forGetter(DimensionGeneratorSettings::func_236224_e_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_236213_0_) -> {
+          return p_236213_0_.field_236209_i_;
+       })).apply(p_236214_0_, p_236214_0_.stable(DimensionGeneratorSettings::new));
+-   }).comapFlatMap(DimensionGeneratorSettings::func_236233_n_, Function.identity());
++   }).comapFlatMap(DimensionGeneratorSettings::func_236233_n_, Function.identity()));
+    private static final Logger field_236203_c_ = LogManager.getLogger();
+    private final long field_236205_e_;
+    private final boolean field_236206_f_;
+@@ -82,6 +82,18 @@
+       this.field_236209_i_ = p_i231915_6_;
+    }
+ 
++   public static Codec<DimensionGeneratorSettings> basedOn(DimensionGeneratorSettings base, net.minecraft.util.registry.WorldSettingsImport<com.google.gson.JsonElement> parser) {
++      return RecordCodecBuilder.create(inst ->
++              inst.group(
++                      com.mojang.serialization.MapCodec.unit(base.field_236205_e_).forGetter(dgs -> dgs.field_236205_e_),
++                      com.mojang.serialization.MapCodec.unit(base.field_236206_f_).forGetter(dgs -> dgs.field_236206_f_),
++                      com.mojang.serialization.MapCodec.unit(base.field_236207_g_).forGetter(dgs -> dgs.field_236207_g_),
++                      net.minecraftforge.common.world.WorldGenAdditions.handleRegistry(base.field_236208_h_, parser).forGetter(dgs -> dgs.field_236208_h_),
++                      com.mojang.serialization.MapCodec.unit(base.field_236209_i_).forGetter(dgs -> dgs.field_236209_i_)
++              ).apply(inst, DimensionGeneratorSettings::new)
++      );
++   }
++
+    public static DimensionGeneratorSettings func_242752_a(DynamicRegistries p_242752_0_) {
+       Registry<Biome> registry = p_242752_0_.func_243612_b(Registry.field_239720_u_);
+       int i = "North Carolina".hashCode();

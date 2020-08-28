@@ -9,8 +9,8 @@
 +              inst.group(
 +                      MapCodec.unit(()->base.field_242482_d).forGetter(bgs -> bgs.field_242482_d),
 +                      MapCodec.unit(base.field_242483_e).forGetter(bgs -> bgs.field_242483_e),
-+                      net.minecraftforge.common.world.CodecAdditions.featureAdditions(base.field_242484_f, key, category, parser).forGetter(bgs -> bgs.field_242484_f),
-+                      net.minecraftforge.common.world.CodecAdditions.structureAdditions(base.field_242485_g, key, category, parser).forGetter(bgs -> bgs.field_242485_g)
++                      net.minecraftforge.common.world.WorldGenAdditions.featureAdditions(base.field_242484_f, key, category, parser).forGetter(bgs -> bgs.field_242484_f),
++                      net.minecraftforge.common.world.WorldGenAdditions.structureAdditions(base.field_242485_g, key, category, parser).forGetter(bgs -> bgs.field_242485_g)
 +              ).apply(inst, BiomeGenerationSettings::new)
 +      );
 +   }

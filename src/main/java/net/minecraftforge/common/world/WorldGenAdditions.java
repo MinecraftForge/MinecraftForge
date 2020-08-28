@@ -41,14 +41,13 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
-public class CodecAdditions
+public class WorldGenAdditions
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
 
-    //TODO make it only accept res loc references, otherwise the biome is not registered could be problematic?
-    // it is not working so not sure what is needed
+    //TODO make it only accept res loc references, otherwise the biome is not registered, which would be problematic?
     public static MapCodec<List<Supplier<Biome>>> SIMPLE_BIOMES = Biome.field_242420_e.fieldOf("biomes");
 
     public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> COMPLEX_BIOMES = RecordCodecBuilder.<Pair<Biome.Attributes, Supplier<Biome>>>create((inst) ->
@@ -88,14 +87,14 @@ public class CodecAdditions
             @Override
             public <T> DataResult<Pair<DimensionGeneratorSettings, T>> decode(DynamicOps<T> ops, T input)
             {
+                DataResult<Pair<DimensionGeneratorSettings, T>> baseResult = base.decode(ops, input);
                 if(ops instanceof WorldSettingsImport && input instanceof JsonElement)
                 {
-                    DataResult<Pair<DimensionGeneratorSettings, T>> first = base.decode(ops, input);
-                    if(first.error().isPresent())
-                        return first;
-                    return first.map(p -> p.mapFirst(base -> handleWorldGeneration(base, (WorldSettingsImport<JsonElement>) ops)));
+                    if(baseResult.error().isPresent())
+                        return baseResult;
+                    return baseResult.map(p -> p.mapFirst(base -> handleWorldGeneration(base, (WorldSettingsImport<JsonElement>) ops)));
                 }
-                return base.decode(ops, input);
+                return baseResult;
             }
 
             @Override
@@ -115,25 +114,23 @@ public class CodecAdditions
                     .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
                     .orElseThrow(RuntimeException::new); //Impossible
 
-//        if(value instanceof Dimension)
-//            return (E) Dimension.basedOn((Dimension) value, (RegistryKey<Dimension>) key, parser)
-//                            .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
-//                            .setPartial((Dimension) value) //Fall back on the base value.
-//                            .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
-//                            .orElseThrow(RuntimeException::new); //Impossible
+        if(value instanceof Dimension)
+            return (E) Dimension.basedOn((Dimension) value, (RegistryKey<Dimension>) key, parser)
+                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
+                    .setPartial((Dimension) value) //Fall back on the base value.
+                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
+                    .orElseThrow(RuntimeException::new); //Impossible
 
         return value;
     }
 
-    //Adding a biome to the list of the OverworldBiomeProvider or the NetherBiomeProvider isn't generating it...... world...
     public static DimensionGeneratorSettings handleWorldGeneration(DimensionGeneratorSettings base, WorldSettingsImport<JsonElement> parser)
     {
-        return base;
-//        return DimensionGeneratorSettings.basedOn(base, parser)
-//                .parse(parser, new JsonObject())
-//                .setPartial(base)
-//                .resultOrPartial(LOGGER::error)
-//                .orElseThrow(RuntimeException::new);
+        return DimensionGeneratorSettings.basedOn(base, parser)
+                .parse(parser, new JsonObject())
+                .setPartial(base)
+                .resultOrPartial(LOGGER::error)
+                .orElseThrow(RuntimeException::new);
     }
 
     public static <E> MapCodec<SimpleRegistry<E>> handleRegistry(SimpleRegistry<E> base, WorldSettingsImport<JsonElement> parser)
@@ -144,24 +141,25 @@ public class CodecAdditions
             E parsed = handleAdditions(entry.getValue(), entry.getKey(), parser);
             ret.register(base.getId(entry.getValue()), entry.getKey(), parsed, base.func_241876_d(entry.getValue()));
         }
-        return MapCodec.unit(base);
+        return MapCodec.unit(ret);
     }
 
     public static MapCodec<List<Supplier<Biome>>> overworldBiomeAdditions(List<Biome> fakeBase, RegistryKey<Dimension> key, WorldSettingsImport<JsonElement> parser)
     {
+        resetCachingState();
         List<Supplier<Biome>> base = fakeBase.stream().<Supplier<Biome>>map(b -> () -> b).collect(Collectors.toList());
         return parseAddition(base, SIMPLE_BIOMES,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                "additions/dimensions", key.func_240901_a_().toString()
+                "additions/dimensions/overworld"
         );
     }
 
     public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> complexBiomeAdditions(List<Pair<Biome.Attributes, Supplier<Biome>>> base, RegistryKey<Dimension> key, WorldSettingsImport<JsonElement> parser)
     {
+        resetCachingState();
         return parseAddition(base, COMPLEX_BIOMES,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
-                "additions/dimensions/noise_biomes",
-                key.func_240901_a_().toString()
+                "additions/dimensions/noise_biomes", key.func_240901_a_().toString()
         );
     }
 
@@ -202,7 +200,7 @@ public class CodecAdditions
         updateCachingStateFor("spawns");
         weightMap.clear();
         return parseAddition(base, SPAWN_COSTS_CODEC,
-                CodecAdditions::mergeCosts, HashMap::new, ImmutableMap::copyOf,
+                WorldGenAdditions::mergeCosts, HashMap::new, ImmutableMap::copyOf,
                 parser,
                 "additions/biomes/mob_spawns",
                 key.func_240901_a_().toString(), category.getName()
@@ -269,13 +267,14 @@ public class CodecAdditions
      * @param parser        How to decode the additions
      * @param folder        The folder where these additions are stored
      * @param validTargets  One of these string need to match in the "target" array for the addition to apply.
+     *                      If none are included, there will be no filter and all will match
      * @param <E>           The type of this object.
      * @return              A MapCodec of this object.
      */
     public static <E> MapCodec<E> parseAddition(E base, MapCodec<E> decoder, BiConsumer<E, E> merger,
-                                                   UnaryOperator<E> toMutable, UnaryOperator<E> toImmutable,
-                                                   WorldSettingsImport<JsonElement> parser,
-                                                   String folder, String... validTargets)
+                                                UnaryOperator<E> toMutable, UnaryOperator<E> toImmutable,
+                                                WorldSettingsImport<JsonElement> parser,
+                                                String folder, String... validTargets)
     {
         E mutable = toMutable.apply(base);
         List<DataResult<E>> results = new ArrayList<>();
@@ -285,7 +284,7 @@ public class CodecAdditions
         {
             getCurrentCache().forEach(j ->
             {
-                if(TARGETS.parse(parser, j).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
+                if(targets.isEmpty() || TARGETS.parse(parser, j).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
                     results.add(decoder.decoder().parse(parser, j));
             });
         }
@@ -314,7 +313,7 @@ public class CodecAdditions
                         if(cachingState == Caching.STORE)
                             getCurrentCache().add(json);
 
-                        if(TARGETS.parse(parser, json).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
+                        if(targets.isEmpty() || TARGETS.parse(parser, json).result().orElse(Collections.EMPTY_LIST).stream().anyMatch(targets::contains))
                             results.add(decoder.decoder().parse(parser, json));
                     }
                     catch (RuntimeException | IOException e)
@@ -336,6 +335,12 @@ public class CodecAdditions
     private static final Map<String, List<JsonElement>> caches = new HashMap<>();
     private static String current = "";
     private static Caching cachingState = Caching.NONE;
+
+    private static void resetCachingState()
+    {
+        cachingState = Caching.NONE;
+        current = "";
+    }
 
     private static void updateCachingStateFor(String name)
     {

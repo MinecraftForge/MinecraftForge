@@ -8,8 +8,8 @@
 +      return RecordCodecBuilder.mapCodec(inst ->
 +              inst.group(
 +                      MapCodec.unit(base.field_242553_d).forGetter(msi -> msi.field_242553_d),
-+                      net.minecraftforge.common.world.CodecAdditions.spawnerAdditions(base.field_242554_e, key, category,parser).forGetter(msi -> msi.field_242554_e),
-+                      net.minecraftforge.common.world.CodecAdditions.spawnCostsAdditions(base.field_242555_f, key, category,parser).forGetter(msi -> msi.field_242555_f),
++                      net.minecraftforge.common.world.WorldGenAdditions.spawnerAdditions(base.field_242554_e, key, category,parser).forGetter(msi -> msi.field_242554_e),
++                      net.minecraftforge.common.world.WorldGenAdditions.spawnCostsAdditions(base.field_242555_f, key, category,parser).forGetter(msi -> msi.field_242555_f),
 +                      MapCodec.unit(base.field_242556_g).forGetter(msi -> msi.field_242556_g)
 +              ).apply(inst, MobSpawnInfo::new)
 +      );

@@ -4,7 +4,7 @@
           Optional<Pair<E, OptionalInt>> optional = dataresult1.result();
           if (optional.isPresent()) {
              Pair<E, OptionalInt> pair = optional.get();
-+            pair = pair.mapFirst(e -> net.minecraftforge.common.world.CodecAdditions.handleAdditions(e, registrykey, this.field_244333_f));
++            pair = pair.mapFirst(e -> net.minecraftforge.common.world.WorldGenAdditions.handleAdditions(e, registrykey, this.field_244333_f));
              p_241805_2_.func_241874_a(pair.getSecond(), registrykey, pair.getFirst(), dataresult1.lifecycle());
           }
  
