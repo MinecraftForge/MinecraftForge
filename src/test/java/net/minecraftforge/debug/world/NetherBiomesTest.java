@@ -36,7 +36,6 @@ public class NetherBiomesTest
 
     private static final boolean ENABLED = false;
     private static Logger logger;
-    private static Biome biome;
 
     public NetherBiomesTest()
     {

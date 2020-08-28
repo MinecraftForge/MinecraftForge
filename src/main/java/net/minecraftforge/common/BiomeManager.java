@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Biomes are completely redone in 1.16.2, reevaluate
+/* Biomes are completely redone in 1.16.2, reevaluate*/
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
@@ -149,7 +149,7 @@ public class BiomeManager
         synchronized (moddedNetherBiomes)
         {
             for (Pair<RegistryKey<Biome>, Biome.Attributes> moddedBiome : moddedNetherBiomes) {
-                result.add(Pair.of(moddedBiome.getSecond(), () -> biomeRegistry.func_243576_d(moddedBiome.getFirst())));
+                result.add(moddedBiome.swap().mapSecond(key -> () -> biomeRegistry.func_243576_d(key)));
             }
         }
 
