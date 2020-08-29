@@ -44,38 +44,7 @@ import java.util.stream.Collectors;
 public class WorldGenAdditions
 {
     private static final Logger LOGGER = LogManager.getLogger();
-
     public static final Codec<List<String>> TARGETS = Codec.STRING.listOf().fieldOf("targets").codec();
-
-    public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> COMPLEX_BIOMES = RecordCodecBuilder.<Pair<Biome.Attributes, Supplier<Biome>>>create((inst) ->
-            inst.group(
-                    Biome.Attributes.field_235104_a_.fieldOf("parameters").forGetter(Pair::getFirst),
-                    Biome.field_235051_b_.fieldOf("biome").forGetter(Pair::getSecond)
-            ).apply(inst, Pair::of)
-    ).listOf().fieldOf("noise_biomes");
-
-    public static final MapCodec<Map<EntityClassification, List<MobSpawnInfo.Spawners>>> SPAWNERS_CODEC =
-            Codec.simpleMap(
-                    EntityClassification.field_233667_g_,
-                    MobSpawnInfo.Spawners.field_242587_b.listOf().promotePartial(Util.func_240982_a_("Spawn data: ", LOGGER::error)),
-                    IStringSerializable.func_233025_a_(EntityClassification.values())
-            ).codec().optionalFieldOf("spawners", ImmutableMap.of());
-
-    public static final MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> SPAWN_COSTS_CODEC =
-            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec()
-                    .optionalFieldOf("spawn_costs", ImmutableMap.of());
-
-    /**
-     * Feature lists are based on {@link GenerationStage.Decoration}, the object itself is a list of lists,
-     * the position of the list is very important as it corresponds to the ordinal of the Decoration associated with the features.
-     */
-    public static final MapCodec<List<List<Supplier<ConfiguredFeature<?, ?>>>>> FEATURES_CODEC =
-            ConfiguredFeature.field_242764_c.promotePartial(Util.func_240982_a_("Feature: ", LOGGER::error)).listOf()
-                    .optionalFieldOf("features", ImmutableList.of());
-
-    public static final MapCodec<List<Supplier<StructureFeature<?, ?>>>> STRUCTURES_CODEC =
-            StructureFeature.field_242770_c.promotePartial(Util.func_240982_a_("Structure start: ", LOGGER::error))
-                    .optionalFieldOf("starts", ImmutableList.of());
 
     public static Codec<DimensionGeneratorSettings> delegateWorldDecoding(Codec<DimensionGeneratorSettings> base)
     {
@@ -102,25 +71,6 @@ public class WorldGenAdditions
         };
     }
 
-    public static <E> E handleAdditions(E value, RegistryKey<E> key, WorldSettingsImport<JsonElement> parser)
-    {
-        if(value instanceof Biome)
-            return (E) Biome.basedOn((Biome) value, (RegistryKey<Biome>) key, parser)
-                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
-                    .setPartial((Biome)value) //Fall back on the base value.
-                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
-                    .orElseThrow(RuntimeException::new); //Impossible
-
-        if(value instanceof Dimension)
-            return (E) Dimension.basedOn((Dimension) value, (RegistryKey<Dimension>) key, parser)
-                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
-                    .setPartial((Dimension) value) //Fall back on the base value.
-                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
-                    .orElseThrow(RuntimeException::new); //Impossible
-
-        return value;
-    }
-
     public static DimensionGeneratorSettings handleWorldGeneration(DimensionGeneratorSettings base, WorldSettingsImport<JsonElement> parser)
     {
         return DimensionGeneratorSettings.basedOn(base, parser)
@@ -141,12 +91,54 @@ public class WorldGenAdditions
         return MapCodec.unit(ret);
     }
 
+    public static <E> E handleAdditions(E value, RegistryKey<E> key, WorldSettingsImport<JsonElement> parser)
+    {
+        if(value instanceof Biome)
+            return (E) Biome.basedOn((Biome) value, (RegistryKey<Biome>) key, parser)
+                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
+                    .setPartial((Biome)value) //Fall back on the base value.
+                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
+                    .orElseThrow(RuntimeException::new); //Impossible
+
+        if(value instanceof Dimension)
+            return (E) Dimension.basedOn((Dimension) value, (RegistryKey<Dimension>) key, parser)
+                    .parse(parser, new JsonObject()) //Dummy object, no actual parsing is done.
+                    .setPartial((Dimension) value) //Fall back on the base value.
+                    .resultOrPartial(LOGGER::warn) //Inform of errors if they occured.
+                    .orElseThrow(RuntimeException::new); //Impossible
+
+        return value;
+    }
+
+    public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> COMPLEX_BIOMES = RecordCodecBuilder.<Pair<Biome.Attributes, Supplier<Biome>>>create((inst) ->
+            inst.group(
+                    Biome.Attributes.field_235104_a_.fieldOf("parameters").forGetter(Pair::getFirst),
+                    Biome.field_235051_b_.fieldOf("biome").forGetter(Pair::getSecond)
+            ).apply(inst, Pair::of)
+    ).listOf().fieldOf("noise_biomes");
+
     public static MapCodec<List<Pair<Biome.Attributes, Supplier<Biome>>>> complexBiomeAdditions(List<Pair<Biome.Attributes, Supplier<Biome>>> base, RegistryKey<Dimension> key, WorldSettingsImport<JsonElement> parser)
     {
         resetCachingState();
         return parseAddition(base, COMPLEX_BIOMES,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
                 "additions/dimensions/noise_biomes", key.func_240901_a_().toString()
+        );
+    }
+
+    public static final MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> SPAWN_COSTS_CODEC =
+            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec()
+                    .optionalFieldOf("spawn_costs", ImmutableMap.of());
+
+    public static MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> spawnCostsAdditions(Map<EntityType<?>, MobSpawnInfo.SpawnCosts> base, RegistryKey<Biome> key, Biome.Category category, WorldSettingsImport<JsonElement> parser)
+    {
+        updateCacheFor("spawns");
+        weightMap.clear();
+        return parseAddition(base, SPAWN_COSTS_CODEC,
+                WorldGenAdditions::mergeCosts, HashMap::new, ImmutableMap::copyOf,
+                parser,
+                "additions/biomes/mob_spawns",
+                key.func_240901_a_().toString(), category.getName()
         );
     }
 
@@ -182,21 +174,17 @@ public class WorldGenAdditions
         });
     }
 
-    public static MapCodec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> spawnCostsAdditions(Map<EntityType<?>, MobSpawnInfo.SpawnCosts> base, RegistryKey<Biome> key, Biome.Category category, WorldSettingsImport<JsonElement> parser)
-    {
-        updateCachingStateFor("spawns");
-        weightMap.clear();
-        return parseAddition(base, SPAWN_COSTS_CODEC,
-                WorldGenAdditions::mergeCosts, HashMap::new, ImmutableMap::copyOf,
-                parser,
-                "additions/biomes/mob_spawns",
-                key.func_240901_a_().toString(), category.getName()
-        );
-    }
+    public static final MapCodec<Map<EntityClassification, List<MobSpawnInfo.Spawners>>> SPAWNERS_CODEC =
+            Codec.simpleMap(
+                    EntityClassification.field_233667_g_,
+                    MobSpawnInfo.Spawners.field_242587_b.listOf().promotePartial(Util.func_240982_a_("Spawn data: ", LOGGER::error)),
+                    IStringSerializable.func_233025_a_(EntityClassification.values())
+            ).codec().optionalFieldOf("spawners", ImmutableMap.of());
+
 
     public static MapCodec<Map<EntityClassification, List<MobSpawnInfo.Spawners>>> spawnerAdditions(Map<EntityClassification, List<MobSpawnInfo.Spawners>> base, RegistryKey<Biome> key, Biome.Category category, WorldSettingsImport<JsonElement> parser)
     {
-        updateCachingStateFor("spawns");
+        updateCacheFor("spawns");
         return parseAddition(base, SPAWNERS_CODEC,
                 (ret, toAdd) ->
                 {
@@ -211,9 +199,14 @@ public class WorldGenAdditions
         );
     }
 
+    public static final MapCodec<List<Supplier<StructureFeature<?, ?>>>> STRUCTURES_CODEC =
+            StructureFeature.field_242770_c.promotePartial(Util.func_240982_a_("Structure start: ", LOGGER::error))
+                    .optionalFieldOf("starts", ImmutableList.of());
+
+
     public static MapCodec<List<Supplier<StructureFeature<?, ?>>>> structureAdditions(List<Supplier<StructureFeature<?, ?>>> base, RegistryKey<Biome> key, Biome.Category category, WorldSettingsImport<JsonElement> parser)
     {
-        updateCachingStateFor("features");
+        updateCacheFor("features");
         return parseAddition(base , STRUCTURES_CODEC,
                 List::addAll, ArrayList::new, ImmutableList::copyOf, parser,
                 "additions/biomes/features",
@@ -221,9 +214,17 @@ public class WorldGenAdditions
         );
     }
 
+    /**
+     * Feature lists are based on {@link GenerationStage.Decoration}, the object itself is a list of lists,
+     * the position of the list is very important as it corresponds to the ordinal of the Decoration associated with the features.
+     */
+    public static final MapCodec<List<List<Supplier<ConfiguredFeature<?, ?>>>>> FEATURES_CODEC =
+            ConfiguredFeature.field_242764_c.promotePartial(Util.func_240982_a_("Feature: ", LOGGER::error)).listOf()
+                    .optionalFieldOf("features", ImmutableList.of());
+
     public static MapCodec<List<List<Supplier<ConfiguredFeature<?, ?>>>>> featureAdditions(List<List<Supplier<ConfiguredFeature<?, ?>>>> base , RegistryKey<Biome> key, Biome.Category category, WorldSettingsImport<JsonElement> parser)
     {
-        updateCachingStateFor("features");
+        updateCacheFor("features");
         return parseAddition(base, FEATURES_CODEC,
                 (ret, toAdd) -> //merger.
                 {
@@ -329,7 +330,7 @@ public class WorldGenAdditions
         current = "";
     }
 
-    private static void updateCachingStateFor(String name)
+    private static void updateCacheFor(String name)
     {
         if(caches.get(name) == null)
         {
