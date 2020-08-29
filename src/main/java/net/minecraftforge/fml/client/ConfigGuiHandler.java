@@ -21,6 +21,8 @@ package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.gui.config.ConfigScreen;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -32,7 +34,8 @@ public class ConfigGuiHandler
 {
     public static Optional<BiFunction<Minecraft, Screen, Screen>> getGuiFactoryFor(ModInfo selectedMod)
     {
-        return ModList.get().getModContainerById(selectedMod.getModId()).
-                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY));
+//        return ModList.get().getModContainerById(selectedMod.getModId()).
+//                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY));
+        return Optional.of((minecraft, screen) -> new ConfigScreen(screen, new StringTextComponent("Testing")));
     }
 }
