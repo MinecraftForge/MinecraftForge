@@ -62,7 +62,7 @@
        if (p_217384_1_ == this.field_73037_M.field_71439_g) {
           this.field_73037_M.func_147118_V().func_147682_a(new EntityTickableSound(p_217384_3_, p_217384_4_, p_217384_2_));
        }
-@@ -857,6 +874,7 @@
+@@ -876,6 +893,7 @@
        }
  
        public void func_239156_a_(Difficulty p_239156_1_) {
