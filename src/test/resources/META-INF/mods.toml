@@ -80,3 +80,5 @@ license="LGPL v2.1"
     modId="custom_elytra_test"
 [[mods]]
     modId="finite_water_test"
+[[mods]]
+    modId="item_model_data"

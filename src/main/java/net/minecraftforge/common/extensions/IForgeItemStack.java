@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.monster.EndermanEntity;
@@ -43,6 +44,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -503,5 +506,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return getStack().getItem().elytraFlightTick(getStack(), entity, flightTicks);
+    }
+
+    /**
+     * Allows you to return additional model data.
+     * This data can be used to provide additional functionality in your {@link net.minecraft.client.renderer.model.IBakedModel}
+     * @return Your model data
+     */
+    default @Nonnull IModelData getModelData()
+    {
+        return getStack().getItem().getModelData(getStack());
     }
 }

@@ -22,6 +22,7 @@ package net.minecraftforge.common.extensions;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
@@ -59,6 +60,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.animation.ITimeValue;
@@ -858,5 +861,16 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return this.getItem().isDamageable();
+    }
+
+    /**
+     * Allows you to return additional model data.
+     * This data can be used to provide additional functionality in your {@link net.minecraft.client.renderer.model.IBakedModel}
+     * @param stack       The ItemStack to get the additional model data from
+     * @return Your model data
+     */
+    default @Nonnull IModelData getModelData(ItemStack stack)
+    {
+        return EmptyModelData.INSTANCE;
     }
 }
