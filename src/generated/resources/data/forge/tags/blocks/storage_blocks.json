@@ -8,6 +8,7 @@
     "#forge:storage_blocks/iron",
     "#forge:storage_blocks/lapis",
     "#forge:storage_blocks/quartz",
-    "#forge:storage_blocks/redstone"
+    "#forge:storage_blocks/redstone",
+    "#forge:storage_blocks/netherite"
   ]
 }

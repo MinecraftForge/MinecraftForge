@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Random;
@@ -44,7 +45,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
     public NamespacedWrapper(ForgeRegistry<T> owner)
     {
-        super(RegistryKey.func_240904_a_(owner.getRegistryName()), Lifecycle.experimental());
+        super(owner.getRegistryKey(), Lifecycle.experimental());
         this.delegate = owner;
     }
 
@@ -129,6 +130,12 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     public Set<ResourceLocation> keySet()
     {
         return this.delegate.getKeys();
+    }
+
+    @Override
+    public Set<Map.Entry<RegistryKey<T>, T>> func_239659_c_()
+    {
+        return this.delegate.getEntries();
     }
 
     @Override
