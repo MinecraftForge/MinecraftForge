@@ -41,12 +41,11 @@
 +   /**@deprecated Forge: use {@link #renderParticles(MatrixStack, IRenderTypeBuffer.Impl, LightTexture, ActiveRenderInfo, float, net.minecraft.client.renderer.culling.ClippingHelper)} with ClippingHelper as additional parameter*/
 +   @Deprecated
     public void func_228345_a_(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_) {
--      p_228345_3_.func_205109_c();
 +      renderParticles(p_228345_1_, p_228345_2_, p_228345_3_, p_228345_4_, p_228345_5_, null);
 +   }
 +
-+   public void renderParticles(MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, LightTexture lightTextureIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks, @Nullable net.minecraft.client.renderer.culling.ClippingHelper clippingHelper) {
-+      lightTextureIn.func_205109_c();
++   public void renderParticles(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_, @Nullable net.minecraft.client.renderer.culling.ClippingHelper clippingHelper) {
+       p_228345_3_.func_205109_c();
 +      Runnable enable = () -> {
        RenderSystem.enableAlphaTest();
        RenderSystem.defaultAlphaFunc();
@@ -57,8 +56,7 @@
 +         RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE0);
 +      };
        RenderSystem.pushMatrix();
--      RenderSystem.multMatrix(p_228345_1_.func_227866_c_().func_227870_a_());
-+      RenderSystem.multMatrix(matrixStackIn.func_227866_c_().func_227870_a_());
+       RenderSystem.multMatrix(p_228345_1_.func_227866_c_().func_227870_a_());
  
 -      for(IParticleRenderType iparticlerendertype : field_215241_b) {
 +      for(IParticleRenderType iparticlerendertype : this.field_78876_b.keySet()) { // Forge: allow custom IParticleRenderType's
@@ -67,26 +65,14 @@
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -331,8 +344,9 @@
+@@ -331,6 +344,7 @@
              iparticlerendertype.func_217600_a(bufferbuilder, this.field_78877_c);
  
              for(Particle particle : iterable) {
 +               if (clippingHelper != null && particle.shouldCull() && !clippingHelper.func_228957_a_(particle.func_187116_l())) continue;
                 try {
--                  particle.func_225606_a_(bufferbuilder, p_228345_4_, p_228345_5_);
-+                  particle.func_225606_a_(bufferbuilder, activeRenderInfoIn, partialTicks);
+                   particle.func_225606_a_(bufferbuilder, p_228345_4_, p_228345_5_);
                 } catch (Throwable throwable) {
-                   CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering Particle");
-                   CrashReportCategory crashreportcategory = crashreport.func_85058_a("Particle being rendered");
-@@ -351,7 +365,7 @@
-       RenderSystem.depthFunc(515);
-       RenderSystem.disableBlend();
-       RenderSystem.defaultAlphaFunc();
--      p_228345_3_.func_205108_b();
-+      lightTextureIn.func_205108_b();
-       RenderSystem.disableFog();
-    }
- 
 @@ -362,7 +376,7 @@
     }
  
