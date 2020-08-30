@@ -1,6 +1,14 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -22,7 +22,15 @@
+@@ -16,13 +16,50 @@
+    private ITagCollection<T> field_232930_b_ = ITagCollection.func_242205_c();
+    private final List<TagRegistry.NamedTag<T>> field_232931_c_ = Lists.newArrayList();
+    private final Function<ITagCollectionSupplier, ITagCollection<T>> field_242184_c;
++   //TODO: Figure out about any potential concurrency issues
++   private static java.util.Map<ResourceLocation, List<TagRegistry.NamedTag<?>>> toAdd = com.google.common.collect.Maps.newHashMap();
+
+    public TagRegistry(Function<ITagCollectionSupplier, ITagCollection<T>> p_i241894_1_) {
+       this.field_242184_c = p_i241894_1_;
     }
  
     public ITag.INamedTag<T> func_232937_a_(String p_232937_1_) {
@@ -12,12 +20,39 @@
 +       return add(new TagRegistry.OptionalNamedTag<>(key, defaults));
 +   }
 +
++   //TODO: Document this and createDelayedOptional to being made via ForgeTagHandler instead
++   public static <T> ITag.INamedTag<T> createDelayedTag(ResourceLocation tagRegistry, ResourceLocation name) {
++      if (toAdd == null) throw new RuntimeException("Create delayed tag can only be called before custom tag types have been added.");
++      TagRegistry.NamedTag<T> tag = new TagRegistry.NamedTag<>(name);
++      toAdd.computeIfAbsent(tagRegistry, registry -> Lists.newArrayList()).add(tag);
++      return tag;
++   }
++
++   public static <T> net.minecraftforge.common.Tags.IOptionalNamedTag<T> createDelayedOptional(ResourceLocation tagRegistry, ResourceLocation key, @Nullable java.util.function.Supplier<Set<T>> defaults) {
++      if (toAdd == null) throw new RuntimeException("Create delayed optional can only be called before custom tag types have been added.");
++      TagRegistry.OptionalNamedTag<T> tag = new TagRegistry.OptionalNamedTag<>(key, defaults);
++      toAdd.computeIfAbsent(tagRegistry, registry -> Lists.newArrayList()).add(tag);
++      return tag;
++   }
++
++   public static void performDelayedAdd() {
++      if (toAdd != null) {
++         for (java.util.Map.Entry<ResourceLocation, List<TagRegistry.NamedTag<?>>> entry : toAdd.entrySet()) {
++            TagRegistry<?> tagRegistry = TagRegistryManager.get(entry.getKey());
++            if (tagRegistry == null)  throw new RuntimeException("A mod attempted to add a delayed tag for a registry that doesn't have custom tag support.");
++            //TODO: Do this in a "safer" way
++            tagRegistry.add((TagRegistry.NamedTag) entry.getValue());
++         }
++         toAdd = null;
++      }
++   }
++
 +   private <R extends TagRegistry.NamedTag<T>> R add(R namedtag) {
 +      namedtag.func_232943_a_(field_232930_b_::func_199910_a);
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
-@@ -56,7 +64,7 @@
+@@ -56,7 +93,7 @@
  
     public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
@@ -26,7 +61,7 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +101,45 @@
+@@ -93,5 +130,45 @@
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
        }

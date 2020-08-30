@@ -54,8 +54,7 @@ import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//TODO: We can easily make it so that it "nukes" the cache when reloads happen, but how would we best nuke it when connecting to say a vanilla server after
-// having loaded tags, or would that even matter
+//TODO: Nuke the cached customTagTypes map when connecting to say a vanilla server after having loaded tags, as we won't have received a packet to update them
 //TODO: keep track of generation index, both of vanilla tags and of custom tags and make sure that they match
 public class ForgeTagHandler
 {
@@ -66,9 +65,7 @@ public class ForgeTagHandler
 
     public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
     {
-        if (tagTypesSet) {
-            throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
-        }
+        if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
     }
@@ -87,20 +84,30 @@ public class ForgeTagHandler
         ForgeTagHandler.customTagTypes = customTagTypes;
     }
 
-    //TODO: We also should setup a way to declare the tag before registry events fire in case someone static initializes it
-    // We can handle this by making it so there is a returned method, and then when the custom tag type names get set we initialize it all
-    //TODO: Also create a way to get the tag type so that multiple can be made without having to look it up each time
+    //TODO: Can we create a way to easily create multiple tag types at once without having to do quite as much lookup
     @Nullable
     private static <T extends IForgeRegistryEntry<T>> TagRegistry<T> getTagRegistry(IForgeRegistry<T> registry)
     {
         return (TagRegistry<T>) TagRegistryManager.get(registry.getRegistryName());
     }
 
+    private static void validateRegistrySupportsTags(IForgeRegistry<?> registry) {
+        //Note: We also check against getTagRegistry in case someone decides to use the helpers for tag creation for types supported by vanilla
+        if (getTagRegistry(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null)) {
+            throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
+        }
+    }
+
     public static <T extends IForgeRegistryEntry<T>> ITag.INamedTag<T> makeWrapperTag(IForgeRegistry<T> registry, ResourceLocation name)
     {
-        TagRegistry<T> tagRegistry = getTagRegistry(registry);
-        if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-        return tagRegistry.func_232937_a_(name.toString());
+        validateRegistrySupportsTags(registry);
+        if (tagTypesSet)
+        {
+            TagRegistry<T> tagRegistry = getTagRegistry(registry);
+            if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
+            return tagRegistry.func_232937_a_(name.toString());
+        }
+        return TagRegistry.createDelayedTag(registry.getRegistryName(), name);
     }
 
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name)
@@ -110,9 +117,14 @@ public class ForgeTagHandler
 
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
     {
-        TagRegistry<T> tagRegistry = getTagRegistry(registry);
-        if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-        return tagRegistry.createOptional(name, defaults);
+        validateRegistrySupportsTags(registry);
+        if (tagTypesSet)
+        {
+            TagRegistry<T> tagRegistry = getTagRegistry(registry);
+            if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
+            return tagRegistry.createOptional(name, defaults);
+        }
+        return TagRegistry.createDelayedOptional(registry.getRegistryName(), name, defaults);
     }
 
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()

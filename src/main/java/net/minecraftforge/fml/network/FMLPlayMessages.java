@@ -405,6 +405,8 @@ public class FMLPlayMessages
                     //Validate that all the tags exist using the tag type collections from the packet
                     // We mimic vanilla in that we validate before updating the actual stored tags so that it can gracefully fallback
                     // to the last working set of tags
+                    //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
+                    // so they won't be validated
                     Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(new ITagCollectionSupplier()
                     {
                         @Override
