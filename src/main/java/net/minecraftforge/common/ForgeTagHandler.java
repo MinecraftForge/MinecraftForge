@@ -20,10 +20,9 @@
 package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
-import com.ibm.icu.impl.locale.XCldrStub.ImmutableSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
