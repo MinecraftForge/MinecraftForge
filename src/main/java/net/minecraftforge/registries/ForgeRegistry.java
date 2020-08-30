@@ -91,6 +91,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    @Nullable
     private final String tagFolder;
 
     private V defaultValue = null;

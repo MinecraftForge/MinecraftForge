@@ -401,13 +401,7 @@ public class FMLPlayMessages
             ctx.get().enqueueWork(() -> {
                 if (Minecraft.getInstance().world != null)
                 {
-                    //TODO: Re-evaluate this way of getting the tags
                     ITagCollectionSupplier tagCollectionSupplier = Minecraft.getInstance().world.getTags();
-                    for (ResourceLocation resourceLocation : msg.customTagTypeCollections.keySet())
-                    {
-                        //Ensure all the custom types exist on the client
-                        TagRegistryManager.getOrCreateCustomTagType((IForgeRegistry<?>) RegistryManager.ACTIVE.getRegistry(resourceLocation));
-                    }
                     //Validate that all the tags exist using the tag type collections from the packet
                     // We mimic vanilla in that we validate before updating the actual stored tags so that it can gracefully fallback
                     // to the last working set of tags

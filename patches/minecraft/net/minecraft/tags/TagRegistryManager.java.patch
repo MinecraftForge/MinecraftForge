@@ -1,14 +1,6 @@
 --- a/net/minecraft/tags/TagRegistryManager.java
 +++ b/net/minecraft/tags/TagRegistryManager.java
-@@ -12,6 +12,7 @@
- 
- public class TagRegistryManager {
-    private static final Map<ResourceLocation, TagRegistry<?>> field_242190_a = Maps.newHashMap();
-+   private static final java.util.Set<ResourceLocation> customTagTypes = com.google.common.collect.Sets.newHashSet();
- 
-    public static <T> TagRegistry<T> func_242196_a(ResourceLocation p_242196_0_, Function<ITagCollectionSupplier, ITagCollection<T>> p_242196_1_) {
-       TagRegistry<T> tagregistry = new TagRegistry<>(p_242196_1_);
-@@ -51,4 +52,40 @@
+@@ -51,4 +51,19 @@
           throw new IllegalStateException("Missing helper registrations");
        }
     }
@@ -16,7 +8,7 @@
 +   public static Multimap<ResourceLocation, ResourceLocation> validateVanillaTags(ITagCollectionSupplier tagCollectionSupplier) {
 +      Multimap<ResourceLocation, ResourceLocation> missingTags = HashMultimap.create();
 +      for (java.util.Map.Entry<ResourceLocation, TagRegistry<?>> entry : field_242190_a.entrySet()) {
-+         if (!customTagTypes.contains(entry.getKey())) {
++         if (!net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(entry.getKey())) {
 +            missingTags.putAll(entry.getKey(), entry.getValue().func_242189_b(tagCollectionSupplier));
 +         }
 +      }
@@ -26,26 +18,5 @@
 +   @javax.annotation.Nullable
 +   public static TagRegistry<?> get(ResourceLocation rl) {
 +      return field_242190_a.get(rl);
-+   }
-+
-+   public static java.util.Set<ResourceLocation> getCustomTagTypes() {
-+      return customTagTypes;
-+   }
-+
-+   /**
-+    * Creates and "registers" (or gets) a TagRegistry based on the passed in IForgeRegistry. This has to be called after RegistryEvents are done.
-+    *
-+    * @param reg The registry behind the tag type
-+    * @param <T> The Tag type
-+    *
-+    * @return A TagRegistry used to create any tags in code for this type
-+    */
-+   public synchronized static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> TagRegistry<T> getOrCreateCustomTagType(net.minecraftforge.registries.IForgeRegistry<T> reg) {
-+      ResourceLocation registryName = reg.getRegistryName();
-+      if (field_242190_a.containsKey(registryName)) {
-+         return (TagRegistry<T>) field_242190_a.get(registryName);
-+      }
-+      customTagTypes.add(registryName);
-+      return func_242196_a(registryName, tagCollectionSupplier -> (ITagCollection<T>) tagCollectionSupplier.getModdedCollection(registryName));
 +   }
  }

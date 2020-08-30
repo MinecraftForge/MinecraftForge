@@ -48,6 +48,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
+    @Nullable
     private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
@@ -206,6 +207,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public RegistryBuilder<T> tagFolder(String tagFolder)
     {
+        //TODO: Validate the naming scheme for the folder (all lower case, and probably mostly matching RL constraints but with no slashes for sub folders?)
         this.tagFolder = tagFolder;
         return this;
     }

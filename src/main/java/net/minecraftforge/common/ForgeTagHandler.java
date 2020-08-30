@@ -20,14 +20,19 @@
 package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
+import com.ibm.icu.impl.locale.XCldrStub.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -41,7 +46,10 @@ import net.minecraft.tags.TagCollectionReader;
 import net.minecraft.tags.TagRegistry;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +61,22 @@ public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static Map<ResourceLocation, ITagCollection<?>> customTagTypes = Collections.emptyMap();
+    private static Set<ResourceLocation> customTagTypeNames = Collections.emptySet();
+    private static boolean tagTypesSet = false;
+
+    public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
+    {
+        if (tagTypesSet) {
+            throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
+        }
+        tagTypesSet = true;
+        customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
+    }
+
+    public static Set<ResourceLocation> getCustomTagTypeNames()
+    {
+        return customTagTypeNames;
+    }
 
     public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes() {
         return customTagTypes;
@@ -63,11 +87,39 @@ public class ForgeTagHandler
         ForgeTagHandler.customTagTypes = customTagTypes;
     }
 
+    //TODO: We also should setup a way to declare the tag before registry events fire in case someone static initializes it
+    // We can handle this by making it so there is a returned method, and then when the custom tag type names get set we initialize it all
+    //TODO: Also create a way to get the tag type so that multiple can be made without having to look it up each time
+    @Nullable
+    private static <T extends IForgeRegistryEntry<T>> TagRegistry<T> getTagRegistry(IForgeRegistry<T> registry)
+    {
+        return (TagRegistry<T>) TagRegistryManager.get(registry.getRegistryName());
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> ITag.INamedTag<T> makeWrapperTag(IForgeRegistry<T> registry, ResourceLocation name)
+    {
+        TagRegistry<T> tagRegistry = getTagRegistry(registry);
+        if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
+        return tagRegistry.func_232937_a_(name.toString());
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name)
+    {
+        return createOptionalTag(registry, name, null);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
+    {
+        TagRegistry<T> tagRegistry = getTagRegistry(registry);
+        if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
+        return tagRegistry.createOptional(name, defaults);
+    }
+
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()
     {
         LOGGER.debug("Gathering custom tag collection reader from types.");
         ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : TagRegistryManager.getCustomTagTypes())
+        for (ResourceLocation registryName : customTagTypeNames)
         {
             ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry != null)
@@ -86,7 +138,7 @@ public class ForgeTagHandler
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : TagRegistryManager.getCustomTagTypes())
+        for (ResourceLocation registryName : customTagTypeNames)
         {
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)

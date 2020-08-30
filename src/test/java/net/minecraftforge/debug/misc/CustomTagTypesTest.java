@@ -19,10 +19,10 @@
 
 package net.minecraftforge.debug.misc;
 
-import net.minecraft.tags.TagRegistry;
-import net.minecraft.tags.TagRegistryManager;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -47,13 +47,8 @@ public class CustomTagTypesTest
     private static class BiomeTags
     {
         //This needs to be initialised after registry events.
-        private static final TagRegistry<Biome> biomeTagRegistry = TagRegistryManager.getOrCreateCustomTagType(ForgeRegistries.BIOMES);
-        private static final IOptionalNamedTag<Biome> OCEANS = tag("oceans");
-
-        private static IOptionalNamedTag<Biome> tag(String name)
-        {
-            return biomeTagRegistry.createOptional(new ResourceLocation(MODID, name), () -> null);
-        }
+        //TODO: Make this not be the case
+        private static final ITag.INamedTag<Biome> OCEANS = ForgeTagHandler.makeWrapperTag(ForgeRegistries.BIOMES, new ResourceLocation(MODID, "oceans"));
 
         private static void init() {}
     }
