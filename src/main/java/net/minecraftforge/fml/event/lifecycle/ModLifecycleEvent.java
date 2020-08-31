@@ -54,6 +54,10 @@ public class ModLifecycleEvent extends Event implements IModBusEvent
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
     }
 
+    ModContainer getContainer() {
+        return this.container;
+    }
+
     @Override
     public String toString() {
         return description();

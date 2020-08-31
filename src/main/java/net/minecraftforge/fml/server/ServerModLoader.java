@@ -24,6 +24,7 @@ import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.ModWorkManager;
 import net.minecraftforge.fml.SidedProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,9 +47,9 @@ public class ServerModLoader
         });
         LanguageHook.loadForgeAndMCLangs();
         try {
-            ModLoader.get().gatherAndInitializeMods(() -> {});
-            ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
-            ModLoader.get().finishMods(Runnable::run);
+            ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
+            ModLoader.get().loadMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), null, null, ()->{});
+            ModLoader.get().finishMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         } catch (LoadingFailedException e) {
             ServerModLoader.hasErrors = true;
             throw e;

@@ -32,9 +32,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-import net.minecraft.resources.*;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IPackNameDecorator;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.ResourcePackList;
+import net.minecraftforge.fml.BrandingControl;
+import net.minecraftforge.fml.LoadingFailedException;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.ModWorkManager;
+import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.VersionChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,16 +64,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.BrandingControl;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.SidedProvider;
-import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.screen.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -90,17 +93,19 @@ public class ClientModLoader
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.getMainWindow());
-        createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
-        ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
-        mcResourceManager.addReloadListener(ClientModLoader::onreload);
-        mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
-        ModelLoaderRegistry.init();
+        createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), earlyLoaderGUI::renderTick)).run();
+        if (error == null) {
+            ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
+            mcResourceManager.addReloadListener(ClientModLoader::onResourceReload);
+            mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
+            ModelLoaderRegistry.init();
+        }
     }
 
-    private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
-        return CompletableFuture.runAsync(createRunnableWithCatch(() -> startModLoading(syncExecutor)), asyncExecutor).
-                thenCompose(stage::markCompleteAwaitingOthers).
-                thenRunAsync(() -> finishModLoading(syncExecutor), asyncExecutor);
+    private static CompletableFuture<Void> onResourceReload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
+        return CompletableFuture.runAsync(createRunnableWithCatch(() -> startModLoading(ModWorkManager.wrappedExecutor(syncExecutor), asyncExecutor)), asyncExecutor)
+                .thenCompose(stage::markCompleteAwaitingOthers)
+                .thenRunAsync(() -> finishModLoading(ModWorkManager.wrappedExecutor(syncExecutor), asyncExecutor), asyncExecutor);
     }
 
     private static Runnable createRunnableWithCatch(Runnable r) {
@@ -114,24 +119,26 @@ public class ClientModLoader
         };
     }
 
-    private static void startModLoading(Executor executor) {
+    private static void startModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
         earlyLoaderGUI.handleElsewhere();
-        createRunnableWithCatch(() -> ModLoader.get().loadMods(executor, ClientModLoader::preSidedRunnable, ClientModLoader::postSidedRunnable)).run();
+        createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, executor -> CompletableFuture.runAsync(ClientModLoader::preSidedRunnable, executor), executor -> CompletableFuture.runAsync(ClientModLoader::postSidedRunnable, executor), ()->{})).run();
     }
 
-    private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
+    private static void postSidedRunnable() {
+        LOGGER.debug(LOADING, "Running post client event work");
         RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
     }
 
-    private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
+    private static void preSidedRunnable() {
+        LOGGER.debug(LOADING, "Running pre client event work");
     }
 
-    private static void finishModLoading(Executor executor)
+    private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)
     {
-        createRunnableWithCatch(() -> ModLoader.get().finishMods(executor)).run();
+        createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, ()->{})).run();
         loading = false;
         // reload game settings on main thread
-        executor.execute(()->mc.gameSettings.loadOptions());
+        syncExecutor.execute(()->mc.gameSettings.loadOptions());
     }
 
     public static VersionChecker.Status checkForUpdates()
