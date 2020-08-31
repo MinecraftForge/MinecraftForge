@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -47,6 +47,7 @@
- import net.minecraft.world.World;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.client.model.data.IModelData;
- 
- @OnlyIn(Dist.CLIENT)
- public class ItemRenderer implements IResourceManagerReloadListener {
-@@ -59,7 +60,7 @@
+@@ -59,7 +59,7 @@
  
     public ItemRenderer(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_) {
        this.field_175057_n = p_i46552_1_;
@@ -17,11 +9,11 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-@@ -78,13 +79,14 @@
+@@ -78,13 +78,14 @@
        Random random = new Random();
        long i = 42L;
  
-+      IModelData modelData = p_229114_2_.getModelData();
++      net.minecraftforge.client.model.data.IModelData modelData = p_229114_2_.getModelData();
        for(Direction direction : Direction.values()) {
           random.setSeed(42L);
 -         this.func_229112_a_(p_229114_5_, p_229114_6_, p_229114_1_.func_200117_a((BlockState)null, direction, random), p_229114_2_, p_229114_3_, p_229114_4_);
@@ -34,7 +26,7 @@
     }
  
     public void func_229111_a_(ItemStack p_229111_1_, ItemCameraTransforms.TransformType p_229111_2_, boolean p_229111_3_, MatrixStack p_229111_4_, IRenderTypeBuffer p_229111_5_, int p_229111_6_, int p_229111_7_, IBakedModel p_229111_8_) {
-@@ -95,7 +97,7 @@
+@@ -95,7 +96,7 @@
              p_229111_8_ = this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation("minecraft:trident#inventory"));
           }
  
@@ -43,7 +35,7 @@
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag)) {
              boolean flag1;
-@@ -105,7 +107,8 @@
+@@ -105,7 +106,8 @@
              } else {
                 flag1 = true;
              }
@@ -53,7 +45,7 @@
              RenderType rendertype = RenderTypeLookup.func_239219_a_(p_229111_1_, flag1);
              IVertexBuilder ivertexbuilder;
              if (p_229111_1_.func_77973_b() == Items.field_151111_aL && p_229111_1_.func_77962_s()) {
-@@ -131,8 +134,9 @@
+@@ -131,8 +133,9 @@
              }
  
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
@@ -64,7 +56,7 @@
           }
  
           p_229111_4_.func_227865_b_();
-@@ -176,7 +180,7 @@
+@@ -176,7 +179,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -73,7 +65,7 @@
        }
  
     }
-@@ -267,6 +271,7 @@
+@@ -267,6 +270,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_239387_2_.func_77973_b());
              });
@@ -81,7 +73,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_239387_2_.func_77952_i());
              });
-@@ -298,18 +303,16 @@
+@@ -298,18 +302,16 @@
              irendertypebuffer$impl.func_228461_a_();
           }
  
@@ -104,7 +96,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.enableBlend();
-@@ -347,4 +350,9 @@
+@@ -347,4 +349,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }
