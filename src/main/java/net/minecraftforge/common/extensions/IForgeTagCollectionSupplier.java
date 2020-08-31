@@ -32,15 +32,14 @@ public interface IForgeTagCollectionSupplier
         return ForgeTagHandler.getCustomTagTypes();
     }
 
-    //TODO: If the type doesn't support custom tags, error else fallback to the "empty" tag collection if it has not been set yet (Is there a case when it hasn't been set yet)
-    default ITagCollection<?> getModdedCollection(ResourceLocation regName)
+    default ITagCollection<?> getCustomTypeCollection(ResourceLocation regName)
     {
+        if (!ForgeTagHandler.getCustomTagTypeNames().contains(regName)) throw new IllegalArgumentException("Registry " + regName + ", does not support custom tag types");
         return getCustomTagTypes().get(regName);
     }
 
-    //TODO: If the type doesn't support custom tags, error else fallback to the "empty" tag collection if it has not been set yet (Is there a case when it hasn't been set yet)
-    default <T extends IForgeRegistryEntry<T>> ITagCollection<T> getModdedCollection(IForgeRegistry<T> reg)
+    default <T extends IForgeRegistryEntry<T>> ITagCollection<T> getCustomTypeCollection(IForgeRegistry<T> reg)
     {
-        return (ITagCollection<T>) getModdedCollection(reg.getRegistryName());
+        return (ITagCollection<T>) getCustomTypeCollection(reg.getRegistryName());
     }
 }
