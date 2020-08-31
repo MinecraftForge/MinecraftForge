@@ -67,6 +67,7 @@ public class ForgeTagHandler
         if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
+        TagRegistry.performDelayedAdd();
     }
 
     public static Set<ResourceLocation> getCustomTagTypeNames()
@@ -83,7 +84,6 @@ public class ForgeTagHandler
         ForgeTagHandler.customTagTypes = customTagTypes;
     }
 
-    //TODO: Can we create a way to easily create multiple tag types at once without having to do quite as much lookup
     @Nullable
     private static <T extends IForgeRegistryEntry<T>> TagRegistry<T> getTagRegistry(IForgeRegistry<T> registry)
     {
@@ -92,7 +92,8 @@ public class ForgeTagHandler
 
     private static void validateRegistrySupportsTags(IForgeRegistry<?> registry) {
         //Note: We also check against getTagRegistry in case someone decides to use the helpers for tag creation for types supported by vanilla
-        if (getTagRegistry(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null)) {
+        if (getTagRegistry(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null))
+        {
             throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
         }
     }
@@ -124,6 +125,36 @@ public class ForgeTagHandler
             return tagRegistry.createOptional(name, defaults);
         }
         return TagRegistry.createDelayedOptional(registry.getRegistryName(), name, defaults);
+    }
+
+    //TODO: State in java docs for these three methods that they are helpers for making tags for custom registries, and that they don't do validation initially
+    // to ensure that the registry type does actually support having tags, and will explode slightly later down the line once the registry is created and it doesn't
+    // support them
+    public static <T extends IForgeRegistryEntry<T>> ITag.INamedTag<T> makeWrapperTag(ResourceLocation registryName, ResourceLocation name)
+    {
+        if (tagTypesSet)
+        {
+            IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+            if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
+            return makeWrapperTag(registry, name);
+        }
+        return TagRegistry.createDelayedTag(registryName, name);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name)
+    {
+        return createOptionalTag(registryName, name, null);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
+    {
+        if (tagTypesSet)
+        {
+            IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+            if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
+            return createOptionalTag(registry, name, defaults);
+        }
+        return TagRegistry.createDelayedOptional(registryName, name, defaults);
     }
 
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()

@@ -48,6 +48,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
+    private boolean hasWrapper = false;
     @Nullable
     private String tagFolder;
     private DummyFactory<T> dummyFactory;
@@ -205,10 +206,18 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    RegistryBuilder<T> hasWrapper()
+    {
+        this.hasWrapper = true;
+        return this;
+    }
+
     public RegistryBuilder<T> tagFolder(String tagFolder)
     {
         //TODO: Validate the naming scheme for the folder (all lower case, and probably mostly matching RL constraints but with no slashes for sub folders?)
         this.tagFolder = tagFolder;
+        //Mark it as having a vanilla registry wrapper so that it can be used in data generators properly
+        hasWrapper();
         return this;
     }
 
@@ -225,6 +234,13 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public IForgeRegistry<T> create()
     {
+        if (hasWrapper)
+        {
+            if (getDefault() == null)
+                addCallback(new NamespacedWrapper.Factory<T>());
+            else
+                addCallback(new NamespacedDefaultedWrapper.Factory<T>());
+        }
         return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
 

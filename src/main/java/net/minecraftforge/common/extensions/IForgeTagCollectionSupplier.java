@@ -32,13 +32,13 @@ public interface IForgeTagCollectionSupplier
         return ForgeTagHandler.getCustomTagTypes();
     }
 
-    //TODO: Nullable or error?
+    //TODO: If the type doesn't support custom tags, error else fallback to the "empty" tag collection if it has not been set yet (Is there a case when it hasn't been set yet)
     default ITagCollection<?> getModdedCollection(ResourceLocation regName)
     {
         return getCustomTagTypes().get(regName);
     }
 
-    //TODO: Nullable or error?
+    //TODO: If the type doesn't support custom tags, error else fallback to the "empty" tag collection if it has not been set yet (Is there a case when it hasn't been set yet)
     default <T extends IForgeRegistryEntry<T>> ITagCollection<T> getModdedCollection(IForgeRegistry<T> reg)
     {
         return (ITagCollection<T>) getModdedCollection(reg.getRegistryName());

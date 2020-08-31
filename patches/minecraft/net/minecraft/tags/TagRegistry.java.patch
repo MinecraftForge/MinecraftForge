@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -16,13 +16,50 @@
+@@ -16,13 +16,52 @@
     private ITagCollection<T> field_232930_b_ = ITagCollection.func_242205_c();
     private final List<TagRegistry.NamedTag<T>> field_232931_c_ = Lists.newArrayList();
     private final Function<ITagCollectionSupplier, ITagCollection<T>> field_242184_c;
@@ -39,9 +39,11 @@
 +      if (toAdd != null) {
 +         for (java.util.Map.Entry<ResourceLocation, List<TagRegistry.NamedTag<?>>> entry : toAdd.entrySet()) {
 +            TagRegistry<?> tagRegistry = TagRegistryManager.get(entry.getKey());
-+            if (tagRegistry == null)  throw new RuntimeException("A mod attempted to add a delayed tag for a registry that doesn't have custom tag support.");
-+            //TODO: Do this in a "safer" way
-+            tagRegistry.add((TagRegistry.NamedTag) entry.getValue());
++            if (tagRegistry == null) throw new RuntimeException("A mod attempted to add a delayed tag for a registry that doesn't have custom tag support.");
++            for (TagRegistry.NamedTag<?> tag : entry.getValue()) {
++               //TODO: Do this in a "safer" way
++               tagRegistry.add((TagRegistry.NamedTag) tag);
++            }
 +         }
 +         toAdd = null;
 +      }
@@ -52,7 +54,7 @@
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
-@@ -56,7 +93,7 @@
+@@ -56,7 +95,7 @@
  
     public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
@@ -61,7 +63,7 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +130,45 @@
+@@ -93,5 +132,45 @@
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
        }

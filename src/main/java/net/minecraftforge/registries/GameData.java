@@ -190,11 +190,11 @@ public class GameData
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
