@@ -51,7 +51,6 @@ import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.DefaultedRegistry;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
@@ -69,8 +68,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
@@ -91,9 +90,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
@@ -365,6 +363,34 @@ public class GameData
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         LOGGER.debug(REGISTRIES, "Reverting complete");
+    }
+
+    public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
+        List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
+        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
+
+        //Move Blocks to first, and Items to second.
+        keys.remove(BLOCKS);
+        keys.remove(ITEMS);
+
+        keys.add(0, BLOCKS);
+        keys.add(1, ITEMS);
+
+        return keys.stream().map(rl -> mc -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
+    }
+
+    public static ModLoadingStage.EventDispatcher<RegistryEvent.Register<?>> buildRegistryEventDispatch() {
+        return eventConsumer -> eventToSend -> {
+            final ResourceLocation rl = eventToSend.getName();
+            ForgeRegistry<?> fr = (ForgeRegistry<?>) eventToSend.getRegistry();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
+            fr.unfreeze();
+            eventConsumer.accept(eventToSend);
+            fr.freeze();
+            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
+            ObjectHolderRegistry.applyObjectHolders(rl::equals);
+            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
+        };
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -830,47 +856,6 @@ public class GameData
         Map<ResourceLocation, Integer> _new = Maps.newHashMap();
         frozen.getKeys().stream().filter(key -> !newRegistry.containsKey(key)).forEach(key -> _new.put(key, frozen.getID(key)));
         newRegistry.loadIds(_new, frozen.getOverrideOwners(), Maps.newLinkedHashMap(), remaps, frozen, name);
-    }
-
-    public static void fireCreateRegistryEvents()
-    {
-        MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
-    }
-
-    public static void fireCreateRegistryEvents(final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher) {
-        final RegistryEvent.NewRegistry newRegistryEvent = new RegistryEvent.NewRegistry();
-        lifecycleEventProvider.setCustomEventSupplier(()->newRegistryEvent);
-        eventDispatcher.accept(lifecycleEventProvider);
-    }
-
-
-    public static void fireRegistryEvents(Predicate<ResourceLocation> filter, final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher)
-    {
-        List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
-        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
-
-        //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS);
-        keys.remove(ITEMS);
-
-        keys.add(0, BLOCKS);
-        keys.add(1, ITEMS);
-        for (int i = 0, keysSize = keys.size(); i < keysSize; i++) {
-            final ResourceLocation rl = keys.get(i);
-            if (!filter.test(rl)) continue;
-            ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
-            reg.unfreeze();
-            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
-            final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
-            lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
-            lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);
-            if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
-            eventDispatcher.accept(lifecycleEventProvider);
-            reg.freeze();
-            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
-        }
     }
 
     /**

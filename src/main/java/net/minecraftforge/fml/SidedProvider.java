@@ -22,10 +22,7 @@ package net.minecraftforge.fml;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.client.ClientHooks;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.function.Function;
@@ -37,10 +34,6 @@ public enum SidedProvider
     DATAFIXER(
             c->c.get().getDataFixer(),
             s->s.get().getDataFixer(),
-            ()-> { throw new UnsupportedOperationException(); }),
-    SIDED_SETUP_EVENT(
-            (Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientSetupEvent(c, mc),
-            s-> mc->new FMLDedicatedServerSetupEvent(mc),
             ()-> { throw new UnsupportedOperationException(); }),
     STRIPCHARS(
             (Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
