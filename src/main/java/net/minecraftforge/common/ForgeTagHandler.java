@@ -46,6 +46,7 @@ import net.minecraft.tags.TagRegistry;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
+import net.minecraftforge.fml.network.FMLPlayMessages.SyncCustomTagTypes;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -53,8 +54,6 @@ import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//TODO: Nuke the cached customTagTypes map when connecting to say a vanilla server after having loaded tags, as we won't have received a packet to update them
-//TODO: keep track of generation index, both of vanilla tags and of custom tags and make sure that they match
 public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -77,11 +76,6 @@ public class ForgeTagHandler
 
     public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes() {
         return customTagTypes;
-    }
-
-    public static void updateCustomTagTypes(Map<ResourceLocation, ITagCollection<?>> customTagTypes) {
-        //TODO: Implement this in a slightly less "public" API way
-        ForgeTagHandler.customTagTypes = customTagTypes;
     }
 
     @Nullable
@@ -176,35 +170,47 @@ public class ForgeTagHandler
         return builder.build();
     }
 
-    //TODO: Re-evaluate this method
-    public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
+    public static void clearCachedTagCollections()
     {
+        customTagTypes = Collections.emptyMap();
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
             {
-                builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
+                builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().distinct().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
             }
         }
-        Map<ResourceLocation, ITagCollection<?>> modded = builder.build();
-        if (!modded.isEmpty())
+        customTagTypes = builder.build();
+    }
+
+    public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
+    {
+        //Default the tag collections
+        clearCachedTagCollections();
+        if (!customTagTypes.isEmpty())
         {
-            LOGGER.debug("Populated the TagCollectionManager with {} extra types", modded.size());
+            LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
         }
-        updateCustomTagTypes(modded);
         return ITagCollectionSupplier.func_242209_a(blockTags, itemTags, fluidTags, entityTypeTags);
     }
 
     //Update from NetworkTagManager
-    public static void updateCustomTagTypes(List<TagCollectionReaderInfo> tagCollectionReaders) {
+    public static void updateCustomTagTypes(List<TagCollectionReaderInfo> tagCollectionReaders)
+    {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (TagCollectionReaderInfo info : tagCollectionReaders)
         {
             builder.put(info.tagType, info.reader.func_242226_a(info.tagBuilders));
         }
-        updateCustomTagTypes(builder.build());
+        customTagTypes = builder.build();
+    }
+
+    //Update from packet
+    public static void updateCustomTagTypes(SyncCustomTagTypes packet)
+    {
+        customTagTypes = packet.getCustomTagTypes();
     }
 
     public static CompletableFuture<List<TagCollectionReaderInfo>> getCustomTagTypeReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)

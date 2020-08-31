@@ -336,6 +336,11 @@ public class FMLPlayMessages
             this.customTagTypeCollections = customTagTypeCollections;
         }
 
+        public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
+        {
+            return customTagTypeCollections;
+        }
+
         public static void encode(SyncCustomTagTypes msg, PacketBuffer buf)
         {
             buf.writeVarInt(msg.customTagTypeCollections.size());
@@ -443,7 +448,7 @@ public class FMLPlayMessages
                     if (missingTags.isEmpty())
                     {
                         //If we have no missing tags, update the custom tag types
-                        ForgeTagHandler.updateCustomTagTypes(msg.customTagTypeCollections);
+                        ForgeTagHandler.updateCustomTagTypes(msg);
                         if (!ctx.get().getNetworkManager().isLocalChannel())
                         {
                             //And if everything hasn't already been set due to being in single player
