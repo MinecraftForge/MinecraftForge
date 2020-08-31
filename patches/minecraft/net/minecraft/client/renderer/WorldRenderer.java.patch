@@ -79,6 +79,15 @@
        }
  
        RenderSystem.pushMatrix();
+@@ -1792,7 +1797,7 @@
+ 
+          while(iterator.hasNext()) {
+             ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = iterator.next();
+-            if (chunkrenderdispatcher$chunkrender.func_188281_o()) {
++            if (!net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() && chunkrenderdispatcher$chunkrender.func_188281_o()) {
+                this.field_174995_M.func_228902_a_(chunkrenderdispatcher$chunkrender);
+             } else {
+                chunkrenderdispatcher$chunkrender.func_228929_a_(this.field_174995_M);
 @@ -2076,7 +2081,12 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }
