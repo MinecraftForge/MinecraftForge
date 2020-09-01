@@ -46,7 +46,7 @@ public class CustomTagTypesTest
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(Custom.class, MODID);
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
-          () -> new RegistryBuilder<Custom>().tagFolder("custom_types"));
+          () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
     private static final ITag.INamedTag<Biome> OCEANS = ForgeTagHandler.makeWrapperTag(ForgeRegistries.BIOMES, new ResourceLocation(MODID, "oceans"));
     private static final ITag.INamedTag<Custom> TESTS = ForgeTagHandler.makeWrapperTag(customRegistryName, new ResourceLocation(MODID, "tests"));
 

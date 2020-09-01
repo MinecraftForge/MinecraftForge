@@ -214,9 +214,9 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public RegistryBuilder<T> tagFolder(String tagFolder)
     {
-        //TODO: Validate the naming scheme for the folder (all lower case, and probably mostly matching RL constraints but with no slashes for sub folders?)
+        if (tagFolder == null || !tagFolder.matches("[a-z_/]+")) throw new IllegalArgumentException("Non [a-z_/] character in tag folder " + tagFolder);
         this.tagFolder = tagFolder;
-        //Mark it as having a vanilla registry wrapper so that it can be used in data generators properly
+        //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
         hasWrapper();
         return this;
     }

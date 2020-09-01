@@ -62,6 +62,8 @@ import java.util.function.Supplier;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FMLPlayMessages
 {
@@ -329,6 +331,7 @@ public class FMLPlayMessages
 
     public static class SyncCustomTagTypes
     {
+        private static final Logger LOGGER = LogManager.getLogger();
         private final Map<ResourceLocation, ITagCollection<?>> customTagTypeCollections;
 
         SyncCustomTagTypes(Map<ResourceLocation, ITagCollection<?>> customTagTypeCollections)
@@ -357,7 +360,6 @@ public class FMLPlayMessages
                 buf.writeVarInt(elements.size());
                 for (T element : elements)
                 {
-                    //TODO: Make this not need to be unchecked
                     buf.writeResourceLocation(((IForgeRegistryEntry<?>) element).getRegistryName());
                 }
             });
@@ -452,15 +454,13 @@ public class FMLPlayMessages
                         if (!ctx.get().getNetworkManager().isLocalChannel())
                         {
                             //And if everything hasn't already been set due to being in single player
-                            // Fetch and update all the tags for our supplier including custom tag types
+                            // Fetch and update the custom tag types. We skip vanilla tag types as they have already been fetched
                             // And fire an event that the custom tag types have been updated
-                            //TODO: Do we only want to fetch the custom tag types
-                            TagRegistryManager.func_242193_a(tagCollectionSupplier);
+                            TagRegistryManager.fetchCustomTagTypes(tagCollectionSupplier);
                             MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
                         }
                     } else {
-                        //TODO: Log
-                        //LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", missingTags);
+                        LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", missingTags);
                         ctx.get().getNetworkManager().closeChannel(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
                     }
                 }

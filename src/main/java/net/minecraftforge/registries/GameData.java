@@ -366,7 +366,6 @@ public class GameData
 
     public static void setCustomTagTypesFromRegistries()
     {
-        //TODO: Discuss with cpw if this is an ok way of doing this or if it should be done differently
         Set<ResourceLocation> customTagTypes = new HashSet<>();
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> entry : RegistryManager.ACTIVE.registries.entrySet())
         {
