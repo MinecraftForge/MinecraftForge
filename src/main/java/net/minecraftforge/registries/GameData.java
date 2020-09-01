@@ -53,6 +53,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
@@ -331,11 +332,11 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS);
-        keys.remove(ITEMS);
+        keys.remove(BLOCKS.func_240901_a_());
+        keys.remove(ITEMS.func_240901_a_());
 
-        keys.add(0, BLOCKS);
-        keys.add(1, ITEMS);
+        keys.add(0, BLOCKS.func_240901_a_());
+        keys.add(1, ITEMS.func_240901_a_());
 
         return keys.stream().map(rl -> mc -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
     }
