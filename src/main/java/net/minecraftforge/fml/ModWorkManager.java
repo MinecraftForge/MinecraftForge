@@ -17,10 +17,10 @@ public class ModWorkManager {
         boolean selfDriven();
         boolean driveOne();
 
-        default void drive() {
+        default void drive(Runnable ticker) {
             if (!selfDriven()) {
                 while (driveOne())
-                    ;
+                    ticker.run();
             }
         }
     }

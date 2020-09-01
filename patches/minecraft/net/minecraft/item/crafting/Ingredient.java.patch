@@ -20,7 +20,7 @@
        this.field_199807_b = p_i49381_1_.toArray((p_209360_0_) -> {
           return new Ingredient.IItemList[p_209360_0_];
        });
-+      this.isSimple = !net.minecraftforge.fml.ModLoader.isDataGenRunning() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().func_77645_m()));
++      this.isSimple = !net.minecraftforge.fml.DatagenModLoader.isRunningDataGen() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().func_77645_m()));
 +      Ingredient.INSTANCES.add(this);
     }
  

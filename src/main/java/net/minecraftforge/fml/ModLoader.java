@@ -112,8 +112,7 @@ public class ModLoader
 
     private final List<ModLoadingException> loadingExceptions;
     private final List<ModLoadingWarning> loadingWarnings;
-    private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
-    private ExistingFileHelper existingFileHelper;
+    private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
 
@@ -162,6 +161,7 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
+        loadingStateValid = true;
         statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
         statusConsumer.ifPresent(c->c.accept("Loading mods"));
@@ -174,6 +174,7 @@ public class ModLoader
         if (!this.loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
+            loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
         statusConsumer.ifPresent(c->c.accept("Building Mod List"));
@@ -185,6 +186,7 @@ public class ModLoader
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
+            loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
@@ -225,21 +227,29 @@ public class ModLoader
     }
 
     private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker) {
+        if (!isLoadingStateValid()) {
+            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            return;
+        }
         waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor));
     }
 
     private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
+        if (!isLoadingStateValid()) {
+            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            return;
+        }
         waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask));
     }
 
     private void waitForTransition(final ModLoadingStage state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker, final CompletableFuture<List<Throwable>> transition) {
         while (!transition.isDone()) {
-            ticker.run();
-            syncExecutor.drive();
+            syncExecutor.drive(ticker);
         }
         try {
             transition.join();
         } catch (CompletionException e) {
+            loadingStateValid = false;
             Throwable t = e.getCause();
             final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
                     .filter(obj -> !(obj instanceof ModLoadingException))
@@ -292,7 +302,27 @@ public class ModLoader
         }
     }
 
+    /**
+     * @return If the current mod loading state is valid. Use if you interact with vanilla systems directly during loading
+     * and don't want to cause extraneous crashes due to trying to do things that aren't possible in a "broken load"
+     */
+    public static boolean isLoadingStateValid() {
+        return get().loadingStateValid;
+    }
+
+    public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
+            return;
+        }
+        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
+    }
+
     public <T extends Event & IModBusEvent> void postEvent(T e) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            return;
+        }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
     }
 
@@ -310,21 +340,5 @@ public class ModLoader
 
     public static boolean isDataGenRunning () {
         return runningDataGen;
-    }
-
-    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
-//        if (mods.contains("minecraft") && mods.size() == 1) return;
-//        LOGGER.info("Initializing Data Gatherer for mods {}", mods);
-//        runningDataGen = true;
-//        Bootstrap.register();
-//        dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
-//        existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
-//        gatherAndInitializeMods(() -> {});
-//        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
-//        dataGeneratorConfig.runAll();
-    }
-
-    public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
     }
 }

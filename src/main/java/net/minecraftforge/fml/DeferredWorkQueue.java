@@ -21,11 +21,7 @@ package net.minecraftforge.fml;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executor;
@@ -33,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,6 +92,20 @@ public class DeferredWorkQueue
 
     public <T> CompletableFuture<T> enqueueWork(final IModInfo modInfo, final Supplier<T> work) {
         return CompletableFuture.supplyAsync(work, r->tasks.add(new TaskInfo(modInfo, r)));
+    }
+
+    /**
+     * DEPRECATED FOR REMOVAL. Use {@link ParallelDispatchEvent#enqueueWork(Runnable)} or {@link ParallelDispatchEvent#enqueueWork(Supplier)}
+     *
+     * @param workToEnqueue Runnable to execute later
+     * @return a completable future
+     */
+    @Deprecated
+    public static CompletableFuture<Void> runLater(Runnable workToEnqueue) {
+        return
+                Optional.ofNullable(ModLoadingContext.get().getActiveContainer().modLoadingStage.getDeferredWorkQueue())
+                .map(wq->wq.enqueueWork(ModLoadingContext.get().getActiveContainer().modInfo, workToEnqueue))
+                .orElseGet(()->CompletableFuture.completedFuture(null));
     }
 
     static class TaskInfo

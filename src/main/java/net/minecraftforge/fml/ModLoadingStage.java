@@ -57,14 +57,14 @@ public enum ModLoadingStage
     ENQUEUE_IMC(InterModEnqueueEvent.class),
     PROCESS_IMC(InterModProcessEvent.class),
     COMPLETE(FMLLoadCompleteEvent.class),
-    DONE(),
-    GATHERDATA();
+    DONE();
 
     private final Supplier<Stream<EventGenerator<?>>> eventFunctionStream;
     private final EventDispatcher<?> eventManager;
     private final Optional<Class<? extends ParallelDispatchEvent>> parallelEventClass;
     private final ThreadSelector threadSelector;
     private final BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator;
+    private DeferredWorkQueue deferredWorkQueue;
 
     ModLoadingStage(Class<? extends ParallelDispatchEvent> parallelClass) {
         final EventGenerator<?> event = EventGenerator.fromFunction(LamdbaExceptionUtils.rethrowFunction((ModContainer mc) -> parallelClass.getConstructor(ModContainer.class).newInstance(mc)));
@@ -72,7 +72,7 @@ public enum ModLoadingStage
         this.threadSelector = ThreadSelector.PARALLEL;
         this.eventManager = EventDispatcher.identity();
         this.parallelEventClass = Optional.of(parallelClass);
-        final DeferredWorkQueue deferredWorkQueue = new DeferredWorkQueue(this, parallelClass);
+        deferredWorkQueue = new DeferredWorkQueue(this, parallelClass);
         this.finalActivityGenerator = (e, prev) -> prev.thenApplyAsync((List<Throwable> t) -> {
             deferredWorkQueue.runTasks();
             return t;
@@ -143,6 +143,10 @@ public enum ModLoadingStage
         public Executor apply(final Executor sync, final Executor parallel) {
             return this.selector.apply(sync, parallel);
         }
+    }
+
+    public DeferredWorkQueue getDeferredWorkQueue() {
+        return deferredWorkQueue;
     }
 
     public interface EventGenerator<T extends Event & IModBusEvent> extends Function<ModContainer, T> {

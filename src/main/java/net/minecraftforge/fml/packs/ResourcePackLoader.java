@@ -54,16 +54,16 @@ public class ResourcePackLoader
 
     public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, T>, IPackInfoFinder> packFinder) {
         resourcePackList = resourcePacks;
-        modResourcePacks = ModList.get().getModFiles().stream().
-                filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).
-                map(mf -> new ModFileResourcePack(mf.getFile())).
-                collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
+        modResourcePacks = ModList.get().getModFiles().stream()
+                .filter(mf->!Objects.equals(mf.getModLoader(),"minecraft"))
+                .map(mf -> new ModFileResourcePack(mf.getFile()))
+                .collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
     }
 
     public static List<String> getPackNames()
     {
-        return modResourcePacks.values().stream().map(pack -> pack.getPackInfo().getName()).collect(Collectors.toList());
+        return ModList.get().applyForEachModFile(mf->"mod:"+mf.getModInfos().get(0).getModId()).filter(n->!n.equals("mod:minecraft")).collect(Collectors.toList());
     }
 
     public static <V> Comparator<Map.Entry<String,V>> getSorter() {
