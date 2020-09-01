@@ -29,7 +29,6 @@
        this.field_110451_am = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
 +      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
        this.field_110448_aq.func_198983_a();
-+      DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
        this.field_71474_y.func_198017_a(this.field_110448_aq);
        this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
        this.field_110451_am.func_219534_a(this.field_135017_as);
