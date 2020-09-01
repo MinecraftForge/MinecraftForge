@@ -28,6 +28,7 @@ public class ModLoadingContext
 {
     private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
     private Object languageExtension;
+    private ModLoadingStage stage;
 
     public static ModLoadingContext get() {
         return context.get();
