@@ -67,7 +67,8 @@ public class ForgeTagHandler
         return (TagRegistry<T>) TagRegistryManager.get(registry.getRegistryName());
     }
 
-    private static void validateRegistrySupportsTags(IForgeRegistry<?> registry) {
+    private static void validateRegistrySupportsTags(IForgeRegistry<?> registry)
+    {
         //Note: We also check against getTagRegistry in case someone decides to use the helpers for tag creation for types supported by vanilla
         if (getTagRegistry(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null))
         {
