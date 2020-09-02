@@ -28,8 +28,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -212,21 +212,30 @@ public class NetworkHooks
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 
-    public static void syncCustomTagTypes()
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to all connected players.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ITagCollectionSupplier tagCollectionSupplier)
     {
-        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = ForgeTagHandler.getCustomTagTypes();
-        if (!moddedTagTypes.isEmpty())
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
         {
-            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(moddedTagTypes));
+            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
         }
     }
 
-    public static void syncCustomTagTypes(ServerPlayerEntity player)
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to the given player.
+     * @param player                The player to sync the custom tags to.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ServerPlayerEntity player, ITagCollectionSupplier tagCollectionSupplier)
     {
-        Map<ResourceLocation, ITagCollection<?>> moddedTagTypes = ForgeTagHandler.getCustomTagTypes();
-        if (!moddedTagTypes.isEmpty())
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
         {
-            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(moddedTagTypes), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
         }
     }
 }

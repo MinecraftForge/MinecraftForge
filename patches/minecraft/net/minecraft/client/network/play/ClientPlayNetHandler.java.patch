@@ -87,7 +87,7 @@
           field_147301_d.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
           this.field_147302_e.func_150718_a(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
        } else {
-+         net.minecraftforge.common.ForgeTagHandler.clearCachedTagCollections();
++         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections();
           this.field_199725_m = itagcollectionsupplier;
           if (!this.field_147302_e.func_150731_c()) {
              itagcollectionsupplier.func_242212_e();

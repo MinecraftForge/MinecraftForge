@@ -61,23 +61,6 @@ public class ForgeTagHandler
     private static Set<ResourceLocation> customTagTypeNames = Collections.emptySet();
     private static boolean tagTypesSet = false;
 
-    public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
-    {
-        if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
-        tagTypesSet = true;
-        customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
-        TagRegistry.performDelayedAdd();
-    }
-
-    public static Set<ResourceLocation> getCustomTagTypeNames()
-    {
-        return customTagTypeNames;
-    }
-
-    public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes() {
-        return customTagTypes;
-    }
-
     @Nullable
     private static <T extends IForgeRegistryEntry<T>> TagRegistry<T> getTagRegistry(IForgeRegistry<T> registry)
     {
@@ -92,6 +75,15 @@ public class ForgeTagHandler
         }
     }
 
+    /**
+     * Helper method that creates a named tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
+     * initializing and referencing the tag.
+     * @param registry Registry the tag is for
+     * @param name     Name of the tag
+     * @param <T>      Type of the registry
+     * @return A named tag
+     */
     public static <T extends IForgeRegistryEntry<T>> ITag.INamedTag<T> makeWrapperTag(IForgeRegistry<T> registry, ResourceLocation name)
     {
         validateRegistrySupportsTags(registry);
@@ -104,11 +96,30 @@ public class ForgeTagHandler
         return TagRegistry.createDelayedTag(registry.getRegistryName(), name);
     }
 
+    /**
+     * Helper method that creates an optional tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
+     * initializing and referencing the tag.
+     * @param registry Registry the tag is for
+     * @param name     Name of the tag
+     * @param <T>      Type of the registry
+     * @return An optional tag
+     */
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name)
     {
         return createOptionalTag(registry, name, null);
     }
 
+    /**
+     * Helper method that creates an optional tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
+     * initializing and referencing the tag.
+     * @param registry Registry the tag is for
+     * @param name     Name of the tag
+     * @param defaults Default values for the optional tag
+     * @param <T>      Type of the registry
+     * @return An optional tag
+     */
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
     {
         validateRegistrySupportsTags(registry);
@@ -121,9 +132,16 @@ public class ForgeTagHandler
         return TagRegistry.createDelayedOptional(registry.getRegistryName(), name, defaults);
     }
 
-    //TODO: State in java docs for these three methods that they are helpers for making tags for custom registries, and that they don't do validation initially
-    // to ensure that the registry type does actually support having tags, and will explode slightly later down the line once the registry is created and it doesn't
-    // support them
+    /**
+     * Helper method for creating named tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
+     * @param registryName Name of the registry the tag is for
+     * @param name         Name of the tag
+     * @param <T>          Type of the registry
+     * @return A named tag
+     * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
+     * and we can validate if the custom registry really does support custom tags.
+     */
     public static <T extends IForgeRegistryEntry<T>> ITag.INamedTag<T> makeWrapperTag(ResourceLocation registryName, ResourceLocation name)
     {
         if (tagTypesSet)
@@ -135,11 +153,32 @@ public class ForgeTagHandler
         return TagRegistry.createDelayedTag(registryName, name);
     }
 
+    /**
+     * Helper method for creating optional tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
+     * @param registryName Name of the registry the tag is for
+     * @param name         Name of the tag
+     * @param <T>          Type of the registry
+     * @return An optional tag
+     * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
+     * and we can validate if the custom registry really does support custom tags.
+     */
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name)
     {
         return createOptionalTag(registryName, name, null);
     }
 
+    /**
+     * Helper method for creating optional tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
+     * @param registryName Name of the registry the tag is for
+     * @param name         Name of the tag
+     * @param defaults     Default values for the optional tag
+     * @param <T>          Type of the registry
+     * @return An optional tag
+     * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
+     * and we can validate if the custom registry really does support custom tags.
+     */
     public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
     {
         if (tagTypesSet)
@@ -151,6 +190,43 @@ public class ForgeTagHandler
         return TagRegistry.createDelayedOptional(registryName, name, defaults);
     }
 
+    /**
+     * Gets the all the registry names of registries that support custom tag types.
+     */
+    public static Set<ResourceLocation> getCustomTagTypeNames()
+    {
+        return customTagTypeNames;
+    }
+
+    /**
+     * Gets a map of registry name to tag collection for all custom tag types.
+     *
+     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods
+     */
+    public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
+    {
+        return customTagTypes;
+    }
+
+    /**
+     * Sets the set containing the resource locations representing the registry name of each forge registry that supports custom tag types.
+     *
+     * @apiNote Internal: Calling this manually <strong>WILL</strong> cause a crash to occur as it can only be called once, and is done so by
+     * forge after all registries have been initialized.
+     */
+    public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
+    {
+        if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
+        tagTypesSet = true;
+        customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
+        TagRegistry.performDelayedAdd();
+    }
+
+    /**
+     * Creates a map for custom tag type to tag reader
+     *
+     * @apiNote Internal: For use by NetworkTagManager
+     */
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()
     {
         LOGGER.debug("Gathering custom tag collection reader from types.");
@@ -158,21 +234,21 @@ public class ForgeTagHandler
         for (ResourceLocation registryName : customTagTypeNames)
         {
             ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
-            if (registry != null)
+            if (registry != null && registry.getTagFolder() != null)
             {
-                String tagFolder = registry.getTagFolder();
-                if (tagFolder != null)
-                {
-                    builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + tagFolder, registryName.getPath()));
-                }
+                builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registry.getTagFolder(), registryName.getPath()));
             }
         }
         return builder.build();
     }
 
-    public static void clearCachedTagCollections()
+    /**
+     * Resets the cached collections for the various custom tag types.
+     *
+     * @apiNote Internal
+     */
+    public static void resetCachedTagCollections()
     {
-        customTagTypes = Collections.emptyMap();
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {
@@ -185,10 +261,15 @@ public class ForgeTagHandler
         customTagTypes = builder.build();
     }
 
+    /**
+     * Used to ensure that all custom tag types have a defaulted collection when vanilla is initializing a defaulted TagCollectionManager
+     *
+     * @apiNote Internal: For use by TagCollectionManager
+     */
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         //Default the tag collections
-        clearCachedTagCollections();
+        resetCachedTagCollections();
         if (!customTagTypes.isEmpty())
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
@@ -196,7 +277,11 @@ public class ForgeTagHandler
         return ITagCollectionSupplier.func_242209_a(blockTags, itemTags, fluidTags, entityTypeTags);
     }
 
-    //Update from NetworkTagManager
+    /**
+     * Updates the custom tag types' tags from reloading via NetworkTagManager
+     *
+     * @apiNote Internal: For use by NetworkTagManager
+     */
     public static void updateCustomTagTypes(List<TagCollectionReaderInfo> tagCollectionReaders)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
@@ -207,12 +292,21 @@ public class ForgeTagHandler
         customTagTypes = builder.build();
     }
 
-    //Update from packet
+    /**
+     * Updates the custom tag types' tags from packet
+     *
+     * @apiNote Internal
+     */
     public static void updateCustomTagTypes(SyncCustomTagTypes packet)
     {
         customTagTypes = packet.getCustomTagTypes();
     }
 
+    /**
+     * Gets the completable future containing the reload results for all custom tag types.
+     *
+     * @apiNote Internal: For use by NetworkTagManager
+     */
     public static CompletableFuture<List<TagCollectionReaderInfo>> getCustomTagTypeReloadResults(IResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagCollectionReader<?>> readers)
     {
         CompletableFuture<List<TagCollectionReaderInfo>> customResults = CompletableFuture.completedFuture(new ArrayList<>());
@@ -226,6 +320,11 @@ public class ForgeTagHandler
         return customResults;
     }
 
+    /**
+     * Helper storage class for keeping track of various data for all custom tag types in the NetworkTagReader to make the code easier to read.
+     *
+     * @apiNote Internal: For use by NetworkTagManager
+     */
     public static class TagCollectionReaderInfo
     {
 
