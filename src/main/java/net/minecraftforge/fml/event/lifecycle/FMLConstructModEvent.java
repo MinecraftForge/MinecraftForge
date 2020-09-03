@@ -17,26 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.model.generators;
+package net.minecraftforge.fml.event.lifecycle;
 
-import javax.annotation.Nonnull;
+import net.minecraftforge.fml.ModContainer;
 
-import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.ExistingFileHelper;
-
-/**
- * Stub class to extend for block model data providers, eliminates some
- * boilerplate constructor parameters.
- */
-public abstract class BlockModelProvider extends ModelProvider<BlockModelBuilder> {
-
-    public BlockModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        super(generator, modid, BLOCK_FOLDER, BlockModelBuilder::new, existingFileHelper);
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return "Block Models: " + modid;
+public class FMLConstructModEvent extends ParallelDispatchEvent {
+    public FMLConstructModEvent(final ModContainer container) {
+        super(container);
     }
 }
