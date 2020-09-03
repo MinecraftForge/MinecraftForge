@@ -38,14 +38,14 @@ import java.util.function.Supplier;
  *
  * This is a parallel dispatch event.
  */
-public class FMLClientSetupEvent extends ModLifecycleEvent
+public class FMLClientSetupEvent extends ParallelDispatchEvent
 {
     private final Supplier<Minecraft> minecraftSupplier;
 
-    public FMLClientSetupEvent(Supplier<Minecraft> mc, ModContainer container)
+    public FMLClientSetupEvent(ModContainer container)
     {
         super(container);
-        this.minecraftSupplier = mc;
+        minecraftSupplier = Minecraft::getInstance;
     }
 
     public Supplier<Minecraft> getMinecraftSupplier()

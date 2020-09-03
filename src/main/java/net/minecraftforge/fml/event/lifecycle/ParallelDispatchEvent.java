@@ -19,18 +19,27 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModContainer;
 
-/**
- * This is a mostly internal event fired to mod containers that indicates that loading is complete. Mods should not
- * in general override or otherwise attempt to implement this event.
- *
- * @author cpw
- */
-public class FMLLoadCompleteEvent extends ParallelDispatchEvent
-{
-    public FMLLoadCompleteEvent(final ModContainer container)
-    {
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
+public class ParallelDispatchEvent extends ModLifecycleEvent {
+    public ParallelDispatchEvent(final ModContainer container) {
         super(container);
+    }
+
+    private Optional<DeferredWorkQueue> getQueue() {
+        return DeferredWorkQueue.lookup(Optional.of(getClass()));
+    }
+
+    public CompletableFuture<Void> enqueueWork(Runnable work) {
+        return getQueue().map(q->q.enqueueWork(getContainer().getModInfo(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
+    }
+
+    public <T> CompletableFuture<T> enqueueWork(Supplier<T> work) {
+        return getQueue().map(q->q.enqueueWork(getContainer().getModInfo(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
     }
 }

@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  * @see net.minecraftforge.fml.DeferredWorkQueue to enqueue work to run on the main game thread after this event has
  * completed dispatch
  */
-public class FMLCommonSetupEvent extends ModLifecycleEvent
+public class FMLCommonSetupEvent extends ParallelDispatchEvent
 {
     public FMLCommonSetupEvent(final ModContainer container)
     {

@@ -36,6 +36,6 @@ public class StencilEnableTest {
 
     private void clientSetup(FMLClientSetupEvent event) {
         if (ENABLED)
-            DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+            event.enqueueWork(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
     }
 }

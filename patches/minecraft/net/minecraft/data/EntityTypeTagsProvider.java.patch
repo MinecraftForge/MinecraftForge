@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/EntityTypeTagsProvider.java
++++ b/net/minecraft/data/EntityTypeTagsProvider.java
+@@ -7,9 +7,13 @@
+ import net.minecraft.util.registry.Registry;
+ 
+ public class EntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
++   @Deprecated
+    public EntityTypeTagsProvider(DataGenerator p_i50784_1_) {
+       super(p_i50784_1_, Registry.field_212629_r);
+    }
++   public EntityTypeTagsProvider(DataGenerator p_i50784_1_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_i50784_1_, Registry.field_212629_r, modId, existingFileHelper);
++   }
+ 
+    protected void func_200432_c() {
+       this.func_240522_a_(EntityTypeTags.field_219764_a).func_240534_a_(EntityType.field_200741_ag, EntityType.field_200750_ap, EntityType.field_200722_aA);
