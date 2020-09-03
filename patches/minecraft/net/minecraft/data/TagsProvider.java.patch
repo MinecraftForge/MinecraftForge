@@ -4,8 +4,8 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
     protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
-+   protected String modId;
-+   net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
++   protected final String modId;
++   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
  
 +   @Deprecated//Forge, Use ModID version.
     protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_) {
@@ -29,7 +29,7 @@
 +            // FORGE: Add validation via existing resources
 +            for (ITag.Proxy missingTag : list) {
 +               // Vanilla tag types use plural names, revisit this when/if we add custom tag types
-+               if (existingFileHelper == null || !missingTag.func_232968_a_().exists(((Registry)Registry.field_212617_f).func_177774_c(field_200435_c).func_110623_a() + "s", existingFileHelper))
++               if (existingFileHelper == null || !exists(missingTag))
              throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_240524_4_, list.stream().map(Objects::toString).collect(Collectors.joining(","))));
 -         } else {
 +            }
@@ -41,16 +41,31 @@
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -70,7 +85,7 @@
+@@ -69,16 +84,29 @@
+             } catch (IOException ioexception) {
                 field_200436_d.error("Couldn't save tags to {}", path, ioexception);
              }
- 
+-
 -         }
-+//         }
        });
     }
  
-@@ -78,7 +93,7 @@
++   private boolean exists(ITag.Proxy reference) {
++      ITag.ITagEntry entry = reference.func_232968_a_();
++      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
++      // Optional tags should not be validated
++      if (entry instanceof ITag.TagEntry) {
++         return existingFileHelper.exists(((ITag.TagEntry)entry).getId(), net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
++      }
++      return true;
++   }
++
++   @SuppressWarnings({ "unchecked", "rawtypes" })
++   protected String getTagFolder() {
++      return ((Registry)Registry.field_212617_f).func_177774_c(field_200435_c).func_110623_a() + "s";
++   }
++
+    protected abstract Path func_200431_a(ResourceLocation p_200431_1_);
  
     protected TagsProvider.Builder<T> func_240522_a_(ITag.INamedTag<T> p_240522_1_) {
        ITag.Builder itag$builder = this.func_240525_b_(p_240522_1_);
@@ -59,7 +74,7 @@
     }
  
     protected ITag.Builder func_240525_b_(ITag.INamedTag<T> p_240525_1_) {
-@@ -87,7 +102,7 @@
+@@ -87,7 +115,7 @@
        });
     }
  
@@ -68,7 +83,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +130,18 @@
+@@ -115,5 +143,18 @@
           });
           return this;
        }
