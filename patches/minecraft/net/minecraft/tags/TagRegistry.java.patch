@@ -35,7 +35,7 @@
 +      public String toString() {
 +          return "NamedTag[" + func_230234_a_().toString() + ']';
 +      }
-+      @Override public boolean equals(Object o) { return (o == this) || (o instanceof ITag.INamedTag && java.util.Objects.equals(this.func_230234_a_(),((ITag.INamedTag<T>)o).func_230234_a_())); }
++      @Override public boolean equals(Object o) { return (o == this) || (o instanceof ITag.INamedTag && java.util.Objects.equals(this.func_230234_a_(), ((ITag.INamedTag<T>)o).func_230234_a_())); }
 +      @Override public int hashCode() { return func_230234_a_().hashCode(); }
     }
 +
