@@ -50,7 +50,8 @@ public enum ModLoadingStage
     ERROR(),
     VALIDATE(),
     CONSTRUCT(FMLConstructModEvent.class),
-    CREATE_REGISTRIES(()->Stream.of(RegistryEvent.NewRegistry::new), EventDispatcher.identity()),
+    @SuppressWarnings({ "unchecked", "rawtypes" }) //Eclipse compiler generics issue. Sorry cpw, your nested generics can't be inferred
+    CREATE_REGISTRIES((Supplier)()->Stream.of((Function<ModContainer, IModBusEvent>)RegistryEvent.NewRegistry::new), EventDispatcher.identity()),
     LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData.buildRegistryEventDispatch()),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
@@ -79,7 +80,6 @@ public enum ModLoadingStage
         }, e);
     }
 
-    @SuppressWarnings("unchecked")
     <T extends Event & IModBusEvent> ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream, EventDispatcher<?> eventManager) {
         this.eventFunctionStream = eventStream;
         this.parallelEventClass = Optional.empty();

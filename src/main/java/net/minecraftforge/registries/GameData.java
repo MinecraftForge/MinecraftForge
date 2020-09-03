@@ -327,6 +327,7 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
+    @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
@@ -338,7 +339,7 @@ public class GameData
         keys.add(0, BLOCKS.func_240901_a_());
         keys.add(1, ITEMS.func_240901_a_());
 
-        return keys.stream().map(rl -> mc -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
+        return keys.stream().map(rl -> (ModLoadingStage.EventGenerator)(mc -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl)));
     }
 
     public static ModLoadingStage.EventDispatcher<RegistryEvent.Register<?>> buildRegistryEventDispatch() {
