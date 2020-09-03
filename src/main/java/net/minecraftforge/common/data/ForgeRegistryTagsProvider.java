@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Lifecycle;
 import java.nio.file.Path;
 import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.TagsProvider;
 import net.minecraft.util.ResourceLocation;
@@ -57,9 +58,9 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
 
     private final String folder;
 
-    public ForgeRegistryTagsProvider(DataGenerator generatorIn, IForgeRegistry<T> registryIn, String modId)
+    public ForgeRegistryTagsProvider(DataGenerator generatorIn, IForgeRegistry<T> registryIn, String modId, @Nullable ExistingFileHelper existingFileHelper)
     {
-        super(generatorIn, wrapRegistry(registryIn), modId);
+        super(generatorIn, wrapRegistry(registryIn), modId, existingFileHelper);
         String tagFolder = ((ForgeRegistry<T>) registryIn).getTagFolder();
         folder = tagFolder == null ? vanillaTypes.get(registryIn) : tagFolder;
     }

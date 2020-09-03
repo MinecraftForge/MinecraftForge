@@ -20,12 +20,14 @@
 package net.minecraftforge.debug.misc;
 
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeRegistryTagsProvider;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -62,8 +64,9 @@ public class CustomTagTypesTest
         if (event.includeServer())
         {
             DataGenerator gen = event.getGenerator();
-            gen.addProvider(new BiomeTags(gen));
-            gen.addProvider(new CustomRegistryTags(gen));
+            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+            gen.addProvider(new BiomeTags(gen, existingFileHelper));
+            gen.addProvider(new CustomRegistryTags(gen, existingFileHelper));
         }
     }
 
@@ -72,9 +75,9 @@ public class CustomTagTypesTest
 
     public static class BiomeTags extends ForgeRegistryTagsProvider<Biome>
     {
-        public BiomeTags(DataGenerator gen)
+        public BiomeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
         {
-            super(gen, ForgeRegistries.BIOMES, MODID);
+            super(gen, ForgeRegistries.BIOMES, MODID, existingFileHelper);
         }
 
         @Override
@@ -92,9 +95,9 @@ public class CustomTagTypesTest
 
     public static class CustomRegistryTags extends ForgeRegistryTagsProvider<Custom>
     {
-        public CustomRegistryTags(DataGenerator gen)
+        public CustomRegistryTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
         {
-            super(gen, CUSTOM_REG.get(), MODID);
+            super(gen, CUSTOM_REG.get(), MODID, existingFileHelper);
         }
 
         @Override
