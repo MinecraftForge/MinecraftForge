@@ -50,7 +50,6 @@ public enum ModLoadingStage
     ERROR(),
     VALIDATE(),
     CONSTRUCT(FMLConstructModEvent.class),
-    @SuppressWarnings({ "unchecked", "rawtypes" }) //Eclipse compiler generics issue. Sorry cpw, your nested generics can't be inferred
     CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new)), EventDispatcher.identity()),
     LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData.buildRegistryEventDispatch()),
     COMMON_SETUP(FMLCommonSetupEvent.class),
