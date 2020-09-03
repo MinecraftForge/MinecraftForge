@@ -61,6 +61,24 @@
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
           }
+@@ -1119,7 +1124,7 @@
+          this.field_239224_H_.func_237506_a_(this.field_72777_q.func_147110_a());
+          RenderState.field_239237_T_.func_228547_a_();
+          iprofiler.func_219895_b("particles");
+-         this.field_72777_q.field_71452_i.func_228345_a_(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_);
++         this.field_72777_q.field_71452_i.renderParticles(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_, clippinghelper);
+          RenderState.field_239237_T_.func_228549_b_();
+       } else {
+          iprofiler.func_219895_b("translucent");
+@@ -1129,7 +1134,7 @@
+          iprofiler.func_219895_b("string");
+          this.func_228441_a_(RenderType.func_241715_r_(), p_228426_1_, d0, d1, d2);
+          iprofiler.func_219895_b("particles");
+-         this.field_72777_q.field_71452_i.func_228345_a_(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_);
++         this.field_72777_q.field_71452_i.renderParticles(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_, clippinghelper);
+       }
+ 
+       RenderSystem.pushMatrix();
 @@ -2076,7 +2081,12 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }

@@ -23,16 +23,22 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.IWorldInfo;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.command.ConfigCommand;
+import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -106,7 +112,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
-        modEventBus.addGenericListener(IRecipeSerializer.class, this::registerRecipeSerialziers);
+        modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
@@ -119,6 +125,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -208,6 +215,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
 
+    @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
     public void registerRecipeSerialziers(RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         CraftingHelper.register(AndCondition.Serializer.INSTANCE);

@@ -26,7 +26,7 @@
 +         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
-+         net.minecraftforge.fml.ModLoader.get().runDataGenerator(mods, path, inputs, existingPacks, flag2, flag1, flag3, flag4, flag5, isFlat);
++         net.minecraftforge.fml.DatagenModLoader.begin(mods, path, inputs, existingPacks, flag2, flag1, flag3, flag4, flag5, isFlat);
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            func_200264_a(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).func_200392_c();
        } else {

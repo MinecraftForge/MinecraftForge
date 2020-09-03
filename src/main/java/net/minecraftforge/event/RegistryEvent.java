@@ -46,6 +46,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      */
     public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
     {
+        public NewRegistry(ModContainer mc) {}
         @Override
         public String toString() {
             return "RegistryEvent.NewRegistry";

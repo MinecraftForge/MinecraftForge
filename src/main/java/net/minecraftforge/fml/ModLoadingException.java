@@ -20,7 +20,9 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.Streams;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Arrays;
@@ -78,5 +80,12 @@ public class ModLoadingException extends RuntimeException
     @Override
     public String getMessage() {
         return formatToString();
+    }
+
+    public IModInfo getModInfo() {
+        return modInfo;
+    }
+    public String getCleanMessage() {
+        return ForgeI18n.stripControlCodes(formatToString());
     }
 }

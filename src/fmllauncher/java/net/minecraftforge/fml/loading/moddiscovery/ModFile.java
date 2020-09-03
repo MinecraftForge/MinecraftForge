@@ -79,7 +79,7 @@ public class ModFile implements IModFile {
         this.locator = locator;
         this.filePath = file;
         this.parser = parser;
-        manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
+        manifest = Optional.ofNullable(locator).flatMap(l->l.findManifest(file)).orElse(DEFAULTMANIFEST);
         if (manifest != DEFAULTMANIFEST) LOGGER.debug(SCAN,"Mod file {} has a manifest", file);
         else LOGGER.debug(SCAN,"Mod file {} is missing a manifest", file);
         final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
