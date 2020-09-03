@@ -21,6 +21,11 @@ net/minecraft/client/renderer/model/ModelBakery.getBakedModel(Lnet/minecraft/uti
 net/minecraft/client/renderer/model/ModelBakery.processLoading(Lnet/minecraft/profiler/IProfiler;I)V=|p_i226056_3_,p_i226056_4_
 net/minecraft/client/renderer/model/MultipartBakedModel.getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;=|p_200117_1_,p_200117_2_,p_200117_3_,modelData
 net/minecraft/client/renderer/model/WeightedBakedModel.getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;=|p_200117_1_,p_200117_2_,p_200117_3_,modelData
+net/minecraft/data/BlockTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i48256_1_,modId,existingFileHelper
+net/minecraft/data/EntityTypeTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i50784_1_,modId,existingFileHelper
+net/minecraft/data/FluidTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i49156_1_,modId,existingFileHelper
+net/minecraft/data/ItemTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/data/BlockTagsProvider;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i232552_1_,p_i232552_2_,modId,existingFileHelper
+net/minecraft/data/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i49827_1_,p_i49827_2_,modId,existingFileHelper
 net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/item/EnderPearlEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/item/ItemEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter

@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/TagsProvider.java
 +++ b/net/minecraft/data/TagsProvider.java
-@@ -28,11 +28,19 @@
+@@ -28,10 +28,18 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
     protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
@@ -9,19 +9,16 @@
  
 +   @Deprecated//Forge, Use ModID version.
     protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_) {
--      this.field_200433_a = p_i49827_1_;
--      this.field_200435_c = p_i49827_2_;
-+       this(p_i49827_1_, p_i49827_2_, "vanilla", null);
-    }
-+   protected TagsProvider(DataGenerator generatorIn, Registry<T> registryIn, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      this.field_200433_a = generatorIn;
-+      this.field_200435_c = registryIn;
++      this(p_i49827_1_, p_i49827_2_, "vanilla", null);
++   }
++   protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       this.field_200433_a = p_i49827_1_;
+       this.field_200435_c = p_i49827_2_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+   }
+    }
  
     protected abstract void func_200432_c();
- 
 @@ -47,12 +55,14 @@
           return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
        };
