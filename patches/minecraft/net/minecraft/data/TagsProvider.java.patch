@@ -22,42 +22,34 @@
  
     protected abstract void func_200432_c();
  
-@@ -49,10 +57,17 @@
+@@ -47,12 +55,14 @@
+          return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
+       };
        this.field_200434_b.forEach((p_240524_4_, p_240524_5_) -> {
-          List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).collect(Collectors.toList());
+-         List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).collect(Collectors.toList());
++         // FORGE: Add validation via existing resources
++         List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).filter(this::missing).collect(Collectors.toList());
           if (!list.isEmpty()) {
-+            // FORGE: Add validation via existing resources
-+            for (ITag.Proxy missingTag : list) {
-+               // Vanilla tag types use plural names, revisit this when/if we add custom tag types
-+               if (existingFileHelper == null || !exists(missingTag))
              throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_240524_4_, list.stream().map(Objects::toString).collect(Collectors.joining(","))));
--         } else {
-+            }
-+         } //else {
-+            // FORGE: Run this code always, it will be skipped if the above code throws an exception
+          } else {
              JsonObject jsonobject = p_240524_5_.func_232965_c_();
              Path path = this.func_200431_a(p_240524_4_);
 +            if (path == null) return; //Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -69,16 +84,29 @@
-             } catch (IOException ioexception) {
-                field_200436_d.error("Couldn't save tags to {}", path, ioexception);
-             }
--
--         }
+@@ -74,11 +84,26 @@
        });
     }
  
-+   private boolean exists(ITag.Proxy reference) {
++   private boolean missing(ITag.Proxy reference) {
 +      ITag.ITagEntry entry = reference.func_232968_a_();
 +      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +      if (entry instanceof ITag.TagEntry) {
-+         return existingFileHelper.exists(((ITag.TagEntry)entry).getId(), net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
++         return existingFileHelper == null || !existingFileHelper.exists(((ITag.TagEntry)entry).getId(), net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
 +      }
-+      return true;
++      return false;
 +   }
 +
 +   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -74,7 +66,7 @@
     }
  
     protected ITag.Builder func_240525_b_(ITag.INamedTag<T> p_240525_1_) {
-@@ -87,7 +115,7 @@
+@@ -87,7 +112,7 @@
        });
     }
  
@@ -83,7 +75,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +143,18 @@
+@@ -115,5 +140,18 @@
           });
           return this;
        }
