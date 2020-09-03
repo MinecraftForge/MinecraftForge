@@ -27,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -66,7 +67,7 @@ public class ModFileResourcePack extends ResourcePack
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         if(!Files.exists(path))
-            throw new ResourcePackFileNotFoundException(path.toFile(), name);
+            throw new FileNotFoundException(String.format("'%s' in ResourcePack '%s'", path, name));
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
