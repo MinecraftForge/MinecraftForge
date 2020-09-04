@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/Atlases.java
++++ b/net/minecraft/client/renderer/Atlases.java
+@@ -44,7 +44,7 @@
+    public static final List<RenderMaterial> field_228749_h_ = Stream.of("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black").map((p_228777_0_) -> {
+       return new RenderMaterial(field_228742_a_, new ResourceLocation("entity/shulker/shulker_" + p_228777_0_));
+    }).collect(ImmutableList.toImmutableList());
+-   public static final Map<WoodType, RenderMaterial> field_228750_i_ = WoodType.func_227046_a_().collect(Collectors.toMap(Function.identity(), Atlases::func_228773_a_));
++   public static final Map<WoodType, RenderMaterial> field_228750_i_ = java.util.Collections.synchronizedMap(WoodType.func_227046_a_().collect(Collectors.toMap(Function.identity(), Atlases::func_228773_a_)));
+    public static final RenderMaterial[] field_228751_j_ = Arrays.stream(DyeColor.values()).sorted(Comparator.comparingInt(DyeColor::func_196059_a)).map((p_228770_0_) -> {
+       return new RenderMaterial(field_228743_b_, new ResourceLocation("entity/bed/" + p_228770_0_.func_176762_d()));
+    }).toArray((p_228769_0_) -> {
+@@ -129,7 +129,7 @@
+    }
+ 
+    public static RenderMaterial func_228773_a_(WoodType p_228773_0_) {
+-      return new RenderMaterial(field_228746_e_, new ResourceLocation("entity/signs/" + p_228773_0_.func_227048_b_()));
++      return new RenderMaterial(field_228746_e_, new ResourceLocation(p_228773_0_.getNamespace(), "entity/signs/" + p_228773_0_.func_227048_b_()));
+    }
+ 
+    private static RenderMaterial func_228774_a_(String p_228774_0_) {

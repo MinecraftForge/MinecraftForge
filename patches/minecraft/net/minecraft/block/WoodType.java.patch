@@ -1,0 +1,39 @@
+--- a/net/minecraft/block/WoodType.java
++++ b/net/minecraft/block/WoodType.java
+@@ -18,6 +18,7 @@
+ 
+    protected WoodType(String p_i225775_1_) {
+       this.field_227045_h_ = p_i225775_1_;
++      this.namespace = "minecraft";
+    }
+ 
+    private static WoodType func_227047_a_(WoodType p_227047_0_) {
+@@ -32,4 +33,28 @@
+    public String func_227048_b_() {
+       return this.field_227045_h_;
+    }
++
++   private static final Set<WoodType> MOD_VALUES = new io.netty.util.internal.ConcurrentSet<>();
++
++   private final String namespace;
++
++   protected WoodType(String namespaceIn, String nameIn) {
++      this.field_227045_h_ = nameIn;
++      this.namespace = namespaceIn;
++   }
++
++   public String getNamespace() {
++      return this.namespace;
++   }
++
++   public static Stream<WoodType> getModValues() {
++      return MOD_VALUES.stream();
++   }
++
++   public static WoodType create(String namespaceIn, String nameIn) {
++      WoodType woodType = new WoodType(namespaceIn, nameIn);
++      MOD_VALUES.add(woodType);
++      net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT, () -> () -> net.minecraft.client.renderer.Atlases.field_228750_i_.put(woodType, net.minecraft.client.renderer.Atlases.func_228773_a_(woodType)));
++      return woodType;
++   }
+ }
