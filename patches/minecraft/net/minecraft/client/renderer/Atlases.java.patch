@@ -5,7 +5,7 @@
        return new RenderMaterial(field_228742_a_, new ResourceLocation("entity/shulker/shulker_" + p_228777_0_));
     }).collect(ImmutableList.toImmutableList());
 -   public static final Map<WoodType, RenderMaterial> field_228750_i_ = WoodType.func_227046_a_().collect(Collectors.toMap(Function.identity(), Atlases::func_228773_a_));
-+   public static final Map<WoodType, RenderMaterial> field_228750_i_ = java.util.Collections.synchronizedMap(WoodType.func_227046_a_().collect(Collectors.toMap(Function.identity(), Atlases::func_228773_a_)));
++   public static final Map<WoodType, RenderMaterial> field_228750_i_ = WoodType.func_227046_a_().collect(Collectors.toConcurrentMap(Function.identity(), Atlases::func_228773_a_));
     public static final RenderMaterial[] field_228751_j_ = Arrays.stream(DyeColor.values()).sorted(Comparator.comparingInt(DyeColor::func_196059_a)).map((p_228770_0_) -> {
        return new RenderMaterial(field_228743_b_, new ResourceLocation("entity/bed/" + p_228770_0_.func_176762_d()));
     }).toArray((p_228769_0_) -> {
