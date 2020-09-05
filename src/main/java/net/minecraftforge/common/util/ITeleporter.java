@@ -24,6 +24,7 @@ import java.util.function.Function;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.server.ServerWorld;
 
 /**
@@ -58,8 +59,9 @@ public interface ITeleporter {
        return repositionEntity.apply(true);
     }
     
+    //used internally to handle vanilla hardcoding
     default boolean isVanilla()
     {
-        return true;
+        return getClass() == Teleporter.class;
     }
 }
