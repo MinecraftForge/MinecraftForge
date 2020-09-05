@@ -57,4 +57,9 @@ public interface ITeleporter {
     default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
        return repositionEntity.apply(true);
     }
+    
+    default boolean isVanilla()
+    {
+        return true;
+    }
 }

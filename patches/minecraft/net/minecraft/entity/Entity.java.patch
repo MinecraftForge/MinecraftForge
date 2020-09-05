@@ -218,7 +218,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,14 +2117,20 @@
+@@ -2087,14 +2117,19 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -232,16 +232,15 @@
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
 -         if (portalinfo == null) {
-+         boolean vanillaTeleporter = teleporter instanceof net.minecraft.world.Teleporter;
-+         PortalInfo portalinfo = vanillaTeleporter ? this.func_241829_a(p_241206_1_) : null;
-+         if (portalinfo == null && vanillaTeleporter) {
++         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : null;
++         if (portalinfo == null && teleporter.isVanilla()) {
              return null;
           } else {
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
              Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
              if (entity != null) {
-@@ -2102,17 +2138,19 @@
+@@ -2102,17 +2137,19 @@
                 entity.func_70012_b(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, entity.field_70125_A);
                 entity.func_213317_d(portalinfo.field_222506_b);
                 p_241206_1_.func_217460_e(entity);
@@ -263,7 +262,7 @@
           }
        } else {
           return null;
-@@ -2320,9 +2358,10 @@
+@@ -2320,9 +2357,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -276,7 +275,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2796,6 +2835,7 @@
+@@ -2796,6 +2834,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -284,7 +283,7 @@
  
     }
  
-@@ -2811,4 +2851,63 @@
+@@ -2811,4 +2850,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
