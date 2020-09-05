@@ -199,23 +199,17 @@ public class ClientModLoader
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
-            final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
-            error.getErrors().forEach(mle -> {
-                final CrashReportCategory category = crashReport.makeCategory(mle.getModInfo().getModId());
-                category.applyStackTrace(mle.getCause());
-                category.addDetail("Failure message", mle.getCleanMessage());
-                category.addDetail("Exception message", mle.getCause().toString());
-                category.addDetail("Mod Version", mle.getModInfo().getVersion().toString());
-                category.addDetail("Mod Issue URL", ((ModFileInfo)mle.getModInfo().getOwningFile()).getConfigElement("issueTrackerURL").orElse("NOT PROVIDED"));
-            });
-            final File file1 = new File(mc.gameDir, "crash-reports");
-            final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
-            if (crashReport.saveToFile(file2)) {
-                LOGGER.fatal("Crash report saved to {}", crashReport.getFile());
-            } else {
-                LOGGER.fatal("Failed to save crash report");
+            try {
+                saveCrashReport();
+            } catch (Exception e) {
+                LOGGER.error("Failed to generate crash report!");
             }
-            System.out.print(crashReport.getCompleteReport());
+            //We need this here, as due to early loading failures, the forge resource pack may not have been registered, but we require lang for the loading screen
+            try {
+                LanguageHook.loadForgeAndMCLangs();
+            } catch (Exception e) {
+                LOGGER.error("Failed to load forge and mc langs!");
+            }
         }
         if (error != null || !warnings.isEmpty()) {
             mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
@@ -224,6 +218,33 @@ public class ClientModLoader
             ClientHooks.logMissingTextureErrors();
             return false;
         }
+    }
+
+    private static void saveCrashReport() {
+        final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
+        error.getErrors().forEach(mle -> {
+            String catName;
+            try {
+                catName = mle.getModInfo().getModId();
+            } catch (Exception e) {
+                //May happen in early mod loading errors
+                catName = "[Unknown mod]";
+            }
+            final CrashReportCategory category = crashReport.makeCategory(catName);
+            if (mle.getCause() != null) category.applyStackTrace(mle.getCause());
+            category.addDetail("Failure message", mle::getCleanMessage);
+            category.addDetail("Exception message", () -> mle.getCause().toString());
+            category.addDetail("Mod Version", () -> mle.getModInfo().getVersion().toString());
+            category.addDetail("Mod Issue URL", () -> ((ModFileInfo) mle.getModInfo().getOwningFile()).getConfigElement("issueTrackerURL").orElse("NOT PROVIDED").toString());
+        });
+        final File file1 = new File(mc.gameDir, "crash-reports");
+        final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+        if (crashReport.saveToFile(file2)) {
+            LOGGER.fatal("Crash report saved to {}", crashReport.getFile());
+        } else {
+            LOGGER.fatal("Failed to save crash report");
+        }
+        System.out.print(crashReport.getCompleteReport());
     }
 
     public static void renderProgressText() {

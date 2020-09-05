@@ -66,7 +66,7 @@ public class LoadingModList
         this.preLoadErrors = new ArrayList<>();
     }
 
-    public static LoadingModList of(List<ModFile> modFiles, List<ModInfo> sortedList, final EarlyLoadingException earlyLoadingException)
+    static LoadingModList of(List<ModFile> modFiles, List<ModInfo> sortedList, final EarlyLoadingException earlyLoadingException)
     {
         INSTANCE = new LoadingModList(modFiles, sortedList);
         if (earlyLoadingException != null)

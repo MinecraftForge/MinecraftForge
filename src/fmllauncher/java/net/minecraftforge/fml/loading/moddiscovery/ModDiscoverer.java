@@ -134,9 +134,9 @@ public class ModDiscoverer {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+mods.size()+" modfiles to load"));
         final LoadingModList loadingModList;
         if (additionalErrors.isEmpty())
-            loadingModList = ModSorter.sort(mods);
+            loadingModList = ModSorter.sort(mods, null);
         else
-            loadingModList = LoadingModList.of(mods, Collections.emptyList(), new EarlyLoadingException("Missing license information", null, additionalErrors.stream().map(InvalidModFileException::makeExceptionData).collect(Collectors.toList())));
+            loadingModList = ModSorter.sort(mods, new EarlyLoadingException("Invalid mods", null, additionalErrors.stream().map(InvalidModFileException::makeExceptionData).collect(Collectors.toList())));
         loadingModList.addCoreMods();
         loadingModList.addAccessTransformers();
         loadingModList.addForScanning(backgroundScanHandler);

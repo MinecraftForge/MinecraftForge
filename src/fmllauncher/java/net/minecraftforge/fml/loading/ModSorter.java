@@ -62,19 +62,22 @@ public class ModSorter
         this.modFiles = modFiles;
     }
 
-    public static LoadingModList sort(List<ModFile> mods)
+    public static LoadingModList sort(List<ModFile> mods, EarlyLoadingException earlyLoadingException)
     {
         final ModSorter ms = new ModSorter(mods);
-        EarlyLoadingException earlyLoadingException = null;
         try {
             ms.findLanguages();
             ms.buildUniqueList();
             ms.verifyDependencyVersions();
             ms.sort();
         } catch (EarlyLoadingException ele) {
-            earlyLoadingException = ele;
-            ms.sortedList = Collections.emptyList();
+            if (earlyLoadingException != null)
+                earlyLoadingException = ele;
+            else
+                LOGGER.warn("Discarding early loading exception from sorter, this may have been due to another exception!", earlyLoadingException);
         }
+        if (earlyLoadingException != null)
+            ms.sortedList = Collections.emptyList();
         return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
     }
 
