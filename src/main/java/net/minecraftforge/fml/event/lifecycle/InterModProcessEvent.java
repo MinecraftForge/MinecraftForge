@@ -36,7 +36,7 @@ import java.util.function.Predicate;
  * @see #getIMCStream()
  * @see #getIMCStream(Predicate)
  */
-public class InterModProcessEvent extends ModLifecycleEvent
+public class InterModProcessEvent extends ParallelDispatchEvent
 {
     public InterModProcessEvent(final ModContainer container)
     {

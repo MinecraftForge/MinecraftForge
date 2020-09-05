@@ -1,0 +1,20 @@
+--- a/net/minecraft/fluid/FlowingFluid.java
++++ b/net/minecraft/fluid/FlowingFluid.java
+@@ -159,7 +159,7 @@
+          BlockState blockstate = p_205576_1_.func_180495_p(blockpos);
+          FluidState fluidstate = blockstate.func_204520_s();
+          if (fluidstate.func_206886_c().func_207187_a(this) && this.func_212751_a(direction, p_205576_1_, p_205576_2_, p_205576_3_, blockpos, blockstate)) {
+-            if (fluidstate.func_206889_d()) {
++            if (fluidstate.func_206889_d() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_205576_1_, blockpos, blockstate, this.func_205579_d())) {
+                ++j;
+             }
+ 
+@@ -167,7 +167,7 @@
+          }
+       }
+ 
+-      if (this.func_205579_d() && j >= 2) {
++      if (j >= 2) {
+          BlockState blockstate1 = p_205576_1_.func_180495_p(p_205576_2_.func_177977_b());
+          FluidState fluidstate1 = blockstate1.func_204520_s();
+          if (blockstate1.func_185904_a().func_76220_a() || this.func_211758_g(fluidstate1)) {
