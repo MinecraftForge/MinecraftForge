@@ -1,24 +1,6 @@
 --- a/net/minecraft/world/gen/NoiseChunkGenerator.java
 +++ b/net/minecraft/world/gen/NoiseChunkGenerator.java
-@@ -127,6 +127,17 @@
- 
-    }
- 
-+   @Override
-+   public com.mojang.serialization.MapCodec<ChunkGenerator> dispatch(net.minecraft.util.RegistryKey<net.minecraft.world.Dimension> key, net.minecraft.util.registry.WorldSettingsImport<com.google.gson.JsonElement> parser) {
-+      return RecordCodecBuilder.<NoiseChunkGenerator>mapCodec(inst ->
-+              inst.group(
-+                      this.field_222542_c.dispatch(key, parser).forGetter(cg -> cg.field_222542_c),
-+                      com.mojang.serialization.MapCodec.unit(this.field_236084_w_).forGetter(cg -> cg.field_236084_w_),
-+                      com.mojang.serialization.MapCodec.unit(()->this.field_236080_h_).forGetter(cg -> cg.field_236080_h_)
-+              ).apply(inst, NoiseChunkGenerator::new)
-+      ).xmap(cg -> cg, cg -> (NoiseChunkGenerator) cg);
-+   }
-+
-    protected Codec<? extends ChunkGenerator> func_230347_a_() {
-       return field_236079_d_;
-    }
-@@ -525,8 +536,8 @@
+@@ -525,8 +525,8 @@
                          objectlistiterator1.back(objectlist1.size());
                          BlockState blockstate = this.func_236086_a_(d18, i2);
                          if (blockstate != field_222562_i) {

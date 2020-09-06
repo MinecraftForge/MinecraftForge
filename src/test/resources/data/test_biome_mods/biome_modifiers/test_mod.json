@@ -1,9 +1,9 @@
 {
-  "targets" : [
-    "savanna",
-    "minecraft:plains",
-    "forest"
-  ],
+  "type" : "forge:spawns_additions",
+  "condition" : {
+    "type" : "forge:matches_category",
+    "category" : "plains"
+  },
   "spawners" : {
     "monster" : [
       {

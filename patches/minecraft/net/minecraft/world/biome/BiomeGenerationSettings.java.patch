@@ -1,20 +1,12 @@
 --- a/net/minecraft/world/biome/BiomeGenerationSettings.java
 +++ b/net/minecraft/world/biome/BiomeGenerationSettings.java
-@@ -61,6 +61,17 @@
-       }).collect(ImmutableList.toImmutableList());
-    }
- 
-+   public static MapCodec<BiomeGenerationSettings> basedOn(BiomeGenerationSettings base, net.minecraft.util.RegistryKey<Biome> key, Biome.Category category, net.minecraft.util.registry.WorldSettingsImport<com.google.gson.JsonElement> parser) {
-+      return RecordCodecBuilder.mapCodec(inst ->
-+              inst.group(
-+                      MapCodec.unit(()->base.field_242482_d).forGetter(bgs -> bgs.field_242482_d),
-+                      MapCodec.unit(base.field_242483_e).forGetter(bgs -> bgs.field_242483_e),
-+                      net.minecraftforge.common.world.WorldGenAdditions.featureAdditions(base.field_242484_f, key, category, parser).forGetter(bgs -> bgs.field_242484_f),
-+                      net.minecraftforge.common.world.WorldGenAdditions.structureAdditions(base.field_242485_g, key, category, parser).forGetter(bgs -> bgs.field_242485_g)
-+              ).apply(inst, BiomeGenerationSettings::new)
-+      );
-+   }
-+
+@@ -64,6 +64,9 @@
     public List<Supplier<ConfiguredCarver<?>>> func_242489_a(GenerationStage.Carving p_242489_1_) {
        return this.field_242483_e.getOrDefault(p_242489_1_, ImmutableList.of());
     }
++   public Map<GenerationStage.Carving, List<Supplier<ConfiguredCarver<?>>>> getAllCarvers(){
++      return this.field_242483_e;
++   }
+ 
+    public boolean func_242493_a(Structure<?> p_242493_1_) {
+       return this.field_242485_g.stream().anyMatch((p_242494_1_) -> {

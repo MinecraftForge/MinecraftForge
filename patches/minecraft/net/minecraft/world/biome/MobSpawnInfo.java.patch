@@ -1,20 +1,15 @@
 --- a/net/minecraft/world/biome/MobSpawnInfo.java
 +++ b/net/minecraft/world/biome/MobSpawnInfo.java
-@@ -50,6 +50,17 @@
-       this.field_242556_g = p_i241946_4_;
+@@ -58,6 +58,12 @@
+    public MobSpawnInfo.SpawnCosts func_242558_a(EntityType<?> p_242558_1_) {
+       return this.field_242555_f.get(p_242558_1_);
     }
- 
-+   public static MapCodec<MobSpawnInfo> basedOn(MobSpawnInfo base, net.minecraft.util.RegistryKey<Biome> key, Biome.Category category, net.minecraft.util.registry.WorldSettingsImport<com.google.gson.JsonElement> parser) {
-+      return RecordCodecBuilder.mapCodec(inst ->
-+              inst.group(
-+                      MapCodec.unit(base.field_242553_d).forGetter(msi -> msi.field_242553_d),
-+                      net.minecraftforge.common.world.WorldGenAdditions.spawnerAdditions(base.field_242554_e, key, category,parser).forGetter(msi -> msi.field_242554_e),
-+                      net.minecraftforge.common.world.WorldGenAdditions.spawnCostsAdditions(base.field_242555_f, key, category,parser).forGetter(msi -> msi.field_242555_f),
-+                      MapCodec.unit(base.field_242556_g).forGetter(msi -> msi.field_242556_g)
-+              ).apply(inst, MobSpawnInfo::new)
-+      );
++   public Map<EntityClassification, List<MobSpawnInfo.Spawners>> getAllSpawners() {
++      return this.field_242554_e;
 +   }
-+
-    public List<MobSpawnInfo.Spawners> func_242559_a(EntityClassification p_242559_1_) {
-       return this.field_242554_e.getOrDefault(p_242559_1_, ImmutableList.of());
-    }
++   public Map<EntityType<?>, MobSpawnInfo.SpawnCosts> getAllSpawnCosts() {
++      return this.field_242555_f;
++   }
+ 
+    public float func_242557_a() {
+       return this.field_242553_d;

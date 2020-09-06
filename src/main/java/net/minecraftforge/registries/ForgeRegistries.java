@@ -57,6 +57,8 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
+import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -111,6 +113,8 @@ public class ForgeRegistries
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
+    public static final IForgeRegistry<BiomeConditionType<?>> BIOME_CONDITION_TYPES = RegistryManager.ACTIVE.getRegistry(BiomeConditionType.class);
+    public static final IForgeRegistry<BiomeModifierType<?>> BIOME_MODIFIER_TYPES = RegistryManager.ACTIVE.getRegistry(BiomeModifierType.class);
 
     public static final class Keys {
         //Vanilla
@@ -152,6 +156,8 @@ public class ForgeRegistries
         //Forge
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
+        public static final RegistryKey<Registry<BiomeConditionType<?>>> BIOME_CONDITION_TYPE = key("forge:biome_condition_type");
+        public static final RegistryKey<Registry<BiomeModifierType<?>>> BIOME_MODIFIER_TYPE = key("forge:biome_modifier_type");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {

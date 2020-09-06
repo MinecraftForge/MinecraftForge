@@ -1,0 +1,23 @@
+{
+  "type" : "forge:spawns_additions",
+  "condition" : {
+    "type" : "forge:inverted",
+    "inverse" : {
+      "type" : "forge:matches_category",
+      "categories" : [
+        "plains",
+        "savanna"
+      ]
+    }
+  },
+  "spawners" : {
+    "monster" : [
+      {
+        "type" : "minecraft:witch",
+        "weight" : 200,
+        "minCount" : 10,
+        "maxCount" : 30
+      }
+    ]
+  }
+}
