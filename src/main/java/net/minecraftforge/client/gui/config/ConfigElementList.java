@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
@@ -302,6 +303,12 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
                 // Render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+            }
+            // TODO: Doesn't work well
+            if (description.length() > 0 && this.func_231047_b_(mouseX, mouseY)) {
+                // renderTooltip
+                List<ITextComponent> list = Arrays.stream(description.split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
+                ConfigElementList.this.configScreen.func_243308_b(matrixStack, list, mouseX, mouseY);
             }
         }
 
