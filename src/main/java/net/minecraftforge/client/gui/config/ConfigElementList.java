@@ -352,6 +352,15 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     @Override
+    protected void func_230938_a_(int p_230938_1_, int p_230938_2_) {
+        super.func_230938_a_(p_230938_1_, p_230938_2_);
+        for (ConfigElement element : func_231039_at__())
+            for (Widget widget : element.widgets)
+                if (widget instanceof TextFieldWidget)
+                    ((TextFieldWidget) widget).setFocused2(false);
+    }
+
+    @Override
     public void func_231035_a_(IGuiEventListener newFocused) {
         final ConfigElement oldFocused = func_241217_q_();
         if (oldFocused != null && oldFocused != newFocused)
