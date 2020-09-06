@@ -4,22 +4,24 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import static net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
@@ -48,7 +50,81 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             ConfigValue<?> value = (ConfigValue<?>) raw;
             ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
             String name = new TranslationTextComponent(valueInfo.getTranslationKey()).getString();
-            return new ConfigElementImpl(name + ": " + value.get(), valueInfo.getComment());
+            final Object valueValue = value.get();
+            if (valueValue instanceof Boolean) {
+                BooleanValue booleanValue = ((BooleanValue) value);
+                return new ConfigElementImpl(name, valueInfo.getComment()) {
+                    boolean state;
+                    {
+                        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(valueValue.toString()), button -> {
+                            booleanValue.set(!state);
+                            // TODO: saveAndReload
+                            state = booleanValue.get();
+                            button.func_238482_a_(new StringTextComponent(Boolean.toString(state)));
+                            button.setFGColor(state ? TextFormatting.GREEN.getColor() : TextFormatting.RED.getColor());
+                        });
+                        control.setFGColor((state = booleanValue.get()) ? TextFormatting.GREEN.getColor() : TextFormatting.RED.getColor());
+                        widgets.add(0, control);
+                    }
+                };
+            }
+            if (valueValue instanceof Integer) {
+                IntValue intValue = ((IntValue) value);
+                Range<Integer> range = valueInfo.getRange();
+                return new ConfigElementImpl(name, valueInfo.getComment()) {
+                    {
+                        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 50, 20, new StringTextComponent(translatedName));
+                        control.setText(valueValue.toString());
+                        control.setResponder(newValue -> {
+                            int parsed;
+                            try {
+                                parsed = Integer.parseInt(newValue);
+                            } catch (NumberFormatException ignored) {
+                                control.setTextColor(TextFormatting.RED.getColor());
+                                return;
+                            }
+                            if (range != null) {
+                                if (!range.test(parsed)) {
+                                    control.setTextColor(TextFormatting.RED.getColor());
+                                    return;
+                                }
+                            }
+                            control.setTextColor(0xe0e0e0);
+                            intValue.set(parsed);
+                        });
+                        widgets.add(0, control);
+                    }
+                };
+            }
+            if (valueValue instanceof Long) {
+                LongValue intValue = ((LongValue) value);
+                Range<Long> range = valueInfo.getRange();
+                return new ConfigElementImpl(name, valueInfo.getComment()) {
+                    {
+                        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 50, 20, new StringTextComponent(translatedName));
+                        control.setText(valueValue.toString());
+                        control.setResponder(newValue -> {
+                            long parsed;
+                            try {
+                                parsed = Long.parseLong(newValue);
+                            } catch (NumberFormatException ignored) {
+                                control.setTextColor(TextFormatting.RED.getColor());
+                                return;
+                            }
+                            if (range != null) {
+                                if (!range.test(parsed)) {
+                                    control.setTextColor(TextFormatting.RED.getColor());
+                                    return;
+                                }
+                            }
+                            control.setTextColor(0xe0e0e0);
+                            intValue.set(parsed);
+                        });
+                        widgets.add(0, control);
+                    }
+                };
+            }
+            return new ConfigElementImpl(name + ": " + valueValue, valueInfo.getComment());
         }
     }
 
