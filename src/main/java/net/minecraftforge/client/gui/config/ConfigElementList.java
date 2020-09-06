@@ -139,10 +139,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         }
 
         public BooleanSupplier canReset(ConfigValue<T> value, ValueSpec valueInfo) {
-            T _default = (T) valueInfo.getDefault();
-            return () -> !value.get().equals(_default);
+            return () -> !value.get().equals(valueInfo.getDefault());
         }
-
     }
 
     public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue) {
