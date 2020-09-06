@@ -21,14 +21,16 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
+import com.google.common.collect.Lists;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import java.util.List;
 
 public class ForgeConfig
 {
@@ -195,7 +197,6 @@ public class ForgeConfig
         CLIENT = specPair.getLeft();
     }
 
-
     static final ForgeConfigSpec serverSpec;
     public static final Server SERVER;
     static {
@@ -218,4 +219,70 @@ public class ForgeConfig
     //public static boolean disableVersionCheck = false;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
+
+    public static class Common {
+        public final BooleanValue aBoolean;
+        public final IntValue anInt;
+        public final LongValue aLong;
+        public final DoubleValue aDouble;
+        public final EnumValue<DyeColor> anEnum;
+        public final ConfigValue<String> aString;
+        public final ConfigValue<List<? extends TextFormatting>> anEnumList;
+        public final ConfigValue<String> aStringInList;
+
+        Common(ForgeConfigSpec.Builder builder) {
+            aBoolean = builder
+                    .comment("a Boolean comment")
+                    .translation("forge.configgui.a.boolean")
+                    .worldRestart()
+                    .define("aBoolean", false);
+
+            builder.comment("Category comment")
+                    .push("numbers");
+            {
+                anInt = builder
+                        .comment("an Int comment")
+                        .translation("forge.configgui.an.int")
+                        .defineInRange("anInt", 5, -10, 1000);
+                aLong = builder
+                        .comment("a Long comment")
+                        .translation("forge.configgui.a.long")
+                        .defineInRange("aLong", Long.MIN_VALUE, Long.MIN_VALUE, 5);
+                aDouble = builder
+                        .comment("a Double comment")
+                        .translation("forge.configgui.a.double")
+                        .defineInRange("aDouble", 5d, 4d, 6d);
+                builder.comment("Sub-category comment")
+                        .push("empty");
+                builder.pop();
+            }
+            builder.pop();
+
+            anEnum = builder
+                    .comment("an Enum comment")
+                    .translation("forge.configgui.an.enum")
+                    .defineEnum("anEnum", DyeColor.GREEN, dc -> dc instanceof DyeColor && ((DyeColor) dc).getId() >= 10);
+            aString = builder
+                    .comment("a String comment")
+                    .translation("forge.configgui.a.string")
+                    .define("aString", "foo");
+            anEnumList = builder
+                    .comment("an Enum List comment")
+                    .translation("forge.configgui.an.enum.list")
+                    .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);
+            aStringInList = builder
+                    .comment("a String In List comment")
+                    .translation("forge.configgui.a.string.in.list")
+                    .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
+        }
+    }
+
+    static final ForgeConfigSpec commonSpec;
+    public static final Common COMMON;
+    static {
+        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        commonSpec = specPair.getRight();
+        COMMON = specPair.getLeft();
+    }
+
 }
