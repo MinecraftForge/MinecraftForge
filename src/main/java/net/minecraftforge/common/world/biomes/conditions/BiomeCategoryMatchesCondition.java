@@ -15,8 +15,8 @@ public class BiomeCategoryMatchesCondition implements IBiomeCondition
 {
     public static final MapCodec<BiomeCategoryMatchesCondition> CODEC =
             Codec.mapEither(
-                    Codec.STRING.listOf().fieldOf("categories"),
-                    Codec.STRING.fieldOf("category")
+                    Biome.Category.field_235102_r_.listOf().fieldOf("categories"),
+                    Biome.Category.field_235102_r_.fieldOf("category")
             ).xmap(e ->
             {
                 if(e.left().isPresent())
@@ -25,14 +25,14 @@ public class BiomeCategoryMatchesCondition implements IBiomeCondition
                     return new BiomeCategoryMatchesCondition(e.right().get());
             }, cond -> cond.categories.size() == 1 ? Either.right(cond.categories.get(0)) : Either.left(cond.categories));
 
-    private final List<String> categories;
+    private final List<Biome.Category> categories;
 
-    public BiomeCategoryMatchesCondition(String category)
+    public BiomeCategoryMatchesCondition(Biome.Category category)
     {
         this(ImmutableList.of(category));
     }
 
-    public BiomeCategoryMatchesCondition(List<String> categories)
+    public BiomeCategoryMatchesCondition(List<Biome.Category> categories)
     {
         this.categories = categories;
     }
@@ -46,6 +46,6 @@ public class BiomeCategoryMatchesCondition implements IBiomeCondition
     @Override
     public boolean test(Biome biome)
     {
-        return categories.contains(biome.getCategory().getName());
+        return categories.contains(biome.getCategory());
     }
 }
