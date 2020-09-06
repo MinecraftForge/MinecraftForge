@@ -26,7 +26,7 @@ public interface IBiomeCondition extends Predicate<Biome>
     MapCodec<IBiomeCondition> FIELD_CODEC = FROM_REGISTRY.<IBiomeCondition>dispatch(IBiomeCondition::getType, BiomeConditionType::getCodec).fieldOf("condition");
 
     /**
-     * Use this when encoding in any other context then a BiomeModifier.
+     * Use this when encoding in any other context than a BiomeModifier.
      *
      * See {@link BiomeOrCondition#CODEC}
      */
