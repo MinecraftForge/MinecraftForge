@@ -23,24 +23,26 @@ import net.minecraftforge.fml.loading.FMLConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModWorkManager {
     private static final Logger LOGGER = LogManager.getLogger();
-
+    private static final long PARK_TIME = TimeUnit.MILLISECONDS.toNanos(1);
     public interface DrivenExecutor extends Executor {
         boolean selfDriven();
         boolean driveOne();
 
         default void drive(Runnable ticker) {
             if (!selfDriven()) {
-                while (driveOne())
+                while (driveOne()) {
                     ticker.run();
+                }
+            } else {
+                // park for a bit so other threads can schedule
+                LockSupport.parkNanos(PARK_TIME);
             }
         }
     }
