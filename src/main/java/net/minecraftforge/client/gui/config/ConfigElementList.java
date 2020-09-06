@@ -166,7 +166,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRanged(ConfigValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue, Function<String, T> parser, T longestValue) {
         @Nullable
         Range<T> range = valueInfo.getRange();
-        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 48, 18, new StringTextComponent(translatedName));
+        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 46, 16, new StringTextComponent(translatedName));
         control.setMaxStringLength(longestValue.toString().length());
         final BiConsumer<Boolean, String> stringConsumer = (initial, newValue) -> {
             T parsed;
@@ -186,8 +186,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 value.set(parsed);
             }
         };
-        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
+        control.setText(valueValue.toString());
         stringConsumer.accept(true, valueValue.toString());
+        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
         return new ValueConfigElementData<>(control, n -> control.setText(n.toString()));
     }
 
@@ -215,9 +216,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     private ValueConfigElementData<String> createString(ConfigValue<String> value, ValueSpec valueInfo, String translatedName, String valueValue) {
-        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 48, 18, new StringTextComponent(translatedName));
+        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 46, 20, new StringTextComponent(translatedName));
         control.setMaxStringLength(Integer.MAX_VALUE);
-        control.setText(valueValue);
         BiConsumer<Boolean, String> stringConsumer = (initial, newValue) -> {
             if (!valueInfo.test(newValue)) {
                 control.setTextColor(RED);
@@ -229,8 +229,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 value.set(newValue);
             }
         };
-        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
+        control.setText(valueValue);
         stringConsumer.accept(true, valueValue);
+        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
         return new ValueConfigElementData<>(control, control::setText);
     }
 
@@ -294,6 +295,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 widgetPos -= widget.func_230998_h_(); // Width
                 widget.field_230690_l_ = widgetPos;
                 widget.field_230691_m_ = elementRenderY;
+                if (widget instanceof TextFieldWidget) {
+                    widget.field_230690_l_ -= 2;
+                    widget.field_230691_m_ += 2;
+                }
                 // Render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
             }
@@ -334,6 +339,18 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     @Override
+    public boolean func_231044_a_(double p_231044_1_, double p_231044_3_, int p_231044_5_) {
+        boolean wasAnythingSelected = super.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_);
+        if (!wasAnythingSelected) {
+            for (ConfigElement element : func_231039_at__())
+                for (Widget widget : element.widgets)
+                if (widget instanceof TextFieldWidget)
+                    ((TextFieldWidget) widget).setFocused2(false);
+        }
+        return wasAnythingSelected;
+    }
+
+    @Override
     public void func_231035_a_(IGuiEventListener newFocused) {
         final ConfigElement oldFocused = func_241217_q_();
         if (oldFocused != null && oldFocused != newFocused)
@@ -356,7 +373,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // render
         public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
             super.func_230432_a_(matrixStack, p_230432_2_, elementRenderY, p_230432_4_, p_230432_5_, p_230432_6_, mouseX, mouseY, p_230432_9_, partialTicks);
-            field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, (float) (p_230432_4_ + /*90*/ -ConfigElementList.this.maxListLabelWidth), (float) (elementRenderY + p_230432_6_ / 2 - 9 / 2), 0xffffff);
+            field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, p_230432_4_, (float) (elementRenderY + p_230432_6_ / 2 - 9 / 2), 0xffffff);
         }
 
     }
