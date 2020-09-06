@@ -50,22 +50,11 @@ public class ConfigScreen extends Screen {
         Map<String, ModConfig> mapped = new HashMap<>();
         for (ModConfig config : configs)
             mapped.put(config.getType().name().toLowerCase(), config);
-        return new ConfigCategoryInfo(null, null, null) {
-            @Override
-            public Collection<String> elements() {
-                return mapped.keySet();
-            }
-
-            @Override
-            public Object getValue(String key) {
-                return mapped.get(key).getSpec().getValues().get(key);
-            }
-
-            @Override
-            public Object getSpec(String key) {
-                return mapped.get(key).getSpec().getSpec().get(key);
-            }
-        };
+        return ConfigCategoryInfo.of(
+                mapped::keySet,
+                key -> mapped.get(key).getSpec().getValues().get(key),
+                key -> mapped.get(key).getSpec().getSpec().get(key)
+        );
     }
 
     @Override
@@ -73,12 +62,6 @@ public class ConfigScreen extends Screen {
     protected void func_231160_c_() {
         super.func_231160_c_();
         configElementList = new ConfigElementList(this, field_230706_i_, categoryInfo);
-//        for (ModConfig modConfig : ConfigTracker.INSTANCE.getConfigsForMod("forge").values()) {
-//            final UnmodifiableConfig values = modConfig.getSpec().getValues();
-//            final UnmodifiableConfig spec = modConfig.getSpec().getSpec();
-//            for (String key : values.valueMap().keySet())
-//                printValue(key, values, spec);
-//        }
         // children.add
         field_230705_e_.add(configElementList);
         resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
@@ -89,35 +72,6 @@ public class ConfigScreen extends Screen {
         }));
         // Add the "done" button
         func_230480_a_(new Button(field_230708_k_ / 2 - 155 + 160, field_230709_l_ - 29, 150, 20, DialogTexts.field_240632_c_, b -> field_230706_i_.displayGuiScreen(parentScreen)));
-    }
-
-    private void printValue(String path, UnmodifiableConfig values, UnmodifiableConfig infos) {
-        String indent = StringUtils.repeat(' ', StringUtils.countMatches(path, '.'));
-        Object raw = values.get(path);
-        if (raw instanceof UnmodifiableConfig) {
-            UnmodifiableConfig value = (UnmodifiableConfig) raw;
-            UnmodifiableConfig info = infos.get(path);
-            System.out.println(indent + (path.lastIndexOf('.') == -1 ? path : path.substring(path.lastIndexOf('.'))) + ":");
-            for (String key : value.valueMap().keySet())
-                printValue(path + '.' + key, values, infos);
-        } else {
-            ForgeConfigSpec.ConfigValue<?> value = (ForgeConfigSpec.ConfigValue<?>) raw;
-            ForgeConfigSpec.ValueSpec info = infos.get(path);
-            String name = new TranslationTextComponent(info.getTranslationKey()).getString();
-            System.out.println(indent + name + " = " + value.get() + " (" + info.getComment() + ")");
-        }
-    }
-
-    private void printEverything(UnmodifiableConfig values, int indent) {
-        values.valueMap().forEach((s, o) -> {
-            s = StringUtils.repeat(' ', indent) + s;
-            if (o instanceof UnmodifiableConfig) {
-                System.out.println(s + ":");
-                printEverything((UnmodifiableConfig) o, indent + 1);
-            } else {
-                System.out.println(s + " = " + ((ForgeConfigSpec.ConfigValue<?>) o).get());
-            }
-        });
     }
 
     @Override

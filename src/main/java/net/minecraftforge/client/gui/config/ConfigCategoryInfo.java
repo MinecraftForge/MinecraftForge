@@ -1,30 +1,34 @@
 package net.minecraftforge.client.gui.config;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class ConfigCategoryInfo {
-    private final String path;
-    private final UnmodifiableConfig rootValues;
-    private final UnmodifiableConfig rootSpec;
+public interface ConfigCategoryInfo {
 
-    public ConfigCategoryInfo(String path, UnmodifiableConfig rootValues, UnmodifiableConfig rootSpec) {
-        this.path = path;
-        this.rootValues = rootValues;
-        this.rootSpec = rootSpec;
+    Collection<String> elements();
+
+    Object getValue(String key);
+
+    Object getSpec(String key);
+
+    static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec) {
+        return new ConfigCategoryInfo() {
+
+            @Override
+            public Collection<String> elements() {
+                return elements.get();
+            }
+
+            @Override
+            public Object getValue(String key) {
+                return getValue.apply(key);
+            }
+
+            @Override
+            public Object getSpec(String key) {
+                return getSpec.apply(key);
+            }
+        };
     }
-
-    public Collection<String> elements() {
-        return rootValues.valueMap().keySet();
-    }
-
-    public Object getValue(String key) {
-        return ((UnmodifiableConfig) rootValues.get(path)).get(key);
-    }
-
-    public Object getSpec(String key) {
-        return ((UnmodifiableConfig) rootSpec.get(path)).get(key);
-    }
-
 }
