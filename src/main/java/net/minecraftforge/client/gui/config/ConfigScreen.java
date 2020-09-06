@@ -1,7 +1,7 @@
 package net.minecraftforge.client.gui.config;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -12,7 +12,6 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,8 +47,12 @@ public class ConfigScreen extends Screen {
     private static ConfigCategoryInfo makeCategoryInfo(ModInfo selectedMod) {
         Collection<ModConfig> configs = ConfigTracker.INSTANCE.getConfigsForMod(selectedMod.getModId()).values();
         Map<String, ModConfig> mapped = new HashMap<>();
-        for (ModConfig config : configs)
+        for (ModConfig config : configs) {
+            if (config.getType() == ModConfig.Type.SERVER)
+                if (!Minecraft.getInstance().isSingleplayer() || Minecraft.getInstance().getIntegratedServer().getPublic())
+                    continue;
             mapped.put(config.getType().name().toLowerCase(), config);
+        }
         return ConfigCategoryInfo.of(
                 mapped::keySet,
                 key -> mapped.get(key).getSpec().getValues().get(key),
