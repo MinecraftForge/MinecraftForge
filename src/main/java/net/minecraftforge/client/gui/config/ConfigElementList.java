@@ -29,8 +29,8 @@ import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
-    public static final int GREEN = TextFormatting.GREEN.getColor();
     public static final int RED = TextFormatting.RED.getColor();
+    public static final int GREEN = TextFormatting.GREEN.getColor();
     public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
     private final ConfigScreen configScreen;
     private int maxListLabelWidth;
