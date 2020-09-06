@@ -6,12 +6,17 @@ import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class needs to handle holding state for the displayed config.
@@ -26,27 +31,54 @@ import org.apache.commons.lang3.StringUtils;
 public class ConfigScreen extends Screen {
 
     private final Screen parentScreen;
-    private final ModInfo modInfo;
+    private final ConfigCategoryInfo categoryInfo;
     private Button resetButton;
     private ConfigElementList configElementList;
 
-    public ConfigScreen(Screen parentScreen, ITextComponent titleIn, ModInfo modInfo) {
+    public ConfigScreen(Screen parentScreen, ITextComponent titleIn, ConfigCategoryInfo categoryInfo) {
         super(titleIn);
         this.parentScreen = parentScreen;
-        this.modInfo = modInfo;
+        this.categoryInfo = categoryInfo;
+    }
+
+    public ConfigScreen(Screen screen, StringTextComponent testing, ModInfo selectedMod) {
+        this(screen, testing, makeCategoryInfo(selectedMod));
+    }
+
+    private static ConfigCategoryInfo makeCategoryInfo(ModInfo selectedMod) {
+        Collection<ModConfig> configs = ConfigTracker.INSTANCE.getConfigsForMod(selectedMod.getModId()).values();
+        Map<String, ModConfig> mapped = new HashMap<>();
+        for (ModConfig config : configs)
+            mapped.put(config.getType().name().toLowerCase(), config);
+        return new ConfigCategoryInfo(null, null, null) {
+            @Override
+            public Collection<String> elements() {
+                return mapped.keySet();
+            }
+
+            @Override
+            public Object getValue(String key) {
+                return mapped.get(key).getSpec().getValues().get(key);
+            }
+
+            @Override
+            public Object getSpec(String key) {
+                return mapped.get(key).getSpec().getSpec().get(key);
+            }
+        };
     }
 
     @Override
     // init
     protected void func_231160_c_() {
         super.func_231160_c_();
-        configElementList = new ConfigElementList(this, field_230706_i_);
-        for (ModConfig modConfig : ConfigTracker.INSTANCE.getConfigsForMod("forge").values()) {
-            final UnmodifiableConfig values = modConfig.getSpec().getValues();
-            final UnmodifiableConfig spec = modConfig.getSpec().getSpec();
-            for (String key : values.valueMap().keySet())
-                printValue(key, values, spec);
-        }
+        configElementList = new ConfigElementList(this, field_230706_i_, categoryInfo);
+//        for (ModConfig modConfig : ConfigTracker.INSTANCE.getConfigsForMod("forge").values()) {
+//            final UnmodifiableConfig values = modConfig.getSpec().getValues();
+//            final UnmodifiableConfig spec = modConfig.getSpec().getSpec();
+//            for (String key : values.valueMap().keySet())
+//                printValue(key, values, spec);
+//        }
         // children.add
         field_230705_e_.add(configElementList);
         resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
