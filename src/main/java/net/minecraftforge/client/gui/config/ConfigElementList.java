@@ -72,7 +72,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue);
                     canReset = data.canReset((BooleanValue) value, valueInfo);
-                    reset = data.reset((BooleanValue) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -81,7 +81,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<Integer> data = createNumericRanged((IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE);
                     canReset = data.canReset((IntValue) value, valueInfo);
-                    reset = data.reset((IntValue) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -90,7 +90,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<Long> data = createNumericRanged((LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE);
                     canReset = data.canReset((LongValue) value, valueInfo);
-                    reset = data.reset((LongValue) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -99,7 +99,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<Double> data = createNumericRanged((DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY);
                     canReset = data.canReset((DoubleValue) value, valueInfo);
-                    reset = data.reset((DoubleValue) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -108,7 +108,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<?> data = createEnum((EnumValue<?>) value, valueInfo, translatedName, (Enum) valueValue);
                     canReset = data.canReset((EnumValue) value, valueInfo);
-                    reset = data.reset((EnumValue) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -117,7 +117,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 {
                     ValueConfigElementData<String> data = createString((ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
                     canReset = data.canReset((ConfigValue<String>) value, valueInfo);
-                    reset = data.reset((ConfigValue<String>) value, valueInfo);
+                    reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
                 }
             };
@@ -134,7 +134,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             this.consumer = consumer;
         }
 
-        public Runnable reset(ConfigValue<T> value, ValueSpec valueInfo) {
+        public Runnable reset(ValueSpec valueInfo) {
             return () -> consumer.accept((T) valueInfo.getDefault());
         }
 
