@@ -24,13 +24,8 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -46,15 +41,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.datafix.codec.DatapackCodec;
-import net.minecraftforge.fml.BrandingControl;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,23 +186,9 @@ public class ClientModLoader
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
-            final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
-            error.getErrors().forEach(mle -> {
-                final CrashReportCategory category = crashReport.makeCategory(mle.getModInfo().getModId());
-                category.applyStackTrace(mle.getCause());
-                category.addDetail("Failure message", mle.getCleanMessage());
-                category.addDetail("Exception message", mle.getCause().toString());
-                category.addDetail("Mod Version", mle.getModInfo().getVersion().toString());
-                category.addDetail("Mod Issue URL", ((ModFileInfo)mle.getModInfo().getOwningFile()).getConfigElement("issueTrackerURL").orElse("NOT PROVIDED"));
-            });
-            final File file1 = new File(mc.gameDir, "crash-reports");
-            final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
-            if (crashReport.saveToFile(file2)) {
-                LOGGER.fatal("Crash report saved to {}", crashReport.getFile());
-            } else {
-                LOGGER.fatal("Failed to save crash report");
-            }
-            System.out.print(crashReport.getCompleteReport());
+            // Double check we have the langs loaded for forge
+            LanguageHook.loadForgeAndMCLangs();
+            CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }
         if (error != null || !warnings.isEmpty()) {
             mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));

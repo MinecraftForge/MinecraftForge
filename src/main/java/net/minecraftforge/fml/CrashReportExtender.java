@@ -23,10 +23,13 @@ import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class CrashReportExtender
@@ -66,4 +69,25 @@ public class CrashReportExtender
         return TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
     }
 
+
+    public static void dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
+        final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
+        error.getErrors().forEach(mle -> {
+            final Optional<IModInfo> modInfo = Optional.ofNullable(mle.getModInfo());
+            final CrashReportCategory category = crashReport.makeCategory(modInfo.map(IModInfo::getModId).orElse("NO MOD INFO AVAILABLE"));
+            category.applyStackTrace(mle.getCause());
+            category.addDetail("Failure message", mle.getCleanMessage());
+            category.addDetail("Exception message", Objects.toString(mle.getCause(), "MISSING EXCEPTION MESSAGE"));
+            category.addDetail("Mod Version", modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
+            category.addDetail("Mod Issue URL", modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
+        });
+        final File file1 = new File(topLevelDir, "crash-reports");
+        final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
+        if (crashReport.saveToFile(file2)) {
+            logger.fatal("Crash report saved to {}", file2);
+        } else {
+            logger.fatal("Failed to save crash report");
+        }
+        System.out.print(crashReport.getCompleteReport());
+    }
 }
