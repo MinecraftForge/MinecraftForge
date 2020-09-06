@@ -569,7 +569,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             validate(hasComment(), "Non-empty comment when empty expected");
             validate(langKey, "Non-null translation key when null expected");
             validate(range, "Non-null range when null expected");
-            validate(worldRestart, "Dangeling world restart value set to true");
+            validate(worldRestart, "Dangling world restart value set to true");
         }
 
         private void validate(Object value, String message)

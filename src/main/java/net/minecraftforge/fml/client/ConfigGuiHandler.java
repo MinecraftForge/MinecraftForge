@@ -36,6 +36,6 @@ public class ConfigGuiHandler
     {
 //        return ModList.get().getModContainerById(selectedMod.getModId()).
 //                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY));
-        return Optional.of((minecraft, screen) -> new ConfigScreen(screen, new StringTextComponent("Testing")));
+        return Optional.of((minecraft, screen) -> new ConfigScreen(screen, new StringTextComponent("Testing"), selectedMod));
     }
 }
