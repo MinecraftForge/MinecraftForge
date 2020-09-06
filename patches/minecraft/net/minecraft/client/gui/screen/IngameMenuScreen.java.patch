@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/gui/screen/IngameMenuScreen.java
++++ b/net/minecraft/client/gui/screen/IngameMenuScreen.java
+@@ -89,6 +89,9 @@
+       if (!this.field_230706_i_.func_71387_A()) {
+          button1.func_238482_a_(new TranslationTextComponent("menu.disconnect"));
+       }
++      this.func_230480_a_(new net.minecraftforge.fml.client.gui.widget.ExtendedButton(this.field_230708_k_ / 2 - 102, this.field_230709_l_/ 4 + 120 + -16 + 24, 204, 20, new TranslationTextComponent("fml.menu.mods"), modsButton -> {
++         this.field_230706_i_.func_147108_a(new net.minecraftforge.fml.client.gui.screen.ModListScreen(this));
++      }));
+ 
+    }
+ 
