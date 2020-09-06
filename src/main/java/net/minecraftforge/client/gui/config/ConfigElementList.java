@@ -120,6 +120,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         private ConfigElementImpl(String translatedName, String description) {
             super(translatedName, description);
+            if (maxListLabelWidth < translatedName.length())
+                maxListLabelWidth = translatedName.length();
             this.nameComponent = new StringTextComponent(translatedName);
 //         this.btnChangeKeyBinding = new Button(0, 0, 75 + 20 /*Forge: add space*/, 20, p_i232281_3_, (p_214386_2_) -> {
 ////            ConfigEntryList.this.configScreen.buttonId = p_i232281_2_;
@@ -146,7 +148,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // render
         public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
 //            boolean flag = ConfigEntryList.this.configScreen.buttonId == this.keybinding;
-            ConfigElementList.this.field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, (float) (p_230432_4_ + 90 - ConfigElementList.this.maxListLabelWidth), (float) (p_230432_3_ + p_230432_6_ / 2 - 9 / 2), 0xffffff);
+            ConfigElementList.this.field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, (float) (p_230432_4_ + /*90*/ - ConfigElementList.this.maxListLabelWidth), (float) (p_230432_3_ + p_230432_6_ / 2 - 9 / 2), 0xffffff);
             this.btnReset.field_230690_l_ = p_230432_4_ + 190 + 20;
             this.btnReset.field_230691_m_ = p_230432_3_;
 //            this.btnReset.field_230693_o_ = !this.keybinding.isDefault();
