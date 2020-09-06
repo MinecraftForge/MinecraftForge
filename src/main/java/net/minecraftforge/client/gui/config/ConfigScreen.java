@@ -8,7 +8,6 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -68,10 +67,7 @@ public class ConfigScreen extends Screen {
         // children.add
         field_230705_e_.add(configElementList);
         resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
-//            for(KeyBinding keybinding : this.gameSettings.keyBindings) {
-//                keybinding.setToDefault();
-//            }
-//            KeyBinding.resetKeyBindingArrayAndHash();
+            resetConfig();
         }));
         // Add the "done" button
         func_230480_a_(new Button(field_230708_k_ / 2 - 155 + 160, field_230709_l_ - 29, 150, 20, DialogTexts.field_240632_c_, b -> field_230706_i_.displayGuiScreen(parentScreen)));
@@ -87,28 +83,34 @@ public class ConfigScreen extends Screen {
         // drawCenteredString(matrixStack, fontRenderer, title, width / 2, 8, 0xFFFFFF)
         func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, this.field_230708_k_ / 2, 8, 0xFFFFFF);
 
-//        modConfig.getSpec().
-
-//        resetButton.field_230693_o_ = anyConfigElementNotDefault;
-
         // Renders our widgets for us
         // super.render(matrixStack, mouseX, mouseY, partialTicks);
         super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    // config.getSpec().getValues().get("client.showLoadWarnings").get() -> Boolean
-
-    ForgeConfigSpec.ConfigValue<?> getSpecConfigValue(ModConfig config, String path) {
-        return config.getSpec().getValues().get(path);
+    @Override
+    public void func_231023_e_() {
+        this.configElementList.tick();
+        boolean anyResettable = false;
+        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__()) {
+            if (!element.btnReset.field_230693_o_)
+                continue;
+            anyResettable = true;
+            break;
+        }
+        // active/enabled
+        this.resetButton.field_230693_o_ = anyResettable;
     }
 
     protected void resetConfig() {
-        // Delegate resetting to the parent screen if we are a sub-screen (list/sub config)
-        if (parentScreen instanceof ConfigScreen) {
-            ((ConfigScreen) parentScreen).resetConfig();
-        } else {
-            // TODO: Reset
-        }
+//        // Delegate resetting to the parent screen if we are a sub-screen (list/sub config)
+//        if (parentScreen instanceof ConfigScreen) {
+//            ((ConfigScreen) parentScreen).resetConfig();
+//        } else {
+//            // TODO: Reset
+//        }
+        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
+            element.reset.run();
     }
 
     @Override

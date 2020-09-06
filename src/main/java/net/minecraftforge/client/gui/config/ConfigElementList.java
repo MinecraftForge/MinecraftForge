@@ -8,23 +8,28 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.*;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import static net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
+    public static final int GREEN = TextFormatting.GREEN.getColor();
+    public static final int RED = TextFormatting.RED.getColor();
+    public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
     private final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
@@ -50,82 +55,153 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             ConfigValue<?> value = (ConfigValue<?>) raw;
             ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
             String name = new TranslationTextComponent(valueInfo.getTranslationKey()).getString();
-            final Object valueValue = value.get();
-            if (valueValue instanceof Boolean) {
-                BooleanValue booleanValue = ((BooleanValue) value);
-                return new ConfigElementImpl(name, valueInfo.getComment()) {
-                    boolean state;
-                    {
-                        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(valueValue.toString()), button -> {
-                            booleanValue.set(!state);
-                            // TODO: saveAndReload
-                            state = booleanValue.get();
-                            button.func_238482_a_(new StringTextComponent(Boolean.toString(state)));
-                            button.setFGColor(state ? TextFormatting.GREEN.getColor() : TextFormatting.RED.getColor());
-                        });
-                        control.setFGColor((state = booleanValue.get()) ? TextFormatting.GREEN.getColor() : TextFormatting.RED.getColor());
-                        widgets.add(0, control);
-                    }
-                };
-            }
-            if (valueValue instanceof Integer) {
-                IntValue intValue = ((IntValue) value);
-                Range<Integer> range = valueInfo.getRange();
-                return new ConfigElementImpl(name, valueInfo.getComment()) {
-                    {
-                        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 50, 20, new StringTextComponent(translatedName));
-                        control.setText(valueValue.toString());
-                        control.setResponder(newValue -> {
-                            int parsed;
-                            try {
-                                parsed = Integer.parseInt(newValue);
-                            } catch (NumberFormatException ignored) {
-                                control.setTextColor(TextFormatting.RED.getColor());
-                                return;
-                            }
-                            if (range != null) {
-                                if (!range.test(parsed)) {
-                                    control.setTextColor(TextFormatting.RED.getColor());
-                                    return;
-                                }
-                            }
-                            control.setTextColor(0xe0e0e0);
-                            intValue.set(parsed);
-                        });
-                        widgets.add(0, control);
-                    }
-                };
-            }
-            if (valueValue instanceof Long) {
-                LongValue intValue = ((LongValue) value);
-                Range<Long> range = valueInfo.getRange();
-                return new ConfigElementImpl(name, valueInfo.getComment()) {
-                    {
-                        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 50, 20, new StringTextComponent(translatedName));
-                        control.setText(valueValue.toString());
-                        control.setResponder(newValue -> {
-                            long parsed;
-                            try {
-                                parsed = Long.parseLong(newValue);
-                            } catch (NumberFormatException ignored) {
-                                control.setTextColor(TextFormatting.RED.getColor());
-                                return;
-                            }
-                            if (range != null) {
-                                if (!range.test(parsed)) {
-                                    control.setTextColor(TextFormatting.RED.getColor());
-                                    return;
-                                }
-                            }
-                            control.setTextColor(0xe0e0e0);
-                            intValue.set(parsed);
-                        });
-                        widgets.add(0, control);
-                    }
-                };
-            }
+            Object valueValue = value.get();
+            ConfigElement element = createValueConfigElement(value, valueInfo, name, valueValue);
+            if (element != null)
+                return element;
             return new ConfigElementImpl(name + ": " + valueValue, valueInfo.getComment());
         }
+    }
+
+    @Nullable
+    private ConfigElement createValueConfigElement(ConfigValue<?> value, ValueSpec valueInfo, String translatedName, Object valueValue) {
+        if (valueValue instanceof Boolean)
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createBoolean((BooleanValue) value, (Boolean) valueValue);
+                    reset = () -> ((BooleanValue) value).set((Boolean) valueInfo.getDefault());
+                    Boolean _default = (Boolean) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        if (valueValue instanceof Integer)
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createNumericRanged((IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE);
+                    reset = () -> ((IntValue) value).set((Integer) valueInfo.getDefault());
+                    Integer _default = (Integer) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        if (valueValue instanceof Long)
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createNumericRanged((LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE);
+                    reset = () -> ((LongValue) value).set((Long) valueInfo.getDefault());
+                    Long _default = (Long) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        if (valueValue instanceof Double)
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createNumericRanged((DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY);
+                    reset = () -> ((DoubleValue) value).set((Double) valueInfo.getDefault());
+                    Double _default = (Double) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        if (valueValue instanceof Enum<?>)
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createEnum((EnumValue<?>) value, valueInfo, translatedName, (Enum) valueValue);
+                    reset = () -> ((EnumValue) value).set(valueInfo.getDefault());
+                    Enum<?> _default = (Enum<?>) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        if (valueValue instanceof String) {
+            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+                {
+                    Widget widget = createString((ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
+                    reset = () -> ((ConfigValue<String>) value).set((String) valueInfo.getDefault());
+                    String _default = (String) valueInfo.getDefault();
+                    canReset = () -> !value.get().equals(_default);
+                    widgets.add(0, widget);
+                }
+            };
+        }
+        return null;
+    }
+
+    public Button createBoolean(BooleanValue value, Boolean valueValue) {
+        final boolean[] state = {valueValue};
+        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(valueValue.toString()), button -> {
+            value.set(!state[0]);
+            // TODO: saveAndReload
+            state[0] = value.get();
+            button.func_238482_a_(new StringTextComponent(Boolean.toString(state[0])));
+            button.setFGColor(state[0] ? GREEN : RED);
+        });
+        control.setFGColor(state[0] ? GREEN : RED);
+        return control;
+    }
+
+    public <T extends Comparable<? super T>> TextFieldWidget createNumericRanged(ConfigValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue, Function<String, T> parser, T longestValue) {
+        @Nullable
+        Range<T> range = valueInfo.getRange();
+        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 48, 18, new StringTextComponent(translatedName));
+        control.setMaxStringLength(longestValue.toString().length());
+        control.setText(valueValue.toString());
+        control.setResponder(newValue -> {
+            T parsed;
+            try {
+                parsed = parser.apply(newValue);
+            } catch (NumberFormatException ignored) {
+                control.setTextColor(RED);
+                return;
+            }
+            if (range != null && !range.test(parsed)) {
+                control.setTextColor(RED);
+                return;
+            }
+            // TODO: saveAndReload
+            control.setTextColor(TEXT_FIELD_ACTIVE_COLOR);
+            value.set(parsed);
+        });
+        return control;
+    }
+
+    private <T extends Enum<T>> Button createEnum(EnumValue<T> value, ValueSpec valueInfo, String name, Enum<T> valueValue) {
+        final Enum<?>[] state = {valueValue};
+        final Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
+        BiConsumer<Widget, Enum<?>> setColor = (w, e) -> {
+            if (e instanceof DyeColor)
+                w.setFGColor(((DyeColor) e).getTextColor());
+            else if (state[0] instanceof TextFormatting && ((TextFormatting) e).isColor())
+                w.setFGColor(((TextFormatting) e).getColor());
+        };
+        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(valueValue.toString()), button -> {
+            Enum<?> next = potential[ArrayUtils.indexOf(potential, state) % potential.length];
+            value.set((T) next);
+            // TODO: saveAndReload
+            state[0] = value.get();
+            button.func_238482_a_(new StringTextComponent(state[0].toString()));
+            setColor.accept(button, state[0]);
+        });
+        setColor.accept(control, state[0]);
+        return control;
+    }
+
+    private TextFieldWidget createString(ConfigValue<String> value, ValueSpec valueInfo, String translatedName, String valueValue) {
+        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 48, 18, new StringTextComponent(translatedName));
+        control.setMaxStringLength(Integer.MAX_VALUE);
+        control.setText(valueValue);
+        control.setResponder(newValue -> {
+            if (!valueInfo.test(newValue)) {
+                control.setTextColor(RED);
+                return;
+            }
+            // TODO: saveAndReload
+            control.setTextColor(TEXT_FIELD_ACTIVE_COLOR);
+            value.set(newValue);
+        });
+        return control;
     }
 
     @Override
@@ -140,6 +216,11 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         return super.func_230949_c_() + 32;
     }
 
+    public void tick() {
+        for (ConfigElement element : this.func_231039_at__())
+            element.tick();
+    }
+
     @OnlyIn(Dist.CLIENT)
     public abstract class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
         public static final int PADDING = 5;
@@ -147,15 +228,18 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         final String description;
         protected final LinkedList<Widget> widgets = new LinkedList<>();
         protected final Button btnReset;
+        protected Runnable reset;
+        protected BooleanSupplier canReset;
 
         public ConfigElement(String translatedName, String description) {
             this.translatedName = translatedName;
             this.description = description;
             if (maxListLabelWidth < translatedName.length())
                 maxListLabelWidth = translatedName.length();
+            reset = () -> System.out.println("Reset " + translatedName);
+            canReset = () -> false;
             btnReset = new Button(0, 0, 50, 20, new TranslationTextComponent("controls.reset"), button -> {
-                System.out.println("Reset " + translatedName);
-//            keybinding.setToDefault();
+                reset.run();
             }) {
                 @Override
                 protected IFormattableTextComponent func_230442_c_() {
@@ -183,6 +267,11 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 // Render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
             }
+        }
+
+        public void tick() {
+            // active/enabled
+            btnReset.field_230693_o_ = canReset.getAsBoolean();
         }
 
 //        @Override
@@ -215,7 +304,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     public class ConfigElementImpl extends ConfigElement {
         private final ITextComponent nameComponent;
 
-        private ConfigElementImpl(String translatedName, String description) {
+        public ConfigElementImpl(String translatedName, String description) {
             super(translatedName, description);
             nameComponent = new StringTextComponent(translatedName);
         }
