@@ -12,6 +12,8 @@ public interface ConfigCategoryInfo {
 
     Object getSpec(String key);
 
+//    String getComment(String key);
+
     static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec) {
         return new ConfigCategoryInfo() {
 

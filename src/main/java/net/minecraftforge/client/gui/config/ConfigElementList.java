@@ -47,6 +47,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         if (raw instanceof UnmodifiableConfig) {
             UnmodifiableConfig value = (UnmodifiableConfig) raw;
             UnmodifiableConfig valueInfo = (UnmodifiableConfig) categoryInfo.getSpec(key);
+            // TODO: There should be some way to get the comment for the category.
             ConfigCategoryInfo valueCategoryInfo = ConfigCategoryInfo.of(
                     () -> value.valueMap().keySet(),
                     value::get,
@@ -144,8 +145,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue) {
-        final boolean[] state = {valueValue};
+        final boolean[] state = new boolean[1];
         TriConsumer<Button, Boolean, Boolean> setValue = (button, initial, b) -> {
+            state[0] = b;
             if (!initial) {
                 value.set(b);
                 // TODO: saveAndReload
@@ -157,8 +159,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(translatedName), button -> {
             setValue.accept(button, false, !state[0]);
         });
-        setValue.accept(control, true, state[0]);
-        return new ValueConfigElementData<>(control, b -> setValue.accept(control, true, b));
+        setValue.accept(control, true, valueValue);
+        return new ValueConfigElementData<>(control, b -> setValue.accept(control, false, b));
     }
 
     public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRanged(ConfigValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue, Function<String, T> parser, T longestValue) {
@@ -191,9 +193,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     private <T extends Enum<T>> ValueConfigElementData<T> createEnum(EnumValue<T> value, ValueSpec valueInfo, String translatedName, Enum<T> valueValue) {
-        final Enum<?>[] state = {valueValue};
+        final Enum<?>[] state = new Enum<?>[1];
         final Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
         TriConsumer<Button, Boolean, Enum<?>> setValue = (button, initial, e) -> {
+            state[0] = e;
             if (!initial) {
                 value.set((T) e);
                 // TODO: saveAndReload
@@ -206,10 +209,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 button.setFGColor(((TextFormatting) e).getColor());
         };
         Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(translatedName), button -> {
-            Enum<?> next = potential[ArrayUtils.indexOf(potential, state) % potential.length];
+            Enum<?> next = potential[(ArrayUtils.indexOf(potential, state[0]) + 1) % potential.length];
             setValue.accept(button, false, next);
         });
-        setValue.accept(control, true, state[0]);
+        setValue.accept(control, true, valueValue);
         return new ValueConfigElementData<>(control, e -> setValue.accept(control, false, e));
     }
 
@@ -342,8 +345,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         if (!wasAnythingSelected) {
             for (ConfigElement element : func_231039_at__())
                 for (Widget widget : element.widgets)
-                if (widget instanceof TextFieldWidget)
-                    ((TextFieldWidget) widget).setFocused2(false);
+                    if (widget instanceof TextFieldWidget)
+                        ((TextFieldWidget) widget).setFocused2(false);
         }
         return wasAnythingSelected;
     }

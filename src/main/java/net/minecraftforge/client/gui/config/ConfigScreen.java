@@ -54,8 +54,8 @@ public class ConfigScreen extends Screen {
         }
         return ConfigCategoryInfo.of(
                 mapped::keySet,
-                key -> mapped.get(key).getSpec().getValues().get(key),
-                key -> mapped.get(key).getSpec().getSpec().get(key)
+                key -> mapped.get(key).getSpec().getValues(),
+                key -> mapped.get(key).getSpec().getSpec()
         );
     }
 
