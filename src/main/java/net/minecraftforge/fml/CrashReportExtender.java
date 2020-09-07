@@ -24,13 +24,16 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class CrashReportExtender
 {
@@ -74,10 +77,17 @@ public class CrashReportExtender
         final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
         error.getErrors().forEach(mle -> {
             final Optional<IModInfo> modInfo = Optional.ofNullable(mle.getModInfo());
-            final CrashReportCategory category = crashReport.makeCategory(modInfo.map(IModInfo::getModId).orElse("NO MOD INFO AVAILABLE"));
-            category.applyStackTrace(mle.getCause());
-            category.addDetail("Failure message", mle.getCleanMessage());
-            category.addDetail("Exception message", Objects.toString(mle.getCause(), "MISSING EXCEPTION MESSAGE"));
+            final CrashReportCategory category = crashReport.makeCategory(modInfo.map(iModInfo -> "MOD "+iModInfo.getModId()).orElse("NO MOD INFO AVAILABLE"));
+            Throwable cause = mle.getCause();
+            int depth = 0;
+            while (cause != null && cause.getCause() != null && cause.getCause()!=cause) {
+                category.addDetail("Caused by "+(depth++), cause +"\n\t\t"+ Arrays.stream(cause.getStackTrace()).map(Objects::toString).collect(Collectors.joining("\n\t\t")));
+                cause = cause.getCause();
+            }
+            category.applyStackTrace(cause);
+            category.addDetail("Mod File", modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
+            category.addDetail("Failure message", mle.getCleanMessage().replace("\n", "\n\t\t"));
+            category.addDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
             category.addDetail("Mod Version", modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
             category.addDetail("Mod Issue URL", modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
         });
