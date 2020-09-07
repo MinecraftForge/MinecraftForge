@@ -84,12 +84,13 @@ public class CrashReportExtender
                 category.addDetail("Caused by "+(depth++), cause +"\n\t\t"+ Arrays.stream(cause.getStackTrace()).map(Objects::toString).collect(Collectors.joining("\n\t\t")));
                 cause = cause.getCause();
             }
-            category.applyStackTrace(cause);
-            category.addDetail("Mod File", modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
-            category.addDetail("Failure message", mle.getCleanMessage().replace("\n", "\n\t\t"));
+            if (cause != null)
+                category.applyStackTrace(cause);
+            category.addDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
+            category.addDetail("Failure message", () -> mle.getCleanMessage().replace("\n", "\n\t\t"));
             category.addDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
-            category.addDetail("Mod Version", modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
-            category.addDetail("Mod Issue URL", modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
+            category.addDetail("Mod Version", () -> modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
+            category.addDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED").toString());
         });
         final File file1 = new File(topLevelDir, "crash-reports");
         final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
