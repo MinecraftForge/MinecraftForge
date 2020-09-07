@@ -1,5 +1,6 @@
 package net.minecraftforge.common.world.biomes.conditions.base;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.ResourceLocation;
@@ -39,13 +40,13 @@ public interface IBiomeCondition extends Predicate<Biome>
         return new BiomeInvertedCondition(this);
     }
 
-    default BiomeAndCondition and(IBiomeCondition condition)
+    default BiomeAndCondition and(IBiomeCondition... conditions)
     {
-        return new BiomeAndCondition(this, condition);
+        return new BiomeAndCondition(Lists.asList(this, conditions));
     }
 
-    default BiomeOrCondition or(IBiomeCondition condition)
+    default BiomeOrCondition or(IBiomeCondition... conditions)
     {
-        return new BiomeOrCondition(this, condition);
+        return new BiomeOrCondition(Lists.asList(this, conditions));
     }
 }

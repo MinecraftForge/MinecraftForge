@@ -2,17 +2,19 @@
   "type" : "forge:features_additions",
   "condition" : {
     "type" : "forge:or_combined",
-    "first" : {
-      "type" : "forge:matches_category",
-      "categories" : [
-        "plains",
-        "savanna"
-      ]
-    },
-    "second" : {
-      "type" : "forge:matches_biome",
-      "biome" : "minecraft:giant_tree_taiga"
-    }
+    "conditions" : [
+      {
+        "type": "forge:matches_category",
+        "categories": [
+          "plains",
+          "savanna"
+        ]
+      },
+      {
+        "type" : "forge:matches_biome",
+        "biome" : "minecraft:giant_tree_taiga"
+      }
+    ]
   },
   "starts" : [
     {

@@ -5,7 +5,7 @@
        return func_244336_a(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_);
     }
 +   public static <T> WorldSettingsImport<T> createWithBiomeModifiers(DynamicOps<T> ops, IResourceManager manager, DynamicRegistries.Impl impl) {
-+      return func_244336_a(ops, new net.minecraftforge.common.world.BiomeModifierManager.ModificationAccess(manager), impl);
++      return func_244336_a(ops, new net.minecraftforge.common.world.biomes.BiomeModifierManager.ModificationAccess(manager), impl);
 +   }
  
     public static <T> WorldSettingsImport<T> func_244336_a(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_) {

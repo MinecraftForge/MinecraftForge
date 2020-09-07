@@ -7,22 +7,17 @@ import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 
+import java.util.List;
+
 public class BiomeAndCondition implements IBiomeCondition
 {
-    public static final MapCodec<BiomeAndCondition> CODEC = RecordCodecBuilder.mapCodec(inst ->
-            inst.group(
-                    IBiomeCondition.INNER_CODEC.fieldOf("first").forGetter(or -> or.first),
-                    IBiomeCondition.INNER_CODEC.fieldOf("second").forGetter(or -> or.second)
-            ).apply(inst, BiomeAndCondition::new)
-    );
+    public static final MapCodec<BiomeAndCondition> CODEC = IBiomeCondition.INNER_CODEC.listOf().xmap(BiomeAndCondition::new, and -> and.conditions).fieldOf("conditions");
 
-    private final IBiomeCondition first;
-    private final IBiomeCondition second;
+    private final List<IBiomeCondition> conditions;
 
-    public BiomeAndCondition(IBiomeCondition first, IBiomeCondition second)
+    public BiomeAndCondition(List<IBiomeCondition> conditions)
     {
-        this.first = first;
-        this.second = second;
+        this.conditions = conditions;
     }
 
     @Override
@@ -34,6 +29,11 @@ public class BiomeAndCondition implements IBiomeCondition
     @Override
     public boolean test(Biome biome)
     {
-        return first.test(biome) && second.test(biome);
+        for(IBiomeCondition cond : conditions)
+        {
+            if(!cond.test(biome))
+                return false;
+        }
+        return true;
     }
 }
