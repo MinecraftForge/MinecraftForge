@@ -26,7 +26,7 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +101,43 @@
+@@ -93,5 +101,45 @@
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
        }
@@ -35,6 +35,8 @@
 +      public String toString() {
 +          return "NamedTag[" + func_230234_a_().toString() + ']';
 +      }
++      @Override public boolean equals(Object o) { return (o == this) || (o instanceof ITag.INamedTag && java.util.Objects.equals(this.func_230234_a_(), ((ITag.INamedTag<T>)o).func_230234_a_())); }
++      @Override public int hashCode() { return func_230234_a_().hashCode(); }
     }
 +
 +   private static class OptionalNamedTag<T> extends NamedTag<T> implements net.minecraftforge.common.Tags.IOptionalNamedTag<T> {
