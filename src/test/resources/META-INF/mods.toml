@@ -83,4 +83,4 @@ license="LGPL v2.1"
 [[mods]]
     modId="scaffolding_test"
 [[mods]]
-modId="custom_tag_types_test"
+    modId="custom_tag_types_test"
