@@ -7,7 +7,6 @@ import net.minecraft.block.ScaffoldingBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
@@ -29,7 +28,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * This test mod allows a custom scaffolding to move down
- * while sneaking through a tag and method.
+ * while sneaking through a method.
  */
 @Mod(ScaffoldingTest.MODID)
 public class ScaffoldingTest
@@ -38,7 +37,6 @@ public class ScaffoldingTest
     static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     static final IOptionalNamedTag<Block> SCAFFOLDING = BlockTags.createOptional(new ResourceLocation("forge", "scaffolding"));
 
-    static final RegistryObject<Block> SCAFFOLDING_TAG_TEST = BLOCKS.register("scaffolding_tag_test", () -> new ScaffoldingTagTestBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.SAND).doesNotBlockMovement().sound(SoundType.SCAFFOLDING).variableOpacity()));
     static final RegistryObject<Block> SCAFFOLDING_METHOD_TEST = BLOCKS.register("scaffolding_method_test", () -> new ScaffoldingMethodTestBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.SAND).doesNotBlockMovement().sound(SoundType.SCAFFOLDING).variableOpacity()));
 
     public ScaffoldingTest()
@@ -52,21 +50,6 @@ public class ScaffoldingTest
     {
         DataGenerator gen = event.getGenerator();
         if(event.includeClient()) gen.addProvider(new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
-        if(event.includeServer()) gen.addProvider(new ScaffoldingTagsProvider(gen));
-    }
-
-    static class ScaffoldingTagsProvider extends BlockTagsProvider
-    {
-        public ScaffoldingTagsProvider(DataGenerator generatorIn)
-        {
-            super(generatorIn);
-        }
-
-        @Override
-        protected void registerTags()
-        {
-            this.func_240522_a_(SCAFFOLDING).func_240532_a_(SCAFFOLDING_TAG_TEST.get());
-        }
     }
 
     static class ScaffoldingBlockState extends BlockStateProvider
@@ -79,23 +62,7 @@ public class ScaffoldingTest
         @Override
         protected void registerStatesAndModels()
         {
-            this.getVariantBuilder(SCAFFOLDING_TAG_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
             this.getVariantBuilder(SCAFFOLDING_METHOD_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
-        }
-    }
-
-    static class ScaffoldingTagTestBlock extends ScaffoldingBlock
-    {
-
-        public ScaffoldingTagTestBlock(Properties properties)
-        {
-            super(properties);
-        }
-
-        @Override
-        public boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
-        {
-            return state.getBlock().isIn(SCAFFOLDING);
         }
     }
 
