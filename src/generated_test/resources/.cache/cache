@@ -76,3 +76,6 @@ d65c425e740dc833f29d16606a1171825876be0d data/data_gen_test/tags/blocks/thing/on
 1f70ed4ddc878bada5e43d3c44a34157806beda8 data/data_gen_test/tags/blocks/thing/three.json
 2c648bca262caaa826ddbbde796d35bb2ee5f03a data/data_gen_test/tags/blocks/thing/two.json
 b0565ce75fc7880be7517e86a218d1ed9d9e346f data/data_gen_test/tags/blocks/things.json
+7572ecfdcedc05dfcabf8a4c69c75e007023256f data/forge/loot_modifiers/global_loot_modifiers.json
+f65e40b06ce7ad18e053ec88058b951f98ae5f40 data/global_loot_test/loot_modifiers/smelting.json
+f991cfd612acf5ce98a43f4771ee04727219ae53 data/global_loot_test/loot_modifiers/wheat_harvest.json
