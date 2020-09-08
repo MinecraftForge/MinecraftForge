@@ -17,4 +17,4 @@
 +   }))), ITagCollection.func_242202_a(EntityTypeTags.func_242175_b().stream().distinct().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242179_0_) -> {
        return p_242179_0_;
     }))));
-
+ 

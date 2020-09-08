@@ -5,7 +5,7 @@
     private final List<TagRegistry.NamedTag<T>> field_232931_c_ = Lists.newArrayList();
     private final Function<ITagCollectionSupplier, ITagCollection<T>> field_242184_c;
 +   private static java.util.Map<ResourceLocation, List<TagRegistry.NamedTag<?>>> toAdd = com.google.common.collect.Maps.newHashMap();
-
+ 
     public TagRegistry(Function<ITagCollectionSupplier, ITagCollection<T>> p_i241894_1_) {
        this.field_242184_c = p_i241894_1_;
     }
