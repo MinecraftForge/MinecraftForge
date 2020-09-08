@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/BlockTagsProvider.java
++++ b/net/minecraft/data/BlockTagsProvider.java
+@@ -8,9 +8,13 @@
+ import net.minecraft.util.registry.Registry;
+ 
+ public class BlockTagsProvider extends TagsProvider<Block> {
++   @Deprecated
+    public BlockTagsProvider(DataGenerator p_i48256_1_) {
+       super(p_i48256_1_, Registry.field_212618_g);
+    }
++   public BlockTagsProvider(DataGenerator p_i48256_1_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_i48256_1_, Registry.field_212618_g, modId, existingFileHelper);
++   }
+ 
+    protected void func_200432_c() {
+       this.func_240522_a_(BlockTags.field_199897_a).func_240534_a_(Blocks.field_196556_aL, Blocks.field_196557_aM, Blocks.field_196558_aN, Blocks.field_196559_aO, Blocks.field_196560_aP, Blocks.field_196561_aQ, Blocks.field_196562_aR, Blocks.field_196563_aS, Blocks.field_196564_aT, Blocks.field_196565_aU, Blocks.field_196566_aV, Blocks.field_196567_aW, Blocks.field_196568_aX, Blocks.field_196569_aY, Blocks.field_196570_aZ, Blocks.field_196602_ba);
