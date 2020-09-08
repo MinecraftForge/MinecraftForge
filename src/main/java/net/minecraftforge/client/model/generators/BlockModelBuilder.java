@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model.generators;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * Builder for block models, does not currently provide any additional

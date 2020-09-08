@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/WorldSettings.java
++++ b/net/minecraft/world/WorldSettings.java
+@@ -62,6 +62,7 @@
+    }
+ 
+    public WorldSettings func_234948_a_(Difficulty p_234948_1_) {
++      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_234948_1_, this.field_234944_d_);
+       return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, p_234948_1_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_);
+    }
+ 

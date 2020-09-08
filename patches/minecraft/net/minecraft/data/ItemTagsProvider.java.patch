@@ -1,0 +1,18 @@
+--- a/net/minecraft/data/ItemTagsProvider.java
++++ b/net/minecraft/data/ItemTagsProvider.java
+@@ -14,10 +14,15 @@
+ public class ItemTagsProvider extends TagsProvider<Item> {
+    private final Function<ITag.INamedTag<Block>, ITag.Builder> field_240520_d_;
+ 
++   @Deprecated
+    public ItemTagsProvider(DataGenerator p_i232552_1_, BlockTagsProvider p_i232552_2_) {
+       super(p_i232552_1_, Registry.field_212630_s);
+       this.field_240520_d_ = p_i232552_2_::func_240525_b_;
+    }
++   public ItemTagsProvider(DataGenerator p_i232552_1_, BlockTagsProvider p_i232552_2_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_i232552_1_, Registry.field_212630_s, modId, existingFileHelper);
++      this.field_240520_d_ = p_i232552_2_::func_240525_b_;
++   }
+ 
+    protected void func_200432_c() {
+       this.func_240521_a_(BlockTags.field_199897_a, ItemTags.field_199904_a);

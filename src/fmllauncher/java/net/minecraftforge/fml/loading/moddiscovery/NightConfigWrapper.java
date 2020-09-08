@@ -45,8 +45,14 @@ public class NightConfigWrapper implements IConfigurable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigElement(final String... key) {
-        return this.config.getOptional(asList(key));
+        return this.config.getOptional(asList(key)).map(value -> {
+            if (value instanceof UnmodifiableConfig) {
+                return (T) ((UnmodifiableConfig) value).valueMap();
+            }
+            return (T) value;
+        });
     }
 
     @Override

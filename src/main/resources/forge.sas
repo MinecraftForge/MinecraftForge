@@ -86,7 +86,7 @@ net/minecraft/resources/IResourceManager func_219533_b(Lnet/minecraft/util/Resou
 	net/minecraft/resources/FallbackResourceManager func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z
 	net/minecraft/resources/IResourceManager$Instance func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z
 	net/minecraft/resources/SimpleReloadableResourceManager func_219533_b(Lnet/minecraft/util/ResourceLocation;)Z
-net/minecraft/tags/TagCollection func_199913_a(Ljava/lang/Object;)Ljava/util/Collection; # getOwningTags
+net/minecraft/tags/ITagCollection func_199913_a(Ljava/lang/Object;)Ljava/util/Collection; # getOwningTags
 net/minecraft/util/Direction func_176739_a(Ljava/lang/String;)Lnet/minecraft/util/Direction; # byName
 net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraft/util/Direction$Axis; # byName
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
