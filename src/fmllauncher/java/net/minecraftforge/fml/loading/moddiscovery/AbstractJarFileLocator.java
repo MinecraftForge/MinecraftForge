@@ -63,7 +63,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
-        return modJars.get(modFile).getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
+        return modJars.get(modFile).getPath("",path);
     }
 
     @Override

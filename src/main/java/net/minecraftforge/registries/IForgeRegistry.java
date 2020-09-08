@@ -24,6 +24,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -48,9 +50,9 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nullable ResourceLocation getKey(V value);
     @Nullable ResourceLocation getDefaultKey();
 
-    @Nonnull Set<ResourceLocation>           getKeys();
-    @Nonnull Collection<V>                   getValues();
-    @Nonnull Set<Entry<ResourceLocation, V>> getEntries();
+    @Nonnull Set<ResourceLocation>         getKeys();
+    @Nonnull Collection<V>                 getValues();
+    @Nonnull Set<Entry<RegistryKey<V>, V>> getEntries();
 
     /**
      * Retrieve the slave map of type T from the registry.

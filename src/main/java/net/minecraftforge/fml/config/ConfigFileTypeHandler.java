@@ -22,6 +22,7 @@ package net.minecraftforge.fml.config;
 import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -50,7 +51,14 @@ public class ConfigFileTypeHandler {
                     writingMode(WritingMode.REPLACE).
                     build();
             LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
-            configData.load();
+            try
+            {
+                configData.load();
+            }
+            catch (ParsingException ex)
+            {
+                throw new ConfigLoadingException(c, ex);
+            }
             LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
             try {
                 FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
@@ -99,10 +107,25 @@ public class ConfigFileTypeHandler {
             // Force the regular classloader onto the special thread
             Thread.currentThread().setContextClassLoader(realClassLoader);
             if (!this.modConfig.getSpec().isCorrecting()) {
-                this.commentedFileConfig.load();
+                try
+                {
+                    this.commentedFileConfig.load();
+                }
+                catch (ParsingException ex)
+                {
+                    throw new ConfigLoadingException(modConfig, ex);
+                }
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
             }
+        }
+    }
+
+    private static class ConfigLoadingException extends RuntimeException
+    {
+        public ConfigLoadingException(ModConfig config, Exception cause)
+        {
+            super("Failed loading config file " + config.getFullPath().toString() + " with type " + config.getType() + " for modid " + config.getModId(), cause);
         }
     }
 }

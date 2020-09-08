@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/FluidTagsProvider.java
++++ b/net/minecraft/data/FluidTagsProvider.java
+@@ -8,9 +8,13 @@
+ import net.minecraft.util.registry.Registry;
+ 
+ public class FluidTagsProvider extends TagsProvider<Fluid> {
++   @Deprecated
+    public FluidTagsProvider(DataGenerator p_i49156_1_) {
+       super(p_i49156_1_, Registry.field_212619_h);
+    }
++   public FluidTagsProvider(DataGenerator p_i49156_1_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_i49156_1_, Registry.field_212619_h, modId, existingFileHelper);
++   }
+ 
+    protected void func_200432_c() {
+       this.func_240522_a_(FluidTags.field_206959_a).func_240534_a_(Fluids.field_204546_a, Fluids.field_207212_b);

@@ -53,7 +53,7 @@
  
     public boolean func_77616_k(ItemStack p_77616_1_) {
 -      return this.func_77639_j() == 1 && this.func_77645_m();
-+      return this.getItemStackLimit(p_77616_1_) == 1 && this.func_77645_m();
++      return this.getItemStackLimit(p_77616_1_) == 1 && this.isDamageable(p_77616_1_);
     }
  
     protected static BlockRayTraceResult func_219968_a(World p_219968_0_, PlayerEntity p_219968_1_, RayTraceContext.FluidMode p_219968_2_) {
@@ -93,7 +93,7 @@
 +
 +   @Override
 +   public boolean isRepairable(ItemStack stack) {
-+      return canRepair && func_77645_m();
++      return canRepair && isDamageable(stack);
 +   }
 +
 +   @Override
