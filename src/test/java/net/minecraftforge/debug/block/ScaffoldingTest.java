@@ -10,6 +10,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -17,7 +18,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -35,8 +36,9 @@ public class ScaffoldingTest
 {
     static final String MODID = "scaffolding_test";
     static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    static final IOptionalNamedTag<Block> SCAFFOLDING = BlockTags.createOptional(new ResourceLocation("forge", "scaffolding"));
 
-    static final RegistryObject<Block> SCAFFOLDING_TAG_TEST = BLOCKS.register("scaffolding_tag_test", () -> new ScaffoldingBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.SAND).doesNotBlockMovement().sound(SoundType.SCAFFOLDING).variableOpacity()));
+    static final RegistryObject<Block> SCAFFOLDING_TAG_TEST = BLOCKS.register("scaffolding_tag_test", () -> new ScaffoldingTagTestBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.SAND).doesNotBlockMovement().sound(SoundType.SCAFFOLDING).variableOpacity()));
     static final RegistryObject<Block> SCAFFOLDING_METHOD_TEST = BLOCKS.register("scaffolding_method_test", () -> new ScaffoldingMethodTestBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.SAND).doesNotBlockMovement().sound(SoundType.SCAFFOLDING).variableOpacity()));
 
     public ScaffoldingTest()
@@ -63,7 +65,7 @@ public class ScaffoldingTest
         @Override
         protected void registerTags()
         {
-            this.func_240522_a_(Tags.Blocks.SCAFFOLDING).func_240532_a_(SCAFFOLDING_TAG_TEST.get());
+            this.func_240522_a_(SCAFFOLDING).func_240532_a_(SCAFFOLDING_TAG_TEST.get());
         }
     }
 
@@ -79,6 +81,21 @@ public class ScaffoldingTest
         {
             this.getVariantBuilder(SCAFFOLDING_TAG_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
             this.getVariantBuilder(SCAFFOLDING_METHOD_TEST.get()).forAllStatesExcept((state) -> ConfiguredModel.builder().modelFile(state.get(ScaffoldingBlock.field_220120_c) ? new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_unstable"), this.models().existingFileHelper) : new ModelFile.ExistingModelFile(new ResourceLocation("block/scaffolding_stable"), this.models().existingFileHelper)).build(), ScaffoldingBlock.field_220118_a, ScaffoldingBlock.WATERLOGGED);
+        }
+    }
+
+    static class ScaffoldingTagTestBlock extends ScaffoldingBlock
+    {
+
+        public ScaffoldingTagTestBlock(Properties properties)
+        {
+            super(properties);
+        }
+
+        @Override
+        public boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
+        {
+            return state.getBlock().isIn(SCAFFOLDING);
         }
     }
 

@@ -923,6 +923,6 @@ public interface IForgeBlock
      */
     default boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
-        return state.isIn(Blocks.SCAFFOLDING) || state.getBlock().isIn(Tags.Blocks.SCAFFOLDING);
+        return state.isIn(Blocks.SCAFFOLDING);
     }
 }
