@@ -349,7 +349,8 @@ project(':forge') {
                 
                 args '--flat', '--all', '--validate',
                     '--mod', 'data_gen_test', 
-                    '--mod', 'piston_event_test', 
+                    '--mod', 'piston_event_test',
+                    '--mod', 'global_loot_test',
                     '--output', rootProject.file('src/generated_test/resources/'),
                     '--existing', sourceSets.main.resources.srcDirs[0]
             }
