@@ -173,20 +173,11 @@ public class ForgeHooks
         if (stack.isEmpty() || tool == null)
             return player.func_234569_d_(state);
 
-        int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
+        int toolLevel = stack.getHarvestLevel(tool, player, state);
         if (toolLevel < 0)
             return player.func_234569_d_(state);
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
-    }
-
-    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
-        BlockState state = world.getBlockState(pos);
-        //state = state.getActualState(world, pos);
-        ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null) return false;
-        return stack.getHarvestLevel(tool, null, null) >= state.getHarvestLevel();
     }
 
     public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
