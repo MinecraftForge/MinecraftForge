@@ -233,7 +233,7 @@ public class ClientModLoader
             }
         }
         final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
-                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 5),
+                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 6),
                 hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.field_232625_a_);
         consumer.accept(packInfo);
     }
