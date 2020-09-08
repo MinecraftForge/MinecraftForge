@@ -51,17 +51,22 @@
              BlockPos blockpos2 = tileentity.func_174877_v();
              p_228426_1_.func_227860_a_();
              p_228426_1_.func_227861_a_((double)blockpos2.func_177958_n() - d0, (double)blockpos2.func_177956_o() - d1, (double)blockpos2.func_177952_p() - d2);
-@@ -1084,7 +1088,8 @@
+@@ -1084,10 +1088,13 @@
           iprofiler.func_219895_b("outline");
           BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
 -         if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, field_72777_q.field_71476_x, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, raytraceresult, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
 +         if (!blockstate.isAir(this.field_72769_h, blockpos) && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
           }
-@@ -1119,7 +1124,7 @@
++      } else if (raytraceresult != null && raytraceresult.func_216346_c() == RayTraceResult.Type.ENTITY) {
++         net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, raytraceresult, p_228426_2_, p_228426_1_, irendertypebuffer$impl);
+       }
+ 
+       RenderSystem.pushMatrix();
+@@ -1119,7 +1126,7 @@
           this.field_239224_H_.func_237506_a_(this.field_72777_q.func_147110_a());
           RenderState.field_239237_T_.func_228547_a_();
           iprofiler.func_219895_b("particles");
@@ -70,7 +75,7 @@
           RenderState.field_239237_T_.func_228549_b_();
        } else {
           iprofiler.func_219895_b("translucent");
-@@ -1129,7 +1134,7 @@
+@@ -1129,7 +1136,7 @@
           iprofiler.func_219895_b("string");
           this.func_228441_a_(RenderType.func_241715_r_(), p_228426_1_, d0, d1, d2);
           iprofiler.func_219895_b("particles");
@@ -79,7 +84,7 @@
        }
  
        RenderSystem.pushMatrix();
-@@ -2076,7 +2081,12 @@
+@@ -2076,7 +2083,12 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }
  
@@ -92,7 +97,7 @@
        ISound isound = this.field_147593_P.get(p_184377_2_);
        if (isound != null) {
           this.field_72777_q.func_147118_V().func_147683_b(isound);
-@@ -2084,7 +2094,7 @@
+@@ -2084,7 +2096,7 @@
        }
  
        if (p_184377_1_ != null) {
@@ -101,7 +106,7 @@
           if (musicdiscitem != null) {
              this.field_72777_q.field_71456_v.func_238451_a_(musicdiscitem.func_234801_g_());
           }
-@@ -2232,7 +2242,7 @@
+@@ -2232,7 +2244,7 @@
           break;
        case 1010:
           if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
@@ -110,7 +115,7 @@
           } else {
              this.func_184377_a((SoundEvent)null, p_180439_3_);
           }
-@@ -2382,8 +2392,8 @@
+@@ -2382,8 +2394,8 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
@@ -121,7 +126,7 @@
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
  
-@@ -2531,7 +2541,7 @@
+@@ -2531,7 +2543,7 @@
        } else {
           int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
           int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
@@ -130,7 +135,7 @@
           if (j < k) {
              j = k;
           }
-@@ -2570,6 +2580,11 @@
+@@ -2570,6 +2582,11 @@
        return this.field_239226_J_;
     }
  
