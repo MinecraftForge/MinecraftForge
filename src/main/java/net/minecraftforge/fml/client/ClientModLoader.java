@@ -182,16 +182,17 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
+        File dumpedLocation = null;
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();
-            CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
+            dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }
         if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
             ClientHooks.logMissingTextureErrors();
