@@ -18,6 +18,7 @@ public class ForgeBiomeModifiers
 
     public static final RegistryObject<BiomeConditionType<BiomeCategoryMatchesCondition>> MATCHES_CATEGORY = BIOME_CONDITIONS.register("matches_category", () -> new BiomeConditionType<>(BiomeCategoryMatchesCondition.CODEC));
     public static final RegistryObject<BiomeConditionType<BiomeMatchesCondition>> MATCHES_BIOME = BIOME_CONDITIONS.register("matches_biome", () -> new BiomeConditionType<>(BiomeMatchesCondition.CODEC));
+    public static final RegistryObject<BiomeConditionType<BiomeTagMatchesCondition>> MATCHES_TAG = BIOME_CONDITIONS.register("matches_tag", () -> new BiomeConditionType<>(BiomeTagMatchesCondition.CODEC));
     public static final RegistryObject<BiomeConditionType<BiomeInvertedCondition>> INVERTED = BIOME_CONDITIONS.register("inverted", () -> new BiomeConditionType<>(BiomeInvertedCondition.CODEC));
     public static final RegistryObject<BiomeConditionType<BiomeAndCondition>> AND_COMBINED = BIOME_CONDITIONS.register("and_combined", () -> new BiomeConditionType<>(BiomeAndCondition.CODEC));
     public static final RegistryObject<BiomeConditionType<BiomeOrCondition>> OR_COMBINED = BIOME_CONDITIONS.register("or_combined", () -> new BiomeConditionType<>(BiomeOrCondition.CODEC));

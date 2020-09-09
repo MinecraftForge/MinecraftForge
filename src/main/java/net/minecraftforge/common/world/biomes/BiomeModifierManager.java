@@ -149,7 +149,7 @@ public class BiomeModifierManager extends JsonReloadListener
 
     private Biome getModifiedBiome(Biome base)
     {
-        List<BiomeModifications> modifications = getDeserializedModifiers().stream()
+        List<BiomeModifications> modifications = this.getDeserializedModifiers().stream()
                 .map(bm -> bm.getModifications(base))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
