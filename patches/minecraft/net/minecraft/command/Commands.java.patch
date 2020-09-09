@@ -8,11 +8,10 @@
  
        this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
           field_197061_a.warn("Ambiguity between arguments {} and {} with inputs: {}", this.field_197062_b.getPath(p_201302_2_), this.field_197062_b.getPath(p_201302_3_), p_201302_4_);
-@@ -205,7 +206,15 @@
+@@ -205,6 +206,14 @@
  
        try {
           try {
--            return this.field_197062_b.execute(stringreader, p_197059_1_);
 +            ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
@@ -21,7 +20,6 @@
 +               }
 +               return 1;
 +            }
-+            return this.field_197062_b.execute(event.getParseResults());
+             return this.field_197062_b.execute(stringreader, p_197059_1_);
           } catch (CommandException commandexception) {
              p_197059_1_.func_197021_a(commandexception.func_197003_a());
-             return 0;

@@ -19,16 +19,19 @@
 
 package net.minecraftforge.fml.server;
 
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
@@ -38,20 +41,20 @@ public class ServerModLoader
     private static boolean hasErrors = false;
 
     public static void load() {
-        SidedProvider.setServer(()-> {
-            throw new IllegalStateException("Unable to access server yet");
-        });
         LogicalSidedProvider.setServer(()-> {
             throw new IllegalStateException("Unable to access server yet");
         });
         LanguageHook.loadForgeAndMCLangs();
         try {
-            ModLoader.get().gatherAndInitializeMods(() -> {});
-            ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
-            ModLoader.get().finishMods(Runnable::run);
-        } catch (LoadingFailedException e) {
+            ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
+            ModLoader.get().loadMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), e-> CompletableFuture.runAsync(()->{}, e), e->CompletableFuture.runAsync(()->{}, e), ()->{});
+            ModLoader.get().finishMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
+        } catch (LoadingFailedException error) {
             ServerModLoader.hasErrors = true;
-            throw e;
+            // In case its not loaded properly
+            LanguageHook.loadForgeAndMCLangs();
+            CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, new File("."));
+            throw error;
         }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {

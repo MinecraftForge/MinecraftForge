@@ -17,24 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.packs;
+package net.minecraftforge.fml.event.lifecycle;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import net.minecraftforge.fml.ModContainer;
 
-import net.minecraft.resources.ResourcePack;
-
-public abstract class DelegatableResourcePack extends ResourcePack
-{
-    protected DelegatableResourcePack(File resourcePackFileIn)
-    {
-        super(resourcePackFileIn);
+public class FMLConstructModEvent extends ParallelDispatchEvent {
+    public FMLConstructModEvent(final ModContainer container) {
+        super(container);
     }
-
-    @Override
-    public abstract InputStream getInputStream(String resourcePath) throws IOException;
-
-    @Override
-    public abstract boolean resourceExists(String resourcePath);
 }

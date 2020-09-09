@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/MerchantOffer.java
++++ b/net/minecraft/item/MerchantOffer.java
+@@ -178,7 +178,7 @@
+          return true;
+       } else {
+          ItemStack itemstack = p_222201_1_.func_77946_l();
+-         if (itemstack.func_77973_b().func_77645_m()) {
++         if (itemstack.func_77973_b().isDamageable(itemstack)) {
+             itemstack.func_196085_b(itemstack.func_77952_i());
+          }
+ 

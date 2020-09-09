@@ -32,6 +32,8 @@ import net.minecraft.client.renderer.WorldRenderer;
 /**
  * An event called whenever the selection highlight around blocks is about to be rendered.
  * Canceling this event stops the selection highlight from being rendered.
+ * 
+ * TODO: Rename to DrawSelectionEvent
  */
 @Cancelable
 public class DrawHighlightEvent extends Event
@@ -61,7 +63,7 @@ public class DrawHighlightEvent extends Event
     public IRenderTypeBuffer getBuffers() { return buffers; }
 
     /**
-     * A variant of the DrawBlockHighlightEvent only called when a block is highlighted.
+     * A variant of the DrawHighlightEvent only called when a block is highlighted.
      */
     @Cancelable
     public static class HighlightBlock extends DrawHighlightEvent
@@ -79,7 +81,7 @@ public class DrawHighlightEvent extends Event
     }
 
     /**
-     * A variant of the DrawBlockHighlightEvent only called when an entity is highlighted.
+     * A variant of the DrawHighlightEvent only called when an entity is highlighted.
      * Canceling this event has no effect.
      */
     @Cancelable

@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Random;
@@ -46,7 +47,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     private NamespacedDefaultedWrapper(ForgeRegistry<T> owner)
     {
-        super("empty", RegistryKey.<T>func_240904_a_(owner.getRegistryName()), Lifecycle.experimental());
+        super("empty", owner.getRegistryKey(), Lifecycle.experimental());
         this.delegate = owner;
     }
 
@@ -131,6 +132,12 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     public Set<ResourceLocation> keySet()
     {
         return this.delegate.getKeys();
+    }
+
+    @Override
+    public Set<Map.Entry<RegistryKey<T>, T>> func_239659_c_()
+    {
+        return this.delegate.getEntries();
     }
 
     @Override

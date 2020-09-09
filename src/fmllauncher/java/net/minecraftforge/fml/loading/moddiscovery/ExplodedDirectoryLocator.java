@@ -79,7 +79,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
         if (Files.exists(found)) return found;
         // then try left path (classes)
         return mods.get(modFile).getRight().stream().map(p->p.resolve(target)).filter(Files::exists).
-                findFirst().orElse(found.resolve(target));
+                findFirst().orElse(found);
     }
 
     @Override
@@ -92,6 +92,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     private void scanIndividualPath(final Path path, Consumer<Path> pathConsumer) {
+        if (!Files.exists(path)) return;
         LOGGER.debug(SCAN, "Scanning exploded target {}", path.toString());
         try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);

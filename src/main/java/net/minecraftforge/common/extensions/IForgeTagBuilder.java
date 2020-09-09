@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.data.TagsProvider;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 
 //TODO, Tag removal support.
@@ -36,6 +37,14 @@ public interface IForgeTagBuilder<T>
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
             builder.func_240531_a_(value);
+        }
+        return builder;
+    }
+
+    default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
+        TagsProvider.Builder<T> builder = getBuilder();
+        for (RegistryKey<T> key : keys) {
+            builder.getInternalBuilder().func_232961_a_(key.func_240901_a_(), getBuilder().getModID());
         }
         return builder;
     }

@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  *
  * This is a parallel dispatch event.
  */
-public class FMLDedicatedServerSetupEvent extends ModLifecycleEvent
+public class FMLDedicatedServerSetupEvent extends ParallelDispatchEvent
 {
     public FMLDedicatedServerSetupEvent(ModContainer container)
     {

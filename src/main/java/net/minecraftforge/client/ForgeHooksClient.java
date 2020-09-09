@@ -128,6 +128,7 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
+    //TODO: Rename to onDrawHighlight
     public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         switch (target.getType()) {

@@ -94,10 +94,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Queries the harvest level of this item stack for the specified tool class,
      * Returns -1 if this tool is not of the specified type
      *
-     * @param stack      This item stack instance
-     * @param toolClass  Tool Class
-     * @param player     The player trying to harvest the given blockstate
-     * @param state The block to harvest
+     * @param tool   the tool type of the item
+     * @param player The player trying to harvest the given blockstate
+     * @param state  The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
      */
     default int getHarvestLevel(ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState state)
