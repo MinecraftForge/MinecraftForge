@@ -22,11 +22,7 @@ package net.minecraftforge.fml.server;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.ModWorkManager;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,23 +51,9 @@ public class ServerModLoader
             ModLoader.get().finishMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         } catch (LoadingFailedException error) {
             ServerModLoader.hasErrors = true;
-            final CrashReport crashReport = CrashReport.makeCrashReport(error, "Mod loading error has occurred");
-            error.getErrors().forEach(mle -> {
-                final CrashReportCategory category = crashReport.makeCategory(mle.getModInfo().getModId());
-                category.applyStackTrace(mle.getCause());
-                category.addDetail("Failure message", mle.getCleanMessage());
-                category.addDetail("Exception message", mle.getCause().toString());
-                category.addDetail("Mod Version", mle.getModInfo().getVersion().toString());
-                category.addDetail("Mod Issue URL", ((ModFileInfo)mle.getModInfo().getOwningFile()).getConfigElement("issueTrackerURL").orElse("NOT PROVIDED"));
-            });
-            final File file1 = new File("crash-reports");
-            final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
-            if (crashReport.saveToFile(file2)) {
-                LOGGER.fatal("Crash report saved to {}", file2);
-            } else {
-                LOGGER.fatal("Failed to save crash report");
-            }
-            System.out.print(crashReport.getCompleteReport());
+            // In case its not loaded properly
+            LanguageHook.loadForgeAndMCLangs();
+            CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, new File("."));
             throw error;
         }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();

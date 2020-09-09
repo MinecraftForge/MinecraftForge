@@ -22,6 +22,8 @@ package net.minecraftforge.registries;
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -47,6 +49,7 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
 import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
+import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryKey;
@@ -68,6 +71,7 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
@@ -177,7 +181,7 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES, Biome.class).create();
+        makeRegistry(BIOMES, Biome.class).tagFolder("biomes").create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
@@ -194,11 +198,11 @@ public class GameData
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -362,6 +366,22 @@ public class GameData
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
             LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
         };
+    }
+
+    public static void setCustomTagTypesFromRegistries()
+    {
+        Set<ResourceLocation> customTagTypes = new HashSet<>();
+        for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> entry : RegistryManager.ACTIVE.registries.entrySet())
+        {
+            ResourceLocation registryName = entry.getKey();
+            if (entry.getValue().getTagFolder() != null && TagRegistryManager.get(registryName) == null)
+            {
+                LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
+                customTagTypes.add(registryName);
+                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
+            }
+        }
+        ForgeTagHandler.setCustomTagTypes(customTagTypes);
     }
 
     //Lets us clear the map so we can rebuild it.

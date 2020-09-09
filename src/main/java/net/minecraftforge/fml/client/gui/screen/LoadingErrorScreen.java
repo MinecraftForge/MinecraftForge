@@ -41,6 +41,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -53,17 +54,19 @@ public class LoadingErrorScreen extends ErrorScreen {
     private final Path logFile;
     private final List<ModLoadingException> modLoadErrors;
     private final List<ModLoadingWarning> modLoadWarnings;
+    private final Path dumpedLocation;
     private LoadingEntryList entryList;
     private ITextComponent errorHeader;
     private ITextComponent warningHeader;
 
-    public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings)
+    public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings, final File dumpedLocation)
     {
         super(new StringTextComponent("Loading Error"), null);
         this.modLoadWarnings = warnings;
         this.modLoadErrors = loadingException == null ? Collections.emptyList() : loadingException.getErrors();
         this.modsDir = FMLPaths.MODSDIR.get();
         this.logFile = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
+        this.dumpedLocation = dumpedLocation.toPath();
     }
 
     @Override
@@ -76,7 +79,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.errorHeader = new StringTextComponent(TextFormatting.RED + ForgeI18n.parseMessage("fml.loadingerrorscreen.errorheader", this.modLoadErrors.size()) + TextFormatting.RESET);
         this.warningHeader = new StringTextComponent(TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET);
 
-        int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
+        int yOffset = 46;
         this.func_230480_a_(new ExtendedButton(50, this.field_230709_l_ - yOffset, this.field_230708_k_ / 2 - 55, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getOSType().openFile(modsDir.toFile())));
         this.func_230480_a_(new ExtendedButton(this.field_230708_k_ / 2 + 5, this.field_230709_l_ - yOffset, this.field_230708_k_ / 2 - 55, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), b -> Util.getOSType().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
@@ -84,6 +87,8 @@ public class LoadingErrorScreen extends ErrorScreen {
                 ClientHooks.logMissingTextureErrors();
                 this.field_230706_i_.displayGuiScreen(null);
             }));
+        } else {
+            this.func_230480_a_(new ExtendedButton(this.field_230708_k_ / 4, this.field_230709_l_ - 24, this.field_230708_k_ / 2, 20, new StringTextComponent(ForgeI18n.parseMessage("fml.button.open.file", dumpedLocation.getFileName())), b -> Util.getOSType().openFile(dumpedLocation.toFile())));
         }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
