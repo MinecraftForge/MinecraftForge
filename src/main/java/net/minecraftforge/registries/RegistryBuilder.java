@@ -48,6 +48,9 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
+    private boolean hasWrapper = false;
+    @Nullable
+    private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -203,6 +206,21 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    RegistryBuilder<T> hasWrapper()
+    {
+        this.hasWrapper = true;
+        return this;
+    }
+
+    public RegistryBuilder<T> tagFolder(String tagFolder)
+    {
+        if (tagFolder == null || !tagFolder.matches("[a-z_/]+")) throw new IllegalArgumentException("Non [a-z_/] character in tag folder " + tagFolder);
+        this.tagFolder = tagFolder;
+        //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
+        hasWrapper();
+        return this;
+    }
+
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
@@ -216,6 +234,13 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public IForgeRegistry<T> create()
     {
+        if (hasWrapper)
+        {
+            if (getDefault() == null)
+                addCallback(new NamespacedWrapper.Factory<T>());
+            else
+                addCallback(new NamespacedDefaultedWrapper.Factory<T>());
+        }
         return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
 
@@ -323,6 +348,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getAllowModifications()
     {
         return allowModifications;
+    }
+
+    @Nullable
+    public String getTagFolder()
+    {
+        return tagFolder;
     }
 
     @Nullable
