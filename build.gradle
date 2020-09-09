@@ -352,6 +352,7 @@ project(':forge') {
                     '--mod', 'piston_event_test',
                     '--mod', 'global_loot_test',
                     '--mod', 'scaffolding_test',
+                    '--mod', 'custom_tag_types_test',
                     '--output', rootProject.file('src/generated_test/resources/'),
                     '--existing', sourceSets.main.resources.srcDirs[0]
             }
