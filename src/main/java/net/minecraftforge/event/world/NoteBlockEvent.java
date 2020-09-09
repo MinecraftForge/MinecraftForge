@@ -63,7 +63,7 @@ public class NoteBlockEvent extends BlockEvent
      * get the vanilla note-id, which contains information about both Note and Octave. Most modders should not need this.
      * @return an ID for the note
      */
-    public int getRawNote()
+    public int getVanillaNoteID()
     {
         return noteId;
     }

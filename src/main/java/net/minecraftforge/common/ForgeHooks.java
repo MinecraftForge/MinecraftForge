@@ -1055,7 +1055,7 @@ public class ForgeHooks
         NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
-        return event.getRawNote();
+        return event.getVanillaNoteID();
     }
 
     public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {
