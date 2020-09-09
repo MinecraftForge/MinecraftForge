@@ -71,4 +71,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="player_name_event_test"
 [[mods]]
+    modId="custom_elytra_test"
+[[mods]]
     modId="render_local_player_test"
