@@ -16,12 +16,12 @@
 +   @Nullable @Deprecated // Use ITeleporter safe version
     protected PortalInfo func_241829_a(ServerWorld p_241829_1_) {
 -      PortalInfo portalinfo = super.func_241829_a(p_241829_1_);
-+      return this.func_241829_a(p_241829_1_, p_241829_1_.func_85176_s());
++      return this.getPortalInfo(p_241829_1_, p_241829_1_.func_85176_s());
 +   }
 +   
 +   @Nullable
-+   protected PortalInfo func_241829_a(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      PortalInfo portalinfo = super.func_241829_a(p_241829_1_, teleporter);
++   protected PortalInfo getPortalInfo(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      PortalInfo portalinfo = super.getPortalInfo(p_241829_1_, teleporter);
 +      if (portalinfo == null && !teleporter.isVanilla()) return teleporter.createAndGetPortal(this.func_71121_q(), p_241829_1_, this).map(teleporter::getPortalInfo).orElse(null);
        if (portalinfo != null && this.field_70170_p.func_234923_W_() == World.field_234918_g_ && p_241829_1_.func_234923_W_() == World.field_234920_i_) {
           Vector3d vector3d = portalinfo.field_222505_a.func_72441_c(0.0D, -1.0D, 0.0D);
@@ -53,7 +53,7 @@
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
 +         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
 +         this.revive();
-+         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : this.func_241829_a(p_241206_1_, teleporter);
++         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : this.getPortalInfo(p_241206_1_, teleporter);
           if (portalinfo != null) {
 +            Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
              serverworld.func_217381_Z().func_76320_a("moving");

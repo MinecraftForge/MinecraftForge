@@ -231,7 +231,7 @@
           this.func_213319_R();
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : this.func_241829_a(p_241206_1_, teleporter);
++         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : this.getPortalInfo(p_241206_1_, teleporter);
           if (portalinfo == null) {
              return null;
           } else {
@@ -268,11 +268,11 @@
 -   @Nullable
 +   @Nullable @Deprecated // Use ITeleporter safe version
     protected PortalInfo func_241829_a(ServerWorld p_241829_1_) {
-+      return this.func_241829_a(p_241829_1_, p_241829_1_.func_85176_s());
++      return this.getPortalInfo(p_241829_1_, p_241829_1_.func_85176_s());
 +   }
 +
 +   @Nullable
-+   protected PortalInfo func_241829_a(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++   protected PortalInfo getPortalInfo(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
        boolean flag = this.field_70170_p.func_234923_W_() == World.field_234920_i_ && p_241829_1_.func_234923_W_() == World.field_234918_g_;
        boolean flag1 = p_241829_1_.func_234923_W_() == World.field_234920_i_;
        if (!flag && !flag1) {
