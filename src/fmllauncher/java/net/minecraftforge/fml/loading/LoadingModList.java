@@ -19,20 +19,17 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.Streams;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Master list of all mods <em>in the loading context. This class cannot refer outside the
@@ -44,6 +41,7 @@ public class LoadingModList
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
+    @SuppressWarnings("unused")
     private BackgroundScanHandler scanner;
     private final List<EarlyLoadingException> preLoadErrors;
     private List<ModFile> brokenFiles;

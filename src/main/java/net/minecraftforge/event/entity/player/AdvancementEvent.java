@@ -22,7 +22,6 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * This event is fired when a player gets an advancement.

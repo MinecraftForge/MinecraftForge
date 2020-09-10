@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

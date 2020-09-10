@@ -22,7 +22,6 @@ package net.minecraftforge.server.permission;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import net.minecraftforge.fml.server.ServerModLoader;
 import net.minecraftforge.server.permission.context.IContext;
 
 import javax.annotation.Nullable;
