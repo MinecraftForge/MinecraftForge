@@ -22,7 +22,6 @@ package net.minecraftforge.userdev;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
 import net.minecraftforge.fml.loading.LibraryFinder;

@@ -343,6 +343,15 @@
              float f4 = this.field_70122_E ? f3 * 0.91F : 0.91F;
              Vector3d vector3d5 = this.func_233633_a_(p_213352_1_, f3);
              double d2 = vector3d5.field_72448_b;
+@@ -2049,7 +2081,7 @@
+          double d0 = MathHelper.func_151237_a(p_213362_1_.field_72450_a, (double)-0.15F, (double)0.15F);
+          double d1 = MathHelper.func_151237_a(p_213362_1_.field_72449_c, (double)-0.15F, (double)0.15F);
+          double d2 = Math.max(p_213362_1_.field_72448_b, (double)-0.15F);
+-         if (d2 < 0.0D && !this.func_213339_cH().func_203425_a(Blocks.field_222420_lI) && this.func_230491_ea_() && this instanceof PlayerEntity) {
++         if (d2 < 0.0D && !this.func_213339_cH().isScaffolding(this) && this.func_230491_ea_() && this instanceof PlayerEntity) {
+             d2 = 0.0D;
+          }
+ 
 @@ -2077,6 +2109,7 @@
     }
  

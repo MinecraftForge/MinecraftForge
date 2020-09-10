@@ -29,7 +29,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -63,7 +62,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
-        return modJars.get(modFile).getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
+        return modJars.get(modFile).getPath("",path);
     }
 
     @Override

@@ -1,10 +1,19 @@
 --- a/net/minecraft/tags/ITagCollectionSupplier.java
 +++ b/net/minecraft/tags/ITagCollectionSupplier.java
+@@ -8,7 +8,7 @@
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.util.registry.Registry;
+ 
+-public interface ITagCollectionSupplier {
++public interface ITagCollectionSupplier extends net.minecraftforge.common.extensions.IForgeTagCollectionSupplier {
+    ITagCollectionSupplier field_242208_a = func_242209_a(ITagCollection.func_242205_c(), ITagCollection.func_242205_c(), ITagCollection.func_242205_c(), ITagCollection.func_242205_c());
+ 
+    ITagCollection<Block> func_241835_a();
 @@ -22,6 +22,7 @@
     default void func_242212_e() {
        TagRegistryManager.func_242193_a(this);
        Blocks.func_235419_a_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes(this));
     }
  
     default void func_242210_a(PacketBuffer p_242210_1_) {

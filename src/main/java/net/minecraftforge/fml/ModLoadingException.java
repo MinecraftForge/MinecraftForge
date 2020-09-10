@@ -20,9 +20,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.Streams;
-import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Arrays;
@@ -34,6 +32,7 @@ import java.util.stream.Stream;
  */
 public class ModLoadingException extends RuntimeException
 {
+    private static final long serialVersionUID = 2048947398536935507L;
     /**
      * Mod Info for mod with issue
      */

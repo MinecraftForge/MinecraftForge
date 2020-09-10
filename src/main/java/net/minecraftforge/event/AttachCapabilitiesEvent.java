@@ -28,14 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.GenericEvent;
 
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.eventbus.api.GenericEvent;
-
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
  * is created. Allowing for the attachment of arbitrary capability providers.

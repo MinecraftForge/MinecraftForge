@@ -76,7 +76,7 @@ public class PotionBrewEvent extends Event
      * <br>
      * If this event is canceled, and items have been modified, PotionBrewEvent.Post will automatically be fired.
      **/
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class Pre extends PotionBrewEvent
     {
         public Pre(NonNullList<ItemStack> stacks)
