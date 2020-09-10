@@ -148,29 +148,30 @@ public class BiomeModifications
 
     static Biome performModifications(List<BiomeModifications> modifications, Biome base)
     {
-        return modifications.isEmpty() ? base :
-                new Biome.Builder()
-                        .temperature(fromlist(modifications, mods -> mods.temperature, base.func_242445_k()))
-                        .downfall(fromlist(modifications, mods -> mods.downfall, base.getDownfall()))
-                        .precipitation(fromlist(modifications, mods -> mods.precipitation, base.getPrecipitation()))
-                        .func_242456_a(fromlist(modifications, mods -> mods.temperatureModifier, base.getTemperatureModifier()))
-                        .category(fromlist(modifications, mods -> mods.category, base.getCategory()))
-                        .depth(fromlist(modifications, mods -> mods.depth, base.getDepth()))
-                        .scale(fromlist(modifications, mods -> mods.scale, base.getScale()))
-                        .func_235097_a_(fromlist(modifications, mods -> mods.effects, base.func_235089_q_()))
-                        .func_242457_a(new BiomeGenerationSettings(
-                                fromlist(modifications, mods -> mods.surfaceBuilder, base.func_242440_e().func_242500_d()),
-                                fromlist(modifications, mods -> mods.carvers, base.func_242440_e().getAllCarvers()),
-                                fromlist(modifications, mods -> mods.features, base.func_242440_e().func_242498_c()),
-                                fromlist(modifications, mods -> mods.structures, (List<Supplier<StructureFeature<?,?>>>) base.func_242440_e().func_242487_a())
-                        ))
-                        .func_242458_a(new MobSpawnInfo(
-                                fromlist(modifications, mods -> mods.creatureSpawnProbability, base.func_242433_b().func_242557_a()),
-                                fromlist(modifications, mods -> mods.spawners, base.func_242433_b().getAllSpawners()),
-                                fromlist(modifications, mods -> mods.spawnCosts, base.func_242433_b().getAllSpawnCosts()),
-                                fromlist(modifications, mods -> mods.playerSpawnFriendly, base.func_242433_b().func_242562_b())
-                        ))
-                        .func_242455_a();
+        if(modifications.isEmpty())
+            return base;
+        return new Biome.Builder()
+                .temperature(fromlist(modifications, mods -> mods.temperature, base.func_242445_k()))
+                .downfall(fromlist(modifications, mods -> mods.downfall, base.getDownfall()))
+                .precipitation(fromlist(modifications, mods -> mods.precipitation, base.getPrecipitation()))
+                .func_242456_a(fromlist(modifications, mods -> mods.temperatureModifier, base.getTemperatureModifier()))
+                .category(fromlist(modifications, mods -> mods.category, base.getCategory()))
+                .depth(fromlist(modifications, mods -> mods.depth, base.getDepth()))
+                .scale(fromlist(modifications, mods -> mods.scale, base.getScale()))
+                .func_235097_a_(fromlist(modifications, mods -> mods.effects, base.func_235089_q_()))
+                .func_242457_a(new BiomeGenerationSettings(
+                        fromlist(modifications, mods -> mods.surfaceBuilder, base.func_242440_e().func_242500_d()),
+                        fromlist(modifications, mods -> mods.carvers, base.func_242440_e().getAllCarvers()),
+                        fromlist(modifications, mods -> mods.features, base.func_242440_e().func_242498_c()),
+                        fromlist(modifications, mods -> mods.structures, (List<Supplier<StructureFeature<?,?>>>) base.func_242440_e().func_242487_a())
+                ))
+                .func_242458_a(new MobSpawnInfo(
+                        fromlist(modifications, mods -> mods.creatureSpawnProbability, base.func_242433_b().func_242557_a()),
+                        fromlist(modifications, mods -> mods.spawners, base.func_242433_b().getAllSpawners()),
+                        fromlist(modifications, mods -> mods.spawnCosts, base.func_242433_b().getAllSpawnCosts()),
+                        fromlist(modifications, mods -> mods.playerSpawnFriendly, base.func_242433_b().func_242562_b())
+                ))
+                .func_242455_a();
     }
 
     /**
