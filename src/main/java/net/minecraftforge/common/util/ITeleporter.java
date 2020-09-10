@@ -19,13 +19,30 @@
 
 package net.minecraftforge.common.util;
 
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Function;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.PortalInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.TeleportationRepositioner;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.village.PointOfInterest;
+import net.minecraft.village.PointOfInterestManager;
+import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.Teleporter;
+import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.TicketType;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -58,10 +75,68 @@ public interface ITeleporter {
     default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
        return repositionEntity.apply(true);
     }
-    
-    //used internally to handle vanilla hardcoding
+
+    // States if this teleporter is the vanilla instance
     default boolean isVanilla()
     {
         return getClass() == Teleporter.class;
+    }
+
+    // Replicated from the vanilla code for interface implementation. Return an empty optional if no portal was found.
+    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+    {
+        PointOfInterestManager pointofinterestmanager = toWorld.getPointOfInterestManager();
+        int dist = Math.max((int) DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) * 16, 16);
+        BlockPos pos = this.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec()));
+        pointofinterestmanager.ensureLoadedAndValid(toWorld, pos, dist);
+        
+        Optional<PointOfInterest> optional = pointofinterestmanager.getInSquare((poi) -> 
+        {
+           return poi == this.getPortalPOI();
+        }, pos, dist, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((poi) -> 
+        {
+           return poi.getPos().distanceSq(pos);
+        }).thenComparingInt((poi) -> 
+        {
+           return poi.getPos().getY();
+        })).findFirst();
+        
+        return optional.map((poi) -> 
+        {
+           BlockPos blockpos = poi.getPos();
+           toWorld.getChunkProvider().registerTicket(TicketType.PORTAL, new ChunkPos(blockpos), 3, blockpos);
+           BlockState blockstate = toWorld.getBlockState(blockpos);
+           return TeleportationRepositioner.func_243676_a(blockpos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, (p) -> toWorld.getBlockState(p) == blockstate);
+        });
+    }
+
+    // Creates a portal if one doesn't exist and returns the result. Default does nothing so you'll need to implement it for your portal.
+    default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+    {
+        return Optional.empty();
+    }
+
+    // Returns the portal info for the result. Default returns the tpResult position and zero values for everything else.
+    default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult)
+    {
+        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
+    }
+    
+    // Scales the given blockpos based on the worlds passed in.
+    default BlockPos getScaledPos(World fromWorld, World toWorld, BlockPos originalPos)
+    {
+    	WorldBorder worldborder = toWorld.getWorldBorder();
+        double minX = Math.max(-2.9999872E7D, worldborder.minX() + 16.0D);
+        double minZ = Math.max(-2.9999872E7D, worldborder.minZ() + 16.0D);
+        double maxX = Math.min(2.9999872E7D, worldborder.maxX() - 16.0D);
+        double maxZ = Math.min(2.9999872E7D, worldborder.maxZ() - 16.0D);
+        double dimensionScaling = DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_());
+        return new BlockPos(MathHelper.clamp(originalPos.getX() * dimensionScaling, minX, maxX), originalPos.getY(), MathHelper.clamp(originalPos.getZ() * dimensionScaling, minZ, maxZ));
+    }
+
+    // Returns the point of interest type for teleporter to look for.
+    default PointOfInterestType getPortalPOI()
+    {
+    	return PointOfInterestType.NETHER_PORTAL;
     }
 }

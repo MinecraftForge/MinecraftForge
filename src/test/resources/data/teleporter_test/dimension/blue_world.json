@@ -1,0 +1,13 @@
+{
+    "generator": {
+        "biome_source": {
+            "type": "minecraft:fixed",
+            "seed": 0,
+            "biome": "minecraft:ice_spikes"
+        },
+        "seed": 0,
+        "settings": "minecraft:overworld",
+        "type": "minecraft:noise"
+      },
+    "type": "minecraft:overworld"
+}
