@@ -36,7 +36,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event does not have a result. {@link HasResult}<br>
  *<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
- * 
+ *
  */
 
 @Cancelable
@@ -44,7 +44,7 @@ public class EntityMountEvent extends EntityEvent
 {
     private final Entity entityBeingMounted;
     private final World worldObj;
-    
+
     private final boolean isMounting;
 
     public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, World entityWorld, boolean isMounting)
@@ -54,12 +54,12 @@ public class EntityMountEvent extends EntityEvent
         this.worldObj = entityWorld;
         this.isMounting = isMounting;
     }
-    
+
     public boolean isMounting()
     {
         return isMounting;
     }
-    
+
     public boolean isDismounting()
     {
         return !isMounting;

@@ -28,6 +28,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -139,7 +140,11 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
              AxisAlignedBB cbb = null;
              try
              {
-                 cbb = state.getCollisionShape(getTileEntity().getWorld(), pos).getBoundingBox().offset(pos);
+                 VoxelShape collisionShape = state.getCollisionShape(getTileEntity().getWorld(), pos);
+                 if (!collisionShape.isEmpty())
+                 {
+                     cbb = collisionShape.getBoundingBox().offset(pos);
+                 }
              }
              catch (Exception e)
              {

@@ -59,6 +59,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+@SuppressWarnings("deprecation")
 public class ForgeIngameGui extends IngameGui
 {
     //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");

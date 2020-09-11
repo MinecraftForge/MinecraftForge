@@ -21,7 +21,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
