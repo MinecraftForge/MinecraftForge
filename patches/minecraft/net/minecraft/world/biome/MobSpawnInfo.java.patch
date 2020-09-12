@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/biome/MobSpawnInfo.java
++++ b/net/minecraft/world/biome/MobSpawnInfo.java
+@@ -77,6 +77,19 @@
+       private float field_242569_c = 0.1F;
+       private boolean field_242570_d;
+ 
++      public Builder() {
++      }
++
++      public Builder(MobSpawnInfo orig) {
++         orig.field_242554_e.forEach((k, l)-> {
++            field_242567_a.get(k).clear();
++            field_242567_a.get(k).addAll(new java.util.ArrayList<>(l));
++         });
++         field_242568_b.putAll(orig.field_242555_f);
++         field_242569_c = orig.field_242553_d;
++         field_242570_d = orig.field_242556_g;
++      }
++
+       public MobSpawnInfo.Builder func_242575_a(EntityClassification p_242575_1_, MobSpawnInfo.Spawners p_242575_2_) {
+          this.field_242567_a.get(p_242575_1_).add(p_242575_2_);
+          return this;

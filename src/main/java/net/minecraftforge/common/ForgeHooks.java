@@ -41,6 +41,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.*;
@@ -86,8 +90,13 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.datafix.DelegatingDynamicOps;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -107,10 +116,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -837,6 +843,18 @@ public class ForgeHooks
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public interface BiomeCallbackFunction {
+        Biome apply(final Biome.Climate climate, final Biome.Category category1, final Float aFloat, final Float aFloat1, final BiomeAmbience biomeAmbience, final BiomeGenerationSettings biomeGenerationSettings, final MobSpawnInfo mobSpawnInfo);
+    }
+
+    public static Biome enhanceBiome(final ResourceLocation resourceLocation, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience biomeAmbience, final BiomeGenerationSettings biomeGenerationSettings, final MobSpawnInfo mobSpawnInfo, final RecordCodecBuilder.Instance<Biome> p_235064_0_, final BiomeCallbackFunction callback) {
+        BiomeGenerationSettings.Builder biomeSettingsBuilder = new BiomeGenerationSettings.Builder(biomeGenerationSettings);
+        MobSpawnInfo.Builder mobSpawnInfoBuilder = new MobSpawnInfo.Builder(mobSpawnInfo);
+        BiomeLoadingEvent ble = new BiomeLoadingEvent(resourceLocation, climate, category, depth, scale, biomeAmbience, biomeSettingsBuilder, mobSpawnInfoBuilder);
+        MinecraftForge.EVENT_BUS.post(ble);
+        return callback.apply(ble.getClimate(), ble.getCategory(), ble.getDepth(), ble.getScale(), ble.getBiomeAmbience(), ble.getSettingsBuilder().func_242508_a(), ble.getMobSpawnInfoBuilder().func_242577_b());
     }
 
     private static class LootTableContext
