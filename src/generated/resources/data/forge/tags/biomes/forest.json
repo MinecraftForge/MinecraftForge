@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:forest",
+    "minecraft:taiga",
+    "minecraft:wooded_hills",
+    "minecraft:taiga_hills",
+    "minecraft:jungle_edge",
+    "minecraft:birch_forest",
+    "minecraft:birch_forest_hills",
+    "minecraft:dark_forest",
+    "minecraft:snowy_taiga",
+    "minecraft:snowy_taiga_hills",
+    "minecraft:giant_tree_taiga",
+    "minecraft:giant_tree_taiga_hills",
+    "minecraft:wooded_mountains",
+    "minecraft:flower_forest",
+    "minecraft:taiga_mountains",
+    "minecraft:tall_birch_forest",
+    "minecraft:tall_birch_hills",
+    "minecraft:dark_forest_hills",
+    "minecraft:snowy_taiga_mountains",
+    "minecraft:giant_spruce_taiga",
+    "minecraft:giant_spruce_taiga_hills"
+  ]
+}

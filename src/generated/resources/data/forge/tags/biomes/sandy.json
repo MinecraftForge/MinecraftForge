@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:desert_hills",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands_plateau",
+    "minecraft:badlands_plateau",
+    "minecraft:desert_lakes"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:nether_wastes",
+    "minecraft:desert_hills",
+    "minecraft:jungle",
+    "minecraft:jungle_hills",
+    "minecraft:jungle_edge",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:warm_ocean",
+    "minecraft:deep_warm_ocean",
+    "minecraft:desert_lakes",
+    "minecraft:modified_jungle",
+    "minecraft:modified_jungle_edge",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau",
+    "minecraft:eroded_badlands",
+    "minecraft:modified_wooded_badlands_plateau",
+    "minecraft:modified_badlands_plateau"
+  ]
+}

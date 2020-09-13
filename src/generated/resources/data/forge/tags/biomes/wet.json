@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:swamp",
+    "minecraft:jungle",
+    "minecraft:jungle_hills",
+    "minecraft:jungle_edge",
+    "minecraft:swamp_hills",
+    "minecraft:modified_jungle"
+  ]
+}

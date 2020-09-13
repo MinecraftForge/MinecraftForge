@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:wooded_mountains",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:wooded_badlands_plateau",
+    "minecraft:gravelly_mountains",
+    "minecraft:modified_jungle_edge",
+    "minecraft:modified_gravelly_mountains",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau",
+    "minecraft:eroded_badlands",
+    "minecraft:modified_wooded_badlands_plateau",
+    "minecraft:modified_badlands_plateau"
+  ]
+}

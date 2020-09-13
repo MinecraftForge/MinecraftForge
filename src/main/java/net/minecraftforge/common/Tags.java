@@ -345,7 +345,8 @@ public class Tags
 
         private static IOptionalNamedTag<Biome> tag(String name)
         {
-            return ForgeTagHandler.createOptionalTag(ForgeRegistries.BIOMES, new ResourceLocation("forge", name));
+            //Uses ForgeRegistries.Keys.BIOMES, since ForgeRegistries.BIOMES is still null when Forge initializes tags
+            return ForgeTagHandler.createOptionalTag(ForgeRegistries.Keys.BIOMES.func_240901_a_(), new ResourceLocation("forge", name));
         }
     }
 
