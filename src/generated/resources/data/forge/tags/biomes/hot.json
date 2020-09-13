@@ -3,6 +3,10 @@
   "values": [
     "minecraft:desert",
     "minecraft:nether_wastes",
+    "minecraft:soul_sand_valley",
+    "minecraft:crimson_forest",
+    "minecraft:warped_forest",
+    "minecraft:basalt_deltas",
     "minecraft:desert_hills",
     "minecraft:jungle",
     "minecraft:jungle_hills",

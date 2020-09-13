@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:snowy_tundra"
+    "minecraft:snowy_tundra",
+    "minecraft:nether_wastes"
   ]
 }
