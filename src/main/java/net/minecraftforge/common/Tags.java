@@ -26,6 +26,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.tags.ITag.INamedTag;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Tags
 {
@@ -33,6 +35,7 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        Biomes.init();
     }
 
     public static class Blocks
@@ -284,6 +287,65 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return ItemTags.createOptional(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class Biomes
+    {
+        private static void init(){}
+
+        public static final IOptionalNamedTag<Biome> HOT = tag("hot");
+        public static final IOptionalNamedTag<Biome> COLD = tag("cold");
+
+        /*Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
+        public static final IOptionalNamedTag<Biome> SPARSE = tag("sparse");
+        public static final IOptionalNamedTag<Biome> DENSE = tag("dense");
+
+        /*Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
+        public static final IOptionalNamedTag<Biome> WET = tag("wet");
+        public static final IOptionalNamedTag<Biome> DRY = tag("dry");
+
+        /*Tree-based tags, SAVANNA refers to dry, desert-like trees (Such as Acacia), CONIFEROUS refers to snowy trees (Such as Spruce) and JUNGLE refers to jungle trees.
+         * Specifying no tag implies a biome has temperate trees (Such as Oak)*/
+        public static final IOptionalNamedTag<Biome> SAVANNA = tag("savanna");
+        public static final IOptionalNamedTag<Biome> CONIFEROUS = tag("coniferous");
+        public static final IOptionalNamedTag<Biome> JUNGLE = tag("jungle");
+
+        /*Tags specifying the nature of a biome*/
+        public static final IOptionalNamedTag<Biome> SPOOKY = tag("spooky");
+        public static final IOptionalNamedTag<Biome> DEAD = tag("dead");
+        public static final IOptionalNamedTag<Biome> LUSH = tag("lush");
+        public static final IOptionalNamedTag<Biome> MUSHROOM = tag("mushroom");
+        public static final IOptionalNamedTag<Biome> MAGICAL = tag("magical");
+        public static final IOptionalNamedTag<Biome> RARE = tag("rare");
+        public static final IOptionalNamedTag<Biome> PLATEAU = tag("plateau");
+        public static final IOptionalNamedTag<Biome> MODIFIED = tag("modified");
+
+        public static final IOptionalNamedTag<Biome> OCEAN = tag("water/ocean");
+        public static final IOptionalNamedTag<Biome> RIVER = tag("water/river");
+        public static final IOptionalNamedTag<Biome> WATER = tag("water");
+
+        /*Generic types which a biome can be*/
+        public static final IOptionalNamedTag<Biome> MESA = tag("mesa");
+        public static final IOptionalNamedTag<Biome> FOREST = tag("forest");
+        public static final IOptionalNamedTag<Biome> PLAINS = tag("plains");
+        public static final IOptionalNamedTag<Biome> MOUNTAIN = tag("mountain");
+        public static final IOptionalNamedTag<Biome> HILLS = tag("hills");
+        public static final IOptionalNamedTag<Biome> SWAMP = tag("swamp");
+        public static final IOptionalNamedTag<Biome> SANDY = tag("sandy");
+        public static final IOptionalNamedTag<Biome> SNOWY = tag("snowy");
+        public static final IOptionalNamedTag<Biome> WASTELAND = tag("wasteland");
+        public static final IOptionalNamedTag<Biome> BEACH = tag("beach");
+        public static final IOptionalNamedTag<Biome> VOID = tag("void");
+
+        /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
+        public static final IOptionalNamedTag<Biome> OVERWORLD = tag("overworld");
+        public static final IOptionalNamedTag<Biome> NETHER = tag("nether");
+        public static final IOptionalNamedTag<Biome> END = tag("end");
+
+        private static IOptionalNamedTag<Biome> tag(String name)
+        {
+            return ForgeTagHandler.createOptionalTag(ForgeRegistries.BIOMES, new ResourceLocation("forge", name));
         }
     }
 
