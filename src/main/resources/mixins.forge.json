@@ -1,0 +1,17 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.minecraftforge.mixin",
+    "target": "@env(DEFAULT)",
+    "compatibilityLevel": "JAVA_8",
+    "verbose": true,
+    "refmap": "main.refmap.json",
+    "mixins": [
+        "MixinBiomeGenerationSettingsAccessor",
+        "MixinMobSpawnAccessors"
+    ],
+    "client": [
+    ],
+    "server": [
+    ]
+}
