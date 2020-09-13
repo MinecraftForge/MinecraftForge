@@ -24,6 +24,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.eventbus.api.Event;
 
 public class BiomeLoadingEvent extends Event {
@@ -33,10 +35,10 @@ public class BiomeLoadingEvent extends Event {
     private Float depth;
     private Float scale;
     private BiomeAmbience biomeAmbience;
-    private final BiomeGenerationSettings.Builder settingsBuilder;
-    private final MobSpawnInfo.Builder mobSpawnInfoBuilder;
+    private final BiomeGenerationSettingsBuilder settingsBuilder;
+    private final MobSpawnInfoBuilder mobSpawnInfoBuilder;
 
-    public BiomeLoadingEvent(final ResourceLocation resourceLocation, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience biomeAmbience, final BiomeGenerationSettings.Builder settingsBuilder, final MobSpawnInfo.Builder mobSpawnInfoBuilder) {
+    public BiomeLoadingEvent(final ResourceLocation resourceLocation, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience biomeAmbience, final BiomeGenerationSettingsBuilder settingsBuilder, final MobSpawnInfoBuilder mobSpawnInfoBuilder) {
         this.resourceLocation = resourceLocation;
         this.climate = climate;
         this.category = category;
@@ -71,11 +73,11 @@ public class BiomeLoadingEvent extends Event {
         return biomeAmbience;
     }
 
-    public BiomeGenerationSettings.Builder getSettingsBuilder() {
+    public BiomeGenerationSettingsBuilder getSettingsBuilder() {
         return settingsBuilder;
     }
 
-    public MobSpawnInfo.Builder getMobSpawnInfoBuilder() {
+    public MobSpawnInfoBuilder getMobSpawnInfoBuilder() {
         return mobSpawnInfoBuilder;
     }
 
