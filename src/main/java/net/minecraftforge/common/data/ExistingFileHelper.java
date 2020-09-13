@@ -48,6 +48,8 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 
+import javax.annotation.Nullable;
+
 /**
  * Enables data providers to check if other data files currently exist. The
  * instance provided in the {@link GatherDataEvent} utilizes the standard
@@ -107,11 +109,12 @@ public class ExistingFileHelper {
      * @param existingMods
      * @param enable
      */
+    @Deprecated // TODO: Remove in 1.17
     public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
-        this(existingPacks, existingMods, null, null, enable);
+        this(existingPacks, existingMods, enable, null, null);
     }
 
-    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, final String assetIndex, final File assetsDir, boolean enable) {
+    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
 

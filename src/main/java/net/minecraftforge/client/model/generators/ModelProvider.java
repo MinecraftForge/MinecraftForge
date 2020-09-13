@@ -40,7 +40,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
-
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
 
@@ -251,7 +250,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T wallSide(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
-    
+
     public T wallSideTall(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side_tall", "wall", wall);
     }
@@ -357,7 +356,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         ret.assertExistence();
         return ret;
     }
-    
+
     protected void clear() {
         generatedModels.clear();
     }
