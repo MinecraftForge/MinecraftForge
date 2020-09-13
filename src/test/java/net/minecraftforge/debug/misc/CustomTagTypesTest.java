@@ -19,16 +19,19 @@
 
 package net.minecraftforge.debug.misc;
 
+import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeRegistryTagsProvider;
+import net.minecraftforge.common.util.ReverseTagWrapper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -70,7 +73,19 @@ public class CustomTagTypesTest
         }
     }
 
-    public static class Custom extends ForgeRegistryEntry<Custom> {
+    public static class Custom extends ForgeRegistryEntry<Custom>
+    {
+        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.func_242178_a().getCustomTypeCollection(CUSTOM_REG.get()));
+
+        public Set<ResourceLocation> getTags()
+        {
+            return reverseTags.getTagNames();
+        }
+
+        public boolean isIn(ITag<Custom> tag)
+        {
+            return tag.func_230235_a_(this);
+        }
     }
 
     public static class BiomeTags extends ForgeRegistryTagsProvider<Biome>
