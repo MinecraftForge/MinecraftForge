@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:water/ocean",
+    "#forge:water/river"
+  ]
+}

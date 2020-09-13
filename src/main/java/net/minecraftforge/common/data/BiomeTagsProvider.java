@@ -43,6 +43,7 @@ public class BiomeTagsProvider extends ForgeRegistryTagsProvider<Biome>
     @Override
     protected void registerTags()
     {
+        func_240522_a_(Tags.Biomes.WATER).addTags(Tags.Biomes.OCEAN, Tags.Biomes.RIVER);
         func_240522_a_(Tags.Biomes.HOT).add(Biomes.DESERT, Biomes.field_235254_j_, Biomes.field_235252_ay_, Biomes.field_235253_az_, Biomes.field_235250_aA_, Biomes.field_235251_aB_,
                 Biomes.DESERT_HILLS, Biomes.JUNGLE, Biomes.JUNGLE_HILLS, Biomes.JUNGLE_EDGE,
                 Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.DESERT_LAKES, Biomes.MODIFIED_JUNGLE, Biomes.MODIFIED_JUNGLE_EDGE,
