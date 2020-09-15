@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/BiomeGeneratorTypeScreens.java
++++ b/net/minecraft/client/gui/screen/BiomeGeneratorTypeScreens.java
+@@ -27,7 +27,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public abstract class BiomeGeneratorTypeScreens {
++public abstract class BiomeGeneratorTypeScreens implements net.minecraftforge.client.extensions.IForgeGeneratorType {
+    public static final BiomeGeneratorTypeScreens field_239066_a_ = new BiomeGeneratorTypeScreens("default") {
+       protected ChunkGenerator func_241869_a(Registry<Biome> p_241869_1_, Registry<DimensionSettings> p_241869_2_, long p_241869_3_) {
+          return new NoiseChunkGenerator(new OverworldBiomeProvider(p_241869_3_, false, false, p_241869_1_), p_241869_3_, () -> {
