@@ -278,7 +278,12 @@
        this.func_72854_c();
     }
  
-@@ -1010,10 +1043,20 @@
+    public void func_217468_a(LightningBoltEntity p_217468_1_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217468_1_, this))) return;
+       this.field_217497_w.add(p_217468_1_);
+       this.field_73061_a.func_184103_al().func_148543_a((PlayerEntity)null, p_217468_1_.func_226277_ct_(), p_217468_1_.func_226278_cu_(), p_217468_1_.func_226281_cx_(), 512.0D, this.field_73011_w.func_186058_p(), new SSpawnGlobalEntityPacket(p_217468_1_));
+    }
+@@ -1010,10 +1044,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {

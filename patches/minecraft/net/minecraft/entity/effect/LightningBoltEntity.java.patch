@@ -1,6 +1,29 @@
 --- a/net/minecraft/entity/effect/LightningBoltEntity.java
 +++ b/net/minecraft/entity/effect/LightningBoltEntity.java
-@@ -80,6 +80,7 @@
+@@ -38,11 +38,6 @@
+       this.field_70264_a = this.field_70146_Z.nextLong();
+       this.field_70263_c = this.field_70146_Z.nextInt(3) + 1;
+       this.field_184529_d = p_i46780_8_;
+-      Difficulty difficulty = p_i46780_1_.func_175659_aa();
+-      if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
+-         this.func_195053_a(4);
+-      }
+-
+    }
+ 
+    public SoundCategory func_184176_by() {
+@@ -58,6 +53,10 @@
+       if (this.field_70262_b == 2) {
+          this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187754_de, SoundCategory.WEATHER, 10000.0F, 0.8F + this.field_70146_Z.nextFloat() * 0.2F);
+          this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
++         Difficulty difficulty = this.field_70170_p.func_175659_aa();
++         if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
++            this.func_195053_a(4);
++         }
+       }
+ 
+       --this.field_70262_b;
+@@ -80,6 +79,7 @@
              List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
  
              for(Entity entity : list) {
