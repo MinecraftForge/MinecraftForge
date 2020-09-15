@@ -20,7 +20,30 @@
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {
-@@ -200,7 +202,7 @@
+@@ -112,6 +114,7 @@
+          return long2floatlinkedopenhashmap;
+       });
+    });
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Biome> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.TagCollectionManager.func_242178_a().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.BIOMES));
+ 
+    private Biome(Biome.Climate p_i241927_1_, Biome.Category p_i241927_2_, float p_i241927_3_, float p_i241927_4_, BiomeAmbience p_i241927_5_, BiomeGenerationSettings p_i241927_6_, MobSpawnInfo p_i241927_7_) {
+       this.field_242423_j = p_i241927_1_;
+@@ -123,6 +126,14 @@
+       this.field_235052_p_ = p_i241927_5_;
+    }
+ 
++   public java.util.Set<ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
++   public boolean isIn(net.minecraft.tags.ITag<Biome> tag) {
++      return tag.func_230235_a_(this);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public int func_225529_c_() {
+       return this.field_235052_p_.func_242527_d();
+@@ -200,7 +211,7 @@
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_226658_a_(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
