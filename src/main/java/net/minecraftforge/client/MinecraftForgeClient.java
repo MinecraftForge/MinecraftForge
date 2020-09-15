@@ -116,7 +116,7 @@ public class MinecraftForgeClient
         if (cache == null)
             regionCache.invalidate(Pair.of(world, position));
         else
-            regionCache.put(Pair.of(world, position), Optional.ofNullable(cache));
+            regionCache.put(Pair.of(world, position), Optional.of(cache));
     }
 
     public static ChunkRenderCache getRegionRenderCache(World world, BlockPos pos)
