@@ -93,7 +93,7 @@
 +      @Override
 +      void func_232943_a_(Function<ResourceLocation, ITag<T>> p_232943_1_) {
 +         super.func_232943_a_(p_232943_1_);
-+         if (this.field_232942_b_ == null) {
++         if (this.field_232942_b_ == null || this.field_232942_b_ == this) {
 +            this.defaulted = true;
 +            Set<T> defs = defaults == null ? null : defaults.get();
 +            this.field_232942_b_ = defs == null ? Tag.func_241284_a_() : Tag.func_241286_a_(defs);
