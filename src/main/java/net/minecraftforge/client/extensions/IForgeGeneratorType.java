@@ -25,11 +25,19 @@ import javax.annotation.Nullable;
 
 public interface IForgeGeneratorType
 {
+    /**
+     * Override to specify that this GeneratorType provides a Screen for editing its settings.
+     * @return True if this GeneratorType provides a Screen for editing its settings.
+     */
     default boolean hasEditScreen()
     {
         return false;
     }
 
+    /**
+     * Override to provide a Screen for editing this GeneratorType's settings.
+     * @return A factory for creating new instances of this GeneratorType's settings editor Screen
+     */
     @Nullable
     default BiomeGeneratorTypeScreens.IFactory getEditScreenFactory()
     {
