@@ -5,6 +5,8 @@
     "minecraft:jungle_hills",
     "minecraft:jungle_edge",
     "minecraft:modified_jungle",
-    "minecraft:modified_jungle_edge"
+    "minecraft:modified_jungle_edge",
+    "minecraft:bamboo_jungle",
+    "minecraft:bamboo_jungle_hills"
   ]
 }

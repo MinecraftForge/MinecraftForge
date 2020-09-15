@@ -66,6 +66,8 @@
     "minecraft:shattered_savanna_plateau",
     "minecraft:eroded_badlands",
     "minecraft:modified_wooded_badlands_plateau",
-    "minecraft:modified_badlands_plateau"
+    "minecraft:modified_badlands_plateau",
+    "minecraft:bamboo_jungle",
+    "minecraft:bamboo_jungle_hills"
   ]
 }
