@@ -51,21 +51,15 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -75,6 +69,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
+    private final BiMap<RegistryKey<V>, V> keys = HashBiMap.create();
     private final Class<V> superType;
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
     final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
@@ -101,11 +96,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     boolean isFrozen = false;
 
     private final ResourceLocation name;
+    private final RegistryKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
 
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
+        this.key = RegistryKey.func_240904_a_(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -165,6 +162,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public ResourceLocation getRegistryName()
     {
         return this.name;
+    }
+
+    public RegistryKey<Registry<V>> getRegistryKey()
+    {
+        return this.key;
     }
 
     @Override
@@ -238,9 +240,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public Set<Entry<ResourceLocation, V>> getEntries()
+    public Set<Entry<RegistryKey<V>, V>> getEntries()
     {
-        return Collections.unmodifiableSet(this.names.entrySet());
+        return Collections.unmodifiableSet(this.keys.entrySet());
     }
 
     @SuppressWarnings("unchecked")
@@ -283,6 +285,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         V ret = this.ids.get(id);
         return ret == null ? this.defaultValue : ret;
+    }
+
+    @Nullable
+    public RegistryKey<V> getKey(int id)
+    {
+        V value = getValue(id);
+        return this.keys.inverse().get(value);
     }
 
     void validateKey()
@@ -355,6 +364,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
+        this.keys.put(RegistryKey.func_240903_a_(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
@@ -418,6 +428,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.superType.getSimpleName(), key);
     }
 
+    @SuppressWarnings("unchecked")
     private RegistryDelegate<V> getDelegate(V thing)
     {
         if (isDelegated)
@@ -526,6 +537,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         this.ids.clear();
         this.names.clear();
+        this.keys.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
         this.defaultValue = null;
         this.overrides.clear();
@@ -596,6 +608,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         this.ids.clear();
         this.names.clear();
+        this.keys.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
     }
 
@@ -611,6 +624,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         V value = this.names.remove(key);
         if (value != null)
         {
+            RegistryKey<V> rkey = this.keys.inverse().remove(value);
+            if (rkey == null)
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
+
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
@@ -764,6 +781,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             if (value == null)
                 throw new IllegalStateException("ContainsKey for " + key + " was true, but removing by name returned no value.. This should never happen unless hackery!");
 
+            RegistryKey<V> rkey = this.keys.inverse().remove(value); // Remove from the RegistryKey -> Value map
+            if (rkey == null)
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
             Integer oldid = this.ids.inverse().remove(value);
             if (oldid == null)

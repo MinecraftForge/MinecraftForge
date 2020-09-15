@@ -81,4 +81,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="finite_water_test"
 [[mods]]
+    modId="scaffolding_test"
+[[mods]]
     modId="custom_armor_test"

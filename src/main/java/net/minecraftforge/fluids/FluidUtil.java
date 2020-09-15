@@ -48,6 +48,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.Optional;
+
 public class FluidUtil
 {
     private FluidUtil()
@@ -428,7 +430,7 @@ public class FluidUtil
     /**
      * Helper method to get the fluid contained in an itemStack
      */
-    public static LazyOptional<FluidStack> getFluidContained(@Nonnull ItemStack container)
+    public static Optional<FluidStack> getFluidContained(@Nonnull ItemStack container)
     {
         if (!container.isEmpty())
         {
@@ -436,7 +438,7 @@ public class FluidUtil
             return getFluidHandler(container)
                     .map(handler -> handler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE));
         }
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 
     /**

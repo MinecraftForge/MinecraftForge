@@ -798,4 +798,15 @@ public interface IForgeBlockState
         BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(getBlockState(), world, pos, player, stack, toolType);
         return eventState != getBlockState() ? eventState : getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
     }
+
+    /**
+     * Checks if a player or entity handles movement on this block like scaffolding.
+     *
+     * @param entity The entity on the scaffolding
+     * @return True if the block should act like scaffolding
+     */
+    default boolean isScaffolding(LivingEntity entity)
+    {
+        return getBlockState().getBlock().isScaffolding(getBlockState(), entity.world, entity.func_233580_cy_(), entity);
+    }
 }
