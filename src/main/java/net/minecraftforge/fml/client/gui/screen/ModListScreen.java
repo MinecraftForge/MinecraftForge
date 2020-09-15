@@ -409,6 +409,7 @@ public class ModListScreen extends Screen
         List<String> lines = new ArrayList<>();
         VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 
+        @SuppressWarnings("resource")
         Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = this.field_230706_i_.getTextureManager();

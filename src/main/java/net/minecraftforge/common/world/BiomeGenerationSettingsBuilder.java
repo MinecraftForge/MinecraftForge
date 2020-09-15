@@ -17,34 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.common.world;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.world.biome.BiomeGenerationSettings;
 
-/**
- * This event is called before any Gui will open.
- * If you don't want this to happen, cancel the event.
- * If you want to override this Gui, simply set the gui variable to your own Gui.
- *
- */
-@Cancelable
-public class GuiOpenEvent extends Event
+import java.util.ArrayList;
+import java.util.Optional;
+
+public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Builder
 {
-    private Screen gui;
-    public GuiOpenEvent(Screen gui)
+    public BiomeGenerationSettingsBuilder(BiomeGenerationSettings orig)
     {
-        this.setGui(gui);
-    }
-
-    public Screen getGui()
-    {
-        return gui;
-    }
-
-    public void setGui(Screen gui)
-    {
-        this.gui = gui;
+        field_242504_a = Optional.of(orig.func_242500_d());
+        orig.getCarvingStages().forEach(k -> field_242505_b.put(k, orig.func_242489_a(k)));
+        orig.func_242498_c().forEach(l -> field_242506_c.add(new ArrayList<>(l)));
+        field_242507_d.addAll(orig.func_242487_a());
     }
 }

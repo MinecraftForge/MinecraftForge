@@ -1,12 +1,10 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
-@@ -47,6 +47,9 @@
-    public static <T> WorldSettingsImport<T> func_244335_a(DynamicOps<T> p_244335_0_, IResourceManager p_244335_1_, DynamicRegistries.Impl p_244335_2_) {
-       return func_244336_a(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_);
-    }
-+   public static <T> WorldSettingsImport<T> createWithBiomeModifiers(DynamicOps<T> ops, IResourceManager manager, DynamicRegistries.Impl impl) {
-+      return func_244336_a(ops, new net.minecraftforge.common.world.biomes.BiomeModifierManager.ModificationAccess(manager), impl);
-+   }
+@@ -231,6 +231,7 @@
  
-    public static <T> WorldSettingsImport<T> func_244336_a(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_) {
-       WorldSettingsImport<T> worldsettingsimport = new WorldSettingsImport<>(p_244336_0_, p_244336_1_, p_244336_2_, Maps.newIdentityHashMap());
+          public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {
+             JsonElement jsonelement = this.field_244349_a.get(p_241879_3_);
++            if (jsonelement!= null) jsonelement.getAsJsonObject().addProperty("forge:registry_name", p_241879_3_.func_240901_a_().toString());
+             return jsonelement == null ? DataResult.error("Unknown element: " + p_241879_3_) : p_241879_4_.parse(p_241879_1_, jsonelement).setLifecycle(this.field_244351_c.get(p_241879_3_)).map((p_244353_2_) -> {
+                return Pair.of(p_244353_2_, OptionalInt.of(this.field_244350_b.getInt(p_241879_3_)));
+             });

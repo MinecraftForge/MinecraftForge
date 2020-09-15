@@ -55,13 +55,12 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class LibraryManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
+
     public static final boolean DISABLE_EXTERNAL_MANIFEST = Boolean.parseBoolean(System.getProperty("forge.disable_external_manifest", "false"));
     public static final boolean ENABLE_AUTO_MOD_MOVEMENT = Boolean.parseBoolean(System.getProperty("forge.enable_auto_mod_movement", "false"));
     private static final String LIBRARY_DIRECTORY_OVERRIDE = System.getProperty("forge.lib_folder", null);
@@ -447,7 +446,6 @@ public class LibraryManager
     {
         List<File> list = new ArrayList<>();
 
-        @SuppressWarnings("unchecked")
         Map<String,String> args = Collections.emptyMap(); // TODO Launch args - do we need this? (Map<String, String>)Launcher.INSTANCE.blackboard().get("launchArgs");
         String extraMods = args.get("--mods");
         if (extraMods != null)

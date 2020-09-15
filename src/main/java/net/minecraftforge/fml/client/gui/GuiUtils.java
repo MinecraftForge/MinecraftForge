@@ -20,27 +20,17 @@
 package net.minecraftforge.fml.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -157,6 +147,7 @@ public class GuiUtils
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
      */
+    @SuppressWarnings("deprecation")
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
             int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
@@ -426,6 +417,7 @@ public class GuiUtils
     }
     */
 
+    @SuppressWarnings("deprecation")
     public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float startAlpha = (float)(startColor >> 24 & 255) / 255.0F;

@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  * ItemStack to your inventory and reducing the stack size to process.
  * setResult(ALLOW) is the same as the old setHandled();
  */
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 @Event.HasResult
 public class FillBucketEvent extends PlayerEvent
 {

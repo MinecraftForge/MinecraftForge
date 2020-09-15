@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -98,6 +97,7 @@ public interface IForgeFluid
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
+    @SuppressWarnings("deprecation")
     default float getExplosionResistance(FluidState state, IBlockReader world, BlockPos pos, Explosion explosion)
     {
         return state.getExplosionResistance();
