@@ -14,7 +14,7 @@
           this.field_239034_h_.field_230694_p_ = p_239059_1_;
           this.field_239027_a_.field_230694_p_ = p_239059_1_;
 -         this.field_239036_j_.field_230694_p_ = p_239059_1_ && BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_);
-+         this.field_239036_j_.field_230694_p_ = p_239059_1_ && this.field_239040_n_.map(BiomeGeneratorTypeScreens::hasEditScreen).orElse(BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_));
++         this.field_239036_j_.field_230694_p_ = p_239059_1_ && (this.field_239040_n_.filter(BiomeGeneratorTypeScreens::hasEditScreen).isPresent() || BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_));
           this.field_239037_k_.field_230694_p_ = p_239059_1_;
        }
  
