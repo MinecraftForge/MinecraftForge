@@ -36,7 +36,7 @@ public interface IForgeGeneratorType
 
     /**
      * Override to provide a Screen for editing this GeneratorType's settings.
-     * @return A factory for creating new instances of this GeneratorType's settings editor Screen
+     * @return A factory for creating new instances of this GeneratorType's settings editor Screen or null.
      */
     @Nullable
     default BiomeGeneratorTypeScreens.IFactory getEditScreenFactory()
