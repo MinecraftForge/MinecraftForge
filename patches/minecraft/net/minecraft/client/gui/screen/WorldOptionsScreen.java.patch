@@ -5,7 +5,7 @@
        this.field_239035_i_.field_230693_o_ = this.field_239040_n_.isPresent();
        this.field_239036_j_ = p_239048_1_.func_230480_a_(new Button(j, 120, 150, 20, new TranslationTextComponent("selectWorld.customizeType"), (p_239044_3_) -> {
 -         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = BiomeGeneratorTypeScreens.field_239069_d_.get(this.field_239040_n_);
-+         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = this.field_239040_n_.map(BiomeGeneratorTypeScreens::getEditScreenFactory).orElse(BiomeGeneratorTypeScreens.field_239069_d_.get(this.field_239040_n_));
++         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = this.field_239040_n_.filter(BiomeGeneratorTypeScreens::hasEditScreen).map(BiomeGeneratorTypeScreens::getEditScreenFactory).orElse(BiomeGeneratorTypeScreens.field_239069_d_.get(this.field_239040_n_));
           if (biomegeneratortypescreens$ifactory != null) {
              p_239048_2_.func_147108_a(biomegeneratortypescreens$ifactory.createEditScreen(p_239048_1_, this.field_239039_m_));
           }
