@@ -50,6 +50,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -68,7 +69,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -79,7 +79,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.PlayerData;
@@ -107,17 +106,17 @@ import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingFindAmmoEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ProjectileLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.FindAmmoEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -616,20 +615,41 @@ public class ForgeEventFactory
             return canContinueSleep == Result.ALLOW;
     }
 
-    public static ActionResult<ItemStack> onArrowNock(ItemStack item, World world, PlayerEntity player, Hand hand, boolean hasAmmo)
+    public static ActionResult<ItemStack> onArrowNock(PlayerEntity player, ItemStack shootable, ItemStack ammo, Hand hand)
     {
-        ArrowNockEvent event = new ArrowNockEvent(player, item, hand, world, hasAmmo);
-        if (MinecraftForge.EVENT_BUS.post(event))
-            return new ActionResult<ItemStack>(ActionResultType.FAIL, item);
+        ArrowNockEvent event = new ArrowNockEvent(player, shootable, ammo, hand);
+        MinecraftForge.EVENT_BUS.post(event);
         return event.getAction();
     }
 
-    public static int onArrowLoose(ItemStack stack, World world, PlayerEntity player, int charge, boolean hasAmmo)
+    public static boolean onProjectileLoose(PlayerEntity player, ItemStack stack, ItemStack ammo)
     {
-        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, world, charge, hasAmmo);
+        ProjectileLooseEvent event = new ProjectileLooseEvent(player, stack, ammo);
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static int onProjectileLoose(PlayerEntity player, ItemStack stack, ItemStack ammo, int charge)
+    {
+        ProjectileLooseEvent event = new ProjectileLooseEvent(player, stack, ammo, charge);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getCharge();
+    }
+
+    public static ProjectileEntity onProjectileLoosePost(PlayerEntity player, ItemStack stack, ItemStack ammo, ProjectileEntity arrowEntity)
+    {
+        ProjectileLooseEvent.Post event = new ProjectileLooseEvent.Post(player, stack, ammo, arrowEntity);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return arrowEntity;
+        return event.getProjectileEntity();
+    }
+
+    public static ProjectileEntity onProjectileLoosePost(PlayerEntity player, ItemStack stack, ItemStack ammo, int charge, ProjectileEntity arrowEntity)
+    {
+        ProjectileLooseEvent.Post event = new ProjectileLooseEvent.Post(player, stack, ammo, charge, arrowEntity);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return arrowEntity;
+        return event.getProjectileEntity();
     }
 
     public static boolean onProjectileImpact(Entity entity, RayTraceResult ray)
@@ -751,9 +771,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static Pair<ItemStack, Consumer<ItemStack>> onFindAmmo(LivingEntity livingEntity, ItemStack shootable, Predicate<ItemStack> ammoPredicate)
+    public static Pair<ItemStack, Consumer<ItemStack>> onFindAmmo(PlayerEntity shooter, ItemStack shootable, Predicate<ItemStack> ammoPredicate)
     {
-        LivingFindAmmoEvent event = new LivingFindAmmoEvent(livingEntity, shootable, ammoPredicate);
+        FindAmmoEvent event = new FindAmmoEvent(shooter, shootable, ammoPredicate);
         MinecraftForge.EVENT_BUS.post(event);
         return Pair.of(event.getAmmo(), event.getConsumer());
     }

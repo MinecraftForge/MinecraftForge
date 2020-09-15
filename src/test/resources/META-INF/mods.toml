@@ -81,4 +81,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_elytra_test"
 [[mods]]
-    modId="living_find_ammo_event_test"
+    modId="find_ammo_event_test"
+[[mods]]
+    modId="arrow_nock_event_test"
+[[mods]]
+    modId="arrow_loose_event_test"

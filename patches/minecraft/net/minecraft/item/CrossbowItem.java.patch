@@ -1,39 +1,85 @@
 --- a/net/minecraft/item/CrossbowItem.java
 +++ b/net/minecraft/item/CrossbowItem.java
-@@ -58,7 +58,7 @@
+@@ -54,11 +54,12 @@
+ 
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+       ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
++      net.minecraftforge.common.ForgeHooks.findAmmo(p_77659_2_, itemstack);
+       if (func_220012_d(itemstack)) {
           func_220014_a(p_77659_1_, p_77659_2_, p_77659_3_, itemstack, func_220013_l(itemstack), 1.0F);
           func_220011_a(itemstack, false);
           return ActionResult.func_226249_b_(itemstack);
 -      } else if (!p_77659_2_.func_213356_f(itemstack).func_190926_b()) {
-+      } else if (!net.minecraftforge.common.ForgeHooks.findAmmo(itemstack, p_77659_2_).getKey().func_190926_b()) {
++      } else if (net.minecraftforge.items.AmmoHolderHelper.hasStoredAmmo(itemstack)) {
           if (!func_220012_d(itemstack)) {
              this.field_220034_c = false;
              this.field_220035_d = false;
-@@ -74,7 +74,8 @@
+@@ -74,14 +75,17 @@
     public void func_77615_a(ItemStack p_77615_1_, World p_77615_2_, LivingEntity p_77615_3_, int p_77615_4_) {
        int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
        float f = func_220031_a(i, p_77615_1_);
 -      if (f >= 1.0F && !func_220012_d(p_77615_1_) && func_220021_a(p_77615_3_, p_77615_1_)) {
-+      org.apache.commons.lang3.tuple.Pair<ItemStack, java.util.function.Consumer<ItemStack>> pair = net.minecraftforge.common.ForgeHooks.findAmmo(p_77615_1_, p_77615_3_);
-+      if (f >= 1.0F && !func_220012_d(p_77615_1_) && net.minecraftforge.common.ForgeHooks.handleCrossbowCharging(pair, p_77615_1_, p_77615_3_)) {
++
++      if (f >= 1.0F && !func_220012_d(p_77615_1_) && net.minecraftforge.common.ForgeHooks.handleCrossbowCharging((PlayerEntity) p_77615_3_, p_77615_1_)) {
           func_220011_a(p_77615_1_, true);
-          SoundCategory soundcategory = p_77615_3_ instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
+-         SoundCategory soundcategory = p_77615_3_ instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
++         SoundCategory soundcategory = SoundCategory.PLAYERS;
           p_77615_2_.func_184148_a((PlayerEntity)null, p_77615_3_.func_226277_ct_(), p_77615_3_.func_226278_cu_(), p_77615_3_.func_226281_cx_(), SoundEvents.field_219610_bB, soundcategory, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.5F + 1.0F) + 0.2F);
-@@ -82,6 +83,8 @@
+       }
  
     }
  
-+   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(PlayerEntity, ItemStack)}*/
 +   @Deprecated
     private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) {
        int i = EnchantmentHelper.func_77506_a(Enchantments.field_222192_G, p_220021_1_);
        int j = i == 0 ? 1 : 3;
-@@ -107,6 +110,8 @@
+@@ -107,6 +111,8 @@
        return true;
     }
  
-+   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(org.apache.commons.lang3.tuple.Pair, ItemStack, LivingEntity)}*/
++   /**@deprecated Forge: This method has been inlined to get control over the ammo consumption chain, Use {@link net.minecraftforge.common.ForgeHooks#handleCrossbowCharging(PlayerEntity, ItemStack)}*/
 +   @Deprecated
     private static boolean func_220023_a(LivingEntity p_220023_0_, ItemStack p_220023_1_, ItemStack p_220023_2_, boolean p_220023_3_, boolean p_220023_4_) {
        if (p_220023_2_.func_190926_b()) {
           return false;
+@@ -188,6 +194,9 @@
+       if (!p_220016_0_.field_72995_K) {
+          boolean flag = p_220016_4_.func_77973_b() == Items.field_196152_dE;
+          ProjectileEntity projectileentity;
++         if (p_220016_1_ instanceof PlayerEntity && net.minecraftforge.event.ForgeEventFactory.onProjectileLoose((PlayerEntity) p_220016_1_, p_220016_3_, p_220016_4_))
++            return;
++
+          if (flag) {
+             projectileentity = new FireworkRocketEntity(p_220016_0_, p_220016_4_, p_220016_1_, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226280_cw_() - (double)0.15F, p_220016_1_.func_226281_cx_(), true);
+          } else {
+@@ -212,7 +221,15 @@
+          p_220016_3_.func_222118_a(flag ? 3 : 1, p_220016_1_, (p_220017_1_) -> {
+             p_220017_1_.func_213334_d(p_220016_2_);
+          });
+-         p_220016_0_.func_217376_c(projectileentity);
++         if (p_220016_1_ instanceof PlayerEntity)
++         {
++            net.minecraft.entity.projectile.ProjectileEntity projectileEntityPost = net.minecraftforge.event.ForgeEventFactory.onProjectileLoosePost((PlayerEntity) p_220016_1_, p_220016_3_, p_220016_4_, projectileentity);
++            p_220016_0_.func_217376_c(projectileEntityPost);
++         } else
++         {
++            p_220016_0_.func_217376_c(projectileentity);
++         }
++
+          p_220016_0_.func_184148_a((PlayerEntity)null, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226278_cu_(), p_220016_1_.func_226281_cx_(), SoundEvents.field_219616_bH, SoundCategory.PLAYERS, 1.0F, p_220016_5_);
+       }
+    }
+@@ -365,4 +382,12 @@
+    public int func_230305_d_() {
+       return 8;
+    }
++
++   @Nullable
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundNBT nbt) {
++      if (!stack.func_190926_b())
++         return new net.minecraftforge.items.AmmoHolderProvider();
++      return null;
++   }
+ }

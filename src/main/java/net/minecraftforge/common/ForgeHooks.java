@@ -147,6 +147,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.items.AmmoHolderHandler;
+import net.minecraftforge.items.AmmoHolderHelper;
 import net.minecraftforge.items.CapabilityAmmoHolder;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -1178,7 +1179,7 @@ public class ForgeHooks
      * @param stack The "ShootableItem" stack.
      * @param shooter The LivingEntity shooter
      */
-    public static void findAmmo(ItemStack stack, PlayerEntity shooter)
+    public static void findAmmo(PlayerEntity shooter, ItemStack stack)
     {
         if (stack.getItem() instanceof ShootableItem)
         {
@@ -1218,17 +1219,17 @@ public class ForgeHooks
     /**
      * This method comprises the logic of CrossbowItem#hasAmmo(LivingEntity, ItemStack) & CrossbowItem#func_220023_a(LivingEntity, ItemStack, ItemStack, boolean, boolean)
      * Those two methods are being deprecated in favor of this hook method that in-lines the code.
-     * @param pair The provided Pair of Ammo and Ammo Consumer.
-     * @param shootable The shootable itemstack.
      * @param shooter The shooter.
+     * @param shootable The shootable itemstack.
+
      * @return returns a boolean if it succeeds in charging the crossbow.
      */
-    public static boolean handleCrossbowCharging(Pair<ItemStack, Consumer<ItemStack>> pair, ItemStack shootable, PlayerEntity shooter)
+    public static boolean handleCrossbowCharging(PlayerEntity shooter, ItemStack shootable)
     {
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.MULTISHOT, shootable);
         int j = i == 0 ? 1 : 3;
         boolean isCreative = shooter != null && shooter.abilities.isCreativeMode;
-        ItemStack itemstack = pair.getKey();
+        ItemStack itemstack = AmmoHolderHelper.getStoredAmmo(shootable);
         ItemStack stackCopy = itemstack.copy();
         for (int k = 0; k < j; ++k)
         {
@@ -1250,11 +1251,11 @@ public class ForgeHooks
                 if (!notCreativeAndIsArrow && !isCreative && (k > 0))
                 {
                     itemstack2 = itemstack.split(1);
-                    if (itemstack.isEmpty()) pair.getValue().accept(itemstack);
+                    if (itemstack.isEmpty()) AmmoHolderHelper.consumeAmmo(shootable);
                 } else
                 {
                     itemstack2 = itemstack.copy();
-                    if (!isCreative) pair.getValue().accept(itemstack);
+                    if (!isCreative) AmmoHolderHelper.consumeAmmo(shootable);
                 }
                 CrossbowItem.addChargedProjectile(shootable, itemstack2);
                 addedAmmo = true;

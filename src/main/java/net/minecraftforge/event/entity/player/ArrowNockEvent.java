@@ -20,50 +20,64 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BowItem;
+import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShootableItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.items.IAmmoHolder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 /**
- * ArrowNockEvent is fired when a player begins using a bow.<br>
- * This event is fired whenever a player begins using a bow in
- * {@link ItemBow#onItemRightClick(World, EntityPlayer, EnumHand)}.<br>
+ * ArrowNockEvent is fired when a player begins using either a {@link BowItem} or {@link CrossbowItem}.
+ * This event is fired whenever a player begins using a BowItem or a CrossbowItem using {@link BowItem#onItemRightClick(World, PlayerEntity, Hand)} or {@link CrossbowItem#onItemRightClick(World, PlayerEntity, Hand)}.<br>
  * <br>
+ * This event fires after the findAmmo
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class ArrowNockEvent extends PlayerEvent
 {
-    private final ItemStack bow;
-    private final Hand hand;
-    private final World world;
+    @Nonnull
+    private final ItemStack shootable;
+    @Nonnull
+    private final ItemStack ammo;
     private final boolean hasAmmo;
+    private final Hand hand;
     private ActionResult<ItemStack> action;
 
-    public ArrowNockEvent(PlayerEntity player, @Nonnull ItemStack item, Hand hand, World world, boolean hasAmmo)
+    public ArrowNockEvent(PlayerEntity player, @Nonnull ItemStack shootable, @Nonnull ItemStack ammo, Hand hand)
     {
         super(player);
-        this.bow = item;
+        this.shootable = shootable;
+        this.ammo = ammo;
+        this.hasAmmo = !ammo.isEmpty();
         this.hand = hand;
-        this.world = world;
-        this.hasAmmo = hasAmmo;
+        if (hasAmmo) this.action = ActionResult.resultSuccess(ammo);
+        else this.action = ActionResult.resultFail(ammo);
     }
 
     @Nonnull
-    public ItemStack getBow() { return this.bow; }
-    public World getWorld() { return this.world; }
-    public Hand getHand() { return this.hand; }
+    public ItemStack getShootable() { return this.shootable; }
+    @Nonnull
+    public ItemStack getAmmo() { return this.ammo; }
     public boolean hasAmmo() { return this.hasAmmo; }
+    public Hand getHand() { return this.hand; }
     public ActionResult<ItemStack> getAction()
     {
         return this.action;
     }
-
     public void setAction(ActionResult<ItemStack> action)
     {
         this.action = action;
     }
+    public World getWorld() { return getPlayer().world; }
 }

@@ -1,15 +1,14 @@
 --- a/net/minecraft/item/BowItem.java
 +++ b/net/minecraft/item/BowItem.java
-@@ -23,19 +23,25 @@
+@@ -23,19 +23,24 @@
        if (p_77615_3_ instanceof PlayerEntity) {
           PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
           boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
 -         ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
-+         org.apache.commons.lang3.tuple.Pair<ItemStack, java.util.function.Consumer<ItemStack>> pair = net.minecraftforge.common.ForgeHooks.findAmmo(p_77615_1_, playerentity);
-+         ItemStack itemstack = pair.getKey();
++         ItemStack itemstack = net.minecraftforge.items.AmmoHolderHelper.getStoredAmmo(p_77615_1_);
 +
 +         int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
-+         i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, playerentity, i, !itemstack.func_190926_b() || flag);
++         i = net.minecraftforge.event.ForgeEventFactory.onProjectileLoose(playerentity, p_77615_1_, itemstack, i);
 +         if (i < 0) return;
 +
           if (!itemstack.func_190926_b() || flag) {
@@ -29,7 +28,14 @@
                    abstractarrowentity.func_234612_a_(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -67,10 +73,7 @@
+@@ -62,15 +67,13 @@
+                      abstractarrowentity.field_70251_a = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                   }
+ 
+-                  p_77615_2_.func_217376_c(abstractarrowentity);
++                  net.minecraft.entity.projectile.ProjectileEntity arrowEntity = net.minecraftforge.event.ForgeEventFactory.onProjectileLoosePost(playerentity, p_77615_1_, itemstack, i, abstractarrowentity);
++                  p_77615_2_.func_217376_c(arrowEntity);
+                }
  
                 p_77615_2_.func_184148_a((PlayerEntity)null, playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_(), SoundEvents.field_187737_v, SoundCategory.PLAYERS, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                 if (!flag1 && !playerentity.field_71075_bZ.field_75098_d) {
@@ -37,24 +43,26 @@
 -                  if (itemstack.func_190926_b()) {
 -                     playerentity.field_71071_by.func_184437_d(itemstack);
 -                  }
-+                   pair.getValue().accept(itemstack);
++                   net.minecraftforge.items.AmmoHolderHelper.consumeAmmo(p_77615_1_);
                 }
  
                 playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(this));
-@@ -99,7 +102,11 @@
+@@ -99,8 +102,12 @@
  
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
 -      boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
-+      boolean flag = !net.minecraftforge.common.ForgeHooks.findAmmo(itemstack, p_77659_2_).getKey().func_190926_b();
+-      if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
 +
-+      ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_77659_1_, p_77659_2_, p_77659_3_, flag);
++      net.minecraftforge.common.ForgeHooks.findAmmo(p_77659_2_, itemstack);
++      ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(p_77659_2_, itemstack, net.minecraftforge.items.AmmoHolderHelper.getStoredAmmo(itemstack), p_77659_3_);
 +      if (ret != null) return ret;
 +
-       if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
++      if (!p_77659_2_.field_71075_bZ.field_75098_d && net.minecraftforge.items.AmmoHolderHelper.hasStoredAmmo(itemstack)) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -112,6 +119,10 @@
+          p_77659_2_.func_184598_c(p_77659_3_);
+@@ -112,7 +119,19 @@
        return field_220007_a;
     }
  
@@ -65,3 +73,12 @@
     public int func_230305_d_() {
        return 15;
     }
++
++   @javax.annotation.Nullable
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @javax.annotation.Nullable net.minecraft.nbt.CompoundNBT nbt) {
++      if (!stack.func_190926_b())
++         return new net.minecraftforge.items.AmmoHolderProvider();
++      return null;
++   }
+ }

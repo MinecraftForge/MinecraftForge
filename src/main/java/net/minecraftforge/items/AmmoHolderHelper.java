@@ -30,4 +30,9 @@ public class AmmoHolderHelper {
             return holder.map(IAmmoHolder::getAmmoConsumer).orElse(ammo -> {});
         return ammo -> {};
     }
+
+    public static void consumeAmmo(ItemStack stack) {
+        LazyOptional<IAmmoHolder> holder = stack.getCapability(CapabilityAmmoHolder.AMMO_HOLDER_CAPABILITY);
+        holder.ifPresent(IAmmoHolder::consumeAmmo);
+    }
 }
