@@ -525,7 +525,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public ForgeConfigSpec build()
         {
             context.ensureEmpty();
-            Config valueCfg = Config.of(InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
+            Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
             values.forEach(v -> valueCfg.set(v.getPath(), v));
 
             ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments);
