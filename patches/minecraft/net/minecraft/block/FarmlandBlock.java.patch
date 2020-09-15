@@ -9,7 +9,7 @@
           func_199610_d(p_180658_1_.func_180495_p(p_180658_2_), p_180658_1_, p_180658_2_);
        }
  
-@@ -87,9 +87,9 @@
+@@ -87,9 +87,10 @@
        p_199610_1_.func_175656_a(p_199610_2_, func_199601_a(p_199610_0_, Blocks.field_150346_d.func_176223_P(), p_199610_1_, p_199610_2_));
     }
  
@@ -17,12 +17,13 @@
 -      Block block = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a()).func_177230_c();
 -      return block instanceof CropsBlock || block instanceof StemBlock || block instanceof AttachedStemBlock;
 +   private boolean func_176529_d(IBlockReader p_176529_0_, BlockPos p_176529_1_) {
-+      BlockState state = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a());
-+      return state.func_177230_c() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, p_176529_0_, p_176529_1_, Direction.UP, (net.minecraftforge.common.IPlantable)state.func_177230_c());
++      BlockState plant = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a());
++      BlockState state = p_176529_0_.func_180495_p(p_176529_1_);
++      return plant.func_177230_c() instanceof net.minecraftforge.common.IPlantable && state.canSustainPlant(p_176529_0_, p_176529_1_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.func_177230_c());
     }
  
     private static boolean func_176530_e(IWorldReader p_176530_0_, BlockPos p_176530_1_) {
-@@ -99,7 +99,7 @@
+@@ -99,7 +100,7 @@
           }
        }
  
