@@ -93,6 +93,7 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -838,13 +839,17 @@ public class ForgeHooks
                     new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
-                    .color(0xFF3F76E4).build(fluid);
+                    .color(0xFF3F76E4)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
+                    .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
                     new ResourceLocation("block/lava_still"),
                     new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
+                    .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
