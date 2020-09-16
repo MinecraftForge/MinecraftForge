@@ -860,9 +860,7 @@ public class ForgeHooks
         MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
         BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
         MinecraftForge.EVENT_BUS.post(event);
-        Biome biome = callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b());
-        biome.setRegistryName(name);
-        return biome;
+        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b());
     }
 
     private static class LootTableContext

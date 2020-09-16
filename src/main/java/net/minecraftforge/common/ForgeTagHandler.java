@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -48,6 +47,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.network.FMLPlayMessages.SyncCustomTagTypes;
 import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
@@ -237,7 +237,7 @@ public class ForgeTagHandler
             ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry != null && registry.getTagFolder() != null)
             {
-                builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registry.getTagFolder(), registryName.getPath()));
+                builder.put(registryName, new TagCollectionReader<>(GameData.getRegistryValueLookup(registry), "tags/" + registry.getTagFolder(), registryName.getPath()));
             }
         }
         return builder.build();
@@ -248,7 +248,7 @@ public class ForgeTagHandler
      *
      * @apiNote Internal
      */
-    public static void resetCachedTagCollections()
+    public static void resetCachedTagCollections(boolean makeEmpty)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
@@ -256,7 +256,10 @@ public class ForgeTagHandler
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
             {
-                builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().distinct().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
+                if (makeEmpty)
+                    builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+                else
+                    builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().distinct().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
             }
         }
         customTagTypes = builder.build();
@@ -270,7 +273,7 @@ public class ForgeTagHandler
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         //Default the tag collections
-        resetCachedTagCollections();
+        resetCachedTagCollections(false);
         if (!customTagTypes.isEmpty())
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
@@ -319,6 +322,56 @@ public class ForgeTagHandler
             });
         }
         return customResults;
+    }
+
+    public static ITagCollectionSupplier withNoModded(ITagCollectionSupplier tagCollectionSupplier)
+    {
+        ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
+        for (ResourceLocation registryName : customTagTypeNames)
+        {
+            TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
+            if (tagRegistry != null)
+            {
+                builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+            }
+        }
+        return withSpecificModded(tagCollectionSupplier, builder.build());
+    }
+
+    public static ITagCollectionSupplier withSpecificModded(ITagCollectionSupplier tagCollectionSupplier, Map<ResourceLocation, ITagCollection<?>> modded)
+    {
+        return new ITagCollectionSupplier()
+        {
+            @Override
+            public ITagCollection<Block> func_241835_a()
+            {
+                return tagCollectionSupplier.func_241835_a();
+            }
+
+            @Override
+            public ITagCollection<Item> func_241836_b()
+            {
+                return tagCollectionSupplier.func_241836_b();
+            }
+
+            @Override
+            public ITagCollection<Fluid> func_241837_c()
+            {
+                return tagCollectionSupplier.func_241837_c();
+            }
+
+            @Override
+            public ITagCollection<EntityType<?>> func_241838_d()
+            {
+                return tagCollectionSupplier.func_241838_d();
+            }
+
+            @Override
+            public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
+            {
+                return modded;
+            }
+        };
     }
 
     /**

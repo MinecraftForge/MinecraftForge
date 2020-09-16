@@ -23,6 +23,7 @@ import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -120,6 +121,7 @@ public class GameData
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
+    public static final ResourceLocation DYNAMIC_REGISTRY_WRAPPER = new ResourceLocation("forge", "dynamic_registry_wrapper");
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
@@ -199,6 +201,37 @@ public class GameData
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
         return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+    }
+
+    public static <T> SimpleRegistry<T> setDynamicRegistry(SimpleRegistry<T> dynamicRegistry)
+    {
+        ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(dynamicRegistry.func_243578_f().func_240901_a_());
+        if (registry != null)
+        {
+            //There is a forge version of this dynamic registry so update it with the new dynamic registry that is going to be filled
+            ((IForgeRegistryInternal<?>) registry).setSlaveMap(DYNAMIC_REGISTRY_WRAPPER, dynamicRegistry);
+        }
+        return dynamicRegistry;
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> Function<ResourceLocation, Optional<T>> getRegistryValueLookup(ForgeRegistry<T> registry)
+    {
+        SimpleRegistry<T> dynamicRegistry = registry.getSlaveMap(DYNAMIC_REGISTRY_WRAPPER, SimpleRegistry.class);
+        if (dynamicRegistry != null)
+        {
+            return rl -> Optional.ofNullable(dynamicRegistry.getOrDefault(rl));
+        }
+        return rl -> Optional.ofNullable(registry.getValue(rl));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> Function<T, ResourceLocation> getRegistryKeyLookup(ForgeRegistry<T> registry)
+    {
+        SimpleRegistry<T> dynamicRegistry = registry.getSlaveMap(DYNAMIC_REGISTRY_WRAPPER, SimpleRegistry.class);
+        if (dynamicRegistry != null)
+        {
+            return dynamicRegistry::getKey;
+        }
+        return IForgeRegistryEntry::getRegistryName;
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)

@@ -1,25 +1,11 @@
 --- a/net/minecraft/util/registry/SimpleRegistry.java
 +++ b/net/minecraft/util/registry/SimpleRegistry.java
-@@ -193,6 +193,9 @@
- 
-          for(SimpleRegistry.Entry<T> entry : p_243540_2_) {
+@@ -195,7 +195,7 @@
              simpleregistry.func_218382_a(entry.field_243547_b, entry.field_243546_a, entry.field_243548_c, p_243539_1_);
-+            if (entry.field_243548_c instanceof net.minecraftforge.registries.IForgeRegistryEntry) {
-+               ((net.minecraftforge.registries.IForgeRegistryEntry<T>) entry.field_243548_c).setRegistryName(entry.field_243546_a.func_240901_a_());
-+            }
           }
  
-          return simpleregistry;
-@@ -200,7 +203,11 @@
+-         return simpleregistry;
++         return net.minecraftforge.registries.GameData.setDynamicRegistry(simpleregistry);
+       }, (p_243544_0_) -> {
           Builder<SimpleRegistry.Entry<T>> builder = ImmutableList.builder();
  
-          for(T t : p_243544_0_) {
--            builder.add(new SimpleRegistry.Entry<>(p_243544_0_.func_230519_c_(t).get(), p_243544_0_.func_148757_b(t), t));
-+            RegistryKey<T> registryKey = p_243544_0_.func_230519_c_(t).get();
-+            if (t instanceof net.minecraftforge.registries.IForgeRegistryEntry) {
-+               ((net.minecraftforge.registries.IForgeRegistryEntry<T>) t).setRegistryName(registryKey.func_240901_a_());
-+            }
-+            builder.add(new SimpleRegistry.Entry<>(registryKey, p_243544_0_.func_148757_b(t), t));
-          }
- 
-          return builder.build();

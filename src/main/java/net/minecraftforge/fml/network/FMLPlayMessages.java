@@ -26,6 +26,7 @@ import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
@@ -59,7 +60,8 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
@@ -353,16 +355,26 @@ public class FMLPlayMessages
         private static <T> void forgeTagCollectionWrite(PacketBuffer buf, ResourceLocation registryName, Map<ResourceLocation, ITag<T>> tags)
         {
             buf.writeResourceLocation(registryName);
-            buf.writeVarInt(tags.size());
-            tags.forEach((name, tag) -> {
-                buf.writeResourceLocation(name);
-                List<T> elements = tag.func_230236_b_();
-                buf.writeVarInt(elements.size());
-                for (T element : elements)
-                {
-                    buf.writeResourceLocation(((IForgeRegistryEntry<?>) element).getRegistryName());
-                }
-            });
+            ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+            if (registry != null)
+            {
+                buf.writeVarInt(tags.size());
+                Function<T, ResourceLocation> registryKeyLookup = (Function<T, ResourceLocation>) GameData.getRegistryKeyLookup(registry);
+                tags.forEach((name, tag) -> {
+                    buf.writeResourceLocation(name);
+                    List<T> elements = tag.func_230236_b_();
+                    buf.writeVarInt(elements.size());
+                    for (T element : elements)
+                    {
+                        //TODO: FIXME single player goes boom
+                        buf.writeResourceLocation(registryKeyLookup.apply(element));
+                    }
+                });
+            }
+            else
+            {
+                buf.writeVarInt(0);
+            }
         }
 
         public static SyncCustomTagTypes decode(PacketBuffer buf)
@@ -372,7 +384,7 @@ public class FMLPlayMessages
             for (int i = 0; i < size; i++)
             {
                 ResourceLocation regName = buf.readResourceLocation();
-                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
+                ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
                 if (registry != null)
                 {
                     builder.put(regName, readTagCollection(buf, registry));
@@ -381,8 +393,9 @@ public class FMLPlayMessages
             return new SyncCustomTagTypes(builder.build());
         }
 
-        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buf, IForgeRegistry<T> registry)
+        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buf, ForgeRegistry<T> registry)
         {
+            Function<ResourceLocation, Optional<T>> lookup = GameData.getRegistryValueLookup(registry);
             Map<ResourceLocation, ITag<T>> tags = Maps.newHashMap();
             int totalTags = buf.readVarInt();
             for (int i = 0; i < totalTags; i++)
@@ -392,11 +405,7 @@ public class FMLPlayMessages
                 int totalElements = buf.readVarInt();
                 for (int j = 0; j < totalElements; j++)
                 {
-                    T element = registry.getValue(buf.readResourceLocation());
-                    if (element != null)
-                    {
-                        elementBuilder.add(element);
-                    }
+                    lookup.apply(buf.readResourceLocation()).ifPresent(elementBuilder::add);
                 }
                 tags.put(name, ITag.func_232946_a_(elementBuilder.build()));
             }
@@ -414,39 +423,8 @@ public class FMLPlayMessages
                     // to the last working set of tags
                     //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
                     // so they won't be validated
-                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(new ITagCollectionSupplier()
-                    {
-                        @Override
-                        public ITagCollection<Block> func_241835_a()
-                        {
-                            return tagCollectionSupplier.func_241835_a();
-                        }
-
-                        @Override
-                        public ITagCollection<Item> func_241836_b()
-                        {
-                            return tagCollectionSupplier.func_241836_b();
-                        }
-
-                        @Override
-                        public ITagCollection<Fluid> func_241837_c()
-                        {
-                            return tagCollectionSupplier.func_241837_c();
-                        }
-
-                        @Override
-                        public ITagCollection<EntityType<?>> func_241838_d()
-                        {
-                            return tagCollectionSupplier.func_241838_d();
-                        }
-
-                        @Override
-                        public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
-                        {
-                            //Override and use the tags from the packet to test for validation before we actually set them
-                            return msg.customTagTypeCollections;
-                        }
-                    });
+                    //Override and use the tags from the packet to test for validation before we actually set them
+                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(ForgeTagHandler.withSpecificModded(tagCollectionSupplier, msg.customTagTypeCollections));
                     if (missingTags.isEmpty())
                     {
                         //If we have no missing tags, update the custom tag types
