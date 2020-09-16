@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/gen/ChunkGenerator.java
++++ b/net/minecraft/world/gen/ChunkGenerator.java
+@@ -58,9 +58,11 @@
+    }
+ 
+    public ChunkGenerator(BiomeProvider p_i231887_1_, BiomeProvider p_i231887_2_, DimensionStructuresSettings p_i231887_3_, long p_i231887_4_) {
++      net.minecraftforge.event.world.ChunkGeneratorLoadEvent loadEvent = new net.minecraftforge.event.world.ChunkGeneratorLoadEvent(p_i231887_1_, p_i231887_3_, p_i231887_4_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(loadEvent);
+       this.field_222542_c = p_i231887_1_;
+       this.field_235949_c_ = p_i231887_2_;
+-      this.field_222543_d = p_i231887_3_;
++      this.field_222543_d = new DimensionStructuresSettings(java.util.Optional.ofNullable(loadEvent.getStructureSpreadSettings()), loadEvent.getStructureSeparationSettings());
+       this.field_235950_e_ = p_i231887_4_;
+    }
+ 
