@@ -66,7 +66,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.modLoadErrors = loadingException == null ? Collections.emptyList() : loadingException.getErrors();
         this.modsDir = FMLPaths.MODSDIR.get();
         this.logFile = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
-        this.dumpedLocation = dumpedLocation.toPath();
+        this.dumpedLocation = dumpedLocation != null ? dumpedLocation.toPath() : null;
     }
 
     @Override

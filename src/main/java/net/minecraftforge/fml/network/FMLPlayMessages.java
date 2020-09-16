@@ -88,7 +88,7 @@ public class FMLPlayMessages
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = Registry.ENTITY_TYPE.getId(e.getType());
+            this.typeId = Registry.ENTITY_TYPE.getId(e.getType()); //TODO: Codecs
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
             this.posX = e.getPosX();
