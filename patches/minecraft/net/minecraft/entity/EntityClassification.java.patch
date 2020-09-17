@@ -20,8 +20,8 @@
 +   @Override
 +   @Deprecated
 +   public void init() {
-+      field_220364_f.clear();
-+      Arrays.stream(values()).forEach(v->field_220364_f.put(v.func_220363_a(),v)); //Collect values again after modded additions similar as Vanilla does statically above
++      field_220364_f.put(this.field_220365_j, this);
++      field_233667_g_ = IStringSerializable.func_233023_a_(EntityClassification::values, EntityClassification::func_233670_a_);
 +   }
 +
     public int func_233671_f_() {
