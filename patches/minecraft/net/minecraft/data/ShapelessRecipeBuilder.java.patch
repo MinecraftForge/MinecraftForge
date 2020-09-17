@@ -1,0 +1,12 @@
+--- a/net/minecraft/data/ShapelessRecipeBuilder.java
++++ b/net/minecraft/data/ShapelessRecipeBuilder.java
+@@ -96,7 +96,7 @@
+    public void func_200485_a(Consumer<IFinishedRecipe> p_200485_1_, ResourceLocation p_200485_2_) {
+       this.func_200481_a(p_200485_2_);
+       this.field_200497_e.func_200272_a(new ResourceLocation("recipes/root")).func_200275_a("has_the_recipe", new RecipeUnlockedTrigger.Instance(p_200485_2_)).func_200271_a(AdvancementRewards.Builder.func_200280_c(p_200485_2_)).func_200270_a(IRequirementsStrategy.field_223215_b_);
+-      p_200485_1_.accept(new ShapelessRecipeBuilder.Result(p_200485_2_, this.field_200494_b, this.field_200495_c, this.field_200498_f == null ? "" : this.field_200498_f, this.field_200496_d, this.field_200497_e, new ResourceLocation(p_200485_2_.func_110624_b(), "recipes/" + this.field_200494_b.func_77640_w().func_200300_c() + "/" + p_200485_2_.func_110623_a())));
++      p_200485_1_.accept(new ShapelessRecipeBuilder.Result(p_200485_2_, this.field_200494_b, this.field_200495_c, this.field_200498_f == null ? "" : this.field_200498_f, this.field_200496_d, this.field_200497_e, net.minecraftforge.common.ForgeHooks.createRecipeAdvancementId(p_200485_2_, this.field_200494_b.func_77640_w())));
+\ No newline at end of file
+    }
+ 
+    private void func_200481_a(ResourceLocation p_200481_1_) {

@@ -1,0 +1,12 @@
+--- a/net/minecraft/data/SingleItemRecipeBuilder.java
++++ b/net/minecraft/data/SingleItemRecipeBuilder.java
+@@ -55,7 +55,7 @@
+    public void func_218647_a(Consumer<IFinishedRecipe> p_218647_1_, ResourceLocation p_218647_2_) {
+       this.func_218646_a(p_218647_2_);
+       this.field_218652_d.func_200272_a(new ResourceLocation("recipes/root")).func_200275_a("has_the_recipe", new RecipeUnlockedTrigger.Instance(p_218647_2_)).func_200271_a(AdvancementRewards.Builder.func_200280_c(p_218647_2_)).func_200270_a(IRequirementsStrategy.field_223215_b_);
+-      p_218647_1_.accept(new SingleItemRecipeBuilder.Result(p_218647_2_, this.field_218654_f, this.field_218653_e == null ? "" : this.field_218653_e, this.field_218650_b, this.field_218649_a, this.field_218651_c, this.field_218652_d, new ResourceLocation(p_218647_2_.func_110624_b(), "recipes/" + this.field_218649_a.func_77640_w().func_200300_c() + "/" + p_218647_2_.func_110623_a())));
++      p_218647_1_.accept(new SingleItemRecipeBuilder.Result(p_218647_2_, this.field_218654_f, this.field_218653_e == null ? "" : this.field_218653_e, this.field_218650_b, this.field_218649_a, this.field_218651_c, this.field_218652_d, net.minecraftforge.common.ForgeHooks.createRecipeAdvancementId(p_218647_2_, this.field_218649_a.func_77640_w())));
+\ No newline at end of file
+    }
+ 
+    private void func_218646_a(ResourceLocation p_218646_1_) {
