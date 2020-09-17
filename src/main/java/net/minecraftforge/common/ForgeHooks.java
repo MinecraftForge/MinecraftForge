@@ -114,7 +114,6 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.world.BiomeClimateBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -860,13 +859,13 @@ public class ForgeHooks
         Biome apply(final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns);
     }
 
-    public static Biome enhanceBiome(final ResourceLocation name, final BiomeClimateBuilder climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
+    public static Biome enhanceBiome(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
     {
         BiomeGenerationSettingsBuilder genBuilder = new BiomeGenerationSettingsBuilder(gen);
         MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
         BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
         MinecraftForge.EVENT_BUS.post(event);
-        return callback.apply(event.getClimate().build(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b());
+        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b());
     }
 
     private static class LootTableContext

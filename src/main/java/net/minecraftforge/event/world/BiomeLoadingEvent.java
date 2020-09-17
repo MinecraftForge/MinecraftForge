@@ -22,7 +22,6 @@ package net.minecraftforge.event.world;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraftforge.common.world.BiomeClimateBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.eventbus.api.Event;
@@ -45,7 +44,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 public class BiomeLoadingEvent extends Event
 {
     private final ResourceLocation name;
-    private BiomeClimateBuilder climate;
+    private Biome.Climate climate;
     private Biome.Category category;
     private float depth;
     private float scale;
@@ -53,7 +52,7 @@ public class BiomeLoadingEvent extends Event
     private final BiomeGenerationSettingsBuilder gen;
     private final MobSpawnInfoBuilder spawns;
 
-    public BiomeLoadingEvent(final ResourceLocation name, final BiomeClimateBuilder climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
+    public BiomeLoadingEvent(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
     {
         this.name = name;
         this.climate = climate;
@@ -70,9 +69,14 @@ public class BiomeLoadingEvent extends Event
         return name;
     }
 
-    public BiomeClimateBuilder getClimate()
+    public Biome.Climate getClimate()
     {
         return climate;
+    }
+
+    public void setClimate(Biome.Climate climate)
+    {
+        this.climate = climate;
     }
 
     public Biome.Category getCategory()
