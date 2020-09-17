@@ -9,12 +9,19 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -57,6 +57,10 @@
+@@ -57,6 +57,17 @@
        return this.field_82707_i;
     }
  
 +   public static EntityClassification create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
 +      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   @Deprecated
++   public void init() {
++      field_220364_f.clear();
++      Arrays.stream(values()).forEach(v->field_220364_f.put(v.func_220363_a(),v)); //Collect values again after modded additions similar as Vanilla does statically above
 +   }
 +
     public int func_233671_f_() {
