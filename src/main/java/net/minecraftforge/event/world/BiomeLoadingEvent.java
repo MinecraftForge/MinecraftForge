@@ -74,9 +74,9 @@ public class BiomeLoadingEvent extends Event
         return climate;
     }
 
-    public void setClimate(Biome.Climate climate)
+    public void setClimate(final Biome.Climate value)
     {
-        this.climate = climate;
+        this.climate = value;
     }
 
     public Biome.Category getCategory()
