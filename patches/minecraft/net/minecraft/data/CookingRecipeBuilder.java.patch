@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/CookingRecipeBuilder.java
++++ b/net/minecraft/data/CookingRecipeBuilder.java
+@@ -68,7 +68,7 @@
+    public void func_218635_a(Consumer<IFinishedRecipe> p_218635_1_, ResourceLocation p_218635_2_) {
+       this.func_218634_a(p_218635_2_);
+       this.field_218640_e.func_200272_a(new ResourceLocation("recipes/root")).func_200275_a("has_the_recipe", RecipeUnlockedTrigger.func_235675_a_(p_218635_2_)).func_200271_a(AdvancementRewards.Builder.func_200280_c(p_218635_2_)).func_200270_a(IRequirementsStrategy.field_223215_b_);
+-      p_218635_1_.accept(new CookingRecipeBuilder.Result(p_218635_2_, this.field_218641_f == null ? "" : this.field_218641_f, this.field_218637_b, this.field_218636_a, this.field_218638_c, this.field_218639_d, this.field_218640_e, new ResourceLocation(p_218635_2_.func_110624_b(), "recipes/" + this.field_218636_a.func_77640_w().func_200300_c() + "/" + p_218635_2_.func_110623_a()), this.field_218642_g));
++      p_218635_1_.accept(new CookingRecipeBuilder.Result(p_218635_2_, this.field_218641_f == null ? "" : this.field_218641_f, this.field_218637_b, this.field_218636_a, this.field_218638_c, this.field_218639_d, this.field_218640_e, net.minecraftforge.common.ForgeHooks.createRecipeAdvancementId(p_218635_2_, this.field_218636_a.func_77640_w()), this.field_218642_g));
+    }
+ 
+    private void func_218634_a(ResourceLocation p_218634_1_) {

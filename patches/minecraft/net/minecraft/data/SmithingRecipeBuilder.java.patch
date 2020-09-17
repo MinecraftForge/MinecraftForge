@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/SmithingRecipeBuilder.java
++++ b/net/minecraft/data/SmithingRecipeBuilder.java
+@@ -44,7 +44,7 @@
+    public void func_240505_a_(Consumer<IFinishedRecipe> p_240505_1_, ResourceLocation p_240505_2_) {
+       this.func_240506_a_(p_240505_2_);
+       this.field_240500_d_.func_200272_a(new ResourceLocation("recipes/root")).func_200275_a("has_the_recipe", RecipeUnlockedTrigger.func_235675_a_(p_240505_2_)).func_200271_a(AdvancementRewards.Builder.func_200280_c(p_240505_2_)).func_200270_a(IRequirementsStrategy.field_223215_b_);
+-      p_240505_1_.accept(new SmithingRecipeBuilder.Result(p_240505_2_, this.field_240501_e_, this.field_240497_a_, this.field_240498_b_, this.field_240499_c_, this.field_240500_d_, new ResourceLocation(p_240505_2_.func_110624_b(), "recipes/" + this.field_240499_c_.func_77640_w().func_200300_c() + "/" + p_240505_2_.func_110623_a())));
++      p_240505_1_.accept(new SmithingRecipeBuilder.Result(p_240505_2_, this.field_240501_e_, this.field_240497_a_, this.field_240498_b_, this.field_240499_c_, this.field_240500_d_, net.minecraftforge.common.ForgeHooks.createRecipeAdvancementId(p_240505_2_, this.field_240499_c_.func_77640_w())));
+    }
+ 
+    private void func_240506_a_(ResourceLocation p_240506_1_) {

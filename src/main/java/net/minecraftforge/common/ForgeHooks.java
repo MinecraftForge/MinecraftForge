@@ -66,6 +66,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EnchantedBookItem;
@@ -1165,6 +1166,20 @@ public class ForgeHooks
             list = mod.apply(list, context);
         }
         return list;
+    }
+
+    /**
+     * Creates a recipe advancement id based on the current item group.
+     * Fixes an issue with regular groups that prevents creating recipes 
+     * with items without an ItemGroup.
+     * 
+     * @param recipeId The current recipe id
+     * @param group The result's group
+     * @return The id of the recipe advancement.
+     * */
+    public static ResourceLocation createRecipeAdvancementId(ResourceLocation recipeId, @Nullable ItemGroup group)
+    {
+        return new ResourceLocation(recipeId.getNamespace(), "recipes/" + (group != null ? group.getPath() + "/" : "") + recipeId.getPath());
     }
 
     public static List<String> getModPacks()
