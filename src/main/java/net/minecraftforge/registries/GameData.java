@@ -407,7 +407,7 @@ public class GameData
             {
                 LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
                 customTagTypes.add(registryName);
-                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
+                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTagTypes().get(registryName));
             }
         }
         ForgeTagHandler.setCustomTagTypes(customTagTypes);

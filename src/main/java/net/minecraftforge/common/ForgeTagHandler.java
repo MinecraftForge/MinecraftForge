@@ -202,7 +202,8 @@ public class ForgeTagHandler
     /**
      * Gets a map of registry name to tag collection for all custom tag types.
      *
-     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods
+     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods.
+     * This will ensure that any {@link net.minecraftforge.common.Tags.IOptionalNamedTag}s are properly defaulted and accessible.
      */
     public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
     {
@@ -220,7 +221,8 @@ public class ForgeTagHandler
         if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
-        TagRegistry.performDelayedAdd();
+        //Add the static references for custom tag types to the proper tag registries
+        TagRegistry.performDelayedAdd();//TODO: Talk with cpw about this, as this potentially should be parallelized?
     }
 
     /**

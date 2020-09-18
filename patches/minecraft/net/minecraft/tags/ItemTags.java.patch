@@ -1,11 +1,15 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -65,6 +65,10 @@
+@@ -65,6 +65,14 @@
        return field_199906_c.func_232937_a_(p_199901_0_);
     }
  
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(ResourceLocation name) {
-+       return field_199906_c.createOptional(name, () -> null);
++       return createOptional(name, null);
++   }
++
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(ResourceLocation name, @javax.annotation.Nullable java.util.function.Supplier<java.util.Set<Item>> defaults) {
++      return field_199906_c.createOptional(name, defaults);
 +   }
 +
     public static ITagCollection<Item> func_199903_a() {

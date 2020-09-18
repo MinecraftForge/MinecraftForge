@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -16,13 +16,51 @@
+@@ -16,13 +16,52 @@
     private ITagCollection<T> field_232930_b_ = ITagCollection.func_242205_c();
     private final List<TagRegistry.NamedTag<T>> field_232931_c_ = Lists.newArrayList();
     private final Function<ITagCollectionSupplier, ITagCollection<T>> field_242184_c;
@@ -49,11 +49,36 @@
 +   }
 +
 +   private <R extends TagRegistry.NamedTag<T>> R add(R namedtag) {
++      if (namedtag instanceof OptionalNamedTag) ((OptionalNamedTag<T>) namedtag).fetchTagNoDefault(field_232930_b_::func_199910_a); else
 +      namedtag.func_232943_a_(field_232930_b_::func_199910_a);
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
-@@ -56,7 +94,7 @@
+@@ -40,12 +79,22 @@
+ 
+    public void func_242188_a(ITagCollectionSupplier p_242188_1_) {
+       ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242188_1_);
+-      this.field_232930_b_ = itagcollection;
++      this.field_232930_b_ = reinjectOptionalTags(itagcollection);//Forge: Ensure our tag collection contains any missing optional tags so that we can properly default them
+       this.field_232931_c_.forEach((p_232936_1_) -> {
+          p_232936_1_.func_232943_a_(itagcollection::func_199910_a);
+       });
+    }
+ 
++   private ITagCollection<T> reinjectOptionalTags(ITagCollection<T> tagCollection) {
++      java.util.Map<ResourceLocation, ITag<T>> currentTags = tagCollection.func_241833_a();
++      java.util.Map<ResourceLocation, ITag<T>> missingOptionals = this.field_232931_c_.stream().filter(e -> e instanceof OptionalNamedTag && !currentTags.containsKey(e.func_230234_a_())).collect(Collectors.toMap(NamedTag::func_230234_a_, namedTag -> namedTag));
++      if (!missingOptionals.isEmpty()) {
++         missingOptionals.putAll(currentTags);
++         return ITagCollection.func_242202_a(missingOptionals);
++      }
++      return tagCollection;
++   }
++
+    public ITagCollection<T> func_232939_b_() {
+       return this.field_232930_b_;
+    }
+@@ -56,7 +105,7 @@
  
     public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
@@ -62,7 +87,7 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +131,45 @@
+@@ -93,5 +142,50 @@
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
        }
@@ -100,6 +125,11 @@
 +         } else {
 +            this.defaulted = false;
 +         }
++      }
++
++      /** This method is used for the very initial resolving that happens from adding a tag to the tag registry as due to static initialization the elements in the defaults may not exist yet */
++      void fetchTagNoDefault(Function<ResourceLocation, ITag<T>> idToTagFunction) {
++         super.func_232943_a_(idToTagFunction);
 +      }
 +
 +      @Override
