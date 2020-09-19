@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -76,7 +77,8 @@ public class ConfigElementControls {
     public static <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, @Nullable String name, Function<String, T> parser, T longestValue) {
         TextFieldWidget control = new TextFieldWidget(Minecraft.getInstance().fontRenderer, 0, 0, 46, 16, component(name));
         control.setMaxStringLength(longestValue.toString().length());
-        final BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
+        Object[] lastText = new Object[1];
+        BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             T parsed;
             try {
                 parsed = parser.apply(newValue);
@@ -85,8 +87,9 @@ public class ConfigElementControls {
                 return;
             }
             boolean valid = true;
-            if (!isSetup)
+            if (!isSetup && !Objects.equals(lastText[0], newValue))
                 valid = setter.test(parsed);
+            lastText[0] = newValue;
             control.setTextColor(valid ? TEXT_FIELD_ACTIVE_COLOR : RED);
         };
         final Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);

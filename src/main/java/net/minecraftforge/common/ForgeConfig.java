@@ -29,6 +29,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.List;
+
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
 public class ForgeConfig {
@@ -240,9 +242,11 @@ public class ForgeConfig {
                 builder.comment("a Double comment")
                         .translation("forge.configgui.a.double")
                         .defineInRange("aDouble", 5d, 4d, 6d);
+
                 builder.comment("Sub-category comment")
                         .push("empty");
                 builder.pop();
+
                 builder.comment("Sub-category comment")
                         .push("not-empty");
                 {
@@ -266,6 +270,33 @@ public class ForgeConfig {
             builder.comment("a String In List comment")
                     .translation("forge.configgui.a.string.in.list")
                     .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
+
+            builder.comment("I'm in Spain but the S is silent")
+                    .push("Lists!");
+            {
+                builder.comment("a List<Boolean> comment")
+                        .translation("forge.configgui.a.list.boolean")
+                        .defineList("aListBoolean", Lists.newArrayList(true, false, true, false, true, true, false, false), o -> o instanceof Boolean);
+                builder.comment("a List<Int> comment")
+                        .translation("forge.configgui.a.list.int")
+                        .defineList("aListInt", Lists.newArrayList(1, 2, 5, 66, 3, 7), o -> o instanceof Integer);
+                builder.comment("a List<Long> comment")
+                        .translation("forge.configgui.a.list.long")
+                        .defineList("aListLong", Lists.newArrayList(5L, 12L, 623L, Long.MIN_VALUE), o -> o instanceof Long);
+                builder.comment("a List<Double> comment")
+                        .translation("forge.configgui.a.list.double")
+                        .defineList("aListDouble", Lists.newArrayList(123.213, 21343.21, 456.32, 9765.2), o -> o instanceof Double);
+                builder.comment("a List<Enum> comment")
+                        .translation("forge.configgui.a.list.enum")
+                        .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> o instanceof DyeColor);
+                builder.comment("a List<String> comment")
+                        .translation("forge.configgui.a.list.string")
+                        .defineList("aListString", Lists.newArrayList("foo", "bar", "baz", "qez"), o -> o instanceof String);
+                builder.comment("a List<List<String>> comment")
+                        .translation("forge.configgui.a.list.list.string")
+                        .defineList("aListListString", Lists.newArrayList(Lists.newArrayList("foo", "bar", "baz", "qez"), Lists.newArrayList("foobar")), o -> o instanceof List);
+            }
+            builder.pop();
         }
     }
 

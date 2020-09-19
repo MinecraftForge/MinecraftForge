@@ -125,16 +125,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         }
-//        if (valueValue instanceof List<?>) {
-//            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
-//                {
-//                    ValueConfigElementData<List<?>> data = createList((ConfigValue<List<?>>) value, valueInfo, translatedName, (List<?>) valueValue);
-//                    canReset = data.canReset((ConfigValue<List<?>>) value, valueInfo);
-//                    reset = data.reset(valueInfo);
-//                    widgets.add(0, data.widget);
-//                }
-//            };
-//        }
+        if (valueValue instanceof List<?>) {
+            return new PopupConfigElement(translatedName, valueInfo.getComment(), () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue));
+        }
         return null;
     }
 
