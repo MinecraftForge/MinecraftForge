@@ -9,28 +9,26 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
-    public static final int RED = TextFormatting.RED.getColor();
-    public static final int GREEN = TextFormatting.GREEN.getColor();
-    public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
     private final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
@@ -75,7 +73,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         if (valueValue instanceof Boolean)
             return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
-                    ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue, $ -> configScreen.onChange());
+                    ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue);
                     canReset = data.canReset((BooleanValue) value, valueInfo);
                     reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
@@ -111,7 +109,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         if (valueValue instanceof Enum<?>)
             return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
-                    ValueConfigElementData<?> data = createEnum((EnumValue<?>) value, valueInfo, translatedName, (Enum) valueValue);
+                    ValueConfigElementData<?> data = createEnum((EnumValue) value, valueInfo, translatedName, (Enum) valueValue);
                     canReset = data.canReset((EnumValue) value, valueInfo);
                     reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
@@ -158,56 +156,11 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         }
     }
 
-    static class ConfigElementWidgetData<T> {
-        final Widget widget;
-        final ValueSetter<T> valueSetter;
-
-        ConfigElementWidgetData(Widget widget, ValueSetter<T> valueSetter) {
-            this.widget = widget;
-            this.valueSetter = valueSetter;
-        }
-
-        @FunctionalInterface
-        interface ValueSetter<T> {
-            default void setup(T value) {
-                setValue(true, value);
-            }
-
-            default void setTo(T value) {
-                setValue(false, value);
-            }
-
-            void setValue(boolean isSetup, T newValue);
-        }
-    }
-
-    ConfigElementWidgetData<Boolean> createBooleanButton(Function<Boolean, Boolean> setter, @Nullable String name) {
-        final boolean[] state = new boolean[1];
-        TriConsumer<Button, Boolean, Boolean> setValue = (button, isSetup, newValue) -> {
-            state[0] = newValue;
-            if (!isSetup)
-                state[0] = setter.apply(newValue);
-            button.func_238482_a_(new StringTextComponent(Boolean.toString(state[0])));
-            button.setFGColor(state[0] ? GREEN : RED);
-        };
-        ConfigElementButton control = new ConfigElementButton(name, $ -> setValue.accept($, false, !state[0]));
-        return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
-    }
-
-    public static class ConfigElementButton extends ExtendedButton {
-
-        private static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
-
-        public ConfigElementButton(@Nullable String name, IPressable handler) {
-            super(0, 0, 50, 20, name == null ? EMPTY_STRING : new StringTextComponent(name), handler);
-        }
-    }
-
-    public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue, Consumer<Boolean> onChanged) {
-        final ConfigElementWidgetData<Boolean> control = createBooleanButton(b -> {
-            value.set(b);
-            onChanged.accept(b);
-            return value.get();
+    public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue) {
+        ConfigElementWidgetData<Boolean> control = ConfigElementControls.createBooleanButton(newValue -> {
+            value.set(newValue);
+            configScreen.onChange();
+            return true; // Can't have an "invalid" boolean
         }, translatedName);
         control.valueSetter.setup(valueValue);
         return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
@@ -216,81 +169,38 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRanged(ConfigValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue, Function<String, T> parser, T longestValue) {
         @Nullable
         Range<T> range = valueInfo.getRange();
-        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 46, 16, new StringTextComponent(translatedName));
-        control.setMaxStringLength(longestValue.toString().length());
-        final BiConsumer<Boolean, String> stringConsumer = (initial, newValue) -> {
-            T parsed;
-            try {
-                parsed = parser.apply(newValue);
-            } catch (NumberFormatException ignored) {
-                control.setTextColor(RED);
-                return;
-            }
-            if (range != null && !range.test(parsed)) {
-                control.setTextColor(RED);
-                return;
-            }
-            control.setTextColor(TEXT_FIELD_ACTIVE_COLOR);
-            if (!initial) {
-                // TODO: saveAndReload
-                value.set(parsed);
-            }
-        };
-        control.setText(valueValue.toString());
-        stringConsumer.accept(true, valueValue.toString());
-        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
-        return new ValueConfigElementData<>(control, n -> control.setText(n.toString()));
+        ConfigElementWidgetData<T> control = ConfigElementControls.createNumericTextField(newValue -> {
+            if (range != null && !range.test(newValue))
+                return false;
+            value.set(newValue);
+            configScreen.onChange();
+            return true;
+        }, translatedName, parser, longestValue);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
-    private <T extends Enum<T>> ValueConfigElementData<T> createEnum(EnumValue<T> value, ValueSpec valueInfo, String translatedName, Enum<T> valueValue) {
-        final Enum<?>[] state = new Enum<?>[1];
-        final Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
-        TriConsumer<Button, Boolean, Enum<?>> setValue = (button, initial, e) -> {
-            state[0] = e;
-            if (!initial) {
-                value.set((T) e);
-                // TODO: saveAndReload
-                state[0] = value.get();
-            }
-            button.func_238482_a_(new StringTextComponent(state[0].toString()));
-            if (e instanceof DyeColor)
-                button.setFGColor(((DyeColor) e).getTextColor());
-            else if (e instanceof TextFormatting && ((TextFormatting) e).isColor())
-                button.setFGColor(((TextFormatting) e).getColor());
-        };
-        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(translatedName), button -> {
-            Enum<?> next = potential[(ArrayUtils.indexOf(potential, state[0]) + 1) % potential.length];
-            setValue.accept(button, false, next);
-        });
-//        {
-//            @Override
-//            // Allow mouse click forwards or backwards
-//            protected boolean func_230987_a_(int p_230987_1_) {
-//                return p_230987_1_ == 0 || p_230987_1_ == 1;
-//            }
-//        };
-        setValue.accept(control, true, valueValue);
-        return new ValueConfigElementData<>(control, e -> setValue.accept(control, false, e));
+    private <T extends Enum<T>> ValueConfigElementData<T> createEnum(EnumValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue) {
+        Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
+        ConfigElementWidgetData<T> control = ConfigElementControls.createEnumButton(newValue -> {
+            value.set(newValue);
+            configScreen.onChange();
+            return true; // Can't have an "invalid" boolean
+        }, translatedName, (T[]) potential);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
     private ValueConfigElementData<String> createString(ConfigValue<String> value, ValueSpec valueInfo, String translatedName, String valueValue) {
-        TextFieldWidget control = new TextFieldWidget(field_230668_b_.fontRenderer, 0, 0, 46, 20, new StringTextComponent(translatedName));
-        control.setMaxStringLength(Integer.MAX_VALUE);
-        BiConsumer<Boolean, String> stringConsumer = (initial, newValue) -> {
-            if (!valueInfo.test(newValue)) {
-                control.setTextColor(RED);
-                return;
-            }
-            control.setTextColor(TEXT_FIELD_ACTIVE_COLOR);
-            if (!initial) {
-                // TODO: saveAndReload
-                value.set(newValue);
-            }
-        };
-        control.setText(valueValue);
-        stringConsumer.accept(true, valueValue);
-        control.setResponder(newValue -> stringConsumer.accept(false, newValue));
-        return new ValueConfigElementData<>(control, control::setText);
+        ConfigElementWidgetData<String> control = ConfigElementControls.createStringTextField(newValue -> {
+            if (!valueInfo.test(newValue))
+                return false;
+            value.set(newValue);
+            configScreen.onChange();
+            return true;
+        }, translatedName);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
     @Override
