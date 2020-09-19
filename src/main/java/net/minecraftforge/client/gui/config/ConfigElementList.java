@@ -22,10 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -36,14 +33,18 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     private final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
-    public ConfigElementList(ConfigScreen configScreen, Minecraft mcIn, ConfigCategoryInfo info) {
+    public ConfigElementList(ConfigScreen configScreen, Minecraft mcIn) {
         super(mcIn, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, 20);
         this.configScreen = configScreen;
+    }
+
+    public ConfigElementList(ConfigScreen configScreen, Minecraft mcIn, ConfigCategoryInfo info) {
+        this(configScreen, mcIn);
         for (String key : info.elements())
             this.func_230513_b_(createConfigElement(key, info));
     }
 
-    private ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
+    protected ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
         Object raw = categoryInfo.getValue(key);
         if (raw instanceof UnmodifiableConfig) {
             UnmodifiableConfig value = (UnmodifiableConfig) raw;
@@ -63,14 +64,14 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             ConfigElement element = createValueConfigElement(value, valueInfo, name, valueValue);
             if (element != null)
                 return element;
-            return new ConfigElementImpl(name + ": " + valueValue, valueInfo.getComment());
+            return new TitledConfigElement(name + ": " + valueValue, valueInfo.getComment());
         }
     }
 
     @Nullable
     private ConfigElement createValueConfigElement(ConfigValue<?> value, ValueSpec valueInfo, String translatedName, Object valueValue) {
         if (valueValue instanceof Boolean)
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue);
                     canReset = data.canReset((BooleanValue) value, valueInfo);
@@ -79,7 +80,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         if (valueValue instanceof Integer)
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<Integer> data = createNumericRanged((IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE);
                     canReset = data.canReset((IntValue) value, valueInfo);
@@ -88,7 +89,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         if (valueValue instanceof Long)
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<Long> data = createNumericRanged((LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE);
                     canReset = data.canReset((LongValue) value, valueInfo);
@@ -97,7 +98,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         if (valueValue instanceof Double)
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<Double> data = createNumericRanged((DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY);
                     canReset = data.canReset((DoubleValue) value, valueInfo);
@@ -106,7 +107,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         if (valueValue instanceof Enum<?>)
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<?> data = createEnum((EnumValue<?>) value, valueInfo, translatedName, (Enum) valueValue);
                     canReset = data.canReset((EnumValue) value, valueInfo);
@@ -115,7 +116,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         if (valueValue instanceof String) {
-            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+            return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<String> data = createString((ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
                     canReset = data.canReset((ConfigValue<String>) value, valueInfo);
@@ -124,6 +125,16 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 }
             };
         }
+//        if (valueValue instanceof List<?>) {
+//            return new ConfigElementImpl(translatedName, valueInfo.getComment()) {
+//                {
+//                    ValueConfigElementData<List<?>> data = createList((ConfigValue<List<?>>) value, valueInfo, translatedName, (List<?>) valueValue);
+//                    canReset = data.canReset((ConfigValue<List<?>>) value, valueInfo);
+//                    reset = data.reset(valueInfo);
+//                    widgets.add(0, data.widget);
+//                }
+//            };
+//        }
         return null;
     }
 
@@ -289,7 +300,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         @Override
         // render
-        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
+        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean isHovered, float partialTicks) {
             final Iterator<Widget> iterator = widgets.descendingIterator();
             int widgetPos = (shouldRenderScrollbar() ? func_230952_d_() : getWidth()) - PADDING; // getScrollbarPosition
             while (iterator.hasNext()) {
@@ -378,34 +389,45 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     @OnlyIn(Dist.CLIENT)
-    public class ConfigElementImpl extends ConfigElement {
+    public class TitledConfigElement extends ConfigElement {
         private final ITextComponent nameComponent;
 
-        public ConfigElementImpl(String translatedName, String description) {
+        public TitledConfigElement(String translatedName, String description) {
             super(translatedName, description);
             nameComponent = new StringTextComponent(translatedName);
         }
 
         @Override
         // render
-        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
-            super.func_230432_a_(matrixStack, p_230432_2_, elementRenderY, p_230432_4_, p_230432_5_, p_230432_6_, mouseX, mouseY, p_230432_9_, partialTicks);
+        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean isHovered, float partialTicks) {
+            super.func_230432_a_(matrixStack, p_230432_2_, elementRenderY, p_230432_4_, p_230432_5_, p_230432_6_, mouseX, mouseY, isHovered, partialTicks);
             field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, p_230432_4_, (float) (elementRenderY + p_230432_6_ / 2 - 9 / 2), 0xffffff);
         }
 
     }
 
-    private class CategoryConfigElement extends ConfigElement {
-        public CategoryConfigElement(ConfigScreen parentScreen, String translatedName, String description, ConfigCategoryInfo valueCategoryInfo) {
+    /**
+     * Opens a new Screen
+     */
+    public class PopupConfigElement extends ConfigElement {
+        public PopupConfigElement(String translatedName, String description, Supplier<ConfigScreen> screenFactory) {
             super(translatedName, description);
             int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum();
             // getScrollbarPosition
             int width = (shouldRenderScrollbar() ? func_230952_d_() : getWidth()) - otherWidthsAndPadding - PADDING * 2;
-            Button openScreen = new ExtendedButton(0, 0, width, 20, new StringTextComponent(translatedName), button -> {
-                ConfigScreen screen = new ConfigScreen(parentScreen, new StringTextComponent(translatedName), valueCategoryInfo);
-                field_230668_b_.displayGuiScreen(screen);
+            Button openScreen = new ExtendedButton(0, 0, width, 20, new StringTextComponent(translatedName), b -> {
+                // DO NOT use this, it crashes Java somehow. Probably a bug in the compiler?
+                // "https://gist.github.com/Cadiboo/6d1bd4b3b97c284e743a2253b81c3e5e#file-log"
+                field_230668_b_.displayGuiScreen(screenFactory.get());
+//                Minecraft.getInstance().displayGuiScreen(screenFactory.get());
             });
             widgets.add(0, openScreen);
+        }
+    }
+
+    public class CategoryConfigElement extends PopupConfigElement {
+        public CategoryConfigElement(ConfigScreen parentScreen, String translatedName, String description, ConfigCategoryInfo valueCategoryInfo) {
+            super(translatedName, description, () -> new CategoryConfigScreen(parentScreen, new StringTextComponent(translatedName), valueCategoryInfo));
         }
     }
 }

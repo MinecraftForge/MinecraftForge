@@ -1,20 +1,13 @@
 package net.minecraftforge.client.gui.config;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * This class needs to handle holding state for the displayed config.
@@ -26,44 +19,30 @@ import java.util.Map;
  * and wait for them to click reload, maybe in the future allow them to merge their changes)
  * - To manage the scrollable screen displaying the widgets
  */
-public class ConfigScreen extends Screen {
+public abstract class ConfigScreen extends Screen {
 
     private final Screen parentScreen;
-    private final ConfigCategoryInfo categoryInfo;
-    private Button resetButton;
-    private ConfigElementList configElementList;
+    @Nullable
+    private final ITextComponent subTitle;
+    protected Button resetButton;
+//    protected Button undoButton;
+    protected ConfigElementList configElementList;
 
-    public ConfigScreen(Screen parentScreen, ITextComponent titleIn, ConfigCategoryInfo categoryInfo) {
-        super(titleIn);
+    public ConfigScreen(Screen parentScreen, ITextComponent title) {
+        this(parentScreen, title, null);
+    }
+
+    public ConfigScreen(Screen parentScreen, ITextComponent title, @Nullable ITextComponent subTitle) {
+        super(title);
         this.parentScreen = parentScreen;
-        this.categoryInfo = categoryInfo;
-    }
-
-    public ConfigScreen(Screen screen, StringTextComponent testing, ModInfo selectedMod) {
-        this(screen, testing, makeCategoryInfo(selectedMod));
-    }
-
-    private static ConfigCategoryInfo makeCategoryInfo(ModInfo selectedMod) {
-        Collection<ModConfig> configs = ConfigTracker.INSTANCE.getConfigsForMod(selectedMod.getModId()).values();
-        Map<String, ModConfig> mapped = new HashMap<>();
-        for (ModConfig config : configs) {
-            if (config.getType() == ModConfig.Type.SERVER)
-                if (!Minecraft.getInstance().isSingleplayer() || Minecraft.getInstance().getIntegratedServer().getPublic())
-                    continue;
-            mapped.put(config.getType().name().toLowerCase(), config);
-        }
-        return ConfigCategoryInfo.of(
-                mapped::keySet,
-                key -> mapped.get(key).getSpec().getValues(),
-                key -> mapped.get(key).getSpec().getSpec()
-        );
+        this.subTitle = subTitle;
     }
 
     @Override
     // init
     protected void func_231160_c_() {
         super.func_231160_c_();
-        configElementList = new ConfigElementList(this, field_230706_i_, categoryInfo);
+        configElementList = makeConfigElementList();
         // children.add
         field_230705_e_.add(configElementList);
         resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
@@ -73,6 +52,8 @@ public class ConfigScreen extends Screen {
         func_230480_a_(new Button(field_230708_k_ / 2 - 155 + 160, field_230709_l_ - 29, 150, 20, DialogTexts.field_240632_c_, b -> field_230706_i_.displayGuiScreen(parentScreen)));
     }
 
+    protected abstract ConfigElementList makeConfigElementList();
+
     @Override
     // render
     public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -80,8 +61,11 @@ public class ConfigScreen extends Screen {
         func_230446_a_(matrixStack);
         // configEntryList.render()
         configElementList.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+
         // drawCenteredString(matrixStack, fontRenderer, title, width / 2, 8, 0xFFFFFF)
         func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, this.field_230708_k_ / 2, 8, 0xFFFFFF);
+        if (subTitle != null)
+            func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, this.field_230708_k_ / 2, 8 + field_230712_o_.FONT_HEIGHT + 4, 0xFFFFFF);
 
         // Renders our widgets for us
         // super.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -100,6 +84,11 @@ public class ConfigScreen extends Screen {
         }
         // active/enabled
         this.resetButton.field_230693_o_ = anyResettable;
+    }
+
+    public void onChange() {
+        if (parentScreen instanceof ConfigScreen)
+            ((ConfigScreen) parentScreen).onChange();
     }
 
     protected void resetConfig() {

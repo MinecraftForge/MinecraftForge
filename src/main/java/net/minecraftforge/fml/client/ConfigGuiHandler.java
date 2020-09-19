@@ -21,10 +21,7 @@ package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.client.gui.config.ConfigScreen;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.client.gui.config.ModConfigScreen;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.util.Optional;
@@ -36,6 +33,6 @@ public class ConfigGuiHandler
     {
 //        return ModList.get().getModContainerById(selectedMod.getModId()).
 //                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY));
-        return Optional.of((minecraft, screen) -> new ConfigScreen(screen, new StringTextComponent("Testing"), selectedMod));
+        return Optional.of((minecraft, screen) -> new ModConfigScreen(screen, selectedMod));
     }
 }
