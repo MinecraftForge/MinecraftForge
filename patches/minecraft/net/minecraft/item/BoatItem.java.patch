@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/BoatItem.java
++++ b/net/minecraft/item/BoatItem.java
+@@ -21,6 +21,8 @@
+ 
+    public BoatItem(BoatEntity.Type p_i48526_1_, Item.Properties p_i48526_2_) {
+       super(p_i48526_2_);
++      p_i48526_1_.setBoatItem(this);
++      net.minecraft.block.DispenserBlock.func_199774_a(this, new net.minecraft.dispenser.DispenseBoatBehavior(p_i48526_1_));
+       this.field_185057_a = p_i48526_1_;
+    }
+ 

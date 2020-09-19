@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/renderer/entity/BoatRenderer.java
++++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
+@@ -58,6 +58,10 @@
+    }
+ 
+    public ResourceLocation func_110775_a(BoatEntity p_110775_1_) {
+-      return field_110782_f[p_110775_1_.func_184453_r().ordinal()];
++      if(p_110775_1_.func_184453_r().ordinal() < field_110782_f.length) {
++         return field_110782_f[p_110775_1_.func_184453_r().ordinal()];
++      } else {
++         return p_110775_1_.func_184453_r().getTexture();
++      }
+    }
+ }

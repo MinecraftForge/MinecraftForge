@@ -1,6 +1,19 @@
 --- a/net/minecraft/dispenser/IDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/IDispenseItemBehavior.java
-@@ -373,8 +373,9 @@
+@@ -305,12 +305,6 @@
+             p_82485_1_.func_197524_h().func_217379_c(1018, p_82485_1_.func_180699_d(), 0);
+          }
+       });
+-      DispenserBlock.func_199774_a(Items.field_151124_az, new DispenseBoatBehavior(BoatEntity.Type.OAK));
+-      DispenserBlock.func_199774_a(Items.field_185150_aH, new DispenseBoatBehavior(BoatEntity.Type.SPRUCE));
+-      DispenserBlock.func_199774_a(Items.field_185151_aI, new DispenseBoatBehavior(BoatEntity.Type.BIRCH));
+-      DispenserBlock.func_199774_a(Items.field_185152_aJ, new DispenseBoatBehavior(BoatEntity.Type.JUNGLE));
+-      DispenserBlock.func_199774_a(Items.field_185154_aL, new DispenseBoatBehavior(BoatEntity.Type.DARK_OAK));
+-      DispenserBlock.func_199774_a(Items.field_185153_aK, new DispenseBoatBehavior(BoatEntity.Type.ACACIA));
+       IDispenseItemBehavior idispenseitembehavior1 = new DefaultDispenseItemBehavior() {
+          private final DefaultDispenseItemBehavior field_239793_b_ = new DefaultDispenseItemBehavior();
+ 
+@@ -373,8 +367,9 @@
                 world.func_175656_a(blockpos, AbstractFireBlock.func_235326_a_(world, blockpos));
              } else if (CampfireBlock.func_241470_h_(blockstate)) {
                 world.func_175656_a(blockpos, blockstate.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)));

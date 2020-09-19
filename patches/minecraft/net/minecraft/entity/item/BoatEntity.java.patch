@@ -1,6 +1,29 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -468,7 +468,7 @@
+@@ -188,21 +188,7 @@
+    }
+ 
+    public Item func_184455_j() {
+-      switch(this.func_184453_r()) {
+-      case OAK:
+-      default:
+-         return Items.field_151124_az;
+-      case SPRUCE:
+-         return Items.field_185150_aH;
+-      case BIRCH:
+-         return Items.field_185151_aI;
+-      case JUNGLE:
+-         return Items.field_185152_aJ;
+-      case ACACIA:
+-         return Items.field_185153_aK;
+-      case DARK_OAK:
+-         return Items.field_185154_aL;
+-      }
++      return this.func_184453_r().getBoatItem();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -468,7 +454,7 @@
                       blockpos$mutable.func_181079_c(l1, k2, i2);
                       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
                       if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$mutable).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,7 +32,7 @@
                          ++k1;
                       }
                    }
-@@ -817,6 +817,16 @@
+@@ -817,6 +803,16 @@
        return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
     }
  
@@ -26,3 +49,109 @@
     public static enum Status {
        IN_WATER,
        UNDER_WATER,
+@@ -825,22 +821,52 @@
+       IN_AIR;
+    }
+ 
+-   public static enum Type {
+-      OAK(Blocks.field_196662_n, "oak"),
+-      SPRUCE(Blocks.field_196664_o, "spruce"),
+-      BIRCH(Blocks.field_196666_p, "birch"),
+-      JUNGLE(Blocks.field_196668_q, "jungle"),
+-      ACACIA(Blocks.field_196670_r, "acacia"),
+-      DARK_OAK(Blocks.field_196672_s, "dark_oak");
++   public static class Type {
++      private static final List<Type> values = new java.util.ArrayList<>();
++      public static final Type OAK = register(Blocks.field_196662_n, "oak");
++      public static final Type SPRUCE = register(Blocks.field_196664_o, "spruce");
++      public static final Type BIRCH = register(Blocks.field_196666_p, "birch");
++      public static final Type JUNGLE = register(Blocks.field_196668_q, "jungle");
++      public static final Type ACACIA = register(Blocks.field_196670_r, "acacia");
++      public static final Type DARK_OAK = register(Blocks.field_196672_s, "dark_oak");
+ 
+       private final String field_184990_g;
+       private final Block field_195934_h;
++      private final int ord;
++      private Item boatItem;
++      private net.minecraft.util.ResourceLocation texture;
+ 
+-      private Type(Block p_i48146_3_, String p_i48146_4_) {
+-         this.field_184990_g = p_i48146_4_;
++      private Type(Block p_i48146_3_, String p_i48146_4_, net.minecraft.util.ResourceLocation texture, int ord) {
+          this.field_195934_h = p_i48146_3_;
++         this.field_184990_g = p_i48146_4_;
++         this.texture = texture;
++         this.ord = ord;
+       }
+ 
++      private Type(Block p_i48146_3_, String p_i48146_4_, int ord) {
++         this(p_i48146_3_, p_i48146_4_, null, ord);
++      }
++
++      public static Type register(Block p_i48146_3_, String p_i48146_4_, net.minecraft.util.ResourceLocation texture) {
++         Type t = new Type(p_i48146_3_, p_i48146_4_, new net.minecraft.util.ResourceLocation(texture.func_110624_b(), "textures/entity/boat/" + texture.func_110623_a() + ".png"), values.size());
++         values.add(t);
++         return t;
++      }
++
++      public static Type register(Block p_i48146_3_, String p_i48146_4_) {
++         Type t = new Type(p_i48146_3_, p_i48146_4_, values.size());
++         values.add(t);
++         return t;
++      }
++
++      public static java.util.stream.Stream<Type> values() {
++         return values.stream();
++      }
++
++      public void setBoatItem(Item boatItem) {
++         this.boatItem = boatItem;
++      }
++
+       public String func_184980_a() {
+          return this.field_184990_g;
+       }
+@@ -853,25 +879,34 @@
+          return this.field_184990_g;
+       }
+ 
++      public int ordinal() {
++         return this.ord;
++      }
++
+       public static BoatEntity.Type func_184979_a(int p_184979_0_) {
+-         BoatEntity.Type[] aboatentity$type = values();
+-         if (p_184979_0_ < 0 || p_184979_0_ >= aboatentity$type.length) {
++         if (p_184979_0_ < 0 || p_184979_0_ >= values.size()) {
+             p_184979_0_ = 0;
+          }
+ 
+-         return aboatentity$type[p_184979_0_];
++         return values.get(p_184979_0_);
+       }
+ 
+       public static BoatEntity.Type func_184981_a(String p_184981_0_) {
+-         BoatEntity.Type[] aboatentity$type = values();
+-
+-         for(int i = 0; i < aboatentity$type.length; ++i) {
+-            if (aboatentity$type[i].func_184980_a().equals(p_184981_0_)) {
+-               return aboatentity$type[i];
++         for(Type type : values) {
++            if (type.func_184980_a().equals(p_184981_0_)) {
++               return type;
+             }
+          }
+ 
+-         return aboatentity$type[0];
++         return values.get(0);
+       }
++
++      public Item getBoatItem() {
++         return this.boatItem;
++      }
++
++      public net.minecraft.util.ResourceLocation getTexture() {
++         return this.texture;
++      }
+    }
+ }
