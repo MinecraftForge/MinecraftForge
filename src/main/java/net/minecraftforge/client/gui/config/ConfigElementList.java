@@ -9,7 +9,10 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData;
@@ -115,7 +118,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                     widgets.add(0, data.widget);
                 }
             };
-        if (valueValue instanceof String) {
+        if (valueValue instanceof String)
             return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
                     ValueConfigElementData<String> data = createString((ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
@@ -124,10 +127,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                     widgets.add(0, data.widget);
                 }
             };
-        }
-        if (valueValue instanceof List<?>) {
+        if (valueValue instanceof List<?>)
             return new PopupConfigElement(translatedName, valueInfo.getComment(), () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue));
-        }
         return null;
     }
 

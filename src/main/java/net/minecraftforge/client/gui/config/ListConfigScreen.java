@@ -1,8 +1,10 @@
 package net.minecraftforge.client.gui.config;
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -31,10 +33,30 @@ public class ListConfigScreen extends ConfigScreen {
                 }
             }
 
+            class ListItemConfigElement extends ConfigElement {
+
+                public ListItemConfigElement(int index, Object item) {
+                    super(item.getClass().getSimpleName() + " list item", "");
+                    Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
+                        // TODO: Add copy
+                        list.add(index + 1, item);
+                        onAddRemove();
+                    });
+                    addBelowButton.setFGColor(ConfigElementControls.GREEN);
+                    Button removeButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("-"), b -> {
+                        list.remove(index);
+                        onAddRemove();
+                    });
+                    addBelowButton.setFGColor(ConfigElementControls.RED);
+                    widgets.add(addBelowButton);
+                    widgets.add(removeButton);
+                }
+            }
+
             @Nullable
             private ConfigElement createWidget(int index, Object item) {
                 if (item instanceof Boolean)
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                    return new ListItemConfigElement(index, item) {
                         {
                             ConfigElementControls.ConfigElementWidgetData<Boolean> control = ConfigElementControls.createBooleanButton(newValue -> {
                                 set(index, newValue);
@@ -46,7 +68,7 @@ public class ListConfigScreen extends ConfigScreen {
                         }
                     };
                 if (item instanceof Integer)
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                    return new ListItemConfigElement(index, item) {
                         {
                             ConfigElementControls.ConfigElementWidgetData<Integer> control = ConfigElementControls.createNumericTextField(newValue -> {
                                 set(index, newValue);
@@ -58,7 +80,7 @@ public class ListConfigScreen extends ConfigScreen {
                         }
                     };
                 if (item instanceof Long)
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                    return new ListItemConfigElement(index, item) {
                         {
                             ConfigElementControls.ConfigElementWidgetData<Long> control = ConfigElementControls.createNumericTextField(newValue -> {
                                 set(index, newValue);
@@ -70,7 +92,7 @@ public class ListConfigScreen extends ConfigScreen {
                         }
                     };
                 if (item instanceof Double)
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                    return new ListItemConfigElement(index, item) {
                         {
                             ConfigElementControls.ConfigElementWidgetData<Double> control = ConfigElementControls.createNumericTextField(newValue -> {
                                 set(index, newValue);
@@ -82,7 +104,7 @@ public class ListConfigScreen extends ConfigScreen {
                         }
                     };
                 if (item instanceof Enum<?>)
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                    return new ListItemConfigElement(index, item) {
                         {
                             Enum[] potential = Arrays.stream(((Enum<?>) item).getDeclaringClass().getEnumConstants()).toArray(Enum<?>[]::new);
                             ConfigElementControls.ConfigElementWidgetData<Enum> control = ConfigElementControls.createEnumButton(newValue -> {
@@ -96,8 +118,8 @@ public class ListConfigScreen extends ConfigScreen {
                             widgets.add(0, control.widget);
                         }
                     };
-                if (item instanceof String) {
-                    return new ConfigElement(item.getClass().getSimpleName() + " list item", "") {
+                if (item instanceof String)
+                    return new ListItemConfigElement(index, item) {
                         {
                             ConfigElementControls.ConfigElementWidgetData<String> control = ConfigElementControls.createStringTextField(newValue -> {
                                 set(index, newValue);
@@ -108,12 +130,11 @@ public class ListConfigScreen extends ConfigScreen {
                             widgets.add(0, control.widget);
                         }
                     };
-                }
-                if (item instanceof List<?>) {
+                if (item instanceof List<?>)
                     return new PopupConfigElement("Nested List", "Nested List", () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item));
-                }
                 return null;
             }
+
         };
     }
 

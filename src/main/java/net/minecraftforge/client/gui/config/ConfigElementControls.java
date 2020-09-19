@@ -19,8 +19,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ConfigElementControls {
-    private static final int RED = TextFormatting.RED.getColor();
-    private static final int GREEN = TextFormatting.GREEN.getColor();
+    static final int RED = TextFormatting.RED.getColor();
+    static final int GREEN = TextFormatting.GREEN.getColor();
     // Copied from TextFieldWidget#enabledColor because it's private
     private static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
