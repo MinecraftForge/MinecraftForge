@@ -19,21 +19,19 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
-
 import com.google.common.collect.Lists;
 import net.minecraft.item.DyeColor;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.ForgeConfigSpec.*;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.List;
+import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
-public class ForgeConfig
-{
+public class ForgeConfig {
     public static class Server {
         public final BooleanValue removeErroringEntities;
         public final BooleanValue removeErroringTileEntities;
@@ -54,7 +52,7 @@ public class ForgeConfig
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
-                   .push("server");
+                    .push("server");
 
             removeErroringEntities = builder
                     .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
@@ -137,48 +135,48 @@ public class ForgeConfig
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
-                   .push("client");
+                    .push("client");
 
             zoomInMissingModelTextInGui = builder
-                .comment("Toggle off to make missing model text in the gui fit inside the slot.")
-                .translation("forge.configgui.zoomInMissingModelTextInGui")
-                .define("zoomInMissingModelTextInGui", false);
+                    .comment("Toggle off to make missing model text in the gui fit inside the slot.")
+                    .translation("forge.configgui.zoomInMissingModelTextInGui")
+                    .define("zoomInMissingModelTextInGui", false);
 
             forgeCloudsEnabled = builder
-                .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
-                .translation("forge.configgui.forgeCloudsEnabled")
-                .define("forgeCloudsEnabled", true);
+                    .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
+                    .translation("forge.configgui.forgeCloudsEnabled")
+                    .define("forgeCloudsEnabled", true);
 
             disableStairSlabCulling = builder
-                .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
-                .translation("forge.configgui.disableStairSlabCulling")
-                .define("disableStairSlabCulling", false);
+                    .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
+                    .translation("forge.configgui.disableStairSlabCulling")
+                    .define("disableStairSlabCulling", false);
 
             alwaysSetupTerrainOffThread = builder
-                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
-                        "May increase FPS significantly, but may also cause weird rendering lag.",
-                        "Not recommended for computers without a significant number of cores available.")
-                .translation("forge.configgui.alwaysSetupTerrainOffThread")
-                .define("alwaysSetupTerrainOffThread", false);
+                    .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
+                            "May increase FPS significantly, but may also cause weird rendering lag.",
+                            "Not recommended for computers without a significant number of cores available.")
+                    .translation("forge.configgui.alwaysSetupTerrainOffThread")
+                    .define("alwaysSetupTerrainOffThread", false);
 
             forgeLightPipelineEnabled = builder
-                .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("forgeLightPipelineEnabled", true);
+                    .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                    .translation("forge.configgui.forgeLightPipelineEnabled")
+                    .define("forgeLightPipelineEnabled", true);
             experimentalForgeLightPipelineEnabled = builder
-                .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("experimentalForgeLightPipelineEnabled", false);
+                    .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                    .translation("forge.configgui.forgeLightPipelineEnabled")
+                    .define("experimentalForgeLightPipelineEnabled", false);
 
             selectiveResourceReloadEnabled = builder
-                .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
-                .translation("forge.configgui.selectiveResourceReloadEnabled")
-                .define("selectiveResourceReloadEnabled", true);
+                    .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
+                    .translation("forge.configgui.selectiveResourceReloadEnabled")
+                    .define("selectiveResourceReloadEnabled", true);
 
             showLoadWarnings = builder
-                .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                .translation("forge.configgui.showLoadWarnings")
-                .define("showLoadWarnings", true);
+                    .comment("When enabled, Forge will show any warnings that occurred during loading.")
+                    .translation("forge.configgui.showLoadWarnings")
+                    .define("showLoadWarnings", true);
 
             useCombinedDepthStencilAttachment = builder
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
@@ -191,6 +189,7 @@ public class ForgeConfig
 
     static final ForgeConfigSpec clientSpec;
     public static final Client CLIENT;
+
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
         clientSpec = specPair.getRight();
@@ -199,6 +198,7 @@ public class ForgeConfig
 
     static final ForgeConfigSpec serverSpec;
     public static final Server SERVER;
+
     static {
         final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
         serverSpec = specPair.getRight();
@@ -221,18 +221,9 @@ public class ForgeConfig
     //public static boolean fixVanillaCascading = false;
 
     public static class Common {
-        public final BooleanValue aBoolean;
-        public final IntValue anInt;
-        public final LongValue aLong;
-        public final DoubleValue aDouble;
-        public final EnumValue<DyeColor> anEnum;
-        public final ConfigValue<String> aString;
-        public final ConfigValue<List<? extends TextFormatting>> anEnumList;
-        public final ConfigValue<String> aStringInList;
 
         Common(ForgeConfigSpec.Builder builder) {
-            aBoolean = builder
-                    .comment("a Boolean comment")
+            builder.comment("a Boolean comment")
                     .translation("forge.configgui.a.boolean")
                     .worldRestart()
                     .define("aBoolean", false);
@@ -240,38 +231,39 @@ public class ForgeConfig
             builder.comment("Category comment")
                     .push("numbers");
             {
-                anInt = builder
-                        .comment("an Int comment")
+                builder.comment("an Int comment")
                         .translation("forge.configgui.an.int")
                         .defineInRange("anInt", 5, -10, 1000);
-                aLong = builder
-                        .comment("a Long comment")
+                builder.comment("a Long comment")
                         .translation("forge.configgui.a.long")
                         .defineInRange("aLong", Long.MIN_VALUE, Long.MIN_VALUE, 5);
-                aDouble = builder
-                        .comment("a Double comment")
+                builder.comment("a Double comment")
                         .translation("forge.configgui.a.double")
                         .defineInRange("aDouble", 5d, 4d, 6d);
                 builder.comment("Sub-category comment")
                         .push("empty");
                 builder.pop();
+                builder.comment("Sub-category comment")
+                        .push("not-empty");
+                {
+                    builder.comment("sub - an Int comment")
+                            .translation("forge.configgui.sub.an.int")
+                            .defineInRange("subAnInt", 5, -10, 1000);
+                }
+                builder.pop();
             }
             builder.pop();
 
-            anEnum = builder
-                    .comment("an Enum comment")
+            builder.comment("an Enum comment")
                     .translation("forge.configgui.an.enum")
                     .defineEnum("anEnum", DyeColor.GREEN, dc -> dc instanceof DyeColor && ((DyeColor) dc).getId() >= 10);
-            aString = builder
-                    .comment("a String comment")
+            builder.comment("a String comment")
                     .translation("forge.configgui.a.string")
                     .define("aString", "foo");
-            anEnumList = builder
-                    .comment("an Enum List comment")
+            builder.comment("an Enum List comment")
                     .translation("forge.configgui.an.enum.list")
                     .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);
-            aStringInList = builder
-                    .comment("a String In List comment")
+            builder.comment("a String In List comment")
                     .translation("forge.configgui.a.string.in.list")
                     .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
         }
@@ -279,6 +271,7 @@ public class ForgeConfig
 
     static final ForgeConfigSpec commonSpec;
     public static final Common COMMON;
+
     static {
         final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         commonSpec = specPair.getRight();

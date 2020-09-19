@@ -1,5 +1,6 @@
 package net.minecraftforge.client.gui.config;
 
+import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -48,14 +49,15 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         Object raw = categoryInfo.getValue(key);
         if (raw instanceof UnmodifiableConfig) {
             UnmodifiableConfig value = (UnmodifiableConfig) raw;
-            UnmodifiableConfig valueInfo = (UnmodifiableConfig) categoryInfo.getSpec(key);
-            // TODO: There should be some way to get the comment for the category.
+            UnmodifiableCommentedConfig valueInfo = (UnmodifiableCommentedConfig) categoryInfo.getSpec(key);
+            String description = categoryInfo.getCategoryComment(key);
             ConfigCategoryInfo valueCategoryInfo = ConfigCategoryInfo.of(
                     () -> value.valueMap().keySet(),
                     value::get,
-                    valueInfo::get
+                    valueInfo::get,
+                    valueInfo::getComment
             );
-            return new CategoryConfigElement(configScreen, key, "", valueCategoryInfo);
+            return new CategoryConfigElement(configScreen, key, description == null ? "" : description, valueCategoryInfo);
         } else {
             ConfigValue<?> value = (ConfigValue<?>) raw;
             ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
@@ -224,6 +226,13 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             Enum<?> next = potential[(ArrayUtils.indexOf(potential, state[0]) + 1) % potential.length];
             setValue.accept(button, false, next);
         });
+//        {
+//            @Override
+//            // Allow mouse click forwards or backwards
+//            protected boolean func_230987_a_(int p_230987_1_) {
+//                return p_230987_1_ == 0 || p_230987_1_ == 1;
+//            }
+//        };
         setValue.accept(control, true, valueValue);
         return new ValueConfigElementData<>(control, e -> setValue.accept(control, false, e));
     }

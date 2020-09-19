@@ -46,16 +46,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import com.electronwill.nightconfig.core.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionListener;
-import com.electronwill.nightconfig.core.InMemoryFormat;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import com.google.common.base.Joiner;
@@ -68,18 +64,16 @@ import com.google.common.collect.ObjectArrays;
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
  * and other things Forge configs would find useful.
  */
-public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> //TODO: Remove extends and pipe everything through getSpec/getValues?
+public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableCommentedConfig> //TODO: Remove extends and pipe everything through getSpec/getValues?
 {
-    private final Map<List<String>, String> levelComments;
     private final UnmodifiableConfig values;
     private Config childConfig;
 
     private boolean isCorrecting = false;
 
-    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments) {
+    private ForgeConfigSpec(UnmodifiableCommentedConfig storage, UnmodifiableConfig values) {
         super(storage);
         this.values = values;
-        this.levelComments = levelComments;
     }
 
     public void setConfig(CommentedConfig config) {
@@ -103,7 +97,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return childConfig != null;
     }
 
-    public UnmodifiableConfig getSpec() {
+    public UnmodifiableCommentedConfig getSpec() {
         return this.config;
     }
 
@@ -140,7 +134,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return ret;
     }
 
-    private int correct(UnmodifiableConfig spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, boolean dryRun)
+    private int correct(UnmodifiableCommentedConfig spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, boolean dryRun)
     {
         int count = 0;
 
@@ -160,7 +154,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             {
                 if (configValue instanceof CommentedConfig)
                 {
-                    count += correct((Config)specValue, (CommentedConfig)configValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+                    count += correct((CommentedConfig)specValue, (CommentedConfig)configValue, parentPath, parentPathUnmodifiable, listener, dryRun);
                     if (count > 0 && dryRun)
                         return count;
                 }
@@ -174,10 +168,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     configMap.put(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
-                    count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+                    count += correct((CommentedConfig)specValue, newValue, parentPath, parentPathUnmodifiable, listener, dryRun);
                 }
 
-                String newComment = levelComments.get(parentPath);
+                String newComment = spec.getComment(parentPath);
                 String oldComment = config.getComment(key);
                 if (!Objects.equals(oldComment, newComment))
                 {
@@ -236,9 +230,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class Builder
     {
-        private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
+        private final CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, InMemoryCommentedFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
-        private final Map<List<String>, String> levelComments = new HashMap<>();
         private final List<String> currentPath = new ArrayList<>();
         private final List<ConfigValue<?>> values = new ArrayList<>();
 
@@ -500,8 +493,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder push(List<String> path) {
             currentPath.addAll(path);
             if (context.hasComment()) {
-
-                levelComments.put(new ArrayList<>(currentPath), context.buildComment());
+                storage.setComment(new ArrayList<>(currentPath), context.buildComment());
                 context.setComment(); // Set to empty
             }
             context.ensureEmpty();
@@ -531,7 +523,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
             values.forEach(v -> valueCfg.set(v.getPath(), v));
 
-            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments);
+            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg);
             values.forEach(v -> v.spec = ret);
             return ret;
         }

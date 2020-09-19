@@ -64,7 +64,8 @@ public class ModConfigScreen extends ConfigScreen {
             ConfigCategoryInfo info = ConfigCategoryInfo.of(
                     () -> modConfig.getSpec().getValues().valueMap().keySet(),
                     key -> modConfig.getSpec().getValues().get(key),
-                    key -> modConfig.getSpec().getSpec().get(key)
+                    key -> modConfig.getSpec().getSpec().get(key),
+                    key -> modConfig.getSpec().getSpec().getComment(key)
             );
             return new ConfigElementList(this, field_230706_i_, info);
         }
