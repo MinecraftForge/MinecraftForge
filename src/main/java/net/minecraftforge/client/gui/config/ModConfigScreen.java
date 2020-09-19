@@ -1,5 +1,6 @@
 package net.minecraftforge.client.gui.config;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
@@ -72,13 +73,20 @@ public class ModConfigScreen extends ConfigScreen {
 
         @Override
         public void onChange() {
-//            saveAndReloadConfig();
+            saveAndReloadConfig();
             super.onChange();
         }
-    }
 
-    @Override
-    public void onChange() {
+        private void saveAndReloadConfig() {
+            // Need to save and reload now rather than waiting for the changes to get noticed by the
+            // file watcher because this can take a while (upwards of 10 seconds) to happen and the
+            // user is expecting to see their config changes take effect NOW.
+            // E.g. A mod customises how buttons look, users changing the config shouldn't need to wait
+            // 10 seconds before their changes take effect.
+            modConfig.save();
+            ((CommentedFileConfig) modConfig.getConfigData()).load();
+			modConfig.fireEvent(new ModConfig.Reloading(modConfig));
+        }
     }
 
 }

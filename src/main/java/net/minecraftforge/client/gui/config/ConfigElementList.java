@@ -75,7 +75,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         if (valueValue instanceof Boolean)
             return new TitledConfigElement(translatedName, valueInfo.getComment()) {
                 {
-                    ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue);
+                    ValueConfigElementData<Boolean> data = createBoolean((BooleanValue) value, translatedName, (Boolean) valueValue, $ -> configScreen.onChange());
                     canReset = data.canReset((BooleanValue) value, valueInfo);
                     reset = data.reset(valueInfo);
                     widgets.add(0, data.widget);
@@ -142,15 +142,15 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
     static class ValueConfigElementData<T> {
         final Widget widget;
-        final Consumer<T> consumer;
+        final Consumer<T> valueSetter;
 
-        ValueConfigElementData(Widget widget, Consumer<T> consumer) {
+        ValueConfigElementData(Widget widget, Consumer<T> valueSetter) {
             this.widget = widget;
-            this.consumer = consumer;
+            this.valueSetter = valueSetter;
         }
 
         public Runnable reset(ValueSpec valueInfo) {
-            return () -> consumer.accept((T) valueInfo.getDefault());
+            return () -> valueSetter.accept((T) valueInfo.getDefault());
         }
 
         public BooleanSupplier canReset(ConfigValue<T> value, ValueSpec valueInfo) {
@@ -158,23 +158,59 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         }
     }
 
-    public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue) {
-        final boolean[] state = new boolean[1];
-        TriConsumer<Button, Boolean, Boolean> setValue = (button, initial, b) -> {
-            state[0] = b;
-            if (!initial) {
-                value.set(b);
-                // TODO: saveAndReload
-                state[0] = value.get();
+    static class ConfigElementWidgetData<T> {
+        final Widget widget;
+        final ValueSetter<T> valueSetter;
+
+        ConfigElementWidgetData(Widget widget, ValueSetter<T> valueSetter) {
+            this.widget = widget;
+            this.valueSetter = valueSetter;
+        }
+
+        @FunctionalInterface
+        interface ValueSetter<T> {
+            default void setup(T value) {
+                setValue(true, value);
             }
+
+            default void setTo(T value) {
+                setValue(false, value);
+            }
+
+            void setValue(boolean isSetup, T newValue);
+        }
+    }
+
+    ConfigElementWidgetData<Boolean> createBooleanButton(Function<Boolean, Boolean> setter, @Nullable String name) {
+        final boolean[] state = new boolean[1];
+        TriConsumer<Button, Boolean, Boolean> setValue = (button, isSetup, newValue) -> {
+            state[0] = newValue;
+            if (!isSetup)
+                state[0] = setter.apply(newValue);
             button.func_238482_a_(new StringTextComponent(Boolean.toString(state[0])));
             button.setFGColor(state[0] ? GREEN : RED);
         };
-        Button control = new ExtendedButton(0, 0, 50, 20, new StringTextComponent(translatedName), button -> {
-            setValue.accept(button, false, !state[0]);
-        });
-        setValue.accept(control, true, valueValue);
-        return new ValueConfigElementData<>(control, b -> setValue.accept(control, false, b));
+        ConfigElementButton control = new ConfigElementButton(name, $ -> setValue.accept($, false, !state[0]));
+        return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
+    }
+
+    public static class ConfigElementButton extends ExtendedButton {
+
+        private static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
+
+        public ConfigElementButton(@Nullable String name, IPressable handler) {
+            super(0, 0, 50, 20, name == null ? EMPTY_STRING : new StringTextComponent(name), handler);
+        }
+    }
+
+    public ValueConfigElementData<Boolean> createBoolean(BooleanValue value, String translatedName, Boolean valueValue, Consumer<Boolean> onChanged) {
+        final ConfigElementWidgetData<Boolean> control = createBooleanButton(b -> {
+            value.set(b);
+            onChanged.accept(b);
+            return value.get();
+        }, translatedName);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
     public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRanged(ConfigValue<T> value, ValueSpec valueInfo, String translatedName, T valueValue, Function<String, T> parser, T longestValue) {
