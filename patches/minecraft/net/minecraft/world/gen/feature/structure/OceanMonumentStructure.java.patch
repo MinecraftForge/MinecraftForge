@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/OceanMonumentStructure.java
++++ b/net/minecraft/world/gen/feature/structure/OceanMonumentStructure.java
+@@ -19,7 +19,7 @@
+ import net.minecraft.world.gen.feature.template.TemplateManager;
+ 
+ public class OceanMonumentStructure extends Structure<NoFeatureConfig> {
+-   private static final List<MobSpawnInfo.Spawners> field_175803_h = ImmutableList.of(new MobSpawnInfo.Spawners(EntityType.field_200761_A, 1, 2, 4));
++   private static final List<MobSpawnInfo.Spawners> field_175803_h = com.google.common.collect.Lists.newArrayList(new MobSpawnInfo.Spawners(EntityType.field_200761_A, 1, 2, 4));
+ 
+    public OceanMonumentStructure(Codec<NoFeatureConfig> p_i231975_1_) {
+       super(p_i231975_1_);
