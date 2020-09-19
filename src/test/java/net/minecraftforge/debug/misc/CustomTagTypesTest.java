@@ -20,9 +20,7 @@
 package net.minecraftforge.debug.misc;
 
 import com.google.common.collect.Sets;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import net.minecraft.data.DataGenerator;
@@ -32,8 +30,6 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
@@ -47,10 +43,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
@@ -63,22 +56,6 @@ public class CustomTagTypesTest
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final IOptionalNamedTag<Biome> OCEANS = ForgeTagHandler.createOptionalTag(ForgeRegistries.BIOMES, new ResourceLocation(MODID, "oceans"),
-          () -> {//TODO: Make a cleaner way to do this for optional biome tags as this way is sort of hacky and using internals??
-              Function<ResourceLocation, Optional<Biome>> biomeLookup = GameData.getRegistryValueLookup((ForgeRegistry<Biome>) ForgeRegistries.BIOMES);
-              return Sets.newHashSet(
-                    biomeLookup.apply(Biomes.OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.FROZEN_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.DEEP_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.WARM_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.LUKEWARM_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.COLD_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.DEEP_WARM_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.DEEP_LUKEWARM_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.DEEP_COLD_OCEAN.func_240901_a_()).get(),
-                    biomeLookup.apply(Biomes.DEEP_FROZEN_OCEAN.func_240901_a_()).get()
-              );
-          });
     private static final IOptionalNamedTag<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), () -> Sets.newHashSet(CUSTOM.get()));
     private static final IOptionalNamedTag<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), () -> Sets.newHashSet(Items.BONE));
 
@@ -95,9 +72,7 @@ public class CustomTagTypesTest
         if (event.includeServer())
         {
             DataGenerator gen = event.getGenerator();
-            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-            gen.addProvider(new BiomeTags(gen, existingFileHelper));
-            gen.addProvider(new CustomRegistryTags(gen, existingFileHelper));
+            gen.addProvider(new CustomRegistryTags(gen, event.getExistingFileHelper()));
         }
     }
 
@@ -105,7 +80,6 @@ public class CustomTagTypesTest
     {
         //TODO: Either remove this or switch to logger
         System.out.println(event.getArrow().getEntityWorld().getBiome(event.getArrow().func_233580_cy_()).getTags());
-        System.out.println(OCEANS.func_230236_b_().size());
         System.out.println(Items.BONE.getTags());
         System.out.println(OPTIONAL_TEST.func_230236_b_().size());
         //TODO: Should we somehow note that at least server side the below is not able to find optional tags
@@ -124,26 +98,6 @@ public class CustomTagTypesTest
         public boolean isIn(ITag<Custom> tag)
         {
             return tag.func_230235_a_(this);
-        }
-    }
-
-    public static class BiomeTags extends ForgeRegistryTagsProvider<Biome>
-    {
-        public BiomeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
-        {
-            super(gen, ForgeRegistries.BIOMES, MODID, existingFileHelper);
-        }
-
-        @Override
-        protected void registerTags()
-        {
-            func_240522_a_(OCEANS).add(Biomes.OCEAN, Biomes.FROZEN_OCEAN, Biomes.DEEP_OCEAN, Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN,
-                  Biomes.COLD_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_FROZEN_OCEAN);
-        }
-
-        @Override
-        public String getName() {
-            return "Biome Tags";
         }
     }
 

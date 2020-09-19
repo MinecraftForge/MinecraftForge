@@ -26,8 +26,6 @@ import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
@@ -35,10 +33,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
@@ -60,8 +56,7 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
@@ -355,26 +350,16 @@ public class FMLPlayMessages
         private static <T> void forgeTagCollectionWrite(PacketBuffer buf, ResourceLocation registryName, Map<ResourceLocation, ITag<T>> tags)
         {
             buf.writeResourceLocation(registryName);
-            ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
-            if (registry != null)
-            {
-                buf.writeVarInt(tags.size());
-                Function<T, ResourceLocation> registryKeyLookup = (Function<T, ResourceLocation>) GameData.getRegistryKeyLookup(registry);
-                tags.forEach((name, tag) -> {
-                    buf.writeResourceLocation(name);
-                    List<T> elements = tag.func_230236_b_();
-                    buf.writeVarInt(elements.size());
-                    for (T element : elements)
-                    {
-                        //TODO: FIXME single player goes boom
-                        buf.writeResourceLocation(registryKeyLookup.apply(element));
-                    }
-                });
-            }
-            else
-            {
-                buf.writeVarInt(0);
-            }
+            buf.writeVarInt(tags.size());
+            tags.forEach((name, tag) -> {
+                buf.writeResourceLocation(name);
+                List<T> elements = tag.func_230236_b_();
+                buf.writeVarInt(elements.size());
+                for (T element : elements)
+                {
+                    buf.writeResourceLocation(((IForgeRegistryEntry<?>) element).getRegistryName());
+                }
+            });
         }
 
         public static SyncCustomTagTypes decode(PacketBuffer buf)
@@ -384,7 +369,7 @@ public class FMLPlayMessages
             for (int i = 0; i < size; i++)
             {
                 ResourceLocation regName = buf.readResourceLocation();
-                ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
+                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
                 if (registry != null)
                 {
                     builder.put(regName, readTagCollection(buf, registry));
@@ -393,9 +378,8 @@ public class FMLPlayMessages
             return new SyncCustomTagTypes(builder.build());
         }
 
-        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buf, ForgeRegistry<T> registry)
+        private static <T extends IForgeRegistryEntry<T>> ITagCollection<T> readTagCollection(PacketBuffer buf, IForgeRegistry<T> registry)
         {
-            Function<ResourceLocation, Optional<T>> lookup = GameData.getRegistryValueLookup(registry);
             Map<ResourceLocation, ITag<T>> tags = Maps.newHashMap();
             int totalTags = buf.readVarInt();
             for (int i = 0; i < totalTags; i++)
@@ -405,7 +389,11 @@ public class FMLPlayMessages
                 int totalElements = buf.readVarInt();
                 for (int j = 0; j < totalElements; j++)
                 {
-                    lookup.apply(buf.readResourceLocation()).ifPresent(elementBuilder::add);
+                    T element = registry.getValue(buf.readResourceLocation());
+                    if (element != null)
+                    {
+                        elementBuilder.add(element);
+                    }
                 }
                 tags.put(name, ITag.func_232946_a_(elementBuilder.build()));
             }

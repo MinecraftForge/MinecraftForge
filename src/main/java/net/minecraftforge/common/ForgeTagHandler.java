@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -239,7 +240,7 @@ public class ForgeTagHandler
             ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry != null && registry.getTagFolder() != null)
             {
-                builder.put(registryName, new TagCollectionReader<>(GameData.getRegistryValueLookup(registry), "tags/" + registry.getTagFolder(), registryName.getPath()));
+                builder.put(registryName, new TagCollectionReader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registry.getTagFolder(), registryName.getPath()));
             }
         }
         return builder.build();
