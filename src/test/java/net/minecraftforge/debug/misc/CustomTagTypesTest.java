@@ -46,11 +46,14 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(CustomTagTypesTest.MODID)
 public class CustomTagTypesTest
 {
     public static final String MODID = "custom_tag_types_test";
+    private static final Logger LOGGER = LogManager.getLogger(MODID);
     private static final ResourceLocation customRegistryName = new ResourceLocation(MODID, "custom_type_registry");
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(Custom.class, MODID);
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
@@ -78,12 +81,7 @@ public class CustomTagTypesTest
 
     private void projectileImpact(ProjectileImpactEvent.Arrow event)
     {
-        //TODO: Either remove this or switch to logger
-        System.out.println(event.getArrow().getEntityWorld().getBiome(event.getArrow().func_233580_cy_()).getTags());
-        System.out.println(Items.BONE.getTags());
-        System.out.println(OPTIONAL_TEST.func_230236_b_().size());
-        //TODO: Should we somehow note that at least server side the below is not able to find optional tags
-        System.out.println(TagCollectionManager.func_242178_a().func_241836_b().get(new ResourceLocation(MODID, "optional_test")));
+        LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.func_230236_b_().size(), TagCollectionManager.func_242178_a().func_241836_b().get(new ResourceLocation(MODID, "optional_test")));
     }
 
     public static class Custom extends ForgeRegistryEntry<Custom>

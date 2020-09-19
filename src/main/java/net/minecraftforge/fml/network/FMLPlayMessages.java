@@ -412,7 +412,7 @@ public class FMLPlayMessages
                     //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
                     // so they won't be validated
                     //Override and use the tags from the packet to test for validation before we actually set them
-                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(ForgeTagHandler.withSpecificModded(tagCollectionSupplier, msg.customTagTypeCollections));
+                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(ForgeTagHandler.withSpecificCustom(tagCollectionSupplier, msg.customTagTypeCollections));
                     if (missingTags.isEmpty())
                     {
                         //If we have no missing tags, update the custom tag types

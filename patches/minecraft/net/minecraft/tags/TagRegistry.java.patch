@@ -54,20 +54,21 @@
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
-@@ -40,12 +79,22 @@
- 
-    public void func_242188_a(ITagCollectionSupplier p_242188_1_) {
+@@ -42,10 +81,24 @@
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242188_1_);
--      this.field_232930_b_ = itagcollection;
-+      this.field_232930_b_ = reinjectOptionalTags(itagcollection);//Forge: Ensure our tag collection contains any missing optional tags so that we can properly default them
+       this.field_232930_b_ = itagcollection;
        this.field_232931_c_.forEach((p_232936_1_) -> {
++         if (p_232936_1_ instanceof OptionalNamedTag && ((OptionalNamedTag<?>) p_232936_1_).needsDefaulting) p_232936_1_.func_232943_a_(rl -> null); else
           p_232936_1_.func_232943_a_(itagcollection::func_199910_a);
        });
     }
  
-+   private ITagCollection<T> reinjectOptionalTags(ITagCollection<T> tagCollection) {
++   public ITagCollection<T> reinjectOptionalTags(ITagCollection<T> tagCollection) {
 +      java.util.Map<ResourceLocation, ITag<T>> currentTags = tagCollection.func_241833_a();
-+      java.util.Map<ResourceLocation, ITag<T>> missingOptionals = this.field_232931_c_.stream().filter(e -> e instanceof OptionalNamedTag && !currentTags.containsKey(e.func_230234_a_())).collect(Collectors.toMap(NamedTag::func_230234_a_, namedTag -> namedTag));
++      java.util.Map<ResourceLocation, ITag<T>> missingOptionals = this.field_232931_c_.stream().filter(e -> e instanceof OptionalNamedTag && !currentTags.containsKey(e.func_230234_a_())).collect(Collectors.toMap(NamedTag::func_230234_a_, namedTag -> {
++         ((OptionalNamedTag<T>) namedTag).needsDefaulting = true;
++         return namedTag;
++      }));
 +      if (!missingOptionals.isEmpty()) {
 +         missingOptionals.putAll(currentTags);
 +         return ITagCollection.func_242202_a(missingOptionals);
@@ -78,7 +79,7 @@
     public ITagCollection<T> func_232939_b_() {
        return this.field_232930_b_;
     }
-@@ -56,7 +105,7 @@
+@@ -56,7 +109,7 @@
  
     public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
@@ -87,7 +88,7 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +142,50 @@
+@@ -93,5 +146,52 @@
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
        }
@@ -104,6 +105,7 @@
 +      @Nullable
 +      private final java.util.function.Supplier<Set<T>> defaults;
 +      private boolean defaulted = true;
++      private boolean needsDefaulting = false;
 +
 +      private OptionalNamedTag(ResourceLocation name, @Nullable java.util.function.Supplier<Set<T>> defaults) {
 +         super(name);
@@ -120,6 +122,7 @@
 +         super.func_232943_a_(p_232943_1_);
 +         if (this.field_232942_b_ == null) {
 +            this.defaulted = true;
++            this.needsDefaulting = false;
 +            Set<T> defs = defaults == null ? null : defaults.get();
 +            this.field_232942_b_ = defs == null ? Tag.func_241284_a_() : Tag.func_241286_a_(defs);
 +         } else {

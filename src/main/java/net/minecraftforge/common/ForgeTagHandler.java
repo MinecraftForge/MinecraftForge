@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -48,7 +49,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.network.FMLPlayMessages.SyncCustomTagTypes;
 import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
@@ -203,8 +203,7 @@ public class ForgeTagHandler
     /**
      * Gets a map of registry name to tag collection for all custom tag types.
      *
-     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods.
-     * This will ensure that any {@link net.minecraftforge.common.Tags.IOptionalNamedTag}s are properly defaulted and accessible.
+     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods
      */
     public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
     {
@@ -223,7 +222,7 @@ public class ForgeTagHandler
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
         //Add the static references for custom tag types to the proper tag registries
-        TagRegistry.performDelayedAdd();//TODO: Talk with cpw about this, as this potentially should be parallelized?
+        TagRegistry.performDelayedAdd();//TODO: Talk with cpw about this, as this potentially should be in an async processor?
     }
 
     /**
@@ -251,7 +250,7 @@ public class ForgeTagHandler
      *
      * @apiNote Internal
      */
-    public static void resetCachedTagCollections(boolean makeEmpty)
+    public static void resetCachedTagCollections(boolean makeEmpty, boolean withOptional)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
@@ -260,9 +259,16 @@ public class ForgeTagHandler
             if (tagRegistry != null)
             {
                 if (makeEmpty)
-                    builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+                {
+                    if (withOptional)
+                        builder.put(registryName, tagRegistry.reinjectOptionalTags(ITagCollection.func_242202_a(Collections.emptyMap())));
+                    else
+                        builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+                }
                 else
+                {
                     builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().distinct().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
+                }
             }
         }
         customTagTypes = builder.build();
@@ -276,7 +282,7 @@ public class ForgeTagHandler
     public static ITagCollectionSupplier populateTagCollectionManager(ITagCollection<Block> blockTags, ITagCollection<Item> itemTags, ITagCollection<Fluid> fluidTags, ITagCollection<EntityType<?>> entityTypeTags)
     {
         //Default the tag collections
-        resetCachedTagCollections(false);
+        resetCachedTagCollections(false, false);
         if (!customTagTypes.isEmpty())
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
@@ -307,6 +313,7 @@ public class ForgeTagHandler
     public static void updateCustomTagTypes(SyncCustomTagTypes packet)
     {
         customTagTypes = packet.getCustomTagTypes();
+        reinjectOptionalTagsCustomTypes();
     }
 
     /**
@@ -327,7 +334,30 @@ public class ForgeTagHandler
         return customResults;
     }
 
-    public static ITagCollectionSupplier withNoModded(ITagCollectionSupplier tagCollectionSupplier)
+    /**
+     * Add all the missing optional tags back into the custom tag types tag collections
+     *
+     * @apiNote Internal
+     */
+    public static void reinjectOptionalTagsCustomTypes()
+    {
+        ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
+        for (Entry<ResourceLocation, ITagCollection<?>> entry : customTagTypes.entrySet())
+        {
+            ResourceLocation registry = entry.getKey();
+            TagRegistry<?> tagRegistry = TagRegistryManager.get(registry);
+            ITagCollection<?> tagCollection = entry.getValue();
+            builder.put(registry, tagRegistry == null ? tagCollection : tagRegistry.reinjectOptionalTags((ITagCollection) tagCollection));
+        }
+        customTagTypes = builder.build();
+    }
+
+    /**
+     * Gets an {@link ITagCollectionSupplier} with empty custom tag type collections to allow for checking if the client is requiring any tags of custom tag types.
+     *
+     * @apiNote Internal: For use with validating missing tags when connecting to a vanilla server
+     */
+    public static ITagCollectionSupplier withNoCustom(ITagCollectionSupplier tagCollectionSupplier)
     {
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
@@ -338,10 +368,15 @@ public class ForgeTagHandler
                 builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
             }
         }
-        return withSpecificModded(tagCollectionSupplier, builder.build());
+        return withSpecificCustom(tagCollectionSupplier, builder.build());
     }
 
-    public static ITagCollectionSupplier withSpecificModded(ITagCollectionSupplier tagCollectionSupplier, Map<ResourceLocation, ITagCollection<?>> modded)
+    /**
+     * Gets an {@link ITagCollectionSupplier} with specific custom tag types for testing if any tags are missing.
+     *
+     * @apiNote Internal
+     */
+    public static ITagCollectionSupplier withSpecificCustom(ITagCollectionSupplier tagCollectionSupplier, Map<ResourceLocation, ITagCollection<?>> customTagTypes)
     {
         return new ITagCollectionSupplier()
         {
@@ -372,7 +407,7 @@ public class ForgeTagHandler
             @Override
             public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
             {
-                return modded;
+                return customTagTypes;
             }
         };
     }

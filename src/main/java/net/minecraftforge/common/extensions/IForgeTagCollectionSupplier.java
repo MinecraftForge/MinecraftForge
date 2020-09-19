@@ -21,8 +21,6 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Map;
 import net.minecraft.tags.ITagCollection;
-import net.minecraft.tags.TagRegistry;
-import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -33,8 +31,7 @@ public interface IForgeTagCollectionSupplier
     /**
      * Gets the tag map of registry names to tag collections for the various custom tag types.
      *
-     * @apiNote Prefer using one of the getCustomTypeCollection methods, as this method won't contain the tag collections with missing
-     * {@link net.minecraftforge.common.Tags.IOptionalNamedTag}s defaulted. This method is mainly for internal overriding to test specific custom tag types.
+     * @apiNote Prefer using one of the getCustomTypeCollection methods
      */
     default Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
     {
@@ -49,9 +46,7 @@ public interface IForgeTagCollectionSupplier
     default ITagCollection<?> getCustomTypeCollection(ResourceLocation regName)
     {
         if (!ForgeTagHandler.getCustomTagTypeNames().contains(regName)) throw new IllegalArgumentException("Registry " + regName + ", does not support custom tag types");
-        TagRegistry<?> tagRegistry = TagRegistryManager.get(regName);
-        //tagRegistry should never be null but just in case fall back to the raw tags without any optional tags added with their defaults
-        return tagRegistry == null ? getCustomTagTypes().get(regName) : tagRegistry.func_232939_b_();
+        return getCustomTagTypes().get(regName);
     }
 
     /**
