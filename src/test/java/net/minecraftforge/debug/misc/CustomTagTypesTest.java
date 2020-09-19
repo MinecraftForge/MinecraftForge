@@ -49,7 +49,6 @@ public class CustomTagTypesTest
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final ITag.INamedTag<Biome> OCEANS = ForgeTagHandler.makeWrapperTag(ForgeRegistries.BIOMES, new ResourceLocation(MODID, "oceans"));
     private static final ITag.INamedTag<Custom> TESTS = ForgeTagHandler.makeWrapperTag(customRegistryName, new ResourceLocation(MODID, "tests"));
 
     public CustomTagTypesTest()
@@ -65,7 +64,6 @@ public class CustomTagTypesTest
         {
             DataGenerator gen = event.getGenerator();
             ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-            gen.addProvider(new BiomeTags(gen, existingFileHelper));
             gen.addProvider(new CustomRegistryTags(gen, existingFileHelper));
         }
     }
@@ -73,25 +71,6 @@ public class CustomTagTypesTest
     public static class Custom extends ForgeRegistryEntry<Custom> {
     }
 
-    public static class BiomeTags extends ForgeRegistryTagsProvider<Biome>
-    {
-        public BiomeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
-        {
-            super(gen, ForgeRegistries.BIOMES, MODID, existingFileHelper);
-        }
-
-        @Override
-        protected void registerTags()
-        {
-            func_240522_a_(OCEANS).add(Biomes.OCEAN, Biomes.FROZEN_OCEAN, Biomes.DEEP_OCEAN, Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN,
-                  Biomes.COLD_OCEAN, Biomes.DEEP_WARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.DEEP_FROZEN_OCEAN);
-        }
-
-        @Override
-        public String getName() {
-            return "Biome Tags";
-        }
-    }
 
     public static class CustomRegistryTags extends ForgeRegistryTagsProvider<Custom>
     {
