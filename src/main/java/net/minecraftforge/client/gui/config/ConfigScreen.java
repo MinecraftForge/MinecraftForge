@@ -65,7 +65,7 @@ public abstract class ConfigScreen extends Screen {
         // drawCenteredString(matrixStack, fontRenderer, title, width / 2, 8, 0xFFFFFF)
         func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, this.field_230708_k_ / 2, 8, 0xFFFFFF);
         if (subTitle != null)
-            func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, this.field_230708_k_ / 2, 8 + field_230712_o_.FONT_HEIGHT + 4, 0xFFFFFF);
+            func_238472_a_(matrixStack, field_230712_o_, subTitle, this.field_230708_k_ / 2, 8 + field_230712_o_.FONT_HEIGHT + 8, 0xA0A0A0);
 
         // Renders our widgets for us
         // super.render(matrixStack, mouseX, mouseY, partialTicks);
