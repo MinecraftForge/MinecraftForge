@@ -47,7 +47,7 @@ public class ListConfigScreen extends ConfigScreen {
                         list.remove(index);
                         onAddRemove();
                     });
-                    addBelowButton.setFGColor(ConfigElementControls.RED);
+                    removeButton.setFGColor(ConfigElementControls.RED);
                     widgets.add(addBelowButton);
                     widgets.add(removeButton);
                 }
@@ -140,13 +140,18 @@ public class ListConfigScreen extends ConfigScreen {
 
     private void set(int index, Object newValue) {
         list.set(index, newValue);
+
     }
 
     private void onAddRemove() {
         // Lazy way out
         // Whenever anything changes, recreate from scratch
         // Saves the headache of dealing with indexing of adds/removes
+        field_230705_e_.remove(configElementList); // children.remove
+        double scrollAmount = configElementList.func_230966_l_(); // getScrollAmount
         configElementList = makeConfigElementList();
+        configElementList.func_230932_a_(scrollAmount); // getScrollAmount
+        field_230705_e_.add(configElementList); // children.add
     }
 
 }

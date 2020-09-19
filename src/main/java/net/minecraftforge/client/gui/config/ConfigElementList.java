@@ -32,6 +32,10 @@ import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
+
+    // From AbstractList#render/func_230430_a_
+    private static final int SCROLLBAR_WIDTH = 6;
+
     private final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
@@ -206,7 +210,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     @Override
     // getRowWidth
     public int func_230949_c_() {
-        return getWidth() - 20;
+        return getWidth() - SCROLLBAR_WIDTH;
     }
 
     public void tick() {
@@ -251,7 +255,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // render
         public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean isHovered, float partialTicks) {
             final Iterator<Widget> iterator = widgets.descendingIterator();
-            int widgetPos = (shouldRenderScrollbar() ? func_230952_d_() : getWidth()) - PADDING; // getScrollbarPosition
+            int widgetPos = func_230952_d_() - PADDING; // getScrollbarPosition
             while (iterator.hasNext()) {
                 final Widget widget = iterator.next();
                 widgetPos -= widget.func_230998_h_(); // Width
@@ -298,12 +302,6 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 //            return false;
 //        }
 
-    }
-
-    public boolean shouldRenderScrollbar() {
-        // Copied from func_230955_e_/getMaxScroll
-        int maxScroll = func_230945_b_() - (field_230673_j_ - field_230672_i_ - 4);
-        return maxScroll > 0;
     }
 
     @Override
@@ -363,7 +361,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             super(translatedName, description);
             int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum();
             // getScrollbarPosition
-            int width = (shouldRenderScrollbar() ? func_230952_d_() : getWidth()) - otherWidthsAndPadding - PADDING * 2;
+            int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2;
             Button openScreen = new ExtendedButton(0, 0, width, 20, new StringTextComponent(translatedName), b -> {
                 // DO NOT use this, it crashes Java somehow. Probably a bug in the compiler?
                 // "https://gist.github.com/Cadiboo/6d1bd4b3b97c284e743a2253b81c3e5e#file-log"
