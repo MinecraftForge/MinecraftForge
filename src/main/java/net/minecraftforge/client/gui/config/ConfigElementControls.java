@@ -1,10 +1,12 @@
 package net.minecraftforge.client.gui.config;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
@@ -19,21 +21,114 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ConfigElementControls {
+    @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.RED.getColor() could be null"
     static final int RED = TextFormatting.RED.getColor();
+    @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.GREEN.getColor() could be null"
     static final int GREEN = TextFormatting.GREEN.getColor();
     // Copied from TextFieldWidget#enabledColor because it's private
     private static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
     private static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
+    public static final int WIDGET_WIDTH = 50;
+    public static final int WIDGET_HEIGHT = 20;
 
     public static StringTextComponent component(@Nullable String name) {
         return name == null ? EMPTY_STRING : new StringTextComponent(name);
     }
 
+    /**
+     * Has so many constructors so that it is easily extensible.
+     */
     public static class ConfigElementButton extends ExtendedButton {
-
         public ConfigElementButton(@Nullable String name, IPressable handler) {
-            super(0, 0, 50, 20, component(name), handler);
+            this(component(name), handler);
+        }
+
+        public ConfigElementButton(ITextComponent title, IPressable handler) {
+            super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
+        }
+    }
+
+    /**
+     * Has so many constructors so that it is easily extensible.
+     */
+    public static class ConfigElementTextField extends TextFieldWidget {
+
+        // TextFields have a 2px border on each side that is not included in their width/height
+        public static final int BORDER = 2;
+
+        public ConfigElementTextField(@Nullable String name) {
+            this(name, Minecraft.getInstance().fontRenderer);
+        }
+
+        public ConfigElementTextField(ITextComponent title) {
+            this(title, Minecraft.getInstance().fontRenderer);
+        }
+
+        public ConfigElementTextField(@Nullable String name, FontRenderer fontRenderer) {
+            this(component(name), fontRenderer);
+        }
+
+        public ConfigElementTextField(ITextComponent title, FontRenderer fontRenderer) {
+            super(fontRenderer, 0, 0, WIDGET_WIDTH - BORDER * 2, WIDGET_HEIGHT - BORDER * 2, title);
+        }
+
+        protected String lastText = null;
+
+        @Override
+        public void setResponder(@Nullable Consumer<String> responderIn) {
+            super.setResponder(newText -> {
+                // By default this gets called whenever a user clicks somewhere in the text box
+                // Make it so we only run the listener when the text actually changes
+                if (responderIn != null && !Objects.equals(newText, lastText))
+                    responderIn.accept(newText);
+            });
+        }
+    }
+
+    /**
+     * Just testing to check
+     */
+    public static class TestColorTextField extends ConfigElementTextField {
+        public TestColorTextField(@Nullable String name) {
+            super(name);
+        }
+
+        @Override
+        public void setResponder(@Nullable Consumer<String> responderIn) {
+            super.setResponder(newText -> {
+                if (responderIn != null)
+                    responderIn.accept(newText);
+                setColor(newText);
+            });
+        }
+
+        private void setColor(String newText) {
+            if (newText == null)
+                return;
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 2);
+                String g = newText.substring(2, 3);
+                String b = newText.substring(3, 4);
+                newText = "#" + r + r + g + g + b + b;
+            }
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 3);
+                String g = newText.substring(3, 5);
+                String b = newText.substring(5, 7);
+                int ir;
+                int ig;
+                int ib;
+                try {
+                    ir = Integer.parseInt(r, 16);
+                    ig = Integer.parseInt(g, 16);
+                    ib = Integer.parseInt(b, 16);
+                } catch (NumberFormatException e) {
+                    setTextColor(RED);
+                    return;
+                }
+                setTextColor(ir << 16 | ig << 8 | ib);
+            }
         }
     }
 
@@ -75,9 +170,8 @@ public class ConfigElementControls {
     }
 
     public static <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, @Nullable String name, Function<String, T> parser, T longestValue) {
-        TextFieldWidget control = new TextFieldWidget(Minecraft.getInstance().fontRenderer, 0, 0, 46, 16, component(name));
+        ConfigElementTextField control = new ConfigElementTextField(name);
         control.setMaxStringLength(longestValue.toString().length());
-        Object[] lastText = new Object[1];
         BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             T parsed;
             try {
@@ -87,9 +181,8 @@ public class ConfigElementControls {
                 return;
             }
             boolean valid = true;
-            if (!isSetup && !Objects.equals(lastText[0], newValue))
+            if (!isSetup)
                 valid = setter.test(parsed);
-            lastText[0] = newValue;
             control.setTextColor(valid ? TEXT_FIELD_ACTIVE_COLOR : RED);
         };
         final Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);
@@ -98,8 +191,8 @@ public class ConfigElementControls {
             if (isSetup) {
                 // The normal responder assumes it's not setup
                 control.setResponder(null);
-                control.setText(newValue.toString());
                 stringConsumer.accept(true, newValue.toString());
+                control.setText(newValue.toString());
                 control.setResponder(responder);
             } else
                 control.setText(newValue.toString());
@@ -139,7 +232,7 @@ public class ConfigElementControls {
     }
 
     public static ConfigElementWidgetData<String> createStringTextField(Predicate<String> setter, @Nullable String name) {
-        TextFieldWidget control = new TextFieldWidget(Minecraft.getInstance().fontRenderer, 0, 0, 46, 16, component(name));
+        ConfigElementTextField control = new TestColorTextField(name);
         control.setMaxStringLength(Integer.MAX_VALUE);
         final BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             boolean valid = true;
@@ -153,8 +246,8 @@ public class ConfigElementControls {
             if (isSetup) {
                 // The normal responder assumes it's not setup
                 control.setResponder(null);
-                control.setText(newValue);
                 stringConsumer.accept(true, newValue);
+                control.setText(newValue);
                 control.setResponder(responder);
             } else
                 control.setText(newValue);
