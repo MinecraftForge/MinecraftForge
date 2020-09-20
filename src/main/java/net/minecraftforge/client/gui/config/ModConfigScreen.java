@@ -60,7 +60,7 @@ public class ModConfigScreen extends ConfigScreen {
 
         @Override
         protected ConfigElementList makeConfigElementList() {
-            ConfigCategoryInfo info = ConfigCategoryInfo.of(
+            CategoryConfigScreen.ConfigCategoryInfo info = CategoryConfigScreen.ConfigCategoryInfo.of(
                     () -> modConfig.getSpec().getValues().valueMap().keySet(),
                     key -> modConfig.getSpec().getValues().get(key),
                     key -> modConfig.getSpec().getSpec().get(key),

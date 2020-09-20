@@ -12,10 +12,12 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class CategoryConfigScreen extends ConfigScreen {
     private final ConfigCategoryInfo categoryInfo;
@@ -28,6 +30,47 @@ public class CategoryConfigScreen extends ConfigScreen {
     @Override
     protected ConfigElementList makeConfigElementList() {
         return new CategoryConfigElementList(this, field_230706_i_, categoryInfo);
+    }
+
+    public interface ConfigCategoryInfo {
+
+        Collection<String> elements();
+
+        Object getValue(String key);
+
+        Object getSpec(String key);
+
+        /** Special case categories because reasons */
+        String getCategoryComment(String key);
+
+        static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec) {
+            return of(elements, getValue, getSpec, $ -> null);
+        }
+
+        static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec, Function<String, String> getCategoryComment) {
+            return new ConfigCategoryInfo() {
+
+                @Override
+                public Collection<String> elements() {
+                    return elements.get();
+                }
+
+                @Override
+                public Object getValue(String key) {
+                    return getValue.apply(key);
+                }
+
+                @Override
+                public Object getSpec(String key) {
+                    return getSpec.apply(key);
+                }
+
+                @Override
+                public String getCategoryComment(String key) {
+                    return getCategoryComment.apply(key);
+                }
+            };
+        }
     }
 
     public static class CategoryConfigElementList extends ConfigElementList {
