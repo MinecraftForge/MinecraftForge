@@ -15,8 +15,7 @@ import javax.annotation.Nullable;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Stop tooltip rendering partially off screen
- * - Tooltips containing extra info about the item
+ * - Make tooltips contain extra info about the item
  * - Fix list item control sizing (rowWidth - maxListLabelWidth - otherWidgetsWidth)
  * - Translucent scissored list
  * - Copy values
@@ -61,16 +60,17 @@ public abstract class ConfigScreen extends Screen {
         field_230705_e_.add(configElementList);
         int padding = 10;
         int left = padding;
+        int buttonHeight = 20;
+        int buttonSize = (field_230708_k_ - padding * 2) / 3; // width
         int footerTop = configElementList.getBottom();
         int footerHeight = field_230709_l_ - footerTop; // height
-        int y = footerTop + footerHeight / 2 - 20 / 2;
-        int buttonSize = (field_230708_k_ - padding * 2) / 3; // width
+        int y = footerTop + footerHeight / 2 - buttonHeight / 2;
         // Add the undo button
-        undoButton = func_230480_a_(new Button(left, y, buttonSize, 20, new TranslationTextComponent("undo.config"), button -> undo()));
+        undoButton = func_230480_a_(new Button(left, y, buttonSize, buttonHeight, new TranslationTextComponent("undo.config"), button -> undo()));
         // Add the reset button
-        resetButton = func_230480_a_(new Button(left + buttonSize, y, buttonSize, 20, new TranslationTextComponent("reset.config"), button -> reset()));
+        resetButton = func_230480_a_(new Button(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("reset.config"), button -> reset()));
         // Add the "done" button
-        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, 20, DialogTexts.field_240632_c_, button -> field_230706_i_.displayGuiScreen(parentScreen)));
+        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> field_230706_i_.displayGuiScreen(parentScreen)));
     }
 
     protected abstract ConfigElementList makeConfigElementList();

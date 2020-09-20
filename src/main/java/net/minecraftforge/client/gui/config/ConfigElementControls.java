@@ -1,5 +1,6 @@
 package net.minecraftforge.client.gui.config;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -14,6 +15,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -34,6 +37,15 @@ public class ConfigElementControls {
 
     public static StringTextComponent component(@Nullable String name) {
         return name == null ? EMPTY_STRING : new StringTextComponent(name);
+    }
+
+    public static <T> T copyMutable(T o) {
+        // Immutable objects can be returned as is
+        if (o instanceof Boolean || o instanceof Number || o instanceof Enum<?>)
+            return o;
+        if (o instanceof List<?>)
+            return (T) new ArrayList<>((List<?>)o);
+        throw new IllegalArgumentException("Unknown object " + (o == null ? "null" : o.getClass()));
     }
 
     /**

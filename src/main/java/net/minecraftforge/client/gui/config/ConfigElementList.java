@@ -3,6 +3,7 @@ package net.minecraftforge.client.gui.config;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.fonts.DefaultGlyph;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -14,6 +15,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -29,13 +31,13 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
     // From AbstractList#render/func_230430_a_
     private static final int SCROLLBAR_WIDTH = 6;
-    public static final int ROW_HEIGHT = 20;
 
     protected final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
-    public ConfigElementList(ConfigScreen configScreen, Minecraft mcIn) {
-        super(mcIn, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, ROW_HEIGHT);
+    public ConfigElementList(ConfigScreen configScreen, Minecraft minecraft) {
+        // super(minecraft, width, height, top, bottom, rowHeight);
+        super(minecraft, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, 20);
         this.configScreen = configScreen;
     }
 
@@ -66,10 +68,21 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementResetButton(String translatedName, Button.IPressable onPress) {
-        return new ExtendedButton(0, 0, 30, ROW_HEIGHT, new TranslationTextComponent("controls.reset"), onPress) {
+        return new ExtendedButton(0, 0, 30, 10, new TranslationTextComponent("controls.reset"), onPress) {
             @Override
+            // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
                 return new TranslationTextComponent("narrator.controls.reset", translatedName);
+            }
+        };
+    }
+
+    public static Button createConfigElementUndoButton(String translatedName, Button.IPressable onPress) {
+        return new ExtendedButton(0, 0, 30, 10, new TranslationTextComponent("controls.undo"), onPress) {
+            @Override
+            // getNarrationMessage
+            protected IFormattableTextComponent func_230442_c_() {
+                return new TranslationTextComponent("narrator.controls.undo", translatedName);
             }
         };
     }
@@ -104,17 +117,19 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         @Override
         // render
-        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean isHovered, float partialTicks) {
-            final Iterator<Widget> iterator = widgets.descendingIterator();
+        public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+            Iterator<Widget> iterator = widgets.descendingIterator();
             int widgetPos = func_230952_d_() - PADDING; // getScrollbarPosition
             while (iterator.hasNext()) {
-                final Widget widget = iterator.next();
-                widgetPos -= widget.func_230998_h_(); // Width
-                widget.field_230690_l_ = widgetPos;
-                widget.field_230691_m_ = elementRenderY;
+                Widget widget = iterator.next();
+                widgetPos -= widget.func_230998_h_(); // getWidth
+                widget.field_230690_l_ = widgetPos; // x
+                widget.field_230691_m_ = rowTop; // y
+                widget.setHeight(getItemHeight());
                 if (widget instanceof TextFieldWidget) {
-                    widget.field_230690_l_ -= 2;
-                    widget.field_230691_m_ += 2;
+                    widget.field_230690_l_ -= 2; // x
+                    widget.field_230691_m_ += 2; // y
+                    widget.setHeight(widget.func_238483_d_() - 4); // getHeight
                 }
                 // Render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
@@ -123,9 +138,12 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             if (description != null && description.length() > 0) {
+                int maxPerLine = getWidth() / 4 / DefaultGlyph.INSTANCE.getWidth();
+                List<ITextComponent> list = Arrays.stream(WordUtils.wrap(description, maxPerLine).split("\n"))
+                        .map(StringTextComponent::new)
+                        .collect(Collectors.toList());
                 // renderTooltip
-                List<ITextComponent> list = Arrays.stream(description.split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
-                ConfigElementList.this.configScreen.func_243308_b(matrixStack, list, mouseX, mouseY);
+                configScreen.func_243308_b(matrixStack, list, mouseX, mouseY);
             }
         }
 
@@ -158,6 +176,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 //            return false;
 //        }
 
+    }
+
+    public int getItemHeight() {
+        return field_230669_c_;
     }
 
     /**
@@ -213,9 +235,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         @Override
         // render
-        public void func_230432_a_(MatrixStack matrixStack, int p_230432_2_, int elementRenderY, int p_230432_4_, int p_230432_5_, int p_230432_6_, int mouseX, int mouseY, boolean isHovered, float partialTicks) {
-            super.func_230432_a_(matrixStack, p_230432_2_, elementRenderY, p_230432_4_, p_230432_5_, p_230432_6_, mouseX, mouseY, isHovered, partialTicks);
-            field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, p_230432_4_, (float) (elementRenderY + p_230432_6_ / 2 - 9 / 2), 0xffffff);
+        public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+            super.func_230432_a_(matrixStack, index, rowTop, rowLeft, rowWidth, adjustedItemHeight, mouseX, mouseY, isSelected, partialTicks);
+            field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, rowLeft, (float) (rowTop + adjustedItemHeight / 2 - 9 / 2), 0xffffff);
         }
 
     }
@@ -229,7 +251,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum();
             // getScrollbarPosition
             int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2;
-            Button openScreen = new ExtendedButton(0, 0, width, ROW_HEIGHT, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
+            Button openScreen = new ExtendedButton(0, 0, width, 0, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
             widgets.add(0, openScreen);
         }
     }

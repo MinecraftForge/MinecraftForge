@@ -45,13 +45,13 @@ public class ListConfigScreen extends ConfigScreen {
                 super(item.getClass().getSimpleName() + " list item", "");
                 Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
                     // TODO: Add copy
-                    list.add(index + 1, item);
-                    onAddRemove();
+                    list.add(index + 1, ConfigElementControls.copyMutable(list.get(index)));
+                    onAddRemove(index + 1);
                 });
                 addBelowButton.setFGColor(ConfigElementControls.GREEN);
                 Button removeButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("-"), b -> {
                     list.remove(index);
-                    onAddRemove();
+                    onAddRemove(index);
                 });
                 removeButton.setFGColor(ConfigElementControls.RED);
                 widgets.add(addBelowButton);
@@ -147,12 +147,16 @@ public class ListConfigScreen extends ConfigScreen {
         list.set(index, newValue);
     }
 
-    private void onAddRemove() {
+    private void onAddRemove(int index) {
         // Lazy way out
         // Whenever anything changes, recreate from scratch
         // Saves the headache of dealing with indexing of adds/removes
         field_230705_e_.remove(configElementList); // children.remove
         double scrollAmount = configElementList.func_230966_l_(); // getScrollAmount
+        if (index == list.size() - 1)
+            // If we're at the bottom, scroll even further because if it's an add
+            // we want to scroll to the new bottom
+            scrollAmount += this.configElementList.getItemHeight();
         configElementList = makeConfigElementList();
         configElementList.func_230932_a_(scrollAmount); // getScrollAmount
         field_230705_e_.add(configElementList); // children.add
