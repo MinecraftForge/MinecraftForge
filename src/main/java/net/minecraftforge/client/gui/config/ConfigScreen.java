@@ -1,6 +1,7 @@
 package net.minecraftforge.client.gui.config;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -10,14 +11,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import javax.annotation.Nullable;
 
 /**
- * This class needs to handle holding state for the displayed config.
- * It should be the "master" class that everything passes through.
- * Duties:
- * - To load the stuff for the config file
- * - To display a message to the user when the config file on the system is changed
- * and the displayed version needs to be updated (display a list of the user's changes
- * and wait for them to click reload, maybe in the future allow them to merge their changes)
- * - To manage the scrollable screen displaying the widgets
+ * This class standardises the layout/look/feel of a config screen.
+ * It passes necessary events through to it's {@link ConfigElementList}.
  */
 public abstract class ConfigScreen extends Screen {
 
@@ -25,7 +20,7 @@ public abstract class ConfigScreen extends Screen {
     @Nullable
     private final ITextComponent subTitle;
     protected Button resetButton;
-//    protected Button undoButton;
+    //    protected Button undoButton;
     protected ConfigElementList configElementList;
 
     public ConfigScreen(Screen parentScreen, ITextComponent title) {
@@ -39,6 +34,13 @@ public abstract class ConfigScreen extends Screen {
     }
 
     @Override
+    public void func_231158_b_(Minecraft minecraft, int scaledWidth, int scaledHeight) {
+        super.func_231158_b_(minecraft, scaledWidth, scaledHeight);
+        // Tick right after init so everything's set up properly for the first render
+        this.func_231023_e_(); // tick
+    }
+
+    @Override
     // init
     protected void func_231160_c_() {
         super.func_231160_c_();
@@ -46,7 +48,7 @@ public abstract class ConfigScreen extends Screen {
         // children.add
         field_230705_e_.add(configElementList);
         resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
-            resetConfig();
+            reset();
         }));
         // Add the "done" button
         func_230480_a_(new Button(field_230708_k_ / 2 - 155 + 160, field_230709_l_ - 29, 150, 20, DialogTexts.field_240632_c_, b -> field_230706_i_.displayGuiScreen(parentScreen)));
@@ -73,6 +75,7 @@ public abstract class ConfigScreen extends Screen {
     }
 
     @Override
+    // tick
     public void func_231023_e_() {
         this.configElementList.tick();
         boolean anyResettable = false;
@@ -86,18 +89,18 @@ public abstract class ConfigScreen extends Screen {
         this.resetButton.field_230693_o_ = anyResettable;
     }
 
+    /**
+     * Called when the value of a config element on a {@link ConfigElementList} changes.
+     */
     public void onChange() {
         if (parentScreen instanceof ConfigScreen)
             ((ConfigScreen) parentScreen).onChange();
     }
 
-    protected void resetConfig() {
-//        // Delegate resetting to the parent screen if we are a sub-screen (list/sub config)
-//        if (parentScreen instanceof ConfigScreen) {
-//            ((ConfigScreen) parentScreen).resetConfig();
-//        } else {
-//            // TODO: Reset
-//        }
+    /**
+     * Called to reset the current screens config elements to their default values.
+     */
+    protected void reset() {
         for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
             element.reset.run();
     }

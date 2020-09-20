@@ -12,8 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Makes a ConfigScreen with entries for all of a mod's registered configs.
@@ -68,7 +66,7 @@ public class ModConfigScreen extends ConfigScreen {
                     key -> modConfig.getSpec().getSpec().get(key),
                     key -> modConfig.getSpec().getSpec().getComment(key)
             );
-            return new ConfigElementList(this, field_230706_i_, info);
+            return new CategoryConfigScreen.CategoryConfigElementList(this, field_230706_i_, info);
         }
 
         @Override
@@ -85,7 +83,7 @@ public class ModConfigScreen extends ConfigScreen {
             // 10 seconds before their changes take effect.
             modConfig.save();
             ((CommentedFileConfig) modConfig.getConfigData()).load();
-			modConfig.fireEvent(new ModConfig.Reloading(modConfig));
+            modConfig.fireEvent(new ModConfig.Reloading(modConfig));
         }
     }
 
