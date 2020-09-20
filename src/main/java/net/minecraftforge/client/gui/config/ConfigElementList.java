@@ -14,6 +14,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -138,13 +139,11 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             if (description != null && description.length() > 0) {
-                int maxPerLine = getWidth() / 5 * 3 / DefaultGlyph.INSTANCE.getWidth();
                 List<ITextComponent> list = Arrays.stream(description.split("\n"))
-                        .flatMap(d -> Arrays.stream(WordUtils.wrap(d, maxPerLine, null, true).split("\n")))
                         .map(StringTextComponent::new)
                         .collect(Collectors.toList());
                 // renderTooltip
-                configScreen.func_243308_b(matrixStack, list, mouseX, mouseY);
+                GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
             }
         }
 

@@ -3,6 +3,7 @@ package net.minecraftforge.client.gui.config;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
@@ -23,7 +24,6 @@ import javax.annotation.Nullable;
  * - Undo changes working properly for lists & categories
  * - Do I need to deal with sub-configs?
  * - Requires world restart (display screen on change)
- * - Make tooltips wrap and render properly (Hard: IReorderingProcessor + ITextProperties)
  */
 public abstract class ConfigScreen extends Screen {
 
@@ -143,5 +143,9 @@ public abstract class ConfigScreen extends Screen {
     // closeScreen
     public void func_231175_as__() {
         field_230706_i_.displayGuiScreen(parentScreen);
+    }
+
+    public FontRenderer getFontRenderer() {
+        return field_230712_o_;
     }
 }
