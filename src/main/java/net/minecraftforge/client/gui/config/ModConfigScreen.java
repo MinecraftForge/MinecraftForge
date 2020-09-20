@@ -5,9 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -18,11 +21,28 @@ import java.util.Collection;
  */
 public class ModConfigScreen extends ConfigScreen {
 
-    private final ModInfo mod;
+    private final IModInfo mod;
 
-    public ModConfigScreen(Screen screen, ModInfo mod) {
+    public ModConfigScreen(Screen screen, IModInfo mod) {
         super(screen, new StringTextComponent(mod.getDisplayName()));
         this.mod = mod;
+    }
+
+    /**
+     * Makes a Runnable that will register a config gui factory for the ModContainer
+     * BUT ONLY IF a config gui factory does not already exist for the ModContainer.
+     *
+     * @param modContainer The ModContainer to possibly register a config gui factory for
+     * @return The runnable
+     * @see ModContainer#addConfig(ModConfig)
+     */
+    public static DistExecutor.SafeRunnable makeConfigGuiExtensionPoint(final ModContainer modContainer) {
+        if (modContainer.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY).isPresent())
+            return () -> {
+                // No-op
+            };
+        return () -> modContainer.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+                () -> (minecraft, screen) -> new ModConfigScreen(screen, modContainer.getModInfo()));
     }
 
     @Override

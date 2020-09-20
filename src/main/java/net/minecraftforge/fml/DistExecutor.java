@@ -46,7 +46,7 @@ public final class DistExecutor
     private DistExecutor() {}
 
     /**
-     * Run the callable in the supplier only on the specified {@link Side}.
+     * Run the callable in the supplier only on the specified {@link Dist}.
      * This method is NOT sided-safe and special care needs to be taken in code using this method that implicit class
      * loading is not triggered by the Callable.
      *
@@ -95,7 +95,7 @@ public final class DistExecutor
     }
 
     /**
-     * Runs the supplied Runnable on the speicified side. Same warnings apply as {@link #callWhenOn(Dist, Supplier)}.
+     * Runs the supplied Runnable on the specified side. Same warnings apply as {@link #callWhenOn(Dist, Supplier)}.
      *
      * This method can cause unexpected ClassNotFound exceptions.
      *
@@ -109,7 +109,7 @@ public final class DistExecutor
         unsafeRunWhenOn(dist, toRun);
     }
     /**
-     * Runs the supplied Runnable on the speicified side. Same warnings apply as {@link #unsafeCallWhenOn(Dist, Supplier)}.
+     * Runs the supplied Runnable on the specified side. Same warnings apply as {@link #unsafeCallWhenOn(Dist, Supplier)}.
      *
      * This method can cause unexpected ClassNotFoundException problems in common scenarios. Understand the pitfalls of
      * the way the class verifier works to load classes before using this.
@@ -245,7 +245,7 @@ public final class DistExecutor
      */
     public interface SafeRunnable extends SafeReferent, Runnable, Serializable {}
 
-    private static final void validateSafeReferent(Supplier<? extends SafeReferent> safeReferentSupplier) {
+    private static void validateSafeReferent(Supplier<? extends SafeReferent> safeReferentSupplier) {
         if (FMLEnvironment.production) return;
         final SafeReferent setter;
         try {

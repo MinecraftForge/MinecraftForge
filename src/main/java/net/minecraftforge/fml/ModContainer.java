@@ -20,6 +20,8 @@
 package net.minecraftforge.fml;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.gui.config.ModConfigScreen;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
@@ -48,7 +50,6 @@ import java.util.function.Supplier;
  * </p>
  *
  * @author cpw
- *
  */
 
 public abstract class ModContainer
@@ -59,7 +60,7 @@ public abstract class ModContainer
     protected ModLoadingStage modLoadingStage;
     protected Supplier<?> contextExtension;
     protected final Map<ModLoadingStage, Runnable> activityMap = new HashMap<>();
-    protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
+    protected final Map<ExtensionPoint<?>, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
@@ -135,8 +136,17 @@ public abstract class ModContainer
         extensionPoints.put(point, extension);
     }
 
+    /**
+     * Adds a ModConfig to this mod.
+     * If on the client distribution this also adds a config gui extension point to this mod
+     * ONLY IF one is NOT already present.
+     */
     public void addConfig(final ModConfig modConfig) {
-       configs.put(modConfig.getType(), modConfig);
+        configs.put(modConfig.getType(), modConfig);
+        configs.put(modConfig.getType(), modConfig);
+        // It works on a server because of the nested Runnables so this can be run unsafely,
+        // even though it could theoretically crash.
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ModConfigScreen.makeConfigGuiExtensionPoint(this));
     }
 
     public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
