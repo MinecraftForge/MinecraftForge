@@ -13,6 +13,15 @@ import javax.annotation.Nullable;
 /**
  * This class standardises the layout/look/feel of a config screen.
  * It passes necessary events through to it's {@link ConfigElementList}.
+ * <p>
+ * TODO:
+ * - Tooltip rendering post-normal render
+ * - Tooltips containing extra info about the item
+ * - Translucent scissored list
+ * - Copy values
+ * - Reset working properly for lists & categories
+ * - Undo changes working properly for lists & categories
+ * - Do I need to deal with sub-configs?
  */
 public abstract class ConfigScreen extends Screen {
 
