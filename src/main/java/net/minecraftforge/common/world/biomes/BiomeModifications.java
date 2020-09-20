@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Collection of operators to perform on a biome's objects.
@@ -161,14 +162,14 @@ public class BiomeModifications
                 .func_235097_a_(fromlist(modifications, mods -> mods.effects, base.func_235089_q_()))
                 .func_242457_a(new BiomeGenerationSettings(
                         fromlist(modifications, mods -> mods.surfaceBuilder, base.func_242440_e().func_242500_d()),
-                        fromlist(modifications, mods -> mods.carvers, base.func_242440_e().getAllCarvers()),
+                        fromlist(modifications, mods -> mods.carvers, base.func_242440_e().getCarvingStages().stream().collect(Collectors.toMap(Function.identity(), base.func_242440_e()::func_242489_a))),
                         fromlist(modifications, mods -> mods.features, base.func_242440_e().func_242498_c()),
                         fromlist(modifications, mods -> mods.structures, (List<Supplier<StructureFeature<?,?>>>) base.func_242440_e().func_242487_a())
                 ))
                 .func_242458_a(new MobSpawnInfo(
                         fromlist(modifications, mods -> mods.creatureSpawnProbability, base.func_242433_b().func_242557_a()),
-                        fromlist(modifications, mods -> mods.spawners, base.func_242433_b().getAllSpawners()),
-                        fromlist(modifications, mods -> mods.spawnCosts, base.func_242433_b().getAllSpawnCosts()),
+                        fromlist(modifications, mods -> mods.spawners, base.func_242433_b().getSpawnerTypes().stream().collect(Collectors.toMap(Function.identity(), base.func_242433_b()::func_242559_a))),
+                        fromlist(modifications, mods -> mods.spawnCosts, base.func_242433_b().getEntityTypes().stream().collect(Collectors.toMap(Function.identity(), base.func_242433_b()::func_242558_a))),
                         fromlist(modifications, mods -> mods.playerSpawnFriendly, base.func_242433_b().func_242562_b())
                 ))
                 .func_242455_a();

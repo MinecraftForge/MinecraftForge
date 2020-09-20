@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = "forge")
@@ -50,6 +51,7 @@ public class BiomeModifierManager extends JsonReloadListener
     private static final Logger LOGGER = LogManager.getLogger("BiomeModifierManager");
     private static final Gson GSON = new GsonBuilder().create();
     private static final String FOLDER = "biome_modifiers";
+    private static final Map<ResourceLocation, Biome> eventProcessedBiomes = new HashMap<>();
 
     private List<BiomeModifier> deserializedModifiers = null;
     private Function<DynamicOps<JsonElement>, List<BiomeModifier>> modifiers = ops -> { throw new IllegalStateException(); };
@@ -65,6 +67,11 @@ public class BiomeModifierManager extends JsonReloadListener
     private static boolean shouldReload()
     {
         return !worldGenFinished;
+    }
+
+    public static void addBiomeLoadingEventResult(ResourceLocation biome, Biome afterEvent)
+    {
+        eventProcessedBiomes.put(biome, afterEvent);
     }
 
     @Override
@@ -242,7 +249,7 @@ public class BiomeModifierManager extends JsonReloadListener
             if(!reg.containsKey(loc))
                 return dataObj;
 
-            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(reg.getValue(loc));
+            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(BiomeModifierManager.eventProcessedBiomes.getOrDefault(loc, reg.getValue(loc)));
             return DataResult.success(Pair.of((E)modified, OptionalInt.of(reg.getID(loc))), Lifecycle.experimental());
         }
     }

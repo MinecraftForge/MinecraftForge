@@ -1,6 +1,16 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
-@@ -190,6 +190,7 @@
+@@ -47,6 +47,9 @@
+    public static <T> WorldSettingsImport<T> func_244335_a(DynamicOps<T> p_244335_0_, IResourceManager p_244335_1_, DynamicRegistries.Impl p_244335_2_) {
+       return func_244336_a(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_);
+    }
++   public static <T> WorldSettingsImport<T> createWithBiomeModifiers(DynamicOps<T> ops, IResourceManager manager, DynamicRegistries.Impl impl) {
++      return func_244336_a(ops, new net.minecraftforge.common.world.biomes.BiomeModifierManager.ModificationAccess(manager), impl);
++   }
+ 
+    public static <T> WorldSettingsImport<T> func_244336_a(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_) {
+       WorldSettingsImport<T> worldsettingsimport = new WorldSettingsImport<>(p_244336_0_, p_244336_1_, p_244336_2_, Maps.newIdentityHashMap());
+@@ -190,6 +193,7 @@
                 ) {
                    JsonParser jsonparser = new JsonParser();
                    JsonElement jsonelement = jsonparser.parse(reader);
@@ -8,7 +18,7 @@
                    return p_241879_4_.parse(p_241879_1_, jsonelement).map((p_244347_0_) -> {
                       return Pair.of(p_244347_0_, OptionalInt.empty());
                    });
-@@ -231,6 +232,7 @@
+@@ -231,6 +235,7 @@
  
           public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {
              JsonElement jsonelement = this.field_244349_a.get(p_241879_3_);
