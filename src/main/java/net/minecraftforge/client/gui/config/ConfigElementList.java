@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,12 +29,13 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
     // From AbstractList#render/func_230430_a_
     private static final int SCROLLBAR_WIDTH = 6;
+    public static final int ROW_HEIGHT = 20;
 
     protected final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
     public ConfigElementList(ConfigScreen configScreen, Minecraft mcIn) {
-        super(mcIn, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, 20);
+        super(mcIn, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, ROW_HEIGHT);
         this.configScreen = configScreen;
     }
 
@@ -54,14 +56,37 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             element.tick();
     }
 
+    @Override
+    // render
+    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+        ConfigElement selectedElement = func_230933_a_(mouseX, mouseY); // getEntryAtPosition
+        if (selectedElement != null)
+            selectedElement.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
+    }
+
+    public static Button createConfigElementResetButton(String translatedName, Button.IPressable onPress) {
+        return new ExtendedButton(0, 0, 30, ROW_HEIGHT, new TranslationTextComponent("controls.reset"), onPress) {
+            @Override
+            protected IFormattableTextComponent func_230442_c_() {
+                return new TranslationTextComponent("narrator.controls.reset", translatedName);
+            }
+        };
+    }
+
     @OnlyIn(Dist.CLIENT)
     public abstract class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
         public static final int PADDING = 5;
         final String translatedName;
         final String description;
         protected final LinkedList<Widget> widgets = new LinkedList<>();
-        protected final Button btnReset;
+        @Nullable
+        public Button resetButton;
+        @Nullable
+        public Button undoButton;
+        @Deprecated
         protected Runnable reset;
+        @Deprecated
         protected BooleanSupplier canReset;
 
         public ConfigElement(String translatedName, String description) {
@@ -69,20 +94,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             this.description = description;
             if (maxListLabelWidth < translatedName.length())
                 maxListLabelWidth = translatedName.length();
-            reset = () -> System.out.println("Reset " + translatedName);
-            canReset = () -> false;
-            btnReset = new Button(0, 0, 50, 20, new TranslationTextComponent("controls.reset"), button -> {
-                reset.run();
-            }) {
-                @Override
-                protected IFormattableTextComponent func_230442_c_() {
-                    return new TranslationTextComponent("narrator.controls.reset", translatedName);
-                }
-            };
-            widgets.add(btnReset);
         }
 
         @Override
+        // getEventListeners
         public List<? extends IGuiEventListener> func_231039_at__() {
             return widgets;
         }
@@ -104,17 +119,22 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 // Render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
             }
-            // TODO: Doesn't work well
-            if (description.length() > 0 && this.func_231047_b_(mouseX, mouseY)) {
+        }
+
+        public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+            if (description != null && description.length() > 0) {
                 // renderTooltip
                 List<ITextComponent> list = Arrays.stream(description.split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
                 ConfigElementList.this.configScreen.func_243308_b(matrixStack, list, mouseX, mouseY);
             }
         }
 
+        /**
+         * Makes the cursor of any {@link TextFieldWidget}s animate.
+         */
         public void tick() {
-            // active/enabled
-            btnReset.field_230693_o_ = canReset.getAsBoolean();
+//            // active/enabled
+//            resetButton.field_230693_o_ = canReset.getAsBoolean();
             for (Widget widget : widgets)
                 if (widget instanceof TextFieldWidget)
                     ((TextFieldWidget) widget).tick();
@@ -140,30 +160,41 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
     }
 
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
     @Override
-    public boolean func_231044_a_(double p_231044_1_, double p_231044_3_, int p_231044_5_) {
-        boolean wasAnythingSelected = super.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_);
-        if (!wasAnythingSelected) {
-            for (ConfigElement element : func_231039_at__())
+    // mouseClicked
+    public boolean func_231044_a_(double mouseX, double mouseY, int mouseButton) {
+        boolean wasAnythingSelected = super.func_231044_a_(mouseX, mouseY, mouseButton);
+        if (!wasAnythingSelected)
+            for (ConfigElement element : func_231039_at__()) // getEventListeners
                 for (Widget widget : element.widgets)
                     if (widget instanceof TextFieldWidget)
                         ((TextFieldWidget) widget).setFocused2(false);
-        }
         return wasAnythingSelected;
     }
 
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
     @Override
-    protected void func_230938_a_(int p_230938_1_, int p_230938_2_) {
-        super.func_230938_a_(p_230938_1_, p_230938_2_);
-        for (ConfigElement element : func_231039_at__())
+    // clickedHeader
+    protected void func_230938_a_(int relativeX, int relativeY) {
+        super.func_230938_a_(relativeX, relativeY);
+        for (ConfigElement element : func_231039_at__()) // getEventListeners
             for (Widget widget : element.widgets)
                 if (widget instanceof TextFieldWidget)
                     ((TextFieldWidget) widget).setFocused2(false);
     }
 
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
     @Override
+    // setListener
     public void func_231035_a_(IGuiEventListener newFocused) {
-        final ConfigElement oldFocused = func_241217_q_();
+        ConfigElement oldFocused = func_241217_q_(); // getListener
         if (oldFocused != null && oldFocused != newFocused)
             for (Widget widget : oldFocused.widgets)
                 if (widget instanceof TextFieldWidget)
@@ -198,12 +229,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum();
             // getScrollbarPosition
             int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2;
-            Button openScreen = new ExtendedButton(0, 0, width, 20, new StringTextComponent(translatedName), b -> {
-                // DO NOT use this, it crashes Java somehow. Probably a bug in the compiler?
-                // "https://gist.github.com/Cadiboo/6d1bd4b3b97c284e743a2253b81c3e5e#file-log"
-                field_230668_b_.displayGuiScreen(screenFactory.get());
-//                Minecraft.getInstance().displayGuiScreen(screenFactory.get());
-            });
+            Button openScreen = new ExtendedButton(0, 0, width, ROW_HEIGHT, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
             widgets.add(0, openScreen);
         }
     }

@@ -15,14 +15,15 @@ import javax.annotation.Nullable;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Tooltip rendering post-normal render
+ * - Stop tooltip rendering partially off screen
  * - Tooltips containing extra info about the item
- * - Fix list item control sizing
+ * - Fix list item control sizing (rowWidth - maxListLabelWidth - otherWidgetsWidth)
  * - Translucent scissored list
  * - Copy values
  * - Reset working properly for lists & categories
  * - Undo changes working properly for lists & categories
  * - Do I need to deal with sub-configs?
+ * - Requires world restart (display screen on change)
  */
 public abstract class ConfigScreen extends Screen {
 
@@ -30,7 +31,7 @@ public abstract class ConfigScreen extends Screen {
     @Nullable
     private final ITextComponent subTitle;
     protected Button resetButton;
-    //    protected Button undoButton;
+    protected Button undoButton;
     protected ConfigElementList configElementList;
 
     public ConfigScreen(Screen parentScreen, ITextComponent title) {
@@ -44,6 +45,7 @@ public abstract class ConfigScreen extends Screen {
     }
 
     @Override
+    // init
     public void func_231158_b_(Minecraft minecraft, int scaledWidth, int scaledHeight) {
         super.func_231158_b_(minecraft, scaledWidth, scaledHeight);
         // Tick right after init so everything's set up properly for the first render
@@ -57,11 +59,18 @@ public abstract class ConfigScreen extends Screen {
         configElementList = makeConfigElementList();
         // children.add
         field_230705_e_.add(configElementList);
-        resetButton = func_230480_a_(new Button(field_230708_k_ / 2 - 155, field_230709_l_ - 29, 150, 20, new TranslationTextComponent("reset.config"), (p_213125_1_) -> {
-            reset();
-        }));
+        int padding = 10;
+        int left = padding;
+        int footerTop = configElementList.getBottom();
+        int footerHeight = field_230709_l_ - footerTop; // height
+        int y = footerTop + footerHeight / 2 - 20 / 2;
+        int buttonSize = (field_230708_k_ - padding * 2) / 3; // width
+        // Add the undo button
+        undoButton = func_230480_a_(new Button(left, y, buttonSize, 20, new TranslationTextComponent("undo.config"), button -> undo()));
+        // Add the reset button
+        resetButton = func_230480_a_(new Button(left + buttonSize, y, buttonSize, 20, new TranslationTextComponent("reset.config"), button -> reset()));
         // Add the "done" button
-        func_230480_a_(new Button(field_230708_k_ / 2 - 155 + 160, field_230709_l_ - 29, 150, 20, DialogTexts.field_240632_c_, b -> field_230706_i_.displayGuiScreen(parentScreen)));
+        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, 20, DialogTexts.field_240632_c_, button -> field_230706_i_.displayGuiScreen(parentScreen)));
     }
 
     protected abstract ConfigElementList makeConfigElementList();
@@ -89,14 +98,20 @@ public abstract class ConfigScreen extends Screen {
     public void func_231023_e_() {
         this.configElementList.tick();
         boolean anyResettable = false;
+        boolean anyUndoable = false;
         for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__()) {
-            if (!element.btnReset.field_230693_o_)
-                continue;
-            anyResettable = true;
-            break;
+            Button btnReset = element.resetButton;
+            Button btnUndo = element.undoButton;
+            // btn != null && btn.visible && btn.active/enabled
+            anyResettable |= btnReset != null && btnReset.field_230694_p_ && btnReset.field_230693_o_;
+            anyUndoable |= btnUndo != null && btnUndo.field_230694_p_ && btnUndo.field_230693_o_;
+            if (anyResettable && anyUndoable)
+                // We've checked as far as we need to
+                break;
         }
         // active/enabled
         this.resetButton.field_230693_o_ = anyResettable;
+        this.undoButton.field_230693_o_ = anyUndoable;
     }
 
     /**
@@ -108,11 +123,19 @@ public abstract class ConfigScreen extends Screen {
     }
 
     /**
-     * Called to reset the current screens config elements to their default values.
+     * Called to set all of the current screen's config elements to their default values.
      */
     protected void reset() {
-        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
-            element.reset.run();
+//        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
+//            element.reset.run();
+    }
+
+    /**
+     * Called to set all of the current screen's config elements to their initial values.
+     */
+    protected void undo() {
+//        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
+//            element.undo.run();
     }
 
     @Override
