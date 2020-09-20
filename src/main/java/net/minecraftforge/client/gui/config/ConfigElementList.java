@@ -138,8 +138,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             if (description != null && description.length() > 0) {
-                int maxPerLine = getWidth() / 4 / DefaultGlyph.INSTANCE.getWidth();
-                List<ITextComponent> list = Arrays.stream(WordUtils.wrap(description, maxPerLine).split("\n"))
+                int maxPerLine = getWidth() / 5 * 3 / DefaultGlyph.INSTANCE.getWidth();
+                List<ITextComponent> list = Arrays.stream(description.split("\n"))
+                        .flatMap(d -> Arrays.stream(WordUtils.wrap(d, maxPerLine, null, true).split("\n")))
                         .map(StringTextComponent::new)
                         .collect(Collectors.toList());
                 // renderTooltip
