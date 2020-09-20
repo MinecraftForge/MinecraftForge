@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
  * TODO:
  * - Tooltip rendering post-normal render
  * - Tooltips containing extra info about the item
+ * - Fix list item control sizing
  * - Translucent scissored list
  * - Copy values
  * - Reset working properly for lists & categories
