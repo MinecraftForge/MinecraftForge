@@ -2,18 +2,18 @@ package net.minecraftforge.client.gui.config;
 
 import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -79,7 +79,7 @@ public class CategoryConfigScreen extends ConfigScreen {
         public CategoryConfigElementList(ConfigScreen configScreen, Minecraft mcIn, ConfigCategoryInfo info) {
             super(configScreen, mcIn);
             for (String key : info.elements())
-                this.func_230513_b_(createConfigElement(key, info));
+                func_230513_b_(createConfigElement(key, info));
         }
 
         protected ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
@@ -113,61 +113,43 @@ public class CategoryConfigScreen extends ConfigScreen {
             if (valueInfo.needsWorldRestart())
                 description += "\n" + TextFormatting.RED + "[" + new TranslationTextComponent("forge.configgui.needsWorldRestart").getString() + "]";
             if (valueValue instanceof Boolean)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<Boolean> data = createBoolean((ForgeConfigSpec.BooleanValue) value, translatedName, (Boolean) valueValue);
-                        canReset = data.canReset((ForgeConfigSpec.BooleanValue) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.BooleanValue) value, valueInfo,
+                        createBoolean((ForgeConfigSpec.BooleanValue) value, translatedName, (Boolean) valueValue),
+                        (Boolean) valueValue
+                );
             if (valueValue instanceof Integer)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<Integer> data = createNumericRanged((ForgeConfigSpec.IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE);
-                        canReset = data.canReset((ForgeConfigSpec.IntValue) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.IntValue) value, valueInfo,
+                        createNumericRanged((ForgeConfigSpec.IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE),
+                        (Integer) valueValue
+                );
             if (valueValue instanceof Long)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<Long> data = createNumericRanged((ForgeConfigSpec.LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE);
-                        canReset = data.canReset((ForgeConfigSpec.LongValue) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.LongValue) value, valueInfo,
+                        createNumericRanged((ForgeConfigSpec.LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE),
+                        (Long) valueValue
+                );
             if (valueValue instanceof Double)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<Double> data = createNumericRanged((ForgeConfigSpec.DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY);
-                        canReset = data.canReset((ForgeConfigSpec.DoubleValue) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.DoubleValue) value, valueInfo,
+                        createNumericRanged((ForgeConfigSpec.DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY),
+                        (Double) valueValue
+                );
             if (valueValue instanceof Enum<?>)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<?> data = createEnum((ForgeConfigSpec.EnumValue) value, valueInfo, translatedName, (Enum) valueValue);
-                        canReset = data.canReset((ForgeConfigSpec.EnumValue) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.EnumValue) value, valueInfo,
+                        createEnum((ForgeConfigSpec.EnumValue) value, valueInfo, translatedName, (Enum) valueValue),
+                        (Enum) valueValue
+                );
             if (valueValue instanceof String)
-                return new TitledConfigElement(translatedName, description) {
-                    {
-                        ValueConfigElementData<String> data = createString((ForgeConfigSpec.ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
-                        canReset = data.canReset((ForgeConfigSpec.ConfigValue<String>) value, valueInfo);
-                        reset = data.reset(valueInfo);
-                        widgets.add(0, data.widget);
-                    }
-                };
+                return new ConfigValueConfigElement(
+                        translatedName, description, (ForgeConfigSpec.ConfigValue<String>) value, valueInfo,
+                        createString((ForgeConfigSpec.ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue),
+                        (String) valueValue
+                );
             if (valueValue instanceof List<?>)
-                return new PopupConfigElement(translatedName, description, () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue));
+                return new PopupConfigElement(translatedName, description, () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue, (List<?>) valueInfo.getDefault()));
             return null;
         }
 
@@ -180,13 +162,6 @@ public class CategoryConfigScreen extends ConfigScreen {
                 this.valueSetter = valueSetter;
             }
 
-            public Runnable reset(ForgeConfigSpec.ValueSpec valueInfo) {
-                return () -> valueSetter.accept((T) valueInfo.getDefault());
-            }
-
-            public BooleanSupplier canReset(ForgeConfigSpec.ConfigValue<T> value, ForgeConfigSpec.ValueSpec valueInfo) {
-                return () -> !value.get().equals(valueInfo.getDefault());
-            }
         }
 
         public ValueConfigElementData<Boolean> createBoolean(ForgeConfigSpec.BooleanValue value, String translatedName, Boolean valueValue) {
@@ -239,6 +214,56 @@ public class CategoryConfigScreen extends ConfigScreen {
         public class CategoryConfigElement extends PopupConfigElement {
             public CategoryConfigElement(ConfigScreen parentScreen, String translatedName, String description, ConfigCategoryInfo valueCategoryInfo) {
                 super(translatedName, description, () -> new CategoryConfigScreen(parentScreen, new StringTextComponent(translatedName), valueCategoryInfo));
+            }
+        }
+
+        private class ConfigValueConfigElement extends TitledConfigElement {
+
+            private final BooleanSupplier canReset;
+            private final BooleanSupplier canUndo;
+
+            public <T> ConfigValueConfigElement(String translatedName, String description, ForgeConfigSpec.ConfigValue<T> value, ForgeConfigSpec.ValueSpec valueInfo, ValueConfigElementData<T> data, T obj) {
+                super(translatedName, description);
+                widgets.add(0, data.widget);
+                T _default = ConfigElementControls.copyMutable((T) valueInfo.getDefault());
+                T initial = ConfigElementControls.copyMutable(obj);
+                canReset = () -> !value.get().equals(_default);
+                canUndo = () -> !value.get().equals(initial);
+                widgets.add(resetButton = createConfigElementResetButton(translatedName, button -> data.valueSetter.accept(_default)));
+                widgets.add(undoButton = createConfigElementUndoButton(translatedName, button -> data.valueSetter.accept(initial)));
+            }
+
+            @Override
+            public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+                // getRowWidth, Button#getWidth(), Button#getWidth()
+                int controlWidth = func_230949_c_() - getMaxListLabelWidth() - resetButton.func_230998_h_() - undoButton.func_230998_h_();
+                widgets.getFirst().func_230991_b_(controlWidth); // setWidth
+                super.func_230432_a_(matrixStack, index, rowTop, rowLeft, rowWidth, adjustedItemHeight, mouseX, mouseY, isSelected, partialTicks);
+            }
+
+            @Override
+            public void tick() {
+                super.tick();
+                // active/enabled
+                resetButton.field_230693_o_ = canReset.getAsBoolean();
+                undoButton.field_230693_o_ = canUndo.getAsBoolean();
+            }
+
+            @Override
+            public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+                for (Widget widget : widgets)
+                    if (mouseX >= widget.field_230690_l_ && mouseY >= widget.field_230691_m_ && mouseX < widget.field_230690_l_ + widget.func_230998_h_() && mouseY < widget.field_230691_m_ + widget.func_238483_d_()) {
+                        if (widget == resetButton) {
+                            List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("resets stuff"));
+                            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                        } else if (widget == undoButton) {
+                            List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("undoes stuff"));
+                            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                        }
+                        // Don't render the element's tooltip
+                        return;
+                    }
+                super.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
             }
         }
     }

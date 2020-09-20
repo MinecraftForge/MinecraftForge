@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.gui.config.ConfigElementList.ConfigElement;
 
 import javax.annotation.Nullable;
 
@@ -98,21 +99,29 @@ public abstract class ConfigScreen extends Screen {
     // tick
     public void func_231023_e_() {
         this.configElementList.tick();
-        boolean anyResettable = false;
-        boolean anyUndoable = false;
-        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__()) {
-            Button btnReset = element.resetButton;
-            Button btnUndo = element.undoButton;
-            // btn != null && btn.visible && btn.active/enabled
-            anyResettable |= btnReset != null && btnReset.field_230694_p_ && btnReset.field_230693_o_;
-            anyUndoable |= btnUndo != null && btnUndo.field_230694_p_ && btnUndo.field_230693_o_;
-            if (anyResettable && anyUndoable)
-                // We've checked as far as we need to
-                break;
-        }
         // active/enabled
-        this.resetButton.field_230693_o_ = anyResettable;
-        this.undoButton.field_230693_o_ = anyUndoable;
+        this.resetButton.field_230693_o_ = canReset();
+        this.undoButton.field_230693_o_ = canUndo();
+    }
+
+    protected boolean canReset() {
+        for (ConfigElement element : this.configElementList.func_231039_at__()) {
+            Button resetButton = element.resetButton;
+            // btn != null && btn.visible && btn.active/enabled
+            if (resetButton != null && resetButton.field_230694_p_ && resetButton.field_230693_o_)
+                return true;
+        }
+        return false;
+    }
+
+    protected boolean canUndo() {
+        for (ConfigElement element : this.configElementList.func_231039_at__()) {
+            Button undoButton = element.undoButton;
+            // btn != null && btn.visible && btn.active/enabled
+            if (undoButton != null && undoButton.field_230694_p_ && undoButton.field_230693_o_)
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -127,16 +136,18 @@ public abstract class ConfigScreen extends Screen {
      * Called to set all of the current screen's config elements to their default values.
      */
     protected void reset() {
-//        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
-//            element.reset.run();
+        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
+            if (element.resetButton != null)
+                element.resetButton.func_230930_b_();
     }
 
     /**
      * Called to set all of the current screen's config elements to their initial values.
      */
     protected void undo() {
-//        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
-//            element.undo.run();
+        for (ConfigElementList.ConfigElement element : this.configElementList.func_231039_at__())
+            if (element.undoButton != null)
+                element.undoButton.func_230930_b_();
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ConfigElementControls {
     // Copied from TextFieldWidget#enabledColor because it's private
     private static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
-    private static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
+    public static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
     public static final int WIDGET_WIDTH = 50;
     public static final int WIDGET_HEIGHT = 20;
 
@@ -41,7 +41,7 @@ public class ConfigElementControls {
 
     public static <T> T copyMutable(T o) {
         // Immutable objects can be returned as is
-        if (o instanceof Boolean || o instanceof Number || o instanceof Enum<?>)
+        if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Enum<?>)
             return o;
         if (o instanceof List<?>)
             return (T) new ArrayList<>((List<?>)o);

@@ -3,7 +3,6 @@ package net.minecraftforge.client.gui.config;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.fonts.DefaultGlyph;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -16,7 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import org.apache.commons.lang3.text.WordUtils;
+import net.minecraftforge.fml.client.gui.widget.UnicodeGlyphButton;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -40,6 +39,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // super(minecraft, width, height, top, bottom, rowHeight);
         super(minecraft, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, 20);
         this.configScreen = configScreen;
+    }
+
+    public int getMaxListLabelWidth() {
+        return maxListLabelWidth;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementResetButton(String translatedName, Button.IPressable onPress) {
-        return new ExtendedButton(0, 0, 30, 10, new TranslationTextComponent("controls.reset"), onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -79,7 +82,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementUndoButton(String translatedName, Button.IPressable onPress) {
-        return new ExtendedButton(0, 0, 30, 10, new TranslationTextComponent("controls.undo"), onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -98,16 +101,13 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         public Button resetButton;
         @Nullable
         public Button undoButton;
-        @Deprecated
-        protected Runnable reset;
-        @Deprecated
-        protected BooleanSupplier canReset;
 
         public ConfigElement(String translatedName, String description) {
             this.translatedName = translatedName;
             this.description = description;
-            if (maxListLabelWidth < translatedName.length())
-                maxListLabelWidth = translatedName.length();
+            int length = configScreen.getFontRenderer().getStringWidth(translatedName);
+            if (maxListLabelWidth < length)
+                maxListLabelWidth = length;
         }
 
         @Override
@@ -142,7 +142,6 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 List<ITextComponent> list = Arrays.stream(description.split("\n"))
                         .map(StringTextComponent::new)
                         .collect(Collectors.toList());
-                // renderTooltip
                 GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
             }
         }

@@ -13,11 +13,34 @@ import java.util.List;
 import java.util.Objects;
 
 public class ListConfigScreen extends ConfigScreen {
-    private final List list;
+    private List list;
+    private final List<?> initialValue;
+    private final List<?> defaultValue;
 
-    public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> list) {
+    public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
         super(parentScreen, title, new StringTextComponent("List"));
-        this.list = list;
+        list = this.initialValue = initialValue;
+        this.defaultValue = defaultValue;
+    }
+
+    @Override
+    protected void reset() {
+        list = ConfigElementControls.copyMutable(defaultValue);
+    }
+
+    @Override
+    protected void undo() {
+        list = ConfigElementControls.copyMutable(defaultValue);
+    }
+
+    @Override
+    protected boolean canReset() {
+        return !Objects.equals(list, defaultValue);
+    }
+
+    @Override
+    protected boolean canUndo() {
+        return !Objects.equals(list, initialValue);
     }
 
     @Override
@@ -44,7 +67,6 @@ public class ListConfigScreen extends ConfigScreen {
             public ListItemConfigElement(int index, Object item) {
                 super(item.getClass().getSimpleName() + " list item", "");
                 Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
-                    // TODO: Add copy
                     list.add(index + 1, ConfigElementControls.copyMutable(list.get(index)));
                     onAddRemove(index + 1);
                 });
@@ -137,7 +159,7 @@ public class ListConfigScreen extends ConfigScreen {
                     }
                 };
             if (item instanceof List<?>)
-                return new PopupConfigElement("Nested List", "Nested List", () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item));
+                return new PopupConfigElement("Nested List", "Nested List", () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item));
             return null;
         }
 
