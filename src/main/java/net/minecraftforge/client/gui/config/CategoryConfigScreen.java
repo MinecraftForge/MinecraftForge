@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -108,8 +109,11 @@ public class CategoryConfigScreen extends ConfigScreen {
 
         @Nullable
         private ConfigElement createValueConfigElement(ForgeConfigSpec.ConfigValue<?> value, ForgeConfigSpec.ValueSpec valueInfo, String translatedName, Object valueValue) {
+            String description = valueInfo.getComment();
+            if (valueInfo.needsWorldRestart())
+                description += "\n" + TextFormatting.RED + "[" + new TranslationTextComponent("forge.configgui.needsWorldRestart").getString() + "]";
             if (valueValue instanceof Boolean)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<Boolean> data = createBoolean((ForgeConfigSpec.BooleanValue) value, translatedName, (Boolean) valueValue);
                         canReset = data.canReset((ForgeConfigSpec.BooleanValue) value, valueInfo);
@@ -118,7 +122,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof Integer)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<Integer> data = createNumericRanged((ForgeConfigSpec.IntValue) value, valueInfo, translatedName, (Integer) valueValue, Integer::parseInt, Integer.MIN_VALUE);
                         canReset = data.canReset((ForgeConfigSpec.IntValue) value, valueInfo);
@@ -127,7 +131,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof Long)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<Long> data = createNumericRanged((ForgeConfigSpec.LongValue) value, valueInfo, translatedName, (Long) valueValue, Long::parseLong, Long.MIN_VALUE);
                         canReset = data.canReset((ForgeConfigSpec.LongValue) value, valueInfo);
@@ -136,7 +140,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof Double)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<Double> data = createNumericRanged((ForgeConfigSpec.DoubleValue) value, valueInfo, translatedName, (Double) valueValue, Double::parseDouble, Double.NEGATIVE_INFINITY);
                         canReset = data.canReset((ForgeConfigSpec.DoubleValue) value, valueInfo);
@@ -145,7 +149,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof Enum<?>)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<?> data = createEnum((ForgeConfigSpec.EnumValue) value, valueInfo, translatedName, (Enum) valueValue);
                         canReset = data.canReset((ForgeConfigSpec.EnumValue) value, valueInfo);
@@ -154,7 +158,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof String)
-                return new TitledConfigElement(translatedName, valueInfo.getComment()) {
+                return new TitledConfigElement(translatedName, description) {
                     {
                         ValueConfigElementData<String> data = createString((ForgeConfigSpec.ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue);
                         canReset = data.canReset((ForgeConfigSpec.ConfigValue<String>) value, valueInfo);
@@ -163,7 +167,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     }
                 };
             if (valueValue instanceof List<?>)
-                return new PopupConfigElement(translatedName, valueInfo.getComment(), () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue));
+                return new PopupConfigElement(translatedName, description, () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue));
             return null;
         }
 

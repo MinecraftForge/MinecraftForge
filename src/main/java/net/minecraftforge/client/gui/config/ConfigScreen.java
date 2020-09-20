@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
  * - Undo changes working properly for lists & categories
  * - Do I need to deal with sub-configs?
  * - Requires world restart (display screen on change)
+ * - Make tooltips wrap and render properly (Hard: IReorderingProcessor + ITextProperties)
  */
 public abstract class ConfigScreen extends Screen {
 

@@ -127,7 +127,7 @@ public class ModConfigScreen extends ConfigScreen {
         return new ConfigElementList(this, field_230706_i_) {
             {
                 for (ModConfig modConfig : configsToDisplay) {
-                    String translatedName = "fml.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
+                    String translatedName = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
                     String description = COMMENTS.get(modConfig.getType());
                     String filePath = getFilePath(modConfig);
                     if (filePath != null)
