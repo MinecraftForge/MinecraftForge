@@ -22,14 +22,12 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,10 +70,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
@@ -86,6 +82,7 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -115,13 +112,15 @@ public class DataGeneratorTest
         if (event.includeClient())
         {
             gen.addProvider(new Lang(gen));
-            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
-            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
         }
         if (event.includeServer())
         {
             gen.addProvider(new Recipes(gen));
-            gen.addProvider(new Tags(gen));
+            gen.addProvider(new Tags(gen, event.getExistingFileHelper()));
         }
     }
 
@@ -181,19 +180,14 @@ public class DataGeneratorTest
 
     public static class Tags extends BlockTagsProvider
     {
-        private Set<ResourceLocation> filter;
-
-        public Tags(DataGenerator gen)
+        public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
         {
-            super(gen);
+            super(gen, MODID, existingFileHelper);
         }
 
         @Override
         protected void registerTags()
         {
-            super.registerTags();
-            filter = new HashSet<>(this.tagToBuilder.keySet()); // will copy all vanilla tags.
-
             func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .func_240532_a_(Blocks.DIAMOND_BLOCK)
                 .func_240531_a_(BlockTags.STONE_BRICKS)
@@ -212,12 +206,6 @@ public class DataGeneratorTest
                     .func_240532_a_(Blocks.COBBLESTONE)
                     .func_240532_a_(Blocks.DIORITE)
                     .func_240532_a_(Blocks.ANDESITE);
-        }
-
-        @Override
-        protected Path makePath(ResourceLocation id)
-        {
-            return filter != null && filter.contains(id) ? null : super.makePath(id); //To escape saving vanilla tags, but still register them.
         }
     }
 

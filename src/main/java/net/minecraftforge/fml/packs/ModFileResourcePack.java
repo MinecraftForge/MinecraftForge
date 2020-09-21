@@ -66,7 +66,7 @@ public class ModFileResourcePack extends ResourcePack
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         if(!Files.exists(path))
-            throw new ResourcePackFileNotFoundException(path.toFile(), name);
+            throw new ResourcePackFileNotFoundException(modFile.getFilePath().toFile(), name);
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 

@@ -32,6 +32,7 @@ import java.util.stream.Stream;
  */
 public class ModLoadingException extends RuntimeException
 {
+    private static final long serialVersionUID = 2048947398536935507L;
     /**
      * Mod Info for mod with issue
      */
@@ -78,5 +79,12 @@ public class ModLoadingException extends RuntimeException
     @Override
     public String getMessage() {
         return formatToString();
+    }
+
+    public IModInfo getModInfo() {
+        return modInfo;
+    }
+    public String getCleanMessage() {
+        return ForgeI18n.stripControlCodes(formatToString());
     }
 }

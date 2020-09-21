@@ -21,15 +21,12 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
@@ -47,13 +44,18 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
@@ -104,8 +106,7 @@ public class ModLoader
 
     private final List<ModLoadingException> loadingExceptions;
     private final List<ModLoadingWarning> loadingWarnings;
-    private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
-    private ExistingFileHelper existingFileHelper;
+    private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
 
@@ -147,40 +148,27 @@ public class ModLoader
         return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
     }
 
-    public void loadMods(Executor mainThreadExecutor, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
-        DeferredWorkQueue.workExecutor = mainThreadExecutor;
-        statusConsumer.ifPresent(c->c.accept("Loading mod config"));
-        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
-        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
-        statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
-        dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor, null);
-        statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
-        mainThreadExecutor.execute(()->preSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
-        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor, null);
-        mainThreadExecutor.execute(()->postSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
-        statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
-    }
-
-    private static class SpacedRunnable implements Executor {
-        private static final long FIFTYMILLIS = TimeUnit.MILLISECONDS.toNanos(50);
-        private long next = System.nanoTime() + FIFTYMILLIS;
-        @Override
-        public void execute(final Runnable command) {
-            final long time = System.nanoTime();
-            if (next < time) {
-                command.run();
-                next = time + FIFTYMILLIS;
-            }
-        }
-    }
-    public void gatherAndInitializeMods(final Runnable ticker) {
+    /**
+     * Run on the primary starting thread by ClientModLoader and ServerModLoader
+     * @param syncExecutor An executor to run tasks on the main thread
+     * @param parallelExecutor An executor to run tasks on a parallel loading thread pool
+     * @param periodicTask Optional periodic task to perform on the main thread while other activities run
+     */
+    public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
+        loadingStateValid = true;
         statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
-        FMLLoader.backgroundScanHandler.waitForScanToComplete(ticker);
+        FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
         statusConsumer.ifPresent(c->c.accept("Loading mods"));
-        final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
+        final ModList modList = ModList.of(loadingModList
+                .getModFiles()
+                .stream()
+                .map(ModFileInfo::getFile)
+                .collect(Collectors.toList()),
+                loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
+            loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
         statusConsumer.ifPresent(c->c.accept("Building Mod List"));
@@ -192,34 +180,88 @@ public class ModLoader
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
+            loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
-        SpacedRunnable sr = new SpacedRunnable();
         statusConsumer.ifPresent(c->c.accept(String.format("Constructing %d mods", modList.size())));
-        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, sr, ticker);
+        dispatchAndHandleError(ModLoadingStage.CONSTRUCT, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Creating registries"));
-        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, sr, ticker));
+        dispatchAndHandleError(ModLoadingStage.CREATE_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, sr, ticker));
+        dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Adding custom tag types"));
+        GameData.setCustomTagTypesFromRegistries();
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
-    private void dispatchAndHandleError(LifecycleEventProvider event, Executor executor, final Runnable ticker) {
-        if (!loadingExceptions.isEmpty()) {
-            LOGGER.error(LOADING,"Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
-        } else {
-            event.dispatch(this::accumulateErrors, executor, ticker);
-        }
-        if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
-            throw new LoadingFailedException(loadingExceptions);
-        }
+    public void loadMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Function<Executor, CompletableFuture<Void>> beforeSidedEvent, final Function<Executor, CompletableFuture<Void>> afterSidedEvent, final Runnable periodicTask) {
+        statusConsumer.ifPresent(c->c.accept("Loading mod config"));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
+        statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
+        dispatchAndHandleError(ModLoadingStage.COMMON_SETUP, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
+        dispatchAndHandleError(ModLoadingStage.SIDED_SETUP, syncExecutor, parallelExecutor, periodicTask, beforeSidedEvent, afterSidedEvent);
+        statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
-    private void accumulateErrors(List<ModLoadingException> errors) {
-        loadingExceptions.addAll(errors);
+
+    public void finishMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask)
+    {
+        statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
+        dispatchAndHandleError(ModLoadingStage.ENQUEUE_IMC, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
+        dispatchAndHandleError(ModLoadingStage.PROCESS_IMC, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Mod setup: Final completion"));
+        dispatchAndHandleError(ModLoadingStage.COMPLETE, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Freezing data"));
+        GameData.freezeData();
+        NetworkRegistry.lock();
+        statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", ModList.get().size())));
+    }
+
+    private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker) {
+        if (!isLoadingStateValid()) {
+            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            return;
+        }
+        waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor));
+    }
+
+    private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
+        if (!isLoadingStateValid()) {
+            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            return;
+        }
+        waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask));
+    }
+
+    private void waitForTransition(final ModLoadingStage state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker, final CompletableFuture<List<Throwable>> transition) {
+        while (!transition.isDone()) {
+            syncExecutor.drive(ticker);
+        }
+        try {
+            transition.join();
+        } catch (CompletionException e) {
+            loadingStateValid = false;
+            Throwable t = e.getCause();
+            final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
+                    .filter(obj -> !(obj instanceof ModLoadingException))
+                    .collect(Collectors.toList());
+            if (!notModLoading.isEmpty()) {
+                LOGGER.fatal("Encountered non-modloading exceptions!", e);
+                throw e;
+            }
+
+            final List<ModLoadingException> modLoadingExceptions = Arrays.stream(t.getSuppressed())
+                    .filter(ModLoadingException.class::isInstance)
+                    .map(ModLoadingException.class::cast)
+                    .collect(Collectors.toList());
+            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", state, modLoadingExceptions.size());
+            throw new LoadingFailedException(modLoadingExceptions);
+        }
     }
 
     private List<ModContainer> buildMods(final ModFile modFile, final TransformingClassLoader modClassLoader)
@@ -229,7 +271,7 @@ public class ModLoader
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
                 map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e))
-                .filter(e -> e != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
@@ -256,23 +298,28 @@ public class ModLoader
         }
     }
 
-    public void postEvent(Event e) {
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+    /**
+     * @return If the current mod loading state is valid. Use if you interact with vanilla systems directly during loading
+     * and don't want to cause extraneous crashes due to trying to do things that aren't possible in a "broken load"
+     */
+    public static boolean isLoadingStateValid() {
+        return get().loadingStateValid;
     }
 
-    public void finishMods(Executor mainThreadExecutor)
-    {
-        DeferredWorkQueue.workExecutor = mainThreadExecutor;
-        statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor, null);
-        statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC, mainThreadExecutor, null);
-        statusConsumer.ifPresent(c->c.accept("Mod setup: Final completion"));
-        dispatchAndHandleError(LifecycleEventProvider.COMPLETE, mainThreadExecutor, null);
-        statusConsumer.ifPresent(c->c.accept("Freezing data"));
-        GameData.freezeData();
-        NetworkRegistry.lock();
-        statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", ModList.get().size())));
+    public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
+            return;
+        }
+        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
+    }
+
+    public <T extends Event & IModBusEvent> void postEvent(T e) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            return;
+        }
+        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
     }
 
     public List<ModLoadingWarning> getWarnings()
@@ -289,21 +336,5 @@ public class ModLoader
 
     public static boolean isDataGenRunning () {
         return runningDataGen;
-    }
-
-    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
-        if (mods.contains("minecraft") && mods.size() == 1) return;
-        LOGGER.info("Initializing Data Gatherer for mods {}", mods);
-        runningDataGen = true;
-        Bootstrap.register();
-        dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
-        existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
-        gatherAndInitializeMods(() -> {});
-        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, () -> {});
-        dataGeneratorConfig.runAll();
-    }
-
-    public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper);
     }
 }

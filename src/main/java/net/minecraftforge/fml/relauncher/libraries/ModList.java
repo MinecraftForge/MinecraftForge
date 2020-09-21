@@ -40,8 +40,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraftforge.versions.forge.ForgeVersion;
-
 public class ModList
 {
     private static final Logger LOGGER = LogManager.getLogger();

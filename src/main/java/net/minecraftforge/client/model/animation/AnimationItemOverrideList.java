@@ -61,6 +61,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
+    @SuppressWarnings("resource")
     @Override
     public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
     {

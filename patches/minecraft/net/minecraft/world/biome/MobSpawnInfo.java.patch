@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/biome/MobSpawnInfo.java
++++ b/net/minecraft/world/biome/MobSpawnInfo.java
+@@ -42,23 +42,35 @@
+    private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> field_242554_e;
+    private final Map<EntityType<?>, MobSpawnInfo.SpawnCosts> field_242555_f;
+    private final boolean field_242556_g;
++   private final java.util.Set<EntityClassification> typesView;
++   private final java.util.Set<EntityType<?>> costView;
+ 
+    private MobSpawnInfo(float p_i241946_1_, Map<EntityClassification, List<MobSpawnInfo.Spawners>> p_i241946_2_, Map<EntityType<?>, MobSpawnInfo.SpawnCosts> p_i241946_3_, boolean p_i241946_4_) {
+       this.field_242553_d = p_i241946_1_;
+       this.field_242554_e = p_i241946_2_;
+       this.field_242555_f = p_i241946_3_;
+       this.field_242556_g = p_i241946_4_;
++      this.typesView = java.util.Collections.unmodifiableSet(this.field_242554_e.keySet());
++      this.costView = java.util.Collections.unmodifiableSet(this.field_242555_f.keySet());
+    }
+ 
+    public List<MobSpawnInfo.Spawners> func_242559_a(EntityClassification p_242559_1_) {
+       return this.field_242554_e.getOrDefault(p_242559_1_, ImmutableList.of());
+    }
+ 
++   public java.util.Set<EntityClassification> getSpawnerTypes() {
++       return this.typesView;
++   }
++
+    @Nullable
+    public MobSpawnInfo.SpawnCosts func_242558_a(EntityType<?> p_242558_1_) {
+       return this.field_242555_f.get(p_242558_1_);
+    }
+ 
++   public java.util.Set<EntityType<?>> getEntityTypes() {
++       return this.costView;
++   }
++
+    public float func_242557_a() {
+       return this.field_242553_d;
+    }
