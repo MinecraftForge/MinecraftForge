@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Biomes are completely redone in 1.16.2, reevaluate
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
@@ -26,11 +25,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
-import net.minecraft.world.gen.INoiseRandom;
 
 import javax.annotation.Nullable;
 
@@ -38,20 +36,11 @@ public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
-    public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-
-    static
-    {
-        oceanBiomes.add(Biomes.OCEAN);
-        oceanBiomes.add(Biomes.DEEP_OCEAN);
-        oceanBiomes.add(Biomes.FROZEN_OCEAN);
-    }
-
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
         @SuppressWarnings("unchecked")
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
-        List<BiomeEntry> list = new ArrayList<BiomeEntry>();
+        List<BiomeEntry> list = new ArrayList<>();
 
         list.add(new BiomeEntry(Biomes.FOREST, 10));
         list.add(new BiomeEntry(Biomes.DARK_FOREST, 10));
@@ -60,7 +49,7 @@ public class BiomeManager
         list.add(new BiomeEntry(Biomes.BIRCH_FOREST, 10));
         list.add(new BiomeEntry(Biomes.SWAMP, 10));
 
-        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
+        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<>(list);
         list.clear();
 
         list.add(new BiomeEntry(Biomes.FOREST, 10));
@@ -68,34 +57,21 @@ public class BiomeManager
         list.add(new BiomeEntry(Biomes.TAIGA, 10));
         list.add(new BiomeEntry(Biomes.PLAINS, 10));
 
-        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
+        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<>(list);
         list.clear();
 
         list.add(new BiomeEntry(Biomes.SNOWY_TUNDRA, 30));
         list.add(new BiomeEntry(Biomes.SNOWY_TAIGA, 10));
 
-        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
+        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<>(list);
         list.clear();
 
-        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
+        list.add(new BiomeEntry(Biomes.DESERT, 30));
+        list.add(new BiomeEntry(Biomes.SAVANNA, 20));
+        list.add(new BiomeEntry(Biomes.PLAINS, 10));
+        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<>(list);
 
         return currentBiomes;
-    }
-
-    public static void addSpawnBiome(Biome biome)
-    {
-        if (!BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
-        {
-            BiomeProvider.BIOMES_TO_SPAWN_IN.add(biome);
-        }
-    }
-
-    public static void removeSpawnBiome(Biome biome)
-    {
-        if (BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
-        {
-            BiomeProvider.BIOMES_TO_SPAWN_IN.remove(biome);
-        }
     }
 
     public static void addBiome(BiomeType type, BiomeEntry entry)
@@ -146,9 +122,9 @@ public class BiomeManager
 
     public static class BiomeEntry extends WeightedRandom.Item
     {
-        public final Biome biome;
+        public final RegistryKey<Biome> biome;
 
-        public BiomeEntry(Biome biome, int weight)
+        public BiomeEntry(RegistryKey<Biome> biome, int weight)
         {
             super(weight);
 
@@ -242,4 +218,3 @@ public class BiomeManager
         }
     }
 }
-*/
