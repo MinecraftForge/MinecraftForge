@@ -118,7 +118,7 @@ public class Slider extends ExtendedButton
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(field_230687_i_, this.field_230690_l_ + (int)(this.sliderValue * (float)(this.field_230688_j_ - 8)), this.field_230691_m_, 0, 66, 8, this.field_230689_k_, 200, 20, 2, 3, 2, 2, this.func_230927_p_());
+            GuiUtils.drawContinuousTexturedBox(mStack, field_230687_i_, this.field_230690_l_ + (int)(this.sliderValue * (float)(this.field_230688_j_ - 8)), this.field_230691_m_, 0, 66, 8, this.field_230689_k_, 200, 20, 2, 3, 2, 2, this.func_230927_p_());
         }
     }
 

@@ -35,7 +35,7 @@ import java.util.List;
  * Canceling the event will cause the player to receive no items at all.
  * The hook will still take the damage specified
  */
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class ItemFishedEvent extends PlayerEvent
 {
     private final NonNullList<ItemStack> stacks = NonNullList.create();

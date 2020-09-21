@@ -70,7 +70,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -181,8 +180,6 @@ public class DataGeneratorTest
 
     public static class Tags extends BlockTagsProvider
     {
-        private Set<ResourceLocation> filter;
-
         public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
         {
             super(gen, MODID, existingFileHelper);

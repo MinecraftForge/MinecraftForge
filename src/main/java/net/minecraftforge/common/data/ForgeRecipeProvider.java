@@ -46,7 +46,6 @@ import net.minecraft.item.crafting.Ingredient.IItemList;
 import net.minecraft.item.crafting.Ingredient.TagList;
 import net.minecraft.item.crafting.Ingredient.SingleItemList;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -90,7 +89,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
         exclude(Blocks.field_235397_ng_);
-        
+
         exclude(Blocks.COBBLESTONE_STAIRS);
         exclude(Blocks.COBBLESTONE_SLAB);
         exclude(Blocks.COBBLESTONE_WALL);

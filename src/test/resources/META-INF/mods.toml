@@ -85,4 +85,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_tag_types_test"
 [[mods]]
+    modId="biome_loading_event_test"
+[[mods]]
 	modId="teleporter_test"
