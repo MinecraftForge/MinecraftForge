@@ -8,7 +8,7 @@ public class DefaultConfigScreen extends Screen {
     protected Screen previousScreen;
     protected ForgeConfigSpec configSpec;
 
-    protected DefaultConfigScreen(ITextComponent titleIn, Screen previousScreen, ForgeConfigSpec forgeConfigSpec) {
+    public DefaultConfigScreen(ITextComponent titleIn, Screen previousScreen, ForgeConfigSpec forgeConfigSpec) {
         super(titleIn);
         this.previousScreen = previousScreen;
         this.configSpec = forgeConfigSpec;
@@ -17,6 +17,13 @@ public class DefaultConfigScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+    }
+
+    @Override
+    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+        renderBackground();
+        drawCenteredString(font, title.getFormattedText(), width / 2, 6, 0xffffff);
+        super.render(p_render_1_, p_render_2_, p_render_3_);
     }
 
     @Override
