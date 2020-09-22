@@ -55,7 +55,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
     }
 
     protected static BlockRendererDispatcher blockRenderer;
-    
+
     @Override
     public void render(T te, float partialTick, MatrixStack mat, IRenderTypeBuffer renderer, int light, int otherlight)
     {
@@ -66,12 +66,14 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         }
         if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
-        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCacheOptional(te.getWorld(), pos)
+            .map(IBlockDisplayReader.class::cast).orElseGet(() -> te.getWorld());
         BlockState state = world.getBlockState(pos);
         IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
         IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
         if (data.hasProperty(Properties.AnimationProperty))
         {
+            @SuppressWarnings("resource")
             float time = Animation.getWorldTime(Minecraft.getInstance().world, partialTick);
             cap
                 .map(asm -> asm.apply(time))

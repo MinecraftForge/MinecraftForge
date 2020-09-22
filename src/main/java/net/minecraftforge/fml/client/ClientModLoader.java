@@ -23,7 +23,6 @@ import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -32,8 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -42,7 +39,6 @@ import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.datafix.codec.DatapackCodec;
 import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -182,16 +178,17 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
+        File dumpedLocation = null;
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();
-            CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
+            dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }
         if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
             ClientHooks.logMissingTextureErrors();

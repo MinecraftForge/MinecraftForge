@@ -20,20 +20,18 @@
 package net.minecraftforge.fml;
 
 import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
+import joptsimple.internal.Strings;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class CrashReportExtender
 {
@@ -67,13 +65,23 @@ public class CrashReportExtender
     public static void addCrashReportHeader(StringBuilder stringbuilder, CrashReport crashReport)
     {
     }
-
     public static String generateEnhancedStackTrace(final Throwable throwable) {
-        return TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
+        return generateEnhancedStackTrace(throwable, true);
+    }
+
+    public static String generateEnhancedStackTrace(final StackTraceElement[] stacktrace) {
+        final Throwable t = new Throwable();
+        t.setStackTrace(stacktrace);
+        return generateEnhancedStackTrace(t, false);
+    }
+
+    public static String generateEnhancedStackTrace(final Throwable throwable, boolean header) {
+        final String s = TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
+        return header ? s : s.substring(s.indexOf(Strings.LINE_SEPARATOR));
     }
 
 
-    public static void dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
+    public static File dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
         final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
         error.getErrors().forEach(mle -> {
             final Optional<IModInfo> modInfo = Optional.ofNullable(mle.getModInfo());
@@ -81,16 +89,16 @@ public class CrashReportExtender
             Throwable cause = mle.getCause();
             int depth = 0;
             while (cause != null && cause.getCause() != null && cause.getCause()!=cause) {
-                category.addDetail("Caused by "+(depth++), cause +"\n\t\t"+ Arrays.stream(cause.getStackTrace()).map(Objects::toString).collect(Collectors.joining("\n\t\t")));
+                category.addDetail("Caused by "+(depth++), cause + generateEnhancedStackTrace(cause.getStackTrace()).replaceAll(Strings.LINE_SEPARATOR+"\t", "\n\t\t"));
                 cause = cause.getCause();
             }
             if (cause != null)
                 category.applyStackTrace(cause);
             category.addDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
             category.addDetail("Failure message", () -> mle.getCleanMessage().replace("\n", "\n\t\t"));
-            category.addDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
             category.addDetail("Mod Version", () -> modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
-            category.addDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED").toString());
+            category.addDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.<String>getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
+            category.addDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
         });
         final File file1 = new File(topLevelDir, "crash-reports");
         final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
@@ -100,5 +108,6 @@ public class CrashReportExtender
             logger.fatal("Failed to save crash report");
         }
         System.out.print(crashReport.getCompleteReport());
+        return file2;
     }
 }

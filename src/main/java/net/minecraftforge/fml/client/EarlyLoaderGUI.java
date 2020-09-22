@@ -45,6 +45,7 @@ public class EarlyLoaderGUI {
         this.window = window;
     }
 
+    @SuppressWarnings("deprecation")
     private void setupMatrix() {
         RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
         RenderSystem.matrixMode(5889);
@@ -63,6 +64,7 @@ public class EarlyLoaderGUI {
         renderMessages();
     }
 
+    @SuppressWarnings("deprecation")
     void renderTick() {
         if (handledElsewhere) return;
         int guiScale = window.calcGuiScale(0, false);
@@ -116,6 +118,7 @@ public class EarlyLoaderGUI {
         renderMessage(memory, memorycolour, 1, 1.0f);
     }
 
+    @SuppressWarnings("deprecation")
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
         GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
         ByteBuffer charBuffer = MemoryUtil.memAlloc(message.length() * 270);
@@ -124,9 +127,9 @@ public class EarlyLoaderGUI {
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-        // STBEasyFont's quads are in reverse order or what OGGL expects, so it gets culled for facing the wrong way. 
+        // STBEasyFont's quads are in reverse order or what OGGL expects, so it gets culled for facing the wrong way.
         // So Disable culling https://github.com/MinecraftForge/MinecraftForge/pull/6824
-        RenderSystem.disableCull(); 
+        RenderSystem.disableCull();
         GL14.glBlendColor(0,0,0, alpha);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
         RenderSystem.color3f(colour[0],colour[1],colour[2]);

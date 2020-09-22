@@ -59,7 +59,7 @@ public class ForgeI18n {
         customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase(String.valueOf(objectToParse)))));
         // {0,upper> -> uppercase supplied string
         customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase(String.valueOf(objectToParse)))));
-        // {0,exc,class} -> class of exception; {0,exc,msg} -> message from exception
+        // {0,exc,cls} -> class of exception; {0,exc,msg} -> message from exception
         customFactories.put("exc", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseException(formatString, stringBuffer, objectToParse)));
         // {0,vr} -> transform VersionRange into cleartext string using fml.messages.version.restriction.* strings
         customFactories.put("vr", (name, formatString, locale) -> new CustomReadOnlyFormat(((stringBuffer, o) -> MavenVersionStringHelper.parseVersionRange(formatString, stringBuffer, o))));
@@ -72,9 +72,9 @@ public class ForgeI18n {
     private static void parseException(final String formatString, final StringBuffer stringBuffer, final Object objectToParse) {
         Throwable t = (Throwable) objectToParse;
         if (Objects.equals(formatString, "msg")) {
-            stringBuffer.append(t.getMessage());
+            stringBuffer.append(t.getClass().getName()).append(": ").append(t.getMessage());
         } else if (Objects.equals(formatString, "cls")) {
-            stringBuffer.append(t.getClass());
+            stringBuffer.append(t.getClass().getName());
         }
     }
 

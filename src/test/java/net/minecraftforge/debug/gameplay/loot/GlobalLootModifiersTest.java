@@ -66,7 +66,7 @@ import java.util.List;
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
     public static final String MODID = "global_loot_test";
-    public static final boolean ENABLE = false;
+    public static final boolean ENABLE = true;
 
     public GlobalLootModifiersTest()
     {
