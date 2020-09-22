@@ -2,10 +2,13 @@ package net.minecraftforge.fml.client.gui.screen;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.client.gui.IPressHandler;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -60,10 +63,36 @@ public class DefaultConfigScreen extends Screen {
                 ExtendedButton switchButton = new ExtendedButton(x, spacing, font.getStringWidth(k + b.toString()) + 30, 18, k + ": " + b.toString(), (IPressHandler<ExtendedButton>) button -> {
                     booleanValue.set(!booleanValue.get());
                     button.setMessage(k + ": " + booleanValue.get());
-                    booleanValue.save();
                 });
                 addButton(switchButton);
                 spacing += 20;
+            } else if (specValue instanceof ForgeConfigSpec.ConfigValue) {
+                ForgeConfigSpec.ConfigValue<?> configValue = (ForgeConfigSpec.ConfigValue<?>) specValue;
+//                System.out.println(configValue);
+                Object valueObj = configValue.get();
+                if (valueObj instanceof Double) {
+                    double d = (double) valueObj;
+                    ForgeConfigSpec.ConfigValue<Double> doubleConfigValue = (ForgeConfigSpec.ConfigValue<Double>) configValue;
+                    if (valueRange == null) {
+                        TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(d + k), 18, k);
+                        textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s) || s.matches("[0-9]*\\.?[0-9]*"));
+                        textField.setText(String.valueOf(d));
+                        textField.setResponder(s -> {
+                            try {
+                                if (!s.isEmpty()) {
+                                    doubleConfigValue.set(Double.parseDouble(s));
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        addButton(textField);
+                        spacing += 20;
+                        ;
+                    } else {
+//                        System.out.println(valueRange);
+                    }
+                }
             }
         }
         return spacing;
@@ -74,7 +103,13 @@ public class DefaultConfigScreen extends Screen {
         renderBackground();
         drawCenteredString(font, title.getFormattedText(), width / 2, 6, 0xffffff);
         super.render(p_render_1_, p_render_2_, p_render_3_);
-
+        for (Widget button : buttons) {
+            if (button instanceof TextFieldWidget) {
+                if (!button.getMessage().isEmpty()) {
+                    drawString(font, button.getMessage(), button.x - font.getStringWidth(button.getMessage()) - 3, button.y + 6, 0xffffff);
+                }
+            }
+        }
     }
 
     @Override
