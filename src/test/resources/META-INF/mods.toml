@@ -71,4 +71,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="player_name_event_test"
 [[mods]]
-    modId="custom_elytra_test"
+modId = "custom_elytra_test"
+[[mods]]
+modId = "config_screen_test"

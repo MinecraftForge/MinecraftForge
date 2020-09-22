@@ -28,30 +28,45 @@ public class DefaultConfigScreen extends Screen {
         int x = 6;
         for (String key : specMap.keySet()) {
             Object value = specMap.get(key);
+            //nested configs
             if (value instanceof UnmodifiableConfig) {
                 UnmodifiableConfig unmodifiableConfig = (UnmodifiableConfig) value;
                 Map<String, Object> entries = unmodifiableConfig.valueMap();
                 UnmodifiableConfig actualValues = (UnmodifiableConfig) valueMap.get(key);
                 for (String k : entries.keySet()) {
                     Object v = entries.get(k);
-                    if (v instanceof ForgeConfigSpec.ValueSpec) {
-                        ForgeConfigSpec.ValueSpec valueSpec = (ForgeConfigSpec.ValueSpec) v;
-                        Object specValue = actualValues.get(k);
-                        if (specValue instanceof ForgeConfigSpec.BooleanValue) {
-                            ForgeConfigSpec.BooleanValue booleanValue = (ForgeConfigSpec.BooleanValue) specValue;
-                            Boolean b = booleanValue.get();
-                            ExtendedButton switchButton = new ExtendedButton(x, spacing, font.getStringWidth(k + b.toString()) + 30, 18, k + ": " + b.toString(), (IPressHandler<ExtendedButton>) button -> {
-                                booleanValue.set(!booleanValue.get());
-                                button.setMessage(k + ": " + booleanValue.get());
-                                booleanValue.save();
-                            });
-                            addButton(switchButton);
-                            spacing += 20;
-                        }
-                    }
+                    spacing = buildElements(spacing, x, actualValues, k, v);
                 }
+            } else {
+                //immediate config
+                spacing = buildElements(spacing, x, configSpec.getValues(), key, value);
             }
         }
+    }
+
+    /**
+     * Builds screen elements from the config
+     *
+     * @return vertical offset for the next screen element
+     */
+    private int buildElements(int spacing, int x, UnmodifiableConfig actualValues, String k, Object v) {
+        if (v instanceof ForgeConfigSpec.ValueSpec) {
+            ForgeConfigSpec.ValueSpec valueSpec = (ForgeConfigSpec.ValueSpec) v;
+            Object specValue = actualValues.get(k);
+            Object valueRange = valueSpec.getRange();
+            if (specValue instanceof ForgeConfigSpec.BooleanValue) {
+                ForgeConfigSpec.BooleanValue booleanValue = (ForgeConfigSpec.BooleanValue) specValue;
+                Boolean b = booleanValue.get();
+                ExtendedButton switchButton = new ExtendedButton(x, spacing, font.getStringWidth(k + b.toString()) + 30, 18, k + ": " + b.toString(), (IPressHandler<ExtendedButton>) button -> {
+                    booleanValue.set(!booleanValue.get());
+                    button.setMessage(k + ": " + booleanValue.get());
+                    booleanValue.save();
+                });
+                addButton(switchButton);
+                spacing += 20;
+            }
+        }
+        return spacing;
     }
 
     @Override
