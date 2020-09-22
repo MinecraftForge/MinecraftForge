@@ -175,11 +175,13 @@ public class ModelLoaderRegistry
         return blockMaterial(tex);
     }
 
+    @SuppressWarnings("deprecation")
     public static RenderMaterial blockMaterial(String location)
     {
         return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
     }
 
+    @SuppressWarnings("deprecation")
     public static RenderMaterial blockMaterial(ResourceLocation location)
     {
         return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);

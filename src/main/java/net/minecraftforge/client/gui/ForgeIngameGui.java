@@ -50,7 +50,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -60,6 +59,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+@SuppressWarnings("deprecation")
 public class ForgeIngameGui extends IngameGui
 {
     //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");

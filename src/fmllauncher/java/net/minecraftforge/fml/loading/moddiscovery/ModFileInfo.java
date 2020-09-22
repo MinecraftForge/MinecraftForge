@@ -19,9 +19,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-
-import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -144,5 +141,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     public String getLicense()
     {
         return license;
+    }
+
+    public URL getIssueURL()
+    {
+        return issueURL;
     }
 }

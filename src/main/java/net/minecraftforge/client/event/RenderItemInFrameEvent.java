@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  * You can set canceled to do no further vanilla processing.
  */
 @Cancelable
-public class RenderItemInFrameEvent extends net.minecraftforge.eventbus.api.Event
+public class RenderItemInFrameEvent extends Event
 {
     private final ItemStack item;
     private final ItemFrameEntity entityItemFrame;

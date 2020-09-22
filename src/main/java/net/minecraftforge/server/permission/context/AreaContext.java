@@ -35,6 +35,7 @@ public class AreaContext extends PlayerContext
         area = Preconditions.checkNotNull(aabb, "AxisAlignedBB can't be null in AreaContext!");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @Nullable
     public <T> T get(ContextKey<T> key)

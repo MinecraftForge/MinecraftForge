@@ -244,7 +244,7 @@
                 entity.func_213317_d(portalinfo.field_222506_b);
                 p_241206_1_.func_217460_e(entity);
 -               if (p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-+               if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_) {
++               if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_ && teleporter.isVanilla()) {
                    ServerWorld.func_241121_a_(p_241206_1_);
                 }
              }
@@ -261,7 +261,7 @@
           }
        } else {
           return null;
-@@ -2123,14 +2160,19 @@
+@@ -2123,8 +2160,15 @@
        this.field_70128_L = true;
     }
  
@@ -273,17 +273,12 @@
 +
 +   @Nullable
 +   protected PortalInfo getPortalInfo(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      PortalInfo test = teleporter != null ? teleporter.findPortal((ServerWorld) this.field_70170_p, p_241829_1_, this).map(teleporter::getPortalInfo).orElse(null) : null; // Forge: logic in case portal isn't defined by vanilla
++      if (test != null) return test;
        boolean flag = this.field_70170_p.func_234923_W_() == World.field_234920_i_ && p_241829_1_.func_234923_W_() == World.field_234918_g_;
        boolean flag1 = p_241829_1_.func_234923_W_() == World.field_234920_i_;
        if (!flag && !flag1) {
-          boolean flag2 = p_241829_1_.func_234923_W_() == World.field_234919_h_;
-          if (this.field_70170_p.func_234923_W_() != World.field_234919_h_ && !flag2) {
--            return null;
-+            return teleporter != null ? teleporter.findPortal((ServerWorld) this.field_70170_p, p_241829_1_, this).map(teleporter::getPortalInfo).orElse(null) : null; // Forge: logic in case portal isn't defined by vanilla
-          } else {
-             WorldBorder worldborder = p_241829_1_.func_175723_af();
-             double d0 = Math.max(-2.9999872E7D, worldborder.func_177726_b() + 16.0D);
-@@ -2320,9 +2362,10 @@
+@@ -2320,9 +2364,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -296,7 +291,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2796,6 +2839,7 @@
+@@ -2796,6 +2841,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -304,7 +299,7 @@
  
     }
  
-@@ -2811,4 +2855,63 @@
+@@ -2811,4 +2857,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }

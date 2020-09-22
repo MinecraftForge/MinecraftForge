@@ -35,7 +35,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
-import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -52,7 +51,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
@@ -185,6 +183,7 @@ public class ClientHooks
         return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
     }
 
+    @SuppressWarnings("resource")
     static File getSavesDir()
     {
         return new File(Minecraft.getInstance().gameDir, "saves");
