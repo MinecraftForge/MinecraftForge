@@ -68,30 +68,91 @@ public class DefaultConfigScreen extends Screen {
                 spacing += 20;
             } else if (specValue instanceof ForgeConfigSpec.ConfigValue) {
                 ForgeConfigSpec.ConfigValue<?> configValue = (ForgeConfigSpec.ConfigValue<?>) specValue;
-//                System.out.println(configValue);
+
                 Object valueObj = configValue.get();
+                System.out.println(valueObj);
+                System.out.println(valueRange);
                 if (valueObj instanceof Double) {
                     double d = (double) valueObj;
                     ForgeConfigSpec.ConfigValue<Double> doubleConfigValue = (ForgeConfigSpec.ConfigValue<Double>) configValue;
-                    if (valueRange == null) {
-                        TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(d + k), 18, k);
-                        textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s) || s.matches("[0-9]*\\.?[0-9]*"));
-                        textField.setText(String.valueOf(d));
-                        textField.setResponder(s -> {
-                            try {
-                                if (!s.isEmpty()) {
-                                    doubleConfigValue.set(Double.parseDouble(s));
+
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(d + k), 18, k);
+                    textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s) || s.matches("[0-9]*\\.?[0-9]*"));
+                    textField.setText(String.valueOf(d));
+                    textField.setResponder(s -> {
+                        try {
+                            if (!s.isEmpty()) {
+
+                                double dd = Double.parseDouble(s);
+                                if (valueRange != null) {
+                                    String[] range = valueRange.toString().split(" ~ ");
+                                    double min = Double.parseDouble(range[0]);
+                                    double max = Double.parseDouble(range[1]);
+                                    if (dd < min)
+                                        dd = min;
+                                    if (dd > max)
+                                        dd = max;
                                 }
+                                doubleConfigValue.set(dd);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    addButton(textField);
+                    spacing += 20;
+
+                } else if (valueObj instanceof Long) {
+                    long l = (long) valueObj;
+                    ForgeConfigSpec.ConfigValue<Long> longConfigValue = (ForgeConfigSpec.ConfigValue<Long>) configValue;
+
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(l + k), 18, k);
+                    textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s));
+                    textField.setText(String.valueOf(l));
+                    textField.setResponder(s -> {
+                        if (!s.isEmpty()) {
+                            long ll = Long.parseLong(s);
+                            if (valueRange != null) {
+                                String[] range = valueRange.toString().split(" ~ ");
+                                long min = Long.parseLong(range[0]);
+                                long max = Long.parseLong(range[1]);
+                                if (ll < min)
+                                    ll = min;
+                                if (ll > max)
+                                    ll = max;
+                            }
+                            longConfigValue.set(ll);
+                        }
+                    });
+                    addButton(textField);
+                    spacing += 20;
+                } else if (valueObj instanceof Integer) {
+                    int i = (int) valueObj;
+                    ForgeConfigSpec.ConfigValue<Integer> integerConfigValue = (ForgeConfigSpec.ConfigValue<Integer>) configValue;
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(i + k), 18, k);
+                    textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s));
+                    textField.setText(String.valueOf(i));
+                    textField.setResponder(s -> {
+                        if (!s.isEmpty()) {
+                            try {
+                                int ii = Integer.parseInt(s);
+                                if (valueRange != null) {
+                                    String[] range = valueRange.toString().split(" ~ ");
+                                    int min = Integer.parseInt(range[0]);
+                                    int max = Integer.parseInt(range[1]);
+                                    if (ii < min)
+                                        ii = min;
+                                    if (ii > max)
+                                        ii = max;
+                                }
+                                integerConfigValue.set(ii);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        });
-                        addButton(textField);
-                        spacing += 20;
-                        ;
-                    } else {
-//                        System.out.println(valueRange);
-                    }
+                        }
+                    });
+                    addButton(textField);
+                    spacing += 20;
                 }
             }
         }
