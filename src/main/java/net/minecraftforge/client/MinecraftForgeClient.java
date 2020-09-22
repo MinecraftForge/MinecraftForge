@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.RenderType;
 import org.apache.commons.lang3.tuple.Pair;
@@ -119,6 +120,7 @@ public class MinecraftForgeClient
             regionCache.put(Pair.of(world, position), Optional.of(cache));
     }
 
+    @Nullable
     public static ChunkRenderCache getRegionRenderCache(World world, BlockPos pos)
     {
         return getRegionRenderCacheOptional(world, pos).orElse(null);
