@@ -1,4 +1,4 @@
-package net.minecraftforge.client.gui;
+package net.minecraftforge.fml.client.gui.screen;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
