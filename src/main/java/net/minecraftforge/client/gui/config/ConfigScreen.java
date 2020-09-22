@@ -17,14 +17,14 @@ import javax.annotation.Nullable;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Make tooltips contain extra info about the item
- * - Fix list item control sizing (rowWidth - maxListLabelWidth - otherWidgetsWidth)
+ * - Make tooltips contain extra info about the item (and be colorful, it's a video game)
+ * - Properly fix list item control sizing (rowWidth - maxListLabelWidth - otherWidgetsWidth)
  * - Translucent scissored list
- * - Copy values
  * - Reset working properly for lists & categories
  * - Undo changes working properly for lists & categories
  * - Do I need to deal with sub-configs?
  * - Requires world restart (display screen on change)
+ * - Localisation
  */
 public abstract class ConfigScreen extends Screen {
 

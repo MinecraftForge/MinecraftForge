@@ -133,7 +133,7 @@ public class ModConfigScreen extends ConfigScreen {
                     if (filePath != null)
                         description += "\n" + TextFormatting.GRAY + filePath;
                     ConfigElement element = new PopupConfigElement(translatedName, description, () -> new ModConfigConfigScreen(ModConfigScreen.this, new StringTextComponent(translatedName), modConfig));
-                    this.func_230513_b_(element);
+                    this.func_230513_b_(element); // addEntry
                 }
             }
         };

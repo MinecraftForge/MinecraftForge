@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.*;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nullable;
@@ -148,8 +149,56 @@ public class CategoryConfigScreen extends ConfigScreen {
                         createString((ForgeConfigSpec.ConfigValue<String>) value, valueInfo, translatedName, (String) valueValue),
                         (String) valueValue
                 );
-            if (valueValue instanceof List<?>)
-                return new PopupConfigElement(translatedName, description, () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue, (List<?>) valueInfo.getDefault()));
+            if (valueValue instanceof List<?>) {
+                // TODO: Clean this up and merge it with ConfigValueConfigElement
+                ConfigValue<List<?>> configValue = (ForgeConfigSpec.ConfigValue<List<?>>) value;
+                return new PopupConfigElement(translatedName, description, () -> new ListConfigScreen(configScreen, new StringTextComponent(translatedName), (List<?>) valueValue, (List<?>) valueInfo.getDefault())) {
+                    private final BooleanSupplier canReset;
+                    private final BooleanSupplier canUndo;
+
+                    {
+                        List _default = ConfigElementControls.copyMutable((List) valueInfo.getDefault());
+                        List initial = ConfigElementControls.copyMutable((List) valueValue);
+                        canReset = () -> !value.get().equals(_default);
+                        canUndo = () -> !value.get().equals(initial);
+                        widgets.add(resetButton = createConfigElementResetButton(translatedName, button -> configValue.set(_default)));
+                        widgets.add(undoButton = createConfigElementUndoButton(translatedName, button -> configValue.set(initial)));
+                    }
+
+                    @Override
+                    public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+                        // getRowWidth, Button#getWidth(), Button#getWidth()
+                        int controlWidth = func_230949_c_() - resetButton.func_230998_h_() - undoButton.func_230998_h_();
+                        widgets.getFirst().func_230991_b_(controlWidth); // setWidth
+                        super.func_230432_a_(matrixStack, index, rowTop, rowLeft, rowWidth, adjustedItemHeight, mouseX, mouseY, isSelected, partialTicks);
+                    }
+
+                    @Override
+                    public void tick() {
+                        super.tick();
+                        // active/enabled
+                        resetButton.field_230693_o_ = canReset.getAsBoolean();
+                        undoButton.field_230693_o_ = canUndo.getAsBoolean();
+                    }
+
+                    @Override
+                    public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+                        for (Widget widget : widgets)
+                            if (mouseX >= widget.field_230690_l_ && mouseY >= widget.field_230691_m_ && mouseX < widget.field_230690_l_ + widget.func_230998_h_() && mouseY < widget.field_230691_m_ + widget.func_238483_d_()) {
+                                if (widget == resetButton) {
+                                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("resets stuff"));
+                                    GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                                } else if (widget == undoButton) {
+                                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("undoes stuff"));
+                                    GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                                }
+                                // Don't render the element's tooltip
+                                return;
+                            }
+                        super.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
+                    }
+                };
+            }
             return null;
         }
 
@@ -193,7 +242,7 @@ public class CategoryConfigScreen extends ConfigScreen {
             ConfigElementControls.ConfigElementWidgetData<T> control = ConfigElementControls.createEnumButton(newValue -> {
                 value.set(newValue);
                 configScreen.onChange();
-                return true; // Can't have an "invalid" boolean
+                return true; // We already filtered "potential" to have only valid values
             }, translatedName, (T[]) potential);
             control.valueSetter.setup(valueValue);
             return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
