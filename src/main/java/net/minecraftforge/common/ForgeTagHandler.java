@@ -222,7 +222,10 @@ public class ForgeTagHandler
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
         //Add the static references for custom tag types to the proper tag registries
-        TagRegistry.performDelayedAdd();//TODO: Talk with cpw about this, as this potentially should be in an async processor?
+        // Note: If this ends up being a hotspot due to lots of mods having lots of statically registered tags
+        // that get loaded/registered before the new registry event is fired/processed everywhere then this
+        // potentially should end up being moved into an async processor.
+        TagRegistry.performDelayedAdd();
     }
 
     /**
