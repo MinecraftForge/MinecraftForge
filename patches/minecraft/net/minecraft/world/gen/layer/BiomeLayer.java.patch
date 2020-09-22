@@ -17,7 +17,7 @@
 -      if (p_i232147_1_) {
 -         this.field_151623_c = field_202743_q;
 +      for (net.minecraftforge.common.BiomeManager.BiomeType type : net.minecraftforge.common.BiomeManager.BiomeType.values()) {
-+         com.google.common.collect.ImmutableList<net.minecraftforge.common.BiomeManager.BiomeEntry> biomesToAdd = net.minecraftforge.common.BiomeManager.getBiomes(type);
++         com.google.common.collect.ImmutableList<net.minecraftforge.common.BiomeManager.BiomeEntry> biomesToAdd = net.minecraftforge.common.BiomeManager.getBiomeEntries(type);
 +         int idx = type.ordinal();
 +
 +         if (biomes[idx] == null) biomes[idx] = new java.util.ArrayList<>();

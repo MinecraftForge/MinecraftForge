@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,9 +33,13 @@ import net.minecraft.world.biome.Biome;
 
 import javax.annotation.Nullable;
 
+/**
+ * Manage modded biome generation for {@link net.minecraft.world.biome.provider.OverworldBiomeProvider}
+ */
 public class BiomeManager
 {
-    private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
+    private static final TrackedList<BiomeEntry>[] biomes = setupBiomes();
+    private static final ArrayList<RegistryKey<Biome>> allModdedBiomes = new ArrayList<>();
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -74,14 +79,25 @@ public class BiomeManager
         return currentBiomes;
     }
 
-    public static void addBiome(BiomeType type, BiomeEntry entry)
+    /**
+     * Register all your biomes that might be generated in the overworld (either via {@link BiomeManager#addBiomeEntry(BiomeType, BiomeEntry)} or as a biome variant) here.
+     */
+    public static void addBiomes(RegistryKey<Biome>... biomes){
+        allModdedBiomes.addAll(Arrays.asList(biomes));
+    }
+
+    /**
+     * Add a biome entry for the overworld {@link net.minecraft.world.gen.layer.BiomeLayer}
+     * Also add it to {@link BiomeManager#addBiomes(RegistryKey[])}
+     */
+    public static void addBiomeEntry(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
         if (list != null) list.add(entry);
     }
 
-    public static void removeBiome(BiomeType type, BiomeEntry entry)
+    public static void removeBiomeEntry(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
@@ -92,13 +108,23 @@ public class BiomeManager
         }
     }
 
+    /**
+     * @return Immutable list of weighted biome entries that should be considered for overworld biome selection in {@link net.minecraft.world.gen.layer.BiomeLayer}
+     */
     @Nullable
-    public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
+    public static ImmutableList<BiomeEntry> getBiomeEntries(BiomeType type)
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
+    }
+
+    /**
+     * @return Immutable list of all modded biomes that might be generated in the overworld
+     */
+    public static List<RegistryKey<Biome>> getAllBiomes(){
+        return ImmutableList.copyOf(allModdedBiomes);
     }
 
     public static boolean isTypeListModded(BiomeType type)
