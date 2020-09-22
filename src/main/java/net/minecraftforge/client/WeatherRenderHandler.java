@@ -20,8 +20,10 @@
 package net.minecraftforge.client;
 
 /**
- * Call {@link net.minecraft.world.dimension.Dimension#setWeatherRenderer} with an implementation of this
- * to override all weather rendering with your own. This includes rain and snow.
+ * Use {@link IWeatherRenderHandler} instead.
+ *
+ * todo: remove in 1.17
  */
+@Deprecated
 public interface WeatherRenderHandler extends IRenderHandler {
 }
