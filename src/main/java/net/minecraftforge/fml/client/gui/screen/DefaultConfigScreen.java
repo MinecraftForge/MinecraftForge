@@ -9,12 +9,15 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.client.gui.IPressHandler;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
 public class DefaultConfigScreen extends Screen {
     protected Screen previousScreen;
     protected ForgeConfigSpec configSpec;
+    protected static final Logger LOGGER = LogManager.getLogger();
 
     public DefaultConfigScreen(ITextComponent titleIn, Screen previousScreen, ForgeConfigSpec forgeConfigSpec) {
         super(titleIn);
@@ -70,8 +73,8 @@ public class DefaultConfigScreen extends Screen {
                 ForgeConfigSpec.ConfigValue<?> configValue = (ForgeConfigSpec.ConfigValue<?>) specValue;
 
                 Object valueObj = configValue.get();
-                System.out.println(valueObj);
-                System.out.println(valueRange);
+//                System.out.println(valueObj);
+//                System.out.println(valueRange);
                 if (valueObj instanceof Double) {
                     double d = (double) valueObj;
                     ForgeConfigSpec.ConfigValue<Double> doubleConfigValue = (ForgeConfigSpec.ConfigValue<Double>) configValue;
@@ -153,6 +156,24 @@ public class DefaultConfigScreen extends Screen {
                     });
                     addButton(textField);
                     spacing += 20;
+                } else if (valueObj instanceof String) {
+                    String str = (String) valueObj;
+                    ForgeConfigSpec.ConfigValue<String> stringConfigValue = (ForgeConfigSpec.ConfigValue<String>) configValue;
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k), 18, k);
+                    textField.setText(str);
+                    textField.setResponder(s -> {
+                        if (!s.isEmpty()) {
+                            try {
+                                stringConfigValue.set(s);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    addButton(textField);
+                    spacing += 20;
+                } else {
+                    LOGGER.warn("Couldn't handle property '{}'", valueObj);
                 }
             }
         }
