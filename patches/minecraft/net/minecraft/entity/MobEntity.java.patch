@@ -32,7 +32,7 @@
           if (entity != null) {
              double d0 = entity.func_70068_e(this);
              int i = this.func_200600_R().func_220339_d().func_233671_f_();
-@@ -878,6 +887,8 @@
+@@ -879,6 +888,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -41,7 +41,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -885,7 +896,7 @@
+@@ -886,7 +897,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {

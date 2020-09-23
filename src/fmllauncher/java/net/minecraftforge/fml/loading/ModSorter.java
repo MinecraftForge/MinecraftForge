@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.Streams;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import net.minecraftforge.forgespi.language.IModFileInfo;

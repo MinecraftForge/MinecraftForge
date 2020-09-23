@@ -207,9 +207,9 @@
 +   private boolean canUseRail = true;
 +   @Override public boolean canUseRail() { return canUseRail; }
 +   @Override public void setCanUseRail(boolean value) { this.canUseRail = value; }
-+   private float currentSpeedOnRail;
-+   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedOnRail; }
-+   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
++   private float currentSpeedCapOnRail = getMaxCartSpeedOnRail();
++   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
++   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
 +   private float maxSpeedAirLateral = DEFAULT_MAX_SPEED_AIR_LATERAL;
 +   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral; }
 +   @Override public void setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }

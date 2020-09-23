@@ -21,16 +21,12 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
@@ -48,7 +44,6 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -198,6 +192,8 @@ public class ModLoader
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
         dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Adding custom tag types"));
+        GameData.setCustomTagTypesFromRegistries();
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 

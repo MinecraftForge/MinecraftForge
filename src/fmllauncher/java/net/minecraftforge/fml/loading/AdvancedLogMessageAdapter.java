@@ -25,6 +25,8 @@ import org.apache.logging.log4j.util.StringBuilderFormattable;
 import java.util.function.Consumer;
 
 public class AdvancedLogMessageAdapter implements Message, StringBuilderFormattable {
+    private static final long serialVersionUID = -8291754833965087436L;
+
     private static final Object[] EMPTY = new Object[0];
 
     private final Consumer<StringBuilder> logMessageBuilder;

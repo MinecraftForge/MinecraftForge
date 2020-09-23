@@ -13,7 +13,20 @@
           return this.field_85075_d.length;
        }
     }
-@@ -158,6 +160,10 @@
+@@ -145,11 +147,7 @@
+ 
+       if (this.field_85075_d != null && this.field_85075_d.length > 0) {
+          p_85072_1_.append("\nStacktrace:");
+-
+-         for(StackTraceElement stacktraceelement : this.field_85075_d) {
+-            p_85072_1_.append("\n\tat ");
+-            p_85072_1_.append((Object)stacktraceelement);
+-         }
++         p_85072_1_.append(net.minecraftforge.fml.CrashReportExtender.generateEnhancedStackTrace(this.field_85075_d));
+       }
+ 
+    }
+@@ -158,6 +156,10 @@
        return this.field_85075_d;
     }
  

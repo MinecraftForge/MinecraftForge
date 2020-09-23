@@ -23,22 +23,14 @@ import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -46,16 +38,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.datafix.codec.DatapackCodec;
-import net.minecraftforge.fml.BrandingControl;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -195,56 +178,22 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
+        File dumpedLocation = null;
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
-            try {
-                saveCrashReport();
-            } catch (Exception e) {
-                LOGGER.error("Failed to generate crash report!");
-            }
-            //We need this here, as due to early loading failures, the forge resource pack may not have been registered, but we require lang for the loading screen
-            try {
-                LanguageHook.loadForgeAndMCLangs();
-            } catch (Exception e) {
-                LOGGER.error("Failed to load forge and mc langs!");
-            }
+            // Double check we have the langs loaded for forge
+            LanguageHook.loadForgeAndMCLangs();
+            dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }
         if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
             ClientHooks.logMissingTextureErrors();
             return false;
         }
-    }
-
-    private static void saveCrashReport() {
-        final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
-        error.getErrors().forEach(mle -> {
-            String catName;
-            try {
-                catName = mle.getModInfo().getModId();
-            } catch (Exception e) {
-                //May happen in early mod loading errors
-                catName = "[Unknown mod]";
-            }
-            final CrashReportCategory category = crashReport.makeCategory(catName);
-            if (mle.getCause() != null) category.applyStackTrace(mle.getCause());
-            category.addDetail("Failure message", mle::getCleanMessage);
-            category.addDetail("Exception message", () -> mle.getCause().toString());
-            category.addDetail("Mod Version", () -> mle.getModInfo().getVersion().toString());
-            category.addDetail("Mod Issue URL", () -> ((ModFileInfo) mle.getModInfo().getOwningFile()).getConfigElement("issueTrackerURL").orElse("NOT PROVIDED").toString());
-        });
-        final File file1 = new File(mc.gameDir, "crash-reports");
-        final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
-        if (crashReport.saveToFile(file2)) {
-            LOGGER.fatal("Crash report saved to {}", crashReport.getFile());
-        } else {
-            LOGGER.fatal("Failed to save crash report");
-        }
-        System.out.print(crashReport.getCompleteReport());
     }
 
     public static void renderProgressText() {
@@ -281,7 +230,7 @@ public class ClientModLoader
             }
         }
         final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
-                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 5),
+                new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 6),
                 hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.field_232625_a_);
         consumer.accept(packInfo);
     }

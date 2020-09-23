@@ -218,7 +218,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,6 +2117,10 @@
+@@ -2087,14 +2117,19 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -229,8 +229,11 @@
        if (this.field_70170_p instanceof ServerWorld && !this.field_70128_L) {
           this.field_70170_p.func_217381_Z().func_76320_a("changeDimension");
           this.func_213319_R();
-@@ -2095,6 +2129,7 @@
-          if (portalinfo == null) {
+          this.field_70170_p.func_217381_Z().func_76320_a("reposition");
+-         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
+-         if (portalinfo == null) {
++         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : null;
++         if (portalinfo == null && teleporter.isVanilla()) {
              return null;
           } else {
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
