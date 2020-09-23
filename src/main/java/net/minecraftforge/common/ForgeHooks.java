@@ -213,7 +213,7 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        //TODO Axes check Material and Blocks now.
+        //Axes check Blocks AND Materials now. Material checks are state related and part of Block::getHarvestLevel and Block::getHarvestTool.
         blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
         blocks = getPrivateValue(HoeItem.class, null, 0);

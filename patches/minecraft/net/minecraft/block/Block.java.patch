@@ -90,7 +90,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -410,6 +417,83 @@
+@@ -410,6 +417,87 @@
        return this;
     }
  
@@ -108,12 +108,16 @@
 +   @Nullable
 +   @Override
 +   public net.minecraftforge.common.ToolType getHarvestTool(BlockState state) {
++      if (this.harvestTool == null && net.minecraft.item.AxeItem.field_234662_c_.contains(state.func_185904_a()))
++         return net.minecraftforge.common.ToolType.AXE;
 +      return harvestTool; //TODO: RE-Evaluate
 +   }
 +
 +   @Override
 +   public int getHarvestLevel(BlockState state) {
-+     return harvestLevel; //TODO: RE-Evaluate
++      if (this.harvestLevel < 0 && net.minecraft.item.AxeItem.field_234662_c_.contains(state.func_185904_a()))
++         return 0;
++      return harvestLevel; //TODO: RE-Evaluate
 +   }
 +
 +   @Override
