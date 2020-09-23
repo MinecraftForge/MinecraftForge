@@ -186,10 +186,10 @@ public class DefaultConfigScreen extends Screen {
     }
 
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+    public void render(int mouseX, int mouseY, float p_render_3_) {
         renderBackground();
         drawCenteredString(font, title.getFormattedText(), width / 2, 6, 0xffffff);
-        super.render(p_render_1_, p_render_2_, p_render_3_);
+        super.render(mouseX, mouseY, p_render_3_);
         for (Widget button : buttons) {
             if (button instanceof TextFieldWidget) {
                 if (!button.getMessage().isEmpty()) {
