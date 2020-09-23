@@ -38,7 +38,7 @@ public class HarvestToolTest
         BlockState state = event.getState();
         for (ToolType toolType : player.getHeldItemMainhand().getToolTypes()) {
             if (state.isToolEffective(toolType)) {
-                player.sendMessage(new StringTextComponent(String.format("Tool was effective. tool type: %s | harvest level: %d", toolType, state.getHarvestLevel())), player.getUniqueID());
+                player.sendMessage(new StringTextComponent(String.format("Tool was effective. tool type: %s | harvest level: %d", toolType.getName(), state.getHarvestLevel())), player.getUniqueID());
                 break;
             }
         }
