@@ -46,7 +46,7 @@ public abstract class RegistryBackedProvider<P> extends CodecBackedProvider<P>
 
     protected void saveAndRegister(P instance, ResourceLocation name, DirectoryCache cache, Path path) throws IOException
     {
-        if(instance instanceof IForgeRegistryEntry)
+        if(instance instanceof IForgeRegistryEntry) //necessary for biomes which encode the registry name.
             ((IForgeRegistryEntry<?>) instance).setRegistryName(name);
         this.save(instance, cache, path);
         regOps.registerObject(regKey, name, instance);
