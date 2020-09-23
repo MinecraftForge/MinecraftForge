@@ -84,7 +84,7 @@ public class DefaultConfigScreen extends Screen {
                     double d = (double) valueObj;
                     ForgeConfigSpec.ConfigValue<Double> doubleConfigValue = (ForgeConfigSpec.ConfigValue<Double>) configValue;
 
-                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(d + k), 18, k);
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k) - 20, 18, k);
                     textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s) || s.matches("[0-9]*\\.?[0-9]*"));
                     textField.setText(String.valueOf(d));
                     textField.setResponder(s -> {
@@ -108,13 +108,13 @@ public class DefaultConfigScreen extends Screen {
                         }
                     });
                     addButton(textField);
-                    spacing += 20;
+                    spacing += 22;
 
                 } else if (valueObj instanceof Long) {
                     long l = (long) valueObj;
                     ForgeConfigSpec.ConfigValue<Long> longConfigValue = (ForgeConfigSpec.ConfigValue<Long>) configValue;
 
-                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(l + k), 18, k);
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k) - 20, 18, k);
                     textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s));
                     textField.setText(String.valueOf(l));
                     textField.setResponder(s -> {
@@ -133,11 +133,11 @@ public class DefaultConfigScreen extends Screen {
                         }
                     });
                     addButton(textField);
-                    spacing += 20;
+                    spacing += 22;
                 } else if (valueObj instanceof Integer) {
                     int i = (int) valueObj;
                     ForgeConfigSpec.ConfigValue<Integer> integerConfigValue = (ForgeConfigSpec.ConfigValue<Integer>) configValue;
-                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(i + k), 18, k);
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k) - 20, 18, k);
                     textField.setValidator(s -> s.isEmpty() || StringUtils.isNumeric(s));
                     textField.setText(String.valueOf(i));
                     textField.setResponder(s -> {
@@ -160,11 +160,11 @@ public class DefaultConfigScreen extends Screen {
                         }
                     });
                     addButton(textField);
-                    spacing += 20;
+                    spacing += 22;
                 } else if (valueObj instanceof String) {
                     String str = (String) valueObj;
                     ForgeConfigSpec.ConfigValue<String> stringConfigValue = (ForgeConfigSpec.ConfigValue<String>) configValue;
-                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k), 18, k);
+                    TextFieldWidget textField = new TextFieldWidget(font, x + font.getStringWidth(k), spacing, width - font.getStringWidth(k) - 20, 18, k);
                     textField.setText(str);
                     textField.setResponder(s -> {
                         if (!s.isEmpty()) {
@@ -176,7 +176,7 @@ public class DefaultConfigScreen extends Screen {
                         }
                     });
                     addButton(textField);
-                    spacing += 20;
+                    spacing += 22;
                 } else {
                     LOGGER.warn("Couldn't handle property '{}'", valueObj);
                 }
