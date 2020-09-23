@@ -28,6 +28,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.*;
 import net.minecraftforge.common.crafting.conditions.*;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
@@ -214,6 +216,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void clientSetup(FMLClientSetupEvent clientSetupEvent) {
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, screen) -> new DefaultConfigScreen(new StringTextComponent("Forge"), screen, ForgeConfig.clientSpec));

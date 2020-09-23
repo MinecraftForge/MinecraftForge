@@ -3,6 +3,7 @@ package net.minecraftforge.debug.client.config;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -34,9 +35,10 @@ public class ConfigScreenTest {
             return builder.build();
         });
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, configSpec = configSpecPair.getRight());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::makeScreen);
+        FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void makeScreen(FMLClientSetupEvent clientSetupEvent) {
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, screen) -> new DefaultConfigScreen(new StringTextComponent("Test"), screen, configSpec));
