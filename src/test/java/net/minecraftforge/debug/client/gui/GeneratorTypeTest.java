@@ -40,12 +40,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GeneratorTypeTest {
 
-    public static final String MODID = "generatortypetest";
+    public static final String MODID = "generator_type_test";
 
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
-        TestGeneratorType testScreen = new TestGeneratorType("test_screen", TestEditScreen::new);
-        TestGeneratorType testNoScreen = new TestGeneratorType("test_no_screen", null);
+        event.enqueueWork(() -> {
+            new TestGeneratorType("test_screen", TestEditScreen::new);
+            new TestGeneratorType("test_no_screen", null);
+        });
     }
 
     private static class TestGeneratorType extends BiomeGeneratorTypeScreens {
