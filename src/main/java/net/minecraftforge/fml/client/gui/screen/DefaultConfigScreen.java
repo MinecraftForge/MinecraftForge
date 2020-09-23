@@ -25,6 +25,9 @@ public class DefaultConfigScreen extends Screen {
     protected ForgeConfigSpec configSpec;
     protected static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * @param titleIn will be displayed on top
+     */
     public DefaultConfigScreen(ITextComponent titleIn, Screen previousScreen, ForgeConfigSpec forgeConfigSpec) {
         super(titleIn);
         this.previousScreen = previousScreen;
@@ -222,6 +225,7 @@ public class DefaultConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        assert minecraft != null;
         minecraft.displayGuiScreen(previousScreen);
     }
 }
