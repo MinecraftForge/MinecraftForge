@@ -52,7 +52,7 @@
  
        for(Entity entity : this.field_72769_h.func_217416_b()) {
 -         if ((this.field_175010_j.func_229086_a_(entity, clippinghelper, d0, d1, d2) || entity.func_184215_y(this.field_72777_q.field_71439_g)) && (entity != p_228426_6_.func_216773_g() || p_228426_6_.func_216770_i() || p_228426_6_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228426_6_.func_216773_g()).func_70608_bn()) && (!(entity instanceof ClientPlayerEntity) || p_228426_6_.func_216773_g() == entity)) {
-+         if ((this.field_175010_j.func_229086_a_(entity, clippinghelper, d0, d1, d2) || entity.func_184215_y(this.field_72777_q.field_71439_g)) && (entity != p_228426_6_.func_216773_g() || p_228426_6_.func_216770_i() || p_228426_6_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228426_6_.func_216773_g()).func_70608_bn()) && (!(entity instanceof ClientPlayerEntity) || p_228426_6_.func_216773_g() == entity || !field_72777_q.field_71439_g.func_175149_v())) {
++         if ((this.field_175010_j.func_229086_a_(entity, clippinghelper, d0, d1, d2) || entity.func_184215_y(this.field_72777_q.field_71439_g)) && (entity != p_228426_6_.func_216773_g() || p_228426_6_.func_216770_i() || p_228426_6_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228426_6_.func_216773_g()).func_70608_bn()) && (!(entity instanceof ClientPlayerEntity) || p_228426_6_.func_216773_g() == entity || (entity == field_72777_q.field_71439_g && !field_72777_q.field_71439_g.func_175149_v()))) {
              ++this.field_72749_I;
              if (entity.field_70173_aa == 0) {
                 entity.field_70142_S = entity.func_226277_ct_();
