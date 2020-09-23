@@ -1,5 +1,4 @@
 {
-  "scale": 0.45,
   "effects": {
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
@@ -169,9 +168,11 @@
   },
   "spawn_costs": {},
   "player_spawn_friendly": false,
+  "forge:registry_name": "world_data_gen:biome_test_2",
   "precipitation": "rain",
   "temperature": 0.2,
   "downfall": 0.3,
   "category": "extreme_hills",
-  "depth": 0.2
+  "depth": 0.2,
+  "scale": 0.45
 }

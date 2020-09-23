@@ -25,6 +25,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,6 +46,8 @@ public abstract class RegistryBackedProvider<P> extends CodecBackedProvider<P>
 
     protected void saveAndRegister(P instance, ResourceLocation name, DirectoryCache cache, Path path) throws IOException
     {
+        if(instance instanceof IForgeRegistryEntry)
+            ((IForgeRegistryEntry<?>) instance).setRegistryName(name);
         this.save(instance, cache, path);
         regOps.registerObject(regKey, name, instance);
     }

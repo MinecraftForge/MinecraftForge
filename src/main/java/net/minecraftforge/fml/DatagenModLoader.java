@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,21 +34,23 @@ public class DatagenModLoader {
     private static final Logger LOGGER = LogManager.getLogger();
     private static GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
     private static ExistingFileHelper existingFileHelper;
+    private static RegistryOpsHelper regOps;
     private static boolean runningDataGen;
 
     public static boolean isRunningDataGen() {
         return runningDataGen;
     }
 
-    public static void begin(final Set<String> mods, final Path path, final java.util.Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
+    public static void begin(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         runningDataGen = true;
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         existingFileHelper = new ExistingFileHelper(existingPacks, structureValidator);
+        regOps = new RegistryOpsHelper(inputs);
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
-        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper));
+        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper, regOps));
         dataGeneratorConfig.runAll();
     }
 }

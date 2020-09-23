@@ -1,5 +1,4 @@
 {
-  "scale": 0.95,
   "effects": {
     "grass_color_modifier": "dark_forest",
     "sky_color": 11129320,
@@ -162,10 +161,12 @@
   },
   "spawn_costs": {},
   "player_spawn_friendly": false,
+  "forge:registry_name": "world_data_gen:biome_test_4",
   "precipitation": "snow",
   "temperature": -10.0,
   "temperature_modifier": "frozen",
   "downfall": 0.1,
   "category": "icy",
-  "depth": 0.2
+  "depth": 0.2,
+  "scale": 0.95
 }
