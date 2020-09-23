@@ -36,9 +36,7 @@ public class EarlyLoadingException extends RuntimeException {
         private final Object[] args;
 
         public ExceptionData(final String message, Object... args) {
-            this.i18message = message;
-            this.modInfo = null;
-            this.args = args;
+            this(message, null, args);
         }
 
         public ExceptionData(final String message, final IModInfo modInfo, Object... args) {
