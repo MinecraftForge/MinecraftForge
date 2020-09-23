@@ -40,7 +40,11 @@ import net.minecraftforge.eventbus.api.EventPriority;
  *
  * Be aware that another mod could have done an operation beforehand, so an expected value out of a vanilla biome might not
  * always be the same, depending on other mods.
+ *
+ * The event is okay to use for simple changes but json defined biome modifications should still be preferred, as their
+ * order is much more controllable and they can be turned removed if needed independently of the mod author.
  */
+@Deprecated
 public class BiomeLoadingEvent extends Event
 {
     private final ResourceLocation name;

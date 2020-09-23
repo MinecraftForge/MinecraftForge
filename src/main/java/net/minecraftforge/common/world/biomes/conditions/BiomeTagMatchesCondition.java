@@ -30,9 +30,11 @@ public class BiomeTagMatchesCondition implements IBiomeCondition
     @Override
     public boolean test(Biome biome)
     {
+        if(biome.getRegistryName() == null)
+            return false;
         ITag<Biome> tag = TagCollectionManager.func_242178_a().getCustomTypeCollection(ForgeRegistries.BIOMES).get(tagName);
         if(tag == null)
             throw new RuntimeException("Tag " + tagName + " was not present for worldgen.");
-        return tag.func_230235_a_(biome);
+        return tag.func_230236_b_().stream().anyMatch(b -> b.getRegistryName().equals(biome.getRegistryName()));
     }
 }

@@ -13,6 +13,10 @@
       {
         "type" : "forge:matches_biome",
         "biome" : "minecraft:giant_tree_taiga"
+      },
+      {
+        "type" : "forge:matches_tag",
+        "tag" : "biome_loading_event_test:dry"
       }
     ]
   },

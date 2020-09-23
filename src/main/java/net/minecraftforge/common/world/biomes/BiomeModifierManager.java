@@ -34,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = "forge")
@@ -51,11 +50,10 @@ public class BiomeModifierManager extends JsonReloadListener
     private static final Logger LOGGER = LogManager.getLogger("BiomeModifierManager");
     private static final Gson GSON = new GsonBuilder().create();
     private static final String FOLDER = "biome_modifiers";
-    private static final Map<ResourceLocation, Biome> eventProcessedBiomes = new HashMap<>();
+    private static final Map<ResourceLocation, Biome> eventCopiedBiomes = new HashMap<>();
 
     private List<BiomeModifier> deserializedModifiers = null;
     private Function<DynamicOps<JsonElement>, List<BiomeModifier>> modifiers = ops -> { throw new IllegalStateException(); };
-    private List<IBiomeCondition> conditions = new ArrayList<>();
 
     private static boolean worldGenFinished = false;
 
@@ -69,9 +67,12 @@ public class BiomeModifierManager extends JsonReloadListener
         return !worldGenFinished;
     }
 
-    public static void addBiomeLoadingEventResult(ResourceLocation biome, Biome afterEvent)
+    public static void addBiomeLoadingEventResult(ResourceLocation name, Biome afterEvent)
     {
-        eventProcessedBiomes.put(biome, afterEvent);
+        //for any biome overrides from a datapack, this will actually log the fact that the namespace isn't "minecraft"
+        // (even if it's the biome is of another mod). This is somewhat useful for tracking who has overriden the biome.
+        afterEvent.setRegistryName(name);
+        eventCopiedBiomes.put(name, afterEvent);
     }
 
     @Override
@@ -121,17 +122,10 @@ public class BiomeModifierManager extends JsonReloadListener
             modifierLocs.forEach(loc ->
                     BiomeModifier.GENERAL_CODEC.parse(ops, resources.get(loc)).get()
                             .ifLeft(modifiers::add)
-                            .ifRight(e -> LOGGER.error("Could not parse {} : {}", loc, e)));
+                            .ifRight(e -> LOGGER.error("Could not parse {} : {}", loc, e.message())));
             return modifiers;
         };
 
-        //Deserialize the conditions separately, so they can be used to check how many biomes
-        // will get modified.
-        this.conditions = new ArrayList<>();
-        modifierLocs.forEach(loc ->
-                IBiomeCondition.FIELD_CODEC.codec().parse(JsonOps.INSTANCE, resources.get(loc)).get()
-                        .ifLeft(this.conditions::add)
-                        .ifRight(e -> LOGGER.error("Could not parse {} : {}", loc, e)));
         LOGGER.info("Should load {} biome modifiers", modifierLocs.size());
     }
 
@@ -161,22 +155,6 @@ public class BiomeModifierManager extends JsonReloadListener
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return BiomeModifications.performModifications(modifications, base);
-    }
-
-    private List<ResourceLocation> getBiomesToModify()
-    {
-        List<ResourceLocation> biomes = new ArrayList<>();
-        Predicate<Biome> anyMatch = b -> BiomeModifierManager.INSTANCE.conditions.stream().anyMatch(cond -> cond.test(b));
-
-        for(Map.Entry<RegistryKey<Biome>, Biome> entry : ForgeRegistries.BIOMES.getEntries())
-        {
-            if(anyMatch.test(entry.getValue()))
-            {
-                RegistryKey<Biome> key = entry.getKey();
-                biomes.add(new ResourceLocation(key.func_240901_a_().getNamespace(), ForgeRegistries.Keys.BIOMES.func_240901_a_().getPath() + "/" + key.func_240901_a_().getPath() + ".json"));
-            }
-        }
-        return biomes;
     }
 
     @SubscribeEvent
@@ -219,7 +197,10 @@ public class BiomeModifierManager extends JsonReloadListener
             if(!key.equals(Registry.field_239720_u_))
                 return baseLocs;
 
-            baseLocs.addAll(BiomeModifierManager.INSTANCE.getBiomesToModify());
+            //have to trick it into thinking all of these are valid jsons (avoids log spam)
+            baseLocs.addAll(eventCopiedBiomes.keySet().stream()
+                    .map(rl -> new ResourceLocation(rl.getNamespace(), ForgeRegistries.Keys.BIOMES.func_240901_a_().getPath() + "/" + rl.getPath() + ".json"))
+                    .collect(Collectors.toSet()));
             return baseLocs;
         }
 
@@ -241,15 +222,15 @@ public class BiomeModifierManager extends JsonReloadListener
                 return dataObj;
             }
 
-            //Find the biome in the registry.
-            ForgeRegistry<Biome> reg = (ForgeRegistry<Biome>) ForgeRegistries.BIOMES;
             ResourceLocation loc = key.func_240901_a_();
 
             //If it's not there, the previous error was a real one, so return it.
-            if(!reg.containsKey(loc))
+            if(!eventCopiedBiomes.containsKey(loc))
                 return dataObj;
 
-            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(BiomeModifierManager.eventProcessedBiomes.getOrDefault(loc, reg.getValue(loc)));
+            //Used to get the numerical id.
+            ForgeRegistry<Biome> reg = (ForgeRegistry<Biome>) ForgeRegistries.BIOMES;
+            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(BiomeModifierManager.eventCopiedBiomes.get(loc));
             return DataResult.success(Pair.of((E)modified, OptionalInt.of(reg.getID(loc))), Lifecycle.experimental());
         }
     }

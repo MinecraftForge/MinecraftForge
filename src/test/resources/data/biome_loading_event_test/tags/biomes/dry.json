@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:nether_wastes",
+    "minecraft:soul_sand_valley",
+    "minecraft:crimson_forest",
+    "minecraft:warped_forest",
+    "minecraft:basalt_deltas",
+    "minecraft:the_end",
+    "minecraft:small_end_islands",
+    "minecraft:end_midlands",
+    "minecraft:end_highlands",
+    "minecraft:end_barrens",
+    "minecraft:desert_hills",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands_plateau",
+    "minecraft:badlands_plateau",
+    "minecraft:desert_lakes",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau",
+    "minecraft:eroded_badlands",
+    "minecraft:modified_wooded_badlands_plateau",
+    "minecraft:modified_badlands_plateau"
+  ]
+} 
