@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.base.Strings;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -65,7 +66,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.license = config.<String>getConfigElement("license")
-            .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
+            .orElse(null);
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
         this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
@@ -140,11 +141,16 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     @Override
     public String getLicense()
     {
-        return license;
+        return Strings.nullToEmpty(license);
     }
 
     public URL getIssueURL()
     {
         return issueURL;
+    }
+
+    public boolean missingLicense()
+    {
+        return license == null;
     }
 }
