@@ -69,9 +69,6 @@ public class BiomeModifierManager extends JsonReloadListener
 
     public static void addBiomeLoadingEventResult(ResourceLocation name, Biome afterEvent)
     {
-        //for any biome overrides from a datapack, this will actually log the fact that the namespace isn't "minecraft"
-        // (even if it's the biome is of another mod). This is somewhat useful for tracking who has overriden the biome.
-        afterEvent.setRegistryName(name);
         eventCopiedBiomes.put(name, afterEvent);
     }
 
