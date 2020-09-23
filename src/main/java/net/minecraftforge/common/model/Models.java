@@ -21,7 +21,6 @@ package net.minecraftforge.common.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 
 public enum Models

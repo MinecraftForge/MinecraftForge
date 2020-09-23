@@ -21,8 +21,8 @@ package net.minecraftforge.fml.event.lifecycle;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 
 import java.nio.file.Path;
@@ -34,19 +34,24 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class GatherDataEvent extends ModLifecycleEvent
+public class GatherDataEvent extends Event implements IModBusEvent
 {
     private final DataGenerator dataGenerator;
     private final DataGeneratorConfig config;
     private final ExistingFileHelper existingFileHelper;
-    private final RegistryOpsHelper regOps;
-    public GatherDataEvent(final ModContainer modContainer, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper, RegistryOpsHelper regOps)
+    private final ModContainer modContainer;
+
+    public GatherDataEvent(final ModContainer mc, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper)
     {
-        super(modContainer);
+        this.modContainer = mc;
         this.dataGenerator = dataGenerator;
         this.config = dataGeneratorConfig;
         this.existingFileHelper = existingFileHelper;
         this.regOps = regOps;
+    }
+
+    public ModContainer getModContainer() {
+        return this.modContainer;
     }
 
     public DataGenerator getGenerator() { return this.dataGenerator; }

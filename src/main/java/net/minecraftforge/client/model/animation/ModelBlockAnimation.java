@@ -50,7 +50,6 @@ import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.I
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Type;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Variable;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.model.animation.IJointClip;

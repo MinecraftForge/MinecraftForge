@@ -1,0 +1,20 @@
+--- a/net/minecraft/tags/TagCollectionManager.java
++++ b/net/minecraft/tags/TagCollectionManager.java
+@@ -3,13 +3,13 @@
+ import java.util.stream.Collectors;
+ 
+ public class TagCollectionManager {
+-   private static volatile ITagCollectionSupplier field_232918_a_ = ITagCollectionSupplier.func_242209_a(ITagCollection.func_242202_a(BlockTags.func_242174_b().stream().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242183_0_) -> {
++   private static volatile ITagCollectionSupplier field_232918_a_ = net.minecraftforge.common.ForgeTagHandler.populateTagCollectionManager(ITagCollection.func_242202_a(BlockTags.func_242174_b().stream().distinct().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242183_0_) -> {
+       return p_242183_0_;
+-   }))), ITagCollection.func_242202_a(ItemTags.func_242177_b().stream().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242182_0_) -> {
++   }))), ITagCollection.func_242202_a(ItemTags.func_242177_b().stream().distinct().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242182_0_) -> {
+       return p_242182_0_;
+-   }))), ITagCollection.func_242202_a(FluidTags.func_241280_c_().stream().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242181_0_) -> {
++   }))), ITagCollection.func_242202_a(FluidTags.func_241280_c_().stream().distinct().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242181_0_) -> {
+       return p_242181_0_;
+-   }))), ITagCollection.func_242202_a(EntityTypeTags.func_242175_b().stream().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242179_0_) -> {
++   }))), ITagCollection.func_242202_a(EntityTypeTags.func_242175_b().stream().distinct().collect(Collectors.toMap(ITag.INamedTag::func_230234_a_, (p_242179_0_) -> {
+       return p_242179_0_;
+    }))));
+ 

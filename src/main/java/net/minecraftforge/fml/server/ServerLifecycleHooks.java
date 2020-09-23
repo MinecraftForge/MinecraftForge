@@ -31,14 +31,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.network.ConnectionType;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.FMLStatusPing;
@@ -92,7 +90,6 @@ public class ServerLifecycleHooks
         currentServer = server;
         currentServer.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
         // on the dedi server we need to force the stuff to setup properly
-        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, ()->()->SidedProvider.setServer(()->(DedicatedServer)server));
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
@@ -185,30 +182,6 @@ public class ServerLifecycleHooks
 
     public static void handleExit(int retVal)
     {
-/*
-        CountDownLatch latch = exitLatch;
-
-        if (latch != null)
-        {
-            try
-            {
-                LOGGER.info("Waiting for the server to terminate/save.");
-                if (!latch.await(10, TimeUnit.SECONDS))
-                {
-                    LOGGER.warn("The server didn't stop within 10 seconds, exiting anyway.");
-                }
-                else
-                {
-                    LOGGER.info("Server terminated.");
-                }
-            }
-            catch (InterruptedException e)
-            {
-                LOGGER.warn("Interrupted wait, exiting.");
-            }
-        }
-
-*/
         System.exit(retVal);
     }
 
@@ -235,5 +208,4 @@ public class ServerLifecycleHooks
             consumer.accept(packInfo);
         }
     }
-
 }

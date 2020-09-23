@@ -182,6 +182,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void func_230430_a_(MatrixStack matrix, int mouseX, int mouseY, float partialTicks)
     {
