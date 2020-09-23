@@ -13,8 +13,8 @@
     WATER_AMBIENT("water_ambient", 20, true, false, 64),
     MISC("misc", -1, true, true, 128);
  
--   public static Codec<EntityClassification> field_233667_g_ = IStringSerializable.func_233023_a_(EntityClassification::values, EntityClassification::func_233670_a_);
-+   public static Codec<EntityClassification> field_233667_g_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(EntityClassification::values, EntityClassification::func_233670_a_);
+-   public static final Codec<EntityClassification> field_233667_g_ = IStringSerializable.func_233023_a_(EntityClassification::values, EntityClassification::func_233670_a_);
++   public static final Codec<EntityClassification> field_233667_g_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(EntityClassification::values, EntityClassification::func_233670_a_);
     private static final Map<String, EntityClassification> field_220364_f = Arrays.stream(values()).collect(Collectors.toMap(EntityClassification::func_220363_a, (p_220362_0_) -> {
        return p_220362_0_;
     }));
