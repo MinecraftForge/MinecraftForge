@@ -8,7 +8,7 @@
 +       return createOptional(name, null);
 +   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(ResourceLocation name, @javax.annotation.Nullable java.util.function.Supplier<java.util.Set<Item>> defaults) {
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Item>> defaults) {
 +      return field_199906_c.createOptional(name, defaults);
 +   }
 +

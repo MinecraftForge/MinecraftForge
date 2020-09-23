@@ -122,7 +122,7 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return An optional tag
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
@@ -181,7 +181,7 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Supplier<Set<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         if (tagTypesSet)
         {

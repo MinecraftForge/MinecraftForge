@@ -59,8 +59,8 @@ public class CustomTagTypesTest
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final IOptionalNamedTag<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), () -> Sets.newHashSet(CUSTOM.get()));
-    private static final IOptionalNamedTag<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), () -> Sets.newHashSet(Items.BONE));
+    private static final IOptionalNamedTag<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
+    private static final IOptionalNamedTag<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
 
     public CustomTagTypesTest()
     {
