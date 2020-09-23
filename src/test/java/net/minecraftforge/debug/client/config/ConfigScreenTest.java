@@ -31,7 +31,6 @@ public class ConfigScreenTest {
             builder.defineInRange("Ranged integer", 50, 1, 500);
             builder.defineInRange("Ranged double", 6.8, 1.1, 10.2);
             builder.defineInRange("Ranged long", 5555555, 11111, 555555555555L);
-//            builder.defineEnum("Axis enum", Direction.Axis.Z, Direction.Axis.values()); //crash
             return builder.build();
         });
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, configSpec = configSpecPair.getRight());

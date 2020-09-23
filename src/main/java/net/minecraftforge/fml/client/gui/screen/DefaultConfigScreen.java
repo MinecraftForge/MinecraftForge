@@ -5,6 +5,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.client.gui.IPressHandler;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
@@ -14,6 +16,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
+/**
+ * Default screen for configs from the mod menu. Can handle boolean, integer, long, double and string properties.
+ */
+@OnlyIn(Dist.CLIENT)
 public class DefaultConfigScreen extends Screen {
     protected Screen previousScreen;
     protected ForgeConfigSpec configSpec;
@@ -55,7 +61,8 @@ public class DefaultConfigScreen extends Screen {
      *
      * @return vertical offset for the next screen element
      */
-    private int buildElements(int spacing, int x, UnmodifiableConfig actualValues, String k, Object v) {
+    @SuppressWarnings("unchecked")
+    protected int buildElements(int spacing, int x, UnmodifiableConfig actualValues, String k, Object v) {
         if (v instanceof ForgeConfigSpec.ValueSpec) {
             ForgeConfigSpec.ValueSpec valueSpec = (ForgeConfigSpec.ValueSpec) v;
             Object specValue = actualValues.get(k);
@@ -73,8 +80,6 @@ public class DefaultConfigScreen extends Screen {
                 ForgeConfigSpec.ConfigValue<?> configValue = (ForgeConfigSpec.ConfigValue<?>) specValue;
 
                 Object valueObj = configValue.get();
-//                System.out.println(valueObj);
-//                System.out.println(valueRange);
                 if (valueObj instanceof Double) {
                     double d = (double) valueObj;
                     ForgeConfigSpec.ConfigValue<Double> doubleConfigValue = (ForgeConfigSpec.ConfigValue<Double>) configValue;
