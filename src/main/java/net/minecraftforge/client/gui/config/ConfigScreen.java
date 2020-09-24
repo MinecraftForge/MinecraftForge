@@ -21,9 +21,9 @@ import java.util.Collections;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
+ * - **Config Screen titles**
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?
- * - Config Screen titles
  * - Expand ValueConfigElementData ("Provide a way to properly pass a null label")
  * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Fix lists
