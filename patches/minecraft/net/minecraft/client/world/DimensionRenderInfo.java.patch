@@ -1,0 +1,41 @@
+--- a/net/minecraft/client/world/DimensionRenderInfo.java
++++ b/net/minecraft/client/world/DimensionRenderInfo.java
+@@ -26,6 +26,9 @@
+    private final DimensionRenderInfo.FogType field_241680_e_;
+    private final boolean field_241681_f_;
+    private final boolean field_239212_e_;
++   private net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler = null;
++   private net.minecraftforge.client.ISkyRenderHandler skyRenderHandler = null;
++   private net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler = null;
+ 
+    public DimensionRenderInfo(float p_i241259_1_, boolean p_i241259_2_, DimensionRenderInfo.FogType p_i241259_3_, boolean p_i241259_4_, boolean p_i241259_5_) {
+       this.field_239210_c_ = p_i241259_1_;
+@@ -82,6 +85,28 @@
+       return this.field_239212_e_;
+    }
+ 
++   public void setWeatherRenderHandler(net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler) {
++      this.weatherRenderHandler = weatherRenderHandler;
++   }
++   public void setSkyRenderHandler(net.minecraftforge.client.ISkyRenderHandler skyRenderHandler) {
++      this.skyRenderHandler = skyRenderHandler;
++   }
++   public void setCloudRenderHandler(net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler) {
++      this.cloudRenderHandler = cloudRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.ICloudRenderHandler getCloudRenderHandler() {
++      return cloudRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.IWeatherRenderHandler getWeatherRenderHandler() {
++      return weatherRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.ISkyRenderHandler getSkyRenderHandler() {
++      return skyRenderHandler;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class End extends DimensionRenderInfo {
+       public End() {

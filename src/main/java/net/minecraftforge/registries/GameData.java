@@ -22,6 +22,8 @@ package net.minecraftforge.registries;
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -47,6 +49,7 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
 import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
+import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryKey;
@@ -56,6 +59,7 @@ import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
@@ -67,12 +71,14 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.LifecycleEventProvider;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
@@ -93,9 +99,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
@@ -171,6 +178,9 @@ public class GameData
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
+        // Dynamic Worldgen
+        makeRegistry(BIOMES, Biome.class).create();
+
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
@@ -184,11 +194,11 @@ public class GameData
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -322,6 +332,52 @@ public class GameData
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         LOGGER.debug(REGISTRIES, "Reverting complete");
+    }
+
+    @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
+    public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
+        List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
+        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
+
+        //Move Blocks to first, and Items to second.
+        keys.remove(BLOCKS.func_240901_a_());
+        keys.remove(ITEMS.func_240901_a_());
+
+        keys.add(0, BLOCKS.func_240901_a_());
+        keys.add(1, ITEMS.func_240901_a_());
+
+        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> modContainerEventGeneratorFunction = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
+        return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> modContainerEventGeneratorFunction.apply(rl)));
+    }
+
+    public static ModLoadingStage.EventDispatcher<RegistryEvent.Register<?>> buildRegistryEventDispatch() {
+        return eventConsumer -> eventToSend -> {
+            final ResourceLocation rl = eventToSend.getName();
+            ForgeRegistry<?> fr = (ForgeRegistry<?>) eventToSend.getRegistry();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
+            fr.unfreeze();
+            eventConsumer.accept(eventToSend);
+            fr.freeze();
+            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
+            ObjectHolderRegistry.applyObjectHolders(rl::equals);
+            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
+        };
+    }
+
+    public static void setCustomTagTypesFromRegistries()
+    {
+        Set<ResourceLocation> customTagTypes = new HashSet<>();
+        for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> entry : RegistryManager.ACTIVE.registries.entrySet())
+        {
+            ResourceLocation registryName = entry.getKey();
+            if (entry.getValue().getTagFolder() != null && TagRegistryManager.get(registryName) == null)
+            {
+                LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
+                customTagTypes.add(registryName);
+                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
+            }
+        }
+        ForgeTagHandler.setCustomTagTypes(customTagTypes);
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -788,47 +844,6 @@ public class GameData
         Map<ResourceLocation, Integer> _new = Maps.newHashMap();
         frozen.getKeys().stream().filter(key -> !newRegistry.containsKey(key)).forEach(key -> _new.put(key, frozen.getID(key)));
         newRegistry.loadIds(_new, frozen.getOverrideOwners(), Maps.newLinkedHashMap(), remaps, frozen, name);
-    }
-
-    public static void fireCreateRegistryEvents()
-    {
-        MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
-    }
-
-    public static void fireCreateRegistryEvents(final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher) {
-        final RegistryEvent.NewRegistry newRegistryEvent = new RegistryEvent.NewRegistry();
-        lifecycleEventProvider.setCustomEventSupplier(()->newRegistryEvent);
-        eventDispatcher.accept(lifecycleEventProvider);
-    }
-
-
-    public static void fireRegistryEvents(Predicate<ResourceLocation> filter, final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher)
-    {
-        List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
-        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
-
-        //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.func_240901_a_());
-        keys.remove(ITEMS.func_240901_a_());
-
-        keys.add(0, BLOCKS.func_240901_a_());
-        keys.add(1, ITEMS.func_240901_a_());
-        for (int i = 0, keysSize = keys.size(); i < keysSize; i++) {
-            final ResourceLocation rl = keys.get(i);
-            if (!filter.test(rl)) continue;
-            ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
-            reg.unfreeze();
-            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
-            final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
-            lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
-            lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);
-            if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
-            eventDispatcher.accept(lifecycleEventProvider);
-            reg.freeze();
-            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
-        }
     }
 
     /**

@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public abstract class ModelFile {
 

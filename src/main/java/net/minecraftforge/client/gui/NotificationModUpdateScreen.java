@@ -64,6 +64,7 @@ public class NotificationModUpdateScreen extends Screen
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {

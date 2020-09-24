@@ -49,10 +49,11 @@
     }
  
     public static class OptionalItemEntry implements ITag.ITagEntry {
-@@ -278,5 +290,6 @@
+@@ -278,5 +290,7 @@
        public String toString() {
           return "#" + this.field_200163_a;
        }
 +      @Override public boolean equals(Object o) { return o == this || (o instanceof ITag.TagEntry && java.util.Objects.equals(this.field_200163_a, ((ITag.TagEntry) o).field_200163_a)); }
++      public ResourceLocation getId() { return field_200163_a; }
     }
  }

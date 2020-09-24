@@ -80,3 +80,9 @@ license="LGPL v2.1"
     modId="custom_elytra_test"
 [[mods]]
     modId="finite_water_test"
+[[mods]]
+    modId="scaffolding_test"
+[[mods]]
+    modId="custom_tag_types_test"
+[[mods]]
+    modId="biome_loading_event_test"

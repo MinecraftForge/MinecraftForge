@@ -23,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntity.SleepResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 import java.util.Optional;
 
@@ -34,8 +33,6 @@ import java.util.Optional;
  * {@link EntityPlayer#trySleep(BlockPos)}.<br>
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
- * <br>
- * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
  * <br>
  * This event does not have a result. {@link HasResult}
  * <br>

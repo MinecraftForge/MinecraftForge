@@ -92,6 +92,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     private void scanIndividualPath(final Path path, Consumer<Path> pathConsumer) {
+        if (!Files.exists(path)) return;
         LOGGER.debug(SCAN, "Scanning exploded target {}", path.toString());
         try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);

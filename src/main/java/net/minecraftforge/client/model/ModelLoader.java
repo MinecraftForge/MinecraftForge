@@ -158,6 +158,7 @@ public final class ModelLoader extends ModelBakery
     public static final class White {
         public static final ResourceLocation LOCATION = new ResourceLocation("white");
         private static TextureAtlasSprite instance = null;
+        @SuppressWarnings("deprecation")
         public static final TextureAtlasSprite instance()
         {
             if (instance == null)

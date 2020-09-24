@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/biome/BiomeGenerationSettings.java
++++ b/net/minecraft/world/biome/BiomeGenerationSettings.java
+@@ -47,6 +47,7 @@
+    });
+    private final Supplier<ConfiguredSurfaceBuilder<?>> field_242482_d;
+    private final Map<GenerationStage.Carving, List<Supplier<ConfiguredCarver<?>>>> field_242483_e;
++   private final java.util.Set<GenerationStage.Carving> carversView;
+    private final List<List<Supplier<ConfiguredFeature<?, ?>>>> field_242484_f;
+    private final List<Supplier<StructureFeature<?, ?>>> field_242485_g;
+    private final List<ConfiguredFeature<?, ?>> field_242486_h;
+@@ -59,12 +60,17 @@
+       this.field_242486_h = p_i241935_3_.stream().flatMap(Collection::stream).map(Supplier::get).flatMap(ConfiguredFeature::func_242768_d).filter((p_242490_0_) -> {
+          return p_242490_0_.field_222737_a == Feature.field_227247_y_;
+       }).collect(ImmutableList.toImmutableList());
++      this.carversView = java.util.Collections.unmodifiableSet(field_242483_e.keySet());
+    }
+ 
+    public List<Supplier<ConfiguredCarver<?>>> func_242489_a(GenerationStage.Carving p_242489_1_) {
+       return this.field_242483_e.getOrDefault(p_242489_1_, ImmutableList.of());
+    }
+ 
++   public java.util.Set<GenerationStage.Carving> getCarvingStages() {
++       return this.carversView;
++   }
++
+    public boolean func_242493_a(Structure<?> p_242493_1_) {
+       return this.field_242485_g.stream().anyMatch((p_242494_1_) -> {
+          return (p_242494_1_.get()).field_236268_b_ == p_242493_1_;
