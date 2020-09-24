@@ -15,6 +15,7 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.NoiseChunkGenerator;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.GeneratorTypeManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import java.util.function.Supplier;
 
 @Mod(GeneratorTypeTest.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GeneratorTypeTest {
 
     public static final String MODID = "generator_type_test";
