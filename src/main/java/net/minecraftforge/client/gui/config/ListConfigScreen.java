@@ -5,42 +5,50 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ListConfigScreen extends ConfigScreen {
-    private List list;
+public abstract class ListConfigScreen extends ConfigScreen {
+    private List actualValue;
     private final List<?> initialValue;
     private final List<?> defaultValue;
 
     public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
         super(parentScreen, title, new StringTextComponent("List"));
-        list = ConfigElementControls.copyMutable(this.initialValue = initialValue);
+        actualValue = ConfigElementControls.copyMutable(this.initialValue = initialValue);
         this.defaultValue = defaultValue;
     }
 
     @Override
     protected void reset() {
-        list = ConfigElementControls.copyMutable(defaultValue);
+        actualValue = ConfigElementControls.copyMutable(defaultValue);
+        onModified(actualValue);
+        onAddRemove(0);
     }
 
     @Override
     protected void undo() {
-        list = ConfigElementControls.copyMutable(defaultValue);
+        actualValue = ConfigElementControls.copyMutable(initialValue);
+        onModified(actualValue);
+        onAddRemove(0);
     }
+
+    public abstract void onModified(List newValue);
 
     @Override
     protected boolean canReset() {
-        return !Objects.equals(list, defaultValue);
+        return !Objects.equals(actualValue, defaultValue);
     }
 
     @Override
     protected boolean canUndo() {
-        return !Objects.equals(list, initialValue);
+        return !Objects.equals(actualValue, initialValue);
     }
 
     @Override
@@ -52,27 +60,31 @@ public class ListConfigScreen extends ConfigScreen {
 
         public ListConfigElementList(ConfigScreen configScreen, Minecraft mcIn) {
             super(configScreen, mcIn);
-            for (int i = 0; i < list.size(); i++) {
-                Object item = list.get(i);
+            for (int i = 0; i < actualValue.size(); i++) {
+                Object item = actualValue.get(i);
                 ConfigElement element = createWidget(i, item);
                 if (element != null)
                     func_230513_b_(element);
-                else
-                    func_230513_b_(new TitledConfigElement(Objects.toString(item), "Unknown object "));
+                else {
+                    ITextComponent title = new StringTextComponent(i + " (" + (item == null ? "null" : item.getClass().getSimpleName()) + ")");
+                    func_230513_b_(new ConfigElement(title, title, Collections.singletonList(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"))));
+                }
             }
         }
 
         class ListItemConfigElement extends ConfigElement {
 
             public ListItemConfigElement(int index, Object item) {
-                super(item.getClass().getSimpleName() + " list item", "");
+                super(new StringTextComponent(Integer.toString(index)), new StringTextComponent(Integer.toString(index)), Collections.emptyList());
                 Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
-                    list.add(index + 1, ConfigElementControls.copyMutable(list.get(index)));
+                    actualValue.add(index + 1, ConfigElementControls.copyMutable(actualValue.get(index)));
+                    onModified(actualValue);
                     onAddRemove(index + 1);
                 });
                 addBelowButton.setFGColor(ConfigElementControls.GREEN);
                 Button removeButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("-"), b -> {
-                    list.remove(index);
+                    actualValue.remove(index);
+                    onModified(actualValue);
                     onAddRemove(index);
                 });
                 removeButton.setFGColor(ConfigElementControls.RED);
@@ -141,8 +153,6 @@ public class ListConfigScreen extends ConfigScreen {
                             return true;
                         }, title, potential);
                         control.valueSetter.setup((Enum) item);
-//                            canReset = () -> item !=
-//                            reset = data.reset(valueInfo);
                         widgets.add(0, control.widget);
                     }
                 };
@@ -159,14 +169,26 @@ public class ListConfigScreen extends ConfigScreen {
                     }
                 };
             if (item instanceof List<?>)
-                return new PopupConfigElement("Nested List", "Nested List", () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item));
+                return new ListItemConfigElement(index, item) {
+                    {
+                        // TODO: "Nested List"?
+                        this.widgets.add(0, makePopupButton(title, () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item) {
+                            @Override
+                            public void onModified(List newValue) {
+                                ListConfigScreen.this.onModified(actualValue);
+                                onChange();
+                            }
+                        }));
+                    }
+                };
             return null;
         }
 
     }
 
     private void set(int index, Object newValue) {
-        list.set(index, newValue);
+        actualValue.set(index, newValue);
+        onModified(actualValue);
     }
 
     private void onAddRemove(int index) {
@@ -175,7 +197,7 @@ public class ListConfigScreen extends ConfigScreen {
         // Saves the headache of dealing with indexing of adds/removes
         field_230705_e_.remove(configElementList); // children.remove
         double scrollAmount = configElementList.func_230966_l_(); // getScrollAmount
-        if (index == list.size() - 1)
+        if (index == actualValue.size() - 1)
             // If we're at the bottom, scroll even further because if it's an add
             // we want to scroll to the new bottom
             scrollAmount += this.configElementList.getItemHeight();

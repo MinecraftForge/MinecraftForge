@@ -124,7 +124,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * - Has buttons to add a value to the list below it or remove itself from the list
      * - No tooltip
      */
-    public abstract class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
+    public class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
         public static final int PADDING = 5;
         /**
          * The TEXT to display before any widgets.
@@ -145,11 +145,10 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         @Nullable
         public Button undoButton;
 
-        public ConfigElement(String translatedName, String description) {
-            // TODO: Actual values for these
-            this.label = translatedName == null ? null : new StringTextComponent(translatedName);
-            this.title = label;
-            this.tooltip = Arrays.stream(description.split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
+        public ConfigElement(@Nullable ITextComponent label, ITextComponent title, @Nullable List<ITextComponent> tooltip) {
+            this.label = label;
+            this.title = title;
+            this.tooltip = tooltip;
             if (label != null)
                 maxListLabelWidth = Math.max(maxListLabelWidth, configScreen.getFontRenderer().func_238414_a_(label)); // getStringPropertyWidth
         }
@@ -199,13 +198,13 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             for (Widget widget : widgets) {
                 if (resetButton != null && widget == resetButton && widget.func_230449_g_()) { // isHovered
                     // TODO: translation
-                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("resets stuff"));
+                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("forge.configgui.resetToDefault.tooltip"));
                     GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
                     return; // Stop main tooltip being rendered
                 }
                 if (undoButton != null && widget == undoButton && widget.func_230449_g_()) { // isHovered
                     // TODO: translation
-                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("undoes stuff"));
+                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("forge.configgui.undoChanges.tooltip"));
                     GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
                     return; // Stop main tooltip being rendered
                 }
@@ -291,36 +290,6 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 if (widget instanceof TextFieldWidget)
                     ((TextFieldWidget) widget).setFocused2(false);
         super.func_231035_a_(newFocused);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public class TitledConfigElement extends ConfigElement {
-        private final ITextComponent nameComponent;
-
-        public TitledConfigElement(String translatedName, String description) {
-            super(translatedName, description);
-            nameComponent = new StringTextComponent(translatedName);
-        }
-
-        @Override
-        // render
-        public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
-            super.func_230432_a_(matrixStack, index, rowTop, rowLeft, rowWidth, adjustedItemHeight, mouseX, mouseY, isSelected, partialTicks);
-            field_230668_b_.fontRenderer.func_243248_b(matrixStack, this.nameComponent, rowLeft, (float) (rowTop + adjustedItemHeight / 2 - 9 / 2), 0xffffff);
-        }
-
-    }
-
-    /**
-     * Opens a new Screen
-     */
-    public class PopupConfigElement extends ConfigElement {
-
-        public PopupConfigElement(String translatedName, String description, Supplier<ConfigScreen> screenFactory) {
-            super(translatedName, description);
-            Button openScreen = new ExtendedButton(0, 0, 0, 0, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
-            widgets.add(0, openScreen);
-        }
     }
 
     public static int correctWidgetBound(Widget widget, int widthOrHeight) {

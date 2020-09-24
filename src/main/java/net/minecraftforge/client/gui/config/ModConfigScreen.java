@@ -17,10 +17,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Makes a ConfigScreen with entries for all of a mod's registered configs.
@@ -53,7 +51,7 @@ public class ModConfigScreen extends ConfigScreen {
                 () -> (minecraft, screen) -> new ModConfigScreen(screen, modContainer.getModInfo()));
     }
 
-    // TODO: Move these to translation keys?
+    // TODO: Move these to translation keys
     @Deprecated
     private static Map<ModConfig.Type, String> makeTypeComments() {
         Map<ModConfig.Type, String> map = new HashMap<>();
@@ -127,12 +125,23 @@ public class ModConfigScreen extends ConfigScreen {
         return new ConfigElementList(this, field_230706_i_) {
             {
                 for (ModConfig modConfig : configsToDisplay) {
-                    String translatedName = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
-                    String description = COMMENTS.get(modConfig.getType());
+                    String translationKey = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
+                    String comment = COMMENTS.get(modConfig.getType());
+                    ITextComponent title = makeTranslationComponent(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
+                    // TODO: Translation keys
+                    List<ITextComponent> tooltip = Arrays.stream(comment.split("\n"))
+                            .map(StringTextComponent::new)
+                            .map(t -> t.func_240701_a_(TextFormatting.YELLOW))
+                            .collect(Collectors.toList());
+                    tooltip.add(0, title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
                     String filePath = getFilePath(modConfig);
                     if (filePath != null)
-                        description += "\n" + TextFormatting.GRAY + filePath;
-                    ConfigElement element = new PopupConfigElement(translatedName, description, () -> new ModConfigConfigScreen(ModConfigScreen.this, new StringTextComponent(translatedName), modConfig));
+                        tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
+                    ConfigElement element = new ConfigElement(null, title, tooltip) {
+                        {
+                            this.widgets.add(0, makePopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title, modConfig)));
+                        }
+                    };
                     this.func_230513_b_(element); // addEntry
                 }
             }
