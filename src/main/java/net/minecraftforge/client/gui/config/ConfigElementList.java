@@ -11,8 +11,9 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.CategoryConfigElement;
+import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.ConfigValueConfigElement;
+import net.minecraftforge.client.gui.config.ListConfigScreen.ListConfigElementList.ListItemConfigElement;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.UnicodeGlyphButton;
 
@@ -22,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
 
     // From AbstractList#render/func_230430_a_
@@ -35,6 +35,33 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // super(minecraft, width, height, top, bottom, rowHeight);
         super(minecraft, configScreen.field_230708_k_, configScreen.field_230709_l_, 43, configScreen.field_230709_l_ - 32, 20);
         this.configScreen = configScreen;
+    }
+
+    public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1, onPress) {
+            @Override
+            // getNarrationMessage
+            protected IFormattableTextComponent func_230442_c_() {
+                return new TranslationTextComponent("narrator.controls.reset", title);
+            }
+        };
+    }
+
+    public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1, onPress) {
+            @Override
+            // getNarrationMessage
+            protected IFormattableTextComponent func_230442_c_() {
+                return new TranslationTextComponent("narrator.controls.undo", title);
+            }
+        };
+    }
+
+    public static int correctWidgetBound(Widget widget, int widthOrHeight) {
+        // TextFields have a 2px border on each side that is not included in their width/height
+        if (widget instanceof TextFieldWidget)
+            return widthOrHeight - 4;
+        return widthOrHeight;
     }
 
     public int getMaxListLabelWidth() {
@@ -67,24 +94,50 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             selectedElement.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1, onPress) {
-            @Override
-            // getNarrationMessage
-            protected IFormattableTextComponent func_230442_c_() {
-                return new TranslationTextComponent("narrator.controls.reset", title);
-            }
-        };
+    public int getItemHeight() {
+        return field_230669_c_;
     }
 
-    public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1, onPress) {
-            @Override
-            // getNarrationMessage
-            protected IFormattableTextComponent func_230442_c_() {
-                return new TranslationTextComponent("narrator.controls.undo", title);
-            }
-        };
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
+    @Override
+    // mouseClicked
+    public boolean func_231044_a_(double mouseX, double mouseY, int mouseButton) {
+        boolean wasAnythingSelected = super.func_231044_a_(mouseX, mouseY, mouseButton);
+        if (!wasAnythingSelected)
+            for (ConfigElement element : func_231039_at__()) // getEventListeners
+                for (Widget widget : element.widgets)
+                    if (widget instanceof TextFieldWidget)
+                        ((TextFieldWidget) widget).setFocused2(false);
+        return wasAnythingSelected;
+    }
+
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
+    @Override
+    // clickedHeader
+    protected void func_230938_a_(int relativeX, int relativeY) {
+        super.func_230938_a_(relativeX, relativeY);
+        for (ConfigElement element : func_231039_at__()) // getEventListeners
+            for (Widget widget : element.widgets)
+                if (widget instanceof TextFieldWidget)
+                    ((TextFieldWidget) widget).setFocused2(false);
+    }
+
+    /**
+     * {@link TextFieldWidget}s don't like to give up focus.
+     */
+    @Override
+    // setListener
+    public void func_231035_a_(IGuiEventListener newFocused) {
+        ConfigElement oldFocused = func_241217_q_(); // getListener
+        if (oldFocused != null && oldFocused != newFocused)
+            for (Widget widget : oldFocused.widgets)
+                if (widget instanceof TextFieldWidget)
+                    ((TextFieldWidget) widget).setFocused2(false);
+        super.func_231035_a_(newFocused);
     }
 
     /**
@@ -100,14 +153,14 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * - May have widgets
      * - May have a tooltip
      * <p>
-     * 2. Element for "config value" (a named value in a config)
+     * 2. {@link ConfigValueConfigElement Element for a "config value" (a named value in a config)}
      * - Has a label to display its name
      * - Has a title (its name) for use in the narrator
      * - Has a widget to interact with (view and change) its value
      * - Has buttons to reset the value to default and undo changes to the value
      * - Has a tooltip containing info about the config value (e.g. its comment)
      * <p>
-     * 3. Element for (sub)category in the config
+     * 3. {@link CategoryConfigElement Element for a (sub)category in the config}
      * - Does not have a label (it displays its name on its main button)
      * - Has a title (its name) for use in the narrator
      * - Has a widget to take you to a new screen to interact with (view and change) the values in this category
@@ -120,7 +173,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * - Has a widget to take you to a new screen to interact with (view and change) the items in this list
      * - Has buttons to reset the value to default and undo changes to the value
      * - Has a tooltip containing info about the config value (e.g. its comment)
-     * 5. Element for an item inside a List
+     * 5. {@link ListItemConfigElement Element for an item inside a List}
      * - Has a label to display its index
      * - Has a title (its index) for use in the narrator
      * - Has a widget to take you to a new screen to interact with (view and change) its value (it might open a new screen, see "Element for a List")
@@ -129,6 +182,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      */
     public class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
         public static final int PADDING = 5;
+        protected final LinkedList<Widget> widgets = new LinkedList<>();
         /**
          * The TEXT to display before any widgets.
          * E.g. this element's name.
@@ -142,7 +196,6 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         /** Will be null/empty for list item entries who have nothing useful to display. */
         @Nullable
         final List<ITextComponent> tooltip;
-        protected final LinkedList<Widget> widgets = new LinkedList<>();
         @Nullable
         public Button resetButton;
         @Nullable
@@ -229,77 +282,24 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             return widgets.isEmpty() ? null : widgets.getFirst();
         }
 
-//        @Override
-//        // mouseClicked
-//        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
-//            for (Widget widget : widgets)
-//                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
-//                    return true;
-//            return false;
-//        }
-//
-//        @Override
-//        // mouseReleased
-//        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
-//            for (Widget widget : widgets)
-//                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
-//                    return true;
-//            return false;
-//        }
+        @Override
+        // mouseClicked
+        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
+            for (Widget widget : widgets)
+                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
+                    return true;
+            return false;
+        }
 
-    }
+        @Override
+        // mouseReleased
+        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
+            for (Widget widget : widgets)
+                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
+                    return true;
+            return false;
+        }
 
-    public int getItemHeight() {
-        return field_230669_c_;
-    }
-
-    /**
-     * {@link TextFieldWidget}s don't like to give up focus.
-     */
-    @Override
-    // mouseClicked
-    public boolean func_231044_a_(double mouseX, double mouseY, int mouseButton) {
-        boolean wasAnythingSelected = super.func_231044_a_(mouseX, mouseY, mouseButton);
-        if (!wasAnythingSelected)
-            for (ConfigElement element : func_231039_at__()) // getEventListeners
-                for (Widget widget : element.widgets)
-                    if (widget instanceof TextFieldWidget)
-                        ((TextFieldWidget) widget).setFocused2(false);
-        return wasAnythingSelected;
-    }
-
-    /**
-     * {@link TextFieldWidget}s don't like to give up focus.
-     */
-    @Override
-    // clickedHeader
-    protected void func_230938_a_(int relativeX, int relativeY) {
-        super.func_230938_a_(relativeX, relativeY);
-        for (ConfigElement element : func_231039_at__()) // getEventListeners
-            for (Widget widget : element.widgets)
-                if (widget instanceof TextFieldWidget)
-                    ((TextFieldWidget) widget).setFocused2(false);
-    }
-
-    /**
-     * {@link TextFieldWidget}s don't like to give up focus.
-     */
-    @Override
-    // setListener
-    public void func_231035_a_(IGuiEventListener newFocused) {
-        ConfigElement oldFocused = func_241217_q_(); // getListener
-        if (oldFocused != null && oldFocused != newFocused)
-            for (Widget widget : oldFocused.widgets)
-                if (widget instanceof TextFieldWidget)
-                    ((TextFieldWidget) widget).setFocused2(false);
-        super.func_231035_a_(newFocused);
-    }
-
-    public static int correctWidgetBound(Widget widget, int widthOrHeight) {
-        // TextFields have a 2px border on each side that is not included in their width/height
-        if (widget instanceof TextFieldWidget)
-            return widthOrHeight - 4;
-        return widthOrHeight;
     }
 
 }

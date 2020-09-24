@@ -1,12 +1,14 @@
 package net.minecraftforge.client.gui.config;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.fonts.Font;
 import net.minecraft.client.gui.fonts.FontResourceManager;
 import net.minecraft.client.gui.fonts.providers.DefaultGlyphProvider;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,6 +35,17 @@ public class CustomConfigScreenTest extends ModConfigScreen {
             public ConfigElementTextField createTextField(ITextComponent title) {
                 return new TestColorTextField(title);
             }
+
+            @Override
+            public Button createButton(ITextComponent title, Button.IPressable iPressable) {
+                return new ConfigElementButton(title, iPressable) {
+                    @Override
+                    public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
+                        setFGColor((int) (Math.random() * (double) 0xFFFFFF));
+                        super.func_230431_b_(mStack, mouseX, mouseY, partial);
+                    }
+                };
+            }
         };
     }
 
@@ -46,11 +59,6 @@ public class CustomConfigScreenTest extends ModConfigScreen {
     @Override
     public FontRenderer getFontRenderer() {
         return fontRenderer;
-    }
-
-    @Override
-    protected ConfigElementList makeConfigElementList() {
-        return super.makeConfigElementList();
     }
 
     @Override

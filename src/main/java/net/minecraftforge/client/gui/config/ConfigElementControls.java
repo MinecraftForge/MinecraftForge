@@ -11,12 +11,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList;
 import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.ValueConfigElementData;
 import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData.ValueSetter;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -28,6 +26,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.*;
 
+/**
+ * Handles creating the widgets on a {@link ConfigScreen}.
+ * Any of these methods can be overriden by mods wanting to add something extra to how their widgets
+ * are displayed on the config screen without having to dive deeply into the guts of the GUIs.
+ * To do this just create a class that extends {@link ModConfigScreen} and
+ */
 public class ConfigElementControls {
     @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.RED.getColor() could be null"
     public static final int RED = TextFormatting.RED.getColor();
@@ -44,131 +48,24 @@ public class ConfigElementControls {
         return DefaultHolder.INSTANCE;
     }
 
+    @Nullable
     public ValueConfigElementData<?> makeElementData(ConfigElementList configElementList, ITextComponent title, ConfigValue<?> configValue, ValueSpec valueSpec, Object value) {
         if (value instanceof Boolean)
-            return createBooleanElement(configElementList, (ForgeConfigSpec.BooleanValue) configValue, title, (Boolean) value);
+            return createBooleanElement(configElementList, (BooleanValue) configValue, valueSpec, title, (Boolean) value);
         else if (value instanceof Integer)
-            return createNumericRangedElement(configElementList, (ForgeConfigSpec.IntValue) configValue, valueSpec, title, (Integer) value, Integer::parseInt, Integer.MIN_VALUE);
+            return createNumericRangedElement(configElementList, (IntValue) configValue, valueSpec, title, (Integer) value, Integer::parseInt, Integer.MIN_VALUE);
         else if (value instanceof Long)
-            return createNumericRangedElement(configElementList, (ForgeConfigSpec.LongValue) configValue, valueSpec, title, (Long) value, Long::parseLong, Long.MIN_VALUE);
+            return createNumericRangedElement(configElementList, (LongValue) configValue, valueSpec, title, (Long) value, Long::parseLong, Long.MIN_VALUE);
         else if (value instanceof Double)
-            return createNumericRangedElement(configElementList, (ForgeConfigSpec.DoubleValue) configValue, valueSpec, title, (Double) value, Double::parseDouble, Double.NEGATIVE_INFINITY);
+            return createNumericRangedElement(configElementList, (DoubleValue) configValue, valueSpec, title, (Double) value, Double::parseDouble, Double.NEGATIVE_INFINITY);
         else if (value instanceof Enum<?>)
-            return createEnumElement(configElementList, (ForgeConfigSpec.EnumValue) configValue, valueSpec, title, (Enum) value);
+            return createEnumElement(configElementList, (EnumValue) configValue, valueSpec, title, (Enum) value);
         else if (value instanceof String)
             return createStringElement(configElementList, (ConfigValue<String>) configValue, valueSpec, title, (String) value);
         else if (value instanceof List<?>)
             return createListElement(configElementList, (ConfigValue<List>) configValue, valueSpec, title, (List) value);
         else
             return null;
-    }
-
-    static class DefaultHolder {
-        private static final ConfigElementControls INSTANCE = new ConfigElementControls();
-    }
-
-    public static class ConfigElementButton extends ExtendedButton {
-        public ConfigElementButton(ITextComponent title, IPressable handler) {
-            super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
-        }
-    }
-
-    /**
-     * Has so many constructors so that it is easily extensible.
-     */
-    public static class ConfigElementTextField extends TextFieldWidget {
-
-        // TextFields have a 2px border on each side that is not included in their width/height
-        public static final int BORDER = 2;
-
-        public ConfigElementTextField(ITextComponent title) {
-            this(title, Minecraft.getInstance().fontRenderer);
-        }
-
-        public ConfigElementTextField(ITextComponent title, FontRenderer fontRenderer) {
-            super(fontRenderer, 0, 0, WIDGET_WIDTH - BORDER * 2, WIDGET_HEIGHT - BORDER * 2, title);
-        }
-
-        protected String lastText = null;
-
-        @Override
-        public void setResponder(@Nullable Consumer<String> responderIn) {
-            super.setResponder(newText -> {
-                // By default this gets called whenever a user clicks somewhere in the text box
-                // Make it so we only run the listener when the text actually changes
-                if (responderIn != null && !Objects.equals(newText, lastText))
-                    responderIn.accept(newText);
-            });
-        }
-    }
-
-    /**
-     * Just testing to check
-     */
-    public static class TestColorTextField extends ConfigElementTextField {
-        public TestColorTextField(ITextComponent title) {
-            super(title);
-        }
-
-        @Override
-        public void setResponder(@Nullable Consumer<String> responderIn) {
-            super.setResponder(newText -> {
-                if (responderIn != null)
-                    responderIn.accept(newText);
-                setColor(newText);
-            });
-        }
-
-        private void setColor(String newText) {
-            if (newText == null)
-                return;
-            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
-                String r = newText.substring(1, 2);
-                String g = newText.substring(2, 3);
-                String b = newText.substring(3, 4);
-                newText = "#" + r + r + g + g + b + b;
-            }
-            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
-                String r = newText.substring(1, 3);
-                String g = newText.substring(3, 5);
-                String b = newText.substring(5, 7);
-                int ir;
-                int ig;
-                int ib;
-                try {
-                    ir = Integer.parseInt(r, 16);
-                    ig = Integer.parseInt(g, 16);
-                    ib = Integer.parseInt(b, 16);
-                } catch (NumberFormatException e) {
-                    setTextColor(RED);
-                    return;
-                }
-                setTextColor(ir << 16 | ig << 8 | ib);
-            }
-        }
-    }
-
-    public static class ConfigElementWidgetData<T> {
-        public final Widget widget;
-        public final ValueSetter<T> valueSetter;
-
-        ConfigElementWidgetData(Widget widget, ValueSetter<T> valueSetter) {
-            this.widget = widget;
-            this.valueSetter = valueSetter;
-        }
-
-        @FunctionalInterface
-        interface ValueSetter<T> {
-            default void setup(T value) {
-                setValue(true, value);
-            }
-
-            default void setTo(T value) {
-                setValue(false, value);
-            }
-
-            void setValue(boolean isSetup, T newValue);
-        }
     }
 
     public <T> T copyMutable(T o) {
@@ -280,64 +177,64 @@ public class ConfigElementControls {
         return new ConfigElementWidgetData<>(control, valueSetter);
     }
 
-    public ValueConfigElementData<Boolean> createBooleanElement(ConfigElementList configElementList, ForgeConfigSpec.BooleanValue value, ITextComponent title, Boolean valueValue) {
+    public ValueConfigElementData<Boolean> createBooleanElement(ConfigElementList configElementList, BooleanValue configValue, ValueSpec valueSpec, ITextComponent title, Boolean valueValue) {
         ConfigElementWidgetData<Boolean> control = createBooleanButton(newValue -> {
-            value.set(newValue);
-            configElementList.configScreen.onChange();
+            configValue.set(newValue);
+            configElementList.configScreen.onChange(valueSpec.needsWorldRestart());
             return true; // Can't have an "invalid" boolean
         }, title);
         control.valueSetter.setup(valueValue);
         return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
-    public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRangedElement(ConfigElementList configElementList, ConfigValue<T> value, ValueSpec valueInfo, ITextComponent title, T valueValue, Function<String, T> parser, T longestValue) {
+    public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRangedElement(ConfigElementList configElementList, ConfigValue<T> configValue, ValueSpec valueSpec, ITextComponent title, T valueValue, Function<String, T> parser, T longestValue) {
         @Nullable
-        ForgeConfigSpec.Range<T> range = valueInfo.getRange();
+        ForgeConfigSpec.Range<T> range = valueSpec.getRange();
         ConfigElementWidgetData<T> control = createNumericTextField(newValue -> {
             if (range != null && !range.test(newValue))
                 return false;
-            value.set(newValue);
-            configElementList.configScreen.onChange();
+            configValue.set(newValue);
+            configElementList.configScreen.onChange(valueSpec.needsWorldRestart());
             return true;
         }, title, parser, longestValue);
         control.valueSetter.setup(valueValue);
         return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
-    public <T extends Enum<T>> ValueConfigElementData<T> createEnumElement(ConfigElementList configElementList, ForgeConfigSpec.EnumValue<T> value, ValueSpec valueInfo, ITextComponent title, T valueValue) {
-        Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
+    public <T extends Enum<T>> ValueConfigElementData<T> createEnumElement(ConfigElementList configElementList, ForgeConfigSpec.EnumValue<T> configValue, ValueSpec valueSpec, ITextComponent title, T valueValue) {
+        Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueSpec::test).toArray(Enum<?>[]::new);
         ConfigElementWidgetData<T> control = createEnumButton(newValue -> {
-            value.set(newValue);
-            configElementList.configScreen.onChange();
+            configValue.set(newValue);
+            configElementList.configScreen.onChange(valueSpec.needsWorldRestart());
             return true; // We already filtered "potential" to have only valid values
         }, title, (T[]) potential);
         control.valueSetter.setup(valueValue);
         return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
-    public ValueConfigElementData<String> createStringElement(ConfigElementList configElementList, ConfigValue<String> value, ValueSpec valueInfo, ITextComponent title, String valueValue) {
+    public ValueConfigElementData<String> createStringElement(ConfigElementList configElementList, ConfigValue<String> configValue, ValueSpec valueSpec, ITextComponent title, String valueValue) {
         ConfigElementWidgetData<String> control = createStringTextField(newValue -> {
-            if (!valueInfo.test(newValue))
+            if (!valueSpec.test(newValue))
                 return false;
-            value.set(newValue);
-            configElementList.configScreen.onChange();
+            configValue.set(newValue);
+            configElementList.configScreen.onChange(valueSpec.needsWorldRestart());
             return true;
         }, title);
         control.valueSetter.setup(valueValue);
         return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
     }
 
-    public ValueConfigElementData<List> createListElement(ConfigElementList configElementList, ConfigValue<List> value, ValueSpec valueInfo, ITextComponent title, List valueValue) {
-        Widget widget = makePopupButton(title, () -> new ListConfigScreen(configElementList.configScreen, title, copyMutable(value.get()), copyMutable((List) valueInfo.getDefault())) {
+    public ValueConfigElementData<List> createListElement(ConfigElementList configElementList, ConfigValue<List> configValue, ValueSpec valueSpec, ITextComponent title, List valueValue) {
+        Widget widget = makePopupButton(title, () -> new ListConfigScreen(configElementList.configScreen, title, copyMutable(configValue.get()), copyMutable((List) valueSpec.getDefault())) {
             @Override
             public void onModified(List newValue) {
-                value.set(newValue);
-                onChange();
+                configValue.set(newValue);
+                onChange(valueSpec.needsWorldRestart());
             }
         });
         return new ValueConfigElementData<>(widget, newValue -> {
-            value.set(newValue);
-            configElementList.configScreen.onChange();
+            configValue.set(newValue);
+            configElementList.configScreen.onChange(valueSpec.needsWorldRestart());
         });
     }
 
@@ -363,6 +260,113 @@ public class ConfigElementControls {
 
     public ConfigElementTextField createTextField(ITextComponent title) {
         return new ConfigElementTextField(title);
+    }
+
+    static class DefaultHolder {
+        private static final ConfigElementControls INSTANCE = new ConfigElementControls();
+    }
+
+    public static class ConfigElementButton extends ExtendedButton {
+        public ConfigElementButton(ITextComponent title, IPressable handler) {
+            super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
+        }
+    }
+
+    /**
+     * Has so many constructors so that it is easily extensible.
+     */
+    public static class ConfigElementTextField extends TextFieldWidget {
+
+        // TextFields have a 2px border on each side that is not included in their width/height
+        public static final int BORDER = 2;
+        protected String lastText = null;
+
+        public ConfigElementTextField(ITextComponent title) {
+            this(title, Minecraft.getInstance().fontRenderer);
+        }
+
+        public ConfigElementTextField(ITextComponent title, FontRenderer fontRenderer) {
+            super(fontRenderer, 0, 0, WIDGET_WIDTH - BORDER * 2, WIDGET_HEIGHT - BORDER * 2, title);
+        }
+
+        @Override
+        public void setResponder(@Nullable Consumer<String> responderIn) {
+            super.setResponder(newText -> {
+                // By default this gets called whenever a user clicks somewhere in the text box
+                // Make it so we only run the listener when the text actually changes
+                if (responderIn != null && !Objects.equals(newText, lastText))
+                    responderIn.accept(newText);
+            });
+        }
+    }
+
+    /**
+     * Just testing to check
+     */
+    public static class TestColorTextField extends ConfigElementTextField {
+        public TestColorTextField(ITextComponent title) {
+            super(title);
+        }
+
+        @Override
+        public void setResponder(@Nullable Consumer<String> responderIn) {
+            super.setResponder(newText -> {
+                if (responderIn != null)
+                    responderIn.accept(newText);
+                setColor(newText);
+            });
+        }
+
+        private void setColor(String newText) {
+            if (newText == null)
+                return;
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 2);
+                String g = newText.substring(2, 3);
+                String b = newText.substring(3, 4);
+                newText = "#" + r + r + g + g + b + b;
+            }
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 3);
+                String g = newText.substring(3, 5);
+                String b = newText.substring(5, 7);
+                int ir;
+                int ig;
+                int ib;
+                try {
+                    ir = Integer.parseInt(r, 16);
+                    ig = Integer.parseInt(g, 16);
+                    ib = Integer.parseInt(b, 16);
+                } catch (NumberFormatException e) {
+                    setTextColor(RED);
+                    return;
+                }
+                setTextColor(ir << 16 | ig << 8 | ib);
+            }
+        }
+    }
+
+    public static class ConfigElementWidgetData<T> {
+        public final Widget widget;
+        public final ValueSetter<T> valueSetter;
+
+        ConfigElementWidgetData(Widget widget, ValueSetter<T> valueSetter) {
+            this.widget = widget;
+            this.valueSetter = valueSetter;
+        }
+
+        @FunctionalInterface
+        interface ValueSetter<T> {
+            default void setup(T value) {
+                setValue(true, value);
+            }
+
+            default void setTo(T value) {
+                setValue(false, value);
+            }
+
+            void setValue(boolean isSetup, T newValue);
+        }
     }
 
 }

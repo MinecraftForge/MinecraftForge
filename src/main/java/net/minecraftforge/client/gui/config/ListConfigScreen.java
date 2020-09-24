@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class ListConfigScreen extends ConfigScreen {
-    private List actualValue;
     private final List<?> initialValue;
     private final List<?> defaultValue;
+    private List actualValue;
 
     public ListConfigScreen(ConfigScreen configScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
         super(configScreen, title, new StringTextComponent("List"));
@@ -60,6 +60,26 @@ public abstract class ListConfigScreen extends ConfigScreen {
         return new ListConfigElementList(this, field_230706_i_);
     }
 
+    private void setAndNotify(int index, Object newValue) {
+        actualValue.set(index, newValue);
+        onModified(actualValue);
+    }
+
+    private void onAddRemove(int index) {
+        // Lazy way out
+        // Whenever anything changes, recreate from scratch
+        // Saves the headache of dealing with indexing of adds/removes
+        field_230705_e_.remove(configElementList); // children.remove
+        double scrollAmount = configElementList.func_230966_l_(); // getScrollAmount
+        if (index == actualValue.size() - 1)
+            // If we're at the bottom, scroll even further because if it's an add
+            // we want to scroll to the new bottom
+            scrollAmount += this.configElementList.getItemHeight();
+        configElementList = makeConfigElementList();
+        configElementList.func_230932_a_(scrollAmount); // getScrollAmount
+        field_230705_e_.add(configElementList); // children.add
+    }
+
     public class ListConfigElementList extends ConfigElementList {
 
         public ListConfigElementList(ConfigScreen configScreen, Minecraft mcIn) {
@@ -76,6 +96,95 @@ public abstract class ListConfigScreen extends ConfigScreen {
             }
         }
 
+        @Nullable
+        private ConfigElement createWidget(int index, Object item) {
+            if (item instanceof Boolean)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        ConfigElementWidgetData<Boolean> control = configScreen.getControlCreator().createBooleanButton(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true; // Can't have an "invalid" boolean
+                        }, title);
+                        control.valueSetter.setup((Boolean) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof Integer)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        ConfigElementWidgetData<Integer> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true;
+                        }, title, Integer::parseInt, Integer.MIN_VALUE);
+                        control.valueSetter.setup((Integer) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof Long)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        ConfigElementWidgetData<Long> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true;
+                        }, title, Long::parseLong, Long.MIN_VALUE);
+                        control.valueSetter.setup((Long) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof Double)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        ConfigElementWidgetData<Double> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true;
+                        }, title, Double::parseDouble, Double.NEGATIVE_INFINITY);
+                        control.valueSetter.setup((Double) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof Enum<?>)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        Enum[] potential = Arrays.stream(((Enum<?>) item).getDeclaringClass().getEnumConstants()).toArray(Enum<?>[]::new);
+                        ConfigElementWidgetData<Enum> control = configScreen.getControlCreator().createEnumButton(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true;
+                        }, title, potential);
+                        control.valueSetter.setup((Enum) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof String)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        ConfigElementWidgetData<String> control = configScreen.getControlCreator().createStringTextField(newValue -> {
+                            setAndNotify(index, newValue);
+                            return true;
+                        }, title);
+                        control.valueSetter.setup((String) item);
+                        widgets.add(0, control.widget);
+                    }
+                };
+            if (item instanceof List<?>)
+                return new ListItemConfigElement(index, item) {
+                    {
+                        // TODO: "Nested List"?
+                        this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item) {
+                            @Override
+                            public void onModified(List newValue) {
+                                // Pass up to parent
+                                ListConfigScreen.this.onModified(newValue);
+                            }
+                        }));
+                    }
+                };
+            return null;
+        }
+
+        /**
+         * Element for an item inside a List.
+         * See {@link ConfigElement} for documentation.
+         */
         class ListItemConfigElement extends ConfigElement {
 
             public ListItemConfigElement(int index, Object item) {
@@ -97,117 +206,6 @@ public abstract class ListConfigScreen extends ConfigScreen {
             }
         }
 
-        @Nullable
-        private ConfigElement createWidget(int index, Object item) {
-            if (item instanceof Boolean)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        ConfigElementWidgetData<Boolean> control = configScreen.getControlCreator().createBooleanButton(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true; // Can't have an "invalid" boolean
-                        }, title);
-                        control.valueSetter.setup((Boolean) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof Integer)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        ConfigElementWidgetData<Integer> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true;
-                        }, title, Integer::parseInt, Integer.MIN_VALUE);
-                        control.valueSetter.setup((Integer) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof Long)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        ConfigElementWidgetData<Long> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true;
-                        }, title, Long::parseLong, Long.MIN_VALUE);
-                        control.valueSetter.setup((Long) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof Double)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        ConfigElementWidgetData<Double> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true;
-                        }, title, Double::parseDouble, Double.NEGATIVE_INFINITY);
-                        control.valueSetter.setup((Double) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof Enum<?>)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        Enum[] potential = Arrays.stream(((Enum<?>) item).getDeclaringClass().getEnumConstants()).toArray(Enum<?>[]::new);
-                        ConfigElementWidgetData<Enum> control = configScreen.getControlCreator().createEnumButton(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true;
-                        }, title, potential);
-                        control.valueSetter.setup((Enum) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof String)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        ConfigElementWidgetData<String> control = configScreen.getControlCreator().createStringTextField(newValue -> {
-                            set(index, newValue);
-                            ListConfigScreen.this.onChange();
-                            return true;
-                        }, title);
-                        control.valueSetter.setup((String) item);
-                        widgets.add(0, control.widget);
-                    }
-                };
-            if (item instanceof List<?>)
-                return new ListItemConfigElement(index, item) {
-                    {
-                        // TODO: "Nested List"?
-                        this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item) {
-                            @Override
-                            public void onModified(List newValue) {
-                                ListConfigScreen.this.onModified(actualValue);
-                                onChange();
-                            }
-                        }));
-                    }
-                };
-            return null;
-        }
-
-    }
-
-    private void set(int index, Object newValue) {
-        actualValue.set(index, newValue);
-        onModified(actualValue);
-    }
-
-    private void onAddRemove(int index) {
-        // Lazy way out
-        // Whenever anything changes, recreate from scratch
-        // Saves the headache of dealing with indexing of adds/removes
-        field_230705_e_.remove(configElementList); // children.remove
-        double scrollAmount = configElementList.func_230966_l_(); // getScrollAmount
-        if (index == actualValue.size() - 1)
-            // If we're at the bottom, scroll even further because if it's an add
-            // we want to scroll to the new bottom
-            scrollAmount += this.configElementList.getItemHeight();
-        configElementList = makeConfigElementList();
-        configElementList.func_230932_a_(scrollAmount); // getScrollAmount
-        field_230705_e_.add(configElementList); // children.add
     }
 
 }

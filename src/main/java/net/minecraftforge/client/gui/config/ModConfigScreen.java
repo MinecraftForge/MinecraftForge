@@ -4,10 +4,12 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
@@ -154,6 +156,7 @@ public class ModConfigScreen extends ConfigScreen {
     private static class ModConfigConfigScreen extends ConfigScreen {
 
         private final ModConfig modConfig;
+        private boolean requiresWorldRestart;
 
         public ModConfigConfigScreen(Screen parentScreen, ITextComponent titleIn, ModConfig modConfig) {
             super(parentScreen, titleIn);
@@ -172,9 +175,10 @@ public class ModConfigScreen extends ConfigScreen {
         }
 
         @Override
-        public void onChange() {
+        public void onChange(boolean requiresWorldRestart) {
             saveAndReloadConfig();
-            super.onChange();
+            this.requiresWorldRestart |= requiresWorldRestart;
+            super.onChange(requiresWorldRestart);
         }
 
         private void saveAndReloadConfig() {
@@ -194,6 +198,14 @@ public class ModConfigScreen extends ConfigScreen {
             modConfig.save();
             ((CommentedFileConfig) modConfig.getConfigData()).load();
             modConfig.fireEvent(new ModConfig.Reloading(modConfig));
+        }
+
+        @Override
+        // closeScreen
+        public void func_231175_as__() {
+            if (!requiresWorldRestart)
+                super.func_231175_as__();
+            field_230706_i_.displayGuiScreen(new DisconnectedScreen(parentScreen, new TranslationTextComponent("forge.configgui.worldRestartTitle"), new TranslationTextComponent("forge.configgui.worldRestartRequired")));
         }
     }
 

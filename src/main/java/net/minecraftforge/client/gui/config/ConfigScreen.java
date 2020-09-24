@@ -5,32 +5,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.config.ConfigElementList.ConfigElement;
 import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 /**
  * This class standardises the layout/look/feel of a config screen.
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Make tooltips contain extra info about the item (and be colorful, it's a video game)
- * - Properly fix list item control sizing (rowWidth - maxListLabelWidth - otherWidgetsWidth)
  * - Translucent scissored list
- * - Reset working properly for lists & categories
- * - Undo changes working properly for lists & categories
  * - Do I need to deal with sub-configs?
  * - Requires world restart (display screen on change)
- * - Localisation
  * - Config Screen titles
  */
 public abstract class ConfigScreen extends Screen {
@@ -79,7 +70,7 @@ public abstract class ConfigScreen extends Screen {
         // Add the reset button
         resetButton = func_230480_a_(new Button(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), button -> reset()));
         // Add the "done" button
-        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> field_230706_i_.displayGuiScreen(parentScreen)));
+        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> func_231175_as__()));
     }
 
     protected abstract ConfigElementList makeConfigElementList();
@@ -137,10 +128,12 @@ public abstract class ConfigScreen extends Screen {
 
     /**
      * Called when the value of a config element on a {@link ConfigElementList} changes.
+     *
+     * @param requiresWorldRestart
      */
-    public void onChange() {
+    public void onChange(boolean requiresWorldRestart) {
         if (parentScreen instanceof ConfigScreen)
-            ((ConfigScreen) parentScreen).onChange();
+            ((ConfigScreen) parentScreen).onChange(requiresWorldRestart);
     }
 
     /**

@@ -11,9 +11,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.*;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.Range;
+import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * A {@link ConfigScreen} for a (sub) category.
+ * A category is made when you do "builder.push()" when initialising your config.
+ */
 public class CategoryConfigScreen extends ConfigScreen {
     private final ConfigCategoryInfo categoryInfo;
 
@@ -36,15 +41,6 @@ public class CategoryConfigScreen extends ConfigScreen {
     }
 
     public interface ConfigCategoryInfo {
-
-        Collection<String> elements();
-
-        Object getValue(String key);
-
-        Object getSpec(String key);
-
-        /** Special case categories because reasons */
-        String getCategoryComment(String key);
 
         static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec) {
             return of(elements, getValue, getSpec, $ -> null);
@@ -74,6 +70,15 @@ public class CategoryConfigScreen extends ConfigScreen {
                 }
             };
         }
+
+        Collection<String> elements();
+
+        Object getValue(String key);
+
+        Object getSpec(String key);
+
+        /** Special case categories because reasons */
+        String getCategoryComment(String key);
     }
 
     public static class CategoryConfigElementList extends ConfigElementList {
@@ -102,11 +107,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                 tooltip.add(title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
                 // TODO: Comment can have linebreaks in it
                 tooltip.add(configScreen.getControlCreator().makeTranslationComponent(translationKey == null ? null : translationKey + ".tooltip", categoryInfo.getCategoryComment(key)).func_230531_f_().func_240701_a_(TextFormatting.YELLOW));
-                return new ConfigElement(null, title, tooltip) {
-                    {
-                        this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new CategoryConfigScreen(configScreen, title, valueCategoryInfo)));
-                    }
-                };
+                return new CategoryConfigElement(title, tooltip, valueCategoryInfo);
             } else {
                 ForgeConfigSpec.ConfigValue<?> value = (ForgeConfigSpec.ConfigValue<?>) raw;
                 ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
@@ -128,7 +129,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                             .func_230529_a_(new StringTextComponent("[").func_240701_a_(TextFormatting.RED))
                     );
                 Object valueValue = value.get();
-                ValueConfigElementData data = data(title, value, valueInfo, valueValue);
+                ValueConfigElementData data = configScreen.getControlCreator().makeElementData(this, title, value, valueInfo, valueValue);
                 if (data != null)
                     return new ConfigValueConfigElement(title, tooltip, (ConfigValue) value, valueInfo, data, valueValue);
                 // title.deepCopy().appendSibling
@@ -136,11 +137,6 @@ public class CategoryConfigScreen extends ConfigScreen {
                 tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"));
                 return new ConfigElement(label, title, tooltip);
             }
-        }
-
-        @Nullable
-        public ValueConfigElementData<?> data(ITextComponent title, ConfigValue<?> value, ValueSpec valueInfo, Object valueValue) {
-            return configScreen.getControlCreator().makeElementData(this, title, value, valueInfo, valueValue);
         }
 
         static class ValueConfigElementData<T> {
@@ -154,6 +150,10 @@ public class CategoryConfigScreen extends ConfigScreen {
 
         }
 
+        /**
+         * Element for a "config value" (a named value in a config).
+         * See {@link ConfigElement} for documentation.
+         */
         public class ConfigValueConfigElement extends ConfigElement {
 
             private final BooleanSupplier canReset;
@@ -183,6 +183,17 @@ public class CategoryConfigScreen extends ConfigScreen {
                 if (getMainWidget().func_230449_g_()) // isHovered
                     return; // Don't render the main tooltip if we're trying to change the value
                 super.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
+            }
+        }
+
+        /**
+         * Element for a (sub)category in the config.
+         * See {@link ConfigElement} for documentation.
+         */
+        public class CategoryConfigElement extends ConfigElement {
+            public CategoryConfigElement(ITextComponent title, List<ITextComponent> tooltip, ConfigCategoryInfo valueCategoryInfo) {
+                super(null, title, tooltip);
+                this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new CategoryConfigScreen(configScreen, title, valueCategoryInfo)));
             }
         }
     }
