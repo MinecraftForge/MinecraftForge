@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.log4j;
+package net.minecraftforge.fml.loading.log4j;
 
 import net.minecrell.terminalconsole.HighlightErrorConverter;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
