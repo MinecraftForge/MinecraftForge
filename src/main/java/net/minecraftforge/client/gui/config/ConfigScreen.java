@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  */
 public abstract class ConfigScreen extends Screen {
 
-    private final Screen parentScreen;
+    protected final Screen parentScreen;
     @Nullable
     private final ITextComponent subTitle;
     protected Button resetButton;
@@ -171,22 +171,9 @@ public abstract class ConfigScreen extends Screen {
         return field_230712_o_;
     }
 
-    public ITextComponent makeTranslationComponent(@Nullable String translationKey, String fallback) {
-        if (translationKey == null)
-            return new StringTextComponent(fallback);
-        ITextComponent title = new TranslationTextComponent(translationKey);
-        if (translationKey.equals(title.getString()))
-            return new StringTextComponent(fallback);
-        return title;
-    }
-
-    /**
-     * Makes a button that opens a new Screen
-     */
-    public Widget makePopupButton(ITextComponent title, Supplier<? extends Screen> screenFactory) {
+    public ConfigElementControls getControlCreator() {
         if (parentScreen instanceof ConfigScreen)
-            return ((ConfigScreen) parentScreen).makePopupButton(title, screenFactory);
-        return new ExtendedButton(0, 0, 0, 0, title, b -> getMinecraft().displayGuiScreen(screenFactory.get()));
+            return ((ConfigScreen) parentScreen).getControlCreator();
+        return ConfigElementControls.getDefaultCreator();
     }
-
 }

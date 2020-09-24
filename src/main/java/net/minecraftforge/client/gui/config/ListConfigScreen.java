@@ -1,11 +1,11 @@
 package net.minecraftforge.client.gui.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
@@ -19,22 +19,26 @@ public abstract class ListConfigScreen extends ConfigScreen {
     private final List<?> initialValue;
     private final List<?> defaultValue;
 
-    public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
-        super(parentScreen, title, new StringTextComponent("List"));
-        actualValue = ConfigElementControls.copyMutable(this.initialValue = initialValue);
+    public ListConfigScreen(ConfigScreen configScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
+        super(configScreen, title, new StringTextComponent("List"));
+        actualValue = configScreen.getControlCreator().copyMutable(this.initialValue = initialValue);
         this.defaultValue = defaultValue;
     }
 
     @Override
     protected void reset() {
-        actualValue = ConfigElementControls.copyMutable(defaultValue);
+        actualValue = copyMutable(defaultValue);
         onModified(actualValue);
         onAddRemove(0);
     }
 
+    private <T> T copyMutable(T value) {
+        return ((ConfigScreen) parentScreen).getControlCreator().copyMutable(value);
+    }
+
     @Override
     protected void undo() {
-        actualValue = ConfigElementControls.copyMutable(initialValue);
+        actualValue = copyMutable(initialValue);
         onModified(actualValue);
         onAddRemove(0);
     }
@@ -77,7 +81,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             public ListItemConfigElement(int index, Object item) {
                 super(new StringTextComponent(Integer.toString(index)), new StringTextComponent(Integer.toString(index)), Collections.emptyList());
                 Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
-                    actualValue.add(index + 1, ConfigElementControls.copyMutable(actualValue.get(index)));
+                    actualValue.add(index + 1, copyMutable(actualValue.get(index)));
                     onModified(actualValue);
                     onAddRemove(index + 1);
                 });
@@ -98,7 +102,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             if (item instanceof Boolean)
                 return new ListItemConfigElement(index, item) {
                     {
-                        ConfigElementControls.ConfigElementWidgetData<Boolean> control = ConfigElementControls.createBooleanButton(newValue -> {
+                        ConfigElementWidgetData<Boolean> control = configScreen.getControlCreator().createBooleanButton(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true; // Can't have an "invalid" boolean
@@ -110,7 +114,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             if (item instanceof Integer)
                 return new ListItemConfigElement(index, item) {
                     {
-                        ConfigElementControls.ConfigElementWidgetData<Integer> control = ConfigElementControls.createNumericTextField(newValue -> {
+                        ConfigElementWidgetData<Integer> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
@@ -122,7 +126,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             if (item instanceof Long)
                 return new ListItemConfigElement(index, item) {
                     {
-                        ConfigElementControls.ConfigElementWidgetData<Long> control = ConfigElementControls.createNumericTextField(newValue -> {
+                        ConfigElementWidgetData<Long> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
@@ -134,7 +138,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             if (item instanceof Double)
                 return new ListItemConfigElement(index, item) {
                     {
-                        ConfigElementControls.ConfigElementWidgetData<Double> control = ConfigElementControls.createNumericTextField(newValue -> {
+                        ConfigElementWidgetData<Double> control = configScreen.getControlCreator().createNumericTextField(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
@@ -147,7 +151,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
                 return new ListItemConfigElement(index, item) {
                     {
                         Enum[] potential = Arrays.stream(((Enum<?>) item).getDeclaringClass().getEnumConstants()).toArray(Enum<?>[]::new);
-                        ConfigElementControls.ConfigElementWidgetData<Enum> control = ConfigElementControls.createEnumButton(newValue -> {
+                        ConfigElementWidgetData<Enum> control = configScreen.getControlCreator().createEnumButton(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
@@ -159,7 +163,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
             if (item instanceof String)
                 return new ListItemConfigElement(index, item) {
                     {
-                        ConfigElementControls.ConfigElementWidgetData<String> control = ConfigElementControls.createStringTextField(newValue -> {
+                        ConfigElementWidgetData<String> control = configScreen.getControlCreator().createStringTextField(newValue -> {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
@@ -172,7 +176,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
                 return new ListItemConfigElement(index, item) {
                     {
                         // TODO: "Nested List"?
-                        this.widgets.add(0, makePopupButton(title, () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item) {
+                        this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new ListConfigScreen(ListConfigScreen.this, new StringTextComponent("Nested List"), (List<?>) item, (List<?>) item) {
                             @Override
                             public void onModified(List newValue) {
                                 ListConfigScreen.this.onModified(actualValue);

@@ -7,17 +7,20 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.client.gui.widget.UnicodeGlyphButton;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
@@ -25,7 +28,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     // From AbstractList#render/func_230430_a_
     private static final int SCROLLBAR_WIDTH = 6;
 
-    protected final ConfigScreen configScreen;
+    public final ConfigScreen configScreen;
     private int maxListLabelWidth;
 
     public ConfigElementList(ConfigScreen configScreen, Minecraft minecraft) {

@@ -1,8 +1,8 @@
 package net.minecraftforge.client.gui.config;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -10,43 +10,63 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList;
+import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.ValueConfigElementData;
+import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData.ValueSetter;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 public class ConfigElementControls {
     @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.RED.getColor() could be null"
-    static final int RED = TextFormatting.RED.getColor();
+    public static final int RED = TextFormatting.RED.getColor();
     @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.GREEN.getColor() could be null"
-    static final int GREEN = TextFormatting.GREEN.getColor();
+    public static final int GREEN = TextFormatting.GREEN.getColor();
     // Copied from TextFieldWidget#enabledColor because it's private
-    private static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
+    public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
     public static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
     public static final int WIDGET_WIDTH = 50;
     public static final int WIDGET_HEIGHT = 20;
 
-    public static <T> T copyMutable(T o) {
-        // Immutable objects can be returned as is
-        if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Enum<?>)
-            return o;
-        if (o instanceof List<?>)
-            return (T) new ArrayList<>((List<?>)o);
-        throw new IllegalArgumentException("Unknown object " + (o == null ? "null" : o.getClass()));
+    public static ConfigElementControls getDefaultCreator() {
+        return DefaultHolder.INSTANCE;
     }
 
-    /**
-     * Has so many constructors so that it is easily extensible.
-     */
+    public ValueConfigElementData<?> makeElementData(ConfigElementList configElementList, ITextComponent title, ConfigValue<?> configValue, ValueSpec valueSpec, Object value) {
+        if (value instanceof Boolean)
+            return createBooleanElement(configElementList, (ForgeConfigSpec.BooleanValue) configValue, title, (Boolean) value);
+        else if (value instanceof Integer)
+            return createNumericRangedElement(configElementList, (ForgeConfigSpec.IntValue) configValue, valueSpec, title, (Integer) value, Integer::parseInt, Integer.MIN_VALUE);
+        else if (value instanceof Long)
+            return createNumericRangedElement(configElementList, (ForgeConfigSpec.LongValue) configValue, valueSpec, title, (Long) value, Long::parseLong, Long.MIN_VALUE);
+        else if (value instanceof Double)
+            return createNumericRangedElement(configElementList, (ForgeConfigSpec.DoubleValue) configValue, valueSpec, title, (Double) value, Double::parseDouble, Double.NEGATIVE_INFINITY);
+        else if (value instanceof Enum<?>)
+            return createEnumElement(configElementList, (ForgeConfigSpec.EnumValue) configValue, valueSpec, title, (Enum) value);
+        else if (value instanceof String)
+            return createStringElement(configElementList, (ConfigValue<String>) configValue, valueSpec, title, (String) value);
+        else if (value instanceof List<?>)
+            return createListElement(configElementList, (ConfigValue<List>) configValue, valueSpec, title, (List) value);
+        else
+            return null;
+    }
+
+    static class DefaultHolder {
+        private static final ConfigElementControls INSTANCE = new ConfigElementControls();
+    }
+
     public static class ConfigElementButton extends ExtendedButton {
         public ConfigElementButton(ITextComponent title, IPressable handler) {
             super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
@@ -151,8 +171,17 @@ public class ConfigElementControls {
         }
     }
 
-    public static ConfigElementWidgetData<Boolean> createBooleanButton(Predicate<Boolean> setter, ITextComponent title) {
-        final boolean[] state = new boolean[1];
+    public <T> T copyMutable(T o) {
+        // Immutable objects can be returned as is
+        if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Enum<?>)
+            return o;
+        if (o instanceof List<?>)
+            return (T) new ArrayList<>((List<?>) o);
+        throw new IllegalArgumentException("Unknown object " + (o == null ? "null" : o.getClass()));
+    }
+
+    public ConfigElementWidgetData<Boolean> createBooleanButton(Predicate<Boolean> setter, ITextComponent title) {
+        boolean[] state = new boolean[1];
         TriConsumer<Button, Boolean, Boolean> setValue = (button, isSetup, newValue) -> {
             state[0] = newValue;
             boolean valid = true;
@@ -161,12 +190,12 @@ public class ConfigElementControls {
             button.func_238482_a_(new StringTextComponent(Boolean.toString(state[0])));
             button.setFGColor(valid && state[0] ? GREEN : RED);
         };
-        ConfigElementButton control = new ConfigElementButton(title, button -> setValue.accept(button, false, !state[0]));
+        Button control = createButton(title, button -> setValue.accept(button, false, !state[0]));
         return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
     }
 
-    public static <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, ITextComponent title, Function<String, T> parser, T longestValue) {
-        ConfigElementTextField control = new ConfigElementTextField(title);
+    public <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, ITextComponent title, Function<String, T> parser, T longestValue) {
+        TextFieldWidget control = createTextField(title);
         control.setMaxStringLength(longestValue.toString().length());
         BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             T parsed;
@@ -181,9 +210,9 @@ public class ConfigElementControls {
                 valid = setter.test(parsed);
             control.setTextColor(valid ? TEXT_FIELD_ACTIVE_COLOR : RED);
         };
-        final Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);
+        Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);
         control.setResponder(responder);
-        ConfigElementWidgetData.ValueSetter<T> valueSetter = (isSetup, newValue) -> {
+        ValueSetter<T> valueSetter = (isSetup, newValue) -> {
             if (isSetup) {
                 // The normal responder assumes it's not setup
                 control.setResponder(null);
@@ -196,8 +225,8 @@ public class ConfigElementControls {
         return new ConfigElementWidgetData<>(control, valueSetter);
     }
 
-    public static <T extends Enum<T>> ConfigElementWidgetData<T> createEnumButton(Predicate<T> setter, ITextComponent title, T[] potential) {
-        final Enum<?>[] state = new Enum<?>[1];
+    public <T extends Enum<T>> ConfigElementWidgetData<T> createEnumButton(Predicate<T> setter, ITextComponent title, T[] potential) {
+        Enum<?>[] state = new Enum<?>[1];
         TriConsumer<Button, Boolean, Enum<?>> setValue = (button, isSetup, newValue) -> {
             state[0] = newValue;
             boolean valid = true;
@@ -227,18 +256,18 @@ public class ConfigElementControls {
         return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
     }
 
-    public static ConfigElementWidgetData<String> createStringTextField(Predicate<String> setter, ITextComponent title) {
-        ConfigElementTextField control = new TestColorTextField(title); // TODO: Remove and make extensible
+    public ConfigElementWidgetData<String> createStringTextField(Predicate<String> setter, ITextComponent title) {
+        TextFieldWidget control = createTextField(title);
         control.setMaxStringLength(Integer.MAX_VALUE);
-        final BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
+        BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             boolean valid = true;
             if (!isSetup)
                 valid = setter.test(newValue);
             control.setTextColor(valid ? TEXT_FIELD_ACTIVE_COLOR : RED);
         };
-        final Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);
+        Consumer<String> responder = newValue -> stringConsumer.accept(false, newValue);
         control.setResponder(responder);
-        ConfigElementWidgetData.ValueSetter<String> valueSetter = (isSetup, newValue) -> {
+        ValueSetter<String> valueSetter = (isSetup, newValue) -> {
             if (isSetup) {
                 // The normal responder assumes it's not setup
                 control.setResponder(null);
@@ -249,6 +278,91 @@ public class ConfigElementControls {
                 control.setText(newValue);
         };
         return new ConfigElementWidgetData<>(control, valueSetter);
+    }
+
+    public ValueConfigElementData<Boolean> createBooleanElement(ConfigElementList configElementList, ForgeConfigSpec.BooleanValue value, ITextComponent title, Boolean valueValue) {
+        ConfigElementWidgetData<Boolean> control = createBooleanButton(newValue -> {
+            value.set(newValue);
+            configElementList.configScreen.onChange();
+            return true; // Can't have an "invalid" boolean
+        }, title);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
+    }
+
+    public <T extends Comparable<? super T>> ValueConfigElementData<T> createNumericRangedElement(ConfigElementList configElementList, ConfigValue<T> value, ValueSpec valueInfo, ITextComponent title, T valueValue, Function<String, T> parser, T longestValue) {
+        @Nullable
+        ForgeConfigSpec.Range<T> range = valueInfo.getRange();
+        ConfigElementWidgetData<T> control = createNumericTextField(newValue -> {
+            if (range != null && !range.test(newValue))
+                return false;
+            value.set(newValue);
+            configElementList.configScreen.onChange();
+            return true;
+        }, title, parser, longestValue);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
+    }
+
+    public <T extends Enum<T>> ValueConfigElementData<T> createEnumElement(ConfigElementList configElementList, ForgeConfigSpec.EnumValue<T> value, ValueSpec valueInfo, ITextComponent title, T valueValue) {
+        Enum<?>[] potential = Arrays.stream(((Enum<?>) valueValue).getDeclaringClass().getEnumConstants()).filter(valueInfo::test).toArray(Enum<?>[]::new);
+        ConfigElementWidgetData<T> control = createEnumButton(newValue -> {
+            value.set(newValue);
+            configElementList.configScreen.onChange();
+            return true; // We already filtered "potential" to have only valid values
+        }, title, (T[]) potential);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
+    }
+
+    public ValueConfigElementData<String> createStringElement(ConfigElementList configElementList, ConfigValue<String> value, ValueSpec valueInfo, ITextComponent title, String valueValue) {
+        ConfigElementWidgetData<String> control = createStringTextField(newValue -> {
+            if (!valueInfo.test(newValue))
+                return false;
+            value.set(newValue);
+            configElementList.configScreen.onChange();
+            return true;
+        }, title);
+        control.valueSetter.setup(valueValue);
+        return new ValueConfigElementData<>(control.widget, control.valueSetter::setTo);
+    }
+
+    public ValueConfigElementData<List> createListElement(ConfigElementList configElementList, ConfigValue<List> value, ValueSpec valueInfo, ITextComponent title, List valueValue) {
+        Widget widget = makePopupButton(title, () -> new ListConfigScreen(configElementList.configScreen, title, copyMutable(value.get()), copyMutable((List) valueInfo.getDefault())) {
+            @Override
+            public void onModified(List newValue) {
+                value.set(newValue);
+                onChange();
+            }
+        });
+        return new ValueConfigElementData<>(widget, newValue -> {
+            value.set(newValue);
+            configElementList.configScreen.onChange();
+        });
+    }
+
+    public ITextComponent makeTranslationComponent(@Nullable String translationKey, String fallback) {
+        if (translationKey == null)
+            return new StringTextComponent(fallback);
+        ITextComponent title = new TranslationTextComponent(translationKey);
+        if (translationKey.equals(title.getString()))
+            return new StringTextComponent(fallback);
+        return title;
+    }
+
+    /**
+     * Makes a button that opens a new Screen
+     */
+    public Widget makePopupButton(ITextComponent title, Supplier<? extends Screen> screenFactory) {
+        return createButton(title, b -> Minecraft.getInstance().displayGuiScreen(screenFactory.get()));
+    }
+
+    public Button createButton(ITextComponent title, Button.IPressable iPressable) {
+        return new ConfigElementButton(title, iPressable);
+    }
+
+    public ConfigElementTextField createTextField(ITextComponent title) {
+        return new ConfigElementTextField(title);
     }
 
 }

@@ -127,7 +127,7 @@ public class ModConfigScreen extends ConfigScreen {
                 for (ModConfig modConfig : configsToDisplay) {
                     String translationKey = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
                     String comment = COMMENTS.get(modConfig.getType());
-                    ITextComponent title = makeTranslationComponent(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
+                    ITextComponent title = configScreen.getControlCreator().makeTranslationComponent(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
                     // TODO: Translation keys
                     List<ITextComponent> tooltip = Arrays.stream(comment.split("\n"))
                             .map(StringTextComponent::new)
@@ -139,7 +139,7 @@ public class ModConfigScreen extends ConfigScreen {
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
                     ConfigElement element = new ConfigElement(null, title, tooltip) {
                         {
-                            this.widgets.add(0, makePopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title, modConfig)));
+                            this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title, modConfig)));
                         }
                     };
                     this.func_230513_b_(element); // addEntry
