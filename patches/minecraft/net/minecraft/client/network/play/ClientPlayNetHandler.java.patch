@@ -77,21 +77,23 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1388,11 +1401,12 @@
+@@ -1388,11 +1401,14 @@
     public void func_199723_a(STagsListPacket p_199723_1_) {
        PacketThreadUtil.func_218797_a(p_199723_1_, this, this.field_147299_f);
        ITagCollectionSupplier itagcollectionsupplier = p_199723_1_.func_199858_a();
 -      Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
-+      Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.validateVanillaTags(itagcollectionsupplier);
++      boolean vanillaConnection = net.minecraftforge.fml.network.NetworkHooks.isVanillaConnection(field_147302_e);
++      Multimap<ResourceLocation, ResourceLocation> multimap = vanillaConnection ? TagRegistryManager.func_242198_b(net.minecraftforge.common.ForgeTagHandler.withNoCustom(itagcollectionsupplier)) : TagRegistryManager.validateVanillaTags(itagcollectionsupplier);//Forge: If we are connecting to vanilla validate all tags to properly validate custom tags the client may "require", and if we are connecting to forge only validate the vanilla tag types as the custom tag types get synced in a separate packet so may still arrive
        if (!multimap.isEmpty()) {
           field_147301_d.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
           this.field_147302_e.func_150718_a(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
        } else {
-+         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections();
++         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections(true, vanillaConnection);
++         itagcollectionsupplier = ITagCollectionSupplier.reinjectOptionalTags(itagcollectionsupplier);
           this.field_199725_m = itagcollectionsupplier;
           if (!this.field_147302_e.func_150731_c()) {
              itagcollectionsupplier.func_242212_e();
-@@ -1883,10 +1897,12 @@
+@@ -1883,10 +1899,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {
