@@ -164,7 +164,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * - Does not have a label (it displays its name on its main button)
      * - Has a title (its name) for use in the narrator
      * - Has a widget to take you to a new screen to interact with (view and change) the values in this category
-     * - TODO: Does this have reset/undo buttons
+     * - Has no undo/redo buttons
      * - Has a tooltip containing info about the category (e.g. its comment) TODO: Forge currently doesn't provide translation keys for Categories
      * <p>
      * 4. Element for a List "config value" (a named value (that is a List) in a config)
@@ -253,13 +253,11 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             for (Widget widget : widgets) {
                 if (resetButton != null && widget == resetButton && widget.func_230449_g_()) { // isHovered
-                    // TODO: translation
                     List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("forge.configgui.resetToDefault.tooltip"));
                     GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
                     return; // Stop main tooltip being rendered
                 }
                 if (undoButton != null && widget == undoButton && widget.func_230449_g_()) { // isHovered
-                    // TODO: translation
                     List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("forge.configgui.undoChanges.tooltip"));
                     GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
                     return; // Stop main tooltip being rendered

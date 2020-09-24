@@ -21,7 +21,6 @@ import java.util.Collections;
  * TODO:
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?
- * - Requires world restart (display screen on change)
  * - Config Screen titles
  */
 public abstract class ConfigScreen extends Screen {
@@ -128,8 +127,6 @@ public abstract class ConfigScreen extends Screen {
 
     /**
      * Called when the value of a config element on a {@link ConfigElementList} changes.
-     *
-     * @param requiresWorldRestart
      */
     public void onChange(boolean requiresWorldRestart) {
         if (parentScreen instanceof ConfigScreen)

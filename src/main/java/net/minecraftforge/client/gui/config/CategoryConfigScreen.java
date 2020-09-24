@@ -125,8 +125,8 @@ public class CategoryConfigScreen extends ConfigScreen {
                 if (valueInfo.needsWorldRestart())
                     tooltip.add(new StringTextComponent("[").func_240701_a_(TextFormatting.RED)
                             // appendSibling
-                            .func_230529_a_(new TranslationTextComponent("forge.configgui.needsWorldRestart").func_240701_a_(TextFormatting.RED))
-                            .func_230529_a_(new StringTextComponent("[").func_240701_a_(TextFormatting.RED))
+                            .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TextFormatting.RED))
+                            .func_230529_a_(new StringTextComponent("]").func_240701_a_(TextFormatting.RED))
                     );
                 Object valueValue = value.get();
                 ValueConfigElementData data = configScreen.getControlCreator().makeElementData(this, title, value, valueInfo, valueValue);

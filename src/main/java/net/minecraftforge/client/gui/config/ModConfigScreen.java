@@ -4,7 +4,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -13,6 +12,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.client.gui.screen.MessageDialogScreen;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -208,7 +208,12 @@ public class ModConfigScreen extends ConfigScreen {
         public void func_231175_as__() {
             if (!requiresWorldRestart)
                 super.func_231175_as__();
-            field_230706_i_.displayGuiScreen(new DisconnectedScreen(parentScreen, new TranslationTextComponent("forge.configgui.worldRestartTitle"), new TranslationTextComponent("forge.configgui.worldRestartRequired")));
+            field_230706_i_.displayGuiScreen(new MessageDialogScreen(
+                    new TranslationTextComponent("forge.configgui.worldRestartRequired"),
+                    new TranslationTextComponent("forge.configgui.worldRestartRequiredBecause"),
+                    new TranslationTextComponent("forge.configgui.worldRestartRequiredConfirm"),
+                    super::func_231175_as__)
+            );
         }
     }
 
