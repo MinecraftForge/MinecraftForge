@@ -37,6 +37,32 @@ public class CategoryConfigScreen extends ConfigScreen {
         this.categoryInfo = categoryInfo;
     }
 
+    static ITextComponent translateWithFallback(@Nullable String translationKey, String fallback) {
+        if (translationKey == null)
+            return new StringTextComponent(fallback);
+        ITextComponent title = new TranslationTextComponent(translationKey);
+        if (translationKey.equals(title.getString()))
+            return new StringTextComponent(fallback);
+        return title;
+    }
+
+    static Collection<? extends ITextComponent> translateCommentWithFallback(String translationKey, String fallbackComment) {
+        // Need to handle line breaks (\n) properly
+        if (translationKey != null) {
+            translationKey += ".tooltip";
+            TranslationTextComponent comment = new TranslationTextComponent(translationKey);
+            if (!translationKey.equals(comment.getString())) {
+                // TODO: There can be line breaks in here too but everything's SRG named and I cbf to work out how to split text components
+//                configScreen.getFontRenderer().func_238420_b_().func_238362_b_(textLine, tooltipTextWidth, Style.field_240709_b_);
+                return Collections.singletonList(comment);
+            }
+        }
+        return Arrays.stream(fallbackComment.split("\n"))
+                .map(StringTextComponent::new)
+                .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
+                .collect(Collectors.toList());
+    }
+
     @Override
     protected ConfigElementList makeConfigElementList() {
         return new CategoryConfigElementList(this, field_230706_i_, categoryInfo);
@@ -81,32 +107,6 @@ public class CategoryConfigScreen extends ConfigScreen {
 
         /** Special case categories because reasons */
         String getCategoryComment(String key);
-    }
-
-    static ITextComponent translateWithFallback(@Nullable String translationKey, String fallback) {
-        if (translationKey == null)
-            return new StringTextComponent(fallback);
-        ITextComponent title = new TranslationTextComponent(translationKey);
-        if (translationKey.equals(title.getString()))
-            return new StringTextComponent(fallback);
-        return title;
-    }
-
-    static Collection<? extends ITextComponent> translateCommentWithFallback(String translationKey, String fallbackComment) {
-        // Need to handle line breaks (\n) properly
-        if (translationKey != null) {
-            translationKey += ".tooltip";
-            TranslationTextComponent comment = new TranslationTextComponent(translationKey);
-            if (!translationKey.equals(comment.getString())) {
-                // TODO: There can be line breaks in here too but everything's SRG named and I cbf to work out how to split text components
-//                configScreen.getFontRenderer().func_238420_b_().func_238362_b_(textLine, tooltipTextWidth, Style.field_240709_b_);
-                return Collections.singletonList(comment);
-            }
-        }
-        return Arrays.stream(fallbackComment.split("\n"))
-                .map(StringTextComponent::new)
-                .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
-                .collect(Collectors.toList());
     }
 
     public static class CategoryConfigElementList extends ConfigElementList {

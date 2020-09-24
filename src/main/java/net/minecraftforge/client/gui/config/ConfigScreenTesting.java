@@ -37,6 +37,15 @@ import java.util.function.Consumer;
 @EventBusSubscriber(bus = Bus.MOD, modid = "forge", value = Dist.CLIENT)
 public class ConfigScreenTesting extends ModConfigScreen {
 
+    public static final Common COMMON;
+    static final ForgeConfigSpec commonSpec;
+
+    static {
+        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        commonSpec = specPair.getRight();
+        COMMON = specPair.getLeft();
+    }
+
     private final FontRenderer fontRenderer;
     private final ConfigElementControls configElementControls;
 
@@ -63,6 +72,30 @@ public class ConfigScreenTesting extends ModConfigScreen {
             }
         };
     }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        ModList.get().getModContainerById("forge").ifPresent(forge -> {
+            forge.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigScreenTesting(screen, forge.getModInfo()));
+        });
+    }
+
+    @SubscribeEvent
+    public static void onCommonSetup(FMLConstructModEvent event) {
+        ModList.get().getModContainerById("forge").ifPresent(forge -> {
+            forge.addConfig(new ModConfig(ModConfig.Type.COMMON, commonSpec, forge));
+        });
+    }
+
+    @Override
+    public ConfigElementControls getControlCreator() {
+        return configElementControls;
+    }
+
+//    @Override
+//    public FontRenderer getFontRenderer() {
+//        return fontRenderer;
+//    }
 
     /**
      * Just testing to check
@@ -109,21 +142,6 @@ public class ConfigScreenTesting extends ModConfigScreen {
             }
         }
     }
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        ModList.get().getModContainerById("forge").ifPresent(forge -> {
-            forge.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigScreenTesting(screen, forge.getModInfo()));
-        });
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(FMLConstructModEvent event) {
-        ModList.get().getModContainerById("forge").ifPresent(forge -> {
-            forge.addConfig(new ModConfig(ModConfig.Type.COMMON, commonSpec, forge));
-        });
-    }
-
 
     public static class Common {
 
@@ -201,24 +219,5 @@ public class ConfigScreenTesting extends ModConfigScreen {
             }
             builder.pop();
         }
-    }
-
-    static final ForgeConfigSpec commonSpec;
-    public static final Common COMMON;
-
-    static {
-        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
-        commonSpec = specPair.getRight();
-        COMMON = specPair.getLeft();
-    }
-
-//    @Override
-//    public FontRenderer getFontRenderer() {
-//        return fontRenderer;
-//    }
-
-    @Override
-    public ConfigElementControls getControlCreator() {
-        return configElementControls;
     }
 }
