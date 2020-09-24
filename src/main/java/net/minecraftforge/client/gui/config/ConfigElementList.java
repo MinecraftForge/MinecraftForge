@@ -286,23 +286,23 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             return widgets.isEmpty() ? null : widgets.getFirst();
         }
 
-//        @Override
-//        // mouseClicked
-//        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
-//            for (Widget widget : widgets)
-//                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
-//                    return true;
-//            return false;
-//        }
-//
-//        @Override
-//        // mouseReleased
-//        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
-//            for (Widget widget : widgets)
-//                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
-//                    return true;
-//            return false;
-//        }
+        @Override
+        // mouseClicked
+        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
+            for (Widget widget : widgets)
+                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
+                    return true;
+            return false;
+        }
+
+        @Override
+        // mouseReleased
+        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
+            for (Widget widget : widgets)
+                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
+                    return true;
+            return false;
+        }
 
     }
 
