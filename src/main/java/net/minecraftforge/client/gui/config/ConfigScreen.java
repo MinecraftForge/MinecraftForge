@@ -22,16 +22,21 @@ import java.util.Collections;
  * <p>
  * TODO:
  * - **Config Screen titles**
+ * - ModConfig comments to translations
+ * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?
  * - Expand ValueConfigElementData ("Provide a way to properly pass a null label")
- * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Fix lists
  * -> Move widget creation to ElementControls
  * -> Change indices instead of reloading the entire view
  * -> Localise "Nested List"
- * - ModConfig comments to translations
+ * -> Maybe try and refactor it all to be less confusing and twisted
  * - Client -> Server syncing?
+ * - Document and add comments on everything that isn't immediately obvious
+ * -> Document the intention of the code, not what it does.
+ * ->> I.e. write about "createConfigElement" being about creating an element for any possible object that is stored
+ * in a config, not about how it specifically handles categories and elements.
  *
  * @author bspkrs
  * @author Cadiboo
