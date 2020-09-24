@@ -38,7 +38,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1.5F, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -48,7 +48,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1.5F, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {

@@ -27,6 +27,7 @@ import java.util.Collections;
  */
 public abstract class ConfigScreen extends Screen {
 
+    public static float GLYPH_SCALE = 1.5F;
     protected final Screen parentScreen;
     @Nullable
     protected final ITextComponent subTitle;
@@ -66,8 +67,8 @@ public abstract class ConfigScreen extends Screen {
         int footerTop = configElementList.getBottom();
         int footerHeight = field_230709_l_ - footerTop; // height
         int y = footerTop + footerHeight / 2 - buttonHeight / 2;
-        undoButton = func_230480_a_(new UnicodeGlyphButton(left, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.undoAllChanges"), GuiUtils.UNDO_CHAR, 1.5F, button -> undo()));
-        resetButton = func_230480_a_(new UnicodeGlyphButton(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), GuiUtils.RESET_CHAR, 1.5F, button -> reset()));
+        undoButton = func_230480_a_(new UnicodeGlyphButton(left, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.undoAllChanges"), GuiUtils.UNDO_CHAR, GLYPH_SCALE, button -> undo()));
+        resetButton = func_230480_a_(new UnicodeGlyphButton(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), GuiUtils.RESET_CHAR, GLYPH_SCALE, button -> reset()));
         // Add the "done" button
         func_230480_a_(new ExtendedButton(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> func_231175_as__()));
     }
