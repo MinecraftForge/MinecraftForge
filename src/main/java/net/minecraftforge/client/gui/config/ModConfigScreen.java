@@ -27,9 +27,10 @@ import java.util.stream.Collectors;
  */
 public class ModConfigScreen extends ConfigScreen {
 
+    // TODO: Get rid of this
     private static final Map<ModConfig.Type, String> COMMENTS = makeTypeComments();
 
-    private final IModInfo mod;
+    protected final IModInfo mod;
 
     public ModConfigScreen(Screen screen, IModInfo mod) {
         super(screen, new StringTextComponent(mod.getDisplayName()));
@@ -94,7 +95,7 @@ public class ModConfigScreen extends ConfigScreen {
     /**
      * @return True if in singleplayer and not open to LAN
      */
-    private static boolean canPlayerEditServerConfig() {
+    protected static boolean canPlayerEditServerConfig() {
         final Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.getIntegratedServer() == null)
             return false;
@@ -104,7 +105,7 @@ public class ModConfigScreen extends ConfigScreen {
     }
 
     @Nullable
-    private static String getFilePath(ModConfig modConfig) {
+    protected static String getDisplayFilePath(ModConfig modConfig) {
         // For Server Configs:
         // ConfigData is null unless we are in world
         // and ConfigData is not an instanceof FileConfig when connected to a multiplayer server.
@@ -136,7 +137,7 @@ public class ModConfigScreen extends ConfigScreen {
                             .map(t -> t.func_240701_a_(TextFormatting.YELLOW))
                             .collect(Collectors.toList());
                     tooltip.add(0, title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
-                    String filePath = getFilePath(modConfig);
+                    String filePath = getDisplayFilePath(modConfig);
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
                     ConfigElement element = new ConfigElement(null, title, tooltip) {
@@ -153,10 +154,10 @@ public class ModConfigScreen extends ConfigScreen {
     /**
      * ConfigScreen for a ModConfig.
      */
-    private static class ModConfigConfigScreen extends ConfigScreen {
+    public static class ModConfigConfigScreen extends ConfigScreen {
 
-        private final ModConfig modConfig;
-        private boolean requiresWorldRestart;
+        protected final ModConfig modConfig;
+        protected boolean requiresWorldRestart;
 
         public ModConfigConfigScreen(Screen parentScreen, ITextComponent titleIn, ModConfig modConfig) {
             super(parentScreen, titleIn);
@@ -181,12 +182,14 @@ public class ModConfigScreen extends ConfigScreen {
             super.onChange(requiresWorldRestart);
         }
 
-        private void saveAndReloadConfig() {
-            // Need to save and reload now rather than waiting for the changes to get noticed by the
-            // file watcher because this can take a while (upwards of 10 seconds) to happen and the
-            // user is expecting to see their config changes take effect NOW.
-            // E.g. A mod customises how buttons look, users changing the config shouldn't need to wait
-            // 10 seconds before their changes take effect.
+        /**
+         * Need to save and reload now rather than waiting for the changes to get noticed by the
+         * file watcher because this can take a while (upwards of 10 seconds) to happen and the
+         * user is expecting to see their config changes take effect NOW.
+         * E.g. A mod customises how buttons look, users changing the config shouldn't need to wait
+         * 10 seconds before their changes take effect.
+         */
+        protected void saveAndReloadConfig() {
 //            if (modConfig.getType() == ModConfig.Type.SERVER) {
 //                // TODO: Syncing to Server
 //                final ByteArrayOutputStream output = new ByteArrayOutputStream();

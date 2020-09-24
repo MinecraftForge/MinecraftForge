@@ -19,6 +19,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
+
 @EventBusSubscriber(bus = Bus.MOD, modid = "forge", value = Dist.CLIENT)
 public class CustomConfigScreenTest extends ModConfigScreen {
 
@@ -47,6 +50,52 @@ public class CustomConfigScreenTest extends ModConfigScreen {
                 };
             }
         };
+    }
+
+    /**
+     * Just testing to check
+     */
+    public static class TestColorTextField extends ConfigElementControls.ConfigElementTextField {
+        public TestColorTextField(ITextComponent title) {
+            super(title);
+        }
+
+        @Override
+        public void setResponder(@Nullable Consumer<String> responderIn) {
+            super.setResponder(newText -> {
+                if (responderIn != null)
+                    responderIn.accept(newText);
+                setColor(newText);
+            });
+        }
+
+        private void setColor(String newText) {
+            if (newText == null)
+                return;
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 2);
+                String g = newText.substring(2, 3);
+                String b = newText.substring(3, 4);
+                newText = "#" + r + r + g + g + b + b;
+            }
+            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
+                String r = newText.substring(1, 3);
+                String g = newText.substring(3, 5);
+                String b = newText.substring(5, 7);
+                int ir;
+                int ig;
+                int ib;
+                try {
+                    ir = Integer.parseInt(r, 16);
+                    ig = Integer.parseInt(g, 16);
+                    ib = Integer.parseInt(b, 16);
+                } catch (NumberFormatException e) {
+                    setTextColor(ConfigElementControls.RED);
+                    return;
+                }
+                setTextColor(ir << 16 | ig << 8 | ib);
+            }
+        }
     }
 
     @SubscribeEvent

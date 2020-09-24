@@ -26,10 +26,10 @@ import java.util.List;
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
 
     // From AbstractList#render/func_230430_a_
-    private static final int SCROLLBAR_WIDTH = 6;
+    public static final int SCROLLBAR_WIDTH = 6;
 
     public final ConfigScreen configScreen;
-    private int maxListLabelWidth;
+    protected int maxListLabelWidth;
 
     public ConfigElementList(ConfigScreen configScreen, Minecraft minecraft) {
         // super(minecraft, width, height, top, bottom, rowHeight);

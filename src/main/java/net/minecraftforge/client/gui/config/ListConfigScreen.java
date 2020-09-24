@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class ListConfigScreen extends ConfigScreen {
-    private final List<?> initialValue;
-    private final List<?> defaultValue;
-    private List actualValue;
+    protected final List<?> initialValue;
+    protected final List<?> defaultValue;
+    protected List actualValue;
 
     public ListConfigScreen(ConfigScreen configScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
         super(configScreen, title, new StringTextComponent("List"));
@@ -32,7 +32,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
         onAddRemove(0);
     }
 
-    private <T> T copyMutable(T value) {
+    protected <T> T copyMutable(T value) {
         return ((ConfigScreen) parentScreen).getControlCreator().copyMutable(value);
     }
 
@@ -60,12 +60,13 @@ public abstract class ListConfigScreen extends ConfigScreen {
         return new ListConfigElementList(this, field_230706_i_);
     }
 
-    private void setAndNotify(int index, Object newValue) {
+    protected void setAndNotify(int index, Object newValue) {
         actualValue.set(index, newValue);
         onModified(actualValue);
     }
 
-    private void onAddRemove(int index) {
+    protected void onAddRemove(int index) {
+        // TODO: Don't take the lazy way out
         // Lazy way out
         // Whenever anything changes, recreate from scratch
         // Saves the headache of dealing with indexing of adds/removes
@@ -97,7 +98,8 @@ public abstract class ListConfigScreen extends ConfigScreen {
         }
 
         @Nullable
-        private ConfigElement createWidget(int index, Object item) {
+        protected ConfigElement createWidget(int index, Object item) {
+            // TODO: Move to ConfigElementControls
             if (item instanceof Boolean)
                 return new ListItemConfigElement(index, item) {
                     {

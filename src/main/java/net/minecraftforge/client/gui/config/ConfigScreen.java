@@ -28,7 +28,7 @@ public abstract class ConfigScreen extends Screen {
 
     protected final Screen parentScreen;
     @Nullable
-    private final ITextComponent subTitle;
+    protected final ITextComponent subTitle;
     protected Button resetButton;
     protected Button undoButton;
     protected ConfigElementList configElementList;

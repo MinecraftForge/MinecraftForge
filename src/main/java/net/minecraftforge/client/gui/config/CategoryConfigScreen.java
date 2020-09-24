@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * A category is made when you do "builder.push()" when initialising your config.
  */
 public class CategoryConfigScreen extends ConfigScreen {
-    private final ConfigCategoryInfo categoryInfo;
+    protected final ConfigCategoryInfo categoryInfo;
 
     public CategoryConfigScreen(Screen parentScreen, ITextComponent title, ConfigCategoryInfo categoryInfo) {
         super(parentScreen, title);
@@ -156,8 +156,8 @@ public class CategoryConfigScreen extends ConfigScreen {
          */
         public class ConfigValueConfigElement extends ConfigElement {
 
-            private final BooleanSupplier canReset;
-            private final BooleanSupplier canUndo;
+            protected final BooleanSupplier canReset;
+            protected final BooleanSupplier canUndo;
 
             public <T> ConfigValueConfigElement(ITextComponent title, List<ITextComponent> tooltip, ConfigValue<T> value, ValueSpec valueInfo, ValueConfigElementData<T> data, T obj) {
                 super(title, title, tooltip);
