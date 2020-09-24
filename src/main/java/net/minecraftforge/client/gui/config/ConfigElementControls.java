@@ -35,10 +35,6 @@ public class ConfigElementControls {
     public static final int WIDGET_WIDTH = 50;
     public static final int WIDGET_HEIGHT = 20;
 
-    public static StringTextComponent component(@Nullable String name) {
-        return name == null ? EMPTY_STRING : new StringTextComponent(name);
-    }
-
     public static <T> T copyMutable(T o) {
         // Immutable objects can be returned as is
         if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Enum<?>)
@@ -52,10 +48,6 @@ public class ConfigElementControls {
      * Has so many constructors so that it is easily extensible.
      */
     public static class ConfigElementButton extends ExtendedButton {
-        public ConfigElementButton(@Nullable String name, IPressable handler) {
-            this(component(name), handler);
-        }
-
         public ConfigElementButton(ITextComponent title, IPressable handler) {
             super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
         }
@@ -69,16 +61,8 @@ public class ConfigElementControls {
         // TextFields have a 2px border on each side that is not included in their width/height
         public static final int BORDER = 2;
 
-        public ConfigElementTextField(@Nullable String name) {
-            this(name, Minecraft.getInstance().fontRenderer);
-        }
-
         public ConfigElementTextField(ITextComponent title) {
             this(title, Minecraft.getInstance().fontRenderer);
-        }
-
-        public ConfigElementTextField(@Nullable String name, FontRenderer fontRenderer) {
-            this(component(name), fontRenderer);
         }
 
         public ConfigElementTextField(ITextComponent title, FontRenderer fontRenderer) {
@@ -102,8 +86,8 @@ public class ConfigElementControls {
      * Just testing to check
      */
     public static class TestColorTextField extends ConfigElementTextField {
-        public TestColorTextField(@Nullable String name) {
-            super(name);
+        public TestColorTextField(ITextComponent title) {
+            super(title);
         }
 
         @Override
@@ -167,7 +151,7 @@ public class ConfigElementControls {
         }
     }
 
-    public static ConfigElementWidgetData<Boolean> createBooleanButton(Predicate<Boolean> setter, @Nullable String name) {
+    public static ConfigElementWidgetData<Boolean> createBooleanButton(Predicate<Boolean> setter, ITextComponent title) {
         final boolean[] state = new boolean[1];
         TriConsumer<Button, Boolean, Boolean> setValue = (button, isSetup, newValue) -> {
             state[0] = newValue;
@@ -177,12 +161,12 @@ public class ConfigElementControls {
             button.func_238482_a_(new StringTextComponent(Boolean.toString(state[0])));
             button.setFGColor(valid && state[0] ? GREEN : RED);
         };
-        ConfigElementButton control = new ConfigElementButton(name, button -> setValue.accept(button, false, !state[0]));
+        ConfigElementButton control = new ConfigElementButton(title, button -> setValue.accept(button, false, !state[0]));
         return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
     }
 
-    public static <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, @Nullable String name, Function<String, T> parser, T longestValue) {
-        ConfigElementTextField control = new ConfigElementTextField(name);
+    public static <T extends Comparable<? super T>> ConfigElementWidgetData<T> createNumericTextField(Predicate<T> setter, ITextComponent title, Function<String, T> parser, T longestValue) {
+        ConfigElementTextField control = new ConfigElementTextField(title);
         control.setMaxStringLength(longestValue.toString().length());
         BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             T parsed;
@@ -212,7 +196,7 @@ public class ConfigElementControls {
         return new ConfigElementWidgetData<>(control, valueSetter);
     }
 
-    public static <T extends Enum<T>> ConfigElementWidgetData<T> createEnumButton(Predicate<T> setter, @Nullable String name, T[] potential) {
+    public static <T extends Enum<T>> ConfigElementWidgetData<T> createEnumButton(Predicate<T> setter, ITextComponent title, T[] potential) {
         final Enum<?>[] state = new Enum<?>[1];
         TriConsumer<Button, Boolean, Enum<?>> setValue = (button, isSetup, newValue) -> {
             state[0] = newValue;
@@ -229,7 +213,7 @@ public class ConfigElementControls {
                     button.setFGColor(((TextFormatting) newValue).getColor());
             }
         };
-        ConfigElementButton control = new ConfigElementButton(name, button -> {
+        ConfigElementButton control = new ConfigElementButton(title, button -> {
             Enum<?> next = potential[(ArrayUtils.indexOf(potential, state[0]) + 1) % potential.length];
             setValue.accept(button, false, next);
         });
@@ -243,8 +227,8 @@ public class ConfigElementControls {
         return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
     }
 
-    public static ConfigElementWidgetData<String> createStringTextField(Predicate<String> setter, @Nullable String name) {
-        ConfigElementTextField control = new TestColorTextField(name);
+    public static ConfigElementWidgetData<String> createStringTextField(Predicate<String> setter, ITextComponent title) {
+        ConfigElementTextField control = new TestColorTextField(title); // TODO: Remove and make extensible
         control.setMaxStringLength(Integer.MAX_VALUE);
         final BiConsumer<Boolean, String> stringConsumer = (isSetup, newValue) -> {
             boolean valid = true;

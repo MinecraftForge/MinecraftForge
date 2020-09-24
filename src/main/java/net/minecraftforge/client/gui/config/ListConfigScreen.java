@@ -19,7 +19,7 @@ public class ListConfigScreen extends ConfigScreen {
 
     public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> initialValue, List<?> defaultValue) {
         super(parentScreen, title, new StringTextComponent("List"));
-        list = this.initialValue = initialValue;
+        list = ConfigElementControls.copyMutable(this.initialValue = initialValue);
         this.defaultValue = defaultValue;
     }
 
@@ -90,7 +90,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true; // Can't have an "invalid" boolean
-                        }, translatedName);
+                        }, title);
                         control.valueSetter.setup((Boolean) item);
                         widgets.add(0, control.widget);
                     }
@@ -102,7 +102,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
-                        }, translatedName, Integer::parseInt, Integer.MIN_VALUE);
+                        }, title, Integer::parseInt, Integer.MIN_VALUE);
                         control.valueSetter.setup((Integer) item);
                         widgets.add(0, control.widget);
                     }
@@ -114,7 +114,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
-                        }, translatedName, Long::parseLong, Long.MIN_VALUE);
+                        }, title, Long::parseLong, Long.MIN_VALUE);
                         control.valueSetter.setup((Long) item);
                         widgets.add(0, control.widget);
                     }
@@ -126,7 +126,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
-                        }, translatedName, Double::parseDouble, Double.NEGATIVE_INFINITY);
+                        }, title, Double::parseDouble, Double.NEGATIVE_INFINITY);
                         control.valueSetter.setup((Double) item);
                         widgets.add(0, control.widget);
                     }
@@ -139,7 +139,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
-                        }, translatedName, potential);
+                        }, title, potential);
                         control.valueSetter.setup((Enum) item);
 //                            canReset = () -> item !=
 //                            reset = data.reset(valueInfo);
@@ -153,7 +153,7 @@ public class ListConfigScreen extends ConfigScreen {
                             set(index, newValue);
                             ListConfigScreen.this.onChange();
                             return true;
-                        }, translatedName);
+                        }, title);
                         control.valueSetter.setup((String) item);
                         widgets.add(0, control.widget);
                     }

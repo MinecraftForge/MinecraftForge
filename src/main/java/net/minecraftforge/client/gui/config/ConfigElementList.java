@@ -7,10 +7,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -18,11 +15,7 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.client.gui.widget.UnicodeGlyphButton;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.BooleanSupplier;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -71,31 +64,81 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             selectedElement.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    public static Button createConfigElementResetButton(String translatedName, Button.IPressable onPress) {
+    public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
         return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
-                return new TranslationTextComponent("narrator.controls.reset", translatedName);
+                return new TranslationTextComponent("narrator.controls.reset", title);
             }
         };
     }
 
-    public static Button createConfigElementUndoButton(String translatedName, Button.IPressable onPress) {
+    public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
         return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
-                return new TranslationTextComponent("narrator.controls.undo", translatedName);
+                return new TranslationTextComponent("narrator.controls.undo", title);
             }
         };
     }
 
-    @OnlyIn(Dist.CLIENT)
+    /**
+     * The base class for anything that can be displayed in a row on a {@link ConfigElementList}.
+     * This contains the reset and undo buttons, breaking encapsulation a bit, but it allows simple implementations of
+     * the undo/reset buttons on the {@link ConfigScreen} that this belongs to.
+     * <p>
+     * Examples:
+     * 1. Text only element (might be used for displaying an error message e.g. "Could not generate a widget for this
+     * config value, please edit this in the config file")
+     * - Has a label to display the text
+     * - Has a title for use in the narrator
+     * - May have widgets
+     * - May have a tooltip
+     * <p>
+     * 2. Element for "config value" (a named value in a config)
+     * - Has a label to display its name
+     * - Has a title (its name) for use in the narrator
+     * - Has a widget to interact with (view and change) its value
+     * - Has buttons to reset the value to default and undo changes to the value
+     * - Has a tooltip containing info about the config value (e.g. its comment)
+     * <p>
+     * 3. Element for (sub)category in the config
+     * - Does not have a label (it displays its name on its main button)
+     * - Has a title (its name) for use in the narrator
+     * - Has a widget to take you to a new screen to interact with (view and change) the values in this category
+     * - TODO: Does this have reset/undo buttons
+     * - Has a tooltip containing info about the category (e.g. its comment) TODO: Forge currently doesn't provide translation keys for Categories
+     * <p>
+     * 4. Element for a List "config value" (a named value (that is a List) in a config)
+     * - Does not have a label (it displays its name on its main button)
+     * - Has a title (it's name) for use in the narrator
+     * - Has a widget to take you to a new screen to interact with (view and change) the items in this list
+     * - Has buttons to reset the value to default and undo changes to the value
+     * - Has a tooltip containing info about the config value (e.g. its comment)
+     * 5. Element for an item inside a List
+     * - Has a label to display its index
+     * - Has a title (its index) for use in the narrator
+     * - Has a widget to take you to a new screen to interact with (view and change) its value (it might open a new screen, see "Element for a List")
+     * - Has buttons to add a value to the list below it or remove itself from the list
+     * - No tooltip
+     */
     public abstract class ConfigElement extends AbstractOptionList.Entry<ConfigElement> {
         public static final int PADDING = 5;
-        final String translatedName;
-        final String description;
+        /**
+         * The TEXT to display before any widgets.
+         * E.g. this element's name.
+         * Will be null for list/category elements (they display this info on their main button).
+         * A non-null value for this increments {@link #maxListLabelWidth}.
+         */
+        @Nullable
+        final ITextComponent label;
+        /** The title of this element. Describes what this is. Used for narration messages. */
+        final ITextComponent title;
+        /** Will be null/empty for list item entries who have nothing useful to display. */
+        @Nullable
+        final List<ITextComponent> tooltip;
         protected final LinkedList<Widget> widgets = new LinkedList<>();
         @Nullable
         public Button resetButton;
@@ -103,11 +146,12 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         public Button undoButton;
 
         public ConfigElement(String translatedName, String description) {
-            this.translatedName = translatedName;
-            this.description = description;
-            int length = configScreen.getFontRenderer().getStringWidth(translatedName);
-            if (maxListLabelWidth < length)
-                maxListLabelWidth = length;
+            // TODO: Actual values for these
+            this.label = translatedName == null ? null : new StringTextComponent(translatedName);
+            this.title = label;
+            this.tooltip = Arrays.stream(description.split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
+            if (label != null)
+                maxListLabelWidth = Math.max(maxListLabelWidth, configScreen.getFontRenderer().func_238414_a_(label)); // getStringPropertyWidth
         }
 
         @Override
@@ -119,6 +163,20 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         @Override
         // render
         public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+            if (label != null)
+                configScreen.getFontRenderer().func_243248_b(matrixStack, label, rowLeft, (float) (rowTop + adjustedItemHeight / 2 - configScreen.getFontRenderer().FONT_HEIGHT / 2), 0xFFFFFF);
+            // Expand the main widget to fill all free space
+            // If the label is not null, the free space starts at rowLeft + maxListLabelWidth, otherwise it starts at rowLeft
+            Widget main = getMainWidget();
+            if (main != null) {
+                int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum(); // getHeight
+                otherWidthsAndPadding -= main.func_230998_h_(); // The main widget was included in the sum, subtract it // getHeight
+                int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2; // getScrollbarPosition
+                if (label != null)
+                    width -= maxListLabelWidth;
+                main.func_230991_b_(correctWidgetBound(main, width)); // setWidth
+            }
+            // Position widgets with the first item on the left and the last on the right
             Iterator<Widget> iterator = widgets.descendingIterator();
             int widgetPos = func_230952_d_() - PADDING; // getScrollbarPosition
             while (iterator.hasNext()) {
@@ -126,35 +184,47 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 widgetPos -= widget.func_230998_h_(); // getWidth
                 widget.field_230690_l_ = widgetPos; // x
                 widget.field_230691_m_ = rowTop; // y
-                widget.setHeight(getItemHeight());
+                widget.setHeight(correctWidgetBound(widget, getItemHeight()));
                 if (widget instanceof TextFieldWidget) {
+                    // TextFields have a 2px border on each side that has to be accounted for
                     widget.field_230690_l_ -= 2; // x
                     widget.field_230691_m_ += 2; // y
-                    widget.setHeight(widget.func_238483_d_() - 4); // getHeight
                 }
-                // Render
+                // render
                 widget.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
             }
         }
 
         public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-            if (description != null && description.length() > 0) {
-                List<ITextComponent> list = Arrays.stream(description.split("\n"))
-                        .map(StringTextComponent::new)
-                        .collect(Collectors.toList());
-                GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+            for (Widget widget : widgets) {
+                if (resetButton != null && widget == resetButton && widget.func_230449_g_()) { // isHovered
+                    // TODO: translation
+                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("resets stuff"));
+                    GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                    return; // Stop main tooltip being rendered
+                }
+                if (undoButton != null && widget == undoButton && widget.func_230449_g_()) { // isHovered
+                    // TODO: translation
+                    List<ITextProperties> list = Collections.singletonList(new TranslationTextComponent("undoes stuff"));
+                    GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
+                    return; // Stop main tooltip being rendered
+                }
             }
+            if (tooltip != null && !tooltip.isEmpty())
+                GuiUtils.drawHoveringText(matrixStack, tooltip, mouseX, mouseY, getWidth(), getHeight(), -1, configScreen.getFontRenderer());
         }
 
         /**
          * Makes the cursor of any {@link TextFieldWidget}s animate.
          */
         public void tick() {
-//            // active/enabled
-//            resetButton.field_230693_o_ = canReset.getAsBoolean();
             for (Widget widget : widgets)
                 if (widget instanceof TextFieldWidget)
                     ((TextFieldWidget) widget).tick();
+        }
+
+        public Widget getMainWidget() {
+            return widgets.isEmpty() ? null : widgets.getFirst();
         }
 
 //        @Override
@@ -245,14 +315,19 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * Opens a new Screen
      */
     public class PopupConfigElement extends ConfigElement {
+
         public PopupConfigElement(String translatedName, String description, Supplier<ConfigScreen> screenFactory) {
             super(translatedName, description);
-            int otherWidthsAndPadding = widgets.stream().mapToInt(Widget::func_230998_h_).sum();
-            // getScrollbarPosition
-            int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2;
-            Button openScreen = new ExtendedButton(0, 0, width, 0, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
+            Button openScreen = new ExtendedButton(0, 0, 0, 0, new StringTextComponent(translatedName), b -> field_230668_b_.displayGuiScreen(screenFactory.get()));
             widgets.add(0, openScreen);
         }
+    }
+
+    public static int correctWidgetBound(Widget widget, int widthOrHeight) {
+        // TextFields have a 2px border on each side that is not included in their width/height
+        if (widget instanceof TextFieldWidget)
+            return widthOrHeight - 4;
+        return widthOrHeight;
     }
 
 }
