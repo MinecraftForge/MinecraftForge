@@ -21,6 +21,8 @@ import java.util.Collections;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
+ * - Reformat everything (single indent on nested calls, braces on new lines, undo import changes to Forge classes)
+ * -> ESPECIALLY ForgeConfig and ForgeConfigSpec
  * - **Config Screen titles**
  * - ModConfig comments to translations
  * - Get someone's review on changes to ForgeConfigSpec for comments
