@@ -15,13 +15,13 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * A {@link ConfigScreen} for a (sub) category.
@@ -81,6 +81,32 @@ public class CategoryConfigScreen extends ConfigScreen {
         String getCategoryComment(String key);
     }
 
+    static ITextComponent translateWithFallback(@Nullable String translationKey, String fallback) {
+        if (translationKey == null)
+            return new StringTextComponent(fallback);
+        ITextComponent title = new TranslationTextComponent(translationKey);
+        if (translationKey.equals(title.getString()))
+            return new StringTextComponent(fallback);
+        return title;
+    }
+
+    static Collection<? extends ITextComponent> translateCommentWithFallback(String translationKey, String fallbackComment) {
+        // Need to handle linebreaks properly
+        if (translationKey != null) {
+            translationKey += ".tooltip";
+            TranslationTextComponent comment = new TranslationTextComponent(translationKey);
+            if (!translationKey.equals(comment.getString())) {
+                // TODO: There can be line breaks in here too but everything's SRG named and I cbf to work out how to split text components
+//                configScreen.getFontRenderer().func_238420_b_().func_238362_b_(textLine, tooltipTextWidth, Style.field_240709_b_);
+                return Collections.singletonList(comment);
+            }
+        }
+        return Arrays.stream(fallbackComment.split("\n"))
+                .map(StringTextComponent::new)
+                .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
+                .collect(Collectors.toList());
+    }
+
     public static class CategoryConfigElementList extends ConfigElementList {
 
         public CategoryConfigElementList(ConfigScreen configScreen, Minecraft mcIn, ConfigCategoryInfo info) {
@@ -89,7 +115,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                 func_230513_b_(createConfigElement(key, info));
         }
 
-        // TODO: This is a mess
+        // TODO: This is a bit of a mess
         public ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
             Object raw = categoryInfo.getValue(key);
             if (raw instanceof UnmodifiableConfig) {
@@ -102,21 +128,22 @@ public class CategoryConfigScreen extends ConfigScreen {
                         valueInfo::getComment
                 );
                 String translationKey = null; // TODO: Can pass path in through categoryInfo, need to also get review on changes to ForgeConfigSpec for comments
-                ITextComponent title = configScreen.getControlCreator().makeTranslationComponent(translationKey, key);
+
+                ITextComponent title = translateWithFallback(translationKey, key);
                 List<ITextComponent> tooltip = new LinkedList<>();
                 tooltip.add(title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
-                // TODO: Comment can have linebreaks in it
-                tooltip.add(configScreen.getControlCreator().makeTranslationComponent(translationKey == null ? null : translationKey + ".tooltip", categoryInfo.getCategoryComment(key)).func_230531_f_().func_240701_a_(TextFormatting.YELLOW));
+                tooltip.addAll(translateCommentWithFallback(translationKey, categoryInfo.getCategoryComment(key)));
+
                 return new CategoryConfigElement(title, tooltip, valueCategoryInfo);
             } else {
                 ForgeConfigSpec.ConfigValue<?> value = (ForgeConfigSpec.ConfigValue<?>) raw;
                 ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
                 String translationKey = valueInfo.getTranslationKey();
-                ITextComponent title = configScreen.getControlCreator().makeTranslationComponent(translationKey, key);
+
+                ITextComponent title = translateWithFallback(translationKey, key);
                 List<ITextComponent> tooltip = new LinkedList<>();
                 tooltip.add(title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
-                // TODO: Comment can have linebreaks in it
-                tooltip.add(configScreen.getControlCreator().makeTranslationComponent(translationKey == null ? null : translationKey + ".tooltip", valueInfo.getComment()).func_230531_f_().func_240701_a_(TextFormatting.YELLOW));
+                tooltip.addAll(translateCommentWithFallback(translationKey, valueInfo.getComment()));
                 Range<?> range = valueInfo.getRange();
                 if (range != null)
                     tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.rangeWithDefault", range.getMin(), range.getMax(), valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
@@ -128,10 +155,12 @@ public class CategoryConfigScreen extends ConfigScreen {
                             .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TextFormatting.RED))
                             .func_230529_a_(new StringTextComponent("]").func_240701_a_(TextFormatting.RED))
                     );
+
                 Object valueValue = value.get();
                 ValueConfigElementData data = configScreen.getControlCreator().makeElementData(this, title, value, valueInfo, valueValue);
                 if (data != null)
-                    return new ConfigValueConfigElement(title, tooltip, (ConfigValue) value, valueInfo, data, valueValue);
+                    // TODO: Provide a way to properly pass a null label
+                    return new ConfigValueConfigElement(valueValue instanceof List ? null : title, title, tooltip, (ConfigValue) value, valueInfo, data, valueValue);
                 // title.deepCopy().appendSibling
                 ITextComponent label = title.func_230532_e_().func_230529_a_(new StringTextComponent(": " + valueValue));
                 tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"));
@@ -156,31 +185,33 @@ public class CategoryConfigScreen extends ConfigScreen {
          */
         public class ConfigValueConfigElement extends ConfigElement {
 
-            protected final BooleanSupplier canReset;
             protected final BooleanSupplier canUndo;
+            protected final BooleanSupplier canReset;
 
-            public <T> ConfigValueConfigElement(ITextComponent title, List<ITextComponent> tooltip, ConfigValue<T> value, ValueSpec valueInfo, ValueConfigElementData<T> data, T obj) {
-                super(title, title, tooltip);
+            public <T> ConfigValueConfigElement(ITextComponent label, ITextComponent title, List<ITextComponent> tooltip, ConfigValue<T> value, ValueSpec valueInfo, ValueConfigElementData<T> data, T obj) {
+                super(label, title, tooltip);
                 widgets.add(0, data.widget);
                 T initialValue = configScreen.getControlCreator().copyMutable(obj);
                 T defaultValue = configScreen.getControlCreator().copyMutable((T) valueInfo.getDefault());
-                canReset = () -> !value.get().equals(defaultValue);
                 canUndo = () -> !value.get().equals(initialValue);
-                widgets.add(resetButton = createConfigElementResetButton(title, button -> data.valueSetter.accept(defaultValue)));
+                canReset = () -> !value.get().equals(defaultValue);
                 widgets.add(undoButton = createConfigElementUndoButton(title, button -> data.valueSetter.accept(initialValue)));
+                widgets.add(resetButton = createConfigElementResetButton(title, button -> data.valueSetter.accept(defaultValue)));
             }
 
             @Override
             public void tick() {
                 super.tick();
                 // active/enabled
-                resetButton.field_230693_o_ = canReset.getAsBoolean();
                 undoButton.field_230693_o_ = canUndo.getAsBoolean();
+                resetButton.field_230693_o_ = canReset.getAsBoolean();
             }
 
             @Override
             public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-                if (getMainWidget().func_230449_g_()) // isHovered
+                Widget widget = getMainWidget();
+                // Directly check if it's hovered (all the methods to check also check extra stuff e.g. isFocussed which we don't want)
+                if (mouseX >= widget.field_230690_l_ && mouseY >= widget.field_230691_m_ && mouseX < widget.field_230690_l_ + widget.func_230998_h_() && mouseY < widget.field_230691_m_ + widget.func_238483_d_())
                     return; // Don't render the main tooltip if we're trying to change the value
                 super.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
             }

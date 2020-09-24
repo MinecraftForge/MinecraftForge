@@ -105,10 +105,10 @@ public class CustomConfigScreenTest extends ModConfigScreen {
         });
     }
 
-    @Override
-    public FontRenderer getFontRenderer() {
-        return fontRenderer;
-    }
+//    @Override
+//    public FontRenderer getFontRenderer() {
+//        return fontRenderer;
+//    }
 
     @Override
     public ConfigElementControls getControlCreator() {

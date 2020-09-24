@@ -10,6 +10,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.config.ConfigElementList.ConfigElement;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraftforge.fml.client.gui.widget.UnicodeGlyphButton;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -28,8 +30,8 @@ public abstract class ConfigScreen extends Screen {
     protected final Screen parentScreen;
     @Nullable
     protected final ITextComponent subTitle;
-    protected Button resetButton;
     protected Button undoButton;
+    protected Button resetButton;
     protected ConfigElementList configElementList;
 
     public ConfigScreen(Screen parentScreen, ITextComponent title) {
@@ -64,12 +66,10 @@ public abstract class ConfigScreen extends Screen {
         int footerTop = configElementList.getBottom();
         int footerHeight = field_230709_l_ - footerTop; // height
         int y = footerTop + footerHeight / 2 - buttonHeight / 2;
-        // Add the undo button
-        undoButton = func_230480_a_(new Button(left, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.undoAllChanges"), button -> undo()));
-        // Add the reset button
-        resetButton = func_230480_a_(new Button(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), button -> reset()));
+        undoButton = func_230480_a_(new UnicodeGlyphButton(left, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.undoAllChanges"), GuiUtils.UNDO_CHAR, 1.5F, button -> undo()));
+        resetButton = func_230480_a_(new UnicodeGlyphButton(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), GuiUtils.RESET_CHAR, 1.5F, button -> reset()));
         // Add the "done" button
-        func_230480_a_(new Button(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> func_231175_as__()));
+        func_230480_a_(new ExtendedButton(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> func_231175_as__()));
     }
 
     protected abstract ConfigElementList makeConfigElementList();
@@ -101,18 +101,8 @@ public abstract class ConfigScreen extends Screen {
     public void func_231023_e_() {
         configElementList.tick();
         // active/enabled
-        resetButton.field_230693_o_ = canReset();
         undoButton.field_230693_o_ = canUndo();
-    }
-
-    protected boolean canReset() {
-        for (ConfigElement element : configElementList.func_231039_at__()) {
-            Button resetButton = element.resetButton;
-            // btn != null && btn.visible && btn.active/enabled
-            if (resetButton != null && resetButton.field_230694_p_ && resetButton.field_230693_o_)
-                return true;
-        }
-        return false;
+        resetButton.field_230693_o_ = canReset();
     }
 
     protected boolean canUndo() {
@@ -120,6 +110,16 @@ public abstract class ConfigScreen extends Screen {
             Button undoButton = element.undoButton;
             // btn != null && btn.visible && btn.active/enabled
             if (undoButton != null && undoButton.field_230694_p_ && undoButton.field_230693_o_)
+                return true;
+        }
+        return false;
+    }
+
+    protected boolean canReset() {
+        for (ConfigElement element : configElementList.func_231039_at__()) {
+            Button resetButton = element.resetButton;
+            // btn != null && btn.visible && btn.active/enabled
+            if (resetButton != null && resetButton.field_230694_p_ && resetButton.field_230693_o_)
                 return true;
         }
         return false;
@@ -134,21 +134,21 @@ public abstract class ConfigScreen extends Screen {
     }
 
     /**
-     * Called to set all of the current screen's config elements to their default values.
-     */
-    protected void reset() {
-        for (ConfigElementList.ConfigElement element : configElementList.func_231039_at__())
-            if (element.resetButton != null)
-                element.resetButton.func_230930_b_();
-    }
-
-    /**
      * Called to set all of the current screen's config elements to their initial values.
      */
     protected void undo() {
         for (ConfigElementList.ConfigElement element : configElementList.func_231039_at__())
             if (element.undoButton != null)
                 element.undoButton.func_230930_b_();
+    }
+
+    /**
+     * Called to set all of the current screen's config elements to their default values.
+     */
+    protected void reset() {
+        for (ConfigElementList.ConfigElement element : configElementList.func_231039_at__())
+            if (element.resetButton != null)
+                element.resetButton.func_230930_b_();
     }
 
     @Override

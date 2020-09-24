@@ -26,34 +26,34 @@ public abstract class ListConfigScreen extends ConfigScreen {
     }
 
     @Override
-    protected void reset() {
-        actualValue = copyMutable(defaultValue);
-        onModified(actualValue);
-        onAddRemove(0);
-    }
-
-    protected <T> T copyMutable(T value) {
-        return ((ConfigScreen) parentScreen).getControlCreator().copyMutable(value);
-    }
-
-    @Override
     protected void undo() {
         actualValue = copyMutable(initialValue);
         onModified(actualValue);
         onAddRemove(0);
     }
 
-    public abstract void onModified(List newValue);
-
     @Override
-    protected boolean canReset() {
-        return !Objects.equals(actualValue, defaultValue);
+    protected void reset() {
+        actualValue = copyMutable(defaultValue);
+        onModified(actualValue);
+        onAddRemove(0);
     }
 
     @Override
     protected boolean canUndo() {
         return !Objects.equals(actualValue, initialValue);
     }
+
+    @Override
+    protected boolean canReset() {
+        return !Objects.equals(actualValue, defaultValue);
+    }
+
+    protected <T> T copyMutable(T value) {
+        return ((ConfigScreen) parentScreen).getControlCreator().copyMutable(value);
+    }
+
+    public abstract void onModified(List newValue);
 
     @Override
     protected ConfigElementList makeConfigElementList() {

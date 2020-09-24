@@ -10,7 +10,6 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.ValueConfigElementData;
 import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData.ValueSetter;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -41,8 +40,6 @@ public class ConfigElementControls {
     public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
     public static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
-    public static final int WIDGET_WIDTH = 50;
-    public static final int WIDGET_HEIGHT = 20;
 
     public static ConfigElementControls getDefaultCreator() {
         return DefaultHolder.INSTANCE;
@@ -139,17 +136,10 @@ public class ConfigElementControls {
                     button.setFGColor(((TextFormatting) newValue).getColor());
             }
         };
-        ConfigElementButton control = new ConfigElementButton(title, button -> {
+        Button control = createButton(title, button -> {
             Enum<?> next = potential[(ArrayUtils.indexOf(potential, state[0]) + 1) % potential.length];
             setValue.accept(button, false, next);
         });
-//        {
-//            @Override
-//            // Allow mouse click forwards or backwards
-//            protected boolean func_230987_a_(int p_230987_1_) {
-//                return p_230987_1_ == 0 || p_230987_1_ == 1;
-//            }
-//        };
         return new ConfigElementWidgetData<>(control, (isSetup, newValue) -> setValue.accept(control, isSetup, newValue));
     }
 
@@ -238,15 +228,6 @@ public class ConfigElementControls {
         });
     }
 
-    public ITextComponent makeTranslationComponent(@Nullable String translationKey, String fallback) {
-        if (translationKey == null)
-            return new StringTextComponent(fallback);
-        ITextComponent title = new TranslationTextComponent(translationKey);
-        if (translationKey.equals(title.getString()))
-            return new StringTextComponent(fallback);
-        return title;
-    }
-
     /**
      * Makes a button that opens a new Screen
      */
@@ -267,8 +248,9 @@ public class ConfigElementControls {
     }
 
     public static class ConfigElementButton extends ExtendedButton {
+        // Integer.MAX_VALUE / 2 chosen to be very large so as to avoid any scrolling/visibility issues but also not cause integer overflow issues
         public ConfigElementButton(ITextComponent title, IPressable handler) {
-            super(0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, title, handler);
+            super(0, 0, Integer.MAX_VALUE / 2, Integer.MAX_VALUE / 2, title, handler);
         }
     }
 
@@ -286,7 +268,8 @@ public class ConfigElementControls {
         }
 
         public ConfigElementTextField(ITextComponent title, FontRenderer fontRenderer) {
-            super(fontRenderer, 0, 0, WIDGET_WIDTH - BORDER * 2, WIDGET_HEIGHT - BORDER * 2, title);
+            // Integer.MAX_VALUE / 2 chosen to be very large so as to avoid any scrolling/visibility issues but also not cause integer overflow issues
+            super(fontRenderer, 0, 0, Integer.MAX_VALUE / 2, Integer.MAX_VALUE / 2, title);
         }
 
         @Override
@@ -296,6 +279,7 @@ public class ConfigElementControls {
                 // Make it so we only run the listener when the text actually changes
                 if (responderIn != null && !Objects.equals(newText, lastText))
                     responderIn.accept(newText);
+                lastText = newText;
             });
         }
     }

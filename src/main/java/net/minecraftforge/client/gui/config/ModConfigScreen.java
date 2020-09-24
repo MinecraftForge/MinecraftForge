@@ -1,7 +1,6 @@
 package net.minecraftforge.client.gui.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Makes a ConfigScreen with entries for all of a mod's registered configs.
@@ -31,6 +29,7 @@ public class ModConfigScreen extends ConfigScreen {
     private static final Map<ModConfig.Type, String> COMMENTS = makeTypeComments();
 
     protected final IModInfo mod;
+    protected boolean displayRequiresWorldRestartScreen;
 
     public ModConfigScreen(Screen screen, IModInfo mod) {
         super(screen, new StringTextComponent(mod.getDisplayName()));
@@ -129,14 +128,12 @@ public class ModConfigScreen extends ConfigScreen {
             {
                 for (ModConfig modConfig : configsToDisplay) {
                     String translationKey = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
+                    // TODO: Translation keys instead of hardcoding
                     String comment = COMMENTS.get(modConfig.getType());
-                    ITextComponent title = configScreen.getControlCreator().makeTranslationComponent(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
-                    // TODO: Translation keys
-                    List<ITextComponent> tooltip = Arrays.stream(comment.split("\n"))
-                            .map(StringTextComponent::new)
-                            .map(t -> t.func_240701_a_(TextFormatting.YELLOW))
-                            .collect(Collectors.toList());
+                    ITextComponent title = CategoryConfigScreen.translateWithFallback(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
+                    List<ITextComponent> tooltip = new LinkedList<>();
                     tooltip.add(0, title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
+                    tooltip.addAll(CategoryConfigScreen.translateCommentWithFallback(translationKey, comment));
                     String filePath = getDisplayFilePath(modConfig);
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
@@ -151,13 +148,31 @@ public class ModConfigScreen extends ConfigScreen {
         };
     }
 
+    @Override
+    public void onChange(boolean requiresWorldRestart) {
+        displayRequiresWorldRestartScreen |= requiresWorldRestart;
+        super.onChange(requiresWorldRestart);
+    }
+
+    @Override
+    // closeScreen
+    public void func_231175_as__() {
+        if (!displayRequiresWorldRestartScreen || Minecraft.getInstance().world == null)
+            super.func_231175_as__();
+        field_230706_i_.displayGuiScreen(new MessageDialogScreen(
+                new TranslationTextComponent("forge.configgui.worldRestartRequired"),
+                new TranslationTextComponent("forge.configgui.worldRestartRequiredBecause"),
+                new TranslationTextComponent("forge.configgui.worldRestartRequiredConfirm"),
+                super::func_231175_as__)
+        );
+    }
+
     /**
      * ConfigScreen for a ModConfig.
      */
     public static class ModConfigConfigScreen extends ConfigScreen {
 
         protected final ModConfig modConfig;
-        protected boolean requiresWorldRestart;
 
         public ModConfigConfigScreen(Screen parentScreen, ITextComponent titleIn, ModConfig modConfig) {
             super(parentScreen, titleIn);
@@ -178,7 +193,6 @@ public class ModConfigScreen extends ConfigScreen {
         @Override
         public void onChange(boolean requiresWorldRestart) {
             saveAndReloadConfig();
-            this.requiresWorldRestart |= requiresWorldRestart;
             super.onChange(requiresWorldRestart);
         }
 
@@ -198,22 +212,7 @@ public class ModConfigScreen extends ConfigScreen {
 //                new C2SRequestUpdateConfigData(modConfig.getFileName(), output.toByteArray()).sendToServer();
 //                return;
 //            }
-            modConfig.save();
-            ((CommentedFileConfig) modConfig.getConfigData()).load();
-            modConfig.fireEvent(new ModConfig.Reloading(modConfig));
-        }
-
-        @Override
-        // closeScreen
-        public void func_231175_as__() {
-            if (!requiresWorldRestart)
-                super.func_231175_as__();
-            field_230706_i_.displayGuiScreen(new MessageDialogScreen(
-                    new TranslationTextComponent("forge.configgui.worldRestartRequired"),
-                    new TranslationTextComponent("forge.configgui.worldRestartRequiredBecause"),
-                    new TranslationTextComponent("forge.configgui.worldRestartRequiredConfirm"),
-                    super::func_231175_as__)
-            );
+            modConfig.saveAndReload();
         }
     }
 

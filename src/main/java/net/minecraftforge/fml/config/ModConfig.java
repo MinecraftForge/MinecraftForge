@@ -98,6 +98,12 @@ public class ModConfig
         return ((CommentedFileConfig)this.configData).getNioPath();
     }
 
+    public void saveAndReload() {
+        save();
+        ((CommentedFileConfig) getConfigData()).load();
+        fireEvent(new ModConfig.Reloading(this));
+    }
+
     public enum Type {
         /**
          * Common mod config for configuration that needs to be loaded on both environments.
@@ -153,7 +159,7 @@ public class ModConfig
     }
 
     public static class Reloading extends ModConfigEvent {
-        public Reloading(final ModConfig config) {
+        Reloading(final ModConfig config) {
             super(config);
         }
     }

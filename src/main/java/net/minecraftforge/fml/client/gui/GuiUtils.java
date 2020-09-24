@@ -55,7 +55,7 @@ public class GuiUtils
     public static final int DEFAULT_BORDER_COLOR_START = 0x505000FF;
     public static final int DEFAULT_BORDER_COLOR_END = (DEFAULT_BORDER_COLOR_START & 0xFEFEFE) >> 1 | DEFAULT_BORDER_COLOR_START & 0xFF000000;
     public static final String UNDO_CHAR  = "\u21B6";
-    public static final String RESET_CHAR = "\u2604";
+    public static final String RESET_CHAR = "\u21BB";
     public static final String VALID      = "\u2714";
     public static final String INVALID    = "\u2715";
 

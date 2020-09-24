@@ -38,7 +38,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, 1.5F, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -48,7 +48,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, 1.5F, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -142,8 +142,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
     /**
      * The base class for anything that can be displayed in a row on a {@link ConfigElementList}.
-     * This contains the reset and undo buttons, breaking encapsulation a bit, but it allows simple implementations of
-     * the undo/reset buttons on the {@link ConfigScreen} that this belongs to.
+     * This contains the undo and reset buttons, breaking encapsulation a bit, but it allows simple implementations of
+     * the undo and reset buttons on the {@link ConfigScreen} that this belongs to.
      * <p>
      * Examples:
      * 1. Text only element (might be used for displaying an error message e.g. "Could not generate a widget for this
@@ -157,21 +157,21 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
      * - Has a label to display its name
      * - Has a title (its name) for use in the narrator
      * - Has a widget to interact with (view and change) its value
-     * - Has buttons to reset the value to default and undo changes to the value
+     * - Has buttons to undo changes to the value and reset the value to default
      * - Has a tooltip containing info about the config value (e.g. its comment)
      * <p>
      * 3. {@link CategoryConfigElement Element for a (sub)category in the config}
      * - Does not have a label (it displays its name on its main button)
      * - Has a title (its name) for use in the narrator
      * - Has a widget to take you to a new screen to interact with (view and change) the values in this category
-     * - Has no undo/redo buttons
+     * - Has no undo/reset buttons
      * - Has a tooltip containing info about the category (e.g. its comment) TODO: Forge currently doesn't provide translation keys for Categories
      * <p>
      * 4. Element for a List "config value" (a named value (that is a List) in a config)
      * - Does not have a label (it displays its name on its main button)
      * - Has a title (it's name) for use in the narrator
      * - Has a widget to take you to a new screen to interact with (view and change) the items in this list
-     * - Has buttons to reset the value to default and undo changes to the value
+     * - Has buttons to undo changes to the value and reset the value to default
      * - Has a tooltip containing info about the config value (e.g. its comment)
      * 5. {@link ListItemConfigElement Element for an item inside a List}
      * - Has a label to display its index
@@ -197,9 +197,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         @Nullable
         final List<ITextComponent> tooltip;
         @Nullable
-        public Button resetButton;
-        @Nullable
         public Button undoButton;
+        @Nullable
+        public Button resetButton;
 
         public ConfigElement(@Nullable ITextComponent label, ITextComponent title, @Nullable List<ITextComponent> tooltip) {
             this.label = label;
@@ -280,23 +280,23 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             return widgets.isEmpty() ? null : widgets.getFirst();
         }
 
-        @Override
-        // mouseClicked
-        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
-            for (Widget widget : widgets)
-                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
-                    return true;
-            return false;
-        }
-
-        @Override
-        // mouseReleased
-        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
-            for (Widget widget : widgets)
-                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
-                    return true;
-            return false;
-        }
+//        @Override
+//        // mouseClicked
+//        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
+//            for (Widget widget : widgets)
+//                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
+//                    return true;
+//            return false;
+//        }
+//
+//        @Override
+//        // mouseReleased
+//        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
+//            for (Widget widget : widgets)
+//                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
+//                    return true;
+//            return false;
+//        }
 
     }
 
