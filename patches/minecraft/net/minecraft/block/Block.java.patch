@@ -113,7 +113,7 @@
 +
 +   @Override
 +   public int getHarvestLevel(BlockState state) {
-+      return harvestLevel; //TODO: RE-Evaluate
++     return harvestLevel; //TODO: RE-Evaluate
 +   }
 +
 +   @Override
