@@ -23,6 +23,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A scrolling list for a {@link ConfigScreen}.
+ *
+ * @author bspkrs
+ * @author Cadiboo
+ */
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
 
     // From AbstractList#render/func_230430_a_

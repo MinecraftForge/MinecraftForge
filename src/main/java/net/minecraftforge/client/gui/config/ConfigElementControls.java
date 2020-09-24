@@ -14,6 +14,7 @@ import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigE
 import net.minecraftforge.client.gui.config.ConfigElementControls.ConfigElementWidgetData.ValueSetter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -27,9 +28,14 @@ import java.util.function.*;
 
 /**
  * Handles creating the widgets on a {@link ConfigScreen}.
- * Any of these methods can be overriden by mods wanting to add something extra to how their widgets
+ * Any of these methods can be overridden by mods wanting to add something extra to how their widgets
  * are displayed on the config screen without having to dive deeply into the guts of the GUIs.
- * To do this just create a class that extends {@link ModConfigScreen} and
+ * To do this just create a class that extends {@link ModConfigScreen}, override {@link ConfigScreen#getControlCreator()}
+ * to return a custom implementation (cache the value, don't create a new one each time it's called) and then register
+ * your constructor for the {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} extension point (the same way
+ * that {@link ModConfigScreen#makeConfigGuiExtensionPoint(ModContainer)} works.
+ *
+ * @author Cadiboo
  */
 public class ConfigElementControls {
     @SuppressWarnings("ConstantConditions") // Suppress "TextFormatting.RED.getColor() could be null"

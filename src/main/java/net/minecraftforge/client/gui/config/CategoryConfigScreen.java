@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 /**
  * A {@link ConfigScreen} for a (sub) category.
  * A category is made when you do "builder.push()" when initialising your config.
+ *
+ * @author Cadiboo
  */
 public class CategoryConfigScreen extends ConfigScreen {
     protected final ConfigCategoryInfo categoryInfo;
@@ -91,7 +93,7 @@ public class CategoryConfigScreen extends ConfigScreen {
     }
 
     static Collection<? extends ITextComponent> translateCommentWithFallback(String translationKey, String fallbackComment) {
-        // Need to handle linebreaks properly
+        // Need to handle line breaks (\n) properly
         if (translationKey != null) {
             translationKey += ".tooltip";
             TranslationTextComponent comment = new TranslationTextComponent(translationKey);
@@ -115,7 +117,6 @@ public class CategoryConfigScreen extends ConfigScreen {
                 func_230513_b_(createConfigElement(key, info));
         }
 
-        // TODO: This is a bit of a mess
         public ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
             Object raw = categoryInfo.getValue(key);
             if (raw instanceof UnmodifiableConfig) {

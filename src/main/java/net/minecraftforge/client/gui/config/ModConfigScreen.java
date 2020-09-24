@@ -21,7 +21,9 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * Makes a ConfigScreen with entries for all of a mod's registered configs.
+ * A {@link ConfigScreen} with entries for all of a mod's registered configs.
+ *
+ * @author Cadiboo
  */
 public class ModConfigScreen extends ConfigScreen {
 
@@ -37,6 +39,8 @@ public class ModConfigScreen extends ConfigScreen {
     }
 
     /**
+     * Makes a ConfigScreen with entries for all of a mod's registered configs.
+     * <p>
      * Makes a Runnable that will register a config gui factory for the ModContainer
      * BUT ONLY IF a config gui factory does not already exist for the ModContainer.
      *

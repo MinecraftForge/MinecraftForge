@@ -14,6 +14,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Popup {@link ConfigScreen} that displays and modifies a {@link List}.
+ *
+ * @author Cadiboo
+ */
 public abstract class ListConfigScreen extends ConfigScreen {
     protected final List<?> initialValue;
     protected final List<?> defaultValue;

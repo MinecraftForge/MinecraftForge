@@ -24,6 +24,17 @@ import java.util.Collections;
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?
  * - Config Screen titles
+ * - Expand ValueConfigElementData ("Provide a way to properly pass a null label")
+ * - Get someone's review on changes to ForgeConfigSpec for comments
+ * - Fix lists
+ * -> Move widget creation to ElementControls
+ * -> Change indices instead of reloading the entire view
+ * -> Localise "Nested List"
+ * - ModConfig comments to translations
+ * - Client -> Server syncing?
+ *
+ * @author bspkrs
+ * @author Cadiboo
  */
 public abstract class ConfigScreen extends Screen {
 
