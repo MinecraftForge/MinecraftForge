@@ -513,28 +513,63 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * On the server side fired when any player has their game mode changed via {@link net.minecraft.server.management.PlayerInteractionManager#setGameType(GameType)}.
-     * On the client side fired when only when the client player changes their game mode.
+     * Fired when the game type of a server player is changed to a unique value before listeners are fired.
      */
-    public static class PlayerChangeGameModeEvent extends PlayerEvent {
-        private final GameType previousGameMode;
+    @Cancelable
+    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    {
         private final GameType currentGameMode;
+        private GameType newGameMode;
 
-        public PlayerChangeGameModeEvent(PlayerEntity player, GameType previousGameMode, GameType currentGameMode)
+        public PlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
         {
             super(player);
-            this.previousGameMode = previousGameMode;
             this.currentGameMode = currentGameMode;
-        }
-
-        public GameType getPreviousGameMode()
-        {
-            return previousGameMode;
+            this.newGameMode = newGameMode;
         }
 
         public GameType getCurrentGameMode()
         {
             return currentGameMode;
+        }
+
+        public GameType getNewGameMode()
+        {
+            return newGameMode;
+        }
+
+        /**
+         * Sets the game mode the player will be changed to if this event is not cancelled.
+         */
+        public void setNewGameMode(GameType newGameMode)
+        {
+            this.newGameMode = newGameMode;
+        }
+    }
+
+    /**
+     * Fired before the client player is notified of a change in game mode from the server.
+     */
+    public static class ClientPlayerChangeGameModeEvent extends PlayerEvent
+    {
+        private final GameType currentGameMode;
+        private final GameType newGameMode;
+
+        public ClientPlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+        {
+            super(player);
+            this.currentGameMode = currentGameMode;
+            this.newGameMode = newGameMode;
+        }
+
+        public GameType getCurrentGameMode()
+        {
+            return currentGameMode;
+        }
+
+        public GameType getNewGameMode()
+        {
+            return newGameMode;
         }
     }
 }

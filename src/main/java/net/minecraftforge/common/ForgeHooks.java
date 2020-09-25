@@ -784,11 +784,22 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
-    public static void onChangeGameMode(PlayerEntity player, GameType previousGameMode, GameType currentGameMode)
+    public static boolean onChangeGameMode(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
     {
-        if (previousGameMode != currentGameMode)
+        if (currentGameMode != newGameMode)
         {
-            PlayerInteractEvent.PlayerChangeGameModeEvent evt = new PlayerInteractEvent.PlayerChangeGameModeEvent(player, previousGameMode, currentGameMode);
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+            return !evt.isCanceled();
+        }
+        return true;
+    }
+
+    public static void onClientChangeGameMode(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+    {
+        if (currentGameMode != newGameMode)
+        {
+            PlayerEvent.ClientPlayerChangeGameModeEvent evt = new PlayerEvent.ClientPlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
             MinecraftForge.EVENT_BUS.post(evt);
         }
     }
