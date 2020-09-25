@@ -34,14 +34,18 @@ public class StructureSpawnListGatherEvent extends Event
 
     private final Structure<?> structure;
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = new HashMap<>();
+    private boolean checkPositionInStructurePieces;
 
     public StructureSpawnListGatherEvent(Structure<?> structure)
     {
         this.structure = structure;
-        if (!structure.getSpawnList().isEmpty())
-            this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(structure.getSpawnList()));
-        if (!structure.getCreatureSpawnList().isEmpty())
-            this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(structure.getCreatureSpawnList()));
+        //The Pillager Outpost and Ocean Monument check the full structure by default instead of limiting themselves to being within the structure's bounds
+        //TODO: Allow custom structures to default this for themselves
+        this.checkPositionInStructurePieces = this.structure != Structure.field_236366_b_ && this.structure != Structure.field_236376_l_;
+        if (!this.structure.getSpawnList().isEmpty())
+            this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getSpawnList()));
+        if (!this.structure.getCreatureSpawnList().isEmpty())
+            this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getCreatureSpawnList()));
     }
 
     //TODO: Should we even be exposing the structure as we are doing this from the constructor
@@ -53,12 +57,28 @@ public class StructureSpawnListGatherEvent extends Event
         return structure;
     }
 
+    public void onlyCheckInsideStructurePieces()
+    {
+        this.checkPositionInStructurePieces = true;
+    }
+
+    public void checkOutsideStructurePieces()
+    {
+        this.checkPositionInStructurePieces = false;
+    }
+
+    public boolean getOnlyChecksInside()
+    {
+        return checkPositionInStructurePieces;
+    }
+
     public void addEntityClassification(EntityClassification classification)
     {
         //TODO: Should we require that they also pass a spawner in to populate this classification?
-        entitySpawns.putIfAbsent(classification, new ArrayList<>());
+        this.entitySpawns.putIfAbsent(classification, new ArrayList<>());
     }
 
+    //TODO: We probably want a better way of adding than having this map be modified directly, such as with some helpers
     public Map<EntityClassification, List<MobSpawnInfo.Spawners>> getEntitySpawns()
     {
         return entitySpawns;

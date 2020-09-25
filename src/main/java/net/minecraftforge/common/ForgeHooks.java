@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -150,7 +148,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
-import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
@@ -1105,18 +1102,6 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
-    public static Map<EntityClassification, List<MobSpawnInfo.Spawners>> gatherEntitySpawns(Structure<?> structure)
-    {
-        StructureSpawnListGatherEvent event = new StructureSpawnListGatherEvent(structure);
-        MinecraftForge.EVENT_BUS.post(event);
-        ImmutableMap.Builder<net.minecraft.entity.EntityClassification, List<MobSpawnInfo.Spawners>> builder = ImmutableMap.builder();
-        event.getEntitySpawns().forEach((classification, spawns) -> {
-            if (!spawns.isEmpty())
-                builder.put(classification, ImmutableList.copyOf(spawns));
-        });
-        return builder.build();
-    }
-
     @Nullable
     public static List<MobSpawnInfo.Spawners> getStructureSpawns(StructureManager structureManager, EntityClassification classification, BlockPos pos)
     {
@@ -1136,7 +1121,7 @@ public class ForgeHooks
         for (Structure<?> structure : structures)
         {
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (structure.hasSpawnsFor(classification) && structure.isPositionInBoundsForSpawning(structureManager, pos))
+            if (structure.hasSpawnsFor(classification) && structureManager.func_235010_a_(pos, structure.checkSpawnPositionInStructurePieces(), structure).isValid())
             {
                 return structure.getSpawnList(classification);
             }
