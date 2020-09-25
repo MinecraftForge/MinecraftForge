@@ -27,7 +27,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.BackgroundMusicSelector;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
@@ -732,11 +731,11 @@ public class ForgeHooksClient
         return event;
     }
 
-    public static BackgroundMusicSelector getMusicSelector(MusicTicker musicTicker, Minecraft mc, @Nullable ISound currentMusic, int timeUntilNextMusic, BackgroundMusicSelector _default)
+    public static BackgroundMusicSelector getMusicSelector(@Nullable ISound currentMusic, BackgroundMusicSelector defaultSelector)
     {
-        BackgroundMusicSelectionEvent event = new BackgroundMusicSelectionEvent(musicTicker, mc, currentMusic, timeUntilNextMusic, _default);
+        BackgroundMusicSelectionEvent event = new BackgroundMusicSelectionEvent(currentMusic, defaultSelector);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getNewBackgroundMusicSelector() != null ? event.getNewBackgroundMusicSelector() : _default;
+        return event.getBackgroundMusicSelector();
     }
 
     public static void drawItemLayered(ItemRenderer renderer, IBakedModel modelIn, ItemStack itemStackIn, MatrixStack matrixStackIn,

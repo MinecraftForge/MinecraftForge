@@ -5,7 +5,7 @@
  
     public void func_73660_a() {
 -      BackgroundMusicSelector backgroundmusicselector = this.field_147677_b.func_238178_U_();
-+      BackgroundMusicSelector backgroundmusicselector = net.minecraftforge.client.ForgeHooksClient.getMusicSelector(this, this.field_147677_b, this.field_147678_c, this.field_147676_d, this.field_147677_b.func_238178_U_());
++      BackgroundMusicSelector backgroundmusicselector = net.minecraftforge.client.ForgeHooksClient.getMusicSelector(this.field_147678_c, this.field_147677_b.func_238178_U_());
        if (this.field_147678_c != null) {
           if (!backgroundmusicselector.func_232661_a_().func_187503_a().equals(this.field_147678_c.func_147650_b()) && backgroundmusicselector.func_232668_d_()) {
              this.field_147677_b.func_147118_V().func_147683_b(this.field_147678_c);
