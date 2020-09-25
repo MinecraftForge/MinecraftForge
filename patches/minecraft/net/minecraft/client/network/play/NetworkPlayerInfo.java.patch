@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/network/play/NetworkPlayerInfo.java
++++ b/net/minecraft/client/network/play/NetworkPlayerInfo.java
+@@ -50,7 +50,9 @@
+    }
+ 
+    protected void func_178839_a(GameType p_178839_1_) {
+-      this.field_178866_b = p_178839_1_;
++       GameType oldGameType = this.field_178866_b;
++       this.field_178866_b = p_178839_1_;
++       if(Minecraft.func_71410_x().field_71439_g != null && this.field_178867_a.getId().equals(Minecraft.func_71410_x().field_71439_g.func_110124_au())) net.minecraftforge.common.ForgeHooks.onChangeGameMode(Minecraft.func_71410_x().field_71439_g, p_178839_1_, oldGameType);
+    }
+ 
+    public int func_178853_c() {

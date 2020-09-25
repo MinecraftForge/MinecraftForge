@@ -25,6 +25,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -508,6 +509,32 @@ public class PlayerEvent extends LivingEvent
         public RegistryKey<World> getTo()
         {
             return this.toDim;
+        }
+    }
+
+    /**
+     * On the server side fired when any player has their game mode changed via {@link net.minecraft.server.management.PlayerInteractionManager#setGameType(GameType)}.
+     * On the client side fired when only when the client player changes their game mode.
+     */
+    public static class PlayerChangeGameModeEvent extends PlayerEvent {
+        private final GameType previousGameMode;
+        private final GameType currentGameMode;
+
+        public PlayerChangeGameModeEvent(PlayerEntity player, GameType previousGameMode, GameType currentGameMode)
+        {
+            super(player);
+            this.previousGameMode = previousGameMode;
+            this.currentGameMode = currentGameMode;
+        }
+
+        public GameType getPreviousGameMode()
+        {
+            return previousGameMode;
+        }
+
+        public GameType getCurrentGameMode()
+        {
+            return currentGameMode;
         }
     }
 }

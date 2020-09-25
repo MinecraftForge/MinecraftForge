@@ -784,6 +784,15 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
+    public static void onChangeGameMode(PlayerEntity player, GameType previousGameMode, GameType currentGameMode)
+    {
+        if (previousGameMode != currentGameMode)
+        {
+            PlayerInteractEvent.PlayerChangeGameModeEvent evt = new PlayerInteractEvent.PlayerChangeGameModeEvent(player, previousGameMode, currentGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+        }
+    }
+
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
     private static LootTableContext getLootTableContext()
     {
