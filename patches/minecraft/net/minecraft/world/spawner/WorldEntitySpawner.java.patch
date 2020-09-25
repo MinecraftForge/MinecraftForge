@@ -35,6 +35,15 @@
           return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
        }
     }
+@@ -262,7 +265,7 @@
+    }
+ 
+    private static List<MobSpawnInfo.Spawners> func_241463_a_(ServerWorld p_241463_0_, StructureManager p_241463_1_, ChunkGenerator p_241463_2_, EntityClassification p_241463_3_, BlockPos p_241463_4_, @Nullable Biome p_241463_5_) {
+-      return p_241463_3_ == EntityClassification.MONSTER && p_241463_0_.func_180495_p(p_241463_4_.func_177977_b()).func_177230_c() == Blocks.field_196653_dH && p_241463_1_.func_235010_a_(p_241463_4_, false, Structure.field_236378_n_).func_75069_d() ? Structure.field_236378_n_.func_202279_e() : p_241463_2_.func_230353_a_(p_241463_5_ != null ? p_241463_5_ : p_241463_0_.func_226691_t_(p_241463_4_), p_241463_1_, p_241463_3_, p_241463_4_);
++      return p_241463_3_ == EntityClassification.MONSTER && p_241463_0_.func_180495_p(p_241463_4_.func_177977_b()).func_177230_c() == Blocks.field_196653_dH && p_241463_1_.func_235010_a_(p_241463_4_, false, Structure.field_236378_n_).func_75069_d() ? Structure.field_236378_n_.getSpawnList(p_241463_3_) : p_241463_2_.func_230353_a_(p_241463_5_ != null ? p_241463_5_ : p_241463_0_.func_226691_t_(p_241463_4_), p_241463_1_, p_241463_3_, p_241463_4_);
+    }
+ 
+    private static BlockPos func_222262_a(World p_222262_0_, Chunk p_222262_1_) {
 @@ -292,6 +295,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;

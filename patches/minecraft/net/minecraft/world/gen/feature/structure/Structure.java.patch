@@ -5,7 +5,48 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Structure<C extends IFeatureConfig> {
-+public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> {
++public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> implements net.minecraftforge.common.extensions.IForgeStructure {
     public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
     private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
     private static final Logger field_208204_b = LogManager.getLogger();
+@@ -64,6 +64,7 @@
+    private static final ResourceLocation field_242783_w = new ResourceLocation("jigsaw");
+    private static final Map<ResourceLocation, ResourceLocation> field_242784_x = ImmutableMap.<ResourceLocation, ResourceLocation>builder().put(new ResourceLocation("nvi"), field_242783_w).put(new ResourceLocation("pcp"), field_242783_w).put(new ResourceLocation("bastionremnant"), field_242783_w).put(new ResourceLocation("runtime"), field_242783_w).build();
+    private final Codec<StructureFeature<C, Structure<C>>> field_236386_w_;
++   private final Map<net.minecraft.entity.EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns;
+ 
+    private static <F extends Structure<?>> F func_236394_a_(String p_236394_0_, F p_236394_1_, GenerationStage.Decoration p_236394_2_) {
+       field_236365_a_.put(p_236394_0_.toLowerCase(Locale.ROOT), p_236394_1_);
+@@ -77,6 +78,7 @@
+       }, (p_236390_0_) -> {
+          return p_236390_0_.field_236269_c_;
+       }).codec();
++      entitySpawns = net.minecraftforge.common.ForgeHooks.gatherEntitySpawns(this);
+    }
+ 
+    public GenerationStage.Decoration func_236396_f_() {
+@@ -236,14 +238,24 @@
+       return field_236365_a_.inverse().get(this);
+    }
+ 
++   @Deprecated//Forge: Call via getSpawnList(EntityClassification.MONSTER), overriding is fine and is used to supply defaults
+    public List<MobSpawnInfo.Spawners> func_202279_e() {
+       return ImmutableList.of();
+    }
+ 
++   @Deprecated//Forge: Call via getSpawnList(EntityClassification.CREATURE), overriding is fine and is used to supply defaults
+    public List<MobSpawnInfo.Spawners> func_214469_f() {
+       return ImmutableList.of();
+    }
+ 
++   @Override public List<MobSpawnInfo.Spawners> getSpawnList(net.minecraft.entity.EntityClassification classification) {
++      return entitySpawns.getOrDefault(classification, java.util.Collections.emptyList());
++   }
++
++   @Override public boolean hasSpawnsFor(net.minecraft.entity.EntityClassification classification) {
++      return entitySpawns.containsKey(classification);
++   }
++
+    public interface IStartFactory<C extends IFeatureConfig> {
+       StructureStart<C> create(Structure<C> p_create_1_, int p_create_2_, int p_create_3_, MutableBoundingBox p_create_4_, int p_create_5_, long p_create_6_);
+    }
