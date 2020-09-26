@@ -34,6 +34,7 @@ import net.minecraft.world.biome.Biome;
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
+    private static final List<RegistryKey<Biome>> additionalOverworldBiomes = new ArrayList<>();
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -97,11 +98,23 @@ public class BiomeManager
     }
     */
 
+    /**
+     * Add biomes that you add to the overworld without using {@link BiomeManager#addBiome(BiomeType, BiomeEntry)}
+     */
+    public static void addAdditionalOverworldBiomes(List<RegistryKey<Biome>> biomes){
+        additionalOverworldBiomes.addAll(biomes);
+    }
+
     public static boolean addBiome(BiomeType type, BiomeEntry entry)
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-        return list == null ? false : list.add(entry);
+        if(list != null)
+        {
+            additionalOverworldBiomes.add(entry.key);
+            return list.add(entry);
+        }
+        return false;
     }
 
     public static boolean removeBiome(BiomeType type, BiomeEntry entry)
@@ -109,6 +122,14 @@ public class BiomeManager
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
         return list == null ? false : list.remove(entry);
+    }
+
+    /**
+     * @return list of biomes that might be generated in the overworld in addition to the vanilla biomes
+     */
+    public static List<RegistryKey<Biome>> getAdditionalOverworldBiomes()
+    {
+        return additionalOverworldBiomes;
     }
 
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
