@@ -101,8 +101,11 @@ public class BiomeManager
     /**
      * Add biomes that you add to the overworld without using {@link BiomeManager#addBiome(BiomeType, BiomeEntry)}
      */
-    public static void addAdditionalOverworldBiomes(List<RegistryKey<Biome>> biomes){
-        additionalOverworldBiomes.addAll(biomes);
+    public static void addAdditionalOverworldBiomes(RegistryKey<Biome> biome){
+        if (!"minecraft".equals(biome.func_240901_a_().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.compareTo(biome) == 0))
+        {
+            additionalOverworldBiomes.add(biome);
+        }
     }
 
     public static boolean addBiome(BiomeType type, BiomeEntry entry)
