@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/LlamaModel.java
++++ b/net/minecraft/client/renderer/entity/model/LlamaModel.java
+@@ -106,4 +106,5 @@
+       }
+ 
+    }
++   public Iterable<ModelRenderer> getModelParts() {return com.google.common.collect.ImmutableList.of(field_228273_a_, field_228274_b_, field_228275_f_, field_228276_g_, field_228277_h_, field_228278_i_, field_191226_i, field_191227_j);};
+ }

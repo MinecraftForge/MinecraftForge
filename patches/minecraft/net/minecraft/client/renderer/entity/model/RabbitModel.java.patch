@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/RabbitModel.java
++++ b/net/minecraft/client/renderer/entity/model/RabbitModel.java
+@@ -145,4 +145,5 @@
+       super.func_212843_a_(p_212843_1_, p_212843_2_, p_212843_3_, p_212843_4_);
+       this.field_178701_m = MathHelper.func_76126_a(p_212843_1_.func_175521_o(p_212843_4_) * (float)Math.PI);
+    }
++   public Iterable<ModelRenderer> getModelParts(){return com.google.common.collect.ImmutableList.of(field_178698_a, field_178696_b, field_178697_c, field_178694_d, field_178695_e, field_178692_f, field_178693_g, field_178704_h, field_178705_i, field_178702_j, field_178703_k, field_178700_l);}
+ }

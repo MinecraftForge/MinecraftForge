@@ -1,0 +1,9 @@
+--- a/net/minecraft/client/renderer/entity/EnderDragonRenderer.java
++++ b/net/minecraft/client/renderer/entity/EnderDragonRenderer.java
+@@ -381,5 +381,6 @@
+          p_229081_7_.func_228308_a_(p_229081_1_, p_229081_2_, p_229081_3_, p_229081_4_);
+          p_229081_10_.func_228308_a_(p_229081_1_, p_229081_2_, p_229081_3_, p_229081_4_);
+       }
++      public Iterable<ModelRenderer> getModelParts() {return com.google.common.collect.ImmutableList.of(field_78221_a, field_78219_b, field_78220_c, field_78217_d, field_229065_h_, field_229066_i_, field_229067_j_, field_229068_k_, field_229069_l_, field_229070_m_, field_229071_n_, field_229072_o_, field_229073_p_, field_229074_t_, field_229075_u_, field_229076_v_, field_229077_w_, field_229078_x_, field_229079_y_, field_229080_z_);}
+    }
+ }

@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/ShieldModel.java
++++ b/net/minecraft/client/renderer/entity/model/ShieldModel.java
+@@ -35,4 +35,5 @@
+       this.field_187063_a.func_228309_a_(p_225598_1_, p_225598_2_, p_225598_3_, p_225598_4_, p_225598_5_, p_225598_6_, p_225598_7_, p_225598_8_);
+       this.field_187064_b.func_228309_a_(p_225598_1_, p_225598_2_, p_225598_3_, p_225598_4_, p_225598_5_, p_225598_6_, p_225598_7_, p_225598_8_);
+    }
++   public Iterable<ModelRenderer> getModelParts(){return com.google.common.collect.ImmutableList.of(field_187063_a, field_187064_b);}
+ }

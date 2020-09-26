@@ -1,0 +1,9 @@
+--- a/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
+@@ -108,5 +108,6 @@
+          this.field_78166_a.func_228309_a_(p_225598_1_, p_225598_2_, p_225598_3_, p_225598_4_, p_225598_5_, p_225598_6_, p_225598_7_, p_225598_8_);
+          this.field_78165_b.func_228309_a_(p_225598_1_, p_225598_2_, p_225598_3_, p_225598_4_, p_225598_5_, p_225598_6_, p_225598_7_, p_225598_8_);
+       }
++      public Iterable<ModelRenderer> getModelParts() {return com.google.common.collect.ImmutableList.of(field_78166_a, field_78165_b);}
+    }
+ }

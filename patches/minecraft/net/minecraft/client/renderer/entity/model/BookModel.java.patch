@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/BookModel.java
++++ b/net/minecraft/client/renderer/entity/model/BookModel.java
+@@ -57,4 +57,5 @@
+       this.field_78099_e.field_78800_c = MathHelper.func_76126_a(f);
+       this.field_78096_f.field_78800_c = MathHelper.func_76126_a(f);
+    }
++   public Iterable<ModelRenderer> getModelParts(){return field_228246_h_;}
+ }

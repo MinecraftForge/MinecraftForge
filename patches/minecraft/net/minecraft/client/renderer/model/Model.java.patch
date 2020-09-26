@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/model/Model.java
++++ b/net/minecraft/client/renderer/model/Model.java
+@@ -27,4 +27,5 @@
+    }
+ 
+    public abstract void func_225598_a_(MatrixStack p_225598_1_, IVertexBuilder p_225598_2_, int p_225598_3_, int p_225598_4_, float p_225598_5_, float p_225598_6_, float p_225598_7_, float p_225598_8_);
++   public abstract Iterable<ModelRenderer> getModelParts(); //forge
+ }

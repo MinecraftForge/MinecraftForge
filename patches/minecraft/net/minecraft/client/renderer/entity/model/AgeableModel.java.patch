@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/AgeableModel.java
++++ b/net/minecraft/client/renderer/entity/model/AgeableModel.java
+@@ -76,4 +76,5 @@
+    protected abstract Iterable<ModelRenderer> func_225602_a_();
+ 
+    protected abstract Iterable<ModelRenderer> func_225600_b_();
++   public Iterable<ModelRenderer> getModelParts(){return com.google.common.collect.Iterables.concat(func_225602_a_(), func_225600_b_());}
+ }

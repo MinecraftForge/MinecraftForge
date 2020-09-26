@@ -1,0 +1,8 @@
+--- a/net/minecraft/client/renderer/entity/model/SegmentedModel.java
++++ b/net/minecraft/client/renderer/entity/model/SegmentedModel.java
+@@ -27,4 +27,5 @@
+    }
+ 
+    public abstract Iterable<ModelRenderer> func_225601_a_();
++   public Iterable<ModelRenderer> getModelParts(){return func_225601_a_();};
+ }
