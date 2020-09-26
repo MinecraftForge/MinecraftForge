@@ -1,6 +1,26 @@
 --- a/net/minecraft/entity/monster/AbstractSkeletonEntity.java
 +++ b/net/minecraft/entity/monster/AbstractSkeletonEntity.java
-@@ -155,7 +155,7 @@
+@@ -45,6 +45,8 @@
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.IServerWorld;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingBurnBySunlightEvent;
+ 
+ public abstract class AbstractSkeletonEntity extends MonsterEntity implements IRangedAttackMob {
+    private final RangedBowAttackGoal<AbstractSkeletonEntity> field_85037_d = new RangedBowAttackGoal<>(this, 1.0D, 20, 15.0F);
+@@ -109,7 +111,9 @@
+          }
+ 
+          if (flag) {
+-            this.func_70015_d(8);
++            LivingBurnBySunlightEvent burnEvent = new LivingBurnBySunlightEvent(this, 8);
++            MinecraftForge.EVENT_BUS.post(burnEvent);
++            this.func_70015_d(burnEvent.getDuration());
+          }
+       }
+ 
+@@ -155,7 +159,7 @@
           this.field_70714_bg.func_85156_a(this.field_85038_e);
           this.field_70714_bg.func_85156_a(this.field_85037_d);
           ItemStack itemstack = this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f));
@@ -9,7 +29,7 @@
              int i = 20;
              if (this.field_70170_p.func_175659_aa() != Difficulty.HARD) {
                 i = 40;
-@@ -173,6 +173,8 @@
+@@ -173,6 +177,8 @@
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
        ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);

@@ -1,6 +1,26 @@
 --- a/net/minecraft/entity/monster/PhantomEntity.java
 +++ b/net/minecraft/entity/monster/PhantomEntity.java
-@@ -214,7 +214,7 @@
+@@ -41,6 +41,8 @@
+ import net.minecraft.world.gen.Heightmap;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingBurnBySunlightEvent;
+ 
+ public class PhantomEntity extends FlyingEntity implements IMob {
+    private static final DataParameter<Integer> field_203035_a = EntityDataManager.func_187226_a(PhantomEntity.class, DataSerializers.field_187192_b);
+@@ -121,7 +123,9 @@
+ 
+    public void func_70636_d() {
+       if (this.func_70089_S() && this.func_204609_dp()) {
+-         this.func_70015_d(8);
++         LivingBurnBySunlightEvent burnEvent = new LivingBurnBySunlightEvent(this, 8);
++         MinecraftForge.EVENT_BUS.post(burnEvent);
++         this.func_70015_d(burnEvent.getDuration());
+       }
+ 
+       super.func_70636_d();
+@@ -214,7 +218,7 @@
              this.field_203142_b = 60;
              List<PlayerEntity> list = PhantomEntity.this.field_70170_p.func_217373_a(this.field_220842_b, PhantomEntity.this, PhantomEntity.this.func_174813_aQ().func_72314_b(16.0D, 64.0D, 16.0D));
              if (!list.isEmpty()) {
