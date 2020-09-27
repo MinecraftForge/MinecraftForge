@@ -1,4 +1,3 @@
-  
 /*
  * Minecraft Forge
  * Copyright (c) 2016-2020.
@@ -25,15 +24,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 
 /**
- * Use {@link ISkyRenderHandler} instead.
- *
- * todo: remove in 1.17
+ * Call {@link net.minecraft.client.world.DimensionRenderInfo#setCloudRenderHandler(ICloudRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all cloud rendering with your own.
+ * This is only responsible for rendering clouds.
  */
-@Deprecated
-public interface SkyRenderHandler extends IRenderHandler {
-	@Override
-	default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}
-
-	void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
-
+@FunctionalInterface
+public interface ICloudRenderHandler {
+    void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc, double viewEntityX, double viewEntityY, double viewEntityZ);
 }

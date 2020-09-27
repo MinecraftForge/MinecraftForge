@@ -119,9 +119,14 @@ public class NetworkHooks
         FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }*/
 
-    public static void handleClientLoginSuccess(NetworkManager manager) {
+    public static boolean isVanillaConnection(NetworkManager manager)
+    {
         if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
-        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+        return getConnectionType(() -> manager) == ConnectionType.VANILLA;
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (isVanillaConnection(manager)) {
             LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();
         } else {

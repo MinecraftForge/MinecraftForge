@@ -22,10 +22,16 @@ package net.minecraftforge.debug;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod("potion_event_test")
 @Mod.EventBusSubscriber
@@ -33,6 +39,16 @@ public class PotionEventTest
 {
     private static Logger LOGGER = LogManager.getLogger(PotionEventTest.class);
 
+    public PotionEventTest()
+    {
+    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSetup);
+    }
+    
+    private void onSetup(FMLCommonSetupEvent event)
+    {
+    	BrewingRecipeRegistry.addRecipe(Ingredient.fromItems(Items.ICE), Ingredient.fromItems(Items.LAVA_BUCKET), new ItemStack(Items.OBSIDIAN));
+    }
+    
     @SubscribeEvent
     public static void onPotionAdded(PotionEvent.PotionAddedEvent event)
     {

@@ -61,7 +61,7 @@ public class ModLoadingException extends RuntimeException
     }
 
     static Stream<ModLoadingException> fromEarlyException(final EarlyLoadingException e) {
-        return e.getAllData().stream().map(ed->new ModLoadingException(null, ModLoadingStage.VALIDATE, ed.getI18message(), e.getCause(), ed.getArgs()));
+        return e.getAllData().stream().map(ed->new ModLoadingException(ed.getModInfo(), ModLoadingStage.VALIDATE, ed.getI18message(), e.getCause(), ed.getArgs()));
     }
 
     public String getI18NMessage() {

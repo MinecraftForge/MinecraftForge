@@ -8,3 +8,11 @@
     }
  
     public FunctionReloader func_240960_a_() {
+@@ -81,6 +82,7 @@
+ 
+    public void func_240971_i_() {
+       this.field_240955_e_.func_242231_a().func_242212_e();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.CustomTagTypes(field_240955_e_.func_242231_a()));
+    }
+ 
+    public void close() {
