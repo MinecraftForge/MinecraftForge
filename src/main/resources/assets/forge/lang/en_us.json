@@ -58,6 +58,7 @@
   "fml.modloading.brokenfile.optifine": "File {2} is an incompatible version of OptiFine",
   "fml.modloading.brokenfile.invalidzip": "File {2} is not a jar file",
   "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
+  "fml.modloading.missinglicense": "Missing License Information in file {3}",
   "fml.resources.modresources": "Resources for {0} mod files",
 
   "fml.messages.artifactversion.ornotinstalled":"{0,ornull,fml.messages.artifactversion.notinstalled}",
