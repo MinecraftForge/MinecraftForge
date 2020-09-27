@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/surfacebuilders/DefaultSurfaceBuilder.java
++++ b/net/minecraft/world/gen/surfacebuilders/DefaultSurfaceBuilder.java
+@@ -42,7 +42,7 @@
+                }
+ 
+                if (i1 < p_206967_14_ && (blockstate == null || blockstate.func_196958_f())) {
+-                  if (p_206967_3_.func_225486_c(blockpos$mutable.func_181079_c(p_206967_4_, i1, p_206967_5_)) < 0.15F) {
++                  if (p_206967_3_.getTemperature(null, blockpos$mutable.func_181079_c(p_206967_4_, i1, p_206967_5_)) < 0.15F) {
+                      blockstate = Blocks.field_150432_aD.func_176223_P();
+                   } else {
+                      blockstate = p_206967_10_;

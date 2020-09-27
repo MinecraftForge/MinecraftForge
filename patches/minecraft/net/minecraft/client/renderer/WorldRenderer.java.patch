@@ -12,6 +12,33 @@
        float f = this.field_72777_q.field_71441_e.func_72867_j(p_228438_2_);
        if (!(f <= 0.0F)) {
           p_228438_1_.func_205109_c();
+@@ -256,7 +261,7 @@
+                double d1 = (double)this.field_228412_al_[l1] * 0.5D;
+                blockpos$mutable.func_181079_c(k1, 0, j1);
+                Biome biome = world.func_226691_t_(blockpos$mutable);
+-               if (biome.func_201851_b() != Biome.RainType.NONE) {
++               if (biome.getPrecipitation(world, blockpos$mutable) != Biome.RainType.NONE) {
+                   int i2 = world.func_205770_a(Heightmap.Type.MOTION_BLOCKING, blockpos$mutable).func_177956_o();
+                   int j2 = j - l;
+                   int k2 = j + l;
+@@ -276,7 +281,7 @@
+                   if (j2 != k2) {
+                      Random random = new Random((long)(k1 * k1 * 3121 + k1 * 45238971 ^ j1 * j1 * 418711 + j1 * 13761));
+                      blockpos$mutable.func_181079_c(k1, j2, j1);
+-                     float f2 = biome.func_225486_c(blockpos$mutable);
++                     float f2 = biome.getTemperature(world, blockpos$mutable);
+                      if (f2 >= 0.15F) {
+                         if (i1 != 0) {
+                            if (i1 >= 0) {
+@@ -360,7 +365,7 @@
+             int l = random.nextInt(21) - 10;
+             BlockPos blockpos2 = iworldreader.func_205770_a(Heightmap.Type.MOTION_BLOCKING, blockpos.func_177982_a(k, 0, l)).func_177977_b();
+             Biome biome = iworldreader.func_226691_t_(blockpos2);
+-            if (blockpos2.func_177956_o() > 0 && blockpos2.func_177956_o() <= blockpos.func_177956_o() + 10 && blockpos2.func_177956_o() >= blockpos.func_177956_o() - 10 && biome.func_201851_b() == Biome.RainType.RAIN && biome.func_225486_c(blockpos2) >= 0.15F) {
++            if (blockpos2.func_177956_o() > 0 && blockpos2.func_177956_o() <= blockpos.func_177956_o() + 10 && blockpos2.func_177956_o() >= blockpos.func_177956_o() - 10 && biome.getPrecipitation(field_72769_h, blockpos2) == Biome.RainType.RAIN && biome.getTemperature(field_72769_h, blockpos2) >= 0.15F) {
+                blockpos1 = blockpos2;
+                if (this.field_72777_q.field_71474_y.field_74362_aa == ParticleStatus.MINIMAL) {
+                   break;
 @@ -830,7 +835,7 @@
              this.field_147595_R = true;
              BlockPos blockpos2 = chunkrenderdispatcher$chunkrender4.func_178568_j().func_177982_a(8, 8, 8);

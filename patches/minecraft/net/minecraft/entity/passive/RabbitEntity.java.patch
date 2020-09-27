@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/passive/RabbitEntity.java
 +++ b/net/minecraft/entity/passive/RabbitEntity.java
+@@ -345,7 +345,7 @@
+    private int func_213610_a(IWorld p_213610_1_) {
+       Biome biome = p_213610_1_.func_226691_t_(this.func_233580_cy_());
+       int i = this.field_70146_Z.nextInt(100);
+-      if (biome.func_201851_b() == Biome.RainType.SNOW) {
++      if (biome.getPrecipitation(p_213610_1_, func_233580_cy_()) == Biome.RainType.SNOW) {
+          return i < 80 ? 1 : 3;
+       } else if (biome.func_201856_r() == Biome.Category.DESERT) {
+          return 4;
 @@ -500,7 +500,7 @@
  
        public boolean func_75250_a() {

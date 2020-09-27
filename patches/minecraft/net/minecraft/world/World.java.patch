@@ -361,6 +361,15 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
+@@ -892,7 +956,7 @@
+          return false;
+       } else {
+          Biome biome = this.func_226691_t_(p_175727_1_);
+-         return biome.func_201851_b() == Biome.RainType.RAIN && biome.func_225486_c(p_175727_1_) >= 0.15F;
++         return biome.getPrecipitation(this, p_175727_1_) == Biome.RainType.RAIN && biome.getTemperature(this, p_175727_1_) >= 0.15F;
+       }
+    }
+ 
 @@ -939,16 +1003,15 @@
     public abstract Scoreboard func_96441_U();
  

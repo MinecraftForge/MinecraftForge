@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/gen/surfacebuilders/FrozenOceanSurfaceBuilder.java
++++ b/net/minecraft/world/gen/surfacebuilders/FrozenOceanSurfaceBuilder.java
+@@ -31,7 +31,7 @@
+       double d0 = 0.0D;
+       double d1 = 0.0D;
+       BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+-      float f = p_205610_3_.func_225486_c(blockpos$mutable.func_181079_c(p_205610_4_, 63, p_205610_5_));
++      float f = p_205610_3_.getTemperature(null, blockpos$mutable.func_181079_c(p_205610_4_, 63, p_205610_5_));
+       double d2 = Math.min(Math.abs(p_205610_7_), this.field_205199_h.func_215464_a((double)p_205610_4_ * 0.1D, (double)p_205610_5_ * 0.1D, false) * 15.0D);
+       if (d2 > 1.8D) {
+          double d3 = 0.09765625D;
+@@ -93,7 +93,7 @@
+             }
+ 
+             if (k1 < p_205610_11_ && (blockstate2 == null || blockstate2.func_196958_f())) {
+-               if (p_205610_3_.func_225486_c(blockpos$mutable.func_181079_c(p_205610_4_, k1, p_205610_5_)) < 0.15F) {
++               if (p_205610_3_.getTemperature(null, blockpos$mutable.func_181079_c(p_205610_4_, k1, p_205610_5_)) < 0.15F) {
+                   blockstate2 = field_205197_f;
+                } else {
+                   blockstate2 = p_205610_10_;

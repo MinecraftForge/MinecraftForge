@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/CauldronBlock.java
++++ b/net/minecraft/block/CauldronBlock.java
+@@ -192,7 +192,7 @@
+ 
+    public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
+       if (p_176224_1_.field_73012_v.nextInt(20) == 1) {
+-         float f = p_176224_1_.func_226691_t_(p_176224_2_).func_225486_c(p_176224_2_);
++         float f = p_176224_1_.func_226691_t_(p_176224_2_).getTemperature(p_176224_1_, p_176224_2_);
+          if (!(f < 0.15F)) {
+             BlockState blockstate = p_176224_1_.func_180495_p(p_176224_2_);
+             if (blockstate.func_177229_b(field_176591_a) < 3) {

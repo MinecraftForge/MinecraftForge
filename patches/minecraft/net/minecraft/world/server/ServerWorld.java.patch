@@ -78,6 +78,15 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
+@@ -478,7 +484,7 @@
+             this.func_175656_a(blockpos2, Blocks.field_150433_aE.func_176223_P());
+          }
+ 
+-         if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
++         if (flag && this.func_226691_t_(blockpos3).getPrecipitation(this, blockpos3) == Biome.RainType.RAIN) {
+             this.func_180495_p(blockpos3).func_177230_c().func_176224_k(this, blockpos3);
+          }
+       }
 @@ -593,9 +599,10 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();

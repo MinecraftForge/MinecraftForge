@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public final class Biome {
-+public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
++public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> implements net.minecraftforge.common.world.IForgeBiome {
     public static final Logger field_150586_aC = LogManager.getLogger();
     public static final Codec<Biome> field_242418_b = RecordCodecBuilder.create((p_235064_0_) -> {
        return p_235064_0_.group(Biome.Climate.field_242459_a.forGetter((p_242446_0_) -> {
@@ -20,7 +20,58 @@
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {
-@@ -200,7 +202,7 @@
+@@ -83,9 +85,8 @@
+          return p_242434_0_.field_76749_E;
+       }), BiomeAmbience.field_235204_a_.fieldOf("effects").forGetter((p_242429_0_) -> {
+          return p_242429_0_.field_235052_p_;
+-      })).apply(p_242432_0_, (p_242428_0_, p_242428_1_, p_242428_2_, p_242428_3_, p_242428_4_) -> {
+-         return new Biome(p_242428_0_, p_242428_1_, p_242428_2_, p_242428_3_, p_242428_4_, BiomeGenerationSettings.field_242480_b, MobSpawnInfo.field_242551_b);
+-      });
++      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName))
++      .apply(p_242432_0_, (climate, category, depth, scale, effects, name) -> net.minecraftforge.common.ForgeHooks.addBiomeBehavior(name, new Biome(climate, category, depth, scale, effects, BiomeGenerationSettings.field_242480_b, MobSpawnInfo.field_242551_b)));
+    });
+    public static final Codec<Supplier<Biome>> field_235051_b_ = RegistryKeyCodec.func_241794_a_(Registry.field_239720_u_, field_242418_b);
+    public static final Codec<List<Supplier<Biome>>> field_242420_e = RegistryKeyCodec.func_244328_b(Registry.field_239720_u_, field_242418_b);
+@@ -112,6 +113,7 @@
+          return long2floatlinkedopenhashmap;
+       });
+    });
++   private net.minecraftforge.common.world.IBiomeBehavior biomeBehavior;
+ 
+    private Biome(Biome.Climate p_i241927_1_, Biome.Category p_i241927_2_, float p_i241927_3_, float p_i241927_4_, BiomeAmbience p_i241927_5_, BiomeGenerationSettings p_i241927_6_, MobSpawnInfo p_i241927_7_) {
+       this.field_242423_j = p_i241927_1_;
+@@ -132,6 +134,7 @@
+       return this.field_242425_l;
+    }
+ 
++   @Deprecated // Call IForgeBiome.getPrecipitation(IWorld, BlockPos) whenever possible
+    public Biome.RainType func_201851_b() {
+       return this.field_242423_j.field_242460_b;
+    }
+@@ -150,6 +153,7 @@
+       }
+    }
+ 
++   @Deprecated // FORGE: Call IForgeBiome.getTemperature(IWorld, BlockPos) whenever possible
+    public final float func_225486_c(BlockPos p_225486_1_) {
+       long i = p_225486_1_.func_218275_a();
+       Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.field_225488_v.get();
+@@ -172,7 +176,7 @@
+    }
+ 
+    public boolean func_201854_a(IWorldReader p_201854_1_, BlockPos p_201854_2_, boolean p_201854_3_) {
+-      if (this.func_225486_c(p_201854_2_) >= 0.15F) {
++      if (this.getTemperature(p_201854_1_, p_201854_2_) >= 0.15F) {
+          return false;
+       } else {
+          if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256 && p_201854_1_.func_226658_a_(LightType.BLOCK, p_201854_2_) < 10) {
+@@ -195,12 +199,12 @@
+    }
+ 
+    public boolean func_201850_b(IWorldReader p_201850_1_, BlockPos p_201850_2_) {
+-      if (this.func_225486_c(p_201850_2_) >= 0.15F) {
++      if (this.getTemperature(p_201850_1_, p_201850_2_) >= 0.15F) {
+          return false;
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_226658_a_(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
@@ -29,3 +80,19 @@
                 return true;
              }
           }
+@@ -365,6 +369,15 @@
+       return resourcelocation == null ? super.toString() : resourcelocation.toString();
+    }
+ 
++   // FORGE: Allow modders to have control over their own biomes
++   public void setBehavior(net.minecraftforge.common.world.IBiomeBehavior modBiome) {
++      this.biomeBehavior = modBiome;
++   }
++   @Nullable
++   public net.minecraftforge.common.world.IBiomeBehavior getBehavior() {
++      return biomeBehavior;
++   }
++
+    public static class Attributes {
+       public static final Codec<Biome.Attributes> field_235104_a_ = RecordCodecBuilder.create((p_235111_0_) -> {
+          return p_235111_0_.group(Codec.floatRange(-2.0F, 2.0F).fieldOf("temperature").forGetter((p_235116_0_) -> {

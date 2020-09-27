@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/RuinedPortalStructure.java
++++ b/net/minecraft/world/gen/feature/structure/RuinedPortalStructure.java
+@@ -39,7 +39,7 @@
+    }
+ 
+    private static boolean func_236337_b_(BlockPos p_236337_0_, Biome p_236337_1_) {
+-      return p_236337_1_.func_225486_c(p_236337_0_) < 0.15F;
++      return p_236337_1_.getTemperature(null, p_236337_0_) < 0.15F;
+    }
+ 
+    private static int func_236339_b_(Random p_236339_0_, ChunkGenerator p_236339_1_, RuinedPortalPiece.Location p_236339_2_, boolean p_236339_3_, int p_236339_4_, int p_236339_5_, MutableBoundingBox p_236339_6_) {

@@ -9,7 +9,12 @@
     private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(SnowGolemEntity.class, DataSerializers.field_187191_a);
  
     public SnowGolemEntity(EntityType<? extends SnowGolemEntity> p_i50244_1_, World p_i50244_2_) {
-@@ -93,7 +93,7 @@
+@@ -89,11 +89,11 @@
+          int i = MathHelper.func_76128_c(this.func_226277_ct_());
+          int j = MathHelper.func_76128_c(this.func_226278_cu_());
+          int k = MathHelper.func_76128_c(this.func_226281_cx_());
+-         if (this.field_70170_p.func_226691_t_(new BlockPos(i, 0, k)).func_225486_c(new BlockPos(i, j, k)) > 1.0F) {
++         if (this.field_70170_p.func_226691_t_(new BlockPos(i, 0, k)).getTemperature(field_70170_p, new BlockPos(i, j, k)) > 1.0F) {
              this.func_70097_a(DamageSource.field_76370_b, 1.0F);
           }
  
@@ -23,7 +28,7 @@
              k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
 -            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
++            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_226691_t_(blockpos).getTemperature(field_70170_p, blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }
