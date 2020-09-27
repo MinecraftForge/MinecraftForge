@@ -9,38 +9,40 @@
     public static final Logger field_150586_aC = LogManager.getLogger();
     public static final Codec<Biome> field_242418_b = RecordCodecBuilder.create((p_235064_0_) -> {
        return p_235064_0_.group(Biome.Climate.field_242459_a.forGetter((p_242446_0_) -> {
-@@ -70,7 +70,9 @@
+@@ -70,7 +70,10 @@
           return p_242443_0_.field_242424_k;
        }), MobSpawnInfo.field_242552_c.forGetter((p_242442_0_) -> {
           return p_242442_0_.field_242425_l;
 -      })).apply(p_235064_0_, Biome::new);
-+      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName))
-+      .apply(p_235064_0_, (climate, category, depth, scale, effects, gen, spawns, name) ->
-+          net.minecraftforge.common.ForgeHooks.enhanceBiome(name, climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new));
++      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName),
++      net.minecraftforge.common.world.BiomeExtensionType.CODEC.listOf().optionalFieldOf("forge:extensions", Collections.emptyList()).forGetter(Biome::getExtensions))
++      .apply(p_235064_0_, (climate, category, depth, scale, effects, gen, spawns, name, extensions) ->
++          net.minecraftforge.common.ForgeHooks.enhanceBiome(name, climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new, extensions));
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {
-@@ -83,9 +85,8 @@
+@@ -83,9 +86,9 @@
           return p_242434_0_.field_76749_E;
        }), BiomeAmbience.field_235204_a_.fieldOf("effects").forGetter((p_242429_0_) -> {
           return p_242429_0_.field_235052_p_;
 -      })).apply(p_242432_0_, (p_242428_0_, p_242428_1_, p_242428_2_, p_242428_3_, p_242428_4_) -> {
 -         return new Biome(p_242428_0_, p_242428_1_, p_242428_2_, p_242428_3_, p_242428_4_, BiomeGenerationSettings.field_242480_b, MobSpawnInfo.field_242551_b);
 -      });
-+      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName))
-+      .apply(p_242432_0_, (climate, category, depth, scale, effects, name) -> net.minecraftforge.common.ForgeHooks.addBiomeBehavior(name, new Biome(climate, category, depth, scale, effects, BiomeGenerationSettings.field_242480_b, MobSpawnInfo.field_242551_b)));
++      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName),
++      net.minecraftforge.common.world.BiomeExtensionType.CODEC.listOf().optionalFieldOf("forge:behaviors", Collections.emptyList()).forGetter(Biome::getExtensions))
++      .apply(p_242432_0_, (climate, category, depth, scale, effects, name, extensions) -> net.minecraftforge.common.ForgeHooks.addBiomeExtensions(new Biome(climate, category, depth, scale, effects, BiomeGenerationSettings.field_242480_b, MobSpawnInfo.field_242551_b), extensions));
     });
     public static final Codec<Supplier<Biome>> field_235051_b_ = RegistryKeyCodec.func_241794_a_(Registry.field_239720_u_, field_242418_b);
     public static final Codec<List<Supplier<Biome>>> field_242420_e = RegistryKeyCodec.func_244328_b(Registry.field_239720_u_, field_242418_b);
-@@ -112,6 +113,7 @@
+@@ -112,6 +115,7 @@
           return long2floatlinkedopenhashmap;
        });
     });
-+   private net.minecraftforge.common.world.IBiomeBehavior biomeBehavior;
++   private List<net.minecraftforge.common.world.IBiomeExtension> extensions = Collections.emptyList();
  
     private Biome(Biome.Climate p_i241927_1_, Biome.Category p_i241927_2_, float p_i241927_3_, float p_i241927_4_, BiomeAmbience p_i241927_5_, BiomeGenerationSettings p_i241927_6_, MobSpawnInfo p_i241927_7_) {
        this.field_242423_j = p_i241927_1_;
-@@ -132,6 +134,7 @@
+@@ -132,6 +136,7 @@
        return this.field_242425_l;
     }
  
@@ -48,7 +50,7 @@
     public Biome.RainType func_201851_b() {
        return this.field_242423_j.field_242460_b;
     }
-@@ -150,6 +153,7 @@
+@@ -150,6 +155,7 @@
        }
     }
  
@@ -56,7 +58,7 @@
     public final float func_225486_c(BlockPos p_225486_1_) {
        long i = p_225486_1_.func_218275_a();
        Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.field_225488_v.get();
-@@ -172,7 +176,7 @@
+@@ -172,7 +178,7 @@
     }
  
     public boolean func_201854_a(IWorldReader p_201854_1_, BlockPos p_201854_2_, boolean p_201854_3_) {
@@ -65,7 +67,7 @@
           return false;
        } else {
           if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256 && p_201854_1_.func_226658_a_(LightType.BLOCK, p_201854_2_) < 10) {
-@@ -195,12 +199,12 @@
+@@ -195,12 +201,12 @@
     }
  
     public boolean func_201850_b(IWorldReader p_201850_1_, BlockPos p_201850_2_) {
@@ -80,17 +82,16 @@
                 return true;
              }
           }
-@@ -365,6 +369,15 @@
+@@ -365,6 +371,14 @@
        return resourcelocation == null ? super.toString() : resourcelocation.toString();
     }
  
-+   // FORGE: Allow modders to have control over their own biomes
-+   public void setBehavior(net.minecraftforge.common.world.IBiomeBehavior modBiome) {
-+      this.biomeBehavior = modBiome;
++   // FORGE: Apply extensions here. Modders see BiomeExtensionType and IBiomeExtension instead.
++   public void setExtensions(List<net.minecraftforge.common.world.IBiomeExtension> extensions) {
++       this.extensions = extensions;
 +   }
-+   @Nullable
-+   public net.minecraftforge.common.world.IBiomeBehavior getBehavior() {
-+      return biomeBehavior;
++   public List<net.minecraftforge.common.world.IBiomeExtension> getExtensions() {
++      return extensions;
 +   }
 +
     public static class Attributes {
