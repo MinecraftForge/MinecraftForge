@@ -55,7 +55,17 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -170,6 +177,7 @@
+@@ -145,6 +152,9 @@
+ 
+             iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
+          }
++         
++         net.minecraftforge.dimension.DynamicDimensionManager.getDimensionManager().initDimensionManager(dynamicregistries$impl, iserverconfiguration);
++         net.minecraftforge.dimension.DynamicDimensionManager.onDimensionRegister();
+ 
+          if (optionset.has(optionspec4)) {
+             func_240761_a_(saveformat$levelsave, DataFixesManager.func_210901_a(), optionset.has(optionspec5), () -> {
+@@ -170,6 +180,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
