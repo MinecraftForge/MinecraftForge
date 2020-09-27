@@ -4,7 +4,7 @@
     }
  
     protected void func_178839_a(GameType p_178839_1_) {
-+      if (Minecraft.func_71410_x().field_71439_g != null && this.field_178867_a.getId().equals(Minecraft.func_71410_x().field_71439_g.func_110124_au()) && this.field_178866_b != p_178839_1_) net.minecraftforge.common.ForgeHooks.onClientChangeGameMode(Minecraft.func_71410_x().field_71439_g, this.field_178866_b, p_178839_1_);
++      net.minecraftforge.client.ForgeHooksClient.onClientChangeGameMode(this, this.field_178866_b, p_178839_1_);
        this.field_178866_b = p_178839_1_;
     }
  
