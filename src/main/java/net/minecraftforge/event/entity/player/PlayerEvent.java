@@ -513,7 +513,8 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * Fired when the game type of a server player is changed to a unique value before listeners are fired.
+     * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
+     * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
      */
     @Cancelable
     public static class PlayerChangeGameModeEvent extends PlayerEvent
