@@ -154,7 +154,7 @@ public class ForgeRegistries
         //Forge
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
-        public static final RegistryKey<Registry<IBiomeBehavior>> BIOME_EXTENSIONS = key("biome_extensions");
+        public static final RegistryKey<Registry<IBiomeBehavior>> BIOME_BEHAVIORS = key("biome_behaviors");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
