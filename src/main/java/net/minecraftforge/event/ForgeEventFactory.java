@@ -754,6 +754,8 @@ public class ForgeEventFactory
     {
         LivingBurnBySunlightEvent event = new LivingBurnBySunlightEvent(living, duration);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Result.DEFAULT ? duration : event.getResult() == Result.ALLOW ? event.getDuration() : 0;
+        duration = event.getResult() == Result.DEFAULT ? duration : event.getResult() == Result.ALLOW ? event.getDuration() : 0;
+        living.setFire(duration);
+        return duration;
     }
 }

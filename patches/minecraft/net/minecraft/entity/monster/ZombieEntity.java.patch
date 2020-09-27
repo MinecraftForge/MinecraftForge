@@ -1,23 +1,15 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -64,6 +64,7 @@
- import net.minecraft.world.World;
- import net.minecraft.world.server.ServerWorld;
- import net.minecraft.world.spawner.WorldEntitySpawner;
-+import net.minecraftforge.event.ForgeEventFactory;
- 
- public class ZombieEntity extends MonsterEntity {
-    private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-@@ -222,7 +223,7 @@
+@@ -222,7 +222,7 @@
              }
  
              if (flag) {
 -               this.func_70015_d(8);
-+               this.func_70015_d(ForgeEventFactory.onLivingBurnBySunlight(this, 8));
++               net.minecraftforge.event.ForgeEventFactory.onLivingBurnBySunlight(this, 8);
              }
           }
        }
-@@ -268,12 +269,16 @@
+@@ -268,12 +268,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -36,7 +28,7 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -284,6 +289,7 @@
+@@ -284,6 +288,7 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
@@ -44,7 +36,7 @@
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(serverworld, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       serverworld.func_242417_l(zombieentity);
-@@ -448,7 +454,7 @@
+@@ -448,7 +453,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -53,7 +45,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +474,7 @@
+@@ -468,7 +473,7 @@
     }
  
     protected void func_230291_eT_() {

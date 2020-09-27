@@ -19,7 +19,7 @@ public class LivingBurnBySunlightEventTest
     {
         if (event.getEntityLiving() instanceof PhantomEntity)
             event.setResult(Event.Result.DENY);
-        if (event.getEntityLiving() instanceof StrayEntity)
+        else if (event.getEntityLiving() instanceof StrayEntity)
         {
             event.setResult(Event.Result.ALLOW);
             event.setDuration(20);

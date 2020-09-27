@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * LivingBurnBySunlightEvent is triggered when an entity is trying
@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.Event;
  * {@link Result#DENY} Prevent the entity from burning
  * {@link Result#DEFAULT} Burn the entity for original duration
  */
-@Event.HasResult
+@HasResult
 public class LivingBurnBySunlightEvent extends LivingEvent
 {
     private int duration;
