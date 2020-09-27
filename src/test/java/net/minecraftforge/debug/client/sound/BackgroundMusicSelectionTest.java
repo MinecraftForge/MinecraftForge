@@ -15,12 +15,12 @@ public class BackgroundMusicSelectionTest
 {
     static final Logger LOGGER = LogManager.getLogger();
 
-	@SubscribeEvent
+    @SubscribeEvent
     public static void onMusicSelection(final BackgroundMusicSelectionEvent event)
     {
         //Checks values to make sure the selection event is working
-		LOGGER.debug("Current Sound: {}, Selector: {}", event.getCurrentMusic(), event.getDefaultSelector());
-		//Sets the music to always play the credits sequence
-    	event.setBackgroundMusicSelector(BackgroundMusicTracks.field_232672_c_);
+        LOGGER.debug("Current Sound: {}, Selector: {}", event.getCurrentMusic(), event.getDefaultSelector());
+        //Sets the music to always play the credits sequence
+        event.setBackgroundMusicSelector(BackgroundMusicTracks.field_232672_c_);
     }
 }
