@@ -547,30 +547,4 @@ public class PlayerEvent extends LivingEvent
             this.newGameMode = newGameMode;
         }
     }
-
-    /**
-     * Fired before the client player is notified of a change in game mode from the server.
-     */
-    public static class ClientPlayerChangeGameModeEvent extends PlayerEvent
-    {
-        private final GameType currentGameMode;
-        private final GameType newGameMode;
-
-        public ClientPlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
-        {
-            super(player);
-            this.currentGameMode = currentGameMode;
-            this.newGameMode = newGameMode;
-        }
-
-        public GameType getCurrentGameMode()
-        {
-            return currentGameMode;
-        }
-
-        public GameType getNewGameMode()
-        {
-            return newGameMode;
-        }
-    }
 }

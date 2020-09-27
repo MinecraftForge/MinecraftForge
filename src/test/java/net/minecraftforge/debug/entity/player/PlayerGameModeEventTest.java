@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.world.GameType;
+import net.minecraftforge.client.event.ClientPlayerChangeGameModeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,9 +45,9 @@ public class PlayerGameModeEventTest
     }
 
     @SubscribeEvent
-    public static void onClientPlayerChangeGameModeEvent(PlayerEvent.ClientPlayerChangeGameModeEvent event)
+    public static void onClientPlayerChangeGameModeEvent(ClientPlayerChangeGameModeEvent event)
     {
         if (!ENABLE) return;
-        LOGGER.info("Client notified of changed game mode. Current GameType: {}. New Game Type: {}", event.getCurrentGameMode(), event.getNewGameMode());
+        LOGGER.info("Client notified of changed game mode from '{}'. Current GameType: {}. New Game Type: {}", event.getInfo().getGameProfile(), event.getCurrentGameMode(), event.getNewGameMode());
     }
 }

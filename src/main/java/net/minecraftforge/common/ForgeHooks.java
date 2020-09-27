@@ -795,15 +795,6 @@ public class ForgeHooks
         return true;
     }
 
-    public static void onClientChangeGameMode(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
-    {
-        if (currentGameMode != newGameMode)
-        {
-            PlayerEvent.ClientPlayerChangeGameModeEvent evt = new PlayerEvent.ClientPlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
-            MinecraftForge.EVENT_BUS.post(evt);
-        }
-    }
-
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
     private static LootTableContext getLootTableContext()
     {
