@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -115,7 +116,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.IBiomeBehavior;
+import net.minecraftforge.common.world.IBiomeExtension;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -860,22 +861,18 @@ public class ForgeHooks
         Biome apply(final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns);
     }
 
-    public static Biome enhanceBiome(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
+    public static Biome enhanceBiome(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback, List<IBiomeExtension> extensions)
     {
         BiomeGenerationSettingsBuilder genBuilder = new BiomeGenerationSettingsBuilder(gen);
         MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
-        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
+        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder, extensions);
         MinecraftForge.EVENT_BUS.post(event);
-        return addBiomeBehavior(name, callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b()));
+        return addBiomeExtensions(callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b()), event.getExtensions());
     }
 
-    public static Biome addBiomeBehavior(final ResourceLocation name, final Biome biome)
+    public static Biome addBiomeExtensions(final Biome biome, final List<IBiomeExtension> extensions)
     {
-        IBiomeBehavior behavior = ForgeRegistries.BIOME_BEHAVIORS.getValue(name);
-        if (behavior != null)
-        {
-            biome.setBehavior(behavior);
-        }
+        biome.setExtensions(extensions);
         return biome;
     }
 

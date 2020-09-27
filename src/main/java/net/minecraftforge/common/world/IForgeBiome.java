@@ -20,7 +20,6 @@
 package net.minecraftforge.common.world;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 
@@ -41,23 +40,27 @@ public interface IForgeBiome {
      */
     default Biome.RainType getPrecipitation(IWorldReader world, BlockPos pos)
     {
-        IBiomeBehavior behavior = getBiome().getBehavior();
-        if (behavior != null)
+        for (IBiomeExtension ex : getBiome().getExtensions())
         {
-            return behavior.getPrecipitation(getBiome(), world, pos);
+            if (ex.modifiesPrecipitation())
+            {
+                return ex.getPrecipitation(getBiome(), world, pos);
+            }
         }
         return getBiome().getPrecipitation();
     }
 
     /**
-     * A replacement for {@link Biome#getTemperature(BlockPos)} which takes into account the world
+     * A replacement for {@link Biome#getTemperature(BlockPos)} which takes into account the world (where it is available)
      */
     default float getTemperature(@Nullable IWorldReader world, BlockPos pos)
     {
-        IBiomeBehavior behavior = getBiome().getBehavior();
-        if (behavior != null)
+        for (IBiomeExtension ex : getBiome().getExtensions())
         {
-            return behavior.getTemperature(getBiome(), world, pos);
+            if (ex.modifiesTemperature())
+            {
+                return ex.getTemperature(getBiome(), world, pos);
+            }
         }
         return getBiome().getTemperature(pos);
     }

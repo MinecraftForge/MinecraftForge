@@ -23,9 +23,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.IBiomeExtension;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This event fires when a Biome is created from json or when a registered biome is re-created for worldgen.
@@ -51,8 +55,9 @@ public class BiomeLoadingEvent extends Event
     private BiomeAmbience effects;
     private final BiomeGenerationSettingsBuilder gen;
     private final MobSpawnInfoBuilder spawns;
+    private final List<IBiomeExtension> extensions;
 
-    public BiomeLoadingEvent(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
+    public BiomeLoadingEvent(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns, List<IBiomeExtension> defaultExtensions)
     {
         this.name = name;
         this.climate = climate;
@@ -62,6 +67,7 @@ public class BiomeLoadingEvent extends Event
         this.effects = effects;
         this.gen = gen;
         this.spawns = spawns;
+        this.extensions = new ArrayList<>(defaultExtensions);
     }
 
     public ResourceLocation getName()
@@ -127,5 +133,10 @@ public class BiomeLoadingEvent extends Event
     public MobSpawnInfoBuilder getSpawns()
     {
         return spawns;
+    }
+
+    public List<IBiomeExtension> getExtensions()
+    {
+        return extensions;
     }
 }

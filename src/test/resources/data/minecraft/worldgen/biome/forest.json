@@ -1,0 +1,179 @@
+{
+  "scale": 0.2,
+  "effects": {
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "sky_color": 7972607,
+    "fog_color": 12638463,
+    "water_color": 4159204,
+    "water_fog_color": 329011
+  },
+  "surface_builder": "minecraft:grass",
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [
+      "minecraft:lake_water",
+      "minecraft:lake_lava"
+    ],
+    [],
+    [
+      "minecraft:monster_room"
+    ],
+    [],
+    [],
+    [
+      "minecraft:ore_dirt",
+      "minecraft:ore_gravel",
+      "minecraft:ore_granite",
+      "minecraft:ore_diorite",
+      "minecraft:ore_andesite",
+      "minecraft:ore_coal",
+      "minecraft:ore_iron",
+      "minecraft:ore_gold",
+      "minecraft:ore_redstone",
+      "minecraft:ore_diamond",
+      "minecraft:ore_lapis",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
+    ],
+    [],
+    [
+      "minecraft:forest_flower_vegetation",
+      "minecraft:birch_other",
+      "minecraft:flower_default",
+      "minecraft:patch_grass_forest",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "minecraft:patch_sugar_cane",
+      "minecraft:patch_pumpkin",
+      "minecraft:spring_water",
+      "minecraft:spring_lava"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "starts": [
+    "minecraft:mineshaft",
+    "minecraft:stronghold",
+    "minecraft:ruined_portal"
+  ],
+  "spawners": {
+    "monster": [
+      {
+        "type": "minecraft:spider",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:zombie",
+        "weight": 95,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:zombie_villager",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:slime",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:enderman",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:witch",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [
+      {
+        "type": "minecraft:sheep",
+        "weight": 12,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:pig",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:chicken",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:cow",
+        "weight": 8,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:wolf",
+        "weight": 5,
+        "minCount": 4,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    ],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "player_spawn_friendly": true,
+  "precipitation": "rain",
+  "temperature": 0.7,
+  "downfall": 0.8,
+  "category": "forest",
+  "depth": 0.1,
+  "__comment": "Overrides to add the below extension",
+  "forge:extensions": [{
+    "type": "biome_extensions_test:raining_in_rows",
+    "rows": 6
+  }]
+}
