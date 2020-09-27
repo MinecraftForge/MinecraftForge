@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.world;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -62,7 +63,7 @@ public class BiomeExtensionsTest {
 
     static class TestBiomeExtension implements IBiomeExtension {
 
-        static final Codec<TestBiomeExtension> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        static final MapCodec<TestBiomeExtension> CODEC = RecordCodecBuilder.<TestBiomeExtension>mapCodec(instance -> instance.group(
                 Codec.INT.fieldOf("rows").forGetter(c -> c.rows)
         ).apply(instance, TestBiomeExtension::new));
 

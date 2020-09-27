@@ -20,6 +20,7 @@
 package net.minecraftforge.common.world;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -27,13 +28,13 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class BiomeExtensionType extends ForgeRegistryEntry<BiomeExtensionType>
 {
-    public static final Codec<IBiomeExtension> CODEC = ResourceLocation.field_240908_a_.<IBiomeExtension>dispatchMap(ex -> ex.getType().getRegistryName(), id -> ForgeRegistries.BIOME_EXTENSION_TYPES.getValue(id).getCodec()).codec();
+    public static final Codec<IBiomeExtension> CODEC = ResourceLocation.field_240908_a_.<IBiomeExtension>dispatch(ex -> ex.getType().getRegistryName(), id -> ForgeRegistries.BIOME_EXTENSION_TYPES.getValue(id).getCodec());
 
     private final Codec<? extends IBiomeExtension> codec;
 
-    public BiomeExtensionType(Codec<? extends IBiomeExtension> codec)
+    public BiomeExtensionType(MapCodec<? extends IBiomeExtension> codec)
     {
-        this.codec = codec;
+        this.codec = codec.codec();
     }
 
     public Codec<? extends IBiomeExtension> getCodec()
