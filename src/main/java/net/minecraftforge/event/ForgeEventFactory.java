@@ -103,6 +103,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.LivingBurnBySunlightEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -747,5 +748,12 @@ public class ForgeEventFactory
         EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
+    }
+
+    public static int onLivingBurnBySunlight(LivingEntity living, int duration)
+    {
+        LivingBurnBySunlightEvent event = new LivingBurnBySunlightEvent(living, duration);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.DEFAULT ? duration : event.getResult() == Result.ALLOW ? event.getDuration() : 0;
     }
 }
