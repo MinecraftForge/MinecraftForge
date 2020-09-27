@@ -25,7 +25,8 @@ import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.dimension.DimensionRegisterEvent;
 
-public class DynamicDimensionManager {
+public class DynamicDimensionManager 
+{
 	
 	private static DynamicDimensionManager DIM_MANAGER = new DynamicDimensionManager();
 	
@@ -36,16 +37,19 @@ public class DynamicDimensionManager {
 	private DynamicRegistries.Impl dynamicRegistries;
 	private IServerConfiguration serverWorldInfo;
 	
-	public static DynamicDimensionManager getDimensionManager() {
+	public static DynamicDimensionManager getDimensionManager() 
+	{
 		return DIM_MANAGER;
 	}
 	
-	public void initDimensionManager(DynamicRegistries.Impl dynamicregistries, IServerConfiguration serverWorldInfo) {
+	public void initDimensionManager(DynamicRegistries.Impl dynamicregistries, IServerConfiguration serverWorldInfo) 
+	{
 		this.dynamicRegistries = dynamicregistries;
 		this.serverWorldInfo = serverWorldInfo;
 	}
 	
-	public void onIntegratedServerStop() {
+	public void onIntegratedServerStop()
+	{
 		this.dynamicRegistries = null;
 		this.serverWorldInfo = null;
 	}
@@ -54,14 +58,16 @@ public class DynamicDimensionManager {
 	 * Checks if the server is ready to accept registrations of dimension types and dimensions
 	 * @return true if ready, false if not
 	 */
-	public boolean isReady() {
+	public boolean isReady() 
+	{
 		return this.dynamicRegistries != null && this.serverWorldInfo != null;
 	}
 	
 	/**
 	 * INTERNAL METHOD, DO NOT CALL
 	 */
-	public static void onDimensionRegister() {
+	public static void onDimensionRegister() 
+	{
 		MinecraftForge.EVENT_BUS.post(new DimensionRegisterEvent(DIM_MANAGER));
 	}
 	
@@ -71,13 +77,15 @@ public class DynamicDimensionManager {
 	 * This doesn't create the dimension, please refer to {@link loadOrCreateDimension()}
 	 * @param dimension
 	 */
-	public void registerDimension(ResourceLocation loc, Dimension dimension) {
+	public void registerDimension(ResourceLocation loc, Dimension dimension) 
+	{
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		Validate.notNull(dimension, "Must provide dimension definition");
 		
 		RegistryKey<Dimension> registryKey = RegistryKey.func_240903_a_(Registry.field_239700_af_, loc);
 		
-		if(this.serverWorldInfo.func_230418_z_().func_236224_e_().func_230516_a_(registryKey) == null) {
+		if(this.serverWorldInfo.func_230418_z_().func_236224_e_().func_230516_a_(registryKey) == null) 
+		{
 			this.serverWorldInfo.func_230418_z_().func_236224_e_().register(registryKey, dimension, Lifecycle.stable());
 		}
 	}
@@ -86,7 +94,8 @@ public class DynamicDimensionManager {
 	 * Loads or creates the specified dimension.
 	 * @param dimension
 	 */
-	public void loadOrCreateDimension(MinecraftServer server, ResourceLocation loc) {
+	public void loadOrCreateDimension(MinecraftServer server, ResourceLocation loc) 
+	{
 		Validate.notNull(server, "Must provide server when creating world");
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		
@@ -107,7 +116,9 @@ public class DynamicDimensionManager {
 	 * @return the dimension type or null
 	 */
 	@Nullable
-	public DimensionType getDimensionType(ResourceLocation loc) {
+	public DimensionType getDimensionType(ResourceLocation loc) 
+	
+	{
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		
 		RegistryKey<DimensionType> key = RegistryKey.func_240903_a_(Registry.field_239698_ad_, loc);
@@ -124,7 +135,8 @@ public class DynamicDimensionManager {
 	 * @return the dimension
 	 */
 	@Nullable
-	public Dimension getDimension(ResourceLocation loc) {
+	public Dimension getDimension(ResourceLocation loc) 
+	{
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		
 		RegistryKey<Dimension> registryKey = RegistryKey.func_240903_a_(Registry.field_239700_af_, loc);
@@ -141,7 +153,8 @@ public class DynamicDimensionManager {
 	 * @return the world
 	 */
 	@Nullable
-	public List<ServerWorld> getServerWorlds(MinecraftServer server, DimensionType type) {
+	public List<ServerWorld> getServerWorlds(MinecraftServer server, DimensionType type) 
+	{
 		Validate.notNull(server, "Must provide server when creating world");
 		Validate.notNull(type, "Must provide DimensionType");
 		
@@ -149,8 +162,10 @@ public class DynamicDimensionManager {
 		
 		List<ServerWorld> worlds = new ArrayList<ServerWorld>();
 		
-		for(ServerWorld world : server.getWorlds()) {
-			if(reg.getKey(world.func_230315_m_()).equals(reg.getKey(type))) {
+		for(ServerWorld world : server.getWorlds()) 
+		{
+			if(reg.getKey(world.func_230315_m_()).equals(reg.getKey(type))) 
+			{
 				worlds.add(world);
 			}
 		}
@@ -165,7 +180,8 @@ public class DynamicDimensionManager {
 	 * @return the world
 	 */
 	@Nullable
-	public World getServerWorld(MinecraftServer server, ResourceLocation loc) {
+	public World getServerWorld(MinecraftServer server, ResourceLocation loc) 
+	{
 		Validate.notNull(server, "Must provide server when creating world");
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		
@@ -180,7 +196,8 @@ public class DynamicDimensionManager {
 	 * @return
 	 */
 	@Nullable
-	public DimensionSettings getDimensionSettings(ResourceLocation loc) {
+	public DimensionSettings getDimensionSettings(ResourceLocation loc)
+	{
 		Validate.notNull(loc, "Must provide valid ResourceLocation");
 		
 		RegistryKey<DimensionSettings> registryKey = RegistryKey.func_240903_a_(Registry.field_243549_ar, loc);
@@ -196,7 +213,8 @@ public class DynamicDimensionManager {
 	 * @return the biome registry
 	 */
 	@Deprecated
-	public Registry<Biome> getBiomeRegistry() {
+	public Registry<Biome> getBiomeRegistry() 
+	{
 		return this.dynamicRegistries.func_243612_b(Registry.field_239720_u_);
 	}
 

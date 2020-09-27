@@ -14,7 +14,8 @@ import net.minecraft.world.biome.provider.SingleBiomeProvider;
  * Holds various builder functions for Biome Providers
  *
  */
-public class BiomeProviders {
+public class BiomeProviders 
+{
 	/**
 	 * Creates a normal OverworldBiomeProvider
 	 * @param seed the seed
@@ -22,7 +23,8 @@ public class BiomeProviders {
 	 * @param largeBiomes Whether the biomes are large.
 	 * @return the overworld biome provider
 	 */
-	public static OverworldBiomeProvider createOverworldBiomeProvider(long seed, boolean legacyBiomeInitLayer, boolean largeBiomes) {
+	public static OverworldBiomeProvider createOverworldBiomeProvider(long seed, boolean legacyBiomeInitLayer, boolean largeBiomes) 
+	{
 		return new OverworldBiomeProvider(seed, legacyBiomeInitLayer, largeBiomes, DynamicDimensionManager.getDimensionManager().getBiomeRegistry());
 	}
 	
@@ -31,7 +33,8 @@ public class BiomeProviders {
 	 * @param seed the seed
 	 * @return the nether biome provider
 	 */
-	public static NetherBiomeProvider createNetherBiomeProvider(long seed) {
+	public static NetherBiomeProvider createNetherBiomeProvider(long seed) 
+	{
 		return NetherBiomeProvider.Preset.field_235288_b_.func_242619_a(DynamicDimensionManager.getDimensionManager().getBiomeRegistry(), seed);
 	}
 
@@ -40,7 +43,8 @@ public class BiomeProviders {
 	 * @param seed the seed
 	 * @return the end biome provider
 	 */
-	public static EndBiomeProvider createEndBiomeProvider(long seed) {
+	public static EndBiomeProvider createEndBiomeProvider(long seed) 
+	{
 		return new EndBiomeProvider(DynamicDimensionManager.getDimensionManager().getBiomeRegistry(), seed);
 	}
 	
@@ -50,7 +54,8 @@ public class BiomeProviders {
 	 * @param scale the size of the squares on an exponential scale.
 	 * @return the checkerboard biome provider
 	 */
-	public static CheckerboardBiomeProvider createCheckerboardBiomeProvider(List<Supplier<Biome>> biomeList, int scale) {
+	public static CheckerboardBiomeProvider createCheckerboardBiomeProvider(List<Supplier<Biome>> biomeList, int scale) 
+	{
 		return new CheckerboardBiomeProvider(biomeList, scale);
 	}
 	
@@ -59,7 +64,8 @@ public class BiomeProviders {
 	 * @param biome the biome
 	 * @return the single biome provider
 	 */
-	public static SingleBiomeProvider createSingleBiomeProvider(Biome biome) {
+	public static SingleBiomeProvider createSingleBiomeProvider(Biome biome) 
+	{
 		return new SingleBiomeProvider(biome);
 	}
 

@@ -12,15 +12,18 @@ import net.minecraftforge.eventbus.api.Event;
  * 
  *
  */
-public class DimensionRegisterEvent extends Event {
+public class DimensionRegisterEvent extends Event 
+{
 	
 	private DynamicDimensionManager dimManager;
 	
-	public DimensionRegisterEvent(DynamicDimensionManager dimManager) {
+	public DimensionRegisterEvent(DynamicDimensionManager dimManager) 
+	{
 		this.dimManager = dimManager;
 	}
 	
-	public DynamicDimensionManager getDimensionManager() {
+	public DynamicDimensionManager getDimensionManager() 
+	{
 		return dimManager;
 	}
 
