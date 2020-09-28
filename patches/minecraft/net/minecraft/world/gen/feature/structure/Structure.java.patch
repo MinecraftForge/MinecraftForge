@@ -14,7 +14,7 @@
     private static final Map<ResourceLocation, ResourceLocation> field_242784_x = ImmutableMap.<ResourceLocation, ResourceLocation>builder().put(new ResourceLocation("nvi"), field_242783_w).put(new ResourceLocation("pcp"), field_242783_w).put(new ResourceLocation("bastionremnant"), field_242783_w).put(new ResourceLocation("runtime"), field_242783_w).build();
     private final Codec<StructureFeature<C, Structure<C>>> field_236386_w_;
 +   private Map<net.minecraft.entity.EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = java.util.Collections.emptyMap();
-+   private boolean checkSpawnPositionInStructurePieces;//This gets set by gatherEntitySpawns before it is used anywhere
++   private boolean restrictSpawnsToInside;//This gets set by gatherEntitySpawns before it is used anywhere
  
     private static <F extends Structure<?>> F func_236394_a_(String p_236394_0_, F p_236394_1_, GenerationStage.Decoration p_236394_2_) {
        field_236365_a_.put(p_236394_0_.toLowerCase(Locale.ROOT), p_236394_1_);
@@ -36,8 +36,8 @@
 +      return entitySpawns.getOrDefault(classification, java.util.Collections.emptyList());
 +   }
 +
-+   public boolean checkSpawnPositionInStructurePieces() {
-+      return checkSpawnPositionInStructurePieces;
++   public boolean restrictsSpawnsToInside() {
++      return restrictSpawnsToInside;
 +   }
 +
 +   public boolean hasSpawnsFor(net.minecraft.entity.EntityClassification classification) {
@@ -47,7 +47,7 @@
 +   public void gatherEntitySpawns() {
 +      net.minecraftforge.event.world.StructureSpawnListGatherEvent event = new net.minecraftforge.event.world.StructureSpawnListGatherEvent(this);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+      checkSpawnPositionInStructurePieces = event.getOnlyChecksInside();
++      restrictSpawnsToInside = event.restrictsSpawnsToInside();
 +      ImmutableMap.Builder<net.minecraft.entity.EntityClassification, List<MobSpawnInfo.Spawners>> builder = ImmutableMap.builder();
 +      event.getEntitySpawns().forEach((classification, spawns) -> {
 +         if (!spawns.isEmpty())

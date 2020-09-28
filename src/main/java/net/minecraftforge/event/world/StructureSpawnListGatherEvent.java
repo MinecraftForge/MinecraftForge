@@ -27,58 +27,84 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
-//TODO: Docs
+/**
+ * This event fires when a Structure is gathering what mobs/creatures can spawn in it.
+ *
+ * In order to maintain the most compatibility possible with other mods' modifications to a structure,
+ * the event should be assigned a {@link net.minecraftforge.eventbus.api.EventPriority} as follows:
+ *
+ * - Additions : {@link EventPriority#HIGH}
+ * - Removals : {@link EventPriority#NORMAL}
+ * - Any other modification : {@link EventPriority#LOW}
+ *
+ * Be aware that another mod could have done an operation beforehand, so an expected value out of a vanilla structure might not
+ * always be the same, depending on other mods.
+ */
 public class StructureSpawnListGatherEvent extends Event
 {
 
     private final Structure<?> structure;
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = new HashMap<>();
-    private boolean checkPositionInStructurePieces;
+    private boolean restrictSpawnsToInside;
 
     public StructureSpawnListGatherEvent(Structure<?> structure)
     {
         this.structure = structure;
         //The Pillager Outpost and Ocean Monument check the full structure by default instead of limiting themselves to being within the structure's bounds
-        //TODO: Allow custom structures to default this for themselves
-        this.checkPositionInStructurePieces = this.structure != Structure.field_236366_b_ && this.structure != Structure.field_236376_l_;
-        if (!this.structure.getSpawnList().isEmpty())
-            this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getSpawnList()));
-        if (!this.structure.getCreatureSpawnList().isEmpty())
-            this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getCreatureSpawnList()));
+        this.restrictSpawnsToInside = this.structure != Structure.field_236366_b_ && this.structure != Structure.field_236376_l_;
+        this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getSpawnList()));
+        this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getCreatureSpawnList()));
     }
 
-    //TODO: Should we even be exposing the structure as we are doing this from the constructor
-    // so it may not b fully initialized in terms of the stuff the sub classes want to do in their constructors
-    // The registry name is also likely not set yet, but for precision modification it can probably be done via
-    // object comparison
+    /**
+     * @return Structure to add or remove spawns to/from.
+     */
     public Structure<?> getStructure()
     {
         return structure;
     }
 
-    public void onlyCheckInsideStructurePieces()
+    /**
+     * Restrict entity spawn location checks to being inside the pieces of the structure.
+     */
+    public void restrictSpawnsToInside()
     {
-        this.checkPositionInStructurePieces = true;
+        this.restrictSpawnsToInside = true;
     }
 
-    public void checkOutsideStructurePieces()
+    /**
+     * Allow entity spawn location checks to match being inside the overall structure but outside the individual pieces (basically equates to allowing spawns outside and
+     * nearby).
+     */
+    public void allowSpawnsOutside()
     {
-        this.checkPositionInStructurePieces = false;
+        this.restrictSpawnsToInside = false;
     }
 
-    public boolean getOnlyChecksInside()
+    /**
+     * Checks if spawns for the structure are restricted to being inside the individual pieces of the structure.
+     */
+    public boolean restrictsSpawnsToInside()
     {
-        return checkPositionInStructurePieces;
+        return restrictSpawnsToInside;
     }
 
-    public void addEntityClassification(EntityClassification classification)
+    /**
+     * Gets the list representing the entity spawns for the given classification, creating and adding an empty list if needed. This list is mutable and spawns should be
+     * added/removed from this list.
+     * @param classification Entity Classification
+     * @return The list of spawns for the given classification.
+     */
+    public List<MobSpawnInfo.Spawners> getEntitySpawns(EntityClassification classification)
     {
-        //TODO: Should we require that they also pass a spawner in to populate this classification?
-        this.entitySpawns.putIfAbsent(classification, new ArrayList<>());
+        return this.entitySpawns.computeIfAbsent(classification, c -> new ArrayList<>());
     }
 
-    //TODO: We probably want a better way of adding than having this map be modified directly, such as with some helpers
+    /**
+     * Gets the map of spawns based on entity classification that is used to fill in the various spawn lists for the structure.
+     */
     public Map<EntityClassification, List<MobSpawnInfo.Spawners>> getEntitySpawns()
     {
         return entitySpawns;

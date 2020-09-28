@@ -1121,7 +1121,7 @@ public class ForgeHooks
         for (Structure<?> structure : structures)
         {
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (structure.hasSpawnsFor(classification) && structureManager.func_235010_a_(pos, structure.checkSpawnPositionInStructurePieces(), structure).isValid())
+            if (structure.hasSpawnsFor(classification) && structureManager.func_235010_a_(pos, structure.restrictsSpawnsToInside(), structure).isValid())
             {
                 return structure.getSpawnList(classification);
             }
