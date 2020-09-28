@@ -26,7 +26,6 @@ import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
@@ -34,10 +33,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
@@ -414,39 +411,8 @@ public class FMLPlayMessages
                     // to the last working set of tags
                     //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
                     // so they won't be validated
-                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(new ITagCollectionSupplier()
-                    {
-                        @Override
-                        public ITagCollection<Block> func_241835_a()
-                        {
-                            return tagCollectionSupplier.func_241835_a();
-                        }
-
-                        @Override
-                        public ITagCollection<Item> func_241836_b()
-                        {
-                            return tagCollectionSupplier.func_241836_b();
-                        }
-
-                        @Override
-                        public ITagCollection<Fluid> func_241837_c()
-                        {
-                            return tagCollectionSupplier.func_241837_c();
-                        }
-
-                        @Override
-                        public ITagCollection<EntityType<?>> func_241838_d()
-                        {
-                            return tagCollectionSupplier.func_241838_d();
-                        }
-
-                        @Override
-                        public Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
-                        {
-                            //Override and use the tags from the packet to test for validation before we actually set them
-                            return msg.customTagTypeCollections;
-                        }
-                    });
+                    //Override and use the tags from the packet to test for validation before we actually set them
+                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(ForgeTagHandler.withSpecificCustom(tagCollectionSupplier, msg.customTagTypeCollections));
                     if (missingTags.isEmpty())
                     {
                         //If we have no missing tags, update the custom tag types

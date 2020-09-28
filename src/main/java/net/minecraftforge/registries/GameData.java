@@ -179,7 +179,7 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES, Biome.class).tagFolder("biomes").create();
+        makeRegistry(BIOMES, Biome.class).create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();

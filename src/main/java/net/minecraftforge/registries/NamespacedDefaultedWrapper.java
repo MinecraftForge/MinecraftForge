@@ -98,6 +98,13 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     @Override
     @Nullable
+    public T func_230516_a_(@Nullable RegistryKey<T> name)
+    {
+        return name == null ? null : this.delegate.getRaw(name.func_240901_a_()); //get without default
+    }
+
+    @Override
+    @Nullable
     public ResourceLocation getKey(T value)
     {
         return this.delegate.getKey(value);
