@@ -1,4 +1,3 @@
-  
 /*
  * Minecraft Forge
  * Copyright (c) 2016-2020.
@@ -20,20 +19,15 @@
 
 package net.minecraftforge.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.world.ClientWorld;
 
 /**
- * Use {@link ISkyRenderHandler} instead.
- *
- * todo: remove in 1.17
+ * Call {@link net.minecraft.client.world.DimensionRenderInfo#setWeatherRenderHandler(IWeatherRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all weather rendering with your own.
+ * This includes rain and snow.
  */
-@Deprecated
-public interface SkyRenderHandler extends IRenderHandler {
-	@Override
-	default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}
-
-	void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
-
+@FunctionalInterface
+public interface IWeatherRenderHandler {
+    void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc, LightTexture lightmapIn, double xIn, double yIn, double zIn);
 }

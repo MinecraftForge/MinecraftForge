@@ -70,4 +70,10 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
     {
         return generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/tags/" + folder + "/" + id.getPath() + ".json");
     }
+
+    @Override
+    protected String getTagFolder()
+    {
+        return folder;
+    }
 }

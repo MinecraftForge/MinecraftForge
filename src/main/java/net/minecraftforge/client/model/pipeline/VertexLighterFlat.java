@@ -190,10 +190,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
         for(int v = 0; v < 4; v++)
         {
-            position[v][0] += blockInfo.getShx();
-            position[v][1] += blockInfo.getShy();
-            position[v][2] += blockInfo.getShz();
-
             float x = position[v][0] - .5f;
             float y = position[v][1] - .5f;
             float z = position[v][2] - .5f;
@@ -335,7 +331,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     public void updateBlockInfo()
     {
-        blockInfo.updateShift();
         blockInfo.updateFlatLighting();
     }
 }

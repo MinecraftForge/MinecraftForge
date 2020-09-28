@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/gen/layer/BiomeLayer.java
++++ b/net/minecraft/world/gen/layer/BiomeLayer.java
+@@ -10,12 +10,13 @@
+    private static final int[] field_202746_t = new int[]{4, 3, 5, 1};
+    private static final int[] field_202747_u = new int[]{12, 12, 12, 30};
+    private int[] field_151623_c = field_202744_r;
++   private final boolean legacyDesert;
++   private java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry>[] biomes = new java.util.ArrayList[net.minecraftforge.common.BiomeManager.BiomeType.values().length];
+ 
+    public BiomeLayer(boolean p_i232147_1_) {
+-      if (p_i232147_1_) {
+-         this.field_151623_c = field_202743_q;
+-      }
+-
++      this.legacyDesert = p_i232147_1_;
++      for (net.minecraftforge.common.BiomeManager.BiomeType type : net.minecraftforge.common.BiomeManager.BiomeType.values())
++         biomes[type.ordinal()] = new java.util.ArrayList<>(net.minecraftforge.common.BiomeManager.getBiomes(type));
+    }
+ 
+    public int func_202726_a(INoiseRandom p_202726_1_, int p_202726_2_) {
+@@ -28,21 +29,21 @@
+                return p_202726_1_.func_202696_a(3) == 0 ? 39 : 38;
+             }
+ 
+-            return this.field_151623_c[p_202726_1_.func_202696_a(this.field_151623_c.length)];
++            return getBiomeId(net.minecraftforge.common.BiomeManager.BiomeType.DESERT, p_202726_1_);
+          case 2:
+             if (i > 0) {
+                return 21;
+             }
+ 
+-            return field_202745_s[p_202726_1_.func_202696_a(field_202745_s.length)];
++            return getBiomeId(net.minecraftforge.common.BiomeManager.BiomeType.WARM, p_202726_1_);
+          case 3:
+             if (i > 0) {
+                return 32;
+             }
+ 
+-            return field_202746_t[p_202726_1_.func_202696_a(field_202746_t.length)];
++            return getBiomeId(net.minecraftforge.common.BiomeManager.BiomeType.COOL, p_202726_1_);
+          case 4:
+-            return field_202747_u[p_202726_1_.func_202696_a(field_202747_u.length)];
++            return getBiomeId(net.minecraftforge.common.BiomeManager.BiomeType.ICY, p_202726_1_);
+          default:
+             return 14;
+          }
+@@ -50,4 +51,17 @@
+          return p_202726_2_;
+       }
+    }
++
++   private int getBiomeId(net.minecraftforge.common.BiomeManager.BiomeType type, INoiseRandom context) {
++      return net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_148757_b(
++         net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_230516_a_(getBiome(type, context)));
++   }
++   protected net.minecraft.util.RegistryKey<net.minecraft.world.biome.Biome> getBiome(net.minecraftforge.common.BiomeManager.BiomeType type, INoiseRandom context) {
++      if (type == net.minecraftforge.common.BiomeManager.BiomeType.DESERT && this.legacyDesert)
++         type = net.minecraftforge.common.BiomeManager.BiomeType.DESERT_LEGACY;
++      java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry> biomeList = biomes[type.ordinal()];
++      int totalWeight = net.minecraft.util.WeightedRandom.func_76272_a(biomeList);
++      int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type) ? context.func_202696_a(totalWeight) : context.func_202696_a(totalWeight / 10) * 10;
++      return net.minecraft.util.WeightedRandom.func_180166_a(biomeList, weight).getKey();
++   }
+ }
