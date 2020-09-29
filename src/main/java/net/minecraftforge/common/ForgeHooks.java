@@ -1216,7 +1216,7 @@ public class ForgeHooks
 
     public static IPacket<?> cleanPacketForPossibleVanillaConnection(ServerPlayNetHandler netHandler, IPacket<?> packet)
     {
-        if (NetworkHooks.getConnectionType(() -> netHandler.netManager) == ConnectionType.VANILLA)
+        if (NetworkHooks.isVanillaConnection(netHandler.netManager))
         {
             if (packet instanceof SEntityPropertiesPacket)
             {
