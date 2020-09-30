@@ -41,6 +41,9 @@ public class TeleporterHelper
                 entity.getSize(entity.getPose()), entity.getMotion(), entity.rotationYaw, entity.rotationPitch);
     }
     
+    /**
+     * Gets the search radius to look for a portal based on dimension scaling.
+     */
     public static int getPortalSearchRadius(World fromWorld, World toWorld)
     {
         return Math.max((int) DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) * 16, 16);

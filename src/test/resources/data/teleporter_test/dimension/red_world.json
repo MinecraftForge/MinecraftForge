@@ -9,5 +9,5 @@
         "settings": "minecraft:overworld",
         "type": "minecraft:noise"
       },
-    "type": "minecraft:overworld"
+    "type": "teleporter_test:red_world"
 }
