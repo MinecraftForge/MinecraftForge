@@ -29,9 +29,7 @@ import net.minecraft.util.TeleportationRepositioner;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.util.AbstractTeleporter;
 import net.minecraftforge.common.util.ITeleporter;
-
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
@@ -69,7 +67,7 @@ public class CommandSetDimension
         //    throw INVALID_DIMENSION.create(dim);
 
         entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
-        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new AbstractTeleporter()
+        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new ITeleporter()
         {
             @Override
             public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)

@@ -10,16 +10,21 @@ import net.minecraft.world.server.ServerWorld;
 
 import java.util.Optional;
 
-public abstract class AbstractPOITTeleporter extends AbstractTeleporter
+public interface IPOITTeleporter extends ITeleporter
 {
-    @Override
-    public Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld,
+    /**
+     * A default implementation that uses the vanilla {@link Teleporter} logic to find a portal using a {@link PointOfInterestType}.
+     */
+    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld,
             Entity entity)
     {
         return new Teleporter(toWorld).func_242957_a(new BlockPos(entity.getPositionVec()),
                 DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) < 1,
                 this.getPortalPOI());
     }
-
-    abstract public PointOfInterestType getPortalPOI();
+    
+    /**
+     * The {@link PointOfInterestType} to look for to find a portal.
+     */
+    PointOfInterestType getPortalPOI();
 }

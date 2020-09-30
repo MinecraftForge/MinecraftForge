@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/Teleporter.java
 +++ b/net/minecraft/world/Teleporter.java
-@@ -19,19 +19,19 @@
+@@ -19,19 +19,20 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.server.TicketType;
  
 -public class Teleporter {
-+public class Teleporter extends net.minecraftforge.common.util.AbstractPOITTeleporter {
++public class Teleporter implements net.minecraftforge.common.util.IPOITTeleporter
++{
     protected final ServerWorld field_85192_a;
  
     public Teleporter(ServerWorld p_i1963_1_) {
@@ -23,7 +24,7 @@
        }, p_242957_1_, i, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((p_242954_1_) -> {
           return p_242954_1_.func_218261_f().func_177951_i(p_242957_1_);
        }).thenComparingInt((p_242959_0_) -> {
-@@ -157,4 +157,7 @@
+@@ -157,4 +158,7 @@
  
        return true;
     }

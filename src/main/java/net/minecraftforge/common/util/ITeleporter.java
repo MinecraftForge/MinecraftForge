@@ -21,13 +21,8 @@ package net.minecraftforge.common.util;
 
 import net.minecraft.block.PortalInfo;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.TeleportationRepositioner;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.Teleporter;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.Optional;
@@ -44,26 +39,12 @@ import java.util.function.Function;
  */
 public interface ITeleporter
 {
-    /**
-     * Called to handle placing the entity in the new world.
-     * <p>
-     * The initial position of the entity will be its
-     * position in the origin world, multiplied horizontally
-     * by the computed cross-dimensional movement factor.
-     * <p>
-     * Note that the supplied entity has not yet been spawned
-     * in the destination world at the time.
-     *
-     * @param entity the entity to be placed
-     * @param currentWorld the entity's origin
-     * @param destWorld the entity's destination
-     * @param yaw the suggested yaw value to apply
-     * @param repositionEntity a function to reposition the entity, which returns the new entity in the new dimension. This is the vanilla implementation of the dimension travel logic. If the supplied boolean is true, it is attempted to spawn a new portal.
-     *
-     * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.server.ServerWorld, ITeleporter)}
-     */
-    Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity);
-
+    default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw,
+            Function<Boolean, Entity> repositionEntity)
+    {
+        return repositionEntity.apply(true);
+    }
+    
     /**
      * Is this teleporter the vanilla instance.
      */
@@ -71,20 +52,27 @@ public interface ITeleporter
     {
         return false;
     }
-
+    
     /**
      * Finds a portal to teleport to and creates a {@link TeleportationRepositioner.Result} for it.
      * Return an empty {@link Optional} if no portal was found.
      */
     Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity);
-
+    
     /**
      * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}.
      */
-    Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity);
-
+    Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld,
+            Entity entity);
+    
     /**
-     * Returns the {@link PortalInfo} for the {@link TeleportationRepositioner.Result Result}.
+     * A default implementation of {@link ITeleporter#getPortalInfo(TeleportationRepositioner.Result)} that sets the yaw and pitch to 0.
+     * <p>
+     * To maintain the yaw and pitch of the original entity, see {@link TeleporterHelper#getPortalInfo(TeleportationRepositioner.Result, Entity, ServerWorld)}.
      */
-    PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult);
+    default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult)
+    {
+        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(),
+                tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
+    }
 }

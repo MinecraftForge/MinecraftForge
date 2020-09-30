@@ -12,9 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.server.ServerWorld;
 
-import java.util.function.Function;
-
-public abstract class AbstractTeleporter implements ITeleporter
+public class TeleporterHelper
 {
     /**
      * Scales the given {@link BlockPos} based on the {@link World}s passed in.
@@ -42,23 +40,5 @@ public abstract class AbstractTeleporter implements ITeleporter
         Vector3d vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
         return net.minecraft.block.PortalSize.func_242963_a(destWorld, tpResult, axis1, vector3d,
                 entity.getSize(entity.getPose()), entity.getMotion(), entity.rotationYaw, entity.rotationPitch);
-    }
-
-    @Override
-    public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw,
-            Function<Boolean, Entity> repositionEntity)
-    {
-        return repositionEntity.apply(true);
-    }
-
-    /**
-     * A default implementation of {@link ITeleporter#getPortalInfo(TeleportationRepositioner.Result)} that sets the yaw and pitch to 0.
-     * <p>
-     * To maintain the yaw and pitch of the original entity, see {@link AbstractTeleporter#getPortalInfo(TeleportationRepositioner.Result, Entity, ServerWorld)}.
-     */
-    @Override public PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult)
-    {
-        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(),
-                tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
     }
 }
