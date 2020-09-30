@@ -29,7 +29,7 @@
 +   @Override
 +   @Deprecated
 +   public void init() {
-+      field_220364_f.put(this.field_220365_j, this);
++      field_220364_f.put(this.func_220363_a(), this);
 +   }
 +
     public int func_233671_f_() {
