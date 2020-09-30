@@ -278,15 +278,6 @@
        boolean flag = this.field_70170_p.func_234923_W_() == World.field_234920_i_ && p_241829_1_.func_234923_W_() == World.field_234918_g_;
        boolean flag1 = p_241829_1_.func_234923_W_() == World.field_234920_i_;
        if (!flag && !flag1) {
-@@ -2174,7 +2218,7 @@
-    }
- 
-    protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
--      return p_241830_1_.func_85176_s().func_242957_a(p_241830_2_, p_241830_3_);
-+      return p_241830_1_.func_85176_s().func_242957_a(p_241830_2_, p_241830_3_, net.minecraft.village.PointOfInterestType.field_226358_u_);
-    }
- 
-    public boolean func_184222_aU() {
 @@ -2320,9 +2364,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
