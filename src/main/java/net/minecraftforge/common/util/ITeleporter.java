@@ -59,8 +59,7 @@ public interface ITeleporter
      *
      * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.server.ServerWorld, ITeleporter)}
      */
-    default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw,
-            Function<Boolean, Entity> repositionEntity)
+    default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
     {
         return repositionEntity.apply(true);
     }
@@ -82,8 +81,7 @@ public interface ITeleporter
     /**
      * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}.
      */
-    Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld,
-            Entity entity);
+    Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity);
 
     /**
      * A default implementation of {@link ITeleporter#getPortalInfo(TeleportationRepositioner.Result)} that sets the yaw and pitch to 0.
@@ -92,7 +90,6 @@ public interface ITeleporter
      */
     default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult)
     {
-        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(),
-                tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
+        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
     }
 }
