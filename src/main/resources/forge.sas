@@ -72,6 +72,7 @@ net/minecraft/item/crafting/IRecipe func_193358_e()Ljava/lang/String; # getGroup
 	net/minecraft/item/crafting/ShapedRecipe func_193358_e()Ljava/lang/String;
 	net/minecraft/item/crafting/ShapelessRecipe func_193358_e()Ljava/lang/String;
 	net/minecraft/item/crafting/SingleItemRecipe func_193358_e()Ljava/lang/String;
+net/minecraft/network/play/server/SEntityPropertiesPacket func_149441_d()Ljava/util/List; # getSnapshots
 net/minecraft/nbt/CompressedStreamTools func_74797_a(Ljava/io/File;)Lnet/minecraft/nbt/CompoundNBT; # read
 net/minecraft/nbt/CompressedStreamTools func_74795_b(Lnet/minecraft/nbt/CompoundNBT;Ljava/io/File;)V # write
 net/minecraft/potion/Effect func_220303_e()Lnet/minecraft/potion/EffectType; # getEffectType
@@ -107,4 +108,3 @@ net/minecraft/world/biome/BiomeAmbience func_235222_e_()Ljava/util/Optional; # g
 net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # getMoodSound
 net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
 net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic
-net/minecraft/network/play/server/SEntityPropertiesPacket func_149441_d()Ljava/util/List; # getSnapshots
