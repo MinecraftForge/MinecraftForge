@@ -19,30 +19,23 @@
 
 package net.minecraftforge.common.util;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
-
-import net.minecraft.block.BlockState;
 import net.minecraft.block.PortalInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.TeleportationRepositioner;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.village.PointOfInterest;
-import net.minecraft.village.PointOfInterestManager;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.TicketType;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -83,31 +76,12 @@ public interface ITeleporter {
     }
 
     // Replicated from the vanilla code for interface implementation. Return an empty optional if no portal was found.
-    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld,
+            Entity entity)
     {
-        PointOfInterestManager pointofinterestmanager = toWorld.getPointOfInterestManager();
-        int dist = Math.max((int) DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) * 16, 16);
-        BlockPos pos = this.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec()));
-        pointofinterestmanager.ensureLoadedAndValid(toWorld, pos, dist);
-        
-        Optional<PointOfInterest> optional = pointofinterestmanager.getInSquare((poi) -> 
-        {
-           return poi == this.getPortalPOI();
-        }, pos, dist, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((poi) -> 
-        {
-           return poi.getPos().distanceSq(pos);
-        }).thenComparingInt((poi) -> 
-        {
-           return poi.getPos().getY();
-        })).findFirst();
-        
-        return optional.map((poi) -> 
-        {
-           BlockPos blockpos = poi.getPos();
-           toWorld.getChunkProvider().registerTicket(TicketType.PORTAL, new ChunkPos(blockpos), 3, blockpos);
-           BlockState blockstate = toWorld.getBlockState(blockpos);
-           return TeleportationRepositioner.func_243676_a(blockpos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, (p) -> toWorld.getBlockState(p) == blockstate);
-        });
+        return new Teleporter(toWorld).func_242957_a(new BlockPos(entity.getPositionVec()),
+                DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) < 1,
+                this.getPortalPOI());
     }
 
     // Creates a portal if one doesn't exist and returns the result. Default does nothing so you'll need to implement it for your portal.
