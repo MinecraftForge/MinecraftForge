@@ -29,6 +29,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PortalInfo;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -51,14 +54,17 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
+// Test mod for ITeleporter changes 9/30/2020
 @Mod(TeleporterTest.MODID)
 public class TeleporterTest
 {
     protected static final String MODID = "teleporter_test";
     private static RegistryKey<World> RED_WORLD = RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(MODID, "red_world"));;
     private static RegistryKey<World> BLUE_WORLD = RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(MODID, "blue_world"));
-    private static Block RED_TELEPORTER, BLUE_TELEPORTER;
+    // Triggered by standing on top. Red is scaled the same as the nether while blue is 1 to 1.
+    private static TeleporterBlock RED_TELEPORTER, BLUE_TELEPORTER;
     private static PointOfInterestType RED_POI, BLUE_POI;
     
     public TeleporterTest()
@@ -69,15 +75,21 @@ public class TeleporterTest
     
     protected void registerBlocks(final RegistryEvent.Register<Block> event)
     {
-        RED_TELEPORTER = registerBlock(event.getRegistry(), "red_teleporter", new TeleporterBlock(() -> RED_POI, RED_WORLD));
-        BLUE_TELEPORTER = registerBlock(event.getRegistry(), "blue_teleporter", new TeleporterBlock(() -> BLUE_POI, BLUE_WORLD));
+        RED_TELEPORTER = register(event.getRegistry(), "red_teleporter", new TeleporterBlock(() -> RED_POI, RED_WORLD));
+        BLUE_TELEPORTER = register(event.getRegistry(), "blue_teleporter", new TeleporterBlock(() -> BLUE_POI, BLUE_WORLD));
     }
     
-    private Block registerBlock(IForgeRegistry<Block> registry, String name, Block block)
+    protected void registerItems(final RegistryEvent.Register<Item> event)
     {
-        block.setRegistryName(new ResourceLocation(MODID, name));
-        registry.register(block);
-        return block;
+        register(event.getRegistry(), "red_teleporter", new BlockItem(RED_TELEPORTER, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+        register(event.getRegistry(), "blue_teleporter", new BlockItem(BLUE_TELEPORTER, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    }
+    
+    private <T extends IForgeRegistryEntry<T>, V extends T> V register(IForgeRegistry<T> registry, String name, V obj)
+    {
+        obj.setRegistryName(new ResourceLocation(MODID, name));
+        registry.register(obj);
+        return obj;
     }
     
     protected void registerPOIs(final RegistryEvent.Register<PointOfInterestType> event)
