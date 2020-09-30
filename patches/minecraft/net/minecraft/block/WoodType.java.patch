@@ -13,7 +13,7 @@
        return this.field_227045_h_;
     }
 +
-+   private static final Set<WoodType> MOD_VALUES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
++   private static final Set<WoodType> MOD_VALUES = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
 +
 +   private final String namespace;
 +
