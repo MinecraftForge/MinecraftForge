@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftforge.debug.world;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -37,7 +37,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.IPOITTeleporter;
 import net.minecraftforge.common.util.ITeleporter;
+import net.minecraftforge.common.util.TeleporterHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -113,7 +115,7 @@ public class TeleporterTest
 		}
 	}
 	
-	private static class TestTeleporter implements ITeleporter
+	private static class TestTeleporter implements IPOITTeleporter
 	{
 		final PointOfInterestType poi;
 		final Block teleporterBlock;
@@ -127,7 +129,7 @@ public class TeleporterTest
 		@Override
 		public Optional<Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
 		{
-			BlockPos scaledPos = this.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
+			BlockPos scaledPos = TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
 			for (int i = 0; i < 256 && toWorld.getBlockState(scaledPos.down()).getMaterial() == Material.AIR; i++)
 				scaledPos = scaledPos.down();
 			toWorld.setBlockState(scaledPos, this.teleporterBlock.getDefaultState());

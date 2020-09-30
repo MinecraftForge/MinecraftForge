@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+  	"blue": "minecraft:block/blue_wool",
+    "particle": "#blue",
+    "north": "#blue",
+    "south": "#blue",
+    "east": "#blue",
+    "west": "#blue",
+    "up": "minecraft:block/respawn_anchor_top",
+    "down": "#blue"
+  }
+}

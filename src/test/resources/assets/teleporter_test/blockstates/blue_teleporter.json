@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "teleporter_test:block/blue_teleporter"
+    }
+  }
+}
