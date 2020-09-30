@@ -25,9 +25,11 @@ import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.TeleportationRepositioner;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.AbstractTeleporter;
 import net.minecraftforge.common.util.ITeleporter;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -36,6 +38,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class CommandSetDimension
@@ -66,7 +69,7 @@ public class CommandSetDimension
         //    throw INVALID_DIMENSION.create(dim);
 
         entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
-        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new ITeleporter()
+        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new AbstractTeleporter()
         {
             @Override
             public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
@@ -74,6 +77,20 @@ public class CommandSetDimension
                 Entity repositionedEntity = repositionEntity.apply(false);
                 repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
                 return repositionedEntity;
+            }
+
+            @Override
+            public Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld,
+                    Entity entity)
+            {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld,
+                    ServerWorld toWorld, Entity entity)
+            {
+                return Optional.empty();
             }
         }));
 
