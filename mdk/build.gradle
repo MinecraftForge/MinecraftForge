@@ -43,6 +43,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Required for mixins indev
+            property 'mixin.env.disableRefMap', 'true'
+
             mods {
                 examplemod {
                     source sourceSets.main
@@ -59,6 +62,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Required for mixins indev
+            property 'mixin.env.disableRefMap', 'true'
+
             mods {
                 examplemod {
                     source sourceSets.main
@@ -74,6 +80,9 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            // Required for mixins indev
+            property 'mixin.env.disableRefMap', 'true'
 
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
 
