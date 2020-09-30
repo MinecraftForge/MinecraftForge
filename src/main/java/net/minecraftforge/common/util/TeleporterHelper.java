@@ -1,6 +1,7 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.block.PortalInfo;
+import net.minecraft.block.PortalSize;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.TeleportationRepositioner;
@@ -25,20 +26,23 @@ public class TeleporterHelper
         double maxX = Math.min(2.9999872E7D, worldborder.maxX() - 16.0D);
         double maxZ = Math.min(2.9999872E7D, worldborder.maxZ() - 16.0D);
         double dimensionScaling = DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_());
-        return new BlockPos(MathHelper.clamp(originalPos.getX() * dimensionScaling, minX, maxX), originalPos.getY(),
-                MathHelper.clamp(originalPos.getZ() * dimensionScaling, minZ, maxZ));
+        return new BlockPos(MathHelper.clamp(originalPos.getX() * dimensionScaling, minX, maxX), originalPos.getY(), MathHelper.clamp(originalPos.getZ() * dimensionScaling, minZ, maxZ));
     }
 
     /**
      * An overload of {@link ITeleporter#getPortalInfo} that takes the entity being teleported as well as the
      * destination world to create a complete {@link PortalInfo}.
      */
-    public static PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult, Entity entity,
-            ServerWorld destWorld)
+    public static PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult, Entity entity, ServerWorld destWorld)
     {
         Direction.Axis axis1 = Direction.Axis.X;
         Vector3d vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
-        return net.minecraft.block.PortalSize.func_242963_a(destWorld, tpResult, axis1, vector3d,
+        return PortalSize.func_242963_a(destWorld, tpResult, axis1, vector3d,
                 entity.getSize(entity.getPose()), entity.getMotion(), entity.rotationYaw, entity.rotationPitch);
+    }
+    
+    public static int getPortalSearchRadius(World fromWorld, World toWorld)
+    {
+        return Math.max((int) DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) * 16, 16);
     }
 }

@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.TeleportationRepositioner;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.PointOfInterestType;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.server.ServerWorld;
 
@@ -17,8 +16,8 @@ public interface IPOITTeleporter extends ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-    	return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())),
-        		Math.max((int) DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_()) * 16, 16),
+        return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())),
+                TeleporterHelper.getPortalSearchRadius(fromWorld, toWorld),
                 this.getPortalPOI());
     }
     
