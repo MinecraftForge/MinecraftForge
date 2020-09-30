@@ -50,3 +50,4 @@ net/minecraft/world/server/ServerWorld.removeEntity(Lnet/minecraft/entity/Entity
 net/minecraft/world/server/ServerWorld.removeEntityComplete(Lnet/minecraft/entity/Entity;Z)V=|p_217484_1_,keepData
 net/minecraft/world/server/ServerWorld.removePlayer(Lnet/minecraft/entity/player/ServerPlayerEntity;Z)V=|p_217434_1_,keepData
 net/minecraft/world/spawner/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$PlacementType;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
+net/minecraft/world/Teleporter.func_242957_a(Lnet/minecraft/util/math/BlockPos;ILnet/minecraft/village/PointOfInterestType;)Ljava/util/Optional;=|p_242957_1_,scale,poit
