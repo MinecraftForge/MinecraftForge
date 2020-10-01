@@ -139,7 +139,7 @@ public class ModConfigScreen extends ConfigScreen {
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
                     ConfigElement element = new ConfigElement(null, title, tooltip);
-                    element.setMainWidget(new ConfigElementButton(title, $ -> Minecraft.getInstance().displayGuiScreen(new ModConfigConfigScreen(ModConfigScreen.this, title /* TODO */, modConfig))));
+                    element.setMainWidget(configScreen.getControlCreator().createPopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title /* TODO */, modConfig)));
                     this.func_230513_b_(element); // addEntry
                 }
             }

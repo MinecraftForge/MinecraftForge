@@ -252,7 +252,7 @@ public class CategoryConfigScreen extends ConfigScreen {
         public class CategoryConfigElement extends ConfigElement {
             public CategoryConfigElement(ITextComponent title, List<ITextProperties> tooltip, ConfigCategoryInfo valueCategoryInfo) {
                 super(null, title, tooltip);
-                setMainWidget(new ConfigElementButton(title, b -> Minecraft.getInstance().displayGuiScreen(new CategoryConfigScreen(configScreen, title, valueCategoryInfo))));
+                setMainWidget(configScreen.getControlCreator().createPopupButton(title, () -> new CategoryConfigScreen(configScreen, title, valueCategoryInfo)));
             }
         }
     }

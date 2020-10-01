@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Handles creating the widgets on a {@link ConfigScreen}.
@@ -263,7 +264,6 @@ public class ControlCreator {
         interactor.label = null;
         interactor.control = createButton(interactor, button -> {
             Screen currentScreen = Minecraft.getInstance().currentScreen;
-            // TODO: Move initialisation to method
             Screen screen = new ListConfigScreen(currentScreen, interactor.title, state[0]) {
                 @Override
                 public void onModified(List newValueIn) {
@@ -311,6 +311,10 @@ public class ControlCreator {
 
     static class DefaultHolder {
         static final ControlCreator INSTANCE = new ControlCreator();
+    }
+
+    public Button createPopupButton(ITextComponent title, Supplier<? extends Screen> screenSupplier) {
+        return new ConfigElementButton(title, b -> Minecraft.getInstance().displayGuiScreen(screenSupplier.get()));
     }
 
     public static class ConfigElementButton extends ExtendedButton {
