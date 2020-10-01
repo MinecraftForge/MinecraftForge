@@ -5,35 +5,7 @@
  import net.minecraft.world.server.TicketType;
  
 -public class Teleporter {
-+public class Teleporter implements net.minecraftforge.common.util.IPOITTeleporter {
++public class Teleporter implements net.minecraftforge.common.util.ITeleporter {
     protected final ServerWorld field_85192_a;
  
     public Teleporter(ServerWorld p_i1963_1_) {
-@@ -27,12 +27,15 @@
-    }
- 
-    public Optional<TeleportationRepositioner.Result> func_242957_a(BlockPos p_242957_1_, boolean p_242957_2_) {
-+      return this.func_242957_a(p_242957_1_, p_242957_2_ ? 16 : 128, PointOfInterestType.field_226358_u_);
-+   }
-+   
-+   public Optional<TeleportationRepositioner.Result> func_242957_a(BlockPos p_242957_1_, int scale, PointOfInterestType poit) {
-       PointOfInterestManager pointofinterestmanager = this.field_85192_a.func_217443_B();
--      int i = p_242957_2_ ? 16 : 128;
--      pointofinterestmanager.func_226347_a_(this.field_85192_a, p_242957_1_, i);
-+      pointofinterestmanager.func_226347_a_(this.field_85192_a, p_242957_1_, scale);
-       Optional<PointOfInterest> optional = pointofinterestmanager.func_226353_b_((p_242952_0_) -> {
--         return p_242952_0_ == PointOfInterestType.field_226358_u_;
--      }, p_242957_1_, i, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((p_242954_1_) -> {
-+         return p_242952_0_ == poit;
-+      }, p_242957_1_, scale, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((p_242954_1_) -> {
-          return p_242954_1_.func_218261_f().func_177951_i(p_242957_1_);
-       }).thenComparingInt((p_242959_0_) -> {
-          return p_242959_0_.func_218261_f().func_177956_o();
-@@ -157,4 +160,7 @@
- 
-       return true;
-    }
-+   @Override public boolean isVanilla() { return true; }
-+   @Override public PointOfInterestType getPortalPOI() { return PointOfInterestType.field_226358_u_; }
-+   @Override public Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, net.minecraft.entity.Entity entity) { return Optional.empty(); }
- }

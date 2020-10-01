@@ -23,7 +23,7 @@
 +   @Nullable
 +   protected PortalInfo getPortalInfo(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      PortalInfo portalinfo = super.getPortalInfo(p_241829_1_, teleporter);
-+      if (portalinfo == null && !teleporter.isVanilla()) return teleporter.createAndGetPortal(this.func_71121_q(), p_241829_1_, this).map(teleporter::getPortalInfo).orElse(null);
++      if (portalinfo == null && !teleporter.isVanilla()) return teleporter.createAndGetPortal(this.func_71121_q(), p_241829_1_, this).map(r -> teleporter.getPortalInfo((ServerWorld) this.field_70170_p, p_241829_1_, this, r)).orElse(null);
 +      if (portalinfo != null && this.field_70170_p.func_234923_W_() == World.field_234918_g_ && p_241829_1_.func_234923_W_() == World.field_234920_i_ && teleporter.isVanilla()) {
           Vector3d vector3d = portalinfo.field_222505_a.func_72441_c(0.0D, -1.0D, 0.0D);
           return new PortalInfo(vector3d, Vector3d.field_186680_a, 90.0F, 0.0F);
