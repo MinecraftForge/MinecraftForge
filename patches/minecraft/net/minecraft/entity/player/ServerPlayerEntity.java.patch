@@ -134,7 +134,7 @@
     }
  
     public void func_71033_a(GameType p_71033_1_) {
-+      if(!net.minecraftforge.common.ForgeHooks.onChangeGameMode(this, this.field_71134_c.func_73081_b(), p_71033_1_)) return;
++      if (!net.minecraftforge.common.ForgeHooks.onChangeGameMode(this, this.field_71134_c.func_73081_b(), p_71033_1_)) return;
        this.field_71134_c.func_73076_a(p_71033_1_);
        this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241767_d_, (float)p_71033_1_.func_77148_a()));
        if (p_71033_1_ == GameType.SPECTATOR) {
