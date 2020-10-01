@@ -216,7 +216,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                     interactor.saveValue.accept(newValue);
                     interactor.updateVisuals.update(true, newValue);
                 }));
-                widgets.add(undoButton = createConfigElementResetButton(title, button -> {
+                widgets.add(resetButton = createConfigElementResetButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(defaultValue);
                     interactor.saveValue.accept(newValue);
                     interactor.updateVisuals.update(true, newValue);
