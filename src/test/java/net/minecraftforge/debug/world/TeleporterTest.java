@@ -183,7 +183,7 @@ public class TeleporterTest
         @Override
         public PortalInfo getPortalInfo(ServerWorld fromWorld, ServerWorld toWorld, Entity entity, Result tpResult)
         {
-        	BlockPos pos = tpResult.field_243679_a.north();
+            BlockPos pos = tpResult.field_243679_a.north();
             return new PortalInfo(new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), Vector3d.ZERO, 0, 0);
         }
     }

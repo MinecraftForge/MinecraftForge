@@ -14,10 +14,12 @@ public class TeleporterHelper
     public static BlockPos getScaledPos(World fromWorld, World toWorld, BlockPos originalPos)
     {
         WorldBorder worldborder = toWorld.getWorldBorder();
-        double minX = Math.max(-2.9999872E7D, worldborder.minX() + 16.0D);
-        double minZ = Math.max(-2.9999872E7D, worldborder.minZ() + 16.0D);
-        double maxX = Math.min(2.9999872E7D, worldborder.maxX() - 16.0D);
-        double maxZ = Math.min(2.9999872E7D, worldborder.maxZ() - 16.0D);
+        double maxRadius = 2.9999872E7D;
+        int offset = 16;
+        double minX = Math.max(-maxRadius, worldborder.minX() + offset);
+        double minZ = Math.max(-maxRadius, worldborder.minZ() + offset);
+        double maxX = Math.min(maxRadius, worldborder.maxX() - offset);
+        double maxZ = Math.min(maxRadius, worldborder.maxZ() - offset);
         double dimensionScaling = DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_());
         return new BlockPos(MathHelper.clamp(originalPos.getX() * dimensionScaling, minX, maxX), originalPos.getY(), MathHelper.clamp(originalPos.getZ() * dimensionScaling, minZ, maxZ));
     }
