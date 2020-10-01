@@ -19,21 +19,19 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.Lists;
-import net.minecraft.item.DyeColor;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
+
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.List;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
-import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
-
-public class ForgeConfig {
+public class ForgeConfig
+{
     public static class Server {
         public final BooleanValue removeErroringEntities;
         public final BooleanValue removeErroringTileEntities;
@@ -54,62 +52,62 @@ public class ForgeConfig {
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
-                    .push("server");
+                .push("server");
 
             removeErroringEntities = builder
-                    .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringEntities")
-                    .worldRestart()
-                    .define("removeErroringEntities", false);
+                .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                .translation("forge.configgui.removeErroringEntities")
+                .worldRestart()
+                .define("removeErroringEntities", false);
 
             removeErroringTileEntities = builder
-                    .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringTileEntities")
-                    .worldRestart()
-                    .define("removeErroringTileEntities", false);
+                .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                .translation("forge.configgui.removeErroringTileEntities")
+                .worldRestart()
+                .define("removeErroringTileEntities", false);
 
             fullBoundingBoxLadders = builder
-                    .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
-                    .translation("forge.configgui.fullBoundingBoxLadders")
-                    .worldRestart()
-                    .define("fullBoundingBoxLadders", false);
+                .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
+                .translation("forge.configgui.fullBoundingBoxLadders")
+                .worldRestart()
+                .define("fullBoundingBoxLadders", false);
 
             zombieBaseSummonChance = builder
-                    .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
-                    .translation("forge.configgui.zombieBaseSummonChance")
-                    .worldRestart()
-                    .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D);
+                .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
+                .translation("forge.configgui.zombieBaseSummonChance")
+                .worldRestart()
+                .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D);
 
             zombieBabyChance = builder
-                    .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
-                    .translation("forge.configgui.zombieBabyChance")
-                    .worldRestart()
-                    .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
+                .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
+                .translation("forge.configgui.zombieBabyChance")
+                .worldRestart()
+                .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
 
             logCascadingWorldGeneration = builder
-                    .comment("Log cascading chunk generation issues during terrain population.")
-                    .translation("forge.configgui.logCascadingWorldGeneration")
-                    .define("logCascadingWorldGeneration", true);
+                .comment("Log cascading chunk generation issues during terrain population.")
+                .translation("forge.configgui.logCascadingWorldGeneration")
+                .define("logCascadingWorldGeneration", true);
 
             fixVanillaCascading = builder
-                    .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
-                    .translation("forge.configgui.fixVanillaCascading")
-                    .define("fixVanillaCascading", false);
+                .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
+                .translation("forge.configgui.fixVanillaCascading")
+                .define("fixVanillaCascading", false);
 
             dimensionUnloadQueueDelay = builder
-                    .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
-                    .translation("forge.configgui.dimensionUnloadQueueDelay")
-                    .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
+                .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
+                .translation("forge.configgui.dimensionUnloadQueueDelay")
+                .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
             treatEmptyTagsAsAir = builder
-                    .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
-                    .translation("forge.configgui.treatEmptyTagsAsAir")
-                    .define("treatEmptyTagsAsAir", false);
+                .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
+                .translation("forge.configgui.treatEmptyTagsAsAir")
+                .define("treatEmptyTagsAsAir", false);
 
             fixAdvancementLoading = builder
-                    .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
-                    .translation("forge.configgui.fixAdvancementLoading")
-                    .define("fixAdvancementLoading", true);
+                .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
+                .translation("forge.configgui.fixAdvancementLoading")
+                .define("fixAdvancementLoading", true);
             builder.pop();
         }
     }
@@ -137,53 +135,53 @@ public class ForgeConfig {
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
-                    .push("client");
+                .push("client");
 
             zoomInMissingModelTextInGui = builder
-                    .comment("Toggle off to make missing model text in the gui fit inside the slot.")
-                    .translation("forge.configgui.zoomInMissingModelTextInGui")
-                    .define("zoomInMissingModelTextInGui", false);
+                .comment("Toggle off to make missing model text in the gui fit inside the slot.")
+                .translation("forge.configgui.zoomInMissingModelTextInGui")
+                .define("zoomInMissingModelTextInGui", false);
 
             forgeCloudsEnabled = builder
-                    .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
-                    .translation("forge.configgui.forgeCloudsEnabled")
-                    .define("forgeCloudsEnabled", true);
+                .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
+                .translation("forge.configgui.forgeCloudsEnabled")
+                .define("forgeCloudsEnabled", true);
 
             disableStairSlabCulling = builder
-                    .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
-                    .translation("forge.configgui.disableStairSlabCulling")
-                    .define("disableStairSlabCulling", false);
+                .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
+                .translation("forge.configgui.disableStairSlabCulling")
+                .define("disableStairSlabCulling", false);
 
             alwaysSetupTerrainOffThread = builder
-                    .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
-                            "May increase FPS significantly, but may also cause weird rendering lag.",
-                            "Not recommended for computers without a significant number of cores available.")
-                    .translation("forge.configgui.alwaysSetupTerrainOffThread")
-                    .define("alwaysSetupTerrainOffThread", false);
+                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
+                    "May increase FPS significantly, but may also cause weird rendering lag.",
+                    "Not recommended for computers without a significant number of cores available.")
+                .translation("forge.configgui.alwaysSetupTerrainOffThread")
+                .define("alwaysSetupTerrainOffThread", false);
 
             forgeLightPipelineEnabled = builder
-                    .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                    .translation("forge.configgui.forgeLightPipelineEnabled")
-                    .define("forgeLightPipelineEnabled", true);
+                .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                .translation("forge.configgui.forgeLightPipelineEnabled")
+                .define("forgeLightPipelineEnabled", true);
             experimentalForgeLightPipelineEnabled = builder
-                    .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                    .translation("forge.configgui.forgeLightPipelineEnabled")
-                    .define("experimentalForgeLightPipelineEnabled", false);
+                .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                .translation("forge.configgui.forgeLightPipelineEnabled")
+                .define("experimentalForgeLightPipelineEnabled", false);
 
             selectiveResourceReloadEnabled = builder
-                    .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
-                    .translation("forge.configgui.selectiveResourceReloadEnabled")
-                    .define("selectiveResourceReloadEnabled", true);
+                .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
+                .translation("forge.configgui.selectiveResourceReloadEnabled")
+                .define("selectiveResourceReloadEnabled", true);
 
             showLoadWarnings = builder
-                    .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                    .translation("forge.configgui.showLoadWarnings")
-                    .define("showLoadWarnings", true);
+                .comment("When enabled, Forge will show any warnings that occurred during loading.")
+                .translation("forge.configgui.showLoadWarnings")
+                .define("showLoadWarnings", true);
 
             useCombinedDepthStencilAttachment = builder
-                    .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
-                    .translation("forge.configgui.useCombinedDepthStencilAttachment")
-                    .define("useCombinedDepthStencilAttachment", false);
+                .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
+                .translation("forge.configgui.useCombinedDepthStencilAttachment")
+                .define("useCombinedDepthStencilAttachment", false);
 
             builder.pop();
         }
@@ -221,5 +219,4 @@ public class ForgeConfig {
     //public static boolean disableVersionCheck = false;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
-
 }
