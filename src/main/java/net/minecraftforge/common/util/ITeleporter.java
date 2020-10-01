@@ -93,11 +93,9 @@ public interface ITeleporter
     }
     
     /**
-     * A default implementation of {@link ITeleporter#getPortalInfo(TeleportationRepositioner.Result)} that sets the yaw and pitch to 0.
-     * <p>
-     * To maintain the yaw and pitch of the original entity, see {@link TeleporterHelper#getPortalInfo(TeleportationRepositioner.Result, Entity, ServerWorld)}.
+     * Gets the portal info. Defaults to the tpResult's position, zero motion, and the entity's rotation.
      */
-    default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult, Entity entity, ServerWorld destWorld)
+    default PortalInfo getPortalInfo(ServerWorld fromWorld, ServerWorld toWorld, Entity entity, TeleportationRepositioner.Result tpResult)
     {
         return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, entity.rotationYaw, entity.rotationPitch);
     }

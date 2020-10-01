@@ -47,7 +47,7 @@ import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
-import net.minecraftforge.common.util.IPOITTeleporter;
+import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.common.util.TeleporterHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -134,7 +134,7 @@ public class TeleporterTest
         }
     }
     
-    private static class TestTeleporter implements IPOITTeleporter
+    private static class TestTeleporter implements ITeleporter
     {
         final PointOfInterestType poi;
         final Block teleporterBlock;
@@ -153,7 +153,7 @@ public class TeleporterTest
             BlockPos scaledPos = TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec()));
             poiManager.ensureLoadedAndValid(toWorld, scaledPos, scale);
             Optional<PointOfInterest> optional = poiManager.getInSquare((poiType) -> {
-               return poiType == this.getPortalPOI();
+               return poiType == this.poi;
             }, scaledPos, scale, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((poi) -> {
                return poi.getPos().distanceSq(scaledPos);
             }).thenComparingInt((poi) -> {
@@ -181,15 +181,9 @@ public class TeleporterTest
         }
         
         @Override
-        public PointOfInterestType getPortalPOI()
+        public PortalInfo getPortalInfo(ServerWorld fromWorld, ServerWorld toWorld, Entity entity, Result tpResult)
         {
-            return this.poi;
-        }
-        
-        @Override
-        public PortalInfo getPortalInfo(Result tpResult)
-        {
-            BlockPos pos = tpResult.field_243679_a.north();
+        	BlockPos pos = tpResult.field_243679_a.north();
             return new PortalInfo(new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), Vector3d.ZERO, 0, 0);
         }
     }
