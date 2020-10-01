@@ -163,6 +163,12 @@
   "forge.configgui.worldRestartRequired": "World Restart Required",
   "forge.configgui.worldRestartRequiredBecause": "An option you changed requires the world to be restarted before it will take effect.",
   "forge.configgui.worldRestartRequiredConfirm": "I Understand",
+  "forge.configgui.modConfigType.common": "Common",
+  "forge.configgui.modConfigType.common.tooltip": "Spider config, spider config - does whatever a spider config does",
+  "forge.configgui.modConfigType.client": "Client",
+  "forge.configgui.modConfigType.client.tooltip": "Rendering stuff",
+  "forge.configgui.modConfigType.server": "Server",
+  "forge.configgui.modConfigType.server.tooltip": "Doesn't sync yet - only works in singleplayer",
 
   "forge.configgui.tooltip.default": "[default: %s]",
   "forge.configgui.tooltip.rangeWithDefault": "[range: %s ~ %s, default: %s]",

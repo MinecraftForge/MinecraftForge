@@ -21,8 +21,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.client.gui.config.ControlCreator.ConfigElementButton;
-
 /**
  * A {@link ConfigScreen} for a (sub) category.
  * A category is made when you do "builder.push()" when initialising your config.
@@ -33,7 +31,7 @@ public class CategoryConfigScreen extends ConfigScreen {
     protected final ConfigCategoryInfo categoryInfo;
 
     public CategoryConfigScreen(Screen parentScreen, ITextComponent title, ConfigCategoryInfo categoryInfo) {
-        super(parentScreen, title);
+        super(parentScreen, title, ConfigScreen.makeSubtitle(parentScreen, title));
         this.categoryInfo = categoryInfo;
     }
 

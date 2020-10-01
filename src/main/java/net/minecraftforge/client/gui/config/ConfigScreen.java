@@ -6,7 +6,9 @@ import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.config.ConfigElementList.ConfigElement;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -21,7 +23,8 @@ import java.util.Collections;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - **Config Screen titles**
+ * - Check lists reloading works + undo/reset
+ * - IDK how to handle the coloring thing in the test
  * - ModConfig comments to translations
  * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Translucent scissored list
@@ -56,6 +59,16 @@ public abstract class ConfigScreen extends Screen {
         super(title);
         this.parentScreen = parentScreen;
         this.subTitle = subTitle;
+    }
+
+    protected static ITextComponent makeSubtitle(Screen parentScreen, ITextComponent next) {
+        IFormattableTextComponent title;
+        if (parentScreen instanceof ConfigScreen && ((ConfigScreen) parentScreen).subTitle != null)
+            title = ((ConfigScreen) parentScreen).subTitle.func_230532_e_();
+        else
+            title = parentScreen.func_231171_q_().func_230532_e_();
+        IFormattableTextComponent ending = next.func_230532_e_();
+        return title.func_230529_a_(new StringTextComponent(" > ")).func_230529_a_(ending);
     }
 
     @Override
@@ -93,6 +106,8 @@ public abstract class ConfigScreen extends Screen {
     public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // renderBackground(matrixStack)
         func_230446_a_(matrixStack);
+        // configEntryList.render()
+        configElementList.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
 
         // drawCenteredString(matrixStack, fontRenderer, title, width / 2, 8, 0xFFFFFF)
         func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, field_230708_k_ / 2, 8, 0xFFFFFF);
@@ -102,9 +117,7 @@ public abstract class ConfigScreen extends Screen {
         // Renders our widgets for us
         // super.render(matrixStack, mouseX, mouseY, partialTicks);
         super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
-        // Render this after the widgets so tooltips render over the buttons
-        // configEntryList.render()
-        configElementList.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+        configElementList.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
         if (undoButton.func_230449_g_()) // isHovered
             GuiUtils.drawHoveringText(matrixStack, Collections.singletonList(new TranslationTextComponent("forge.configgui.undoAllChanges.tooltip")), mouseX, mouseY, field_230708_k_, field_230709_l_, -1, getFontRenderer()); // width, height
         if (resetButton.func_230449_g_()) // isHovered

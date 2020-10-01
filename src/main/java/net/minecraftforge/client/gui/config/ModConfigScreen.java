@@ -17,8 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraftforge.client.gui.config.ControlCreator.ConfigElementButton;
-
 /**
  * A {@link ConfigScreen} with entries for all of a mod's registered configs.
  *
@@ -26,14 +24,11 @@ import static net.minecraftforge.client.gui.config.ControlCreator.ConfigElementB
  */
 public class ModConfigScreen extends ConfigScreen {
 
-    // TODO: Get rid of this
-    private static final Map<ModConfig.Type, String> COMMENTS = makeTypeComments();
-
     protected final IModInfo mod;
     protected boolean displayRequiresWorldRestartScreen;
 
     public ModConfigScreen(Screen screen, IModInfo mod) {
-        super(screen, new StringTextComponent(mod.getDisplayName()));
+        super(screen, new TranslationTextComponent("forge.configgui.title", mod.getDisplayName()));
         this.mod = mod;
     }
 
@@ -131,10 +126,8 @@ public class ModConfigScreen extends ConfigScreen {
             {
                 for (ModConfig modConfig : configsToDisplay) {
                     String translationKey = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
-                    // TODO: Translation keys instead of hardcoding
-                    String comment = COMMENTS.get(modConfig.getType());
                     ITextComponent title = CategoryConfigScreen.translateWithFallback(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
-                    List<ITextProperties> tooltip = CategoryConfigScreen.createTooltip(title, translationKey + ".tooltip", comment);
+                    List<ITextProperties> tooltip = CategoryConfigScreen.createTooltip(title, translationKey + ".tooltip", null);
                     String filePath = getDisplayFilePath(modConfig);
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
@@ -176,8 +169,8 @@ public class ModConfigScreen extends ConfigScreen {
 
         protected final ModConfig modConfig;
 
-        public ModConfigConfigScreen(Screen parentScreen, ITextComponent titleIn, ModConfig modConfig) {
-            super(parentScreen, titleIn);
+        public ModConfigConfigScreen(Screen parentScreen, ITextComponent title, ModConfig modConfig) {
+            super(parentScreen, title, ConfigScreen.makeSubtitle(parentScreen, title));
             this.modConfig = modConfig;
         }
 

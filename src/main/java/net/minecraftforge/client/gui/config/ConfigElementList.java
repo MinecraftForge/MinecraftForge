@@ -90,10 +90,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
             element.tick();
     }
 
-    @Override
     // render
-    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+    public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // isMouseOver
         if (!func_231047_b_(mouseX, mouseY))
             return;

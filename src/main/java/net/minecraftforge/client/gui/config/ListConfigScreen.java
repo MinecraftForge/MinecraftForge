@@ -20,8 +20,8 @@ import java.util.List;
 public abstract class ListConfigScreen extends ConfigScreen {
     protected List value;
 
-    public ListConfigScreen(Screen configScreen, ITextComponent title, List<?> value) {
-        super(configScreen, title, new StringTextComponent("List"));
+    public ListConfigScreen(Screen parentScreen, ITextComponent title, List<?> value) {
+        super(parentScreen, title, ConfigScreen.makeSubtitle(parentScreen, title));
         this.value = value;
     }
 
