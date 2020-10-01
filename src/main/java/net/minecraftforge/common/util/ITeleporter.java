@@ -81,7 +81,7 @@ public interface ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-       return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
+       return toWorld.getDefaultTeleporter().func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
     }
 
     /**
@@ -89,7 +89,7 @@ public interface ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-        return new Teleporter(toWorld).func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
+        return toWorld.getDefaultTeleporter().func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
     }
     
     /**
@@ -97,8 +97,8 @@ public interface ITeleporter
      * <p>
      * To maintain the yaw and pitch of the original entity, see {@link TeleporterHelper#getPortalInfo(TeleportationRepositioner.Result, Entity, ServerWorld)}.
      */
-    default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult)
+    default PortalInfo getPortalInfo(TeleportationRepositioner.Result tpResult, Entity entity, ServerWorld destWorld)
     {
-        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, 0, 0);
+        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, entity.rotationYaw, entity.rotationPitch);
     }
 }
