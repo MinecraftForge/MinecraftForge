@@ -52,6 +52,7 @@ public class CategoryConfigScreen extends ConfigScreen {
             translationKey += ".tooltip";
             TranslationTextComponent comment = new TranslationTextComponent(translationKey);
             if (!translationKey.equals(comment.getString())) {
+                comment.func_240701_a_(TextFormatting.YELLOW); // mergeStyle
                 // TODO: There can be line breaks in here too but everything's SRG named and I cbf to work out how to split text components
 //                configScreen.getFontRenderer().func_238420_b_().func_238362_b_(textLine, tooltipTextWidth, Style.field_240709_b_);
                 return Collections.singletonList(comment);
