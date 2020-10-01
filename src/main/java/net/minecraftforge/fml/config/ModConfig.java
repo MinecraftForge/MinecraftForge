@@ -86,7 +86,7 @@ public class ModConfig
         this.spec.setConfig(this.configData);
     }
 
-    public void fireEvent(final ModConfigEvent configEvent) {
+    void fireEvent(final ModConfigEvent configEvent) {
         this.container.dispatchConfigEvent(configEvent);
     }
 
