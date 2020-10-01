@@ -19,16 +19,19 @@
 
 package net.minecraftforge.common.util;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 import net.minecraft.block.PortalInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.TeleportationRepositioner;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.Teleporter;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -69,20 +72,26 @@ public interface ITeleporter
      */
     default boolean isVanilla()
     {
-        return false;
+        return this.getClass() == Teleporter.class;
     }
 
     /**
      * Finds a portal to teleport to and creates a {@link TeleportationRepositioner.Result} for it.
      * Return an empty {@link Optional} if no portal was found.
      */
-    Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity);
+    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+    {
+       return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
+    }
 
     /**
      * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}.
      */
-    Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity);
-
+    default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+    {
+        return new Teleporter(toWorld).func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
+    }
+    
     /**
      * A default implementation of {@link ITeleporter#getPortalInfo(TeleportationRepositioner.Result)} that sets the yaw and pitch to 0.
      * <p>

@@ -16,9 +16,7 @@ public interface IPOITTeleporter extends ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-        return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())),
-                TeleporterHelper.getPortalSearchRadius(fromWorld, toWorld),
-                this.getPortalPOI());
+        return new Teleporter(toWorld).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), TeleporterHelper.getPortalSearchRadius(fromWorld, toWorld), this.getPortalPOI());
     }
     
     /**
