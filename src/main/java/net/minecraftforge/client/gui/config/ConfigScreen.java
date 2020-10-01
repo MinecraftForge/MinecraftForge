@@ -180,9 +180,9 @@ public abstract class ConfigScreen extends Screen {
         return field_230712_o_;
     }
 
-    public ConfigElementControls getControlCreator() {
+    public ControlCreator getControlCreator() {
         if (parentScreen instanceof ConfigScreen)
             return ((ConfigScreen) parentScreen).getControlCreator();
-        return ConfigElementControls.getDefaultCreator();
+        return ControlCreator.getDefaultCreator();
     }
 }

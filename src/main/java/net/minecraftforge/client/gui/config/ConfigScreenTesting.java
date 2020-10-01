@@ -2,16 +2,12 @@ package net.minecraftforge.client.gui.config;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.fonts.Font;
-import net.minecraft.client.gui.fonts.FontResourceManager;
-import net.minecraft.client.gui.fonts.providers.DefaultGlyphProvider;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.gui.config.ControlCreator.ConfigElementTextField;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -27,6 +23,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static net.minecraftforge.client.gui.config.ControlCreator.RED;
 
 /**
  * Just for testing the extensibility of the system.
@@ -46,23 +44,20 @@ public class ConfigScreenTesting extends ModConfigScreen {
         COMMON = specPair.getLeft();
     }
 
-    private final FontRenderer fontRenderer;
-    private final ConfigElementControls configElementControls;
+    private final ControlCreator controlCreator;
 
     public ConfigScreenTesting(Screen screen, IModInfo mod) {
         super(screen, mod);
-        Font font = new Font(Minecraft.getInstance().getTextureManager(), FontResourceManager.field_238544_a_);
-        font.setGlyphProviders(Lists.newArrayList(new DefaultGlyphProvider()));
-        fontRenderer = new FontRenderer(rl -> font);
-        configElementControls = new ConfigElementControls() {
+        controlCreator = new ControlCreator() {
+
             @Override
-            public ConfigElementTextField createTextField(ITextComponent title) {
-                return new TestColorTextField(title);
+            public TestColorTextField createTextField(Interactor<?> interactor) {
+                return new TestColorTextField(interactor.title);
             }
 
             @Override
-            public Button createButton(ITextComponent title, Button.IPressable iPressable) {
-                return new ConfigElementButton(title, iPressable) {
+            public Button createButton(Interactor<?> interactor, Button.IPressable iPressable) {
+                return new ConfigElementButton(interactor.title, iPressable) {
                     @Override
                     public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
                         setFGColor((int) (Math.random() * (double) 0xFFFFFF));
@@ -88,19 +83,14 @@ public class ConfigScreenTesting extends ModConfigScreen {
     }
 
     @Override
-    public ConfigElementControls getControlCreator() {
-        return configElementControls;
+    public ControlCreator getControlCreator() {
+        return controlCreator;
     }
-
-//    @Override
-//    public FontRenderer getFontRenderer() {
-//        return fontRenderer;
-//    }
 
     /**
      * Just testing to check
      */
-    public static class TestColorTextField extends ConfigElementControls.ConfigElementTextField {
+    public static class TestColorTextField extends ConfigElementTextField {
         public TestColorTextField(ITextComponent title) {
             super(title);
         }
@@ -135,7 +125,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
                     ig = Integer.parseInt(g, 16);
                     ib = Integer.parseInt(b, 16);
                 } catch (NumberFormatException e) {
-                    setTextColor(ConfigElementControls.RED);
+                    setTextColor(RED);
                     return;
                 }
                 setTextColor(ir << 16 | ig << 8 | ib);

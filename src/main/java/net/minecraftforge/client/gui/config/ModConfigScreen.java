@@ -4,10 +4,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
@@ -135,17 +132,12 @@ public class ModConfigScreen extends ConfigScreen {
                     // TODO: Translation keys instead of hardcoding
                     String comment = COMMENTS.get(modConfig.getType());
                     ITextComponent title = CategoryConfigScreen.translateWithFallback(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
-                    List<ITextComponent> tooltip = new LinkedList<>();
-                    tooltip.add(0, title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
-                    tooltip.addAll(CategoryConfigScreen.translateCommentWithFallback(translationKey, comment));
+                    List<ITextProperties> tooltip = CategoryConfigScreen.createTooltip(title, translationKey + ".tooltip", comment);
                     String filePath = getDisplayFilePath(modConfig);
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
-                    ConfigElement element = new ConfigElement(null, title, tooltip) {
-                        {
-                            this.widgets.add(0, configScreen.getControlCreator().makePopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title, modConfig)));
-                        }
-                    };
+                    ConfigElement element = new ConfigElement(null, title, tooltip);
+                    element.widgets.add(0, new ControlCreator.ConfigElementButton(title, $ -> Minecraft.getInstance().displayGuiScreen(new ModConfigConfigScreen(ModConfigScreen.this, title /* TODO */, modConfig))));
                     this.func_230513_b_(element); // addEntry
                 }
             }

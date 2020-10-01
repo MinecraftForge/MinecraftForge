@@ -7,10 +7,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.CategoryConfigElement;
 import net.minecraftforge.client.gui.config.CategoryConfigScreen.CategoryConfigElementList.ConfigValueConfigElement;
 import net.minecraftforge.client.gui.config.ListConfigScreen.ListConfigElementList.ListItemConfigElement;
@@ -31,6 +28,8 @@ import java.util.List;
  */
 public class ConfigElementList extends AbstractOptionList<ConfigElementList.ConfigElement> {
 
+    public static final StringTextComponent EMPTY_STRING = new StringTextComponent("");
+
     // From AbstractList#render/func_230430_a_
     public static final int SCROLLBAR_WIDTH = 6;
 
@@ -44,7 +43,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementResetButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.RESET_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, EMPTY_STRING, GuiUtils.RESET_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -54,7 +53,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     }
 
     public static Button createConfigElementUndoButton(ITextComponent title, Button.IPressable onPress) {
-        return new UnicodeGlyphButton(0, 0, 20, 0, ConfigElementControls.EMPTY_STRING, GuiUtils.UNDO_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
+        return new UnicodeGlyphButton(0, 0, 20, 0, EMPTY_STRING, GuiUtils.UNDO_CHAR, ConfigScreen.GLYPH_SCALE, onPress) {
             @Override
             // getNarrationMessage
             protected IFormattableTextComponent func_230442_c_() {
@@ -196,18 +195,18 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
          * A non-null value for this increments {@link #maxListLabelWidth}.
          */
         @Nullable
-        final ITextComponent label;
+        final ITextProperties label;
         /** The title of this element. Describes what this is. Used for narration messages. */
-        final ITextComponent title;
+        final ITextProperties title;
         /** Will be null/empty for list item entries who have nothing useful to display. */
         @Nullable
-        final List<ITextComponent> tooltip;
+        final List<? extends ITextProperties> tooltip;
         @Nullable
         public Button undoButton;
         @Nullable
         public Button resetButton;
 
-        public ConfigElement(@Nullable ITextComponent label, ITextComponent title, @Nullable List<ITextComponent> tooltip) {
+        public ConfigElement(@Nullable ITextProperties label, ITextProperties title, @Nullable List<? extends ITextProperties> tooltip) {
             this.label = label;
             this.title = title;
             this.tooltip = tooltip;
@@ -225,7 +224,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         // render
         public void func_230432_a_(MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int adjustedItemHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
             if (label != null)
-                configScreen.getFontRenderer().func_243248_b(matrixStack, label, rowLeft, (float) (rowTop + adjustedItemHeight / 2 - configScreen.getFontRenderer().FONT_HEIGHT / 2), 0xFFFFFF);
+                configScreen.getFontRenderer().func_238418_a_(label, rowLeft, (rowTop + getItemHeight() / 2 - configScreen.getFontRenderer().FONT_HEIGHT / 2), Integer.MAX_VALUE, 0xFFFFFF);
             // Expand the main widget to fill all free space
             // If the label is not null, the free space starts at rowLeft + maxListLabelWidth, otherwise it starts at rowLeft
             Widget main = getMainWidget();
@@ -234,7 +233,7 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                 otherWidthsAndPadding -= main.func_230998_h_(); // The main widget was included in the sum, subtract it // getHeight
                 int width = func_230952_d_() - otherWidthsAndPadding - PADDING * 2; // getScrollbarPosition
                 if (label != null)
-                    width -= maxListLabelWidth;
+                    width -= getMaxListLabelWidth() + PADDING;
                 main.func_230991_b_(correctWidgetBound(main, width)); // setWidth
             }
             // Position widgets with the first item on the left and the last on the right
