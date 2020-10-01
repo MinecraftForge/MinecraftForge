@@ -146,28 +146,6 @@ public class GeneratorTypeManager {
         this.defaultGeneratorType = generatorType;
     }
 
-    /**
-     * Set the index of the given GeneratorType in the list of GeneratorType
-     * No guarantees can be made about the resulting order of the GeneratorTypes list when multiple mods
-     * set the index of a GeneratorType
-     *
-     * @param generatorType The GeneratorType to set the index of
-     * @param index         The index to set for the given GeneratorType
-     * @return true if the index was successfully set or the GeneratorType was already placed at the given index
-     */
-    public synchronized boolean setIndex(BiomeGeneratorTypeScreens generatorType, int index) {
-        int currentIndex = generatorTypes.indexOf(generatorType);
-        if (currentIndex == -1) {
-            return false;
-        }
-        if (currentIndex == index) {
-            return true;
-        }
-        generatorTypes.remove(currentIndex);
-        generatorTypes.add(index, generatorType);
-        return true;
-    }
-
     public static GeneratorTypeManager get() {
         return INSTANCE;
     }
