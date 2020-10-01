@@ -155,8 +155,10 @@ public class ModConfigScreen extends ConfigScreen {
     @Override
     // closeScreen
     public void func_231175_as__() {
-        if (!displayRequiresWorldRestartScreen || Minecraft.getInstance().world == null)
+        if (!displayRequiresWorldRestartScreen || Minecraft.getInstance().world == null) {
             super.func_231175_as__();
+            return;
+        }
         field_230706_i_.displayGuiScreen(new MessageDialogScreen(
                 new TranslationTextComponent("forge.configgui.worldRestartRequired"),
                 new TranslationTextComponent("forge.configgui.worldRestartRequiredBecause"),

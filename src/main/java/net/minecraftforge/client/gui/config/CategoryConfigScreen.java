@@ -174,9 +174,13 @@ public class CategoryConfigScreen extends ConfigScreen {
                 tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"));
                 return new ConfigElement(label, title, tooltip);
             } else {
-                ConfigElement configElement = new ConfigValueConfigElement(interactor.label, interactor.title, tooltip, configValue, valueSpec, interactor);
-                configElement.setMainWidget(interactor.control);
-                return configElement;
+                // Don't need to explicitly check range, this is done as part of the test :)
+                interactor.isValid = valueSpec::test;
+                interactor.saveValue = newValue -> {
+                    configValue.set(newValue);
+                    configScreen.onChange(valueSpec.needsWorldRestart());
+                };
+                return new ConfigValueConfigElement(interactor.label, interactor.title, tooltip, configValue, valueSpec, interactor);
             }
         }
 

@@ -3,14 +3,17 @@ package net.minecraftforge.client.gui.config;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
+import net.minecraft.util.ColorHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.gui.config.ControlCreator.ConfigElementTextField;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -21,7 +24,9 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.awt.Color;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static net.minecraftforge.client.gui.config.ControlCreator.RED;
@@ -51,35 +56,45 @@ public class ConfigScreenTesting extends ModConfigScreen {
         controlCreator = new ControlCreator() {
 
             @Override
-            public TestColorTextField createTextField(Interactor<?> interactor) {
-                return new TestColorTextField(interactor.title);
+            public TextFieldWidget createTextField(Interactor<?> interactor) {
+                if (interactor instanceof ConfigValueInteractor)
+                    if (((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.hexColorString)
+                        return new TestColorTextField(interactor.title);
+                return super.createTextField(interactor);
             }
 
             @Override
             public Button createButton(Interactor<?> interactor, Button.IPressable iPressable) {
-                return new ConfigElementButton(interactor.title, iPressable) {
-                    @Override
-                    public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
-                        setFGColor((int) (Math.random() * (double) 0xFFFFFF));
-                        super.func_230431_b_(mStack, mouseX, mouseY, partial);
-                    }
-                };
+                if (interactor instanceof ConfigValueInteractor)
+                    if (((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.colouredBoolean)
+                        return new ConfigElementButton(interactor.title, iPressable) {
+                            final Random random = new Random();
+                            @Override
+                            public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
+                                final float hue = random.nextFloat();
+                                final float saturation = 0.9F;
+                                final float luminance = 1.0F;
+                                Color color = Color.getHSBColor(hue, saturation, luminance);
+                                int packed = ColorHelper.PackedColor.func_233006_a_(color.getAlpha(), color.getRed(), color.getBlue(), color.getGreen());
+                                setFGColor(packed);
+                                super.func_230431_b_(mStack, mouseX, mouseY, partial);
+                            }
+                        };
+                return super.createButton(interactor, iPressable);
             }
         };
     }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        ModList.get().getModContainerById("forge").ifPresent(forge -> {
-            forge.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigScreenTesting(screen, forge.getModInfo()));
-        });
+        ModContainer forge = ModList.get().getModContainerById("forge").get();
+        forge.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigScreenTesting(screen, forge.getModInfo()));
     }
 
     @SubscribeEvent
     public static void onCommonSetup(FMLConstructModEvent event) {
-        ModList.get().getModContainerById("forge").ifPresent(forge -> {
-            forge.addConfig(new ModConfig(ModConfig.Type.COMMON, commonSpec, forge));
-        });
+        ModContainer forge = ModList.get().getModContainerById("forge").get();
+        forge.addConfig(new ModConfig(ModConfig.Type.COMMON, commonSpec, forge));
     }
 
     @Override
@@ -88,7 +103,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
     }
 
     /**
-     * Just testing to check
+     * Just testing to check that something like a custom color wheel would be able to work
      */
     public static class TestColorTextField extends ConfigElementTextField {
         public TestColorTextField(ITextComponent title) {
@@ -135,6 +150,9 @@ public class ConfigScreenTesting extends ModConfigScreen {
 
     public static class Common {
 
+        private final ForgeConfigSpec.ConfigValue<String> hexColorString;
+        private final ForgeConfigSpec.BooleanValue colouredBoolean;
+
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("a Boolean comment")
                     .translation("forge.configgui.a.boolean")
@@ -175,6 +193,12 @@ public class ConfigScreenTesting extends ModConfigScreen {
             builder.comment("a String comment")
                     .translation("forge.configgui.a.string")
                     .define("aString", "foo");
+            hexColorString = builder.comment("a Hex Color String comment")
+                    .translation("forge.configgui.a.hexColorString")
+                    .define("aHexColorString", "#0FF");
+            colouredBoolean = builder.comment("a Coloured Boolean comment")
+                    .translation("forge.configgui.a.colouredBoolean")
+                    .define("aColouredBoolean", false);
             builder.comment("an Enum List comment")
                     .translation("forge.configgui.an.enum.list")
                     .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);

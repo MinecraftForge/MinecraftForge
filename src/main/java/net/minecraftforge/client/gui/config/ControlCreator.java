@@ -54,9 +54,12 @@ public class ControlCreator {
         public final T initialValue;
         public ITextComponent label;
         public Widget control;
+        /** Set this AFTER initialisation */
         public Predicate<T> isValid = $ -> true;
+        /** Set this AFTER initialisation */
         public Consumer<T> saveValue = $ -> {
         };
+        /** Set this AFTER initialisation */
         public UpdateVisuals<T> updateVisuals = (a, b) -> {
         };
 
@@ -82,8 +85,6 @@ public class ControlCreator {
             super(title, configValue.get());
             this.configValue = configValue;
             this.configSpec = configSpec;
-            isValid = configSpec::test;
-            saveValue = configValue::set;
         }
 
         public ForgeConfigSpec.ConfigValue<T> getConfigValue() {
@@ -99,6 +100,7 @@ public class ControlCreator {
         return DefaultHolder.INSTANCE;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> void createInteractionWidget(Interactor<T> interactor) {
         T value = interactor.initialValue;
         if (value instanceof Boolean)
@@ -113,6 +115,7 @@ public class ControlCreator {
             createListInteractionWidget((Interactor<List<?>>) interactor);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T[] createHolderForUseInLambda(T value) {
         T[] holder = (T[]) Array.newInstance(value.getClass(), 1);
         holder[0] = value;
@@ -144,6 +147,7 @@ public class ControlCreator {
         interactor.updateVisuals.update(true, interactor.initialValue);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Number> void createNumericInteractionWidget(Interactor<T> interactor) {
         T value = interactor.initialValue;
         if (value instanceof Integer)
@@ -163,7 +167,6 @@ public class ControlCreator {
         interactor.control = textField;
 
         textField.setMaxStringLength(longestValueStringLength);
-        textField.setText(interactor.initialValue.toString());
         textField.setResponder(newText -> {
             T newValue;
             boolean isValid = true;
@@ -179,6 +182,7 @@ public class ControlCreator {
                 interactor.saveValue.accept(newValue);
             interactor.updateVisuals.update(isValid, newValue);
         });
+        textField.setText(interactor.initialValue.toString());
 
         interactor.updateVisuals = (isValid, newValue) -> {
             TextFieldWidget control = ((TextFieldWidget) interactor.control);
@@ -239,13 +243,13 @@ public class ControlCreator {
         interactor.control = textField;
 
         textField.setMaxStringLength(Integer.MAX_VALUE);
-        textField.setText(interactor.initialValue);
         textField.setResponder(newValue -> {
             boolean isValid = interactor.isValid.test(newValue);
             if (isValid)
                 interactor.saveValue.accept(newValue);
             interactor.updateVisuals.update(isValid, newValue);
         });
+        textField.setText(interactor.initialValue);
 
         interactor.updateVisuals = (isValid, newValue) -> {
             TextFieldWidget control = ((TextFieldWidget) interactor.control);
@@ -287,6 +291,7 @@ public class ControlCreator {
         interactor.updateVisuals.update(true, interactor.initialValue);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T copyMutable(T o) {
         // Immutable objects can be returned as is
         if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Enum<?>)
@@ -317,9 +322,6 @@ public class ControlCreator {
         }
     }
 
-    /**
-     * Has so many constructors so that it is easily extensible.
-     */
     public static class ConfigElementTextField extends TextFieldWidget {
 
         // TextFields have a 2px border on each side that is not included in their width/height

@@ -94,6 +94,9 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
     // render
     public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+        // isMouseOver
+        if (!func_231047_b_(mouseX, mouseY))
+            return;
         ConfigElement selectedElement = func_230933_a_(mouseX, mouseY); // getEntryAtPosition
         if (selectedElement != null)
             selectedElement.renderTooltip(matrixStack, mouseX, mouseY, partialTicks);
@@ -299,24 +302,6 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
 
         public void addWidget(Widget widget) {
             widgets.add(widget);
-        }
-
-        @Override
-        // mouseClicked
-        public boolean func_231044_a_(double mouseX, double mouseY, int mouseBtn) {
-            for (Widget widget : widgets)
-                if (widget.func_231044_a_(mouseX, mouseY, mouseBtn))
-                    return true;
-            return false;
-        }
-
-        @Override
-        // mouseReleased
-        public boolean func_231048_c_(double mouseX, double mouseY, int mouseBtn) {
-            for (Widget widget : widgets)
-                if (widget.func_231048_c_(mouseX, mouseY, mouseBtn))
-                    return true;
-            return false;
         }
 
     }
