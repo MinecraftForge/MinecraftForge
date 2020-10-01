@@ -8,12 +8,11 @@
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
        if (flag) {
           ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-@@ -602,10 +603,16 @@
-       return this.field_71133_b.func_71219_W();
+@@ -603,9 +604,16 @@
     }
  
--   @Nullable
-+   @Nullable @Deprecated // Use ITeleporter safe version
+    @Nullable
++   @Deprecated // Forge: Use ITeleporter safe version
     protected PortalInfo func_241829_a(ServerWorld p_241829_1_) {
 -      PortalInfo portalinfo = super.func_241829_a(p_241829_1_);
 -      if (portalinfo != null && this.field_70170_p.func_234923_W_() == World.field_234918_g_ && p_241829_1_.func_234923_W_() == World.field_234920_i_) {
@@ -28,7 +27,7 @@
           Vector3d vector3d = portalinfo.field_222505_a.func_72441_c(0.0D, -1.0D, 0.0D);
           return new PortalInfo(vector3d, Vector3d.field_186680_a, 90.0F, 0.0F);
        } else {
-@@ -614,13 +621,14 @@
+@@ -614,13 +622,14 @@
     }
  
     @Nullable
@@ -46,7 +45,7 @@
           if (!this.field_71136_j) {
              this.field_71136_j = true;
              this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
-@@ -634,14 +642,15 @@
+@@ -634,14 +643,15 @@
           this.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
           PlayerList playerlist = this.field_71133_b.func_184103_al();
           playerlist.func_187243_f(this);
@@ -67,7 +66,7 @@
                 this.func_242110_a(p_241206_1_, new BlockPos(portalinfo.field_222505_a));
              }
  
-@@ -653,6 +662,9 @@
+@@ -653,6 +663,9 @@
              this.func_225653_b_(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c);
              serverworld.func_217381_Z().func_76319_b();
              this.func_213846_b(serverworld);
@@ -77,7 +76,7 @@
              this.field_71134_c.func_73080_a(p_241206_1_);
              this.field_71135_a.func_147359_a(new SPlayerAbilitiesPacket(this.field_71075_bZ));
              playerlist.func_72354_b(this, p_241206_1_);
-@@ -666,6 +678,7 @@
+@@ -666,6 +679,7 @@
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;
@@ -85,7 +84,7 @@
           }
  
           return this;
-@@ -739,6 +752,9 @@
+@@ -739,6 +753,9 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
@@ -95,7 +94,7 @@
        Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.func_70608_bn() && this.func_70089_S()) {
           if (!this.field_70170_p.func_230315_m_().func_236043_f_()) {
-@@ -749,7 +765,7 @@
+@@ -749,7 +766,7 @@
              return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
           } else {
              this.func_242111_a(this.field_70170_p.func_234923_W_(), p_213819_1_, this.field_70177_z, false, true);
@@ -104,7 +103,7 @@
                 return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
              } else {
                 if (!this.func_184812_l_()) {
-@@ -783,6 +799,7 @@
+@@ -783,6 +800,7 @@
     }
  
     private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_) {
@@ -112,7 +111,7 @@
        return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.func_177972_a(p_241147_2_.func_176734_d()));
     }
  
-@@ -882,6 +899,7 @@
+@@ -882,6 +900,7 @@
              this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
              container.func_75132_a(this);
              this.field_71070_bA = container;
@@ -120,7 +119,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -900,6 +918,7 @@
+@@ -900,6 +919,7 @@
        this.field_71135_a.func_147359_a(new SOpenHorseWindowPacket(this.field_71139_cq, p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
        this.field_71070_bA = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
        this.field_71070_bA.func_75132_a(this);
@@ -128,7 +127,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -957,6 +976,7 @@
+@@ -957,6 +977,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -136,7 +135,7 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -1081,6 +1101,13 @@
+@@ -1081,6 +1102,13 @@
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
@@ -150,7 +149,7 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1187,6 +1214,7 @@
+@@ -1187,6 +1215,7 @@
        this.field_71140_co = p_147100_1_.func_149520_f();
        this.func_184212_Q().func_187227_b(field_184827_bp, (byte)p_147100_1_.func_149521_d());
        this.func_184212_Q().func_187227_b(field_184828_bq, (byte)(p_147100_1_.func_186991_f() == HandSide.LEFT ? 0 : 1));
@@ -158,7 +157,7 @@
     }
  
     public ChatVisibility func_147096_v() {
-@@ -1297,14 +1325,14 @@
+@@ -1297,14 +1326,14 @@
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
@@ -176,7 +175,7 @@
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);
           p_200619_1_.func_217446_a(this);
-@@ -1313,6 +1341,7 @@
+@@ -1313,6 +1342,7 @@
           this.field_71134_c.func_73080_a(p_200619_1_);
           this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
           this.field_71133_b.func_184103_al().func_72385_f(this);
@@ -184,7 +183,7 @@
        }
  
     }
-@@ -1335,6 +1364,7 @@
+@@ -1335,6 +1365,7 @@
     }
  
     public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_) {
@@ -192,7 +191,7 @@
        if (p_242111_2_ != null) {
           boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
           if (p_242111_5_ && !flag) {
-@@ -1387,6 +1417,8 @@
+@@ -1387,6 +1418,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -201,7 +200,7 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1400,4 +1432,13 @@
+@@ -1400,4 +1433,13 @@
           return itementity;
        }
     }
