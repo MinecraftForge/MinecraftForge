@@ -24,7 +24,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -69,6 +69,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
                     if (((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.colouredBoolean)
                         return new ConfigElementButton(interactor.title, iPressable) {
                             final Random random = new Random();
+
                             @Override
                             public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
                                 final float hue = random.nextFloat();
@@ -155,81 +156,81 @@ public class ConfigScreenTesting extends ModConfigScreen {
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("a Boolean comment")
-                    .translation("forge.configgui.a.boolean")
-                    .worldRestart()
-                    .define("aBoolean", false);
+                .translation("forge.configgui.a.boolean")
+                .worldRestart()
+                .define("aBoolean", false);
 
             builder.comment("Category comment")
-                    .push("numbers");
+                .push("numbers");
             {
                 builder.comment("an Int comment")
-                        .translation("forge.configgui.an.int")
-                        .defineInRange("anInt", 5, -10, 1000);
+                    .translation("forge.configgui.an.int")
+                    .defineInRange("anInt", 5, -10, 1000);
                 builder.comment("a Long comment")
-                        .translation("forge.configgui.a.long")
-                        .defineInRange("aLong", Long.MIN_VALUE, Long.MIN_VALUE, 5);
+                    .translation("forge.configgui.a.long")
+                    .defineInRange("aLong", Long.MIN_VALUE, Long.MIN_VALUE, 5);
                 builder.comment("a Double comment")
-                        .translation("forge.configgui.a.double")
-                        .defineInRange("aDouble", 5d, 4d, 6d);
+                    .translation("forge.configgui.a.double")
+                    .defineInRange("aDouble", 5d, 4d, 6d);
 
                 builder.comment("Sub-category comment")
-                        .push("empty");
+                    .push("empty");
                 builder.pop();
 
                 builder.comment("Sub-category comment")
-                        .push("not-empty");
+                    .push("not-empty");
                 {
                     builder.comment("sub - an Int comment")
-                            .translation("forge.configgui.sub.an.int")
-                            .defineInRange("subAnInt", 5, -10, 1000);
+                        .translation("forge.configgui.sub.an.int")
+                        .defineInRange("subAnInt", 5, -10, 1000);
                 }
                 builder.pop();
             }
             builder.pop();
 
             builder.comment("an Enum comment")
-                    .translation("forge.configgui.an.enum")
-                    .defineEnum("anEnum", DyeColor.GREEN, dc -> dc instanceof DyeColor && ((DyeColor) dc).getId() >= 10);
+                .translation("forge.configgui.an.enum")
+                .defineEnum("anEnum", DyeColor.GREEN, dc -> dc instanceof DyeColor && ((DyeColor) dc).getId() >= 10);
             builder.comment("a String comment")
-                    .translation("forge.configgui.a.string")
-                    .define("aString", "foo");
+                .translation("forge.configgui.a.string")
+                .define("aString", "foo");
             hexColorString = builder.comment("a Hex Color String comment")
-                    .translation("forge.configgui.a.hexColorString")
-                    .define("aHexColorString", "#0FF");
+                .translation("forge.configgui.a.hexColorString")
+                .define("aHexColorString", "#0FF");
             colouredBoolean = builder.comment("a Coloured Boolean comment")
-                    .translation("forge.configgui.a.colouredBoolean")
-                    .define("aColouredBoolean", false);
+                .translation("forge.configgui.a.colouredBoolean")
+                .define("aColouredBoolean", false);
             builder.comment("an Enum List comment")
-                    .translation("forge.configgui.an.enum.list")
-                    .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);
+                .translation("forge.configgui.an.enum.list")
+                .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);
             builder.comment("a String In List comment")
-                    .translation("forge.configgui.a.string.in.list")
-                    .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
+                .translation("forge.configgui.a.string.in.list")
+                .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
 
             builder.comment("I'm in Spain but the S is silent")
-                    .push("Lists!");
+                .push("Lists!");
             {
                 builder.comment("a List<Boolean> comment")
-                        .translation("forge.configgui.a.list.boolean")
-                        .defineList("aListBoolean", Lists.newArrayList(true, false, true, false, true, true, false, false), o -> o instanceof Boolean);
+                    .translation("forge.configgui.a.list.boolean")
+                    .defineList("aListBoolean", Lists.newArrayList(true, false, true, false, true, true, false, false), o -> o instanceof Boolean);
                 builder.comment("a List<Int> comment")
-                        .translation("forge.configgui.a.list.int")
-                        .defineList("aListInt", Lists.newArrayList(1, 2, 5, 66, 3, 7), o -> o instanceof Integer);
+                    .translation("forge.configgui.a.list.int")
+                    .defineList("aListInt", Lists.newArrayList(1, 2, 5, 66, 3, 7), o -> o instanceof Integer);
                 builder.comment("a List<Long> comment")
-                        .translation("forge.configgui.a.list.long")
-                        .defineList("aListLong", Lists.newArrayList(5L, 12L, 623L, Long.MIN_VALUE), o -> o instanceof Long);
+                    .translation("forge.configgui.a.list.long")
+                    .defineList("aListLong", Lists.newArrayList(5L, 12L, 623L, Long.MIN_VALUE), o -> o instanceof Long);
                 builder.comment("a List<Double> comment")
-                        .translation("forge.configgui.a.list.double")
-                        .defineList("aListDouble", Lists.newArrayList(123.213, 21343.21, 456.32, 9765.2), o -> o instanceof Double);
+                    .translation("forge.configgui.a.list.double")
+                    .defineList("aListDouble", Lists.newArrayList(123.213, 21343.21, 456.32, 9765.2), o -> o instanceof Double);
                 builder.comment("a List<Enum> comment")
-                        .translation("forge.configgui.a.list.enum")
-                        .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> o instanceof DyeColor);
+                    .translation("forge.configgui.a.list.enum")
+                    .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> o instanceof DyeColor);
                 builder.comment("a List<String> comment")
-                        .translation("forge.configgui.a.list.string")
-                        .defineList("aListString", Lists.newArrayList("foo", "bar", "baz", "qez"), o -> o instanceof String);
+                    .translation("forge.configgui.a.list.string")
+                    .defineList("aListString", Lists.newArrayList("foo", "bar", "baz", "qez"), o -> o instanceof String);
                 builder.comment("a List<List<String>> comment")
-                        .translation("forge.configgui.a.list.list.string")
-                        .defineList("aListListString", Lists.newArrayList(Lists.newArrayList("foo", "bar", "baz", "qez"), Lists.newArrayList("foobar")), o -> o instanceof List);
+                    .translation("forge.configgui.a.list.list.string")
+                    .defineList("aListListString", Lists.newArrayList(Lists.newArrayList("foo", "bar", "baz", "qez"), Lists.newArrayList("foobar")), o -> o instanceof List);
             }
             builder.pop();
         }

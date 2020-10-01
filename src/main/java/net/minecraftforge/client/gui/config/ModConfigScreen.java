@@ -49,11 +49,11 @@ public class ModConfigScreen extends ConfigScreen {
      */
     public static DistExecutor.SafeRunnable makeConfigGuiExtensionPoint(final ModContainer modContainer) {
         if (modContainer.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY).isPresent())
-            return () -> {
-                // No-op
-            };
-        return () -> modContainer.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (minecraft, screen) -> new ModConfigScreen(screen, modContainer.getModInfo()));
+            return () -> {};
+        return () -> modContainer.registerExtensionPoint(
+            ExtensionPoint.CONFIGGUIFACTORY,
+            () -> (minecraft, screen) -> new ModConfigScreen(screen, modContainer.getModInfo())
+        );
     }
 
     // TODO: Move these to translation keys
@@ -62,16 +62,16 @@ public class ModConfigScreen extends ConfigScreen {
         Map<ModConfig.Type, String> map = new HashMap<>();
 
         String commonComment = StringUtils.join(new String[]{
-                "Common config is for configuration that needs to be loaded on both environments.",
-                "Loaded on both server and client environments during startup (after registry events and before setup events).",
-                "Stored in the global config directory.",
-                "Not synced.",
+            "Common config is for configuration that needs to be loaded on both environments.",
+            "Loaded on both server and client environments during startup (after registry events and before setup events).",
+            "Stored in the global config directory.",
+            "Not synced.",
         }, "\n");
         String clientComment = StringUtils.join(new String[]{
-                "Client config is for configuration affecting the ONLY client state such as graphical options.",
-                "Loaded on the client environment during startup (after registry events and before setup events).",
-                "Stored in the global config directory.",
-                "Not synced.",
+            "Client config is for configuration affecting the ONLY client state such as graphical options.",
+            "Loaded on the client environment during startup (after registry events and before setup events).",
+            "Stored in the global config directory.",
+            "Not synced.",
         }, "\n");
 //        String playerComment = StringUtils.join(new String[]{
 //                "Player config is for configuration that is associated with a player.",
@@ -79,10 +79,10 @@ public class ModConfigScreen extends ConfigScreen {
 //                "Not Implemented (yet).",
 //        }, "\n");
         String serverComment = StringUtils.join(new String[]{
-                "Server config is for configuration that is associated with a logical server instance.",
-                "Loaded during server startup (right before the FMLServerAboutToStartEvent is fired.)",
-                "Stored in a server/save specific \"serverconfig\" directory",
-                "Synced to clients during connection.",
+            "Server config is for configuration that is associated with a logical server instance.",
+            "Loaded during server startup (right before the FMLServerAboutToStartEvent is fired.)",
+            "Stored in a server/save specific \"serverconfig\" directory",
+            "Synced to clients during connection.",
         }, "\n");
 
         serverComment += "\nRequires you to be in your singleplayer world to change its values from the config gui";
@@ -159,11 +159,13 @@ public class ModConfigScreen extends ConfigScreen {
             super.func_231175_as__();
             return;
         }
-        field_230706_i_.displayGuiScreen(new MessageDialogScreen(
+        field_230706_i_.displayGuiScreen(
+            new MessageDialogScreen(
                 new TranslationTextComponent("forge.configgui.worldRestartRequired"),
                 new TranslationTextComponent("forge.configgui.worldRestartRequiredBecause"),
                 new TranslationTextComponent("forge.configgui.worldRestartRequiredConfirm"),
-                super::func_231175_as__)
+                super::func_231175_as__
+            )
         );
     }
 
@@ -182,10 +184,10 @@ public class ModConfigScreen extends ConfigScreen {
         @Override
         protected ConfigElementList makeConfigElementList() {
             CategoryConfigScreen.ConfigCategoryInfo info = CategoryConfigScreen.ConfigCategoryInfo.of(
-                    () -> modConfig.getSpec().getValues().valueMap().keySet(),
-                    key -> modConfig.getSpec().getValues().get(key),
-                    key -> modConfig.getSpec().getSpec().get(key),
-                    key -> modConfig.getSpec().getSpec().getComment(key)
+                () -> modConfig.getSpec().getValues().valueMap().keySet(),
+                key -> modConfig.getSpec().getValues().get(key),
+                key -> modConfig.getSpec().getSpec().get(key),
+                key -> modConfig.getSpec().getSpec().getComment(key)
             );
             return new CategoryConfigScreen.CategoryConfigElementList(this, field_230706_i_, info);
         }

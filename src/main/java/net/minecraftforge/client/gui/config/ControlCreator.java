@@ -57,11 +57,9 @@ public class ControlCreator {
         /** Set this AFTER initialisation */
         public Predicate<T> isValid = $ -> true;
         /** Set this AFTER initialisation */
-        public Consumer<T> saveValue = $ -> {
-        };
+        public Consumer<T> saveValue = $ -> {};
         /** Set this AFTER initialisation */
-        public UpdateVisuals<T> updateVisuals = (a, b) -> {
-        };
+        public UpdateVisuals<T> updateVisuals = (a, b) -> {};
 
         Interactor(ITextComponent title, T initialValue) {
             this.title = title;

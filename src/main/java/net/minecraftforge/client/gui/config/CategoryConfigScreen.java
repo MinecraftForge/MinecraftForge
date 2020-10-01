@@ -61,9 +61,9 @@ public class CategoryConfigScreen extends ConfigScreen {
         if (fallbackComment == null)
             return Collections.emptyList();
         return Arrays.stream(fallbackComment.split("\n"))
-                .map(StringTextComponent::new)
-                .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
-                .collect(Collectors.toList());
+            .map(StringTextComponent::new)
+            .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
+            .collect(Collectors.toList());
     }
 
     public static List<ITextProperties> createTooltip(ITextComponent title, String commentTranslationKey, String comment) {
@@ -133,10 +133,10 @@ public class CategoryConfigScreen extends ConfigScreen {
                 UnmodifiableConfig value = (UnmodifiableConfig) raw;
                 UnmodifiableCommentedConfig valueInfo = (UnmodifiableCommentedConfig) categoryInfo.getSpec(key);
                 ConfigCategoryInfo valueCategoryInfo = ConfigCategoryInfo.of(
-                        () -> value.valueMap().keySet(),
-                        value::get,
-                        valueInfo::get,
-                        valueInfo::getComment
+                    () -> value.valueMap().keySet(),
+                    value::get,
+                    valueInfo::get,
+                    valueInfo::getComment
                 );
                 String translationKey = null; // TODO: Can pass path in through categoryInfo, need to also get review on changes to ForgeConfigSpec for comments
 
@@ -158,9 +158,9 @@ public class CategoryConfigScreen extends ConfigScreen {
                     tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.default", valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
                 if (valueInfo.needsWorldRestart())
                     tooltip.add(new StringTextComponent("[").func_240701_a_(TextFormatting.RED)
-                            // appendSibling
-                            .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TextFormatting.RED))
-                            .func_230529_a_(new StringTextComponent("]").func_240701_a_(TextFormatting.RED))
+                        // appendSibling
+                        .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TextFormatting.RED))
+                        .func_230529_a_(new StringTextComponent("]").func_240701_a_(TextFormatting.RED))
                     );
 
                 return createValueElement(value, valueInfo, title, tooltip);
