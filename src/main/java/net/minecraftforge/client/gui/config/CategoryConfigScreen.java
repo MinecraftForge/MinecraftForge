@@ -1,7 +1,5 @@
 package net.minecraftforge.client.gui.config;
 
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -19,10 +17,11 @@ import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static net.minecraftforge.client.gui.config.ControlCreator.ConfigElementButton;
 
 /**
  * A {@link ConfigScreen} for a (sub) category.
@@ -176,7 +175,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                 return new ConfigElement(label, title, tooltip);
             } else {
                 ConfigElement configElement = new ConfigValueConfigElement(interactor.label, interactor.title, tooltip, configValue, valueSpec, interactor);
-                configElement.widgets.add(0, interactor.control);
+                configElement.setMainWidget(interactor.control);
                 return configElement;
             }
         }
@@ -206,17 +205,17 @@ public class CategoryConfigScreen extends ConfigScreen {
 
             public <T> ConfigValueConfigElement(ITextComponent label, ITextComponent title, List<? extends ITextProperties> tooltip, ConfigValue<T> value, ValueSpec valueInfo, Interactor<T> interactor) {
                 super(label, title, tooltip);
-                widgets.add(0, interactor.control);
+                setMainWidget(interactor.control);
                 T initialValue = ControlCreator.copyMutable(interactor.initialValue);
                 T defaultValue = ControlCreator.copyMutable((T) valueInfo.getDefault());
                 canUndo = () -> !value.get().equals(initialValue);
                 canReset = () -> !value.get().equals(defaultValue);
-                widgets.add(undoButton = createConfigElementUndoButton(title, button -> {
+                addWidget(undoButton = createConfigElementUndoButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(initialValue);
                     interactor.saveValue.accept(newValue);
                     interactor.updateVisuals.update(true, newValue);
                 }));
-                widgets.add(resetButton = createConfigElementResetButton(title, button -> {
+                addWidget(resetButton = createConfigElementResetButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(defaultValue);
                     interactor.saveValue.accept(newValue);
                     interactor.updateVisuals.update(true, newValue);
@@ -248,7 +247,7 @@ public class CategoryConfigScreen extends ConfigScreen {
         public class CategoryConfigElement extends ConfigElement {
             public CategoryConfigElement(ITextComponent title, List<ITextProperties> tooltip, ConfigCategoryInfo valueCategoryInfo) {
                 super(null, title, tooltip);
-                this.widgets.add(0, new ControlCreator.ConfigElementButton(title, b -> Minecraft.getInstance().displayGuiScreen(new CategoryConfigScreen(configScreen, title, valueCategoryInfo))));
+                setMainWidget(new ConfigElementButton(title, b -> Minecraft.getInstance().displayGuiScreen(new CategoryConfigScreen(configScreen, title, valueCategoryInfo))));
             }
         }
     }

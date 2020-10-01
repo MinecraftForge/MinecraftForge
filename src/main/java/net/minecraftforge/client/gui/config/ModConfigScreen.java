@@ -17,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static net.minecraftforge.client.gui.config.ControlCreator.ConfigElementButton;
+
 /**
  * A {@link ConfigScreen} with entries for all of a mod's registered configs.
  *
@@ -137,7 +139,7 @@ public class ModConfigScreen extends ConfigScreen {
                     if (filePath != null)
                         tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
                     ConfigElement element = new ConfigElement(null, title, tooltip);
-                    element.widgets.add(0, new ControlCreator.ConfigElementButton(title, $ -> Minecraft.getInstance().displayGuiScreen(new ModConfigConfigScreen(ModConfigScreen.this, title /* TODO */, modConfig))));
+                    element.setMainWidget(new ConfigElementButton(title, $ -> Minecraft.getInstance().displayGuiScreen(new ModConfigConfigScreen(ModConfigScreen.this, title /* TODO */, modConfig))));
                     this.func_230513_b_(element); // addEntry
                 }
             }

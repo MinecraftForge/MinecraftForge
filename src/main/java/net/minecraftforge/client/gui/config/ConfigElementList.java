@@ -205,6 +205,8 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
         public Button undoButton;
         @Nullable
         public Button resetButton;
+        @Nullable
+        public Widget mainWidget;
 
         public ConfigElement(@Nullable ITextProperties label, ITextProperties title, @Nullable List<? extends ITextProperties> tooltip) {
             this.label = label;
@@ -281,8 +283,22 @@ public class ConfigElementList extends AbstractOptionList<ConfigElementList.Conf
                     ((TextFieldWidget) widget).tick();
         }
 
+        @Nullable
         public Widget getMainWidget() {
-            return widgets.isEmpty() ? null : widgets.getFirst();
+            return mainWidget;
+        }
+
+        public void setMainWidget(Widget widget) {
+            if (mainWidget != null)
+                widgets.remove(mainWidget);
+            if (widget != null) {
+                mainWidget = widget;
+                widgets.add(0, mainWidget);
+            }
+        }
+
+        public void addWidget(Widget widget) {
+            widgets.add(widget);
         }
 
         @Override

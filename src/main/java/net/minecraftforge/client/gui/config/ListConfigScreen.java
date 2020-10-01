@@ -2,7 +2,6 @@ package net.minecraftforge.client.gui.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -68,16 +67,11 @@ public abstract class ListConfigScreen extends ConfigScreen {
             Interactor<?> interactor = tryCreateInteractor(index, item);
             if (interactor == null) {
                 ITextComponent title = new StringTextComponent(index + ": " + item + (item == null ? "" : " (" + item.getClass().getSimpleName() + ")"));
-                return new ListItemConfigElement(title, index) {
-                    @Override
-                    public Widget getMainWidget() {
-                        return null;
-                    }
-                };
+                return new ListItemConfigElement(title, index);
             } else {
                 interactor.saveValue = newValue -> setAndNotify(index, newValue);
                 ConfigElement configElement = new ListItemConfigElement(interactor.title, index);
-                configElement.widgets.add(0, interactor.control);
+                configElement.setMainWidget(interactor.control);
                 return configElement;
             }
         }
@@ -117,8 +111,8 @@ public abstract class ListConfigScreen extends ConfigScreen {
                     onAddRemove(index);
                 });
                 removeButton.setFGColor(ControlCreator.RED);
-                widgets.add(addBelowButton);
-                widgets.add(removeButton);
+                addWidget(addBelowButton);
+                addWidget(removeButton);
             }
         }
 

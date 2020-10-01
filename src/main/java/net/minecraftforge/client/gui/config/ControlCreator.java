@@ -197,7 +197,7 @@ public class ControlCreator {
             int oldIndex = ArrayUtils.indexOf(potential, oldValue);
             T newValue;
             if (oldIndex == ArrayUtils.INDEX_NOT_FOUND)
-                newValue = (T) oldValue;
+                newValue = oldValue;
             else {
                 int newIndex = (oldIndex + 1) % potential.length;
                 newValue = potential[newIndex];
@@ -340,7 +340,7 @@ public class ControlCreator {
             super.setResponder(newText -> {
                 // By default this gets called whenever a user clicks somewhere in the text box
                 // Make it so we only run the listener when the text actually changes
-                if (responderIn != null && !Objects.equals(newText, lastText))
+                if (responderIn != null && lastText != null && !Objects.equals(newText, lastText))
                     responderIn.accept(newText);
                 lastText = newText;
             });
