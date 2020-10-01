@@ -80,7 +80,7 @@ public interface ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-    	Teleporter teleporter = toWorld.getDefaultTeleporter();
+        Teleporter teleporter = toWorld.getDefaultTeleporter();
         if (this instanceof Teleporter)
             teleporter = (Teleporter) this;
         return teleporter.func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
@@ -91,7 +91,7 @@ public interface ITeleporter
      */
     default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-    	Teleporter teleporter = toWorld.getDefaultTeleporter();
+        Teleporter teleporter = toWorld.getDefaultTeleporter();
         if (this instanceof Teleporter)
             teleporter = (Teleporter) this;
         return teleporter.func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
