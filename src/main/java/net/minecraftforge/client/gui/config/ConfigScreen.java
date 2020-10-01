@@ -93,8 +93,6 @@ public abstract class ConfigScreen extends Screen {
     public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // renderBackground(matrixStack)
         func_230446_a_(matrixStack);
-        // configEntryList.render()
-        configElementList.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
 
         // drawCenteredString(matrixStack, fontRenderer, title, width / 2, 8, 0xFFFFFF)
         func_238472_a_(matrixStack, field_230712_o_, field_230704_d_, field_230708_k_ / 2, 8, 0xFFFFFF);
@@ -104,6 +102,9 @@ public abstract class ConfigScreen extends Screen {
         // Renders our widgets for us
         // super.render(matrixStack, mouseX, mouseY, partialTicks);
         super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+        // Render this after the widgets so tooltips render over the buttons
+        // configEntryList.render()
+        configElementList.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
         if (undoButton.func_230449_g_()) // isHovered
             GuiUtils.drawHoveringText(matrixStack, Collections.singletonList(new TranslationTextComponent("forge.configgui.undoAllChanges.tooltip")), mouseX, mouseY, field_230708_k_, field_230709_l_, -1, getFontRenderer()); // width, height
         if (resetButton.func_230449_g_()) // isHovered
