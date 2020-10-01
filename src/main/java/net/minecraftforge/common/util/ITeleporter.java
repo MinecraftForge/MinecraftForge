@@ -76,20 +76,25 @@ public interface ITeleporter
     }
 
     /**
-     * Finds a portal to teleport to and creates a {@link TeleportationRepositioner.Result} for it.
-     * Return an empty {@link Optional} if no portal was found.
+     * Finds a portal to teleport to and creates a {@link TeleportationRepositioner.Result} for it. Defaults to calling vanilla Teleporter methods.
      */
     default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-       return toWorld.getDefaultTeleporter().func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
+    	Teleporter teleporter = toWorld.getDefaultTeleporter();
+        if (this instanceof Teleporter)
+            teleporter = (Teleporter) this;
+        return teleporter.func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
     }
 
     /**
-     * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}.
+     * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}. Defaults to calling vanilla Teleporter methods.
      */
     default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
-        return toWorld.getDefaultTeleporter().func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
+    	Teleporter teleporter = toWorld.getDefaultTeleporter();
+        if (this instanceof Teleporter)
+            teleporter = (Teleporter) this;
+        return teleporter.func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
     }
     
     /**

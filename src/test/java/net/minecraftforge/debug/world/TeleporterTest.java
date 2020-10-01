@@ -177,7 +177,7 @@ public class TeleporterTest
             for (int i = 0; i < 256 && toWorld.getBlockState(scaledPos.down()).getMaterial() == Material.AIR; i++)
                 scaledPos = scaledPos.down();
             toWorld.setBlockState(scaledPos, this.teleporterBlock.getDefaultState());
-            return Optional.of(new TeleportationRepositioner.Result(scaledPos.north(), 0, 0));
+            return Optional.of(new TeleportationRepositioner.Result(scaledPos, 0, 0));
         }
         
         @Override
