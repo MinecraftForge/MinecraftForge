@@ -91,6 +91,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> GLASS_PANES_YELLOW = tag("glass_panes/yellow");
 
         public static final IOptionalNamedTag<Block> GRAVEL = tag("gravel");
+        public static final IOptionalNamedTag<Block> MUSHROOMS = tag("mushrooms");
         public static final IOptionalNamedTag<Block> NETHERRACK = tag("netherrack");
         public static final IOptionalNamedTag<Block> OBSIDIAN = tag("obsidian");
         public static final IOptionalNamedTag<Block> ORES = tag("ores");

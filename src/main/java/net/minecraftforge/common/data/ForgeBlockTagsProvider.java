@@ -65,6 +65,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         func_240522_a_(GLASS_PANES_COLORLESS).func_240534_a_(Blocks.GLASS_PANE);
         addColored(func_240522_a_(STAINED_GLASS_PANES)::func_240534_a_, GLASS_PANES, "{color}_stained_glass_pane");
         func_240522_a_(GRAVEL).func_240534_a_(Blocks.GRAVEL);
+        func_240522_a_(MUSHROOMS).func_240534_a_(Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM);
         func_240522_a_(NETHERRACK).func_240534_a_(Blocks.NETHERRACK);
         func_240522_a_(OBSIDIAN).func_240534_a_(Blocks.OBSIDIAN);
         func_240522_a_(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE_SCRAP);
