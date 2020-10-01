@@ -214,16 +214,20 @@
        return list;
     }
  
-@@ -817,7 +841,7 @@
+@@ -817,9 +841,10 @@
              }
           }
        } else {
 -         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
 +         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
        }
- 
+-
++      multimap = com.google.common.collect.ArrayListMultimap.create(multimap);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.ItemModifierEvent(this, p_111283_1_, multimap));
        return multimap;
-@@ -954,6 +978,35 @@
+    }
+ 
+@@ -954,6 +979,35 @@
        return this.func_77973_b().func_219971_r();
     }
  
