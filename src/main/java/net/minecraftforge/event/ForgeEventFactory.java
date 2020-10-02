@@ -750,13 +750,11 @@ public class ForgeEventFactory
         return evt;
     }
 
-    public static int onLivingBurnBySunlight(LivingEntity living, int duration)
+    public static void onLivingBurnBySunlight(LivingEntity living, int duration)
     {
         LivingBurnBySunlightEvent event = new LivingBurnBySunlightEvent(living, duration);
         MinecraftForge.EVENT_BUS.post(event);
-        duration = event.getResult() == Result.DEFAULT ? duration : event.getResult() == Result.ALLOW ? event.getDuration() : 0;
-        if (duration != 0)
-            living.setFire(duration);
-        return duration;
+        if (!event.isCanceled())
+            living.setFire(event.getDuration());
     }
 }
