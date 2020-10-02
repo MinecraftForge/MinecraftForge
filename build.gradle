@@ -557,7 +557,7 @@ project(':forge') {
         outputs.file output
         doLast {
             def json_vanilla = vanilla.json()
-            def json = [            
+            def json = [
                 _comment_: comment,
                 id: id,
                 time: timestamp,
@@ -1062,5 +1062,3 @@ task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
-
-
