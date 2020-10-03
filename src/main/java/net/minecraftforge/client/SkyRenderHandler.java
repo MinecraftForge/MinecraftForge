@@ -1,4 +1,3 @@
-  
 /*
  * Minecraft Forge
  * Copyright (c) 2016-2020.

@@ -120,6 +120,11 @@ public class ModLoader
         this.loadingWarnings = FMLLoader.getLoadingModList().
                 getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
                     InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
+        FMLLoader.getLoadingModList()
+                .getModFiles().stream().filter(ModFileInfo::missingLicense) //Search for files with missing licenses
+                .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
+                .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
+                .forEach(this.loadingExceptions::add);
         LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.init());
         CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
@@ -190,10 +195,10 @@ public class ModLoader
         dispatchAndHandleError(ModLoadingStage.CREATE_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Adding custom tag types"));
         GameData.setCustomTagTypesFromRegistries();
+        statusConsumer.ifPresent(c->c.accept("Populating registries"));
+        dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 

@@ -54,7 +54,7 @@
  
     public boolean func_151470_d() {
 -      return this.field_74513_e;
-+      return this.field_74513_e && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
++      return this.field_74513_e && isConflictContextAndModifierActive();
     }
  
     public String func_151466_e() {
