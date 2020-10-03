@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/DimensionType.java
++++ b/net/minecraft/world/DimensionType.java
+@@ -32,25 +32,25 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class DimensionType {
++public class DimensionType implements net.minecraftforge.common.world.ICodecExtraHolder {
+    public static final ResourceLocation field_242710_a = new ResourceLocation("overworld");
+    public static final ResourceLocation field_242711_b = new ResourceLocation("the_nether");
+    public static final ResourceLocation field_242712_c = new ResourceLocation("the_end");
+-   public static final Codec<DimensionType> field_235997_a_ = RecordCodecBuilder.create((p_236026_0_) -> {
++   public static final Codec<DimensionType> field_235997_a_ = new net.minecraftforge.common.world.ICodecExtraHolder.ExtraParser<>(RecordCodecBuilder.create((p_236026_0_) -> {
+       return p_236026_0_.group(Codec.LONG.optionalFieldOf("fixed_time").xmap((p_236028_0_) -> {
+          return p_236028_0_.map(OptionalLong::of).orElseGet(OptionalLong::empty);
+       }, (p_236029_0_) -> {
+          return p_236029_0_.isPresent() ? Optional.of(p_236029_0_.getAsLong()) : Optional.empty();
+       }).forGetter((p_236044_0_) -> {
+          return p_236044_0_.field_236010_o_;
+-      }), Codec.BOOL.fieldOf("has_skylight").forGetter(DimensionType::func_218272_d), Codec.BOOL.fieldOf("has_ceiling").forGetter(DimensionType::func_236037_d_), Codec.BOOL.fieldOf("ultrawarm").forGetter(DimensionType::func_236040_e_), Codec.BOOL.fieldOf("natural").forGetter(DimensionType::func_236043_f_), Codec.doubleRange((double)1.0E-5F, 3.0E7D).fieldOf("coordinate_scale").forGetter(DimensionType::func_242724_f), Codec.BOOL.fieldOf("piglin_safe").forGetter(DimensionType::func_241509_i_), Codec.BOOL.fieldOf("bed_works").forGetter(DimensionType::func_241510_j_), Codec.BOOL.fieldOf("respawn_anchor_works").forGetter(DimensionType::func_241511_k_), Codec.BOOL.fieldOf("has_raids").forGetter(DimensionType::func_241512_l_), Codec.intRange(0, 256).fieldOf("logical_height").forGetter(DimensionType::func_241513_m_), ResourceLocation.field_240908_a_.fieldOf("infiniburn").forGetter((p_241508_0_) -> {
++      }), Codec.BOOL.fieldOf("has_skylight").forGetter(DimensionType::hasSkyLight), Codec.BOOL.fieldOf("has_ceiling").forGetter(DimensionType::func_236037_d_), Codec.BOOL.fieldOf("ultrawarm").forGetter(DimensionType::func_236040_e_), Codec.BOOL.fieldOf("natural").forGetter(DimensionType::func_236043_f_), Codec.doubleRange((double)1.0E-5F, 3.0E7D).fieldOf("coordinate_scale").forGetter(DimensionType::func_242724_f), Codec.BOOL.fieldOf("piglin_safe").forGetter(DimensionType::func_241509_i_), Codec.BOOL.fieldOf("bed_works").forGetter(DimensionType::func_241510_j_), Codec.BOOL.fieldOf("respawn_anchor_works").forGetter(DimensionType::func_241511_k_), Codec.BOOL.fieldOf("has_raids").forGetter(DimensionType::func_241512_l_), Codec.intRange(0, 256).fieldOf("logical_height").forGetter(DimensionType::func_241513_m_), ResourceLocation.field_240908_a_.fieldOf("infiniburn").forGetter((p_241508_0_) -> {
+          return p_241508_0_.field_241504_y_;
+       }), ResourceLocation.field_240908_a_.fieldOf("effects").orElse(field_242710_a).forGetter((p_242721_0_) -> {
+          return p_242721_0_.field_242709_C;
+       }), Codec.FLOAT.fieldOf("ambient_light").forGetter((p_236042_0_) -> {
+          return p_236042_0_.field_236017_x_;
+       })).apply(p_236026_0_, DimensionType::new);
+-   });
++   }));
+    public static final float[] field_235998_b_ = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+    public static final RegistryKey<DimensionType> field_235999_c_ = RegistryKey.func_240903_a_(Registry.field_239698_ad_, new ResourceLocation("overworld"));
+    public static final RegistryKey<DimensionType> field_236000_d_ = RegistryKey.func_240903_a_(Registry.field_239698_ad_, new ResourceLocation("the_nether"));
