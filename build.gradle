@@ -108,6 +108,14 @@ project(':clean') {
                 args '--accessToken', '0'
             }
 
+            clean_client2 {
+                parent clean_client
+
+                args clean_client.args
+                args '--username', 'Dev2'
+                workingDirectory project.file('run2')
+            }
+
             clean_server {
                 taskName 'clean_server'
 

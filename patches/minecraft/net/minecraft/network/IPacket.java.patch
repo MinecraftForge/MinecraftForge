@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/IPacket.java
++++ b/net/minecraft/network/IPacket.java
+@@ -2,7 +2,7 @@
+ 
+ import java.io.IOException;
+ 
+-public interface IPacket<T extends INetHandler> {
++public interface IPacket<T extends INetHandler> extends net.minecraftforge.common.extensions.IForgePacket {
+    void func_148837_a(PacketBuffer p_148837_1_) throws IOException;
+ 
+    void func_148840_b(PacketBuffer p_148840_1_) throws IOException;

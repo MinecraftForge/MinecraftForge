@@ -32,15 +32,6 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (direction == Direction.UP && !actionresulttype.func_226246_a_() && blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z() - 1 && func_241166_a_(this.field_147369_b, itemstack)) {
                 ITextComponent itextcomponent = (new TranslationTextComponent("build.tooHigh", this.field_147367_d.func_71207_Z())).func_240699_a_(TextFormatting.RED);
-@@ -971,7 +975,7 @@
-       }
- 
-       try {
--         this.field_147371_a.func_201058_a(p_211148_1_, p_211148_2_);
-+         this.field_147371_a.func_201058_a(net.minecraftforge.common.ForgeHooks.cleanPacketForPossibleVanillaConnection(this, p_211148_1_), p_211148_2_);
-       } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.func_85055_a(throwable, "Sending packet");
-          CrashReportCategory crashreportcategory = crashreport.func_85058_a("Packet being sent");
 @@ -1014,7 +1018,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);

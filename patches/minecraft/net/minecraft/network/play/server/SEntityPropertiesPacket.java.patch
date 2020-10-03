@@ -1,0 +1,20 @@
+--- a/net/minecraft/network/play/server/SEntityPropertiesPacket.java
++++ b/net/minecraft/network/play/server/SEntityPropertiesPacket.java
+@@ -54,11 +54,16 @@
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
++      writePacketData(p_148840_1_, net.minecraftforge.fml.network.ConnectionType.MODDED);
++   }
++   public void writePacketData(PacketBuffer p_148840_1_, net.minecraftforge.fml.network.ConnectionType connectionType) throws IOException {
+       p_148840_1_.func_150787_b(this.field_149445_a);
+       p_148840_1_.writeInt(this.field_149444_b.size());
+ 
+       for(SEntityPropertiesPacket.Snapshot sentitypropertiespacket$snapshot : this.field_149444_b) {
+-         p_148840_1_.func_192572_a(Registry.field_239692_aP_.func_177774_c(sentitypropertiespacket$snapshot.func_240834_a_()));
++         ResourceLocation key = Registry.field_239692_aP_.func_177774_c(sentitypropertiespacket$snapshot.func_240834_a_());
++         if (connectionType.isVanilla() && !key.func_110624_b().equals("minecraft")) continue;
++         p_148840_1_.func_192572_a(key);
+          p_148840_1_.writeDouble(sentitypropertiespacket$snapshot.func_151410_b());
+          p_148840_1_.func_150787_b(sentitypropertiespacket$snapshot.func_151408_c().size());
+ 

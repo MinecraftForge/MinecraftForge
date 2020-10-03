@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/NettyPacketEncoder.java
++++ b/net/minecraft/network/NettyPacketEncoder.java
+@@ -35,7 +35,7 @@
+             packetbuffer.func_150787_b(integer);
+ 
+             try {
+-               p_encode_2_.func_148840_b(packetbuffer);
++               p_encode_2_.writePacketData(packetbuffer, net.minecraftforge.fml.network.NetworkHooks.getConnectionType(p_encode_1_));
+             } catch (Throwable throwable) {
+                field_150798_a.error(throwable);
+                if (p_encode_2_.func_211402_a()) {
