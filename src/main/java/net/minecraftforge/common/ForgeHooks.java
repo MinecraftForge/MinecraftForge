@@ -49,7 +49,6 @@ import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
-import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
@@ -145,8 +144,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fml.network.ConnectionType;
-import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -1212,21 +1209,5 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
-    }
-
-    public static IPacket<?> cleanPacketForPossibleVanillaConnection(ServerPlayNetHandler netHandler, IPacket<?> packet)
-    {
-        if (NetworkHooks.isVanillaConnection(netHandler.netManager))
-        {
-            if (packet instanceof SEntityPropertiesPacket)
-            {
-                SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket();
-                ((SEntityPropertiesPacket) packet).getSnapshots().stream()
-                        .filter(snapshot -> snapshot.func_240834_a_().getRegistryName().getNamespace().equals("minecraft"))
-                        .forEach(newPacket.getSnapshots()::add);
-                return newPacket;
-            }
-        }
-        return packet;
     }
 }
