@@ -24,7 +24,7 @@ Forge is a free, open-source modding API all of your favourite mods use!
 # Installing Forge
 
 Go to [the Forge website](https://files.minecraftforge.net)
- and select the Minecraft version you wish to get Forge for from the list.
+ and select the Minecraft version you wish to get Forge for.
 
 You can download the installer for the *Recommended Build* or the
  *Latest build* there. Latest builds may have newer features but may be
