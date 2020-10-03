@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/gui/screen/WorldOptionsScreen.java
 +++ b/net/minecraft/client/gui/screen/WorldOptionsScreen.java
-@@ -44,6 +44,7 @@
- import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.common.world.generator.GeneratorTypeManager;
- import org.apache.commons.lang3.StringUtils;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-@@ -104,12 +105,12 @@
+@@ -104,12 +104,12 @@
        this.field_239035_i_ = p_239048_1_.func_230480_a_(new Button(j, 100, 150, 20, new TranslationTextComponent("selectWorld.mapType"), (p_239050_2_) -> {
           while(true) {
              if (this.field_239040_n_.isPresent()) {
@@ -24,7 +16,7 @@
                 this.field_239040_n_ = Optional.of(biomegeneratortypescreens);
                 this.field_239039_m_ = biomegeneratortypescreens.func_241220_a_(this.field_239038_l_, this.field_239039_m_.func_236221_b_(), this.field_239039_m_.func_236222_c_(), this.field_239039_m_.func_236223_d_());
                 if (this.field_239039_m_.func_236227_h_() && !Screen.func_231173_s_()) {
-@@ -133,7 +134,7 @@
+@@ -133,7 +133,7 @@
        this.field_239035_i_.field_230694_p_ = false;
        this.field_239035_i_.field_230693_o_ = this.field_239040_n_.isPresent();
        this.field_239036_j_ = p_239048_1_.func_230480_a_(new Button(j, 120, 150, 20, new TranslationTextComponent("selectWorld.customizeType"), (p_239044_3_) -> {
@@ -33,7 +25,7 @@
           if (biomegeneratortypescreens$ifactory != null) {
              p_239048_2_.func_147108_a(biomegeneratortypescreens$ifactory.createEditScreen(p_239048_1_, this.field_239039_m_));
           }
-@@ -292,7 +293,7 @@
+@@ -292,7 +292,7 @@
        } else {
           this.field_239034_h_.field_230694_p_ = p_239059_1_;
           this.field_239027_a_.field_230694_p_ = p_239059_1_;
