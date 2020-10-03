@@ -43,7 +43,6 @@ public class CheckSAS extends DefaultTask {
 					lines.add(cls + (comment == null ? '' : ' ' + comment))
 					if (json[cls]['methods'] != null)
 						(json[cls]['methods'] as TreeMap).each {
-							lines.add('\t' + cls + ' ' + it.key.replace(' ', ''))
 							findChildMethods(json, cls, it.key).each { lines.add('\t' + it) }
 						}
 					return
@@ -55,5 +54,11 @@ public class CheckSAS extends DefaultTask {
 			}
 			f.text = lines.join('\n')
 		}
+	}
+
+	protected static findChildMethods(json, cls, desc)
+	{
+		return json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
+				.collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
 	}
 }
