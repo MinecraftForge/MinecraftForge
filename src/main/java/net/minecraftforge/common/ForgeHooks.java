@@ -22,9 +22,7 @@ package net.minecraftforge.common;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +46,6 @@ import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityClassification;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
@@ -94,8 +91,6 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1100,33 +1095,6 @@ public class ForgeHooks
     public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, AbstractSpawner spawner, SpawnReason spawnReason) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
-    }
-
-    @Nullable
-    public static List<MobSpawnInfo.Spawners> getStructureSpawns(StructureManager structureManager, EntityClassification classification, BlockPos pos)
-    {
-        //Ensure that we check the structures in an order that if there are multiple structures a position satisfies
-        // then we have the same behavior as vanilla as vanilla checks, swamp huts, pillager outposts, ocean monuments, and nether fortresses
-        // in that order. We intercept vanilla ones as well so that if someone registry replaces a vanilla structure they can change if it
-        // checks for spawns inside the structure pieces or not
-        Collection<Structure<?>> registeredStructures = ForgeRegistries.STRUCTURE_FEATURES.getValues();
-        List<Structure<?>> structures = new ArrayList<>(registeredStructures.size());
-        Collections.addAll(structures, Structure.field_236374_j_, Structure.field_236366_b_, Structure.field_236376_l_, Structure.field_236378_n_);
-        registeredStructures.stream()
-              .filter(structure -> structure != Structure.field_236374_j_ &&
-                                   structure != Structure.field_236366_b_ &&
-                                   structure != Structure.field_236376_l_ &&
-                                   structure != Structure.field_236378_n_)
-              .forEach(structures::add);
-        for (Structure<?> structure : structures)
-        {
-            //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (structure.hasSpawnsFor(classification) && structureManager.func_235010_a_(pos, structure.restrictsSpawnsToInside(), structure).isValid())
-            {
-                return structure.getSpawnList(classification);
-            }
-        }
-        return null;
     }
 
     public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)

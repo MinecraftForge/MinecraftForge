@@ -172,7 +172,7 @@ public class GameData
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
         makeRegistry(DECORATORS, c(Placement.class)).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, c(Structure.class)).disableSaving().disableSync().addCallback(StructureCallbacks.INSTANCE).create();
+        makeRegistry(STRUCTURE_FEATURES, c(Structure.class)).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, c(BlockPlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
@@ -547,17 +547,6 @@ public class GameData
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
             GlobalEntityTypeAttributes.func_233834_a_();
-        }
-    }
-
-    private static class StructureCallbacks implements IForgeRegistry.AddCallback<Structure<?>>
-    {
-        static final StructureCallbacks INSTANCE = new StructureCallbacks();
-
-        @Override
-        public void onAdd(IForgeRegistryInternal<Structure<?>> owner, RegistryManager stage, int id, Structure<?> entry, @Nullable Structure<?> oldEntry)
-        {
-            entry.gatherEntitySpawns();
         }
     }
 

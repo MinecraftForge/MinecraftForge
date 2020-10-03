@@ -52,10 +52,9 @@ public class StructureSpawnListGatherEvent extends Event
     public StructureSpawnListGatherEvent(Structure<?> structure)
     {
         this.structure = structure;
-        //The Pillager Outpost and Ocean Monument check the full structure by default instead of limiting themselves to being within the structure's bounds
-        this.restrictSpawnsToInside = this.structure != Structure.field_236366_b_ && this.structure != Structure.field_236376_l_;
-        this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getSpawnList()));
-        this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getCreatureSpawnList()));
+        this.restrictSpawnsToInside = this.structure.getDefaultRestrictsSpawnsToInside();
+        this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getDefaultSpawnList()));
+        this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getDefaultCreatureSpawnList()));
     }
 
     /**
