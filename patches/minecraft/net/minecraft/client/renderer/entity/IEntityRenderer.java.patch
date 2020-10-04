@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/IEntityRenderer.java
++++ b/net/minecraft/client/renderer/entity/IEntityRenderer.java
+@@ -7,7 +7,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface IEntityRenderer<T extends Entity, M extends EntityModel<T>> {
++public interface IEntityRenderer<T extends Entity, M extends EntityModel<T>> extends net.minecraftforge.client.model.IForgeEntityRenderer<T, M> {
+    M func_217764_d();
+ 
+    ResourceLocation func_110775_a(T p_110775_1_);
