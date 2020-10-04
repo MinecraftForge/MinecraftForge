@@ -1,5 +1,6 @@
 package net.minecraftforge.client.gui.config;
 
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -20,7 +21,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 
@@ -172,7 +175,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
 
             builder.comment("an Enum comment")
                 .translation("forge.configgui.an.enum")
-                .defineEnum("anEnum", DyeColor.GREEN, dc -> dc instanceof DyeColor && ((DyeColor) dc).getId() >= 10);
+                .defineEnum("anEnum", DyeColor.GREEN, Arrays.stream(DyeColor.values()).filter(dc -> dc.getId() >= 10).collect(Collectors.toList()));
             builder.comment("a String comment")
                 .translation("forge.configgui.a.string")
                 .define("aString", "foo");
@@ -206,7 +209,19 @@ public class ConfigScreenTesting extends ModConfigScreen {
                     .defineList("aListDouble", Lists.newArrayList(123.213, 21343.21, 456.32, 9765.2), o -> o instanceof Double);
                 builder.comment("a List<Enum> comment")
                     .translation("forge.configgui.a.list.enum")
-                    .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> o instanceof DyeColor);
+                    .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> {
+                        if (o instanceof DyeColor)
+                            return ((DyeColor) o).getId() >= 10;
+                        if (o instanceof String) {
+                            try {
+                                DyeColor dyeColor = EnumGetMethod.NAME_IGNORECASE.get(o, DyeColor.class);
+                                return dyeColor.getId() >= 10;
+                            } catch (IllegalArgumentException | ClassCastException e) {
+                                return false;
+                            }
+                        }
+                        return false;
+                    });
                 builder.comment("a List<String> comment")
                     .translation("forge.configgui.a.list.string")
                     .defineList("aListString", Lists.newArrayList("foo", "bar", "baz", "qez"), o -> o instanceof String);
