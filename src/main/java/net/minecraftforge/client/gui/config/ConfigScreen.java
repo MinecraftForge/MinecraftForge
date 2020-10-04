@@ -23,7 +23,6 @@ import java.util.Collections;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Make list screen buttons undo/reset work
  * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?

@@ -348,6 +348,8 @@ public class ControlCreator {
     public <T extends List<?>> void createListInteractionWidget(Interactor<T> interactor) {
         T[] state = createHolderForUseInLambda(interactor.initialValue);
         T copiedInitial = copyMutable(interactor.initialValue);
+        T defaultValue = (T) interactor.getData(DEFAULT_VALUE_KEY);
+        T copiedDefault = defaultValue == null ? null : copyMutable(defaultValue);
 
         interactor.label = null;
         interactor.control = createButton(interactor, button -> {
@@ -366,16 +368,33 @@ public class ControlCreator {
                 @Override
                 protected void undo() {
                     T newValue = copyMutable(copiedInitial);
-                    this.value = newValue;
-                    interactor.onUpdate(newValue);
-                    // Completely recreate everything on this screen
-                    // this.init(minecraft, scaledWidth, scaledHeight);
-                    this.func_231158_b_(field_230706_i_, field_230708_k_, field_230709_l_);
+                    setupWithNewValue(newValue);
                 }
 
                 @Override
                 protected boolean canUndo() {
                     return !Objects.equals(value, copiedInitial);
+                }
+
+                @Override
+                protected void reset() {
+                    if (copiedDefault == null)
+                        return;
+                    T newValue = copyMutable(copiedDefault);
+                    setupWithNewValue(newValue);
+                }
+
+                @Override
+                protected boolean canReset() {
+                    return copiedDefault != null && !Objects.equals(value, copiedDefault);
+                }
+
+                private void setupWithNewValue(T newValue) {
+                    this.value = newValue;
+                    interactor.onUpdate(newValue);
+                    // Completely recreate everything on this screen
+                    // this.init(minecraft, scaledWidth, scaledHeight);
+                    this.func_231158_b_(field_230706_i_, field_230708_k_, field_230709_l_);
                 }
             };
             Minecraft.getInstance().displayGuiScreen(screen);
