@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.client;
 
 import com.google.common.base.Suppliers;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.DimensionType;
@@ -68,6 +69,11 @@ public class GeneratorTypeTest {
 
         public CustomCheckboardType(String name, RegistryKey<DimensionType> dimensionType) {
             super(name, dimensionType, DimensionSettings.field_242734_c);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return Screen.func_231173_s_();
         }
 
         @Override

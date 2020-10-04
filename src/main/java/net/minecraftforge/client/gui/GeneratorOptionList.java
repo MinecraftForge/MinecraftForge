@@ -88,31 +88,32 @@ public class GeneratorOptionList {
         return options.get(index);
     }
 
-    // gets called when opening the CreateWorldScreen to set the initially selected generator
+    // gets called when opening the CreateWorldScreen to set the initial generator type
     public synchronized BiomeGeneratorTypeScreens getDefault() {
-        // synchronize entries with the GeneratorTypeManager
-        updateOptions();
         GeneratorType generatorType = GeneratorTypeManager.get().getDefaultGeneratorType();
-        // returns vanilla's 'default' if not present
-        return generatorTypes.getOrDefault(generatorType, BiomeGeneratorTypeScreens.field_239066_a_);
+        BiomeGeneratorTypeScreens option = generatorTypes.get(generatorType);
+        if (option == null) {
+            // synchronize entries with the GeneratorTypeManager & try again
+            updateOptions();
+            option = generatorTypes.get(generatorType);
+        }
+        return option != null ? option : BiomeGeneratorTypeScreens.field_239066_a_;
     }
 
+    // determines whether a generator option has a a 'Customize' button to open its EditScreen
     public synchronized boolean hasEditScreen(BiomeGeneratorTypeScreens generatorType) {
         return editScreens.containsKey(generatorType);
     }
 
+    // returns an 'EditScreenFactory' which creates new instances of the generator types configuration screen
     @Nullable
     public synchronized BiomeGeneratorTypeScreens.IFactory getEditScreen(BiomeGeneratorTypeScreens generatorType) {
         return editScreens.get(generatorType);
     }
 
     // synchronize the available GeneratorTypes with the options list so that they appear in the ui
-    private void updateOptions() {
+    public synchronized void updateOptions() {
         GeneratorTypeManager.get().forEach(generatorType -> {
-            if (!generatorType.isVisible()) {
-                return;
-            }
-
             // only add new generators
             if (!generatorTypes.containsKey(generatorType)) {
                 GeneratorOption option = new GeneratorOption(generatorType);
@@ -129,6 +130,13 @@ public class GeneratorOptionList {
 
     public static GeneratorOptionList get() {
         return INSTANCE;
+    }
+
+    public static boolean isHidden(BiomeGeneratorTypeScreens generatorOption) {
+        if (generatorOption instanceof GeneratorOption) {
+            return !((GeneratorOption) generatorOption).isVisible();
+        }
+        return false;
     }
 
     private static String getGeneratorName(BiomeGeneratorTypeScreens type) {
@@ -153,6 +161,10 @@ public class GeneratorOptionList {
         protected GeneratorOption(GeneratorType generatorType) {
             super(generatorType.getName());
             this.generatorType = generatorType;
+        }
+
+        public boolean isVisible() {
+            return generatorType.isVisible();
         }
 
         @Override
