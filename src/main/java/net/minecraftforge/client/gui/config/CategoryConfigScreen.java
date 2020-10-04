@@ -82,7 +82,7 @@ public class CategoryConfigScreen extends ConfigScreen {
             .collect(Collectors.toList());
     }
 
-    public static List<ITextProperties> createTooltip(ITextComponent title, String commentTranslationKey, String comment) {
+    public static List<ITextProperties> createTooltip(ITextComponent title, @Nullable String commentTranslationKey, @Nullable String comment) {
         List<ITextProperties> tooltip = new LinkedList<>();
         tooltip.add(title.func_230532_e_().func_240701_a_(TOOLTIP_TITLE_COLOR));
         tooltip.addAll(translateCommentWithFallback(commentTranslationKey, comment));
