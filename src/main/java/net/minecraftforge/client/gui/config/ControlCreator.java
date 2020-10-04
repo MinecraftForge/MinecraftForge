@@ -221,7 +221,7 @@ public class ControlCreator {
             else if (value instanceof Long)
                 createTextualNumericInteractionWidget((Interactor<Long>) interactor, Long::parseLong, getLongestValueStringLength(Long.MIN_VALUE));
             else if (value instanceof Double)
-                createTextualNumericInteractionWidget((Interactor<Double>) interactor, Double::parseDouble, getLongestValueStringLength(Double.NEGATIVE_INFINITY));
+                createTextualNumericInteractionWidget((Interactor<Double>) interactor, Double::parseDouble, getLongestValueStringLength(-Double.MAX_VALUE));
             else
                 throw new IllegalStateException("Don't know how to make a widget for Non-ranged Number " + value);
         }

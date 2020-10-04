@@ -241,6 +241,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             return define(split(path), defaultValue);
         }
         public <T> ConfigValue<T> define(List<String> path, T defaultValue) {
+            if (defaultValue instanceof List<?>)
+                throw new IllegalStateException("Use 'defineList' not 'define' to create list config values.");
             return define(path, defaultValue, o -> o != null && defaultValue.getClass().isAssignableFrom(o.getClass()));
         }
         public <T> ConfigValue<T> define(String path, T defaultValue, Predicate<Object> validator) {
@@ -286,7 +288,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min must be less then max.");
-            return define(path, defaultSupplier, range);
+            return define(path, defaultSupplier, range, clazz);
         }
         public <T> ConfigValue<T> defineInList(String path, T defaultValue, Collection<? extends T> acceptableValues) {
             return defineInList(split(path), defaultValue, acceptableValues);
@@ -298,6 +300,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             return defineInList(path, () -> defaultValue, acceptableValues);
         }
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
+            if (acceptableValues.isEmpty())
+                throw new IllegalArgumentException("Must have allowed values.");
+            if (!acceptableValues.contains(defaultSupplier.get()))
+                throw new IllegalArgumentException("Allowed values must contain the default value.");
             String allowedValues = acceptableValues.stream().map(Objects::toString).collect(Collectors.joining(", "));
             context.setAllowedValues(allowedValues);
             context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues));
@@ -658,7 +664,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             if (clazz == Double.class) {
                 if (max.equals(Double.MAX_VALUE) || max.equals(Double.POSITIVE_INFINITY)) {
                     return "> " + min;
-                } else if (min.equals(Double.NEGATIVE_INFINITY)) {
+                } else if (min.equals(-Double.MAX_VALUE) || min.equals(Double.NEGATIVE_INFINITY)) {
                     return "< " + max;
                 }
             }
