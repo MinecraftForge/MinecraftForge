@@ -32,6 +32,8 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.FlatChunkGenerator;
 import net.minecraft.world.gen.FlatGenerationSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.world.generator.GeneratorSettingsHelper;
 import net.minecraftforge.common.world.generator.GeneratorType;
 
@@ -52,6 +54,7 @@ public class FlatGeneratorType extends GeneratorType {
 
     @Nullable
     @Override
+    @OnlyIn(Dist.CLIENT)
     public BiomeGeneratorTypeScreens.IFactory getEditScreen() {
         return (screen, settings) -> {
             DynamicRegistries registries = screen.field_238934_c_.func_239055_b_();

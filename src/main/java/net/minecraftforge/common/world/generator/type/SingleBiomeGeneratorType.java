@@ -36,6 +36,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.world.generator.GeneratorSettingsHelper;
 
+import javax.annotation.Nullable;
+
 public class SingleBiomeGeneratorType extends NoiseGeneratorType {
 
     private final RegistryKey<Biome> biome;
@@ -54,6 +56,7 @@ public class SingleBiomeGeneratorType extends NoiseGeneratorType {
         return new SingleBiomeProvider(biomes.func_243576_d(biome));
     }
 
+    @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
     public BiomeGeneratorTypeScreens.IFactory getEditScreen() {
