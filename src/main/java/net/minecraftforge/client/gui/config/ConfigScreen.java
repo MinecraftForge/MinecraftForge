@@ -128,6 +128,7 @@ public abstract class ConfigScreen extends Screen {
             button.field_230690_l_ = left; // x
             button.field_230691_m_ = y; // y
             button.func_230991_b_(buttonWidth); // setWidth
+            button.setHeight(buttonHeight);
             left += buttonWidth;
         }
     }
