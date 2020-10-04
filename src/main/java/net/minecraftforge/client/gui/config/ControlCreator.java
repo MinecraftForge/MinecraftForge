@@ -74,7 +74,7 @@ public class ControlCreator {
     /**
      * A Widget backed by a value of type T + some extra data & listeners for handling changes and displaying the widget.
      */
-    static class Interactor<T> {
+    public static class Interactor<T> {
 
         public final ITextComponent title;
         public final T initialValue;

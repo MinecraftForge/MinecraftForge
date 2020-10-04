@@ -1,23 +1,4 @@
-/*
- * Minecraft Forge
- * Copyright (c) 2016-2020.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
-package net.minecraftforge.client.gui.config;
+package net.minecraftforge.debug.client.gui.config;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.screen.Screen;
@@ -26,16 +7,14 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ColorHelper;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.gui.config.ControlCreator;
+import net.minecraftforge.client.gui.config.ModConfigScreen;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,16 +22,100 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-
 /**
  * Just for testing the extensibility of the system.
- * Will either be removed or converted to a test mod.
  *
  * @author Cadiboo
  */
-@EventBusSubscriber(bus = Bus.MOD, modid = "forge", value = Dist.CLIENT)
-public class ConfigScreenTesting extends ModConfigScreen {
+@Mod(ConfigGuiTest.MOD_ID)
+public class ConfigGuiTest {
+    public static final String MOD_ID = "config_gui_test";
+
+    public ConfigGuiTest() {
+        ModLoadingContext ctx = ModLoadingContext.get();
+        ctx.registerConfig(ModConfig.Type.COMMON, commonSpec);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            IModInfo modInfo = ctx.getActiveContainer().getModInfo();
+            ctx.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new CustomConfigScreen(screen, modInfo));
+        });
+    }
+
+    public static class CustomConfigScreen extends ModConfigScreen {
+
+        private final ControlCreator controlCreator;
+
+        public CustomConfigScreen(Screen screen, IModInfo mod) {
+            super(screen, mod);
+            controlCreator = new ControlCreator() {
+
+                @Override
+                public void createStringInteractionWidget(Interactor<String> interactor) {
+                    super.createStringInteractionWidget(interactor);
+                    if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.hexColorString)
+                        addColorHandlerToStringInteractor(interactor);
+                }
+
+                @Override
+                public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
+                    super.createBooleanInteractionWidget(interactor);
+                    if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.colouredBoolean)
+                        addColorHandlerToBooleanInteractor(interactor);
+                }
+            };
+        }
+
+        private void addColorHandlerToStringInteractor(ControlCreator.Interactor<String> interactor) {
+            interactor.addUpdateResponder((isValid, newValue) -> {
+                if (isValid)
+                    parseAndSetHexColor((TextFieldWidget) interactor.control, newValue);
+            });
+        }
+
+        private void parseAndSetHexColor(TextFieldWidget widget, String newValue) {
+            if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
+                String parsedR = newValue.substring(1, 2);
+                String parsedG = newValue.substring(2, 3);
+                String parsedB = newValue.substring(3, 4);
+                newValue = "#" + parsedR + parsedR + parsedG + parsedG + parsedB + parsedB;
+            }
+            if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
+                String parsedR = newValue.substring(1, 3);
+                String parsedG = newValue.substring(3, 5);
+                String parsedB = newValue.substring(5, 7);
+                int r;
+                int g;
+                int b;
+                try {
+                    r = Integer.parseInt(parsedR, 16);
+                    g = Integer.parseInt(parsedG, 16);
+                    b = Integer.parseInt(parsedB, 16);
+                } catch (NumberFormatException e) {
+                    widget.setTextColor(ControlCreator.RED);
+                    return;
+                }
+                int color = ColorHelper.PackedColor.func_233006_a_(0xFF, r, g, b);
+                widget.setTextColor(color);
+            }
+        }
+
+        private void addColorHandlerToBooleanInteractor(ControlCreator.Interactor<Boolean> interactor) {
+            interactor.addUpdateResponder((isValid, newValue) -> {
+                if (isValid)
+                    setInvertedColor((Button) interactor.control, newValue);
+            });
+        }
+
+        private void setInvertedColor(Button widget, Boolean newValue) {
+            int color = newValue ? ControlCreator.GREEN : ControlCreator.RED;
+            int inverted = color ^ 0x00FFFFFF;
+            widget.setFGColor(inverted);
+        }
+
+        @Override
+        public ControlCreator getControlCreator() {
+            return controlCreator;
+        }
+    }
 
     public static final Common COMMON;
     static final ForgeConfigSpec commonSpec;
@@ -63,96 +126,10 @@ public class ConfigScreenTesting extends ModConfigScreen {
         COMMON = specPair.getLeft();
     }
 
-    private final ControlCreator controlCreator;
-
-    public ConfigScreenTesting(Screen screen, IModInfo mod) {
-        super(screen, mod);
-        controlCreator = new ControlCreator() {
-
-            @Override
-            public void createStringInteractionWidget(Interactor<String> interactor) {
-                super.createStringInteractionWidget(interactor);
-                if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.hexColorString)
-                    addColorHandlerToStringInteractor(interactor);
-            }
-
-            @Override
-            public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
-                super.createBooleanInteractionWidget(interactor);
-                if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.colouredBoolean)
-                    addColorHandlerToBooleanInteractor(interactor);
-            }
-        };
-    }
-
-    private void addColorHandlerToStringInteractor(ControlCreator.Interactor<String> interactor) {
-        interactor.addUpdateResponder((isValid, newValue) -> {
-            if (isValid)
-                parseAndSetHexColor((TextFieldWidget) interactor.control, newValue);
-        });
-    }
-
-    private void parseAndSetHexColor(TextFieldWidget widget, String newValue) {
-        if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
-            String parsedR = newValue.substring(1, 2);
-            String parsedG = newValue.substring(2, 3);
-            String parsedB = newValue.substring(3, 4);
-            newValue = "#" + parsedR + parsedR + parsedG + parsedG + parsedB + parsedB;
-        }
-        if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
-            String parsedR = newValue.substring(1, 3);
-            String parsedG = newValue.substring(3, 5);
-            String parsedB = newValue.substring(5, 7);
-            int r;
-            int g;
-            int b;
-            try {
-                r = Integer.parseInt(parsedR, 16);
-                g = Integer.parseInt(parsedG, 16);
-                b = Integer.parseInt(parsedB, 16);
-            } catch (NumberFormatException e) {
-                widget.setTextColor(ControlCreator.RED);
-                return;
-            }
-            int color = ColorHelper.PackedColor.func_233006_a_(0xFF, r, g, b);
-            widget.setTextColor(color);
-        }
-    }
-
-    private void addColorHandlerToBooleanInteractor(ControlCreator.Interactor<Boolean> interactor) {
-        interactor.addUpdateResponder((isValid, newValue) -> {
-            if (isValid)
-                setInvertedColor((Button) interactor.control, newValue);
-        });
-    }
-
-    private void setInvertedColor(Button widget, Boolean newValue) {
-        int color = newValue ? ControlCreator.GREEN : ControlCreator.RED;
-        int inverted = color ^ 0x00FFFFFF;
-        widget.setFGColor(inverted);
-    }
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        ModContainer forge = ModList.get().getModContainerById("forge").get();
-        forge.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigScreenTesting(screen, forge.getModInfo()));
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(FMLConstructModEvent event) {
-        ModContainer forge = ModList.get().getModContainerById("forge").get();
-        forge.addConfig(new ModConfig(ModConfig.Type.COMMON, commonSpec, forge));
-    }
-
-    @Override
-    public ControlCreator getControlCreator() {
-        return controlCreator;
-    }
-
     public static class Common {
 
         private final ForgeConfigSpec.ConfigValue<String> hexColorString;
-        private final BooleanValue colouredBoolean;
+        private final ForgeConfigSpec.BooleanValue colouredBoolean;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("a Boolean comment")
