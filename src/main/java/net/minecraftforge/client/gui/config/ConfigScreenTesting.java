@@ -209,19 +209,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
                     .defineList("aListDouble", Lists.newArrayList(123.213, 21343.21, 456.32, 9765.2), o -> o instanceof Double);
                 builder.comment("a List<Enum> comment")
                     .translation("forge.configgui.a.list.enum")
-                    .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> {
-                        if (o instanceof DyeColor)
-                            return ((DyeColor) o).getId() >= 10;
-                        if (o instanceof String) {
-                            try {
-                                DyeColor dyeColor = EnumGetMethod.NAME_IGNORECASE.get(o, DyeColor.class);
-                                return dyeColor.getId() >= 10;
-                            } catch (IllegalArgumentException | ClassCastException e) {
-                                return false;
-                            }
-                        }
-                        return false;
-                    });
+                    .defineList("aListEnum", Lists.newArrayList(DyeColor.BLACK, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK), o -> o instanceof DyeColor && ((DyeColor) o).getId() >= 10);
                 builder.comment("a List<String> comment")
                     .translation("forge.configgui.a.list.string")
                     .defineList("aListString", Lists.newArrayList("foo", "bar", "baz", "qez"), o -> o instanceof String);
