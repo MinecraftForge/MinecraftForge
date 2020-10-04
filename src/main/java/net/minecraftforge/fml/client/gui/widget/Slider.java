@@ -150,7 +150,7 @@ public class Slider extends ExtendedButton
 
         if (showDecimal)
         {
-            val = Double.toString(sliderValue * (maxValue - minValue) + minValue);
+            val = Double.toString(getValue());
 
             if (val.substring(val.indexOf(".") + 1).length() > precision)
             {
@@ -171,7 +171,7 @@ public class Slider extends ExtendedButton
         }
         else
         {
-            val = Integer.toString((int)Math.round(sliderValue * (maxValue - minValue) + minValue));
+            val = Integer.toString(getValueInt());
         }
 
         if(drawString)
