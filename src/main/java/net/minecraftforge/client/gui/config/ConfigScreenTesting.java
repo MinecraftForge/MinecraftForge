@@ -22,7 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-import static net.minecraftforge.common.ForgeConfigSpec.*;
+import static net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 
 /**
  * Just for testing the extensibility of the system.
@@ -49,19 +49,17 @@ public class ConfigScreenTesting extends ModConfigScreen {
         controlCreator = new ControlCreator() {
 
             @Override
-            public Interactor<String> createStringInteractionWidget(InteractorSpec<String> spec) {
-                Interactor<String> interactor = super.createStringInteractionWidget(spec);
-                if (spec.getData(ConfigValue.class) == COMMON.hexColorString)
+            public void createStringInteractionWidget(Interactor<String> interactor) {
+                super.createStringInteractionWidget(interactor);
+                if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.hexColorString)
                     addColorHandlerToStringInteractor(interactor);
-                return interactor;
             }
 
             @Override
-            public Interactor<Boolean> createBooleanInteractionWidget(InteractorSpec<Boolean> spec) {
-                Interactor<Boolean> interactor = super.createBooleanInteractionWidget(spec);
-                if (spec.getData(ConfigValue.class) == COMMON.colouredBoolean)
+            public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
+                super.createBooleanInteractionWidget(interactor);
+                if (interactor.getData(CONFIG_VALUE_KEY) == COMMON.colouredBoolean)
                     addColorHandlerToBooleanInteractor(interactor);
-                return interactor;
             }
         };
     }

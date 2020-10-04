@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.*;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
-import net.minecraftforge.client.gui.config.ControlCreator.InteractorSpec;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
@@ -175,12 +174,6 @@ public class CategoryConfigScreen extends ConfigScreen {
                 tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"));
                 return new ConfigElement(label, title, tooltip);
             } else {
-                // Don't need to explicitly check range, this is done as part of the test :)
-                interactor.addValidator(valueSpec::test);
-                interactor.addSaver(newValue -> {
-                    configValue.set(newValue);
-                    configScreen.onChange(valueSpec.needsWorldRestart());
-                });
                 return new ConfigValueConfigElement(interactor.label, title, tooltip, configValue, valueSpec, interactor);
             }
         }
@@ -188,12 +181,22 @@ public class CategoryConfigScreen extends ConfigScreen {
         @Nullable
         protected <T> Interactor<T> tryCreateInteractor(ITextComponent title, ConfigValue<T> configValue, ValueSpec valueSpec) {
             ControlCreator creator = configScreen.getControlCreator();
-            InteractorSpec<T> spec = new InteractorSpec<>(title, configValue.get());
-            spec.addData(ConfigValue.class, configValue);
-            spec.addData(ValueSpec.class, valueSpec);
-            spec.addData(Range.class, valueSpec.getRange());
+            T value = configValue.get();
+            Interactor<T> interactor = new Interactor<>(title, value);
+            interactor.addData(ControlCreator.CONFIG_VALUE_KEY, configValue);
+            interactor.addData(ControlCreator.VALUE_SPEC_KEY, valueSpec);
+            interactor.addData(ControlCreator.RANGE_KEY, valueSpec.getRange());
+            interactor.addData(ControlCreator.INITIAL_VALUE_KEY, value);
+            interactor.addData(ControlCreator.DEFAULT_VALUE_KEY, valueSpec.getDefault());
+            // Don't need to explicitly check range, this is done as part of the test :)
+            interactor.addValidator(valueSpec::test);
+            interactor.addSaver(newValue -> {
+                configValue.set(newValue);
+                configScreen.onChange(valueSpec.needsWorldRestart());
+            });
             try {
-                return creator.createAndInitialiseInteractionWidget(spec);
+                creator.createAndInitialiseInteractionWidget(interactor);
+                return interactor;
             } catch (Exception e) {
                 return null;
             }

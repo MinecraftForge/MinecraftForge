@@ -6,7 +6,6 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
-import net.minecraftforge.client.gui.config.ControlCreator.InteractorSpec;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
@@ -70,7 +69,6 @@ public abstract class ListConfigScreen extends ConfigScreen {
                 ITextComponent title = new StringTextComponent(index + ": " + item + (item == null ? "" : " (" + item.getClass().getSimpleName() + ")"));
                 return new ListItemConfigElement(title, index);
             } else {
-                interactor.addSaver(newValue -> setAndNotify(index, newValue));
                 ConfigElement configElement = new ListItemConfigElement(interactor.title, index);
                 configElement.setMainWidget(interactor.control);
                 return configElement;
@@ -81,9 +79,13 @@ public abstract class ListConfigScreen extends ConfigScreen {
         protected Interactor<?> tryCreateInteractor(int index, Object item) {
             ITextComponent title = new StringTextComponent(Integer.toString(index));
             ControlCreator creator = configScreen.getControlCreator();
-            InteractorSpec<?> spec = new InteractorSpec<>(title, item);
+            Interactor<?> interactor = new Interactor<>(title, item);
+            interactor.addData(ControlCreator.INITIAL_VALUE_KEY, item);
+            interactor.addData(ControlCreator.DEFAULT_VALUE_KEY, item);
+            interactor.addSaver(newValue -> setAndNotify(index, newValue));
             try {
-                return creator.createAndInitialiseInteractionWidget(spec);
+                creator.createAndInitialiseInteractionWidget(interactor);
+                return interactor;
             } catch (Exception e) {
                 return null;
             }
