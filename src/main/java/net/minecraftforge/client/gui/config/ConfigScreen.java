@@ -29,6 +29,7 @@ import java.util.Collections;
  * - Do I need to deal with sub-configs?
  * - Fix lists
  * -> Change indices instead of reloading the entire view
+ * -> Drag and drop movement?
  * -> Maybe try and refactor it all to be less confusing and twisted
  * - Client -> Server syncing?
  * - Document and add comments on everything that isn't immediately obvious

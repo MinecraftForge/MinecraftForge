@@ -12,10 +12,7 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.client.gui.widget.Slider;
@@ -23,13 +20,8 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * Handles creating the widgets on a {@link ConfigScreen}.
@@ -51,69 +43,110 @@ public class ControlCreator {
     // Copied from TextFieldWidget#enabledColor because it's private
     public static final int TEXT_FIELD_ACTIVE_COLOR = 0xe0e0e0;
 
+    /**
+     * Info about how to create a widget for a value.
+     */
+    static class InteractorSpec<T> {
+
+        public final ITextComponent title;
+        public final T initialValue;
+        private final Map<Class<?>, Object> extraData = new HashMap<>();
+
+        public InteractorSpec(ITextComponent title, T initialValue) {
+            this.title = title;
+            this.initialValue = Objects.requireNonNull(initialValue, "initialValue cannot be null");
+        }
+
+        public <D> void addData(Class<D> key, @Nullable D value) {
+            extraData.put(key, value);
+        }
+
+        @Nullable
+        public <D> D getData(Class<D> key) {
+            return (D) extraData.get(key);
+        }
+    }
+
     static class Interactor<T> {
 
         public final ITextComponent title;
         public final T initialValue;
         public ITextComponent label;
         public Widget control;
-        /** Set this AFTER initialisation */
-        public Predicate<T> isValid = $ -> true;
-        /** Set this AFTER initialisation */
-        public Consumer<T> saveValue = $ -> {};
-        /** Set this AFTER initialisation */
-        public VisualsUpdater<T> visualsUpdater = (a, b) -> {};
+        private Predicate<T> validator = $ -> true;
+        private Consumer<T> saver = $ -> {};
+        private BiConsumer<Boolean, T> updateResponder = (a, b) -> {};
 
-        Interactor(ITextComponent title, T initialValue) {
-            this.title = title;
-            this.initialValue = Objects.requireNonNull(initialValue, "initialValue cannot be null");
-            this.label = title;
+        Interactor(InteractorSpec<T> spec) {
+            this.title = spec.title;
+            this.initialValue = spec.initialValue;
+            this.label = spec.title;
         }
 
-        @FunctionalInterface
-        interface VisualsUpdater<T> {
-            void update(boolean isValid, T newValue);
+        public void addValidator(Predicate<T> newValidator) {
+            validator = validator.and(newValidator);
         }
 
-    }
-
-    public static class ConfigValueInteractor<T> extends Interactor<T> {
-
-        private final ForgeConfigSpec.ConfigValue<T> configValue;
-        private final ForgeConfigSpec.ValueSpec configSpec;
-
-        ConfigValueInteractor(ITextComponent title, ConfigValue<T> configValue, ValueSpec configSpec) {
-            super(title, configValue.get());
-            this.configValue = configValue;
-            this.configSpec = configSpec;
+        public boolean isValid(T newValue) {
+            return validator.test(newValue);
         }
 
-        public ForgeConfigSpec.ConfigValue<T> getConfigValue() {
-            return configValue;
+        public void addSaver(Consumer<T> newSaver) {
+            saver = saver.andThen(newSaver);
         }
 
-        public ForgeConfigSpec.ValueSpec getConfigSpec() {
-            return configSpec;
+        /**
+         * Saves a valid new value.
+         */
+        public void save(T newValue) {
+            saver.accept(newValue);
         }
+
+        public void addUpdateResponder(BiConsumer<Boolean, T> newUpdateResponder) {
+            updateResponder = updateResponder.andThen(newUpdateResponder);
+        }
+
+        public void onUpdate(T newValue) {
+            onUpdate(isValid(newValue), newValue);
+        }
+
+        /**
+         * Responds to value changes.
+         * Called to set up the Interactor after initialisation.
+         * Called when the user interacts with the Widget directly and changes the value.
+         * Called when the user clicks the undo/reset buttons.
+         */
+        public void onUpdate(boolean isValid, T newValue) {
+            updateResponder.accept(isValid, newValue);
+        }
+
     }
 
     public static ControlCreator getDefaultCreator() {
         return DefaultHolder.INSTANCE;
     }
 
+    public <T> Interactor<T> createAndInitialiseInteractionWidget(InteractorSpec<T> spec) {
+        Interactor<T> interactor = createInteractionWidget(spec);
+        T value = spec.initialValue;
+        interactor.onUpdate(value);
+        return interactor;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T> void createInteractionWidget(Interactor<T> interactor) {
-        T value = interactor.initialValue;
+    public <T> Interactor<T> createInteractionWidget(InteractorSpec<T> spec) {
+        T value = spec.initialValue;
         if (value instanceof Boolean)
-            createBooleanInteractionWidget((Interactor<Boolean>) interactor);
+            return (Interactor<T>) createBooleanInteractionWidget((InteractorSpec<Boolean>) spec);
         else if (value instanceof Number)
-            createNumericInteractionWidget((Interactor<? extends Number>) interactor);
+            return (Interactor<T>) createNumericInteractionWidget((InteractorSpec<? extends Number>) spec);
         else if (value instanceof Enum<?>)
-            createEnumInteractionWidget((Interactor<Enum>) interactor);
+            return (Interactor<T>) createEnumInteractionWidget((InteractorSpec<Enum>) spec);
         else if (value instanceof String)
-            createStringInteractionWidget((Interactor<String>) interactor);
+            return (Interactor<T>) createStringInteractionWidget((InteractorSpec<String>) spec);
         else if (value instanceof List<?>)
-            createListInteractionWidget((Interactor<List<?>>) interactor);
+            return (Interactor<T>) createListInteractionWidget((InteractorSpec<List<?>>) spec);
+        throw new IllegalStateException("Don't know how to make a widget for " + value);
     }
 
     @SuppressWarnings("unchecked")
@@ -123,97 +156,101 @@ public class ControlCreator {
         return holder;
     }
 
-    public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
-        Boolean[] state = createHolderForUseInLambda(interactor.initialValue);
+    public Interactor<Boolean> createBooleanInteractionWidget(InteractorSpec<Boolean> spec) {
+        Interactor<Boolean> interactor = new Interactor<>(spec);
 
-        interactor.control = createButton(interactor, button -> {
+        Boolean[] state = createHolderForUseInLambda(spec.initialValue);
+
+        interactor.control = createButton(spec, button -> {
             boolean oldValue = state[0];
             boolean newValue = !oldValue;
             state[0] = newValue;
-            boolean isValid = interactor.isValid.test(newValue);
+            boolean isValid = interactor.isValid(newValue);
             if (isValid)
-                interactor.saveValue.accept(newValue);
-            interactor.visualsUpdater.update(isValid, newValue);
+                interactor.save(newValue);
+            interactor.onUpdate(isValid, newValue);
         });
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             Widget control = interactor.control;
             control.func_238482_a_(new StringTextComponent(Boolean.toString(newValue)));
             if (!isValid)
                 control.setFGColor(RED);
             else
                 control.setFGColor(newValue ? GREEN : RED);
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Number> void createNumericInteractionWidget(Interactor<T> interactor) {
-        T value = interactor.initialValue;
-        Range<? extends Number> range = getRangeForSliderCreation(interactor);
+    public <T extends Number> Interactor<T> createNumericInteractionWidget(InteractorSpec<T> spec) {
+        T value = spec.initialValue;
+        Range<? extends Number> range = getRangeForSliderCreation(spec);
         if (range != null) {
             if (value instanceof Integer)
-                createSliderNumericInteractionWidget((Interactor<Integer>) interactor, range, Double::intValue);
+                return (Interactor<T>) createSliderNumericInteractionWidget((InteractorSpec<Integer>) spec, range, Double::intValue);
             else if (value instanceof Long)
-                createSliderNumericInteractionWidget((Interactor<Long>) interactor, range, Double::longValue);
+                return (Interactor<T>) createSliderNumericInteractionWidget((InteractorSpec<Long>) spec, range, Double::longValue);
             else if (value instanceof Double)
-                createSliderNumericInteractionWidget((Interactor<Double>) interactor, range, Function.identity());
+                return (Interactor<T>) createSliderNumericInteractionWidget((InteractorSpec<Double>) spec, range, Function.identity());
         } else {
             if (value instanceof Integer)
-                createTextualNumericInteractionWidget((Interactor<Integer>) interactor, Integer::parseInt, getLongestValueStringLength(Integer.MIN_VALUE));
+                return (Interactor<T>) createTextualNumericInteractionWidget((InteractorSpec<Integer>) spec, Integer::parseInt, getLongestValueStringLength(Integer.MIN_VALUE));
             else if (value instanceof Long)
-                createTextualNumericInteractionWidget((Interactor<Long>) interactor, Long::parseLong, getLongestValueStringLength(Long.MIN_VALUE));
+                return (Interactor<T>) createTextualNumericInteractionWidget((InteractorSpec<Long>) spec, Long::parseLong, getLongestValueStringLength(Long.MIN_VALUE));
             else if (value instanceof Double)
-                createTextualNumericInteractionWidget((Interactor<Double>) interactor, Double::parseDouble, getLongestValueStringLength(Double.NEGATIVE_INFINITY));
+                return (Interactor<T>) createTextualNumericInteractionWidget((InteractorSpec<Double>) spec, Double::parseDouble, getLongestValueStringLength(Double.NEGATIVE_INFINITY));
         }
+        throw new IllegalStateException("Don't know how to make a widget for Number " + value);
     }
 
     /**
      * @return null if a slider should not be created for the interactor.
      */
+    @SuppressWarnings("unchecked")
     @Nullable
-    public <T extends Number, C extends Number & Comparable<? super C>> Range<C> getRangeForSliderCreation(Interactor<T> interactor) {
-        if (!(interactor instanceof ConfigValueInteractor))
-            return null;
-        ConfigValueInteractor<T> configValueInteractor = (ConfigValueInteractor<T>) interactor;
-        ValueSpec configSpec = configValueInteractor.getConfigSpec();
-        Range<? extends Number> range = configSpec.getRange();
+    public <T extends Number, C extends Number & Comparable<? super C>> Range<C> getRangeForSliderCreation(InteractorSpec<T> spec) {
+        Range<C> range = spec.getData(Range.class);
         if (range == null)
             return null;
         double min = range.getMin().doubleValue();
         double max = range.getMax().doubleValue();
         if (max - min > 10)
             return null;
-        return (Range<C>) range;
+        return range;
     }
 
     public int getLongestValueStringLength(Number value) {
         return Objects.toString(value).length();
     }
 
-    public <T extends Number> void createSliderNumericInteractionWidget(Interactor<T> interactor, Range<? extends Number> range, Function<Double, T> converter) {
+    public <T extends Number> Interactor<T> createSliderNumericInteractionWidget(InteractorSpec<T> spec, Range<? extends Number> range, Function<Double, T> converter) {
+        Interactor<T> interactor = new Interactor<>(spec);
+
         Slider.ISlider responder = slider -> {
             Double sliderValue = slider.getValue();
             T newValue = converter.apply(sliderValue);
-            boolean isValid = interactor.isValid.test(newValue);
+            boolean isValid = interactor.isValid(newValue);
             if (isValid)
-                interactor.saveValue.accept(newValue);
-            interactor.visualsUpdater.update(isValid, newValue);
+                interactor.save(newValue);
+            interactor.onUpdate(isValid, newValue);
         };
 
-        interactor.control = createSlider(interactor, range, responder);
+        interactor.control = createSlider(spec, range, responder);
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             Slider control = ((Slider) interactor.control);
             control.setValue(newValue.doubleValue());
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
-    public <T extends Number> void createTextualNumericInteractionWidget(Interactor<T> interactor, Function<String, T> parser, int longestValueStringLength) {
-        TextFieldWidget textField = createTextField(interactor);
+    public <T extends Number> Interactor<T> createTextualNumericInteractionWidget(InteractorSpec<T> spec, Function<String, T> parser, int longestValueStringLength) {
+        Interactor<T> interactor = new Interactor<>(spec);
+
+        TextFieldWidget textField = createTextField(spec);
         interactor.control = textField;
 
         textField.setMaxStringLength(longestValueStringLength);
@@ -229,29 +266,31 @@ public class ControlCreator {
                 ((TextFieldWidget) interactor.control).setTextColor(RED);
                 return;
             }
-            boolean isValid = interactor.isValid.test(newValue);
+            boolean isValid = interactor.isValid(newValue);
             if (isValid)
-                interactor.saveValue.accept(newValue);
+                interactor.save(newValue);
             currentlyRespondingTo[0] = newText;
-            interactor.visualsUpdater.update(isValid, newValue);
+            interactor.onUpdate(isValid, newValue);
             currentlyRespondingTo[0] = null;
         });
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             TextFieldWidget control = ((TextFieldWidget) interactor.control);
             if (!Objects.equals(textField.getText(), newValue.toString()))
                 textField.setText(newValue.toString());
             control.setTextColor(isValid ? TEXT_FIELD_ACTIVE_COLOR : RED);
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
-    public <T extends Enum<T>> void createEnumInteractionWidget(Interactor<T> interactor) {
-        T[] state = createHolderForUseInLambda(interactor.initialValue);
-        T[] potential = interactor.initialValue.getDeclaringClass().getEnumConstants();
+    public <T extends Enum<T>> Interactor<T> createEnumInteractionWidget(InteractorSpec<T> spec) {
+        Interactor<T> interactor = new Interactor<>(spec);
 
-        interactor.control = createButton(interactor, button -> {
+        T[] state = createHolderForUseInLambda(spec.initialValue);
+        T[] potential = spec.initialValue.getDeclaringClass().getEnumConstants();
+
+        interactor.control = createButton(spec, button -> {
             T oldValue = state[0];
             int oldIndex = ArrayUtils.indexOf(potential, oldValue);
             T newValue;
@@ -262,13 +301,13 @@ public class ControlCreator {
                 newValue = potential[newIndex];
             }
             state[0] = newValue;
-            boolean isValid = interactor.isValid.test(newValue);
+            boolean isValid = interactor.isValid(newValue);
             if (isValid)
-                interactor.saveValue.accept(newValue);
-            interactor.visualsUpdater.update(isValid, newValue);
+                interactor.save(newValue);
+            interactor.onUpdate(isValid, newValue);
         });
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             Widget control = interactor.control;
             control.func_238482_a_(new StringTextComponent(newValue.toString()));
             if (!isValid)
@@ -280,9 +319,9 @@ public class ControlCreator {
                 else
                     control.setFGColor(color);
             }
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
     public int getRGBColorForEnum(Enum<?> value) {
@@ -293,8 +332,10 @@ public class ControlCreator {
         return Widget.UNSET_FG_COLOR;
     }
 
-    public void createStringInteractionWidget(Interactor<String> interactor) {
-        TextFieldWidget textField = createTextField(interactor);
+    public Interactor<String> createStringInteractionWidget(InteractorSpec<String> spec) {
+        Interactor<String> interactor = new Interactor<>(spec);
+
+        TextFieldWidget textField = createTextField(spec);
         interactor.control = textField;
 
         textField.setMaxStringLength(Integer.MAX_VALUE);
@@ -303,54 +344,56 @@ public class ControlCreator {
             if (Objects.equals(currentlyRespondingTo[0], newValue))
                 // We are being called from inside visualsUpdater, don't recurse & stackoverflow
                 return;
-            boolean isValid = interactor.isValid.test(newValue);
+            boolean isValid = interactor.isValid(newValue);
             if (isValid)
-                interactor.saveValue.accept(newValue);
+                interactor.save(newValue);
             currentlyRespondingTo[0] = newValue;
-            interactor.visualsUpdater.update(isValid, newValue);
+            interactor.onUpdate(isValid, newValue);
             currentlyRespondingTo[0] = null;
         });
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             TextFieldWidget control = ((TextFieldWidget) interactor.control);
             if (!Objects.equals(textField.getText(), newValue))
                 textField.setText(newValue);
             control.setTextColor(isValid ? TEXT_FIELD_ACTIVE_COLOR : RED);
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
-    public <T extends List<?>> void createListInteractionWidget(Interactor<T> interactor) {
-        T[] state = createHolderForUseInLambda(interactor.initialValue);
+    public <T extends List<?>> Interactor<T> createListInteractionWidget(InteractorSpec<T> spec) {
+        Interactor<T> interactor = new Interactor<>(spec);
+
+        T[] state = createHolderForUseInLambda(spec.initialValue);
 
         interactor.label = null;
-        interactor.control = createButton(interactor, button -> {
+        interactor.control = createButton(spec, button -> {
             Screen currentScreen = Minecraft.getInstance().currentScreen;
-            Screen screen = new ListConfigScreen(currentScreen, interactor.title, state[0]) {
+            Screen screen = new ListConfigScreen(currentScreen, spec.title, state[0]) {
                 @Override
                 public void onModified(List newValueIn) {
                     T newValue = (T) newValueIn;
                     state[0] = newValue;
-                    boolean isValid = interactor.isValid.test(newValue);
+                    boolean isValid = interactor.isValid(newValue);
                     if (isValid)
-                        interactor.saveValue.accept(newValue);
-                    interactor.visualsUpdater.update(isValid, newValue);
+                        interactor.save(newValue);
+                    interactor.onUpdate(isValid, newValue);
                 }
             };
             Minecraft.getInstance().displayGuiScreen(screen);
         });
 
-        interactor.visualsUpdater = (isValid, newValue) -> {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             state[0] = newValue;
             Widget control = interactor.control;
             if (!isValid)
                 control.setFGColor(RED);
             else
                 control.clearFGColor();
-        };
+        });
 
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        return interactor;
     }
 
     @SuppressWarnings("unchecked")
@@ -365,15 +408,15 @@ public class ControlCreator {
         return o;
     }
 
-    public Button createButton(Interactor<?> interactor, Button.IPressable iPressable) {
+    public Button createButton(InteractorSpec<?> interactor, Button.IPressable iPressable) {
         return new ConfigElementButton(interactor.title, iPressable);
     }
 
-    public TextFieldWidget createTextField(Interactor<?> interactor) {
+    public TextFieldWidget createTextField(InteractorSpec<?> interactor) {
         return new ConfigElementTextField(interactor.title);
     }
 
-    public <T extends Number> Slider createSlider(Interactor<T> interactor, Range<? extends Number> range, Slider.ISlider iSlider) {
+    public <T extends Number> Slider createSlider(InteractorSpec<T> interactor, Range<? extends Number> range, Slider.ISlider iSlider) {
         T value = interactor.initialValue;
         double min = range.getMin().doubleValue();
         double max = range.getMax().doubleValue();

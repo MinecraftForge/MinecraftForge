@@ -22,6 +22,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
+import static net.minecraftforge.common.ForgeConfigSpec.*;
+
 /**
  * Just for testing the extensibility of the system.
  * Will either be removed or converted to a test mod.
@@ -47,28 +49,28 @@ public class ConfigScreenTesting extends ModConfigScreen {
         controlCreator = new ControlCreator() {
 
             @Override
-            public void createStringInteractionWidget(Interactor<String> interactor) {
-                super.createStringInteractionWidget(interactor);
-                if (interactor instanceof ConfigValueInteractor && ((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.hexColorString)
-                    addColorHandlerToStringInteractorAndUpdateInteractorColor(interactor);
+            public Interactor<String> createStringInteractionWidget(InteractorSpec<String> spec) {
+                Interactor<String> interactor = super.createStringInteractionWidget(spec);
+                if (spec.getData(ConfigValue.class) == COMMON.hexColorString)
+                    addColorHandlerToStringInteractor(interactor);
+                return interactor;
             }
 
             @Override
-            public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
-                super.createBooleanInteractionWidget(interactor);
-                if (interactor instanceof ConfigValueInteractor && ((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.colouredBoolean)
-                    addColorHandlerToBooleanInteractorAndUpdateInteractorColor(interactor);
+            public Interactor<Boolean> createBooleanInteractionWidget(InteractorSpec<Boolean> spec) {
+                Interactor<Boolean> interactor = super.createBooleanInteractionWidget(spec);
+                if (spec.getData(ConfigValue.class) == COMMON.colouredBoolean)
+                    addColorHandlerToBooleanInteractor(interactor);
+                return interactor;
             }
         };
     }
 
-    private void addColorHandlerToStringInteractorAndUpdateInteractorColor(ControlCreator.Interactor<String> interactor) {
-        ControlCreator.Interactor.VisualsUpdater<String> old = interactor.visualsUpdater;
-        interactor.visualsUpdater = (isValid, newValue) -> {
-            old.update(isValid, newValue);
-            parseAndSetHexColor((TextFieldWidget) interactor.control, newValue);
-        };
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+    private void addColorHandlerToStringInteractor(ControlCreator.Interactor<String> interactor) {
+        interactor.addUpdateResponder((isValid, newValue) -> {
+            if (isValid)
+                parseAndSetHexColor((TextFieldWidget) interactor.control, newValue);
+        });
     }
 
     private void parseAndSetHexColor(TextFieldWidget widget, String newValue) {
@@ -98,14 +100,11 @@ public class ConfigScreenTesting extends ModConfigScreen {
         }
     }
 
-    private void addColorHandlerToBooleanInteractorAndUpdateInteractorColor(ControlCreator.Interactor<Boolean> interactor) {
-        ControlCreator.Interactor.VisualsUpdater<Boolean> old = interactor.visualsUpdater;
-        interactor.visualsUpdater = (isValid, newValue) -> {
-            old.update(isValid, newValue);
+    private void addColorHandlerToBooleanInteractor(ControlCreator.Interactor<Boolean> interactor) {
+        interactor.addUpdateResponder((isValid, newValue) -> {
             if (isValid)
                 setInvertedColor((Button) interactor.control, newValue);
-        };
-        interactor.visualsUpdater.update(true, interactor.initialValue);
+        });
     }
 
     private void setInvertedColor(Button widget, Boolean newValue) {
@@ -134,7 +133,7 @@ public class ConfigScreenTesting extends ModConfigScreen {
     public static class Common {
 
         private final ForgeConfigSpec.ConfigValue<String> hexColorString;
-        private final ForgeConfigSpec.BooleanValue colouredBoolean;
+        private final BooleanValue colouredBoolean;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("a Boolean comment")

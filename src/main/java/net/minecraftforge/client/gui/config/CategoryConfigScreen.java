@@ -7,8 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.*;
-import net.minecraftforge.client.gui.config.ControlCreator.ConfigValueInteractor;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
+import net.minecraftforge.client.gui.config.ControlCreator.InteractorSpec;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
@@ -176,27 +176,27 @@ public class CategoryConfigScreen extends ConfigScreen {
                 return new ConfigElement(label, title, tooltip);
             } else {
                 // Don't need to explicitly check range, this is done as part of the test :)
-                interactor.isValid = valueSpec::test;
-                interactor.saveValue = newValue -> {
+                interactor.addValidator(valueSpec::test);
+                interactor.addSaver(newValue -> {
                     configValue.set(newValue);
                     configScreen.onChange(valueSpec.needsWorldRestart());
-                };
-                return new ConfigValueConfigElement(interactor.label, interactor.title, tooltip, configValue, valueSpec, interactor);
+                });
+                return new ConfigValueConfigElement(interactor.label, title, tooltip, configValue, valueSpec, interactor);
             }
         }
 
         @Nullable
         protected <T> Interactor<T> tryCreateInteractor(ITextComponent title, ConfigValue<T> configValue, ValueSpec valueSpec) {
             ControlCreator creator = configScreen.getControlCreator();
-            Interactor<T> interactor = new ConfigValueInteractor<>(title, configValue, valueSpec);
+            InteractorSpec<T> spec = new InteractorSpec<>(title, configValue.get());
+            spec.addData(ConfigValue.class, configValue);
+            spec.addData(ValueSpec.class, valueSpec);
+            spec.addData(Range.class, valueSpec.getRange());
             try {
-                creator.createInteractionWidget(interactor);
+                return creator.createAndInitialiseInteractionWidget(spec);
             } catch (Exception e) {
                 return null;
             }
-            if (interactor.control == null)
-                return null;
-            return interactor;
         }
 
         /**
@@ -217,13 +217,13 @@ public class CategoryConfigScreen extends ConfigScreen {
                 canReset = () -> !value.get().equals(defaultValue);
                 addWidget(undoButton = createConfigElementUndoButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(initialValue);
-                    interactor.saveValue.accept(newValue);
-                    interactor.visualsUpdater.update(true, newValue);
+                    interactor.save(newValue);
+                    interactor.onUpdate(newValue);
                 }));
                 addWidget(resetButton = createConfigElementResetButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(defaultValue);
-                    interactor.saveValue.accept(newValue);
-                    interactor.visualsUpdater.update(true, newValue);
+                    interactor.save(newValue);
+                    interactor.onUpdate(newValue);
                 }));
             }
 
