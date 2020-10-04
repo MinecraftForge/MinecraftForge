@@ -36,14 +36,22 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+/**
+ * Class to help manage entity spawns inside of structures
+ */
 public class StructureSpawnManager
 {
     private static Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = Collections.emptyMap();
 
+    /**
+     * Gathers potential entity spawns for all the different registered structures.
+     * @apiNote Internal
+     */
     public static void gatherEntitySpawns()
     {
-        //Ensure that we check the structures in an order that if there are multiple structures a position satisfies then we have the
-        // same behavior as vanilla as vanilla checks, swamp huts, pillager outposts, ocean monuments, and nether fortresses in that order.
+        //We use a linked hash map to ensure that we check the structures in an order that if there are multiple structures a position satisfies
+        // then we have the same behavior as vanilla as vanilla checks, swamp huts, pillager outposts, ocean monuments, and nether fortresses in
+        // that order.
         Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = new LinkedHashMap<>();
         gatherEntitySpawns(structuresWithSpawns, Structure.field_236374_j_);
         gatherEntitySpawns(structuresWithSpawns, Structure.field_236366_b_);
@@ -76,19 +84,32 @@ public class StructureSpawnManager
             structuresWithSpawns.put(structure, new StructureSpawnInfo(entitySpawns, event.restrictsSpawnsToInside()));
     }
 
+    /**
+     * Looks up if a given position is within a structure and returns any entity spawns that structure has for the given classification, or null if
+     * none are found.
+     * @param structureManager Structure Manager, used to check if a position is within a structure.
+     * @param classification   Entity classification
+     * @param pos              Position to get entity spawns of
+     */
     @Nullable
     public static List<MobSpawnInfo.Spawners> getStructureSpawns(StructureManager structureManager, EntityClassification classification, BlockPos pos)
     {
         for (Entry<Structure<?>, StructureSpawnInfo> entry : structuresWithSpawns.entrySet())
         {
             Structure<?> structure = entry.getKey();
+            StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (structure.hasSpawnsFor(classification) && structureManager.func_235010_a_(pos, entry.getValue().restrictsSpawnsToInside, structure).isValid())
-                return structure.getSpawnList(classification);
+            if (spawnInfo.spawns.containsKey(classification) && structureManager.func_235010_a_(pos, spawnInfo.restrictsSpawnsToInside, structure).isValid())
+                return spawnInfo.spawns.get(classification);
         }
         return null;
     }
 
+    /**
+     * Gets the entity spawn lists for entities of a given classification for a given structure.
+     * @param structure      The Structure
+     * @param classification The classification to lookup
+     */
     public static List<MobSpawnInfo.Spawners> getSpawnList(Structure<?> structure, EntityClassification classification)
     {
         if (structuresWithSpawns.containsKey(structure))
@@ -96,13 +117,9 @@ public class StructureSpawnManager
         return Collections.emptyList();
     }
 
-    public static boolean hasSpawnsFor(Structure<?> structure, EntityClassification classification)
-    {
-        if (structuresWithSpawns.containsKey(structure))
-            return structuresWithSpawns.get(structure).spawns.containsKey(classification);
-        return false;
-    }
-
+    /**
+     * Helper class to keep track of spawns and if the spawns should be restricted to inside the structure pieces.
+     */
     private static class StructureSpawnInfo
     {
         private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns;

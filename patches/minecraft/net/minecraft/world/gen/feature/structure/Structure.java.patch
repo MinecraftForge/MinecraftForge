@@ -9,7 +9,7 @@
     public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
     private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
     private static final Logger field_208204_b = LogManager.getLogger();
-@@ -237,11 +237,11 @@
+@@ -237,13 +237,17 @@
     }
  
     public List<MobSpawnInfo.Spawners> func_202279_e() {
@@ -22,4 +22,10 @@
 +      return getSpawnList(net.minecraft.entity.EntityClassification.CREATURE);
     }
  
++   @Override public final List<MobSpawnInfo.Spawners> getSpawnList(net.minecraft.entity.EntityClassification classification) {
++      return net.minecraftforge.common.world.StructureSpawnManager.getSpawnList(getStructure(), classification);
++   }
++
     public interface IStartFactory<C extends IFeatureConfig> {
+       StructureStart<C> create(Structure<C> p_create_1_, int p_create_2_, int p_create_3_, MutableBoundingBox p_create_4_, int p_create_5_, long p_create_6_);
+    }
