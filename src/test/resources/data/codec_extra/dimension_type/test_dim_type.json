@@ -1,0 +1,24 @@
+{
+  "logical_height": 256,
+  "infiniburn": "minecraft:infiniburn_overworld",
+  "effects": "minecraft:overworld",
+  "ambient_light": 0.5,
+  "bed_works": false,
+  "respawn_anchor_works": false,
+  "has_raids": true,
+  "ultrawarm": true,
+  "natural": true,
+  "coordinate_scale": 1.0,
+  "piglin_safe": false,
+  "fixed_time": 500,
+  "has_skylight": true,
+  "has_ceiling": false,
+  "forge_extras" :
+  [
+    {
+      "type" : "codec_extra_test:test_0",
+      "constant_poison" : false,
+      "too_cold_for_lava" : true
+    }
+  ]
+}

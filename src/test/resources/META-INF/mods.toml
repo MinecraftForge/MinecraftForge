@@ -88,3 +88,5 @@ license="LGPL v2.1"
     modId="custom_tag_types_test"
 [[mods]]
     modId="biome_loading_event_test"
+[[mods]]
+    modId="codec_extra_test"
