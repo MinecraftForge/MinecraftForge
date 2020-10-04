@@ -196,7 +196,7 @@ public class Slider extends ExtendedButton
 
     public int getValueInt()
     {
-        return (int)Math.round(sliderValue * (maxValue - minValue) + minValue);
+        return Math.round(Math.round(sliderValue * (maxValue - minValue) + minValue));
     }
 
     public double getValue()
