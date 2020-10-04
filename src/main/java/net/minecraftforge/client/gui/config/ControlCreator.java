@@ -182,9 +182,9 @@ public class ControlCreator {
         Range<? extends Number> range = getRangeForSliderCreation(interactor);
         if (range != null) {
             if (value instanceof Integer)
-                createSliderNumericInteractionWidget((Interactor<Integer>) interactor, range, Double::intValue);
+                createSliderNumericInteractionWidget((Interactor<Integer>) interactor, range, d -> Math.round(Math.round(d)));
             else if (value instanceof Long)
-                createSliderNumericInteractionWidget((Interactor<Long>) interactor, range, Double::longValue);
+                createSliderNumericInteractionWidget((Interactor<Long>) interactor, range, Math::round);
             else if (value instanceof Double)
                 createSliderNumericInteractionWidget((Interactor<Double>) interactor, range, Function.identity());
             else
@@ -235,7 +235,10 @@ public class ControlCreator {
 
         interactor.addUpdateResponder((isValid, newValue) -> {
             Slider control = ((Slider) interactor.control);
-            control.setValue(newValue.doubleValue());
+            if (!Objects.equals(control.getValue(), newValue.doubleValue())) {
+                control.setValue(newValue.doubleValue());
+                control.updateSlider();
+            }
         });
     }
 
