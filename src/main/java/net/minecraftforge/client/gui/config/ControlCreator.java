@@ -51,7 +51,6 @@ public class ControlCreator {
     public static final Interactor.DataKey<Range<?>> RANGE_KEY = new Interactor.DataKey<>();
     public static final Interactor.DataKey<Object> INITIAL_VALUE_KEY = new Interactor.DataKey<>();
     public static final Interactor.DataKey<Object> DEFAULT_VALUE_KEY = new Interactor.DataKey<>();
-    public static final Interactor.DataKey<? extends Enum<?>[]> POTENTIAL_ENUM_VALUES = new Interactor.DataKey<>();
 
     static class Interactor<T> {
 
@@ -274,13 +273,11 @@ public class ControlCreator {
     }
 
     public <T extends Enum<T>> void createEnumInteractionWidget(Interactor<T> interactor) {
-        T[] state = createHolderForUseInLambda(interactor.initialValue);
-        T[] passedPotential = (T[]) interactor.getData(POTENTIAL_ENUM_VALUES);
-        T[] potential;
-        if (passedPotential != null)
-            potential = passedPotential;
-        else
-            potential = interactor.initialValue.getDeclaringClass().getEnumConstants();
+        T value = interactor.initialValue;
+        T[] state = createHolderForUseInLambda(value);
+        T[] potential = Arrays.stream(value.getDeclaringClass().getEnumConstants())
+            .filter(interactor::isValid)
+            .toArray(size -> (T[]) Array.newInstance(value.getClass(), size));
 
         interactor.control = createButton(interactor, button -> {
             T oldValue = state[0];

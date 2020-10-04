@@ -188,7 +188,6 @@ public class CategoryConfigScreen extends ConfigScreen {
             interactor.addData(ControlCreator.RANGE_KEY, valueSpec.getRange());
             interactor.addData(ControlCreator.INITIAL_VALUE_KEY, value);
             interactor.addData(ControlCreator.DEFAULT_VALUE_KEY, valueSpec.getDefault());
-            // Don't need to explicitly check range, this is done as part of the test :)
             interactor.addValidator(valueSpec::test);
             interactor.addSaver(newValue -> {
                 configValue.set(newValue);
