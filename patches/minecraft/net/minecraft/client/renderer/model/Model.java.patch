@@ -1,8 +1,11 @@
 --- a/net/minecraft/client/renderer/model/Model.java
 +++ b/net/minecraft/client/renderer/model/Model.java
-@@ -27,4 +27,5 @@
-    }
+@@ -10,7 +10,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
-    public abstract void func_225598_a_(MatrixStack p_225598_1_, IVertexBuilder p_225598_2_, int p_225598_3_, int p_225598_4_, float p_225598_5_, float p_225598_6_, float p_225598_7_, float p_225598_8_);
-+   public abstract Iterable<ModelRenderer> getModelParts(); //forge
- }
+ @OnlyIn(Dist.CLIENT)
+-public abstract class Model implements Consumer<ModelRenderer> {
++public abstract class Model implements Consumer<ModelRenderer>, net.minecraftforge.client.model.IForgeModel {
+    protected final Function<ResourceLocation, RenderType> field_228281_q_;
+    public int field_78090_t = 64;
+    public int field_78089_u = 32;
