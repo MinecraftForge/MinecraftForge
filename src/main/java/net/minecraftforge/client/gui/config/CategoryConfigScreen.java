@@ -47,7 +47,6 @@ public class CategoryConfigScreen extends ConfigScreen {
     static Collection<? extends ITextProperties> translateCommentWithFallback(@Nullable String translationKey, @Nullable String fallbackComment) {
         // Need to handle line breaks (\n) properly
         if (translationKey != null) {
-            translationKey += ".tooltip";
             TranslationTextComponent comment = new TranslationTextComponent(translationKey);
             if (!translationKey.equals(comment.getString())) {
                 comment.func_240701_a_(TextFormatting.YELLOW); // mergeStyle
@@ -139,7 +138,7 @@ public class CategoryConfigScreen extends ConfigScreen {
                 String translationKey = null; // TODO: Can pass path in through categoryInfo, need to also get review on changes to ForgeConfigSpec for comments
 
                 ITextComponent title = translateWithFallback(translationKey, key);
-                List<ITextProperties> tooltip = createTooltip(title, translationKey, categoryInfo.getCategoryComment(key));
+                List<ITextProperties> tooltip = createTooltip(title, translationKey == null ? null : translationKey + ".tooltip", categoryInfo.getCategoryComment(key));
 
                 return new CategoryConfigElement(title, tooltip, valueCategoryInfo);
             } else {
@@ -148,10 +147,13 @@ public class CategoryConfigScreen extends ConfigScreen {
                 String translationKey = valueInfo.getTranslationKey();
 
                 ITextComponent title = translateWithFallback(translationKey, key);
-                List<ITextProperties> tooltip = createTooltip(title, translationKey, valueInfo.getComment());
+                List<ITextProperties> tooltip = createTooltip(title, translationKey + ".tooltip", valueInfo.getComment());
+                String allowedValues = valueInfo.getAllowedValues();
+                if (allowedValues != null)
+                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.allowedValues", allowedValues).func_240701_a_(TextFormatting.AQUA));
                 Range<?> range = valueInfo.getRange();
                 if (range != null)
-                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.rangeWithDefault", range.getMin(), range.getMax(), valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
+                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.rangeWithDefault", range.toString(), valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
                 else
                     tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.default", valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
                 if (valueInfo.needsWorldRestart())
@@ -216,12 +218,12 @@ public class CategoryConfigScreen extends ConfigScreen {
                 addWidget(undoButton = createConfigElementUndoButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(initialValue);
                     interactor.saveValue.accept(newValue);
-                    interactor.updateVisuals.update(true, newValue);
+                    interactor.visualsUpdater.update(true, newValue);
                 }));
                 addWidget(resetButton = createConfigElementResetButton(title, button -> {
                     T newValue = ControlCreator.copyMutable(defaultValue);
                     interactor.saveValue.accept(newValue);
-                    interactor.updateVisuals.update(true, newValue);
+                    interactor.visualsUpdater.update(true, newValue);
                 }));
             }
 

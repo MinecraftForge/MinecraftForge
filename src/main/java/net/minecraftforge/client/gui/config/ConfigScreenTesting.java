@@ -1,15 +1,12 @@
 package net.minecraftforge.client.gui.config;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ColorHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.gui.config.ControlCreator.ConfigElementTextField;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -23,13 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
-import java.util.Random;
-import java.util.function.Consumer;
-
-import static net.minecraftforge.client.gui.config.ControlCreator.RED;
 
 /**
  * Just for testing the extensibility of the system.
@@ -56,34 +47,71 @@ public class ConfigScreenTesting extends ModConfigScreen {
         controlCreator = new ControlCreator() {
 
             @Override
-            public TextFieldWidget createTextField(Interactor<?> interactor) {
-                if (interactor instanceof ConfigValueInteractor)
-                    if (((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.hexColorString)
-                        return new TestColorTextField(interactor.title);
-                return super.createTextField(interactor);
+            public void createStringInteractionWidget(Interactor<String> interactor) {
+                super.createStringInteractionWidget(interactor);
+                if (interactor instanceof ConfigValueInteractor && ((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.hexColorString)
+                    addColorHandlerToStringInteractorAndUpdateInteractorColor(interactor);
             }
 
             @Override
-            public Button createButton(Interactor<?> interactor, Button.IPressable iPressable) {
-                if (interactor instanceof ConfigValueInteractor)
-                    if (((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.colouredBoolean)
-                        return new ConfigElementButton(interactor.title, iPressable) {
-                            final Random random = new Random();
-
-                            @Override
-                            public void func_230431_b_(MatrixStack mStack, int mouseX, int mouseY, float partial) {
-                                final float hue = random.nextFloat();
-                                final float saturation = 0.9F;
-                                final float luminance = 1.0F;
-                                Color color = Color.getHSBColor(hue, saturation, luminance);
-                                int packed = ColorHelper.PackedColor.func_233006_a_(color.getAlpha(), color.getRed(), color.getBlue(), color.getGreen());
-                                setFGColor(packed);
-                                super.func_230431_b_(mStack, mouseX, mouseY, partial);
-                            }
-                        };
-                return super.createButton(interactor, iPressable);
+            public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
+                super.createBooleanInteractionWidget(interactor);
+                if (interactor instanceof ConfigValueInteractor && ((ConfigValueInteractor<?>) interactor).getConfigValue() == COMMON.colouredBoolean)
+                    addColorHandlerToBooleanInteractorAndUpdateInteractorColor(interactor);
             }
         };
+    }
+
+    private void addColorHandlerToStringInteractorAndUpdateInteractorColor(ControlCreator.Interactor<String> interactor) {
+        ControlCreator.Interactor.VisualsUpdater<String> old = interactor.visualsUpdater;
+        interactor.visualsUpdater = (isValid, newValue) -> {
+            old.update(isValid, newValue);
+            parseAndSetHexColor((TextFieldWidget) interactor.control, newValue);
+        };
+        interactor.visualsUpdater.update(true, interactor.initialValue);
+    }
+
+    private void parseAndSetHexColor(TextFieldWidget widget, String newValue) {
+        if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
+            String parsedR = newValue.substring(1, 2);
+            String parsedG = newValue.substring(2, 3);
+            String parsedB = newValue.substring(3, 4);
+            newValue = "#" + parsedR + parsedR + parsedG + parsedG + parsedB + parsedB;
+        }
+        if (newValue.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
+            String parsedR = newValue.substring(1, 3);
+            String parsedG = newValue.substring(3, 5);
+            String parsedB = newValue.substring(5, 7);
+            int r;
+            int g;
+            int b;
+            try {
+                r = Integer.parseInt(parsedR, 16);
+                g = Integer.parseInt(parsedG, 16);
+                b = Integer.parseInt(parsedB, 16);
+            } catch (NumberFormatException e) {
+                widget.setTextColor(ControlCreator.RED);
+                return;
+            }
+            int color = ColorHelper.PackedColor.func_233006_a_(0xFF, r, g, b);
+            widget.setTextColor(color);
+        }
+    }
+
+    private void addColorHandlerToBooleanInteractorAndUpdateInteractorColor(ControlCreator.Interactor<Boolean> interactor) {
+        ControlCreator.Interactor.VisualsUpdater<Boolean> old = interactor.visualsUpdater;
+        interactor.visualsUpdater = (isValid, newValue) -> {
+            old.update(isValid, newValue);
+            if (isValid)
+                setInvertedColor((Button) interactor.control, newValue);
+        };
+        interactor.visualsUpdater.update(true, interactor.initialValue);
+    }
+
+    private void setInvertedColor(Button widget, Boolean newValue) {
+        int color = newValue ? ControlCreator.GREEN : ControlCreator.RED;
+        int inverted = color ^ 0x00FFFFFF;
+        widget.setFGColor(inverted);
     }
 
     @SubscribeEvent
@@ -103,52 +131,6 @@ public class ConfigScreenTesting extends ModConfigScreen {
         return controlCreator;
     }
 
-    /**
-     * Just testing to check that something like a custom color wheel would be able to work
-     */
-    public static class TestColorTextField extends ConfigElementTextField {
-        public TestColorTextField(ITextComponent title) {
-            super(title);
-        }
-
-        @Override
-        public void setResponder(@Nullable Consumer<String> responderIn) {
-            super.setResponder(newText -> {
-                if (responderIn != null)
-                    responderIn.accept(newText);
-                setColor(newText);
-            });
-        }
-
-        private void setColor(String newText) {
-            if (newText == null)
-                return;
-            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f]")) {
-                String r = newText.substring(1, 2);
-                String g = newText.substring(2, 3);
-                String b = newText.substring(3, 4);
-                newText = "#" + r + r + g + g + b + b;
-            }
-            if (newText.matches("#[0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f][0-9A-f]")) {
-                String r = newText.substring(1, 3);
-                String g = newText.substring(3, 5);
-                String b = newText.substring(5, 7);
-                int ir;
-                int ig;
-                int ib;
-                try {
-                    ir = Integer.parseInt(r, 16);
-                    ig = Integer.parseInt(g, 16);
-                    ib = Integer.parseInt(b, 16);
-                } catch (NumberFormatException e) {
-                    setTextColor(RED);
-                    return;
-                }
-                setTextColor(ir << 16 | ig << 8 | ib);
-            }
-        }
-    }
-
     public static class Common {
 
         private final ForgeConfigSpec.ConfigValue<String> hexColorString;
@@ -166,6 +148,9 @@ public class ConfigScreenTesting extends ModConfigScreen {
                 builder.comment("an Int comment")
                     .translation("forge.configgui.an.int")
                     .defineInRange("anInt", 5, -10, 1000);
+                builder.comment("a small Int comment")
+                    .translation("forge.configgui.a.small.int")
+                    .defineInRange("aSmallInt", 5, -5, 5);
                 builder.comment("a Long comment")
                     .translation("forge.configgui.a.long")
                     .defineInRange("aLong", Long.MIN_VALUE, Long.MIN_VALUE, 5);

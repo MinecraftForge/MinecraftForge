@@ -45,6 +45,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.electronwill.nightconfig.core.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -297,6 +298,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             return defineInList(path, () -> defaultValue, acceptableValues);
         }
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
+            String allowedValues = acceptableValues.stream().map(Objects::toString).collect(Collectors.joining(", "));
+            context.setAllowedValues(allowedValues);
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues));
             return define(path, defaultSupplier, acceptableValues::contains);
         }
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
@@ -399,8 +403,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
         }
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
-            V[] allowedValues = clazz.getEnumConstants();
-            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
+            String allowedValues = Arrays.stream(clazz.getEnumConstants()).filter(validator).map(Enum::name).collect(Collectors.joining(", "));
+            context.setAllowedValues(allowedValues);
+            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + allowedValues));
             return new EnumValue<>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
@@ -537,6 +542,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
     {
         private @Nonnull String[] comment = new String[0];
         private String langKey;
+        private String allowedValues;
         private Range<?> range;
         private boolean worldRestart = false;
         private Class<?> clazz;
@@ -547,11 +553,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
         public String buildComment() { return LINE_JOINER.join(comment); }
         public void setTranslationKey(String value) { this.langKey = value; }
         public String getTranslationKey() { return this.langKey; }
+        public void setAllowedValues(String value) { this.allowedValues = value; }
+        @Nullable
+        public String getAllowedValues() { return this.allowedValues; }
         public <V extends Comparable<? super V>> void setRange(Range<V> value)
         {
             this.range = value;
             this.setClazz(value.getClazz());
         }
+        @Nullable
         @SuppressWarnings("unchecked")
         public <V extends Comparable<? super V>> Range<V> getRange() { return (Range<V>)this.range; }
         public void worldRestart() { this.worldRestart = true; }
@@ -563,6 +573,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
         {
             validate(hasComment(), "Non-empty comment when empty expected");
             validate(langKey, "Non-null translation key when null expected");
+            validate(allowedValues, "Non-null allowedValues when null expected");
             validate(range, "Non-null range when null expected");
             validate(worldRestart, "Dangling world restart value set to true");
         }
@@ -659,6 +670,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
     {
         private final String comment;
         private final String langKey;
+        @Nullable
+        private final String allowedValues;
+        @Nullable
         private final Range<?> range;
         private final boolean worldRestart;
         private final Class<?> clazz;
@@ -674,6 +688,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             this.comment = context.hasComment() ? context.buildComment() : null;
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
+            this.allowedValues = context.getAllowedValues();
             this.worldRestart = context.needsWorldRestart();
             this.clazz = context.getClazz();
             this.supplier = supplier;
@@ -682,6 +697,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
 
         public String getComment() { return comment; }
         public String getTranslationKey() { return langKey; }
+        @Nullable
+        public String getAllowedValues() { return allowedValues; }
+        @Nullable
         @SuppressWarnings("unchecked")
         public <V extends Comparable<? super V>> Range<V> getRange() { return (Range<V>)this.range; }
         public boolean needsWorldRestart() { return this.worldRestart; }

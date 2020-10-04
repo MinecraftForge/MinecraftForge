@@ -23,9 +23,7 @@ import java.util.Collections;
  * It passes necessary events through to it's {@link ConfigElementList}.
  * <p>
  * TODO:
- * - Check lists reloading works + undo/reset
- * - IDK how to handle the coloring thing in the test
- * - ModConfig comments to translations
+ * - Make list screen buttons undo/reset work
  * - Get someone's review on changes to ForgeConfigSpec for comments
  * - Translucent scissored list
  * - Do I need to deal with sub-configs?
