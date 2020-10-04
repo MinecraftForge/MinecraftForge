@@ -37,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class GeneratorType {
@@ -62,16 +61,6 @@ public abstract class GeneratorType {
     }
 
     /**
-     * Returns whether this GeneratorType should be displayed as on option
-     * in the client's world creation menus.
-     *
-     * @return true if this GeneratorType should be displayed as an option on the client
-     */
-    public boolean isVisible() {
-        return true;
-    }
-
-    /**
      * The DimensionType that this generator applies to
      *
      * @return the RegistryKey of the DimensionType
@@ -81,11 +70,19 @@ public abstract class GeneratorType {
     }
 
     /**
+     * Returns whether this GeneratorType should be displayed as on option
+     * in the client's world creation menus.
+     *
+     * @return true if this GeneratorType should be displayed as an option on the client
+     */
+    @OnlyIn(Dist.CLIENT)
+    public boolean isVisible() {
+        return true;
+    }
+
+    /**
      * Returns a factory for creating new instances of this GeneratorType's
      * settings/configuration screen.
-     *
-     * This method is client only and should not be referenced from within the
-     * server context.
      *
      * @return the edit screen factory or null
      */
@@ -154,12 +151,12 @@ public abstract class GeneratorType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GeneratorType that = (GeneratorType) o;
-        return Objects.equals(name, that.name) && Objects.equals(dimensionType, that.dimensionType);
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, dimensionType);
+        return name.hashCode();
     }
 
     /**
