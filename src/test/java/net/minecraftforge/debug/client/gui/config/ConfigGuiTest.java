@@ -1,6 +1,7 @@
 package net.minecraftforge.debug.client.gui.config;
 
 import com.google.common.collect.Lists;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +38,7 @@ public class ConfigGuiTest {
         ctx.registerConfig(ModConfig.Type.COMMON, commonSpec);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             IModInfo modInfo = ctx.getActiveContainer().getModInfo();
-            ctx.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new CustomConfigScreen(screen, modInfo));
+            ctx.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> CustomConfigScreen.createFactory(modInfo));
         });
     }
 
@@ -62,6 +64,10 @@ public class ConfigGuiTest {
                         addColorHandlerToBooleanInteractor(interactor);
                 }
             };
+        }
+
+        public static BiFunction<Minecraft, Screen, Screen> createFactory(IModInfo modInfo) {
+            return (mc, screen) -> new CustomConfigScreen(screen, modInfo);
         }
 
         private void addColorHandlerToStringInteractor(ControlCreator.Interactor<String> interactor) {
@@ -182,7 +188,7 @@ public class ConfigGuiTest {
                 .define("aColouredBoolean", false);
             builder.comment("an Enum List comment")
                 .translation("forge.configgui.an.enum.list")
-                .defineList("anEnumList", Lists.newArrayList(), o -> o instanceof String);
+                .defineList("anEnumList", Arrays.asList(DyeColor.values()), o -> o instanceof String);
             builder.comment("a String In List comment")
                 .translation("forge.configgui.a.string.in.list")
                 .defineInList("aStringInList", "bar", Lists.newArrayList("foo", "bar", "baz"));
