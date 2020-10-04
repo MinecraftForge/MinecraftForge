@@ -44,7 +44,8 @@ import java.util.Collections;
  * <p>
  * TODO:
  * - Get someone's review on changes to ForgeConfigSpec for comments
- * - Translucent scissored list
+ * - Make ConfigScreen header size be smaller if it has a null subTitle?
+ * - Translucent scissored list?
  * - Do I need to deal with sub-configs?
  * - Fix lists
  * -> Change indices instead of reloading the entire view
