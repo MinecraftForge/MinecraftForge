@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -33,8 +34,6 @@ import java.util.Collections;
  * - Client -> Server syncing?
  * - Document and add comments on everything that isn't immediately obvious
  * -> Document the intention of the code, not what it does.
- * ->> I.e. write about "createConfigElement" being about creating an element for any possible object that is stored
- * in a config, not about how it specifically handles categories and elements.
  *
  * @author bspkrs
  * @author Cadiboo
@@ -84,17 +83,34 @@ public abstract class ConfigScreen extends Screen {
         configElementList = makeConfigElementList();
         // children.add
         field_230705_e_.add(configElementList);
-        int padding = 10;
-        int left = padding;
-        int buttonHeight = 20;
-        int buttonSize = (field_230708_k_ - padding * 2) / 3; // width
+        addFooterButtons();
+    }
+
+    protected void addFooterButtons() {
+        ITextComponent undo = new TranslationTextComponent("forge.configgui.undoAllChanges");
+        ITextComponent reset = new TranslationTextComponent("forge.configgui.resetAllToDefault");
+        ITextComponent done = DialogTexts.field_240632_c_;
+        addFooterButtons(
+            undoButton = func_230480_a_(new UnicodeGlyphButton(0, 0, 0, 0, undo, GuiUtils.UNDO_CHAR, GLYPH_SCALE, button -> undo())),
+            resetButton = func_230480_a_(new UnicodeGlyphButton(0, 0, 0, 0, reset, GuiUtils.RESET_CHAR, GLYPH_SCALE, button -> reset())),
+            func_230480_a_(new ExtendedButton(0, 0, 0, 0, done, button -> func_231175_as__()))
+        );
+    }
+
+    protected void addFooterButtons(Widget... buttons) {
+        final int padding = 10;
+        final int buttonHeight = 20;
+        int buttonWidth = (field_230708_k_ - padding * 2) / buttons.length; // width
         int footerTop = configElementList.getBottom();
         int footerHeight = field_230709_l_ - footerTop; // height
         int y = footerTop + footerHeight / 2 - buttonHeight / 2;
-        undoButton = func_230480_a_(new UnicodeGlyphButton(left, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.undoAllChanges"), GuiUtils.UNDO_CHAR, GLYPH_SCALE, button -> undo()));
-        resetButton = func_230480_a_(new UnicodeGlyphButton(left + buttonSize, y, buttonSize, buttonHeight, new TranslationTextComponent("forge.configgui.resetAllToDefault"), GuiUtils.RESET_CHAR, GLYPH_SCALE, button -> reset()));
-        // Add the "done" button
-        func_230480_a_(new ExtendedButton(left + buttonSize * 2, y, buttonSize, buttonHeight, DialogTexts.field_240632_c_, button -> func_231175_as__()));
+        int left = padding;
+        for (Widget button : buttons) {
+            button.field_230690_l_ = left; // x
+            button.field_230691_m_ = y; // y
+            button.func_230991_b_(buttonWidth); // setWidth
+            left += buttonWidth;
+        }
     }
 
     protected abstract ConfigElementList makeConfigElementList();
@@ -133,9 +149,9 @@ public abstract class ConfigScreen extends Screen {
 
     protected boolean canUndo() {
         for (ConfigElement element : configElementList.func_231039_at__()) {
-            Button undoButton = element.undoButton;
-            // btn != null && btn.visible && btn.active/enabled
-            if (undoButton != null && undoButton.field_230694_p_ && undoButton.field_230693_o_)
+            Button button = element.undoButton;
+            // button != null && button.visible && button.active/enabled
+            if (button != null && button.field_230694_p_ && button.field_230693_o_)
                 return true;
         }
         return false;
@@ -143,9 +159,9 @@ public abstract class ConfigScreen extends Screen {
 
     protected boolean canReset() {
         for (ConfigElement element : configElementList.func_231039_at__()) {
-            Button resetButton = element.resetButton;
-            // btn != null && btn.visible && btn.active/enabled
-            if (resetButton != null && resetButton.field_230694_p_ && resetButton.field_230693_o_)
+            Button button = element.resetButton;
+            // button != null && button.visible && button.active/enabled
+            if (button != null && button.field_230694_p_ && button.field_230693_o_)
                 return true;
         }
         return false;

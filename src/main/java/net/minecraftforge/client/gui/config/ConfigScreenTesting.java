@@ -1,6 +1,5 @@
 package net.minecraftforge.client.gui.config;
 
-import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;

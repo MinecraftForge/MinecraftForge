@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.*;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
@@ -27,6 +26,10 @@ import java.util.stream.Collectors;
  * @author Cadiboo
  */
 public class CategoryConfigScreen extends ConfigScreen {
+    public static final TextFormatting TOOLTIP_TITLE_COLOR = TextFormatting.GREEN;
+    public static final TextFormatting TOOLTIP_COMMENT_COLOR = TextFormatting.YELLOW;
+    public static final TextFormatting TOOLTIP_EXTRA_DATA_COLOR = TextFormatting.AQUA;
+    public static final TextFormatting TOOLTIP_WORLD_RESTART_REQUIRED_COLOR = TextFormatting.RED;
     protected final ConfigCategoryInfo categoryInfo;
 
     public CategoryConfigScreen(Screen parentScreen, ITextComponent title, ConfigCategoryInfo categoryInfo) {
@@ -48,7 +51,7 @@ public class CategoryConfigScreen extends ConfigScreen {
         if (translationKey != null) {
             TranslationTextComponent comment = new TranslationTextComponent(translationKey);
             if (!translationKey.equals(comment.getString())) {
-                comment.func_240701_a_(TextFormatting.YELLOW); // mergeStyle
+                comment.func_240701_a_(TOOLTIP_COMMENT_COLOR); // mergeStyle
                 // TODO: There can be line breaks in here too but everything's SRG named and I cbf to work out how to split text components
 //                configScreen.getFontRenderer().func_238420_b_().func_238362_b_(textLine, tooltipTextWidth, Style.field_240709_b_);
                 return Collections.singletonList(comment);
@@ -58,13 +61,13 @@ public class CategoryConfigScreen extends ConfigScreen {
             return Collections.emptyList();
         return Arrays.stream(fallbackComment.split("\n"))
             .map(StringTextComponent::new)
-            .map(s -> s.func_240701_a_(TextFormatting.YELLOW)) // mergeStyle
+            .map(s -> s.func_240701_a_(TOOLTIP_COMMENT_COLOR)) // mergeStyle
             .collect(Collectors.toList());
     }
 
     public static List<ITextProperties> createTooltip(ITextComponent title, String commentTranslationKey, String comment) {
         List<ITextProperties> tooltip = new LinkedList<>();
-        tooltip.add(title.func_230532_e_().func_240701_a_(TextFormatting.GREEN));
+        tooltip.add(title.func_230532_e_().func_240701_a_(TOOLTIP_TITLE_COLOR));
         tooltip.addAll(translateCommentWithFallback(commentTranslationKey, comment));
         return tooltip;
     }
@@ -123,47 +126,59 @@ public class CategoryConfigScreen extends ConfigScreen {
                 func_230513_b_(createConfigElement(key, info));
         }
 
+        /**
+         * Creates an element for any possible object that is stored in a config.
+         */
         public ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
             Object raw = categoryInfo.getValue(key);
-            if (raw instanceof UnmodifiableConfig) {
-                UnmodifiableConfig value = (UnmodifiableConfig) raw;
-                UnmodifiableCommentedConfig valueInfo = (UnmodifiableCommentedConfig) categoryInfo.getSpec(key);
-                ConfigCategoryInfo valueCategoryInfo = ConfigCategoryInfo.of(
-                    () -> value.valueMap().keySet(),
-                    value::get,
-                    valueInfo::get,
-                    valueInfo::getComment
+            if (raw instanceof UnmodifiableConfig)
+                return createCategoryConfigElement(key, categoryInfo, (UnmodifiableConfig) raw);
+            else
+                return createValueConfigElement(key, categoryInfo, (ConfigValue<?>) raw);
+        }
+
+        protected CategoryConfigElement createCategoryConfigElement(String key, ConfigCategoryInfo categoryInfo, UnmodifiableConfig config) {
+            UnmodifiableCommentedConfig valueInfo = (UnmodifiableCommentedConfig) categoryInfo.getSpec(key);
+            ConfigCategoryInfo valueCategoryInfo = ConfigCategoryInfo.of(
+                () -> config.valueMap().keySet(),
+                config::get,
+                valueInfo::get,
+                valueInfo::getComment
+            );
+            String translationKey = null; // TODO: Can pass path in through categoryInfo, need to also get review on changes to ForgeConfigSpec for comments
+
+            ITextComponent title = translateWithFallback(translationKey, key);
+            List<ITextProperties> tooltip = createTooltip(title, translationKey == null ? null : translationKey + ".tooltip", categoryInfo.getCategoryComment(key));
+
+            return new CategoryConfigElement(title, tooltip, valueCategoryInfo);
+        }
+
+        protected ConfigElement createValueConfigElement(String key, ConfigCategoryInfo categoryInfo, ConfigValue<?> configValue) {
+            ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
+            String translationKey = valueInfo.getTranslationKey();
+
+            ITextComponent title = translateWithFallback(translationKey, key);
+            List<ITextProperties> tooltip = createTooltip(title, translationKey + ".tooltip", valueInfo.getComment());
+            addExtraTooltipInfo(valueInfo, tooltip);
+
+            return createValueElement(configValue, valueInfo, title, tooltip);
+        }
+
+        protected void addExtraTooltipInfo(ValueSpec valueInfo, List<ITextProperties> tooltip) {
+            String allowedValues = valueInfo.getAllowedValues();
+            if (allowedValues != null)
+                tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.allowedValues", allowedValues).func_240701_a_(TOOLTIP_EXTRA_DATA_COLOR));
+            Range<?> range = valueInfo.getRange();
+            if (range != null)
+                tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.rangeWithDefault", range.toString(), valueInfo.getDefault()).func_240701_a_(TOOLTIP_EXTRA_DATA_COLOR));
+            else
+                tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.default", valueInfo.getDefault()).func_240701_a_(TOOLTIP_EXTRA_DATA_COLOR));
+            if (valueInfo.needsWorldRestart())
+                tooltip.add(new StringTextComponent("[").func_240701_a_(TOOLTIP_WORLD_RESTART_REQUIRED_COLOR)
+                    // appendSibling
+                    .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TOOLTIP_WORLD_RESTART_REQUIRED_COLOR))
+                    .func_230529_a_(new StringTextComponent("]").func_240701_a_(TOOLTIP_WORLD_RESTART_REQUIRED_COLOR))
                 );
-                String translationKey = null; // TODO: Can pass path in through categoryInfo, need to also get review on changes to ForgeConfigSpec for comments
-
-                ITextComponent title = translateWithFallback(translationKey, key);
-                List<ITextProperties> tooltip = createTooltip(title, translationKey == null ? null : translationKey + ".tooltip", categoryInfo.getCategoryComment(key));
-
-                return new CategoryConfigElement(title, tooltip, valueCategoryInfo);
-            } else {
-                ForgeConfigSpec.ConfigValue<?> value = (ForgeConfigSpec.ConfigValue<?>) raw;
-                ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
-                String translationKey = valueInfo.getTranslationKey();
-
-                ITextComponent title = translateWithFallback(translationKey, key);
-                List<ITextProperties> tooltip = createTooltip(title, translationKey + ".tooltip", valueInfo.getComment());
-                String allowedValues = valueInfo.getAllowedValues();
-                if (allowedValues != null)
-                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.allowedValues", allowedValues).func_240701_a_(TextFormatting.AQUA));
-                Range<?> range = valueInfo.getRange();
-                if (range != null)
-                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.rangeWithDefault", range.toString(), valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
-                else
-                    tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.default", valueInfo.getDefault()).func_240701_a_(TextFormatting.AQUA));
-                if (valueInfo.needsWorldRestart())
-                    tooltip.add(new StringTextComponent("[").func_240701_a_(TextFormatting.RED)
-                        // appendSibling
-                        .func_230529_a_(new TranslationTextComponent("forge.configgui.worldRestartRequired").func_240701_a_(TextFormatting.RED))
-                        .func_230529_a_(new StringTextComponent("]").func_240701_a_(TextFormatting.RED))
-                    );
-
-                return createValueElement(value, valueInfo, title, tooltip);
-            }
         }
 
         protected <T> ConfigElement createValueElement(ConfigValue<T> configValue, ValueSpec valueSpec, ITextComponent title, List<ITextProperties> tooltip) {

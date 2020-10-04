@@ -209,7 +209,7 @@ public class Slider extends ExtendedButton
         this.sliderValue = (d - minValue) / (maxValue - minValue);
     }
 
-    public static interface ISlider
+    public interface ISlider
     {
         void onChangeSliderValue(Slider slider);
     }

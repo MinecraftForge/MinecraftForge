@@ -15,7 +15,9 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A {@link ConfigScreen} with entries for all of a mod's registered configs.
@@ -51,46 +53,8 @@ public class ModConfigScreen extends ConfigScreen {
         );
     }
 
-    // TODO: Move these to translation keys
-    @Deprecated
-    private static Map<ModConfig.Type, String> makeTypeComments() {
-        Map<ModConfig.Type, String> map = new HashMap<>();
-
-        String commonComment = StringUtils.join(new String[]{
-            "Common config is for configuration that needs to be loaded on both environments.",
-            "Loaded on both server and client environments during startup (after registry events and before setup events).",
-            "Stored in the global config directory.",
-            "Not synced.",
-        }, "\n");
-        String clientComment = StringUtils.join(new String[]{
-            "Client config is for configuration affecting the ONLY client state such as graphical options.",
-            "Loaded on the client environment during startup (after registry events and before setup events).",
-            "Stored in the global config directory.",
-            "Not synced.",
-        }, "\n");
-//        String playerComment = StringUtils.join(new String[]{
-//                "Player config is for configuration that is associated with a player.",
-//                "Preferences around machine states, for example.",
-//                "Not Implemented (yet).",
-//        }, "\n");
-        String serverComment = StringUtils.join(new String[]{
-            "Server config is for configuration that is associated with a logical server instance.",
-            "Loaded during server startup (right before the FMLServerAboutToStartEvent is fired.)",
-            "Stored in a server/save specific \"serverconfig\" directory",
-            "Synced to clients during connection.",
-        }, "\n");
-
-        serverComment += "\nRequires you to be in your singleplayer world to change its values from the config gui";
-
-        map.put(ModConfig.Type.COMMON, commonComment);
-        map.put(ModConfig.Type.CLIENT, clientComment);
-//		map.put(ModConfig.Type.PLAYER, playerComment);
-        map.put(ModConfig.Type.SERVER, serverComment);
-        return map;
-    }
-
     /**
-     * @return True if in singleplayer and not open to LAN
+     * @return True if in singleplayer and not open to LAN.
      */
     protected static boolean canPlayerEditServerConfig() {
         final Minecraft minecraft = Minecraft.getInstance();

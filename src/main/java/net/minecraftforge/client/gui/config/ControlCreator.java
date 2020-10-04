@@ -52,6 +52,9 @@ public class ControlCreator {
     public static final Interactor.DataKey<Object> INITIAL_VALUE_KEY = new Interactor.DataKey<>();
     public static final Interactor.DataKey<Object> DEFAULT_VALUE_KEY = new Interactor.DataKey<>();
 
+    /**
+     * A Widget backed by a value of type T + some extra data & listeners for handling changes and displaying the widget.
+     */
     static class Interactor<T> {
 
         public final ITextComponent title;
@@ -67,18 +70,6 @@ public class ControlCreator {
             this.title = title;
             this.initialValue = Objects.requireNonNull(initialValue, "initialValue cannot be null");
             this.label = title;
-        }
-
-        public <D> void addData(DataKey<D> key, @Nullable D value) {
-            extraData.put(key, value);
-        }
-
-        @Nullable
-        public <D> D getData(DataKey<D> key) {
-            return (D) extraData.get(key);
-        }
-
-        static class DataKey<T> {
         }
 
         public void addValidator(Predicate<T> newValidator) {
@@ -116,6 +107,22 @@ public class ControlCreator {
          */
         public void onUpdate(boolean isValid, T newValue) {
             updateResponder.accept(isValid, newValue);
+        }
+
+        public <D> void addData(DataKey<D> key, @Nullable D value) {
+            extraData.put(key, value);
+        }
+
+        @Nullable
+        public <D> D getData(DataKey<D> key) {
+            return (D) extraData.get(key);
+        }
+
+        /**
+         * For making a system similar to a type safe map and the capabilities system.
+         * Lets us store arbitrary extra data in a strongly typed manner.
+         */
+        static class DataKey<T> {
         }
 
     }
@@ -483,7 +490,7 @@ public class ControlCreator {
             super.setResponder(newText -> {
                 // By default this gets called whenever a user clicks somewhere in the text box
                 // Make it so we only run the listener when the text actually changes
-                if (responderIn != null && lastText != null && !Objects.equals(newText, lastText))
+                if (responderIn != null && !Objects.equals(newText, lastText))
                     responderIn.accept(newText);
                 lastText = newText;
             });
