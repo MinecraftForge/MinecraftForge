@@ -71,7 +71,9 @@ public abstract class GeneratorType {
 
     /**
      * Returns whether this GeneratorType should be displayed as on option
-     * in the client's world creation menus.
+     * in the client's world creation menus. If the return value is false,
+     * the option for this GeneratorType will only be displayed while the
+     * user is holding down L-Shift.
      *
      * @return true if this GeneratorType should be displayed as an option on the client
      */

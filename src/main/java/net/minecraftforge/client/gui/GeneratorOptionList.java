@@ -20,6 +20,7 @@
 package net.minecraftforge.client.gui;
 
 import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
@@ -164,7 +165,7 @@ public class GeneratorOptionList {
         }
 
         public boolean isVisible() {
-            return generatorType.isVisible();
+            return generatorType.isVisible() || Screen.func_231173_s_();
         }
 
         @Override
