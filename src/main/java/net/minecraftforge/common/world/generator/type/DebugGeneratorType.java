@@ -36,6 +36,12 @@ public class DebugGeneratorType extends GeneratorType
     }
 
     @Override
+    public boolean isDebug()
+    {
+        return true;
+    }
+
+    @Override
     public ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {
         return new DebugChunkGenerator(biomes);

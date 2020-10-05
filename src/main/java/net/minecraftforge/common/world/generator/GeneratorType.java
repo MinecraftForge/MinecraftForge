@@ -37,6 +37,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+/**
+ * Represents a named world-generation type. Implementations of this class provide the ChunkGenerator to be used
+ * in the overworld and can optionally define other Dimensions that generate in addition to the overworld (ie nether & end).
+ *
+ * When registered with the GeneratorTypeManager, a GeneratorType will appear as an option under the world creation
+ * menu and, on servers, can be set on the 'level-type' field in server.properties so that new worlds are created
+ * using it.
+ */
 public abstract class GeneratorType
 {
     private final String name;
@@ -68,8 +76,8 @@ public abstract class GeneratorType
     }
 
     /**
-     * A debug GeneratorType is one that does not show up on the client as a selected option unless the user is holding
-     * down L-Shift whilst cycling the generator options.
+     * A debug GeneratorType is one that does not show up on the client as a selectable option unless the user is holding
+     * down Left-Shift whilst cycling the generator options.
      *
      * @return true if this GeneratorType should be treated as a debug generator option on the client
      */
@@ -110,8 +118,10 @@ public abstract class GeneratorType
     }
 
     /**
-     * Creates the registry of Dimensions that this GeneratorType provides. The returned registry must contain a
-     * Dimension entry for key Dimension.field_236053_b_ (overworld).
+     * Creates the registry of Dimensions that this GeneratorType provides.
+     * The default implementation of this method populates the registry with this GeneratorType's overworld Dimension,
+     * then with the default nether and end Dimensions respectively. This behaviour can be overridden but the minimum
+     * requirement is that the returned registry contains a Dimension for the overworld.
      *
      * @param seed              the world seed
      * @param biomes            the Biome registry
@@ -128,7 +138,7 @@ public abstract class GeneratorType
         ChunkGenerator chunkGenerator = createChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
         Supplier<DimensionType> overworldType = () -> dimensionTypes.func_243576_d(DimensionType.field_235999_c_);
         // Adds the overworld Dimension to the head of the registry
-        return DimensionGeneratorSettings.func_241520_a_(registry, overworldType, chunkGenerator);
+        return setOverworldGenerator(registry, overworldType, chunkGenerator);
     }
 
     @Override
