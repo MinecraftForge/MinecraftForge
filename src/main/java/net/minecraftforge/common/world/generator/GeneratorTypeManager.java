@@ -24,7 +24,6 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
@@ -43,8 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class GeneratorTypeManager {
-
+public class GeneratorTypeManager
+{
     private static final Logger LOGGER = LogManager.getLogger();
     private static final GeneratorTypeManager INSTANCE = new GeneratorTypeManager();
 
@@ -53,17 +52,18 @@ public class GeneratorTypeManager {
 
     private GeneratorType defaultGeneratorType;
 
-    private GeneratorTypeManager() {
+    private GeneratorTypeManager()
+    {
         // Registered in the same order as BiomeGeneratorTypeScreens
         this.defaultGeneratorType = new OverworldGeneratorType("default", DimensionSettings.field_242734_c, false, false);
         register(this.defaultGeneratorType);
-        register(new FlatGeneratorType("flat", DimensionType.field_235999_c_));
+        register(new FlatGeneratorType("flat"));
         register(new OverworldGeneratorType("large_biomes", DimensionSettings.field_242734_c, false, true));
         register(new OverworldGeneratorType("amplified", DimensionSettings.field_242735_d, false, false));
-        register(new SingleBiomeGeneratorType("single_biome_surface", DimensionType.field_235999_c_, DimensionSettings.field_242734_c, Biomes.PLAINS));
-        register(new SingleBiomeGeneratorType("single_biome_caves", DimensionType.field_241497_i_, DimensionSettings.field_242738_g, Biomes.PLAINS));
-        register(new SingleBiomeGeneratorType("single_biome_floating_islands", DimensionType.field_235999_c_, DimensionSettings.field_242739_h, Biomes.PLAINS));
-        register(new DebugGeneratorType("debug_all_block_states", DimensionType.field_235999_c_));
+        register(new SingleBiomeGeneratorType("single_biome_surface", DimensionSettings.field_242734_c, Biomes.PLAINS));
+        register(new SingleBiomeGeneratorType("single_biome_caves", DimensionSettings.field_242738_g, Biomes.PLAINS));
+        register(new SingleBiomeGeneratorType("single_biome_floating_islands", DimensionSettings.field_242739_h, Biomes.PLAINS));
+        register(new DebugGeneratorType("debug_all_block_states"));
     }
 
     /**
@@ -73,7 +73,8 @@ public class GeneratorTypeManager {
      * @return the GeneratorType associated with the given name or null
      */
     @Nullable
-    public synchronized GeneratorType getGeneratorType(String name) {
+    public synchronized GeneratorType getGeneratorType(String name)
+    {
         return nameToValue.get(name);
     }
 
@@ -84,7 +85,8 @@ public class GeneratorTypeManager {
      *
      * @return default GeneratorType
      */
-    public synchronized GeneratorType getDefaultGeneratorType() {
+    public synchronized GeneratorType getDefaultGeneratorType()
+    {
         return defaultGeneratorType;
     }
 
@@ -93,7 +95,8 @@ public class GeneratorTypeManager {
      *
      * @param consumer the consumer of each registered GeneratorType
      */
-    public synchronized void forEach(Consumer<GeneratorType> consumer) {
+    public synchronized void forEach(Consumer<GeneratorType> consumer)
+    {
         generatorTypes.forEach(consumer);
     }
 
@@ -103,12 +106,16 @@ public class GeneratorTypeManager {
      * @param generatorType the GeneratorType to register
      * @return true if the instance was added to the manager
      */
-    public synchronized boolean register(GeneratorType generatorType) {
-        if (!nameToValue.containsKey(generatorType.getName())) {
+    public synchronized boolean register(GeneratorType generatorType)
+    {
+        if (!nameToValue.containsKey(generatorType.getName()))
+        {
             generatorTypes.add(generatorType);
             nameToValue.put(generatorType.getName(), generatorType);
             return true;
-        } else {
+        }
+        else
+        {
             LOGGER.error("Attempted to register generator type '{}' twice", generatorType.getName());
             return false;
         }
@@ -120,14 +127,19 @@ public class GeneratorTypeManager {
      * @param generatorType the GeneratorType to use as default
      * @return true if the default GeneratorType was set to the provided instance
      */
-    public synchronized boolean setDefaultGeneratorType(@Nonnull GeneratorType generatorType) {
-        if (nameToValue.containsKey(generatorType.getName())) {
-            if (generatorType != defaultGeneratorType) {
+    public synchronized boolean setDefaultGeneratorType(@Nonnull GeneratorType generatorType)
+    {
+        if (nameToValue.containsKey(generatorType.getName()))
+        {
+            if (generatorType != defaultGeneratorType)
+            {
                 LOGGER.info("Default generator '{}' has been overridden by '{}'", defaultGeneratorType.getName(), generatorType.getName());
                 this.defaultGeneratorType = generatorType;
             }
             return true;
-        } else {
+        }
+        else
+        {
             LOGGER.error("Attempted to set the default generator type to unregistered instance '{}'", generatorType.getName());
             return false;
         }
@@ -147,23 +159,30 @@ public class GeneratorTypeManager {
      * is not present or parsing of the options failed
      */
     @Nullable
-    public synchronized DimensionGeneratorSettings createGeneratorSettings(String name, long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, String options) {
-        GeneratorType generatorType = GeneratorTypeManager.get().getGeneratorType(name);
-        if (generatorType == null) {
-            GeneratorType.LOGGER.error("Unknown generator type '{}'", name);
+    public synchronized DimensionGeneratorSettings createGeneratorSettings(String name, long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, String options)
+    {
+        GeneratorType generatorType = getGeneratorType(name);
+        if (generatorType == null)
+        {
+            LOGGER.error("Unknown generator type '{}'", name);
             return null;
-        } else {
-            try {
+        }
+        else
+        {
+            try
+            {
                 Dynamic<?> dynamic = options.isEmpty() ? null : new Dynamic<>(JsonOps.INSTANCE, JSONUtils.fromJson(options));
                 return generatorType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries, dynamic);
-            } catch (JsonParseException e) {
-                GeneratorType.LOGGER.error("Failed to parse generator options", e);
+            } catch (JsonParseException e)
+            {
+                LOGGER.error("Failed to parse generator options", e);
                 return null;
             }
         }
     }
 
-    public static GeneratorTypeManager get() {
+    public static GeneratorTypeManager get()
+    {
         return INSTANCE;
     }
 }

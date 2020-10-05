@@ -36,6 +36,7 @@ import net.minecraftforge.common.world.generator.GeneratorTypeManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,12 +46,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * GeneratorOptionList maintains a list of {@link BiomeGeneratorTypeScreens} which are
- * used in the world creation ui to represent user-selectable world generators.
+ * GeneratorOptionList maintains a list of {@link BiomeGeneratorTypeScreens} which are used in the world creation ui
+ * to represent user-selectable world generators. Mod entries are created and added from the GeneratorTypeManager.
  */
 @OnlyIn(Dist.CLIENT)
-public class GeneratorOptionList {
-
+public class GeneratorOptionList
+{
     private static final Logger LOGGER = LogManager.getLogger();
     private static final GeneratorOptionList INSTANCE = new GeneratorOptionList();
 
@@ -61,12 +62,14 @@ public class GeneratorOptionList {
     // Maps ui options to their corresponding edit screen factory
     private final Map<BiomeGeneratorTypeScreens, BiomeGeneratorTypeScreens.IFactory> editScreens = new HashMap<>();
 
-    private GeneratorOptionList() {
+    private GeneratorOptionList()
+    {
         // populate with the vanilla generators/edit screens
-        GeneratorOption.collectGeneratorTypes(option -> {
+        GeneratorOption.forEachGeneratorType(option -> {
             String name = getGeneratorName(option);
             GeneratorType type = GeneratorTypeManager.get().getGeneratorType(name);
-            if (type == null) {
+            if (type == null)
+            {
                 LOGGER.error("Missing generator type for '{}'", name);
                 return;
             }
@@ -74,26 +77,31 @@ public class GeneratorOptionList {
             options.add(option);
             LOGGER.debug("Registered GeneratorOption '{}'", name);
         });
-        GeneratorOption.collectEditScreens(editScreens::put);
+        GeneratorOption.forEachEditScreen(editScreens::put);
     }
 
-    public synchronized int size() {
+    public synchronized int size()
+    {
         return options.size();
     }
 
-    public synchronized int indexOf(BiomeGeneratorTypeScreens generatorType) {
+    public synchronized int indexOf(BiomeGeneratorTypeScreens generatorType)
+    {
         return options.indexOf(generatorType);
     }
 
-    public synchronized BiomeGeneratorTypeScreens get(int index) {
+    public synchronized BiomeGeneratorTypeScreens get(int index)
+    {
         return options.get(index);
     }
 
     // gets called when opening the CreateWorldScreen to set the initial generator type
-    public synchronized BiomeGeneratorTypeScreens getDefault() {
+    public synchronized BiomeGeneratorTypeScreens getDefault()
+    {
         GeneratorType generatorType = GeneratorTypeManager.get().getDefaultGeneratorType();
         BiomeGeneratorTypeScreens option = generatorTypes.get(generatorType);
-        if (option == null) {
+        if (option == null)
+        {
             // synchronize entries with the GeneratorTypeManager & try again
             updateOptions();
             option = generatorTypes.get(generatorType);
@@ -102,26 +110,31 @@ public class GeneratorOptionList {
     }
 
     // determines whether a generator option has a a 'Customize' button to open its EditScreen
-    public synchronized boolean hasEditScreen(BiomeGeneratorTypeScreens generatorType) {
+    public synchronized boolean hasEditScreen(BiomeGeneratorTypeScreens generatorType)
+    {
         return editScreens.containsKey(generatorType);
     }
 
     // returns an 'EditScreenFactory' which creates new instances of the generator types configuration screen
     @Nullable
-    public synchronized BiomeGeneratorTypeScreens.IFactory getEditScreen(BiomeGeneratorTypeScreens generatorType) {
+    public synchronized BiomeGeneratorTypeScreens.IFactory getEditScreen(BiomeGeneratorTypeScreens generatorType)
+    {
         return editScreens.get(generatorType);
     }
 
     // synchronize the available GeneratorTypes with the options list so that they appear in the ui
-    public synchronized void updateOptions() {
+    public synchronized void updateOptions()
+    {
         GeneratorTypeManager.get().forEach(generatorType -> {
             // only add new generators
-            if (!generatorTypes.containsKey(generatorType)) {
+            if (!generatorTypes.containsKey(generatorType))
+            {
                 GeneratorOption option = new GeneratorOption(generatorType);
                 options.add(option);
                 generatorTypes.put(generatorType, option);
                 BiomeGeneratorTypeScreens.IFactory factory = generatorType.getEditScreen();
-                if (factory != null) {
+                if (factory != null)
+                {
                     editScreens.put(option, factory);
                 }
                 LOGGER.debug("Registered GeneratorOption '{}'", generatorType.getName());
@@ -129,60 +142,74 @@ public class GeneratorOptionList {
         });
     }
 
-    public static GeneratorOptionList get() {
+    public static GeneratorOptionList get()
+    {
         return INSTANCE;
     }
 
-    public static boolean isHidden(BiomeGeneratorTypeScreens generatorOption) {
-        if (generatorOption instanceof GeneratorOption) {
-            return !((GeneratorOption) generatorOption).isVisible();
+    public static boolean isHidden(BiomeGeneratorTypeScreens generatorOption)
+    {
+        if (generatorOption instanceof GeneratorOption)
+        {
+            return ((GeneratorOption) generatorOption).isHidden();
         }
         return false;
     }
 
-    private static String getGeneratorName(BiomeGeneratorTypeScreens type) {
+    private static String getGeneratorName(BiomeGeneratorTypeScreens type)
+    {
         ITextComponent textComponent = type.func_239077_a_();
-        if (textComponent instanceof TranslationTextComponent) {
+        if (textComponent instanceof TranslationTextComponent)
+        {
             // expected to be generator.<name>
             String key = ((TranslationTextComponent) textComponent).getKey();
 
             int i = key.indexOf('.') + 1;
-            if (i > 0 && i < key.length() - 1) {
+            if (i > 0 && i < key.length() - 1)
+            {
                 return key.substring(i);
             }
         }
-        // shouldn't happen unless a mod has overridden BiomeGeneratorTypeScreens.func_239077_a_
         return textComponent.getString().toLowerCase();
     }
 
-    private static class GeneratorOption extends BiomeGeneratorTypeScreens {
+    private static class GeneratorOption extends BiomeGeneratorTypeScreens
+    {
 
         private final GeneratorType generatorType;
 
-        protected GeneratorOption(GeneratorType generatorType) {
+        protected GeneratorOption(GeneratorType generatorType)
+        {
             super(generatorType.getName());
             this.generatorType = generatorType;
         }
 
-        public boolean isVisible() {
-            return generatorType.isVisible() || Screen.func_231173_s_();
+        public boolean isHidden()
+        {
+            return generatorType.isDebug() && !Screen.func_231173_s_();
         }
 
+        @Nonnull
         @Override
-        public DimensionGeneratorSettings func_241220_a_(DynamicRegistries.Impl registries, long seed, boolean structures, boolean bonusChest) {
-            return generatorType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries);
+        public DimensionGeneratorSettings func_241220_a_(@Nonnull DynamicRegistries.Impl registries, long seed, boolean structures, boolean bonusChest)
+        {
+            return generatorType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries, null);
         }
 
+        @Nonnull
         @Override
-        protected ChunkGenerator func_241869_a(Registry<Biome> biomes, Registry<DimensionSettings> settings, long seed) {
+        protected ChunkGenerator func_241869_a(@Nonnull Registry<Biome> biomes, @Nonnull Registry<DimensionSettings> settings, long seed)
+        {
             return generatorType.createChunkGenerator(seed, biomes, settings, null);
         }
 
-        private static void collectGeneratorTypes(Consumer<BiomeGeneratorTypeScreens> consumer) {
+        private static void forEachGeneratorType(Consumer<BiomeGeneratorTypeScreens> consumer)
+        {
             BiomeGeneratorTypeScreens.field_239068_c_.forEach(consumer);
         }
 
-        private static void collectEditScreens(BiConsumer<BiomeGeneratorTypeScreens, BiomeGeneratorTypeScreens.IFactory> consumer) {
+        private static void forEachEditScreen(BiConsumer<BiomeGeneratorTypeScreens, BiomeGeneratorTypeScreens.IFactory> consumer)
+        {
             BiomeGeneratorTypeScreens.field_239069_d_.forEach((typeOp, factory) -> typeOp.ifPresent(type -> consumer.accept(type, factory)));
         }
     }

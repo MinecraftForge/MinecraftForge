@@ -20,18 +20,21 @@
 package net.minecraftforge.debug.client;
 
 import com.google.common.base.Suppliers;
-import net.minecraft.util.RegistryKey;
+import com.mojang.serialization.Dynamic;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.CheckerboardBiomeProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraftforge.common.world.generator.GeneratorType;
 import net.minecraftforge.common.world.generator.GeneratorTypeManager;
-import net.minecraftforge.common.world.generator.type.FlatGeneratorType;
 import net.minecraftforge.common.world.generator.type.NoiseGeneratorType;
+import net.minecraftforge.common.world.generator.type.OverworldGeneratorType;
 import net.minecraftforge.common.world.generator.type.SingleBiomeGeneratorType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,23 +42,25 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Mod(GeneratorTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class GeneratorTypeTest {
-
+public class GeneratorTypeTest
+{
     public static final String MODID = "generator_type_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
 
     @SubscribeEvent
-    public static void setup(FMLCommonSetupEvent event) {
+    public static void setup(FMLCommonSetupEvent event)
+    {
         LOGGER.info("Registering GeneratorTypes");
-        GeneratorType test1 = new SingleBiomeGeneratorType("single_amplified", DimensionType.field_235999_c_, DimensionSettings.field_242735_d, Biomes.BADLANDS);
-        GeneratorType test2 = new FlatGeneratorType("flat_nether", DimensionType.field_236000_d_);
-        GeneratorType test3 = new CustomCheckboardType("checkerboard", DimensionType.field_235999_c_);
+        GeneratorType test1 = new SingleBiomeGeneratorType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS);
+        GeneratorType test2 = new SpookyGeneratorType("spooky");
+        GeneratorType test3 = new CustomCheckboardType("checkerboard");
 
         GeneratorTypeManager.get().register(test1);
         GeneratorTypeManager.get().register(test2);
@@ -64,19 +69,43 @@ public class GeneratorTypeTest {
         GeneratorTypeManager.get().setDefaultGeneratorType(test1);
     }
 
-    private static class CustomCheckboardType extends NoiseGeneratorType {
+    // same as default but uses the nether DimensionType
+    private static class SpookyGeneratorType extends OverworldGeneratorType
+    {
+        public SpookyGeneratorType(String name)
+        {
+            super(name, DimensionSettings.field_242734_c, false, false);
+        }
 
-        public CustomCheckboardType(String name, RegistryKey<DimensionType> dimensionType) {
-            super(name, dimensionType, DimensionSettings.field_242734_c);
+        // need to override #createDimensionRegistry so that an alternate DimensionType can be set
+        @Override
+        public SimpleRegistry<Dimension> createDimensionRegistry(long seed, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions)
+        {
+            SimpleRegistry<Dimension> dimensions = super.createDimensionRegistry(seed, biomes, dimensionTypes, dimensionSettings, generatorOptions);
+            Supplier<DimensionType> nether = () -> dimensionTypes.func_230516_a_(DimensionType.field_236000_d_);
+            ChunkGenerator chunkGenerator = createChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
+            return setOverworldGenerator(dimensions, nether, chunkGenerator);
+        }
+    }
+
+    // overworld using the checkerboard BiomeProvider
+    private static class CustomCheckboardType extends NoiseGeneratorType
+    {
+        public CustomCheckboardType(String name)
+        {
+            super(name, DimensionSettings.field_242734_c);
+        }
+
+        // must hold left-shift for this option to be visible
+        @Override
+        public boolean isDebug()
+        {
+            return true;
         }
 
         @Override
-        public boolean isVisible() {
-            return false;
-        }
-
-        @Override
-        public BiomeProvider createBiomeProvider(long seed, Registry<Biome> biomes) {
+        public BiomeProvider createBiomeProvider(long seed, Registry<Biome> biomes)
+        {
             List<Supplier<Biome>> biomeList = biomes.stream()
                     .filter(this::isOverworldBiome)
                     .map(Suppliers::ofInstance)
@@ -84,8 +113,10 @@ public class GeneratorTypeTest {
             return new CheckerboardBiomeProvider(biomeList, 1);
         }
 
-        private boolean isOverworldBiome(Biome biome) {
-            switch (biome.getCategory()) {
+        private boolean isOverworldBiome(Biome biome)
+        {
+            switch (biome.getCategory())
+            {
                 case NONE:
                 case NETHER:
                 case THEEND:

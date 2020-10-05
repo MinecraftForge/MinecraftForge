@@ -33,132 +33,17 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public abstract class GeneratorType {
-
-    protected static final Logger LOGGER = LogManager.getLogger();
-
+public abstract class GeneratorType
+{
     private final String name;
-    private final RegistryKey<DimensionType> dimensionType;
 
-    public GeneratorType(String name, RegistryKey<DimensionType> dimensionType) {
+    public GeneratorType(String name)
+    {
         this.name = name;
-        this.dimensionType = dimensionType;
-    }
-
-    /**
-     * Get the unique name of this GeneratorType
-     *
-     * @return the name of this GeneratorType
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * The DimensionType that this generator applies to
-     *
-     * @return the RegistryKey of the DimensionType
-     */
-    public RegistryKey<DimensionType> getDimensionTypeKey() {
-        return dimensionType;
-    }
-
-    /**
-     * Returns whether this GeneratorType should be displayed as on option
-     * in the client's world creation menus. If the return value is false,
-     * the option for this GeneratorType will only be displayed while the
-     * user is holding down L-Shift.
-     *
-     * @return true if this GeneratorType should be displayed as an option on the client
-     */
-    @OnlyIn(Dist.CLIENT)
-    public boolean isVisible() {
-        return true;
-    }
-
-    /**
-     * Returns a factory for creating new instances of this GeneratorType's
-     * settings/configuration screen.
-     *
-     * @return the edit screen factory or null
-     */
-    @Nullable
-    @OnlyIn(Dist.CLIENT)
-    public BiomeGeneratorTypeScreens.IFactory getEditScreen() {
-        return null;
-    }
-
-    /**
-     * Create a new DimensionGeneratorSettings instance using this GeneratorType
-     *
-     * @param seed       the world seed
-     * @param structures flag controlling whether structures generate
-     * @param bonusChest flag controlling whether the bonus chest will generate at spawn
-     * @param registries the DynamicRegistries to construct the settings with
-     * @return a new DimensionGeneratorSettings instance
-     */
-    public DimensionGeneratorSettings createDimensionGeneratorSettings(long seed, boolean structures, boolean bonusChest, DynamicRegistries registries) {
-        return createDimensionGeneratorSettings(seed, structures, bonusChest, registries, null);
-    }
-
-    /**
-     * Create a new DimensionGeneratorSettings instance using this GeneratorType
-     *
-     * @param seed             the world seed
-     * @param structures       flag controlling whether structures generate
-     * @param bonusChest       flag controlling whether the bonus chest will generate at spawn
-     * @param registries       the DynamicRegistries to construct the settings with
-     * @param generatorOptions the generator options (may be null)
-     * @return a new DimensionGeneratorSettings instance
-     */
-    public DimensionGeneratorSettings createDimensionGeneratorSettings(long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, @Nullable Dynamic<?> generatorOptions) {
-        Registry<Biome> biomes = registries.func_243612_b(Registry.field_239720_u_);
-        Registry<DimensionType> dimensionTypes = registries.func_243612_b(Registry.field_239698_ad_);
-        Registry<DimensionSettings> dimensionSettings = registries.func_243612_b(Registry.field_243549_ar);
-        return createDimensionGeneratorSettings(seed, structures, bonusChest, biomes, dimensionTypes, dimensionSettings, generatorOptions);
-    }
-
-    /**
-     * Create a new DimensionGeneratorSettings instance using this GeneratorType
-     *
-     * @param seed              the world seed
-     * @param structures        flag controlling whether structures generate
-     * @param bonusChest        flag controlling whether the bonus chest will generate at spawn
-     * @param biomes            the Biome instance registry
-     * @param dimensionTypes    the DimensionType instance registry
-     * @param dimensionSettings the DimesnionSettings instance registry
-     * @param generatorOptions  the generator options (may be null)
-     * @return a new DimensionGeneratorSettings instance
-     */
-    public DimensionGeneratorSettings createDimensionGeneratorSettings(long seed, boolean structures, boolean bonusChest, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions) {
-        SimpleRegistry<Dimension> dimensions = DimensionType.func_242718_a(dimensionTypes, biomes, dimensionSettings, seed);
-        Supplier<DimensionType> dimensionType = () -> dimensionTypes.func_243576_d(getDimensionTypeKey());
-        ChunkGenerator chunkGenerator = createChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
-        return new DimensionGeneratorSettings(seed, structures, bonusChest, DimensionGeneratorSettings.func_241520_a_(dimensions, dimensionType, chunkGenerator));
-    }
-
-    @Override
-    public String toString() {
-        return "GeneratorType{" + name + "}";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GeneratorType that = (GeneratorType) o;
-        return name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
     }
 
     /**
@@ -171,4 +56,145 @@ public abstract class GeneratorType {
      * @return a new ChunkGenerator instance for the provided parameters
      */
     public abstract ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions);
+
+    /**
+     * Get the unique name of this GeneratorType
+     *
+     * @return the name of this GeneratorType
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * A debug GeneratorType is one that does not show up on the client as a selected option unless the user is holding
+     * down L-Shift whilst cycling the generator options.
+     *
+     * @return true if this GeneratorType should be treated as a debug generator option on the client
+     */
+    public boolean isDebug()
+    {
+        return false;
+    }
+
+    /**
+     * Returns a factory for creating new instances of this GeneratorType's settings/configuration screen.
+     *
+     * @return the edit screen factory or null
+     */
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public BiomeGeneratorTypeScreens.IFactory getEditScreen()
+    {
+        return null;
+    }
+
+    /**
+     * Create a new DimensionGeneratorSettings instance for this GeneratorType.
+     *
+     * @param seed             the world seed
+     * @param structures       flag determining whether structures should generate
+     * @param bonusChest       flag determining whether a bonus chest should generate
+     * @param registries       the dynamic registries instance
+     * @param generatorOptions the legacy generator options (may be null)
+     * @return a new DimensionGeneratorSettings instance
+     */
+    public DimensionGeneratorSettings createDimensionGeneratorSettings(long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, @Nullable Dynamic<?> generatorOptions)
+    {
+        Registry<Biome> biomes = registries.func_243612_b(Registry.field_239720_u_);
+        Registry<DimensionType> dimensionTypes = registries.func_243612_b(Registry.field_239698_ad_);
+        Registry<DimensionSettings> dimensionSettings = registries.func_243612_b(Registry.field_243549_ar);
+        SimpleRegistry<Dimension> dimensions = createDimensionRegistry(seed, biomes, dimensionTypes, dimensionSettings, generatorOptions);
+        return new DimensionGeneratorSettings(seed, structures, bonusChest, dimensions);
+    }
+
+    /**
+     * Creates the registry of Dimensions that this GeneratorType provides. The returned registry must contain a
+     * Dimension entry for key Dimension.field_236053_b_ (overworld).
+     *
+     * @param seed              the world seed
+     * @param biomes            the Biome registry
+     * @param dimensionTypes    the DimensionType registry
+     * @param dimensionSettings the DimensionSettings registry
+     * @param generatorOptions  the legacy generator options (may be null)
+     * @return a new SimpleRegistry instance containing the Dimensions provided by this GeneratorType
+     */
+    public SimpleRegistry<Dimension> createDimensionRegistry(long seed, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions)
+    {
+        // Builds the default Dimension registry containing the nether and end Dimensions
+        SimpleRegistry<Dimension> registry = DimensionType.func_242718_a(dimensionTypes, biomes, dimensionSettings, seed);
+        // Creates the overworld chunk generator
+        ChunkGenerator chunkGenerator = createChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
+        Supplier<DimensionType> overworldType = () -> dimensionTypes.func_243576_d(DimensionType.field_235999_c_);
+        // Adds the overworld Dimension to the head of the registry
+        return DimensionGeneratorSettings.func_241520_a_(registry, overworldType, chunkGenerator);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "GeneratorType{" + name + "}";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeneratorType that = (GeneratorType) o;
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return name.hashCode();
+    }
+
+    /**
+     * Helper method for updating the overworld ChunkGenerator in an existing DimensionGeneratorSettings instance.
+     *
+     * @param settings   the settings to update
+     * @param registries the dynamic registries
+     * @param generator  the new overworld chunk generator
+     * @return a new DimensionGeneratorSettings instance with the provided ChunkGenerator used for overworld generation
+     */
+    protected static DimensionGeneratorSettings setOverworldGenerator(DimensionGeneratorSettings settings, DynamicRegistries registries, ChunkGenerator generator)
+    {
+        return setOverworldGenerator(settings, registries, DimensionType.field_235999_c_, generator);
+    }
+
+    /**
+     * Helper method for updating the overworld ChunkGenerator in an existing DimensionGeneratorSettings instance.
+     *
+     * @param settings      the settings to update
+     * @param registries    the dynamic registries
+     * @param dimensionType the DimensionType to assign the new Dimension
+     * @param generator     the ChunkGenerator for the new Dimension
+     * @return a new DimensionGeneratorSettings instance with the provided ChunkGenerator used for overworld generation
+     */
+    protected static DimensionGeneratorSettings setOverworldGenerator(DimensionGeneratorSettings settings, DynamicRegistries registries, RegistryKey<DimensionType> dimensionType, ChunkGenerator generator)
+    {
+        long seed = settings.func_236221_b_();
+        boolean hasStructures = settings.func_236222_c_();
+        boolean hasBonusChest = settings.func_236223_d_();
+        Registry<DimensionType> dimensionTypes = registries.func_243612_b(Registry.field_239698_ad_);
+        Supplier<DimensionType> dimensionTypeSupplier = () -> dimensionTypes.func_230516_a_(dimensionType);
+        SimpleRegistry<Dimension> dimensions = setOverworldGenerator(settings.func_236224_e_(), dimensionTypeSupplier, generator);
+        return new DimensionGeneratorSettings(seed, hasStructures, hasBonusChest, dimensions);
+    }
+
+    /**
+     * Helper method for updating the overworld Dimension in a Dimension registry
+     *
+     * @param dimensions the Dimension registry to update
+     * @param type       the DimensionType to assign the new Dimension
+     * @param generator  the ChunkGenerator for the new Dimension
+     * @return a new Dimension registry
+     */
+    protected static SimpleRegistry<Dimension> setOverworldGenerator(SimpleRegistry<Dimension> dimensions, Supplier<DimensionType> type, ChunkGenerator generator)
+    {
+        return DimensionGeneratorSettings.func_241520_a_(dimensions, type, generator);
+    }
 }
