@@ -4,7 +4,7 @@
     }
  
     public final boolean func_177094_a(LayerRenderer<T, M> p_177094_1_) {
-+      if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.LayerRendererEvent.Add<>(this, p_177094_1_))) return false;
++      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LayerRendererEvent.Add<>(this, p_177094_1_))) return false;
        return this.field_177097_h.add(p_177094_1_);
     }
  
@@ -52,7 +52,7 @@
 +   /* ============= FORGE =============*/
 +   public List<LayerRenderer<T, M>> getLayers() {return Lists.newArrayList(field_177097_h);}
 +   public boolean removeLayer(LayerRenderer<T, M> layer) {
-+      if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.LayerRendererEvent.Remove<>(this, layer))) return false;
++      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LayerRendererEvent.Remove<>(this, layer))) return false;
 +      return field_177097_h.remove(layer);}
 +   
  }

@@ -25,8 +25,9 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
-public abstract class LayerRendererEvent<E extends LivingEntity, M extends EntityModel<E>> extends Event {
+public abstract class LayerRendererEvent<E extends LivingEntity, M extends EntityModel<E>> extends Event implements IModBusEvent{
 
     private final LivingRenderer<E, M> renderer;
     private final LayerRenderer<E, M> layer;

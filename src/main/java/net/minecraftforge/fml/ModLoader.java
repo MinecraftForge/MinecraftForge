@@ -319,12 +319,13 @@ public class ModLoader
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
     }
 
-    public <T extends Event & IModBusEvent> void postEvent(T e) {
+    public <T extends Event & IModBusEvent> boolean postEvent(T e) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
-            return;
+            return false;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+        return e.isCanceled();
     }
 
     public List<ModLoadingWarning> getWarnings()
