@@ -26,17 +26,21 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.BackgroundMusicSelector;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
+    private static Map<BackgroundMusicSelector, Function<BackgroundMusicSelector, Boolean>> musicSelectorMap = new HashMap<>();
 
     /**
      * Registers a Tile Entity renderer.
@@ -73,5 +77,21 @@ public class ClientRegistry
     public static ResourceLocation getEntityShader(Class<? extends Entity> entityClass)
     {
         return entityShaderMap.get(entityClass);
+    }
+
+    /**
+     * Register a {@link BackgroundMusicSelector} based on some condition. If no conditions 
+     * from the registered selectors are met, the vanilla selector will return instead.
+     * @param selector The music selector instance.
+     * @param condition The condition to select the handler. Takes in the vanilla selector.
+     */
+    public static synchronized void registerMusicSelector(BackgroundMusicSelector selector,  Function<BackgroundMusicSelector, Boolean> condition)
+    {
+        musicSelectorMap.put(selector, condition);
+    }
+
+    public static BackgroundMusicSelector getMusicSelector(BackgroundMusicSelector vanillaSelector)
+    {
+        return musicSelectorMap.entrySet().stream().filter(entry -> entry.getValue().apply(vanillaSelector)).map(Entry::getKey).findFirst().orElse(vanillaSelector);
     }
 }
