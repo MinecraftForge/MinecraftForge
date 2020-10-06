@@ -25,7 +25,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
-import net.minecraft.client.audio.BackgroundMusicSelector;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.AbstractGui;
@@ -75,7 +74,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.event.sound.BackgroundMusicSelectionEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
@@ -98,7 +96,6 @@ import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -729,13 +726,6 @@ public class ForgeHooksClient
         InputEvent.ClickInputEvent event = new InputEvent.ClickInputEvent(button, keyBinding, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
-    }
-
-    public static BackgroundMusicSelector getMusicSelector(@Nullable ISound currentMusic, BackgroundMusicSelector defaultSelector)
-    {
-        BackgroundMusicSelectionEvent event = new BackgroundMusicSelectionEvent(currentMusic, defaultSelector);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getBackgroundMusicSelector();
     }
 
     public static void drawItemLayered(ItemRenderer renderer, IBakedModel modelIn, ItemStack itemStackIn, MatrixStack matrixStackIn,
