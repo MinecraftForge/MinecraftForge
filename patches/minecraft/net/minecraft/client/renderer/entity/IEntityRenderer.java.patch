@@ -5,7 +5,7 @@
  
  @OnlyIn(Dist.CLIENT)
 -public interface IEntityRenderer<T extends Entity, M extends EntityModel<T>> {
-+public interface IEntityRenderer<T extends Entity, M extends EntityModel<T>> extends net.minecraftforge.client.model.IForgeEntityRenderer<T, M> {
++public interface IEntityRenderer<T extends Entity, M extends EntityModel<T>> extends net.minecraftforge.client.model.IForgeEntityRenderer {
     M func_217764_d();
  
     ResourceLocation func_110775_a(T p_110775_1_);

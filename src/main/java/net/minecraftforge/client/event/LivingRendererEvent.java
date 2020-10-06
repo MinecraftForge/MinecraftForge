@@ -66,12 +66,6 @@ public abstract class LivingRendererEvent extends Event implements IModBusEvent{
 	            super(renderer, layer);
 	        }
 	    }
-	    
-	    public static final class Remove extends LayerEvent {
-	        public Remove(LivingRenderer renderer, LayerRenderer layer) {
-	            super(renderer, layer);
-	        }
-	    }
     }
     
 }

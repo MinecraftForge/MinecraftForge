@@ -49,14 +49,10 @@
     }
  
     @Nullable
-@@ -254,4 +260,10 @@
+@@ -254,4 +260,6 @@
           return Minecraft.func_71382_s() && p_177070_1_ != minecraft.func_175606_aa() && flag && !p_177070_1_.func_184207_aI();
        }
     }
-+   /* ============= FORGE =============*/
-+   public List<LayerRenderer> getLayers() {return Lists.newArrayList(field_177097_h);}
-+   public boolean removeLayer(LayerRenderer layer) {
-+      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.LayerEvent.Remove(this, layer))) return false;
-+      return field_177097_h.remove(layer);}
++   public List<LayerRenderer> getLayers() {return Lists.newArrayList(field_177097_h);} //forge
 +   
  }
