@@ -26,8 +26,11 @@ import java.util.List;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 
+@SuppressWarnings("rawtypes")
 public interface IForgeEntityRenderer<T extends Entity, M extends EntityModel<T>> {
-
-    public List<LayerRenderer<T, M>> getLayers();
+	
+	public boolean removeLayer(LayerRenderer layer);
+	
+	public List<LayerRenderer> getLayers();
 	
 }
