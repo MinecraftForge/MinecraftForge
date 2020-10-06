@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,21 +48,25 @@ public class ModJarURLHandler extends URLStreamHandler
         private Path resource;
         private String modpath;
         private String modid;
-        private Optional<Manifest> manifest;
+        private Manifest manifest;
 
         public ModJarURLConnection(final URL url) {
             super(url);
         }
 
         @Override
-        public void connect()
+        public void connect() throws IOException
         {
             if (resource == null) {
                 modid = url.getHost();
                 // trim first char
                 modpath = url.getPath().substring(1);
-                resource = FMLLoader.getLoadingModList().getModFileById(modid).getFile().findResource(modpath);
-                manifest = FMLLoader.getLoadingModList().getModFileById(modid).getManifest();
+                ModFileInfo modFileInfo = FMLLoader.getLoadingModList().getModFileById(modid);
+                if (modFileInfo == null) {
+                    throw new IOException("No mod file found for " + modid);
+                }
+                resource = modFileInfo.getFile().findResource(modpath);
+                manifest = modFileInfo.getManifest().orElse(null);
             }
         }
 
@@ -84,7 +89,7 @@ public class ModJarURLHandler extends URLStreamHandler
         }
 
         public Optional<Manifest> getManifest() {
-            return manifest;
+            return Optional.ofNullable(manifest);
         }
     }
 }
