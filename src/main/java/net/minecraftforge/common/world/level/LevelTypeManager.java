@@ -67,10 +67,10 @@ public class LevelTypeManager
     }
 
     /**
-     * Get the {@link LevelType} registered with the given name
+     * Get the {@link LevelType} registered with the given name.
      *
-     * @param name the level type name to look up
-     * @return the {@link LevelType} associated with the given name or null if absent
+     * @param name The level type name to look up.
+     * @return The {@link LevelType} associated with the given name or null if absent.
      */
     @Nullable
     public synchronized LevelType getLevelType(String name)
@@ -79,11 +79,11 @@ public class LevelTypeManager
     }
 
     /**
-     * Get the default {@link LevelType}
+     * Get the default {@link LevelType}.
      * The default {@link LevelType} is used on the client when creating a new world. The 'world type' option
      * will be set to this {@link LevelType} when first opening the world creation screen.
      *
-     * @return the default {@link LevelType}
+     * @return The default {@link LevelType}.
      */
     public synchronized LevelType getDefaultLevelType()
     {
@@ -91,9 +91,9 @@ public class LevelTypeManager
     }
 
     /**
-     * Iterate all registered {@link LevelType}s in order
+     * Iterate all registered {@link LevelType}s in order.
      *
-     * @param action the action to be performed for each element
+     * @param action The action to be performed for each element.
      */
     public synchronized void forEach(Consumer<LevelType> action)
     {
@@ -101,10 +101,10 @@ public class LevelTypeManager
     }
 
     /**
-     * Register a {@link LevelType} instance with the manager
+     * Register a {@link LevelType} instance with the manager.
      *
-     * @param levelType the level type to register
-     * @return true if the instance was added to the manager or false if a level type with the same name has already
+     * @param levelType The level type to register.
+     * @return True if the instance was added to the manager or false if a level type with the same name has already
      * been registered.
      */
     public synchronized boolean register(LevelType levelType)
@@ -117,16 +117,16 @@ public class LevelTypeManager
         }
         else
         {
-            LOGGER.error("Attempted to register generator type '{}' twice", levelType.getName());
+            LOGGER.error("Attempted to register LevelType '{}' twice", levelType.getName());
             return false;
         }
     }
 
     /**
-     * Set the default {@link LevelType}
+     * Set the default {@link LevelType}.
      *
-     * @param levelType the level type to use as default
-     * @return true if the default level type was set to the provided instance. May return false if the provided
+     * @param levelType The level type to use as default.
+     * @return True if the default level type was set to the provided instance. May return false if the provided
      * level type has not been registered with the manager.
      */
     public synchronized boolean setDefaultLevelType(@Nonnull LevelType levelType)
@@ -135,30 +135,30 @@ public class LevelTypeManager
         {
             if (levelType != defaultLevelType)
             {
-                LOGGER.info("Default generator '{}' has been overridden by '{}'", defaultLevelType.getName(), levelType.getName());
+                LOGGER.info("Default LevelType '{}' has been overridden by '{}'", defaultLevelType.getName(), levelType.getName());
                 this.defaultLevelType = levelType;
             }
             return true;
         }
         else
         {
-            LOGGER.error("Attempted to set the default generator type to unregistered instance '{}'", levelType.getName());
+            LOGGER.error("Attempted to set the default LevelType to unregistered instance '{}'", levelType.getName());
             return false;
         }
     }
 
     /**
-     * Looks up the provided {@link LevelType} name and attempts to use it to create a bew
-     * {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} with the provided parameters.
+     * Looks up the provided {@link LevelType} name and attempts to use it to create a new
+     * {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance using the provided parameters.
      *
-     * @param name       the name of the level type to use
-     * @param seed       the world seed
-     * @param structures flag controlling whether structures generate
-     * @param bonusChest flag controlling whether the bonus chest will generate at spawn
-     * @param registries the dynamic registries to construct the settings with
-     * @param options    the generator options serialized as a json string (may be empty)
-     * @return a new {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance or null if the named
-     * level type is not present or parsing of the options failed
+     * @param name       The name of the level type to use.
+     * @param seed       The world seed.
+     * @param structures A flag controlling whether structures generate.
+     * @param bonusChest A flag controlling whether the bonus chest will generate at spawn.
+     * @param registries The dynamic registries to construct the settings with.
+     * @param options    The generator options serialized as a json string (may be empty).
+     * @return A new {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance or null if the named
+     * level type is not present or parsing of the options failed.
      */
     @Nullable
     public synchronized DimensionGeneratorSettings createGeneratorSettings(String name, long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, String options)
@@ -166,7 +166,7 @@ public class LevelTypeManager
         LevelType levelType = getLevelType(name);
         if (levelType == null)
         {
-            LOGGER.error("Unknown generator type '{}'", name);
+            LOGGER.error("Unknown LevelType '{}'", name);
             return null;
         }
         else

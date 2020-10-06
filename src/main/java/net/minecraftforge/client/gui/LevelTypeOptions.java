@@ -76,7 +76,7 @@ public class LevelTypeOptions
             }
             levelTypes.put(type, option);
             options.add(option);
-            LOGGER.debug("Registered LevelTypeOption '{}'", name);
+            LOGGER.debug("Registered LevelType '{}'", name);
         });
         LevelTypeOption.forEachEditScreen(editScreens::put);
     }
@@ -187,6 +187,7 @@ public class LevelTypeOptions
 
         public boolean isHidden()
         {
+            // option is hidden if it is a debug level type and l-shift is not held down
             return levelType.isDebug() && !Screen.func_231173_s_();
         }
 
