@@ -4,11 +4,11 @@
        super(p_i50965_1_);
        this.field_77045_g = p_i50965_2_;
        this.field_76989_e = p_i50965_3_;
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.RendererCreationEvent<>(this));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.RendererCreationEvent(this));
     }
  
     public final boolean func_177094_a(LayerRenderer<T, M> p_177094_1_) {
-+      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.LayerEvent.Add<>(this, p_177094_1_))) return false;
++      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.LayerEvent.Add(this, p_177094_1_))) return false;
        return this.field_177097_h.add(p_177094_1_);
     }
  
@@ -54,9 +54,9 @@
        }
     }
 +   /* ============= FORGE =============*/
-+   public List<LayerRenderer<T, M>> getLayers() {return Lists.newArrayList(field_177097_h);}
-+   public boolean removeLayer(LayerRenderer<T, M> layer) {
-+      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.LayerEvent.Remove<>(this, layer))) return false;
++   public List<LayerRenderer> getLayers() {return Lists.newArrayList(field_177097_h);}
++   public boolean removeLayer(LayerRenderer layer) {
++      if(net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.LivingRendererEvent.LayerEvent.Remove(this, layer))) return false;
 +      return field_177097_h.remove(layer);}
 +   
  }

@@ -21,35 +21,33 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.entity.LivingEntity;
-
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
-public abstract class LivingRendererEvent<E extends LivingEntity, M extends EntityModel<E>> extends Event implements IModBusEvent{
+@SuppressWarnings("rawtypes")
+public abstract class LivingRendererEvent extends Event implements IModBusEvent{
 
-    private final LivingRenderer<E, M> renderer;
+	private final LivingRenderer renderer;
     
-    private LivingRendererEvent(LivingRenderer<E,M> renderer) {
+    private LivingRendererEvent(LivingRenderer renderer) {
         this.renderer = renderer;
     }
     
-    public LivingRenderer<E, M> getRenderer() {
+    public LivingRenderer getRenderer() {
         return renderer;
     }
     
-    public static class RendererCreationEvent<E extends LivingEntity, M extends EntityModel<E>> extends LivingRendererEvent<E, M> {
-    	public RendererCreationEvent(LivingRenderer<E, M> renderer) {
+    public static class RendererCreationEvent extends LivingRendererEvent {
+    	public RendererCreationEvent(LivingRenderer renderer) {
     		super(renderer);
     	}
     }
     
-    public static class LayerEvent<E extends LivingEntity, M extends EntityModel<E>> extends LivingRendererEvent<E, M> {
+    public static class LayerEvent extends LivingRendererEvent {
     
-        private final LayerRenderer<E, M> layer;
+        private final LayerRenderer layer;
     	
-    	private LayerEvent(LivingRenderer<E, M> renderer, LayerRenderer<E, M> layer) {
+    	private LayerEvent(LivingRenderer renderer, LayerRenderer layer) {
     		super(renderer);
             this.layer = layer;
     	}
@@ -59,18 +57,18 @@ public abstract class LivingRendererEvent<E extends LivingEntity, M extends Enti
             return true;
         }
     	
-        public LayerRenderer<E, M> getLayer() {
+        public LayerRenderer getLayer() {
             return layer;
         }
     	
-	    public static final class Add<E extends LivingEntity, M extends EntityModel<E>> extends LayerEvent<E, M> {
-	        public Add(LivingRenderer<E, M> renderer, LayerRenderer<E, M> layer) {
+	    public static final class Add extends LayerEvent {
+	        public Add(LivingRenderer renderer, LayerRenderer layer) {
 	            super(renderer, layer);
 	        }
 	    }
 	    
-	    public static final class Remove<E extends LivingEntity, M extends EntityModel<E>> extends LayerEvent<E, M> {
-	        public Remove(LivingRenderer<E, M> renderer, LayerRenderer<E, M> layer) {
+	    public static final class Remove extends LayerEvent {
+	        public Remove(LivingRenderer renderer, LayerRenderer layer) {
 	            super(renderer, layer);
 	        }
 	    }
