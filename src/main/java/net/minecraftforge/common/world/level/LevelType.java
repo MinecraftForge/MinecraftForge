@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.world.generator;
+package net.minecraftforge.common.world.level;
 
 import com.mojang.serialization.Dynamic;
 import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
@@ -34,34 +34,36 @@ import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 /**
- * Represents a named world-generation type. Implementations of this class provide the ChunkGenerator to be used
- * in the overworld and can optionally define other Dimensions that generate in addition to the overworld (ie nether & end).
+ * Represents the type of world-generation that will be used when creating a new world. Implementations of this class
+ * provide the {@link net.minecraft.world.gen.ChunkGenerator} for the overworld and can optionally define additional
+ * dimensions that generate such as the_nether & end.
  *
- * When registered with the GeneratorTypeManager, a GeneratorType will appear as an option under the world creation
- * menu and, on servers, can be set on the 'level-type' field in server.properties so that new worlds are created
- * using it.
+ * When registered with the {@link LevelTypeManager}, a {@link LevelType} will appear as an option under the world
+ * creation menu and, on servers, can be set on the 'level-type' field in server.properties so that new worlds are
+ * created using it.
  */
-public abstract class GeneratorType
+public abstract class LevelType
 {
     private final String name;
 
-    public GeneratorType(String name)
+    public LevelType(@Nonnull String name)
     {
         this.name = name;
     }
 
     /**
-     * Create a new instance of this GeneratorType's ChunkGenerator
+     * Create a new instance of this {@link LevelType}'s {@link net.minecraft.world.gen.ChunkGenerator}
      *
      * @param seed              the world seed
-     * @param biomes            the Biome registry
-     * @param dimensionSettings the DimensionSettings registry
+     * @param biomes            the biome registry
+     * @param dimensionSettings the {@link net.minecraft.world.gen.DimensionSettings} registry
      * @param generatorOptions  the serialized generator options (may be null)
-     * @return a new ChunkGenerator instance for the provided parameters
+     * @return a new {@link net.minecraft.world.gen.ChunkGenerator} instance for the provided parameters
      */
     public abstract ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions);
 
@@ -87,7 +89,7 @@ public abstract class GeneratorType
     }
 
     /**
-     * Returns a factory for creating new instances of this GeneratorType's settings/configuration screen.
+     * Returns a factory for creating new instances of this LevelType's settings/configuration screen.
      *
      * @return the edit screen factory or null
      */
@@ -106,7 +108,7 @@ public abstract class GeneratorType
      * @param bonusChest       flag determining whether a bonus chest should generate
      * @param registries       the dynamic registries instance
      * @param generatorOptions the legacy generator options (may be null)
-     * @return a new DimensionGeneratorSettings instance
+     * @return a new {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance
      */
     public DimensionGeneratorSettings createDimensionGeneratorSettings(long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, @Nullable Dynamic<?> generatorOptions)
     {
@@ -124,11 +126,12 @@ public abstract class GeneratorType
      * requirement is that the returned registry contains a Dimension for the overworld.
      *
      * @param seed              the world seed
-     * @param biomes            the Biome registry
-     * @param dimensionTypes    the DimensionType registry
-     * @param dimensionSettings the DimensionSettings registry
+     * @param biomes            the biome registry
+     * @param dimensionTypes    the dimension type registry
+     * @param dimensionSettings the dimension settings registry
      * @param generatorOptions  the legacy generator options (may be null)
-     * @return a new SimpleRegistry instance containing the Dimensions provided by this GeneratorType
+     * @return a new {@link net.minecraft.util.registry.SimpleRegistry} instance containing the dimensions provided by
+     * this LevelType
      */
     public SimpleRegistry<Dimension> createDimensionRegistry(long seed, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions)
     {
@@ -144,7 +147,7 @@ public abstract class GeneratorType
     @Override
     public String toString()
     {
-        return "GeneratorType{" + name + "}";
+        return "LevelType{" + name + "}";
     }
 
     @Override
@@ -152,7 +155,7 @@ public abstract class GeneratorType
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GeneratorType that = (GeneratorType) o;
+        LevelType that = (LevelType) o;
         return name.equals(that.name);
     }
 
@@ -163,12 +166,14 @@ public abstract class GeneratorType
     }
 
     /**
-     * Helper method for updating the overworld ChunkGenerator in an existing DimensionGeneratorSettings instance.
+     * Helper method for updating the overworld {@link net.minecraft.world.gen.ChunkGenerator} in an existing
+     * {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance.
      *
      * @param settings   the settings to update
      * @param registries the dynamic registries
      * @param generator  the new overworld chunk generator
-     * @return a new DimensionGeneratorSettings instance with the provided ChunkGenerator used for overworld generation
+     * @return a new {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance using the provided
+     * chunk generator for the overworld
      */
     protected static DimensionGeneratorSettings setOverworldGenerator(DimensionGeneratorSettings settings, DynamicRegistries registries, ChunkGenerator generator)
     {
@@ -176,13 +181,15 @@ public abstract class GeneratorType
     }
 
     /**
-     * Helper method for updating the overworld ChunkGenerator in an existing DimensionGeneratorSettings instance.
+     * Helper method for updating the overworld {@link net.minecraft.world.gen.ChunkGenerator} in an existing
+     * {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance.
      *
      * @param settings      the settings to update
      * @param registries    the dynamic registries
-     * @param dimensionType the DimensionType to assign the new Dimension
-     * @param generator     the ChunkGenerator for the new Dimension
-     * @return a new DimensionGeneratorSettings instance with the provided ChunkGenerator used for overworld generation
+     * @param dimensionType the dimension type to assign the new dimension
+     * @param generator     the chunk generator for the new dimension
+     * @return a new {@link net.minecraft.world.gen.settings.DimensionGeneratorSettings} instance using the provided
+     * chunk generator for the overworld
      */
     protected static DimensionGeneratorSettings setOverworldGenerator(DimensionGeneratorSettings settings, DynamicRegistries registries, RegistryKey<DimensionType> dimensionType, ChunkGenerator generator)
     {
@@ -198,10 +205,11 @@ public abstract class GeneratorType
     /**
      * Helper method for updating the overworld Dimension in a Dimension registry
      *
-     * @param dimensions the Dimension registry to update
-     * @param type       the DimensionType to assign the new Dimension
-     * @param generator  the ChunkGenerator for the new Dimension
-     * @return a new Dimension registry
+     * @param dimensions the dimension registry to update
+     * @param type       the dimension type to assign the new dimension
+     * @param generator  the chunk generator for the new dimension
+     * @return a new {@link net.minecraft.util.registry.SimpleRegistry} containing the contents of the provided
+     * dimension registry with a new overworld dimension using the provided chunk generator
      */
     protected static SimpleRegistry<Dimension> setOverworldGenerator(SimpleRegistry<Dimension> dimensions, Supplier<DimensionType> type, ChunkGenerator generator)
     {

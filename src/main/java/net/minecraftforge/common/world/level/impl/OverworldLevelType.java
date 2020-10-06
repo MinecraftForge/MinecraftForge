@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.world.generator.type;
+package net.minecraftforge.common.world.level.impl;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
@@ -26,12 +26,12 @@ import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.OverworldBiomeProvider;
 import net.minecraft.world.gen.DimensionSettings;
 
-public class OverworldGeneratorType extends NoiseGeneratorType
+public class OverworldLevelType extends NoiseLevelType
 {
     private final boolean largeBiomes;
     private final boolean legacyInitLayer;
 
-    public OverworldGeneratorType(String name, RegistryKey<DimensionSettings> settings, boolean legacy, boolean largeBiomes)
+    public OverworldLevelType(String name, RegistryKey<DimensionSettings> settings, boolean legacy, boolean largeBiomes)
     {
         super(name, settings);
         this.legacyInitLayer = legacy;

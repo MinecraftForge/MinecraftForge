@@ -4,7 +4,7 @@
        this.field_239039_m_ = p_i242065_2_;
        this.field_239040_n_ = p_i242065_3_;
        this.field_243444_q = p_i242065_4_;
-+      net.minecraftforge.client.gui.GeneratorOptionList.get().updateOptions();
++      net.minecraftforge.client.gui.LevelTypeOptions.get().updateOptions();
     }
  
     public void func_239048_a_(final CreateWorldScreen p_239048_1_, Minecraft p_239048_2_, FontRenderer p_239048_3_) {
@@ -14,17 +14,17 @@
              if (this.field_239040_n_.isPresent()) {
 -               int k = BiomeGeneratorTypeScreens.field_239068_c_.indexOf(this.field_239040_n_.get()) + 1;
 -               if (k >= BiomeGeneratorTypeScreens.field_239068_c_.size()) {
-+               int k = net.minecraftforge.client.gui.GeneratorOptionList.get().indexOf(this.field_239040_n_.get()) + 1;
-+               if (k >= net.minecraftforge.client.gui.GeneratorOptionList.get().size()) {
++               int k = net.minecraftforge.client.gui.LevelTypeOptions.get().indexOf(this.field_239040_n_.get()) + 1;
++               if (k >= net.minecraftforge.client.gui.LevelTypeOptions.get().size()) {
                    k = 0;
                 }
  
 -               BiomeGeneratorTypeScreens biomegeneratortypescreens = BiomeGeneratorTypeScreens.field_239068_c_.get(k);
-+               BiomeGeneratorTypeScreens biomegeneratortypescreens = net.minecraftforge.client.gui.GeneratorOptionList.get().get(k);
++               BiomeGeneratorTypeScreens biomegeneratortypescreens = net.minecraftforge.client.gui.LevelTypeOptions.get().get(k);
                 this.field_239040_n_ = Optional.of(biomegeneratortypescreens);
                 this.field_239039_m_ = biomegeneratortypescreens.func_241220_a_(this.field_239038_l_, this.field_239039_m_.func_236221_b_(), this.field_239039_m_.func_236222_c_(), this.field_239039_m_.func_236223_d_());
 -               if (this.field_239039_m_.func_236227_h_() && !Screen.func_231173_s_()) {
-+               if (this.field_239039_m_.func_236227_h_() && !Screen.func_231173_s_() || net.minecraftforge.client.gui.GeneratorOptionList.isHidden(biomegeneratortypescreens)) {
++               if (this.field_239039_m_.func_236227_h_() && !Screen.func_231173_s_() || net.minecraftforge.client.gui.LevelTypeOptions.isHidden(biomegeneratortypescreens)) {
                    continue;
                 }
              }
@@ -33,7 +33,7 @@
        this.field_239035_i_.field_230693_o_ = this.field_239040_n_.isPresent();
        this.field_239036_j_ = p_239048_1_.func_230480_a_(new Button(j, 120, 150, 20, new TranslationTextComponent("selectWorld.customizeType"), (p_239044_3_) -> {
 -         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = BiomeGeneratorTypeScreens.field_239069_d_.get(this.field_239040_n_);
-+         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = this.field_239040_n_.map(net.minecraftforge.client.gui.GeneratorOptionList.get()::getEditScreen).orElse(null);
++         BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = this.field_239040_n_.map(net.minecraftforge.client.gui.LevelTypeOptions.get()::getEditScreen).orElse(null);
           if (biomegeneratortypescreens$ifactory != null) {
              p_239048_2_.func_147108_a(biomegeneratortypescreens$ifactory.createEditScreen(p_239048_1_, this.field_239039_m_));
           }
@@ -42,7 +42,7 @@
           this.field_239034_h_.field_230694_p_ = p_239059_1_;
           this.field_239027_a_.field_230694_p_ = p_239059_1_;
 -         this.field_239036_j_.field_230694_p_ = p_239059_1_ && BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_);
-+         this.field_239036_j_.field_230694_p_ = p_239059_1_ && this.field_239040_n_.map(net.minecraftforge.client.gui.GeneratorOptionList.get()::hasEditScreen).orElse(false);
++         this.field_239036_j_.field_230694_p_ = p_239059_1_ && this.field_239040_n_.map(net.minecraftforge.client.gui.LevelTypeOptions.get()::hasEditScreen).orElse(false);
           this.field_239037_k_.field_230694_p_ = p_239059_1_;
        }
  

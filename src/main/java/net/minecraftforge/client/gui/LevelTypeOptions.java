@@ -31,8 +31,8 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.world.generator.GeneratorType;
-import net.minecraftforge.common.world.generator.GeneratorTypeManager;
+import net.minecraftforge.common.world.level.LevelType;
+import net.minecraftforge.common.world.level.LevelTypeManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,38 +46,39 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * GeneratorOptionList maintains a list of {@link BiomeGeneratorTypeScreens} which are used in the world creation ui
- * to represent user-selectable world generators. Mod entries are created and added from the GeneratorTypeManager.
+ * LevelTypeOptions maintains a list of {@link net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens} which are
+ * used in the world creation gui to represent user-selectable {@link LevelType}s that have been registered with
+ * the {@link LevelTypeManager}.
  */
 @OnlyIn(Dist.CLIENT)
-public class GeneratorOptionList
+public class LevelTypeOptions
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final GeneratorOptionList INSTANCE = new GeneratorOptionList();
+    private static final LevelTypeOptions INSTANCE = new LevelTypeOptions();
 
-    // Holds an ordered list of generator options that appear in the ui
+    // Holds an ordered list of level type options that appear in the ui
     private final List<BiomeGeneratorTypeScreens> options = new ArrayList<>();
-    // Maps GeneratorTypes to their corresponding ui option
-    private final Map<GeneratorType, BiomeGeneratorTypeScreens> generatorTypes = new HashMap<>();
+    // Maps LevelTypes to their corresponding ui option
+    private final Map<LevelType, BiomeGeneratorTypeScreens> levelTypes = new HashMap<>();
     // Maps ui options to their corresponding edit screen factory
     private final Map<BiomeGeneratorTypeScreens, BiomeGeneratorTypeScreens.IFactory> editScreens = new HashMap<>();
 
-    private GeneratorOptionList()
+    private LevelTypeOptions()
     {
         // populate with the vanilla generators/edit screens
-        GeneratorOption.forEachGeneratorType(option -> {
-            String name = getGeneratorName(option);
-            GeneratorType type = GeneratorTypeManager.get().getGeneratorType(name);
+        LevelTypeOption.forEachOption(option -> {
+            String name = getOptionName(option);
+            LevelType type = LevelTypeManager.get().getLevelType(name);
             if (type == null)
             {
-                LOGGER.error("Missing generator type for '{}'", name);
+                LOGGER.error("Missing LevelType for '{}'", name);
                 return;
             }
-            generatorTypes.put(type, option);
+            levelTypes.put(type, option);
             options.add(option);
-            LOGGER.debug("Registered GeneratorOption '{}'", name);
+            LOGGER.debug("Registered LevelTypeOption '{}'", name);
         });
-        GeneratorOption.forEachEditScreen(editScreens::put);
+        LevelTypeOption.forEachEditScreen(editScreens::put);
     }
 
     public synchronized int size()
@@ -98,13 +99,13 @@ public class GeneratorOptionList
     // gets called when opening the CreateWorldScreen to set the initial generator type
     public synchronized BiomeGeneratorTypeScreens getDefault()
     {
-        GeneratorType generatorType = GeneratorTypeManager.get().getDefaultGeneratorType();
-        BiomeGeneratorTypeScreens option = generatorTypes.get(generatorType);
+        LevelType levelType = LevelTypeManager.get().getDefaultLevelType();
+        BiomeGeneratorTypeScreens option = levelTypes.get(levelType);
         if (option == null)
         {
             // synchronize entries with the GeneratorTypeManager & try again
             updateOptions();
-            option = generatorTypes.get(generatorType);
+            option = levelTypes.get(levelType);
         }
         return option != null ? option : BiomeGeneratorTypeScreens.field_239066_a_;
     }
@@ -125,40 +126,40 @@ public class GeneratorOptionList
     // synchronize the available GeneratorTypes with the options list so that they appear in the ui
     public synchronized void updateOptions()
     {
-        GeneratorTypeManager.get().forEach(generatorType -> {
-            // only add new generators
-            if (!generatorTypes.containsKey(generatorType))
+        LevelTypeManager.get().forEach(levelType -> {
+            // only add new types
+            if (!levelTypes.containsKey(levelType))
             {
-                GeneratorOption option = new GeneratorOption(generatorType);
+                LevelTypeOption option = new LevelTypeOption(levelType);
                 options.add(option);
-                generatorTypes.put(generatorType, option);
-                BiomeGeneratorTypeScreens.IFactory factory = generatorType.getEditScreen();
+                levelTypes.put(levelType, option);
+                BiomeGeneratorTypeScreens.IFactory factory = levelType.getEditScreen();
                 if (factory != null)
                 {
                     editScreens.put(option, factory);
                 }
-                LOGGER.debug("Registered GeneratorOption '{}'", generatorType.getName());
+                LOGGER.debug("Registered LevelType '{}'", levelType.getName());
             }
         });
     }
 
-    public static GeneratorOptionList get()
+    public static LevelTypeOptions get()
     {
         return INSTANCE;
     }
 
-    public static boolean isHidden(BiomeGeneratorTypeScreens generatorOption)
+    public static boolean isHidden(BiomeGeneratorTypeScreens option)
     {
-        if (generatorOption instanceof GeneratorOption)
+        if (option instanceof LevelTypeOption)
         {
-            return ((GeneratorOption) generatorOption).isHidden();
+            return ((LevelTypeOption) option).isHidden();
         }
         return false;
     }
 
-    private static String getGeneratorName(BiomeGeneratorTypeScreens type)
+    private static String getOptionName(BiomeGeneratorTypeScreens option)
     {
-        ITextComponent textComponent = type.func_239077_a_();
+        ITextComponent textComponent = option.func_239077_a_();
         if (textComponent instanceof TranslationTextComponent)
         {
             // expected to be generator.<name>
@@ -173,37 +174,37 @@ public class GeneratorOptionList
         return textComponent.getString().toLowerCase();
     }
 
-    private static class GeneratorOption extends BiomeGeneratorTypeScreens
+    private static class LevelTypeOption extends BiomeGeneratorTypeScreens
     {
 
-        private final GeneratorType generatorType;
+        private final LevelType levelType;
 
-        protected GeneratorOption(GeneratorType generatorType)
+        protected LevelTypeOption(LevelType levelType)
         {
-            super(generatorType.getName());
-            this.generatorType = generatorType;
+            super(levelType.getName());
+            this.levelType = levelType;
         }
 
         public boolean isHidden()
         {
-            return generatorType.isDebug() && !Screen.func_231173_s_();
+            return levelType.isDebug() && !Screen.func_231173_s_();
         }
 
         @Nonnull
         @Override
         public DimensionGeneratorSettings func_241220_a_(@Nonnull DynamicRegistries.Impl registries, long seed, boolean structures, boolean bonusChest)
         {
-            return generatorType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries, null);
+            return levelType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries, null);
         }
 
         @Nonnull
         @Override
         protected ChunkGenerator func_241869_a(@Nonnull Registry<Biome> biomes, @Nonnull Registry<DimensionSettings> settings, long seed)
         {
-            return generatorType.createChunkGenerator(seed, biomes, settings, null);
+            return levelType.createChunkGenerator(seed, biomes, settings, null);
         }
 
-        private static void forEachGeneratorType(Consumer<BiomeGeneratorTypeScreens> consumer)
+        private static void forEachOption(Consumer<BiomeGeneratorTypeScreens> consumer)
         {
             BiomeGeneratorTypeScreens.field_239068_c_.forEach(consumer);
         }

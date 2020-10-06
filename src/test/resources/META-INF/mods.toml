@@ -89,4 +89,4 @@ license="LGPL v2.1"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
-    modId="generator_type_test"
+    modId="level_type_test"

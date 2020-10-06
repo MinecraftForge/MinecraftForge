@@ -31,11 +31,11 @@ import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.CheckerboardBiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
-import net.minecraftforge.common.world.generator.GeneratorType;
-import net.minecraftforge.common.world.generator.GeneratorTypeManager;
-import net.minecraftforge.common.world.generator.type.NoiseGeneratorType;
-import net.minecraftforge.common.world.generator.type.OverworldGeneratorType;
-import net.minecraftforge.common.world.generator.type.SingleBiomeGeneratorType;
+import net.minecraftforge.common.world.level.LevelType;
+import net.minecraftforge.common.world.level.LevelTypeManager;
+import net.minecraftforge.common.world.level.impl.NoiseLevelType;
+import net.minecraftforge.common.world.level.impl.OverworldLevelType;
+import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -47,32 +47,32 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Mod(GeneratorTypeTest.MODID)
+@Mod(LevelTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class GeneratorTypeTest
+public class LevelTypeTest
 {
-    public static final String MODID = "generator_type_test";
+    public static final String MODID = "level_type_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event)
     {
-        LOGGER.info("Registering GeneratorTypes");
-        GeneratorType test1 = new SingleBiomeGeneratorType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS);
-        GeneratorType test2 = new SpookyGeneratorType("spooky");
-        GeneratorType test3 = new CustomCheckboardType("checkerboard");
+        LOGGER.info("Registering LevelTypes");
+        LevelType test1 = new SingleBiomeLevelType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS);
+        LevelType test2 = new SpookyLevelType("spooky");
+        LevelType test3 = new CheckboardType("checkerboard");
 
-        GeneratorTypeManager.get().register(test1);
-        GeneratorTypeManager.get().register(test2);
-        GeneratorTypeManager.get().register(test3);
+        LevelTypeManager.get().register(test1);
+        LevelTypeManager.get().register(test2);
+        LevelTypeManager.get().register(test3);
 
-        GeneratorTypeManager.get().setDefaultGeneratorType(test1);
+        LevelTypeManager.get().setDefaultLevelType(test1);
     }
 
-    // same as default but uses the nether DimensionType
-    private static class SpookyGeneratorType extends OverworldGeneratorType
+    // same as default generation but uses the nether DimensionType
+    private static class SpookyLevelType extends OverworldLevelType
     {
-        public SpookyGeneratorType(String name)
+        public SpookyLevelType(String name)
         {
             super(name, DimensionSettings.field_242734_c, false, false);
         }
@@ -88,15 +88,15 @@ public class GeneratorTypeTest
         }
     }
 
-    // overworld using the checkerboard BiomeProvider
-    private static class CustomCheckboardType extends NoiseGeneratorType
+    // default generation using the checkerboard BiomeProvider
+    private static class CheckboardType extends NoiseLevelType
     {
-        public CustomCheckboardType(String name)
+        public CheckboardType(String name)
         {
             super(name, DimensionSettings.field_242734_c);
         }
 
-        // must hold left-shift for this option to be visible
+        // demo use of the debug flag (must hold shift for the option to appear when cycling level types)
         @Override
         public boolean isDebug()
         {

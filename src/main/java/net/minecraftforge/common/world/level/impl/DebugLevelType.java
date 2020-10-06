@@ -17,48 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.world.generator.type;
+package net.minecraftforge.common.world.level.impl;
 
 import com.mojang.serialization.Dynamic;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
-import net.minecraft.world.gen.NoiseChunkGenerator;
-import net.minecraftforge.common.world.generator.GeneratorType;
+import net.minecraftforge.common.world.level.LevelType;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
-public abstract class NoiseGeneratorType extends GeneratorType
+public class DebugLevelType extends LevelType
 {
-    private final RegistryKey<DimensionSettings> settings;
-
-    protected NoiseGeneratorType(String name, RegistryKey<DimensionSettings> settings)
-    {
+    public DebugLevelType(String name) {
         super(name);
-        this.settings = settings;
     }
 
-    public final RegistryKey<DimensionSettings> getSettingsKey()
+    @Override
+    public boolean isDebug()
     {
-        return settings;
+        return true;
     }
 
     @Override
     public ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {
-        BiomeProvider biomeProvider = createBiomeProvider(seed, biomes);
-        return createChunkGenerator(seed, biomeProvider, settings);
+        return new DebugChunkGenerator(biomes);
     }
-
-    public ChunkGenerator createChunkGenerator(long seed, BiomeProvider biomeProvider, Registry<DimensionSettings> settings)
-    {
-        Supplier<DimensionSettings> dimensionSettings = () -> settings.func_230516_a_(getSettingsKey());
-        return new NoiseChunkGenerator(biomeProvider, seed, dimensionSettings);
-    }
-
-    public abstract BiomeProvider createBiomeProvider(long seed, Registry<Biome> biomes);
 }

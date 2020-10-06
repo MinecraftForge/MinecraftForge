@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.world.generator.type;
+package net.minecraftforge.common.world.level.impl;
 
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
@@ -33,14 +33,14 @@ import net.minecraft.world.gen.FlatGenerationSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.world.generator.GeneratorType;
+import net.minecraftforge.common.world.level.LevelType;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class FlatGeneratorType extends GeneratorType
+public class FlatLevelType extends LevelType
 {
-    public FlatGeneratorType(String name)
+    public FlatLevelType(String name)
     {
         super(name);
     }

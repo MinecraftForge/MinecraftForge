@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.world.generator.type;
+package net.minecraftforge.common.world.level.impl;
 
 import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.CreateBuffetWorldScreen;
@@ -35,11 +35,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-public class SingleBiomeGeneratorType extends NoiseGeneratorType
+public class SingleBiomeLevelType extends NoiseLevelType
 {
     private final RegistryKey<Biome> biome;
 
-    public SingleBiomeGeneratorType(String name, RegistryKey<DimensionSettings> settings, RegistryKey<Biome> biome)
+    public SingleBiomeLevelType(String name, RegistryKey<DimensionSettings> settings, RegistryKey<Biome> biome)
     {
         super(name, settings);
         this.biome = biome;
