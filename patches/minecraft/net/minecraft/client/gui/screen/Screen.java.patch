@@ -7,23 +7,35 @@
 -      this.func_243308_b(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_);
 +      FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
 +      net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
-+      this.renderToolTip(p_230457_1_, Lists.transform(this.func_231151_a_(p_230457_2_), ITextComponent::func_241878_f), p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
++      this.renderWrappedToolTip(p_230457_1_, this.func_231151_a_(p_230457_2_), p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +      net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
     }
  
     public List<ITextComponent> func_231151_a_(ItemStack p_231151_1_) {
-@@ -129,6 +132,10 @@
+@@ -121,14 +124,20 @@
     }
+ 
+    public void func_238652_a_(MatrixStack p_238652_1_, ITextComponent p_238652_2_, int p_238652_3_, int p_238652_4_) {
+-      this.func_238654_b_(p_238652_1_, Arrays.asList(p_238652_2_.func_241878_f()), p_238652_3_, p_238652_4_);
++      this.func_243308_b(p_238652_1_, Arrays.asList(p_238652_2_), p_238652_3_, p_238652_4_);
+    }
+ 
+    public void func_243308_b(MatrixStack p_243308_1_, List<ITextComponent> p_243308_2_, int p_243308_3_, int p_243308_4_) {
+-      this.func_238654_b_(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
++      this.renderWrappedToolTip(p_243308_1_, p_243308_2_, p_243308_3_, p_243308_4_, field_230712_o_);
+    }
++   public void renderWrappedToolTip(MatrixStack matrixStack, List<? extends net.minecraft.util.text.ITextProperties> tooltips, int mouseX, int mouseY, FontRenderer font) {
++      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, tooltips, mouseX, mouseY, field_230708_k_, field_230709_l_, -1, font);
++   }
  
     public void func_238654_b_(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_) {
 +      this.renderToolTip(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230712_o_);
 +   }
 +   public void renderToolTip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font) {
-+      //net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230708_k_, field_230709_l_, -1, font);
        if (!p_238654_2_.isEmpty()) {
           int i = 0;
  
-@@ -289,9 +296,12 @@
+@@ -289,9 +298,12 @@
     }
  
     public void func_231159_b_(String p_231159_1_, boolean p_231159_2_) {
@@ -36,7 +48,7 @@
  
        this.field_230706_i_.field_71439_g.func_71165_d(p_231159_1_);
     }
-@@ -302,10 +312,17 @@
+@@ -302,10 +314,17 @@
        this.field_230712_o_ = p_231158_1_.field_71466_p;
        this.field_230708_k_ = p_231158_2_;
        this.field_230709_l_ = p_231158_3_;
@@ -54,7 +66,7 @@
     }
  
     public List<? extends IGuiEventListener> func_231039_at__() {
-@@ -328,6 +345,7 @@
+@@ -328,6 +347,7 @@
     public void func_238651_a_(MatrixStack p_238651_1_, int p_238651_2_) {
        if (this.field_230706_i_.field_71441_e != null) {
           this.func_238468_a_(p_238651_1_, 0, 0, this.field_230708_k_, this.field_230709_l_, -1072689136, -804253680);
@@ -62,7 +74,7 @@
        } else {
           this.func_231165_f_(p_238651_2_);
        }
-@@ -346,6 +364,7 @@
+@@ -346,6 +366,7 @@
        bufferbuilder.func_225582_a_((double)this.field_230708_k_, 0.0D, 0.0D).func_225583_a_((float)this.field_230708_k_ / 32.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        bufferbuilder.func_225582_a_(0.0D, 0.0D, 0.0D).func_225583_a_(0.0F, (float)p_231165_1_).func_225586_a_(64, 64, 64, 255).func_181675_d();
        tessellator.func_78381_a();
@@ -70,7 +82,7 @@
     }
  
     public boolean func_231177_au__() {
-@@ -432,4 +451,8 @@
+@@ -432,4 +453,8 @@
  
     public void func_230476_a_(List<Path> p_230476_1_) {
     }
