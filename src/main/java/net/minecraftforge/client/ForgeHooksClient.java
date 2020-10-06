@@ -96,7 +96,6 @@ import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
