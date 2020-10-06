@@ -24,8 +24,8 @@
 -      this.func_238654_b_(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
 +      this.renderWrappedToolTip(p_243308_1_, p_243308_2_, p_243308_3_, p_243308_4_, field_230712_o_);
     }
-+   public void renderWrappedToolTip(MatrixStack p_238654_1_, List<? extends net.minecraft.util.text.ITextProperties> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font) {
-+      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, field_230708_k_, field_230709_l_, -1, font);
++   public void renderWrappedToolTip(MatrixStack matrixStack, List<? extends net.minecraft.util.text.ITextProperties> tooltips, int mouseX, int mouseY, FontRenderer font) {
++      net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, tooltips, mouseX, mouseY, field_230708_k_, field_230709_l_, -1, font);
 +   }
  
     public void func_238654_b_(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_) {
