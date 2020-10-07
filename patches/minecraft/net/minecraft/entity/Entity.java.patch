@@ -231,7 +231,7 @@
           this.func_213319_R();
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : this.getPortalInfo(p_241206_1_, teleporter);
++         PortalInfo portalinfo = this.getPortalInfo(p_241206_1_, teleporter);
           if (portalinfo == null) {
              return null;
           } else {
@@ -244,7 +244,7 @@
                 entity.func_213317_d(portalinfo.field_222506_b);
                 p_241206_1_.func_217460_e(entity);
 -               if (p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-+               if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_ && teleporter.isVanilla()) {
++               if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_) {
                    ServerWorld.func_241121_a_(p_241206_1_);
                 }
              }
