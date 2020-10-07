@@ -48,6 +48,11 @@ public class LivingConversionEvent extends LivingEvent
             this.outcome = outcome;
         }
 
+        /**
+         * Gets the entity type of the new entity this living entity is
+         * converting to
+         * @return the entity type of the new entity
+         */
         public EntityType<? extends LivingEntity> getOutcome()
         {
             return outcome;
@@ -56,7 +61,8 @@ public class LivingConversionEvent extends LivingEvent
 
     /**
      * LivingConversionEvent.Post is triggered when an entity is replacing
-     * itself with another entity
+     * itself with another entity.
+     * The old living entity is likely to be removed right after this event.
      */
     public static class Post extends LivingConversionEvent
     {
@@ -68,6 +74,11 @@ public class LivingConversionEvent extends LivingEvent
             this.outcome = outcome;
         }
 
+        /**
+         * Gets the finalized new entity (with all data like potion
+         * effect and equipments set)
+         * @return the finalized new entity
+         */
         public LivingEntity getOutcome()
         {
             return outcome;
