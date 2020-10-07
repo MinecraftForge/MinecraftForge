@@ -149,27 +149,6 @@ public class StructureSpawnListGatherEvent extends Event
     }
 
     /**
-     * Removes spawns from the list of spawns for the given classification.
-     * @param classification Entity Classification
-     * @param spawners       Spawners
-     */
-    public void removeEntitySpawns(EntityClassification classification, List<MobSpawnInfo.Spawners> spawners)
-    {
-        if (this.entitySpawns.containsKey(classification))
-            this.entitySpawns.get(classification).removeAll(spawners);
-    }
-
-    /**
-     * Removes all spawns for the given classification.
-     * @param classification Entity Classification
-     */
-    public void clearEntitySpawns(EntityClassification classification)
-    {
-        if (this.entitySpawns.containsKey(classification))
-            this.entitySpawns.get(classification).clear();
-    }
-
-    /**
      * Gets an unmodifiable view of the map of spawns based on entity classification that is used to fill in the various spawn lists for the structure.
      */
     public Map<EntityClassification, List<MobSpawnInfo.Spawners>> getEntitySpawns()
