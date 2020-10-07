@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,14 +48,16 @@ public class StructureSpawnListGatherEvent extends Event
 
     private final Structure<?> structure;
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = new HashMap<>();
+    private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawnsUnmodifiableLists = new HashMap<>();
+    private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawnsUnmodifiable = Collections.unmodifiableMap(entitySpawnsUnmodifiableLists);
     private boolean restrictSpawnsToInside;
 
     public StructureSpawnListGatherEvent(Structure<?> structure)
     {
         this.structure = structure;
         this.restrictSpawnsToInside = this.structure.getDefaultRestrictsSpawnsToInside();
-        this.entitySpawns.put(EntityClassification.MONSTER, new ArrayList<>(this.structure.getDefaultSpawnList()));
-        this.entitySpawns.put(EntityClassification.CREATURE, new ArrayList<>(this.structure.getDefaultCreatureSpawnList()));
+        addEntitySpawns(EntityClassification.MONSTER, new ArrayList<>(this.structure.getDefaultSpawnList()));
+        addEntitySpawns(EntityClassification.CREATURE, new ArrayList<>(this.structure.getDefaultCreatureSpawnList()));
     }
 
     /**
@@ -91,21 +94,86 @@ public class StructureSpawnListGatherEvent extends Event
     }
 
     /**
-     * Gets the list representing the entity spawns for the given classification, creating and adding an empty list if needed. This list is mutable and spawns should be
-     * added/removed from this list.
+     * Gets an unmodifiable view of the the list representing the entity spawns for the given classification.
      * @param classification Entity Classification
      * @return The list of spawns for the given classification.
      */
     public List<MobSpawnInfo.Spawners> getEntitySpawns(EntityClassification classification)
     {
-        return this.entitySpawns.computeIfAbsent(classification, c -> new ArrayList<>());
+        return this.entitySpawnsUnmodifiableLists.getOrDefault(classification, Collections.emptyList());
     }
 
     /**
-     * Gets the map of spawns based on entity classification that is used to fill in the various spawn lists for the structure.
+     * Gets the internal spawn list for a given entity classification, or adds one if needed. (This includes adding it to the unmodifiable view)
+     */
+    private List<MobSpawnInfo.Spawners> getOrCreateEntitySpawns(EntityClassification classification)
+    {
+        return this.entitySpawns.computeIfAbsent(classification, c -> {
+            List<MobSpawnInfo.Spawners> spawners = new ArrayList<>();
+            //If the classification isn't in entitySpawns yet, also add an unmodifiable view of the list to
+            // the unmodifiable list spawn map
+            this.entitySpawnsUnmodifiableLists.put(c, Collections.unmodifiableList(spawners));
+            return spawners;
+        });
+    }
+
+    /**
+     * Adds a spawn to the list of spawns for the given classification.
+     * @param classification Entity Classification
+     * @param spawner        Spawner
+     */
+    public void addEntitySpawn(EntityClassification classification, MobSpawnInfo.Spawners spawner)
+    {
+        getOrCreateEntitySpawns(classification).add(spawner);
+    }
+
+    /**
+     * Adds spawns to the list of spawns for the given classification.
+     * @param classification Entity Classification
+     * @param spawners       Spawners to add
+     */
+    public void addEntitySpawns(EntityClassification classification, List<MobSpawnInfo.Spawners> spawners)
+    {
+        getOrCreateEntitySpawns(classification).addAll(spawners);
+    }
+
+    /**
+     * Removes a spawn from the list of spawns for the given classification.
+     * @param classification Entity Classification
+     * @param spawner        Spawner
+     */
+    public void removeEntitySpawn(EntityClassification classification, MobSpawnInfo.Spawners spawner)
+    {
+        if (this.entitySpawns.containsKey(classification))
+            this.entitySpawns.get(classification).remove(spawner);
+    }
+
+    /**
+     * Removes spawns from the list of spawns for the given classification.
+     * @param classification Entity Classification
+     * @param spawners       Spawners
+     */
+    public void removeEntitySpawns(EntityClassification classification, List<MobSpawnInfo.Spawners> spawners)
+    {
+        if (this.entitySpawns.containsKey(classification))
+            this.entitySpawns.get(classification).removeAll(spawners);
+    }
+
+    /**
+     * Removes all spawns for the given classification.
+     * @param classification Entity Classification
+     */
+    public void clearEntitySpawns(EntityClassification classification)
+    {
+        if (this.entitySpawns.containsKey(classification))
+            this.entitySpawns.get(classification).clear();
+    }
+
+    /**
+     * Gets an unmodifiable view of the map of spawns based on entity classification that is used to fill in the various spawn lists for the structure.
      */
     public Map<EntityClassification, List<MobSpawnInfo.Spawners>> getEntitySpawns()
     {
-        return entitySpawns;
+        return entitySpawnsUnmodifiable;
     }
 }

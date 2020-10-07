@@ -46,13 +46,13 @@ public class StructureSpawnListGatherEventTest
     {
         if (event.getStructure() == Structure.field_236375_k_)
         {
-            event.getEntitySpawns(EntityClassification.MONSTER).add(new MobSpawnInfo.Spawners(EntityType.WITHER_SKELETON, 100, 5, 15));
+            event.addEntitySpawn(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(EntityType.WITHER_SKELETON, 100, 5, 15));
             LOGGER.info("Adding wither skeleton spawns to strong holds");
         }
         else if (event.getStructure() == Structure.field_236373_i_)
         {
             event.allowSpawnsOutside();
-            event.getEntitySpawns(EntityClassification.MONSTER).add(new MobSpawnInfo.Spawners(EntityType.GUARDIAN, 100, 5, 15));
+            event.addEntitySpawn(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(EntityType.GUARDIAN, 100, 5, 15));
             LOGGER.info("Adding guardians spawns to shipwrecks");
         }
     }
