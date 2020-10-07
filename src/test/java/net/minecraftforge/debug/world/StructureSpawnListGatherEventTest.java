@@ -51,7 +51,7 @@ public class StructureSpawnListGatherEventTest
         }
         else if (event.getStructure() == Structure.field_236373_i_)
         {
-            event.allowSpawnsOutside();
+            event.setInsideOnly(false);
             event.addEntitySpawn(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(EntityType.GUARDIAN, 100, 5, 15));
             LOGGER.info("Adding guardians spawns to shipwrecks");
         }

@@ -81,7 +81,7 @@ public class StructureSpawnManager
         });
         Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = builder.build();
         if (!entitySpawns.isEmpty())
-            structuresWithSpawns.put(structure, new StructureSpawnInfo(entitySpawns, event.restrictsSpawnsToInside()));
+            structuresWithSpawns.put(structure, new StructureSpawnInfo(entitySpawns, event.isInsideOnly()));
     }
 
     /**
@@ -99,7 +99,7 @@ public class StructureSpawnManager
             Structure<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (spawnInfo.spawns.containsKey(classification) && structureManager.func_235010_a_(pos, spawnInfo.restrictsSpawnsToInside, structure).isValid())
+            if (spawnInfo.spawns.containsKey(classification) && structureManager.func_235010_a_(pos, spawnInfo.insideOnly, structure).isValid())
                 return spawnInfo.spawns.get(classification);
         }
         return null;
@@ -123,12 +123,12 @@ public class StructureSpawnManager
     private static class StructureSpawnInfo
     {
         private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns;
-        private final boolean restrictsSpawnsToInside;
+        private final boolean insideOnly;
 
-        private StructureSpawnInfo(Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns, boolean restrictsSpawnsToInside)
+        private StructureSpawnInfo(Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns, boolean insideOnly)
         {
             this.spawns = spawns;
-            this.restrictsSpawnsToInside = restrictsSpawnsToInside;
+            this.insideOnly = insideOnly;
         }
     }
 }

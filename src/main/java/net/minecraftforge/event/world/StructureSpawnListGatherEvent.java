@@ -50,12 +50,12 @@ public class StructureSpawnListGatherEvent extends Event
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = new HashMap<>();
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawnsUnmodifiableLists = new HashMap<>();
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawnsUnmodifiable = Collections.unmodifiableMap(entitySpawnsUnmodifiableLists);
-    private boolean restrictSpawnsToInside;
+    private boolean insideOnly;
 
     public StructureSpawnListGatherEvent(Structure<?> structure)
     {
         this.structure = structure;
-        this.restrictSpawnsToInside = this.structure.getDefaultRestrictsSpawnsToInside();
+        this.insideOnly = this.structure.getDefaultRestrictsSpawnsToInside();
         addEntitySpawns(EntityClassification.MONSTER, this.structure.getDefaultSpawnList());
         addEntitySpawns(EntityClassification.CREATURE, this.structure.getDefaultCreatureSpawnList());
     }
@@ -69,28 +69,20 @@ public class StructureSpawnListGatherEvent extends Event
     }
 
     /**
-     * Restrict entity spawn location checks to being inside the pieces of the structure.
+     * Change if entity spawn location checks are done against the entire bounds of the structure or only the inside the pieces of the structure.
+     * @param insideOnly {@code true} to restrict the spawn checks to inside the pieces of the structure, {@code false} to allow spawns outside
      */
-    public void restrictSpawnsToInside()
+    public void setInsideOnly(boolean insideOnly)
     {
-        this.restrictSpawnsToInside = true;
-    }
-
-    /**
-     * Allow entity spawn location checks to match being inside the overall structure but outside the individual pieces (basically equates to allowing spawns outside and
-     * nearby).
-     */
-    public void allowSpawnsOutside()
-    {
-        this.restrictSpawnsToInside = false;
+        this.insideOnly = insideOnly;
     }
 
     /**
      * Checks if spawns for the structure are restricted to being inside the individual pieces of the structure.
      */
-    public boolean restrictsSpawnsToInside()
+    public boolean isInsideOnly()
     {
-        return restrictSpawnsToInside;
+        return insideOnly;
     }
 
     /**
