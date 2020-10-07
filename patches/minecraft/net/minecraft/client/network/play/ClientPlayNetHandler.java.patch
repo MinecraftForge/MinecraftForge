@@ -60,7 +60,15 @@
        }
  
     }
-@@ -1299,6 +1311,7 @@
+@@ -1278,6 +1290,7 @@
+    public void func_195511_a(SCommandListPacket p_195511_1_) {
+       PacketThreadUtil.func_218797_a(p_195511_1_, this, this.field_147299_f);
+       this.field_195517_n = new CommandDispatcher<>(p_195511_1_.func_197693_a());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.CommandRegistryEvent(this.field_195517_n));
+    }
+ 
+    public void func_195512_a(SStopSoundPacket p_195512_1_) {
+@@ -1299,6 +1312,7 @@
        clientrecipebook.func_243196_a(this.field_199528_o.func_199510_b());
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -68,7 +76,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1376,7 +1389,7 @@
+@@ -1376,7 +1390,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -77,7 +85,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1388,11 +1401,14 @@
+@@ -1388,11 +1402,14 @@
     public void func_199723_a(STagsListPacket p_199723_1_) {
        PacketThreadUtil.func_218797_a(p_199723_1_, this, this.field_147299_f);
        ITagCollectionSupplier itagcollectionsupplier = p_199723_1_.func_199858_a();
@@ -93,7 +101,7 @@
           this.field_199725_m = itagcollectionsupplier;
           if (!this.field_147302_e.func_150731_c()) {
              itagcollectionsupplier.func_242212_e();
-@@ -1883,10 +1899,12 @@
+@@ -1883,10 +1900,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {
