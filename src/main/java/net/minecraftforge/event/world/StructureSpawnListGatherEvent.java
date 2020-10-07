@@ -56,8 +56,8 @@ public class StructureSpawnListGatherEvent extends Event
     {
         this.structure = structure;
         this.restrictSpawnsToInside = this.structure.getDefaultRestrictsSpawnsToInside();
-        addEntitySpawns(EntityClassification.MONSTER, new ArrayList<>(this.structure.getDefaultSpawnList()));
-        addEntitySpawns(EntityClassification.CREATURE, new ArrayList<>(this.structure.getDefaultCreatureSpawnList()));
+        addEntitySpawns(EntityClassification.MONSTER, this.structure.getDefaultSpawnList());
+        addEntitySpawns(EntityClassification.CREATURE, this.structure.getDefaultCreatureSpawnList());
     }
 
     /**
