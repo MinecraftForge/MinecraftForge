@@ -76,20 +76,6 @@ public class CommandSetDimension
                 repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
                 return repositionedEntity;
             }
-
-            @Override
-            public Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld,
-                    Entity entity)
-            {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld,
-                    ServerWorld toWorld, Entity entity)
-            {
-                return Optional.empty();
-            }
         }));
 
 

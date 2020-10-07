@@ -85,7 +85,7 @@ public interface ITeleporter
         if (this instanceof Teleporter)
             return ((Teleporter) this).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
         else
-            return Optional.ofNullable(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
+            return Optional.of(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
     }
 
     /**
@@ -96,9 +96,9 @@ public interface ITeleporter
     default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
     {
         if (this instanceof Teleporter)
-            return ((Teleporter) this).func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), entity.getHorizontalFacing().getAxis());
+            return ((Teleporter) this).func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, entity.func_233580_cy_()), entity.getHorizontalFacing().getAxis());
         else
-            return Optional.ofNullable(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
+            return Optional.of(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
     }
     
     /**

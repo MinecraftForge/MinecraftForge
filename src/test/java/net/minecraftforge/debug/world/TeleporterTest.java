@@ -152,21 +152,13 @@ public class TeleporterTest
             int scale = TeleporterHelper.getPortalSearchRadius(fromWorld, toWorld);
             BlockPos scaledPos = TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec()));
             poiManager.ensureLoadedAndValid(toWorld, scaledPos, scale);
-            Optional<PointOfInterest> optional = poiManager.getInSquare((poiType) -> {
-               return poiType == this.poi;
-            }, scaledPos, scale, PointOfInterestManager.Status.ANY).sorted(Comparator.<PointOfInterest>comparingDouble((poi) -> {
-               return poi.getPos().distanceSq(scaledPos);
-            }).thenComparingInt((poi) -> {
-               return poi.getPos().getY();
-            })).findFirst();
+            Optional<PointOfInterest> optional = poiManager.getInSquare(poiType -> poiType == this.poi, scaledPos, scale, PointOfInterestManager.Status.ANY).min(Comparator.<PointOfInterest>comparingDouble(poi -> poi.getPos().distanceSq(scaledPos)).thenComparingInt(poi -> poi.getPos().getY()));
             
-            return optional.map((poi) -> {
+            return optional.map(poi -> {
                BlockPos poiPos = poi.getPos();
                toWorld.getChunkProvider().registerTicket(TicketType.PORTAL, new ChunkPos(poiPos), 3, poiPos);
                BlockState blockstate = toWorld.getBlockState(poiPos);
-               return TeleportationRepositioner.func_243676_a(poiPos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, (pos) -> {
-                  return toWorld.getBlockState(pos) == blockstate;
-               });
+               return TeleportationRepositioner.func_243676_a(poiPos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, pos -> toWorld.getBlockState(pos) == blockstate);
             });
         }
         
