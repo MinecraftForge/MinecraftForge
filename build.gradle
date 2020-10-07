@@ -197,7 +197,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '34.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '34.1' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -451,7 +451,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
-        installer 'org.spongepowered:mixin:0.8.1'
+        installer 'org.spongepowered:mixin:0.8.2'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         fmllauncherImplementation 'org.lwjgl:lwjgl:3.2.2'
