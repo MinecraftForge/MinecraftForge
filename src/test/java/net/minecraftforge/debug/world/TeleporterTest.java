@@ -63,7 +63,7 @@ public class TeleporterTest
     protected static final String MODID = "teleporter_test";
     private static RegistryKey<World> RED_WORLD = RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(MODID, "red_world"));;
     private static RegistryKey<World> BLUE_WORLD = RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(MODID, "blue_world"));
-    // Triggered by standing on top. Red is scaled the same as the nether while blue is 1 to 1.
+    // Triggered by standing on top. Red is scaled the same as the nether while blue is 1 to 1
     private static TeleporterBlock RED_TELEPORTER, BLUE_TELEPORTER;
     private static PointOfInterestType RED_POI, BLUE_POI;
     
