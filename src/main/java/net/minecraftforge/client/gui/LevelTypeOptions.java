@@ -81,23 +81,23 @@ public class LevelTypeOptions
         LevelTypeOption.forEachEditScreen(editScreens::put);
     }
 
-    public synchronized int size()
+    public int size()
     {
         return options.size();
     }
 
-    public synchronized int indexOf(BiomeGeneratorTypeScreens generatorType)
+    public int indexOf(BiomeGeneratorTypeScreens generatorType)
     {
         return options.indexOf(generatorType);
     }
 
-    public synchronized BiomeGeneratorTypeScreens get(int index)
+    public BiomeGeneratorTypeScreens get(int index)
     {
         return options.get(index);
     }
 
-    // gets called when opening the CreateWorldScreen to set the initial generator type
-    public synchronized BiomeGeneratorTypeScreens getDefault()
+    // called when opening the CreateWorldScreen to set the initial generator type
+    public BiomeGeneratorTypeScreens getDefault()
     {
         LevelType levelType = LevelTypeManager.get().getDefaultLevelType();
         BiomeGeneratorTypeScreens option = levelTypes.get(levelType);
@@ -111,20 +111,20 @@ public class LevelTypeOptions
     }
 
     // determines whether a generator option has a a 'Customize' button to open its EditScreen
-    public synchronized boolean hasEditScreen(BiomeGeneratorTypeScreens generatorType)
+    public boolean hasEditScreen(BiomeGeneratorTypeScreens generatorType)
     {
         return editScreens.containsKey(generatorType);
     }
 
     // returns an 'EditScreenFactory' which creates new instances of the generator types configuration screen
     @Nullable
-    public synchronized BiomeGeneratorTypeScreens.IFactory getEditScreen(BiomeGeneratorTypeScreens generatorType)
+    public BiomeGeneratorTypeScreens.IFactory getEditScreen(BiomeGeneratorTypeScreens generatorType)
     {
         return editScreens.get(generatorType);
     }
 
     // synchronize the available GeneratorTypes with the options list so that they appear in the ui
-    public synchronized void updateOptions()
+    public void updateOptions()
     {
         LevelTypeManager.get().forEach(levelType -> {
             // only add new types
