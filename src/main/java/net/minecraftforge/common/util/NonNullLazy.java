@@ -75,11 +75,10 @@ public interface NonNullLazy<T> extends NonNullSupplier<T>
     }
 
     /**
-     * Thread-safe implementation.
+     * Thread-safe implementation. See {@link Lazy.Concurrent} for implementation details.
      */
     final class Concurrent<T> implements NonNullLazy<T>
     {
-        private static final Object lock = new Object();
         private volatile NonNullSupplier<T> supplier;
         private volatile T instance;
 
@@ -92,9 +91,10 @@ public interface NonNullLazy<T> extends NonNullSupplier<T>
         @Override
         public final T get()
         {
-            if (supplier != null)
+            NonNullSupplier<T> localSupplier = supplier;
+            if (localSupplier != null)
             {
-                synchronized (lock)
+                synchronized (localSupplier)
                 {
                     if (supplier != null)
                     {
