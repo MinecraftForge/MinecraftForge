@@ -1,0 +1,23 @@
+--- a/net/minecraft/util/registry/RegistryKeyCodec.java
++++ b/net/minecraft/util/registry/RegistryKeyCodec.java
+@@ -19,17 +19,17 @@
+    }
+ 
+    public static <E> Codec<List<Supplier<E>>> func_244328_b(RegistryKey<? extends Registry<E>> p_244328_0_, Codec<E> p_244328_1_) {
+-      return Codec.either(func_244325_a(p_244328_0_, p_244328_1_, false).listOf(), p_244328_1_.<Supplier<E>>xmap((p_244329_0_) -> {
++      return Codec.either(func_244325_a(p_244328_0_, p_244328_1_, false), p_244328_1_.<Supplier<E>>xmap((p_244329_0_) -> {
+          return () -> {
+             return p_244329_0_;
+          };
+-      }, Supplier::get).listOf()).xmap((p_244323_0_) -> {
++      }, Supplier::get)).xmap((p_244323_0_) -> {
+          return p_244323_0_.map((p_244327_0_) -> {
+             return p_244327_0_;
+          }, (p_244324_0_) -> {
+             return p_244324_0_;
+          });
+-      }, Either::left);
++      }, Either::left).listOf();
+    }
+ 
+    private static <E> RegistryKeyCodec<E> func_244325_a(RegistryKey<? extends Registry<E>> p_244325_0_, Codec<E> p_244325_1_, boolean p_244325_2_) {
