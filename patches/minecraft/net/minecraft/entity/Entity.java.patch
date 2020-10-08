@@ -272,7 +272,7 @@
 +
 +   @Nullable
 +   protected PortalInfo getPortalInfo(ServerWorld p_241829_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      PortalInfo portalInfo = teleporter != null && !teleporter.isVanilla() ? teleporter.findPortal((ServerWorld) this.field_70170_p, p_241829_1_, this).map(r -> teleporter.getPortalInfo((ServerWorld) this.field_70170_p, p_241829_1_, this, r)).orElse(null) : null; // Forge: logic in case portal isn't defined by vanilla
++      PortalInfo portalInfo = !teleporter.isVanilla() ? teleporter.findPortal((ServerWorld) this.field_70170_p, p_241829_1_, this).map(r -> teleporter.getPortalInfo((ServerWorld) this.field_70170_p, p_241829_1_, this, r)).orElse(null) : null; // Forge: logic in case portal isn't defined by vanilla
 +      if (portalInfo != null) return portalInfo;
        boolean flag = this.field_70170_p.func_234923_W_() == World.field_234920_i_ && p_241829_1_.func_234923_W_() == World.field_234918_g_;
        boolean flag1 = p_241829_1_.func_234923_W_() == World.field_234920_i_;
