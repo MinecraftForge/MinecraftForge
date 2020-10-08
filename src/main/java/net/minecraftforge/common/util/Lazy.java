@@ -78,7 +78,7 @@ public interface Lazy<T> extends Supplier<T>
      */
     final class Concurrent<T> implements Lazy<T>
     {
-        // Also used as the lock to reduce object size
+        private volatile Object lock = new Object();
         private volatile Supplier<T> supplier;
         private volatile T instance;
 
@@ -91,17 +91,20 @@ public interface Lazy<T> extends Supplier<T>
         @Override
         public final T get()
         {
-            // Copy the supplier to a local variable to prevent NPEs if the supplier field is set to null between the
+            // Copy the lock to a local variable to prevent NPEs if the lock field is set to null between the
             // null-check and the synchronization
-            Supplier<T> localSupplier = this.supplier;
-            if (localSupplier != null)
+            Object localLock = this.lock;
+            if (supplier != null)
             {
-                synchronized (localSupplier)
+                // localLock is not null here because supplier was non-null after we copied the lock and both of them
+                // are volatile
+                synchronized (localLock)
                 {
                     if (supplier != null)
                     {
                         instance = supplier.get();
                         supplier = null;
+                        this.lock = null;
                     }
                 }
             }
