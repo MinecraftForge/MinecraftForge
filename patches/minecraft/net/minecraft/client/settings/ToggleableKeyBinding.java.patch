@@ -13,5 +13,5 @@
        }
  
     }
-+   @Override public boolean func_151470_d() { return this.field_74513_e; }
++   @Override public boolean func_151470_d() { return this.field_74513_e && (isConflictContextAndModifierActive() || field_228053_a_.getAsBoolean()); }
  }
