@@ -16,15 +16,19 @@
        GameRules gamerules = serverworld1.func_82736_K();
        boolean flag = gamerules.func_223586_b(GameRules.field_226683_z_);
        boolean flag1 = gamerules.func_223586_b(GameRules.field_223612_o);
-@@ -156,6 +158,7 @@
+@@ -154,8 +156,11 @@
+       serverplaynethandler.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
+       serverplaynethandler.func_147359_a(new SPlayerAbilitiesPacket(p_72355_2_.field_71075_bZ));
        serverplaynethandler.func_147359_a(new SHeldItemChangePacket(p_72355_2_.field_71071_by.field_70461_c));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.BeforeRecipes());
        serverplaynethandler.func_147359_a(new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b()));
        serverplaynethandler.func_147359_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(p_72355_2_, this.field_72400_f.func_244266_aF());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.AfterRecipes());
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
-@@ -170,7 +173,7 @@
+@@ -170,7 +175,7 @@
  
        this.func_232641_a_(iformattabletextcomponent.func_240699_a_(TextFormatting.YELLOW), ChatType.SYSTEM, Util.field_240973_b_);
        serverplaynethandler.func_147364_a(p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_(), p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
@@ -33,7 +37,7 @@
        this.field_177454_f.put(p_72355_2_.func_110124_au(), p_72355_2_);
        this.func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
  
-@@ -225,6 +228,7 @@
+@@ -225,6 +230,7 @@
        }
  
        p_72355_2_.func_71116_b();
@@ -41,7 +45,7 @@
     }
  
     protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
-@@ -285,6 +289,7 @@
+@@ -285,6 +291,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -49,7 +53,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,6 +298,7 @@
+@@ -293,6 +300,7 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -57,7 +61,7 @@
        this.field_72412_k.func_237335_a_(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -307,6 +313,7 @@
+@@ -307,6 +315,7 @@
     }
  
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -65,7 +69,7 @@
        ServerWorld serverworld = p_72367_1_.func_71121_q();
        p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -330,7 +337,7 @@
+@@ -330,7 +339,7 @@
        p_72367_1_.func_213319_R();
        serverworld.func_217434_e(p_72367_1_);
        p_72367_1_.func_192039_O().func_192745_a();
@@ -74,7 +78,7 @@
        this.field_72400_f.func_201300_aS().func_201382_b(p_72367_1_);
        UUID uuid = p_72367_1_.func_110124_au();
        ServerPlayerEntity serverplayerentity = this.field_177454_f.get(uuid);
-@@ -400,8 +407,8 @@
+@@ -400,8 +409,8 @@
     }
  
     public ServerPlayerEntity func_232644_a_(ServerPlayerEntity p_232644_1_, boolean p_232644_2_) {
@@ -85,7 +89,7 @@
        BlockPos blockpos = p_232644_1_.func_241140_K_();
        float f = p_232644_1_.func_242109_L();
        boolean flag = p_232644_1_.func_241142_M_();
-@@ -424,6 +431,7 @@
+@@ -424,6 +433,7 @@
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
        serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
        serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
@@ -93,7 +97,7 @@
        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
  
-@@ -465,10 +473,11 @@
+@@ -465,10 +475,11 @@
        this.func_72354_b(serverplayerentity, serverworld1);
        this.func_187243_f(serverplayerentity);
        serverworld1.func_217433_d(serverplayerentity);
@@ -106,7 +110,7 @@
        if (flag2) {
           serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p(), 1.0F, 1.0F));
        }
-@@ -786,7 +795,7 @@
+@@ -786,7 +797,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -115,15 +119,19 @@
     }
  
     @Nullable
-@@ -804,6 +813,7 @@
+@@ -803,8 +814,11 @@
+          playeradvancements.func_240918_a_(this.field_72400_f.func_191949_aK());
        }
  
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.BeforeRecipes());
        this.func_148540_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(this.field_72400_f.func_244266_aF());
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.AfterRecipes());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
-@@ -816,4 +826,12 @@
+          serverplayerentity.field_71135_a.func_147359_a(supdaterecipespacket);
+@@ -816,4 +830,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
