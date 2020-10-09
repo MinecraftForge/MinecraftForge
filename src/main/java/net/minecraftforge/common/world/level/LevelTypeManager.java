@@ -31,6 +31,7 @@ import net.minecraftforge.common.world.level.impl.DebugLevelType;
 import net.minecraftforge.common.world.level.impl.FlatLevelType;
 import net.minecraftforge.common.world.level.impl.OverworldLevelType;
 import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
+import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,7 +76,12 @@ public class LevelTypeManager
     @Nullable
     public synchronized LevelType getLevelType(String name)
     {
-        return nameToValue.get(name);
+        LevelType levelType = nameToValue.get(name);
+        if (levelType == null)
+        {
+            levelType = nameToValue.get(StringUtils.toLowerCase(name));
+        }
+        return levelType;
     }
 
     /**

@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.world.level.LevelType;
 import net.minecraftforge.common.world.level.LevelTypeManager;
+import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -166,12 +167,12 @@ public class LevelTypeOptions
             String key = ((TranslationTextComponent) textComponent).getKey();
 
             int i = key.indexOf('.') + 1;
-            if (i > 0 && i < key.length() - 1)
+            if (i > 0 && i < key.length())
             {
                 return key.substring(i);
             }
         }
-        return textComponent.getString().toLowerCase();
+        return StringUtils.toLowerCase(textComponent.getString());
     }
 
     private static class LevelTypeOption extends BiomeGeneratorTypeScreens
