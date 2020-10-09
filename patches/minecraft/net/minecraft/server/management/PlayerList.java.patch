@@ -119,7 +119,7 @@
     }
  
     @Nullable
-@@ -803,8 +814,11 @@
+@@ -803,17 +814,28 @@
           playeradvancements.func_240918_a_(this.field_72400_f.func_191949_aK());
        }
  
@@ -127,11 +127,15 @@
        this.func_148540_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(this.field_72400_f.func_244266_aF());
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.AfterRecipes());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
           serverplayerentity.field_71135_a.func_147359_a(supdaterecipespacket);
-@@ -816,4 +830,12 @@
+          serverplayerentity.func_192037_E().func_192826_c(serverplayerentity);
+       }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.DataSyncEvent.AfterRecipes());
+ 
+    }
+ 
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
