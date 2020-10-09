@@ -55,6 +55,11 @@ public interface IForgeKeybinding
 
     void setKeyModifierAndCode(KeyModifier keyModifier, InputMappings.Input keyCode);
 
+    default boolean isConflictContextAndModifierActive()
+    {
+        return getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
+    }
+
     /**
      * Returns true when one of the bindings' key codes conflicts with the other's modifier.
      */

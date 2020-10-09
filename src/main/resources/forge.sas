@@ -92,5 +92,19 @@ net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraf
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
 net/minecraft/util/math/vector/Vector3d func_189984_a(Lnet/minecraft/util/math/vector/Vector2f;)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
 net/minecraft/util/math/vector/Vector3d func_189986_a(FF)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
+net/minecraft/util/math/vector/Vector4f # Vector 4f Class
 net/minecraft/util/text/Style func_240719_a_(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/text/Style; #setFontId
 net/minecraft/util/text/Style func_240723_c_(Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/util/text/Style; #forceFormatting
+# BiomeAmbiance getters, needed for it to be useful during BiomeLoadingEvent to be useful
+net/minecraft/world/biome/BiomeAmbience func_235213_a_()I # getFogColor
+net/minecraft/world/biome/BiomeAmbience func_235216_b_()I # getWaterColor
+net/minecraft/world/biome/BiomeAmbience func_235218_c_()I # getWaterFogColor
+net/minecraft/world/biome/BiomeAmbience func_242527_d()I # getSkyColor
+net/minecraft/world/biome/BiomeAmbience func_242528_e()Ljava/util/Optional; # getFoliageColor
+net/minecraft/world/biome/BiomeAmbience func_242529_f()Ljava/util/Optional; # getGrassColor
+net/minecraft/world/biome/BiomeAmbience func_242531_g()Lnet/minecraft/world/biome/BiomeAmbience$GrassColorModifier; # getGrassColorModifier
+net/minecraft/world/biome/BiomeAmbience func_235220_d_()Ljava/util/Optional; # getParticle
+net/minecraft/world/biome/BiomeAmbience func_235222_e_()Ljava/util/Optional; # getAmbientSound
+net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # getMoodSound
+net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
+net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic

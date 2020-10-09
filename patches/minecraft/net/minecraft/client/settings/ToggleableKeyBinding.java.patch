@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/settings/ToggleableKeyBinding.java
++++ b/net/minecraft/client/settings/ToggleableKeyBinding.java
+@@ -16,7 +16,7 @@
+ 
+    public void func_225593_a_(boolean p_225593_1_) {
+       if (this.field_228053_a_.getAsBoolean()) {
+-         if (p_225593_1_) {
++         if (p_225593_1_ && isConflictContextAndModifierActive()) {
+             super.func_225593_a_(!this.func_151470_d());
+          }
+       } else {
+@@ -24,4 +24,5 @@
+       }
+ 
+    }
++   @Override public boolean func_151470_d() { return this.field_74513_e && (isConflictContextAndModifierActive() || field_228053_a_.getAsBoolean()); }
+ }

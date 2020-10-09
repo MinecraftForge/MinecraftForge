@@ -51,8 +51,6 @@ public class BlockInfo
 
     private boolean full;
 
-    private float shx = 0, shy = 0, shz = 0;
-
     private int cachedTint = -1;
     private int cachedMultiplier = -1;
 
@@ -69,12 +67,9 @@ public class BlockInfo
         return cachedMultiplier;
     }
 
+    @Deprecated
     public void updateShift()
     {
-        Vector3d offset = state.getOffset(world, blockPos);
-        shx = (float) offset.x;
-        shy = (float) offset.y;
-        shz = (float) offset.z;
     }
 
     public void setWorld(IBlockDisplayReader world)
@@ -96,7 +91,6 @@ public class BlockInfo
         this.blockPos = blockPos;
         cachedTint = -1;
         cachedMultiplier = -1;
-        shx = shy = shz = 0;
     }
 
     public void reset()
@@ -106,7 +100,6 @@ public class BlockInfo
         this.blockPos = null;
         cachedTint = -1;
         cachedMultiplier = -1;
-        shx = shy = shz = 0;
     }
 
     private float combine(int c, int s1, int s2, int s3, boolean t0, boolean t1, boolean t2, boolean t3)
@@ -251,19 +244,22 @@ public class BlockInfo
         return full;
     }
 
+    @Deprecated
     public float getShx()
     {
-        return shx;
+        return 0;
     }
 
+    @Deprecated
     public float getShy()
     {
-        return shy;
+        return 0;
     }
 
+    @Deprecated
     public float getShz()
     {
-        return shz;
+        return 0;
     }
 
     public int getCachedTint()

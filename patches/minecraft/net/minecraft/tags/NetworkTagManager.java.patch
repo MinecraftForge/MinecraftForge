@@ -23,3 +23,12 @@
           ITagCollectionSupplier itagcollectionsupplier = ITagCollectionSupplier.func_242209_a(itagcollection, itagcollection1, itagcollection2, itagcollection3);
           Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
           if (!multimap.isEmpty()) {
+@@ -43,6 +46,8 @@
+                return p_232978_0_.getKey() + ":" + p_232978_0_.getValue();
+             }).sorted().collect(Collectors.joining(",")));
+          } else {
++            itagcollectionsupplier = ITagCollectionSupplier.reinjectOptionalTags(itagcollectionsupplier);
++            net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTagsCustomTypes();
+             TagCollectionManager.func_242180_a(itagcollectionsupplier);
+             this.field_242230_e = itagcollectionsupplier;
+          }
