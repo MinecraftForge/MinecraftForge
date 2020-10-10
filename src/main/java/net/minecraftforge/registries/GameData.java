@@ -594,14 +594,9 @@ public class GameData
 
         @Override
         public void onCreate(IForgeRegistryInternal<LevelType> owner, RegistryManager stage) {
-            owner.register(new OverworldLevelType("default", DimensionSettings.field_242734_c, false, false).setRegistryName("default"));
-            owner.register(new FlatLevelType("flat").setRegistryName("flat"));
-            owner.register(new OverworldLevelType("large_biomes", DimensionSettings.field_242734_c, false, true).setRegistryName("large_biomes"));
-            owner.register(new OverworldLevelType("amplified", DimensionSettings.field_242735_d, false, false).setRegistryName("amplified"));
-            owner.register(new SingleBiomeLevelType("single_biome_surface", DimensionSettings.field_242734_c, Biomes.PLAINS).setRegistryName("single_biome_surface"));
-            owner.register(new SingleBiomeLevelType("single_biome_caves", DimensionSettings.field_242738_g, Biomes.PLAINS).setRegistryName("single_biome_caves"));
-            owner.register(new SingleBiomeLevelType("single_biome_floating_islands", DimensionSettings.field_242739_h, Biomes.PLAINS).setRegistryName("single_biome_floating_islands"));
-            owner.register(new DebugLevelType("debug_all_block_states").setRegistryName("debug_all_block_states"));
+            owner.registerAll(LevelType.DEFAULT, LevelType.FLAT, LevelType.LARGE_BIOMES, LevelType.LARGE_BIOMES,
+                    LevelType.SINGLE_BIOME_SURFACE, LevelType.SINGLE_BIOME_CAVES,
+                    LevelType.SINGLE_BIOME_FLOATING_ISLANDS, LevelType.DEBUG_ALL_BLOCK_STATES);
         }
     }
 
