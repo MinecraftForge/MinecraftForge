@@ -32,25 +32,23 @@ import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.world.level.impl.DebugLevelType;
-import net.minecraftforge.common.world.level.impl.FlatLevelType;
-import net.minecraftforge.common.world.level.impl.OverworldLevelType;
-import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
 import net.minecraftforge.event.world.LevelTypeEvent;
+import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -58,24 +56,11 @@ import java.util.function.Supplier;
  * provide the {@link net.minecraft.world.gen.ChunkGenerator} for the overworld and can optionally define additional
  * dimensions that generate such as the_nether & end.
  */
-public abstract class LevelType extends ForgeRegistryEntry<LevelType>
+public abstract class LevelType implements IForgeRegistryEntry<LevelType>
 {
-    public static final LevelType DEFAULT = new OverworldLevelType("default", DimensionSettings.field_242734_c, false, false).setRegistryName("default");
-    public static final LevelType FLAT = new FlatLevelType("flat").setRegistryName("flat");
-    public static final LevelType LARGE_BIOMES = new OverworldLevelType("large_biomes", DimensionSettings.field_242734_c, false, true).setRegistryName("large_biomes");
-    public static final LevelType AMPLIFIED = new OverworldLevelType("amplified", DimensionSettings.field_242735_d, false, false).setRegistryName("amplified");
-    public static final LevelType SINGLE_BIOME_SURFACE = new SingleBiomeLevelType("single_biome_surface",DimensionSettings.field_242734_c, Biomes.PLAINS).setRegistryName("single_biome_surface");
-    public static final LevelType SINGLE_BIOME_CAVES = new SingleBiomeLevelType("single_biome_caves", DimensionSettings.field_242738_g, Biomes.PLAINS).setRegistryName("single_biome_caves");
-    public static final LevelType SINGLE_BIOME_FLOATING_ISLANDS = new SingleBiomeLevelType("single_biome_floating_islands", DimensionSettings.field_242739_h, Biomes.PLAINS).setRegistryName("single_biome_floating_islands");
-    public static final LevelType DEBUG_ALL_BLOCK_STATES = new DebugLevelType("debug_all_block_states").setRegistryName("debug_all_block_states");
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final String name;
-
-    public LevelType(@Nonnull String name)
-    {
-        this.name = name;
-    }
+    private ResourceLocation registryName = null;
 
     /**
      * Create a new instance of this {@link LevelType}'s overworld {@link net.minecraft.world.gen.ChunkGenerator}.
@@ -128,7 +113,7 @@ public abstract class LevelType extends ForgeRegistryEntry<LevelType>
         Registry<DimensionSettings> dimensionSettings = registries.func_243612_b(Registry.field_243549_ar);
         SimpleRegistry<Dimension> dimensions = getDimensions(seed, biomes, dimensionTypes, dimensionSettings, generatorOptions);
         // allow other mods to add dimensions to this level
-        MinecraftForge.EVENT_BUS.post(new LevelTypeEvent.CreateLevel(this, dimensions, seed, dimensionTypes, biomes, dimensionSettings, generatorOptions));
+        MinecraftForge.EVENT_BUS.post(new LevelTypeEvent.CreateLevel(this, dimensions, true, seed, dimensionTypes, biomes, dimensionSettings, generatorOptions));
         return new DimensionGeneratorSettings(seed, structures, bonusChest, dimensions);
     }
 
@@ -158,9 +143,46 @@ public abstract class LevelType extends ForgeRegistryEntry<LevelType>
     }
 
     @Override
+    public Class<LevelType> getRegistryType()
+    {
+        return LevelType.class;
+    }
+
+    @Nullable
+    @Override
+    public final ResourceLocation getRegistryName() {
+        return registryName;
+    }
+
+    @Override
+    public final LevelType setRegistryName(ResourceLocation name)
+    {
+        return setRegistryName(name.toString());
+    }
+
+    public final LevelType setRegistryName(String name)
+    {
+        if (getRegistryName() != null)
+            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
+        this.registryName = GameData.checkPrefix(name, true);
+        return this;
+    }
+
+    public final LevelType setRegistryName(String modID, String name)
+    {
+        return setRegistryName(modID + ":" + name);
+    }
+
+    // forge use only
+    void setNameUnchecked(@Nonnull String name)
+    {
+        this.registryName = new ResourceLocation(name);
+    }
+
+    @Override
     public String toString()
     {
-        return "LevelType{" + name + "}";
+        return "LevelType{" + getRegistryName() + "}";
     }
 
     @Override
@@ -169,13 +191,32 @@ public abstract class LevelType extends ForgeRegistryEntry<LevelType>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LevelType that = (LevelType) o;
-        return name.equals(that.name);
+        return Objects.equals(registryName, that.registryName);
     }
 
     @Override
     public int hashCode()
     {
-        return name.hashCode();
+        return registryName != null ? registryName.hashCode() : super.hashCode();
+    }
+
+    /**
+     * Look up a {@link LevelType} via the given name String. The provided name is expected to be in the form of a valid
+     * {@link net.minecraft.util.ResourceLocation}. Strings containing upper-case characters will be converted to
+     * lower-case & if no namespace is present teh default "minecraft" will be used.
+     *
+     * @param name The name of the level type to retrieve.
+     * @return The {@link LevelType} registered with the given name, or null.
+     */
+    @Nullable
+    public static LevelType forName(String name)
+    {
+        ResourceLocation registryName = ResourceLocation.tryCreate(name);
+        if (registryName == null)
+        {
+            registryName = ResourceLocation.tryCreate(StringUtils.toLowerCase(name));
+        }
+        return registryName == null ? null : ForgeRegistries.LEVEL_TYPES.getValue(registryName);
     }
 
     /**
@@ -194,24 +235,21 @@ public abstract class LevelType extends ForgeRegistryEntry<LevelType>
     @Nullable
     public static DimensionGeneratorSettings createGeneratorSettings(String name, long seed, boolean structures, boolean bonusChest, DynamicRegistries registries, String options)
     {
-        ResourceLocation location = new ResourceLocation(name);
-        LevelType levelType = ForgeRegistries.LEVEL_TYPES.getValue(location);
+        LevelType levelType = LevelType.forName(name);
         if (levelType == null)
         {
             LOGGER.error("Unknown LevelType '{}'", name);
             return null;
         }
-        else
+
+        try
         {
-            try
-            {
-                Dynamic<?> dynamic = options.isEmpty() ? null : new Dynamic<>(JsonOps.INSTANCE, JSONUtils.fromJson(options));
-                return levelType.createLevel(seed, structures, bonusChest, registries, dynamic);
-            } catch (JsonParseException e)
-            {
-                LOGGER.error("Failed to parse generator options", e);
-                return null;
-            }
+            Dynamic<?> dynamic = options.isEmpty() ? null : new Dynamic<>(JsonOps.INSTANCE, JSONUtils.fromJson(options));
+            return levelType.createLevel(seed, structures, bonusChest, registries, dynamic);
+        } catch (JsonParseException e)
+        {
+            LOGGER.error("Failed to parse generator options", e);
+            return null;
         }
     }
 

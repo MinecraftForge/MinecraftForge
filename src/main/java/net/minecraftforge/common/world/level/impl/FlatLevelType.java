@@ -40,11 +40,6 @@ import java.util.Optional;
 
 public class FlatLevelType extends LevelType
 {
-    public FlatLevelType(String name)
-    {
-        super(name);
-    }
-
     @Override
     public ChunkGenerator createOverworldChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {

@@ -34,6 +34,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.level.LevelType;
+import net.minecraftforge.common.world.level.LevelTypes;
 import net.minecraftforge.event.world.LevelTypeEvent;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,10 +43,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -62,7 +60,7 @@ public class LevelTypeOptions
     // Holds an ordered list of level type options that appear in the ui
     private final List<BiomeGeneratorTypeScreens> options = new ArrayList<>();
     // Maps LevelTypes to their corresponding ui option
-    private final Map<LevelType, BiomeGeneratorTypeScreens> levelTypes = new HashMap<>();
+    private final Map<ResourceLocation, BiomeGeneratorTypeScreens> levelTypes = new HashMap<>();
     // Maps ui options to their corresponding edit screen factory
     private final Map<BiomeGeneratorTypeScreens, BiomeGeneratorTypeScreens.IFactory> editScreens = new HashMap<>();
 
@@ -76,14 +74,13 @@ public class LevelTypeOptions
                 return;
             }
 
-            LevelType type = ForgeRegistries.LEVEL_TYPES.getValue(name);
-            if (type == null)
+            if (!ForgeRegistries.LEVEL_TYPES.containsKey(name))
             {
                 LOGGER.error("Missing LevelType for '{}'", name);
                 return;
             }
 
-            levelTypes.put(type, option);
+            levelTypes.put(name, option);
             options.add(option);
             LOGGER.debug("Registered LevelType '{}'", name);
         });
@@ -108,13 +105,13 @@ public class LevelTypeOptions
     // called when opening the CreateWorldScreen to set the initial generator type
     public BiomeGeneratorTypeScreens getDefault()
     {
-        LevelTypeEvent.DefaultLevelType event = new LevelTypeEvent.DefaultLevelType(LevelType.DEFAULT);
+        LevelTypeEvent.DefaultLevel event = new LevelTypeEvent.DefaultLevel(LevelTypes.DEFAULT);
         MinecraftForge.EVENT_BUS.post(event);
         LevelType type = event.getLevelType();
-        BiomeGeneratorTypeScreens option = levelTypes.get(type);
+        BiomeGeneratorTypeScreens option = levelTypes.get(type.getRegistryName());
         if (option == null) {
             updateOptions();
-            option = levelTypes.get(type);
+            option = levelTypes.get(type.getRegistryName());
         }
         return option != null ? option : BiomeGeneratorTypeScreens.field_239066_a_;
     }
@@ -136,12 +133,13 @@ public class LevelTypeOptions
     public void updateOptions()
     {
         ForgeRegistries.LEVEL_TYPES.forEach(levelType -> {
+            ResourceLocation name = levelType.getRegistryName();
             // only add new types
-            if (!levelTypes.containsKey(levelType))
+            if (!levelTypes.containsKey(name))
             {
                 LevelTypeOption option = new LevelTypeOption(levelType);
                 options.add(option);
-                levelTypes.put(levelType, option);
+                levelTypes.put(name, option);
                 BiomeGeneratorTypeScreens.IFactory factory = levelType.getEditScreen();
                 if (factory != null)
                 {
@@ -218,6 +216,7 @@ public class LevelTypeOptions
 
         private static String toTranslationKey(ResourceLocation name)
         {
+            Objects.requireNonNull(name, "LevelType cannot have a null registry name");
             // Note: "generator." is prepended in the parent class
             return name.getNamespace() + '.' + name.getPath();
         }

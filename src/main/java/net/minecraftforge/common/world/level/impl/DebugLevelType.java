@@ -31,10 +31,6 @@ import javax.annotation.Nullable;
 
 public class DebugLevelType extends LevelType
 {
-    public DebugLevelType(String name) {
-        super(name);
-    }
-
     @Override
     public boolean isDebug()
     {

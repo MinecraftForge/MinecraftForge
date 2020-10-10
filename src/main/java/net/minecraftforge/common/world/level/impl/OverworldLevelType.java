@@ -31,9 +31,9 @@ public class OverworldLevelType extends NoiseLevelType
     private final boolean largeBiomes;
     private final boolean legacyInitLayer;
 
-    public OverworldLevelType(String name, RegistryKey<DimensionSettings> settings, boolean legacy, boolean largeBiomes)
+    public OverworldLevelType(RegistryKey<DimensionSettings> settings, boolean legacy, boolean largeBiomes)
     {
-        super(name, settings);
+        super(settings);
         this.legacyInitLayer = legacy;
         this.largeBiomes = largeBiomes;
     }

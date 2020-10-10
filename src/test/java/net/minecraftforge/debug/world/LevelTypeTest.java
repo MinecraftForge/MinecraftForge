@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftforge.debug.world;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Dynamic;
@@ -36,10 +36,14 @@ import net.minecraftforge.common.world.level.LevelType;
 import net.minecraftforge.common.world.level.impl.NoiseLevelType;
 import net.minecraftforge.common.world.level.impl.OverworldLevelType;
 import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.LevelTypeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,40 +58,38 @@ public class LevelTypeTest
 {
     public static final String MODID = "level_type_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
+    private static final DeferredRegister<LevelType> LEVEL_REGISTER = DeferredRegister.create(ForgeRegistries.LEVEL_TYPES, MODID);
 
-    private static final LevelType SINGLE_AMPLIFIED = new SingleBiomeLevelType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS).setRegistryName(MODID, "single_amplified");
-    private static final LevelType SPOOKY = new SpookyLevelType("spooky").setRegistryName(MODID, "spooky");
-    private static final LevelType CHECKERBOARD = new CheckboardType("checkerboard").setRegistryName(MODID, "checkerboard");
+    private static final RegistryObject<LevelType> SINGLE_AMPLIFIED = LEVEL_REGISTER.register("single_amplified",  () -> new SingleBiomeLevelType(DimensionSettings.field_242735_d, Biomes.BADLANDS));
+    private static final RegistryObject<LevelType> SPOOKY = LEVEL_REGISTER.register("spooky", SpookyLevelType::new);
+    private static final RegistryObject<LevelType> CHECKERBOARD = LEVEL_REGISTER.register("checkerboard", CheckboardType::new);
 
     public LevelTypeTest()
     {
+        LEVEL_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         MinecraftForge.EVENT_BUS.addListener(LevelTypeTest::setDefaultLevelType);
         MinecraftForge.EVENT_BUS.addListener(LevelTypeTest::onCreateLevel);
     }
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<LevelType> event)
+    public static void complete(FMLLoadCompleteEvent event)
     {
-        LOGGER.info("Registering LevelTypes");
-        event.getRegistry().register(SINGLE_AMPLIFIED);
-        event.getRegistry().register(SPOOKY);
-        event.getRegistry().register(CHECKERBOARD);
+        ForgeRegistries.LEVEL_TYPES.forEach(t -> LOGGER.info("Level: {}", t.getRegistryName()));
     }
 
-    public static void setDefaultLevelType(LevelTypeEvent.DefaultLevelType event)
+    public static void setDefaultLevelType(LevelTypeEvent.DefaultLevel event)
     {
-        LOGGER.info("Setting default LevelType to: {}", SINGLE_AMPLIFIED.getRegistryName());
-        event.setLevelType(SINGLE_AMPLIFIED);
+        LOGGER.info("Setting default LevelType to: {}", SINGLE_AMPLIFIED.getId());
+        event.setLevelType(SINGLE_AMPLIFIED.get());
     }
 
     public static void onCreateLevel(LevelTypeEvent.CreateLevel event)
     {
-        LOGGER.info("Creating LevelType: {}", event.getLevelType());
-        if (event.getLevelType() == SINGLE_AMPLIFIED)
+        if (event.getLevelType() == SINGLE_AMPLIFIED.get())
         {
             LOGGER.info("Replacing nether dimension in level: {}", event.getLevelType().getRegistryName());
             Supplier<DimensionType> nether = () -> event.getDimensionTypes().func_230516_a_(DimensionType.field_236000_d_);
-            ChunkGenerator generator = SPOOKY.createOverworldChunkGenerator(event.getSeed(), event.getBiomes(), event.getDimensionSettings(), event.getGeneratorOptions());
+            ChunkGenerator generator = SPOOKY.get().createOverworldChunkGenerator(event.getSeed(), event.getBiomes(), event.getDimensionSettings(), event.getGeneratorOptions());
             Dimension dimension = new Dimension(nether, generator);
             // replace the nether dimension with our 'spooky' one
             event.addDimension(Dimension.field_236054_c_, dimension, true);
@@ -97,9 +99,9 @@ public class LevelTypeTest
     // same as default generation but uses the nether DimensionType
     private static class SpookyLevelType extends OverworldLevelType
     {
-        public SpookyLevelType(String name)
+        public SpookyLevelType()
         {
-            super(name, DimensionSettings.field_242734_c, false, false);
+            super(DimensionSettings.field_242734_c, false, false);
         }
 
         // need to override #createDimensionRegistry so that an alternate DimensionType can be set
@@ -116,9 +118,9 @@ public class LevelTypeTest
     // default generation using the checkerboard BiomeProvider
     private static class CheckboardType extends NoiseLevelType
     {
-        public CheckboardType(String name)
+        public CheckboardType()
         {
-            super(name, DimensionSettings.field_242734_c);
+            super(DimensionSettings.field_242734_c);
         }
 
         // demo use of the debug flag (must hold shift for the option to appear when cycling level types)

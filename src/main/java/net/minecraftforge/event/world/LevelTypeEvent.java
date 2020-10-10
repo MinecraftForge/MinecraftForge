@@ -31,11 +31,16 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraftforge.common.world.level.LevelType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.OptionalInt;
 
-public abstract class LevelTypeEvent extends Event implements IModBusEvent {
+public abstract class LevelTypeEvent extends Event implements IModBusEvent
+{
+    private static final Logger LOGGER = LogManager.getLogger();
 
     protected LevelType levelType;
 
@@ -52,16 +57,28 @@ public abstract class LevelTypeEvent extends Event implements IModBusEvent {
     /**
      * Used to set the default {@link net.minecraftforge.common.world.level.LevelType} for creating new worlds with.
      */
-    public static class DefaultLevelType extends LevelTypeEvent
+    public static class DefaultLevel extends LevelTypeEvent
     {
-        public DefaultLevelType(LevelType levelType)
+        public DefaultLevel(LevelType levelType)
         {
             super(levelType);
         }
 
-        public void setLevelType(LevelType levelType)
+        /**
+         * Set the default {@link net.minecraftforge.common.world.level.LevelType}
+         *
+         * @param levelType The value to use as default.
+         * @return True if the default level type was updated.
+         */
+        public boolean setLevelType(@Nonnull LevelType levelType)
         {
-            this.levelType = levelType;
+            if (this.levelType != levelType)
+            {
+                LOGGER.info("Default LevelType '{}' has been overridden by '{}'", this.levelType.getRegistryName(), levelType.getRegistryName());
+                this.levelType = levelType;
+                return true;
+            }
+            return false;
         }
     }
 
@@ -76,9 +93,11 @@ public abstract class LevelTypeEvent extends Event implements IModBusEvent {
         private final Registry<Biome> biomes;
         private final Registry<DimensionSettings> settings;
         private final Dynamic<?> generatorOptions;
+
+        private final boolean replacements;
         private final SimpleRegistry<Dimension> dimensions;
 
-        public CreateLevel(LevelType levelType, SimpleRegistry<Dimension> dimensions, long seed, Registry<DimensionType> types, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
+        public CreateLevel(LevelType levelType, SimpleRegistry<Dimension> dimensions, boolean replacements, long seed, Registry<DimensionType> types, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
         {
             super(levelType);
             this.dimensions = dimensions;
@@ -86,7 +105,13 @@ public abstract class LevelTypeEvent extends Event implements IModBusEvent {
             this.types = types;
             this.biomes = biomes;
             this.settings = settings;
+            this.replacements = replacements;
             this.generatorOptions = generatorOptions;
+        }
+
+        public boolean allowsReplacements()
+        {
+            return replacements;
         }
 
         public long getSeed()
@@ -114,17 +139,38 @@ public abstract class LevelTypeEvent extends Event implements IModBusEvent {
             return generatorOptions;
         }
 
+        /**
+         * Add a {@link net.minecraft.world.Dimension} to the levels dimension registry if an entry has not
+         * already been registered for the provided {@link net.minecraft.util.RegistryKey}.
+         *
+         * @param key       The registry key of the dimension to add
+         * @param dimension The dimension to add
+         * @return True if the dimension was added to the levels dimension registry.
+         */
         public boolean addDimension(RegistryKey<Dimension> key, Dimension dimension)
         {
             return addDimension(key, dimension, false);
         }
 
+        /**
+         * Add a {@link net.minecraft.world.Dimension} to the levels dimension registry, optionally replacing an
+         * existing entry for the provided {@link net.minecraft.util.RegistryKey} if the event supports it.
+         *
+         * @param key       The registry key of the dimension to add
+         * @param dimension The dimension to add
+         * @param replace   A flag to control whether an existing value for the key will be replaced.
+         * @return True if the dimension was added to the levels dimension registry.
+         */
         public boolean addDimension(RegistryKey<Dimension> key, Dimension dimension, boolean replace)
         {
-            if (replace || dimensions.func_230516_a_(key) == null)
+            boolean present = dimensions.func_230516_a_(key) != null;
+            if ((replace && allowsReplacements()) || !present)
             {
-                // registers or replaces a dimension
                 dimensions.func_241874_a(OptionalInt.empty(), key, dimension, Lifecycle.stable());
+                if (present)
+                {
+                    LOGGER.info("Dimension for '{}' has been replaced by '{}'", key.func_240901_a_(), dimension);
+                }
                 return true;
             }
             return false;

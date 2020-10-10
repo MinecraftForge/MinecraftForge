@@ -39,9 +39,9 @@ public class SingleBiomeLevelType extends NoiseLevelType
 {
     private final RegistryKey<Biome> biome;
 
-    public SingleBiomeLevelType(String name, RegistryKey<DimensionSettings> settings, RegistryKey<Biome> biome)
+    public SingleBiomeLevelType(RegistryKey<DimensionSettings> settings, RegistryKey<Biome> biome)
     {
-        super(name, settings);
+        super(settings);
         this.biome = biome;
     }
 

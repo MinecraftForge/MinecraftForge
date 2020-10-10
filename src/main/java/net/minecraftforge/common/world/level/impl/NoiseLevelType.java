@@ -36,9 +36,8 @@ public abstract class NoiseLevelType extends LevelType
 {
     private final RegistryKey<DimensionSettings> settings;
 
-    protected NoiseLevelType(String name, RegistryKey<DimensionSettings> settings)
+    protected NoiseLevelType(RegistryKey<DimensionSettings> settings)
     {
-        super(name);
         this.settings = settings;
     }
 

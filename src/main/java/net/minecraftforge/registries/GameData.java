@@ -21,9 +21,6 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
-
-import java.util.*;
-
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -60,10 +57,8 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.DebugChunkGenerator;
-import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -77,38 +72,31 @@ import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.level.LevelType;
-import net.minecraftforge.common.world.level.impl.DebugLevelType;
-import net.minecraftforge.common.world.level.impl.FlatLevelType;
-import net.minecraftforge.common.world.level.impl.OverworldLevelType;
-import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
-
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-
 import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
  * INTERNAL ONLY
@@ -170,7 +158,7 @@ public class GameData
         makeRegistry(ACTIVITIES, Activity.class).disableSaving().disableSync().create();
 
         // Worldgen
-        makeRegistry(LEVEL_TYPES, c(LevelType.class)).addCallback(LevelCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(LEVEL_TYPES, LevelType.class).disableSaving().disableSync().create();
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, c(SurfaceBuilder.class)).disableSaving().disableSync().create();
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
@@ -585,19 +573,6 @@ public class GameData
         public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
         {
             owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
-        }
-    }
-
-    private static class LevelCallbacks implements IForgeRegistry.CreateCallback<LevelType>
-    {
-        static final LevelCallbacks INSTANCE = new LevelCallbacks();
-
-        @Override
-        public void onCreate(IForgeRegistryInternal<LevelType> owner, RegistryManager stage)
-        {
-            owner.registerAll(LevelType.DEFAULT, LevelType.FLAT, LevelType.LARGE_BIOMES, LevelType.LARGE_BIOMES,
-                    LevelType.SINGLE_BIOME_SURFACE, LevelType.SINGLE_BIOME_CAVES,
-                    LevelType.SINGLE_BIOME_FLOATING_ISLANDS, LevelType.DEBUG_ALL_BLOCK_STATES);
         }
     }
 

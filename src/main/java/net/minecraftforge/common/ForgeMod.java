@@ -24,6 +24,8 @@ import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
+import net.minecraftforge.common.world.level.LevelType;
+import net.minecraftforge.common.world.level.LevelTypes;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
@@ -214,6 +216,12 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public void registerLevelTypes(RegistryEvent.Register<LevelType> event)
+    {
+        LevelTypes.forEach(event.getRegistry()::register);
     }
 
     @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
