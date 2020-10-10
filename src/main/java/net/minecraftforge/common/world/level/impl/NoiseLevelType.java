@@ -48,7 +48,7 @@ public abstract class NoiseLevelType extends LevelType
     }
 
     @Override
-    public ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
+    public ChunkGenerator createOverworldChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {
         BiomeProvider biomeProvider = createBiomeProvider(seed, biomes);
         return createChunkGenerator(seed, biomeProvider, settings);

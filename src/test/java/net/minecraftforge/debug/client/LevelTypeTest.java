@@ -31,14 +31,15 @@ import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.CheckerboardBiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.level.LevelType;
-import net.minecraftforge.common.world.level.LevelTypeManager;
 import net.minecraftforge.common.world.level.impl.NoiseLevelType;
 import net.minecraftforge.common.world.level.impl.OverworldLevelType;
 import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.LevelTypeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,19 +55,43 @@ public class LevelTypeTest
     public static final String MODID = "level_type_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
 
+    private static final LevelType SINGLE_AMPLIFIED = new SingleBiomeLevelType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS).setRegistryName(MODID, "single_amplified");
+    private static final LevelType SPOOKY = new SpookyLevelType("spooky").setRegistryName(MODID, "spooky");
+    private static final LevelType CHECKERBOARD = new CheckboardType("checkerboard").setRegistryName(MODID, "checkerboard");
+
+    public LevelTypeTest()
+    {
+        MinecraftForge.EVENT_BUS.addListener(LevelTypeTest::setDefaultLevelType);
+        MinecraftForge.EVENT_BUS.addListener(LevelTypeTest::onCreateLevel);
+    }
+
     @SubscribeEvent
-    public static void setup(FMLCommonSetupEvent event)
+    public static void register(RegistryEvent.Register<LevelType> event)
     {
         LOGGER.info("Registering LevelTypes");
-        LevelType test1 = new SingleBiomeLevelType("single_amplified", DimensionSettings.field_242735_d, Biomes.BADLANDS);
-        LevelType test2 = new SpookyLevelType("spooky");
-        LevelType test3 = new CheckboardType("checkerboard");
+        event.getRegistry().register(SINGLE_AMPLIFIED);
+        event.getRegistry().register(SPOOKY);
+        event.getRegistry().register(CHECKERBOARD);
+    }
 
-        LevelTypeManager.get().register(test1);
-        LevelTypeManager.get().register(test2);
-        LevelTypeManager.get().register(test3);
+    public static void setDefaultLevelType(LevelTypeEvent.DefaultLevelType event)
+    {
+        LOGGER.info("Setting default LevelType to: {}", SINGLE_AMPLIFIED.getRegistryName());
+        event.setLevelType(SINGLE_AMPLIFIED);
+    }
 
-        LevelTypeManager.get().setDefaultLevelType(test1);
+    public static void onCreateLevel(LevelTypeEvent.CreateLevel event)
+    {
+        LOGGER.info("Creating LevelType: {}", event.getLevelType());
+        if (event.getLevelType() == SINGLE_AMPLIFIED)
+        {
+            LOGGER.info("Replacing nether dimension in level: {}", event.getLevelType().getRegistryName());
+            Supplier<DimensionType> nether = () -> event.getDimensionTypes().func_230516_a_(DimensionType.field_236000_d_);
+            ChunkGenerator generator = SPOOKY.createOverworldChunkGenerator(event.getSeed(), event.getBiomes(), event.getDimensionSettings(), event.getGeneratorOptions());
+            Dimension dimension = new Dimension(nether, generator);
+            // replace the nether dimension with our 'spooky' one
+            event.addDimension(Dimension.field_236054_c_, dimension, true);
+        }
     }
 
     // same as default generation but uses the nether DimensionType
@@ -79,11 +104,11 @@ public class LevelTypeTest
 
         // need to override #createDimensionRegistry so that an alternate DimensionType can be set
         @Override
-        public SimpleRegistry<Dimension> createDimensionRegistry(long seed, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions)
+        public SimpleRegistry<Dimension> getDimensions(long seed, Registry<Biome> biomes, Registry<DimensionType> dimensionTypes, Registry<DimensionSettings> dimensionSettings, @Nullable Dynamic<?> generatorOptions)
         {
-            SimpleRegistry<Dimension> dimensions = super.createDimensionRegistry(seed, biomes, dimensionTypes, dimensionSettings, generatorOptions);
+            SimpleRegistry<Dimension> dimensions = super.getDimensions(seed, biomes, dimensionTypes, dimensionSettings, generatorOptions);
             Supplier<DimensionType> nether = () -> dimensionTypes.func_230516_a_(DimensionType.field_236000_d_);
-            ChunkGenerator chunkGenerator = createChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
+            ChunkGenerator chunkGenerator = createOverworldChunkGenerator(seed, biomes, dimensionSettings, generatorOptions);
             return setOverworldGenerator(dimensions, nether, chunkGenerator);
         }
     }

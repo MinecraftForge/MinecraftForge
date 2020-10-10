@@ -60,8 +60,10 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.DebugChunkGenerator;
+import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.blockplacer.BlockPlacerType;
 import net.minecraft.world.gen.blockstateprovider.BlockStateProviderType;
 import net.minecraft.world.gen.carver.WorldCarver;
@@ -74,6 +76,11 @@ import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.level.LevelType;
+import net.minecraftforge.common.world.level.impl.DebugLevelType;
+import net.minecraftforge.common.world.level.impl.FlatLevelType;
+import net.minecraftforge.common.world.level.impl.OverworldLevelType;
+import net.minecraftforge.common.world.level.impl.SingleBiomeLevelType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.ModContainer;
@@ -163,6 +170,7 @@ public class GameData
         makeRegistry(ACTIVITIES, Activity.class).disableSaving().disableSync().create();
 
         // Worldgen
+        makeRegistry(LEVEL_TYPES, c(LevelType.class)).addCallback(LevelCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, c(SurfaceBuilder.class)).disableSaving().disableSync().create();
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
@@ -577,6 +585,23 @@ public class GameData
         public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
         {
             owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
+        }
+    }
+
+    private static class LevelCallbacks implements IForgeRegistry.CreateCallback<LevelType>
+    {
+        static final LevelCallbacks INSTANCE = new LevelCallbacks();
+
+        @Override
+        public void onCreate(IForgeRegistryInternal<LevelType> owner, RegistryManager stage) {
+            owner.register(new OverworldLevelType("default", DimensionSettings.field_242734_c, false, false).setRegistryName("default"));
+            owner.register(new FlatLevelType("flat").setRegistryName("flat"));
+            owner.register(new OverworldLevelType("large_biomes", DimensionSettings.field_242734_c, false, true).setRegistryName("large_biomes"));
+            owner.register(new OverworldLevelType("amplified", DimensionSettings.field_242735_d, false, false).setRegistryName("amplified"));
+            owner.register(new SingleBiomeLevelType("single_biome_surface", DimensionSettings.field_242734_c, Biomes.PLAINS).setRegistryName("single_biome_surface"));
+            owner.register(new SingleBiomeLevelType("single_biome_caves", DimensionSettings.field_242738_g, Biomes.PLAINS).setRegistryName("single_biome_caves"));
+            owner.register(new SingleBiomeLevelType("single_biome_floating_islands", DimensionSettings.field_242739_h, Biomes.PLAINS).setRegistryName("single_biome_floating_islands"));
+            owner.register(new DebugLevelType("debug_all_block_states").setRegistryName("debug_all_block_states"));
         }
     }
 

@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
++++ b/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
+@@ -205,7 +205,8 @@
+             i = (long)s1.hashCode();
+          }
+       }
+-
++      DimensionGeneratorSettings generatorSettings = net.minecraftforge.common.world.level.LevelType.createGeneratorSettings(s4, i, flag, false, p_242753_0_, s);
++      if (generatorSettings != null) return generatorSettings;
+       Registry<DimensionType> registry2 = p_242753_0_.func_243612_b(Registry.field_239698_ad_);
+       Registry<Biome> registry = p_242753_0_.func_243612_b(Registry.field_239720_u_);
+       Registry<DimensionSettings> registry1 = p_242753_0_.func_243612_b(Registry.field_243549_ar);

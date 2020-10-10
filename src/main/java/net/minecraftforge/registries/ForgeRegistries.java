@@ -57,6 +57,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.level.LevelType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -94,6 +95,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<Activity> ACTIVITIES = RegistryManager.ACTIVE.getRegistry(Activity.class);
 
     // Worldgen
+    public static final IForgeRegistry<LevelType> LEVEL_TYPES = RegistryManager.ACTIVE.getRegistry(LevelType.class);
     public static final IForgeRegistry<WorldCarver<?>> WORLD_CARVERS = RegistryManager.ACTIVE.getRegistry(WorldCarver.class);
     public static final IForgeRegistry<SurfaceBuilder<?>> SURFACE_BUILDERS = RegistryManager.ACTIVE.getRegistry(SurfaceBuilder.class);
     public static final IForgeRegistry<Feature<?>> FEATURES = RegistryManager.ACTIVE.getRegistry(Feature.class);
@@ -135,6 +137,7 @@ public class ForgeRegistries
         public static final RegistryKey<Registry<SensorType<?>>> SENSOR_TYPES = key("sensor_type");
         public static final RegistryKey<Registry<Schedule>> SCHEDULES = key("schedule");
         public static final RegistryKey<Registry<Activity>> ACTIVITIES = key("activity");
+        public static final RegistryKey<Registry<LevelType>> LEVEL_TYPES = key("worldgen/level_type");
         public static final RegistryKey<Registry<WorldCarver<?>>> WORLD_CARVERS = key("worldgen/carver");
         public static final RegistryKey<Registry<SurfaceBuilder<?>>> SURFACE_BUILDERS = key("worldgen/surface_builder");
         public static final RegistryKey<Registry<Feature<?>>> FEATURES = key("worldgen/feature");

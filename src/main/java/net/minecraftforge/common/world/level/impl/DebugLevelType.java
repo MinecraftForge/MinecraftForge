@@ -42,7 +42,7 @@ public class DebugLevelType extends LevelType
     }
 
     @Override
-    public ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
+    public ChunkGenerator createOverworldChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {
         return new DebugChunkGenerator(biomes);
     }

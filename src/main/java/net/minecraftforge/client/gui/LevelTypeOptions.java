@@ -21,6 +21,7 @@ package net.minecraftforge.client.gui;
 
 import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
@@ -31,9 +32,11 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.level.LevelType;
-import net.minecraftforge.common.world.level.LevelTypeManager;
+import net.minecraftforge.event.world.LevelTypeEvent;
 import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,8 +51,7 @@ import java.util.function.Consumer;
 
 /**
  * LevelTypeOptions maintains a list of {@link net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens} which are
- * used in the world creation gui to represent user-selectable {@link LevelType}s that have been registered with
- * the {@link LevelTypeManager}.
+ * used in the world creation gui to represent user-selectable {@link LevelType}s.
  */
 @OnlyIn(Dist.CLIENT)
 public class LevelTypeOptions
@@ -68,13 +70,19 @@ public class LevelTypeOptions
     {
         // populate with the vanilla generators/edit screens
         LevelTypeOption.forEachOption(option -> {
-            String name = getOptionName(option);
-            LevelType type = LevelTypeManager.get().getLevelType(name);
+            ResourceLocation name = getOptionName(option);
+            if (name == null)
+            {
+                return;
+            }
+
+            LevelType type = ForgeRegistries.LEVEL_TYPES.getValue(name);
             if (type == null)
             {
                 LOGGER.error("Missing LevelType for '{}'", name);
                 return;
             }
+
             levelTypes.put(type, option);
             options.add(option);
             LOGGER.debug("Registered LevelType '{}'", name);
@@ -100,13 +108,13 @@ public class LevelTypeOptions
     // called when opening the CreateWorldScreen to set the initial generator type
     public BiomeGeneratorTypeScreens getDefault()
     {
-        LevelType levelType = LevelTypeManager.get().getDefaultLevelType();
-        BiomeGeneratorTypeScreens option = levelTypes.get(levelType);
-        if (option == null)
-        {
-            // synchronize entries with the GeneratorTypeManager & try again
+        LevelTypeEvent.DefaultLevelType event = new LevelTypeEvent.DefaultLevelType(LevelType.DEFAULT);
+        MinecraftForge.EVENT_BUS.post(event);
+        LevelType type = event.getLevelType();
+        BiomeGeneratorTypeScreens option = levelTypes.get(type);
+        if (option == null) {
             updateOptions();
-            option = levelTypes.get(levelType);
+            option = levelTypes.get(type);
         }
         return option != null ? option : BiomeGeneratorTypeScreens.field_239066_a_;
     }
@@ -127,7 +135,7 @@ public class LevelTypeOptions
     // synchronize the available GeneratorTypes with the options list so that they appear in the ui
     public void updateOptions()
     {
-        LevelTypeManager.get().forEach(levelType -> {
+        ForgeRegistries.LEVEL_TYPES.forEach(levelType -> {
             // only add new types
             if (!levelTypes.containsKey(levelType))
             {
@@ -139,7 +147,7 @@ public class LevelTypeOptions
                 {
                     editScreens.put(option, factory);
                 }
-                LOGGER.debug("Registered LevelType '{}'", levelType.getName());
+                LOGGER.debug("Registered LevelType '{}'", levelType.getRegistryName());
             }
         });
     }
@@ -158,7 +166,8 @@ public class LevelTypeOptions
         return false;
     }
 
-    private static String getOptionName(BiomeGeneratorTypeScreens option)
+    @Nullable
+    private static ResourceLocation getOptionName(BiomeGeneratorTypeScreens option)
     {
         ITextComponent textComponent = option.func_239077_a_();
         if (textComponent instanceof TranslationTextComponent)
@@ -169,10 +178,11 @@ public class LevelTypeOptions
             int i = key.indexOf('.') + 1;
             if (i > 0 && i < key.length())
             {
-                return key.substring(i);
+                String name = StringUtils.toLowerCase(key.substring(i));
+                return ResourceLocation.tryCreate(name);
             }
         }
-        return StringUtils.toLowerCase(textComponent.getString());
+        return null;
     }
 
     private static class LevelTypeOption extends BiomeGeneratorTypeScreens
@@ -182,7 +192,7 @@ public class LevelTypeOptions
 
         protected LevelTypeOption(LevelType levelType)
         {
-            super(levelType.getName());
+            super(toTranslationKey(levelType.getRegistryName()));
             this.levelType = levelType;
         }
 
@@ -196,14 +206,20 @@ public class LevelTypeOptions
         @Override
         public DimensionGeneratorSettings func_241220_a_(@Nonnull DynamicRegistries.Impl registries, long seed, boolean structures, boolean bonusChest)
         {
-            return levelType.createDimensionGeneratorSettings(seed, structures, bonusChest, registries, null);
+            return levelType.createLevel(seed, structures, bonusChest, registries, null);
         }
 
         @Nonnull
         @Override
         protected ChunkGenerator func_241869_a(@Nonnull Registry<Biome> biomes, @Nonnull Registry<DimensionSettings> settings, long seed)
         {
-            return levelType.createChunkGenerator(seed, biomes, settings, null);
+            return levelType.createOverworldChunkGenerator(seed, biomes, settings, null);
+        }
+
+        private static String toTranslationKey(ResourceLocation name)
+        {
+            // Note: "generator." is prepended in the parent class
+            return name.getNamespace() + '.' + name.getPath();
         }
 
         private static void forEachOption(Consumer<BiomeGeneratorTypeScreens> consumer)

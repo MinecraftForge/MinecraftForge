@@ -46,7 +46,7 @@ public class FlatLevelType extends LevelType
     }
 
     @Override
-    public ChunkGenerator createChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
+    public ChunkGenerator createOverworldChunkGenerator(long seed, Registry<Biome> biomes, Registry<DimensionSettings> settings, @Nullable Dynamic<?> generatorOptions)
     {
         FlatGenerationSettings genSettings = Optional.ofNullable(generatorOptions)
                 .map(FlatGenerationSettings.field_236932_a_::parse)
