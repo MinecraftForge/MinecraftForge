@@ -24,45 +24,47 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConfigCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
                 Commands.literal("config").
-                        then(ShowFile.register())
+                        then(ShowFiles.register())
         );
     }
 
-    public static class ShowFile {
+    public static class ShowFiles {
         static ArgumentBuilder<CommandSource, ?> register() {
             return Commands.literal("showfile").
                     requires(cs->cs.hasPermissionLevel(0)).
                     then(Commands.argument("mod", ModIdArgument.modIdArgument()).
                         then(Commands.argument("type", EnumArgument.enumArgument(ModConfig.Type.class)).
-                            executes(ShowFile::showFile)
+                            executes(ShowFiles::showFiles)
                         )
                     );
         }
 
-        private static int showFile(final CommandContext<CommandSource> context) {
+        private static int showFiles(final CommandContext<CommandSource> context) {
             final String modId = context.getArgument("mod", String.class);
             final ModConfig.Type type = context.getArgument("type", ModConfig.Type.class);
-            final String configFileName = ConfigTracker.INSTANCE.getConfigFileName(modId, type);
-            if (configFileName != null) {
-                File f = new File(configFileName);
-                context.getSource().sendFeedback(new TranslationTextComponent("commands.config.getwithtype",
-                        modId, type,
-                        new StringTextComponent(f.getName()).func_240701_a_(TextFormatting.UNDERLINE).
-                        func_240700_a_((style) -> style.func_240715_a_(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
-                ), true);
+            final List<String> configFileNames = ConfigTracker.INSTANCE.getConfigFileNames(modId, type);
+            ITextComponent fileNames = configFileNames.stream()
+                .map(File::new)
+                .map(file -> new StringTextComponent(file.getName()).func_240700_a_((style) -> style.func_240715_a_(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()))))
+                .map(component -> component.func_240701_a_(TextFormatting.UNDERLINE))
+                .reduce(IFormattableTextComponent::func_230529_a_)
+                .orElse(null);
+            if (fileNames != null) {
+                ITextComponent message = new TranslationTextComponent("commands.config.getwithtype", modId, type, fileNames);
+                context.getSource().sendFeedback(message, true);
             } else {
                 context.getSource().sendFeedback(new TranslationTextComponent("commands.config.noconfig", modId, type),
                         true);

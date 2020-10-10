@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.gui.config;
 
+import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -30,6 +31,7 @@ import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.Range;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -49,6 +51,7 @@ public class CategoryConfigScreen extends ConfigScreen {
     public static final TextFormatting TOOLTIP_COMMENT_COLOR = TextFormatting.YELLOW;
     public static final TextFormatting TOOLTIP_EXTRA_DATA_COLOR = TextFormatting.AQUA;
     public static final TextFormatting TOOLTIP_WORLD_RESTART_REQUIRED_COLOR = TextFormatting.RED;
+    public static final TextFormatting TOOLTIP_CANT_DISPLAY_ELEMENT_COLOR = TextFormatting.YELLOW;
     protected final ConfigCategoryInfo categoryInfo;
 
     public CategoryConfigScreen(Screen parentScreen, ITextComponent title, ConfigCategoryInfo categoryInfo) {
@@ -56,17 +59,19 @@ public class CategoryConfigScreen extends ConfigScreen {
         this.categoryInfo = categoryInfo;
     }
 
-    static ITextComponent translateWithFallback(@Nullable String translationKey, String fallback) {
+    static IFormattableTextComponent translateWithFallback(@Nullable String translationKey, String fallback) {
         if (translationKey == null)
             return new StringTextComponent(fallback);
-        ITextComponent title = new TranslationTextComponent(translationKey);
+        IFormattableTextComponent title = new TranslationTextComponent(translationKey);
         if (translationKey.equals(title.getString()))
             return new StringTextComponent(fallback);
         return title;
     }
 
+    /**
+     * This needs to make sure to split on line breaks properly otherwise the line breaks are rendered as characters.
+     */
     static Collection<? extends ITextProperties> translateCommentWithFallback(@Nullable String translationKey, @Nullable String fallbackComment) {
-        // Need to handle line breaks (\n) properly
         if (translationKey != null) {
             TranslationTextComponent comment = new TranslationTextComponent(translationKey);
             if (!translationKey.equals(comment.getString())) {
@@ -94,11 +99,8 @@ public class CategoryConfigScreen extends ConfigScreen {
         return new CategoryConfigElementList(this, field_230706_i_, categoryInfo);
     }
 
+    // TODO: Make POJO?
     public interface ConfigCategoryInfo {
-
-        static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec) {
-            return of(elements, getValue, getSpec, $ -> null);
-        }
 
         static ConfigCategoryInfo of(Supplier<Collection<String>> elements, Function<String, Object> getValue, Function<String, Object> getSpec, Function<String, String> getCategoryComment) {
             return new ConfigCategoryInfo() {
@@ -127,12 +129,37 @@ public class CategoryConfigScreen extends ConfigScreen {
 
         Collection<String> elements();
 
+        /**
+         * Warning: Can return null if you call it with a key that isn't in the collection returned from {@link #elements()}
+         *
+         * @return Either a {@link Config} (if the key corresponds to a category) or a {@link ConfigValue} (if the key corresponds to a value).
+         */
         Object getValue(String key);
 
+        /**
+         * Warning: Can return null if you call it with a key that isn't in the collection returned from {@link #elements()}
+         *
+         * @return Either a {@link UnmodifiableCommentedConfig} (if the key corresponds to a category) or a {@link ValueSpec} (if the key corresponds to a value) .
+         */
         Object getSpec(String key);
 
-        /** Special case categories because reasons */
+        /**
+         * Unlike a {@link ConfigValue} (whose comment can be gotten from it's corresponding {@link ValueSpec}), a category's
+         * comment needs to be gotten from it's {@link UnmodifiableCommentedConfig#getComment parent's comment map}.
+         *
+         * @return The category's comment or null if the category has no comment.
+         */
+        @Nullable
+        // TODO: Need to talk to forge team about my changes
         String getCategoryComment(String key);
+
+//        /**
+//         * Unlike a {@link ConfigValue} (whose translation key can be gotten from it's corresponding {@link ValueSpec}), a category's
+//         * translation key needs to be gotten from it's {@link ForgeConfigSpec#getTranslationKey parent's translation key map}.
+//         */
+//        @Nullable
+//        // TODO: Need to talk to forge team about changes I can make to make this work
+//        String getCategoryTranslationKey(String key);
     }
 
     public static class CategoryConfigElementList extends ConfigElementList {
@@ -147,11 +174,28 @@ public class CategoryConfigScreen extends ConfigScreen {
          * Creates an element for any possible object that is stored in a config.
          */
         public ConfigElement createConfigElement(String key, ConfigCategoryInfo categoryInfo) {
-            Object raw = categoryInfo.getValue(key);
-            if (raw instanceof UnmodifiableConfig)
-                return createCategoryConfigElement(key, categoryInfo, (UnmodifiableConfig) raw);
+            Object value = categoryInfo.getValue(key);
+            if (value instanceof UnmodifiableConfig)
+                return createCategoryConfigElement(key, categoryInfo, (UnmodifiableConfig) value);
+            else if (value instanceof ConfigValue<?>)
+                return createValueConfigElement(key, categoryInfo, (ConfigValue<?>) value);
             else
-                return createValueConfigElement(key, categoryInfo, (ConfigValue<?>) raw);
+                return createUnknownConfigElement(key, value);
+        }
+
+        protected ConfigElement createUnknownConfigElement(String key, Object value) {
+            ITextComponent title = new StringTextComponent(key);
+            List<ITextProperties> tooltip = createTooltip(title, null, null);
+            return createUnknownConfigElement(title, value, tooltip);
+        }
+
+        protected ConfigElement createUnknownConfigElement(ITextComponent title, @Nullable Object value, List<ITextProperties> tooltip) {
+            // title.deepCopy().appendSibling
+            ITextComponent label = title.func_230532_e_().func_230529_a_(new StringTextComponent(": " + value));
+            IFormattableTextComponent unsupported = new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig", title);
+            unsupported.func_240699_a_(TOOLTIP_CANT_DISPLAY_ELEMENT_COLOR);
+            tooltip.add(unsupported);
+            return new ConfigElement(label, title, tooltip);
         }
 
         protected CategoryConfigElement createCategoryConfigElement(String key, ConfigCategoryInfo categoryInfo, UnmodifiableConfig config) {
@@ -174,7 +218,7 @@ public class CategoryConfigScreen extends ConfigScreen {
             ValueSpec valueInfo = (ValueSpec) categoryInfo.getSpec(key);
             String translationKey = valueInfo.getTranslationKey();
 
-            ITextComponent title = translateWithFallback(translationKey, key);
+            IFormattableTextComponent title = translateWithFallback(translationKey, key);
             List<ITextProperties> tooltip = createTooltip(title, translationKey + ".tooltip", valueInfo.getComment());
             addExtraTooltipInfo(valueInfo, tooltip);
 
@@ -198,20 +242,15 @@ public class CategoryConfigScreen extends ConfigScreen {
                 );
         }
 
-        protected <T> ConfigElement createValueElement(ConfigValue<T> configValue, ValueSpec valueSpec, ITextComponent title, List<ITextProperties> tooltip) {
-            Interactor<T> interactor = tryCreateInteractor(title, configValue, valueSpec);
-            if (interactor == null) {
-                // title.deepCopy().appendSibling
-                ITextComponent label = title.func_230532_e_().func_230529_a_(new StringTextComponent(": " + configValue.get()));
-                tooltip.add(new TranslationTextComponent("forge.configgui.tooltip.unsupportedTypeUseConfig"));
-                return new ConfigElement(label, title, tooltip);
-            } else {
-                return new ConfigValueConfigElement(interactor.label, title, tooltip, configValue, valueSpec, interactor);
-            }
+        protected <T> ConfigElement createValueElement(ConfigValue<T> configValue, ValueSpec valueSpec, IFormattableTextComponent title, List<ITextProperties> tooltip) {
+            Interactor<T> interactor = tryCreateInteractor(title, configValue, valueSpec, tooltip);
+            if (interactor == null)
+                return createUnknownConfigElement(title, configValue.get(), tooltip);
+            return new ConfigValueConfigElement(interactor.label, title, tooltip, configValue, valueSpec, interactor);
         }
 
         @Nullable
-        protected <T> Interactor<T> tryCreateInteractor(ITextComponent title, ConfigValue<T> configValue, ValueSpec valueSpec) {
+        protected <T> Interactor<T> tryCreateInteractor(IFormattableTextComponent title, ConfigValue<T> configValue, ValueSpec valueSpec, List<ITextProperties> tooltip) {
             ControlCreator creator = configScreen.getControlCreator();
             T value = configValue.get();
             Interactor<T> interactor = new Interactor<>(title, value);
@@ -225,12 +264,49 @@ public class CategoryConfigScreen extends ConfigScreen {
                 configValue.set(newValue);
                 configScreen.onChange(valueSpec.needsWorldRestart());
             });
+            addInvalidityWarningHandler(interactor, tooltip);
             try {
                 creator.createAndInitialiseInteractionWidget(interactor);
                 return interactor;
             } catch (Exception e) {
                 return null;
             }
+        }
+
+        protected void addInvalidityWarningHandler(Interactor<?> interactor, List<ITextProperties> tooltip) {
+            final ITextComponent tooltipWarning = new TranslationTextComponent("forge.configgui.tooltip.invalidValue").func_240701_a_(TextFormatting.BOLD, TextFormatting.RED);
+            MutableObject<Boolean> warningActive = new MutableObject<>(false);
+            MutableObject<Style> labelStyleBeforeWarning = new MutableObject<>(interactor.label == null ? null : interactor.label.getStyle());
+            interactor.addUpdateResponder((isValid, newValue) -> {
+                boolean isWarningActive = warningActive.getValue();
+                if (isValid && isWarningActive) { // Not valid & have added the warning - need to remove the warning
+                    warningActive.setValue(false);
+                    // Restore label style to previous red & bold values
+                    if (interactor.label != null) {
+                        Style style = interactor.label.getStyle();
+                        Style oldStyle = labelStyleBeforeWarning.getValue();
+                        // setBold
+                        style = style.func_240713_a_(oldStyle.getBold());
+                        // setColor
+                        style = style.func_240718_a_(oldStyle.func_240711_a_());
+                        interactor.label.func_230530_a_(style);
+                    }
+                    tooltip.remove(tooltipWarning);
+                } else if (!isValid && !isWarningActive) { // Not valid & haven't added the warning - need to add the warning
+                    warningActive.setValue(true);
+                    // Store current label style then make label style red and bold
+                    if (interactor.label != null) {
+                        Style style = interactor.label.getStyle();
+                        labelStyleBeforeWarning.setValue(style);
+                        // setBold
+                        style = style.func_240713_a_(true);
+                        // setColor
+                        style = style.func_240718_a_(Color.func_240744_a_(TextFormatting.RED));
+                        interactor.label.func_230530_a_(style);
+                    }
+                    tooltip.add(tooltipWarning);
+                }
+            });
         }
 
         /**
@@ -242,7 +318,7 @@ public class CategoryConfigScreen extends ConfigScreen {
             protected final BooleanSupplier canUndo;
             protected final BooleanSupplier canReset;
 
-            public <T> ConfigValueConfigElement(ITextComponent label, ITextComponent title, List<? extends ITextProperties> tooltip, ConfigValue<T> value, ValueSpec valueInfo, Interactor<T> interactor) {
+            public <T> ConfigValueConfigElement(@Nullable ITextComponent label, ITextComponent title, List<? extends ITextProperties> tooltip, ConfigValue<T> value, ValueSpec valueInfo, Interactor<T> interactor) {
                 super(label, title, tooltip);
                 setMainWidget(interactor.control);
                 T initialValue = ControlCreator.copyMutable(interactor.initialValue);

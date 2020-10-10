@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A {@link ConfigScreen} with entries for all of a mod's registered configs.
@@ -45,6 +46,7 @@ import java.util.List;
  */
 public class ModConfigScreen extends ConfigScreen {
 
+    public static final TextFormatting FILE_DISPLAY_COLOR = TextFormatting.GRAY;
     protected final IModInfo mod;
     protected boolean displayRequiresWorldRestartScreen;
 
@@ -98,7 +100,9 @@ public class ModConfigScreen extends ConfigScreen {
 
     @Override
     protected ConfigElementList makeConfigElementList() {
-        Collection<ModConfig> allConfigs = ConfigTracker.INSTANCE.getConfigsForMod(mod.getModId()).values();
+        Collection<ModConfig> allConfigs = ConfigTracker.INSTANCE.getConfigsForMod(mod.getModId()).values().stream()
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
         Collection<ModConfig> configsToDisplay = new ArrayList<>();
         for (ModConfig modConfig : allConfigs) {
             if (modConfig.getType() == ModConfig.Type.SERVER && !canPlayerEditServerConfig())
@@ -109,11 +113,12 @@ public class ModConfigScreen extends ConfigScreen {
             {
                 for (ModConfig modConfig : configsToDisplay) {
                     String translationKey = "forge.configgui.modConfigType." + modConfig.getType().name().toLowerCase();
-                    ITextComponent title = CategoryConfigScreen.translateWithFallback(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
+                    IFormattableTextComponent title = CategoryConfigScreen.translateWithFallback(translationKey, StringUtils.capitalize(modConfig.getType().name().toLowerCase()));
+                    title.func_230529_a_(new StringTextComponent(" - " + modConfig.getFileName()).func_240699_a_(FILE_DISPLAY_COLOR));
                     List<ITextProperties> tooltip = CategoryConfigScreen.createTooltip(title, translationKey + ".tooltip", null);
                     String filePath = getDisplayFilePath(modConfig);
                     if (filePath != null)
-                        tooltip.add(new StringTextComponent(filePath).func_240701_a_(TextFormatting.GRAY));
+                        tooltip.add(new StringTextComponent(filePath).func_240701_a_(FILE_DISPLAY_COLOR));
                     ConfigElement element = new ConfigElement(null, title, tooltip);
                     element.setMainWidget(configScreen.getControlCreator().createPopupButton(title, () -> new ModConfigConfigScreen(ModConfigScreen.this, title, modConfig)));
                     this.func_230513_b_(element); // addEntry

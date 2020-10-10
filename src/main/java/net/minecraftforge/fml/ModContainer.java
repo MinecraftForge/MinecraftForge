@@ -143,7 +143,6 @@ public abstract class ModContainer
      */
     public void addConfig(final ModConfig modConfig) {
         configs.put(modConfig.getType(), modConfig);
-        configs.put(modConfig.getType(), modConfig);
         // It works on a server because of the nested Runnables so this can be run unsafely,
         // even though it could theoretically crash.
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ModConfigScreen.makeConfigGuiExtensionPoint(this));

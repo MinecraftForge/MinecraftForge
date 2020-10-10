@@ -115,6 +115,7 @@ public class ConfigFileTypeHandler {
                 {
                     throw new ConfigLoadingException(modConfig, ex);
                 }
+                this.modConfig.getSpec().correct(this.commentedFileConfig);
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
             }

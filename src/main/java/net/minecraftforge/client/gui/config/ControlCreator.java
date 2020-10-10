@@ -28,6 +28,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -78,17 +80,22 @@ public class ControlCreator {
 
         public final ITextComponent title;
         public final T initialValue;
-        public ITextComponent label;
+        @Nullable
+        public IFormattableTextComponent label;
         public Widget control;
         private Predicate<T> validator = $ -> true;
         private Consumer<T> saver = $ -> {};
         private BiConsumer<Boolean, T> updateResponder = (a, b) -> {};
         private final Map<DataKey<?>, Object> extraData = new HashMap<>();
 
-        public Interactor(ITextComponent title, T initialValue) {
+        public Interactor(IFormattableTextComponent title, T initialValue) {
+            this(title, title, initialValue);
+        }
+
+        public Interactor(@Nullable IFormattableTextComponent label, ITextComponent title, T initialValue) {
             this.title = title;
             this.initialValue = Objects.requireNonNull(initialValue, "initialValue cannot be null");
-            this.label = title;
+            this.label = label;
         }
 
         public void addValidator(Predicate<T> newValidator) {
@@ -150,6 +157,10 @@ public class ControlCreator {
         return DefaultHolder.INSTANCE;
     }
 
+    /**
+     * Can throw exceptions if it is unable to create or initialise the widget.
+     * Caller should catch and handle these.
+     */
     public <T> void createAndInitialiseInteractionWidget(Interactor<T> interactor) {
         createInteractionWidget(interactor);
         interactor.onUpdate(interactor.initialValue);
@@ -172,20 +183,13 @@ public class ControlCreator {
             throw new IllegalStateException("Don't know how to make a widget for " + value);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T[] createHolderForUseInLambda(T value) {
-        T[] holder = (T[]) Array.newInstance(value.getClass(), 1);
-        holder[0] = value;
-        return holder;
-    }
-
     public void createBooleanInteractionWidget(Interactor<Boolean> interactor) {
-        Boolean[] state = createHolderForUseInLambda(interactor.initialValue);
+        MutableObject<Boolean> state = new MutableObject<>();
 
         interactor.control = createButton(interactor, button -> {
-            boolean oldValue = state[0];
+            boolean oldValue = state.getValue();
             boolean newValue = !oldValue;
-            state[0] = newValue;
+            state.setValue(newValue);
             boolean isValid = interactor.isValid(newValue);
             if (isValid)
                 interactor.save(newValue);
@@ -193,6 +197,7 @@ public class ControlCreator {
         });
 
         interactor.addUpdateResponder((isValid, newValue) -> {
+            state.setValue(newValue);
             Widget control = interactor.control;
             control.func_238482_a_(new StringTextComponent(Boolean.toString(newValue)));
             if (!isValid)
@@ -273,9 +278,9 @@ public class ControlCreator {
         interactor.control = textField;
 
         textField.setMaxStringLength(longestValueStringLength);
-        String[] currentlyRespondingTo = {null};
+        MutableObject<String> currentlyRespondingTo = new MutableObject<>();
         textField.setResponder(newText -> {
-            if (Objects.equals(currentlyRespondingTo[0], newText))
+            if (Objects.equals(currentlyRespondingTo.getValue(), newText))
                 // We are being called from inside visualsUpdater, don't recurse & stackoverflow
                 return;
             T newValue;
@@ -288,9 +293,9 @@ public class ControlCreator {
             boolean isValid = interactor.isValid(newValue);
             if (isValid)
                 interactor.save(newValue);
-            currentlyRespondingTo[0] = newText;
+            currentlyRespondingTo.setValue(newText);
             interactor.onUpdate(isValid, newValue);
-            currentlyRespondingTo[0] = null;
+            currentlyRespondingTo.setValue(null);
         });
 
         interactor.addUpdateResponder((isValid, newValue) -> {
@@ -303,13 +308,13 @@ public class ControlCreator {
 
     public <T extends Enum<T>> void createEnumInteractionWidget(Interactor<T> interactor) {
         T value = interactor.initialValue;
-        T[] state = createHolderForUseInLambda(value);
+        MutableObject<T> state = new MutableObject<>();
         T[] potential = Arrays.stream(value.getDeclaringClass().getEnumConstants())
             .filter(interactor::isValid)
             .toArray(size -> (T[]) Array.newInstance(value.getClass(), size));
 
         interactor.control = createButton(interactor, button -> {
-            T oldValue = state[0];
+            T oldValue = state.getValue();
             int oldIndex = ArrayUtils.indexOf(potential, oldValue);
             T newValue;
             if (oldIndex == ArrayUtils.INDEX_NOT_FOUND)
@@ -318,7 +323,7 @@ public class ControlCreator {
                 int newIndex = (oldIndex + 1) % potential.length;
                 newValue = potential[newIndex];
             }
-            state[0] = newValue;
+            state.setValue(newValue);
             boolean isValid = interactor.isValid(newValue);
             if (isValid)
                 interactor.save(newValue);
@@ -326,6 +331,7 @@ public class ControlCreator {
         });
 
         interactor.addUpdateResponder((isValid, newValue) -> {
+            state.setValue(newValue);
             Widget control = interactor.control;
             control.func_238482_a_(new StringTextComponent(newValue.toString()));
             if (!isValid)
@@ -353,17 +359,17 @@ public class ControlCreator {
         interactor.control = textField;
 
         textField.setMaxStringLength(Integer.MAX_VALUE);
-        String[] currentlyRespondingTo = {null};
+        MutableObject<String> currentlyRespondingTo = new MutableObject<>();
         textField.setResponder(newValue -> {
-            if (Objects.equals(currentlyRespondingTo[0], newValue))
+            if (Objects.equals(currentlyRespondingTo.getValue(), newValue))
                 // We are being called from inside visualsUpdater, don't recurse & stackoverflow
                 return;
             boolean isValid = interactor.isValid(newValue);
             if (isValid)
                 interactor.save(newValue);
-            currentlyRespondingTo[0] = newValue;
+            currentlyRespondingTo.setValue(newValue);
             interactor.onUpdate(isValid, newValue);
-            currentlyRespondingTo[0] = null;
+            currentlyRespondingTo.setValue(null);
         });
 
         interactor.addUpdateResponder((isValid, newValue) -> {
@@ -375,7 +381,7 @@ public class ControlCreator {
     }
 
     public <T extends List<?>> void createListInteractionWidget(Interactor<T> interactor) {
-        T[] state = createHolderForUseInLambda(interactor.initialValue);
+        MutableObject<T> state = new MutableObject<>();
         T copiedInitial = copyMutable(interactor.initialValue);
         T defaultValue = (T) interactor.getData(DEFAULT_VALUE_KEY);
         T copiedDefault = defaultValue == null ? null : copyMutable(defaultValue);
@@ -383,11 +389,11 @@ public class ControlCreator {
         interactor.label = null;
         interactor.control = createButton(interactor, button -> {
             Screen currentScreen = Minecraft.getInstance().currentScreen;
-            Screen screen = new ListConfigScreen(currentScreen, interactor.title, state[0]) {
+            Screen screen = new ListConfigScreen(currentScreen, interactor.title, state.getValue()) {
                 @Override
                 public void onModified(List newValueIn) {
                     T newValue = (T) newValueIn;
-                    state[0] = newValue;
+                    state.setValue(newValue);
                     boolean isValid = interactor.isValid(newValue);
                     if (isValid)
                         interactor.save(newValue);
@@ -430,7 +436,7 @@ public class ControlCreator {
         });
 
         interactor.addUpdateResponder((isValid, newValue) -> {
-            state[0] = newValue;
+            state.setValue(newValue);
             Widget control = interactor.control;
             if (!isValid)
                 control.setFGColor(RED);

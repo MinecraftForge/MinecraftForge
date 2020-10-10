@@ -22,6 +22,7 @@ package net.minecraftforge.client.gui.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
@@ -96,7 +97,7 @@ public abstract class ListConfigScreen extends ConfigScreen {
 
         @Nullable
         protected Interactor<?> tryCreateInteractor(int index, Object item) {
-            ITextComponent title = new StringTextComponent(Integer.toString(index));
+            IFormattableTextComponent title = new StringTextComponent(Integer.toString(index));
             ControlCreator creator = configScreen.getControlCreator();
             Interactor<?> interactor = new Interactor<>(title, item);
             interactor.addData(ControlCreator.INITIAL_VALUE_KEY, item);

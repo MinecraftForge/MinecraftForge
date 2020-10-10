@@ -146,7 +146,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
         {
             final String key = specEntry.getKey();
             final Object specValue = specEntry.getValue();
-            final Object configValue = configMap.get(key);
+            Object configValue = configMap.get(key);
             final CorrectionAction action = configValue == null ? ADD : REPLACE;
 
             parentPath.addLast(key);
@@ -186,6 +186,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableComme
             else
             {
                 ValueSpec valueSpec = (ValueSpec)specValue;
+                if (configValue != null) { // Apply the converter to convert e.g. String to Enum
+                    ConfigValue definedConfigValue = getValues().get(parentPath);
+                    if (definedConfigValue != null)
+                        configValue = definedConfigValue.getRaw(config, Collections.singletonList(key), valueSpec.supplier);
+                }
                 if (!valueSpec.test(configValue))
                 {
                     if (dryRun)

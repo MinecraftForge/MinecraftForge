@@ -1,0 +1,6 @@
+{
+  "config_gui_test.configgui.a.boolean": "A boolean",
+  "config_gui_test.configgui.a.boolean.tooltip": "A boolean tooltip!",
+  "config_gui_test.configgui.an.int": "An int",
+  "config_gui_test.configgui.an.int.tooltip": "An int tooltip!"
+}
