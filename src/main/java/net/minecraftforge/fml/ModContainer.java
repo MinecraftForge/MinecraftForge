@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.gui.config.ModConfigScreen;
 import net.minecraftforge.eventbus.api.Event;
