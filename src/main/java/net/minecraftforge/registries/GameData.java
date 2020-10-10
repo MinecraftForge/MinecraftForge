@@ -593,7 +593,8 @@ public class GameData
         static final LevelCallbacks INSTANCE = new LevelCallbacks();
 
         @Override
-        public void onCreate(IForgeRegistryInternal<LevelType> owner, RegistryManager stage) {
+        public void onCreate(IForgeRegistryInternal<LevelType> owner, RegistryManager stage)
+        {
             owner.registerAll(LevelType.DEFAULT, LevelType.FLAT, LevelType.LARGE_BIOMES, LevelType.LARGE_BIOMES,
                     LevelType.SINGLE_BIOME_SURFACE, LevelType.SINGLE_BIOME_CAVES,
                     LevelType.SINGLE_BIOME_FLOATING_ISLANDS, LevelType.DEBUG_ALL_BLOCK_STATES);
