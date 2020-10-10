@@ -21,6 +21,9 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
+
+import java.util.*;
+
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -74,29 +77,32 @@ import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.level.LevelType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
+
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+
 import java.lang.reflect.Field;
-import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 
 /**
  * INTERNAL ONLY
@@ -344,12 +350,12 @@ public class GameData
 
     public static CompletableFuture<List<Throwable>> preRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
         return CompletableFuture.runAsync(()-> {
-                    final RegistryEvent.Register<?> event = eventGenerator.apply(null);
-                    final ResourceLocation rl = event.getName();
-                    ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
-                    StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + rl));
-                    fr.unfreeze();
-                }, executor).thenApply(v->Collections.emptyList());
+            final RegistryEvent.Register<?> event = eventGenerator.apply(null);
+            final ResourceLocation rl = event.getName();
+            ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + rl));
+            fr.unfreeze();
+        }, executor).thenApply(v->Collections.emptyList());
     }
 
     public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
@@ -691,7 +697,7 @@ public class GameData
                 }
                 else if (isLocalWorld)
                 {
-                   LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
                 }
                 else
                 {
@@ -722,8 +728,8 @@ public class GameData
                 if (!lst.isEmpty())
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
-                       sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
+                        lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
@@ -738,9 +744,9 @@ public class GameData
             if (!defaulted.isEmpty())
             {
                 String header = "Forge Mod Loader detected missing registry entries.\n\n" +
-                   "There are " + defaulted.size() + " missing entries in this save.\n" +
-                   "If you continue the missing entries will get removed.\n" +
-                   "A world backup will be automatically created in your saves directory.\n\n";
+                        "There are " + defaulted.size() + " missing entries in this save.\n" +
+                        "If you continue the missing entries will get removed.\n" +
+                        "A world backup will be automatically created in your saves directory.\n\n";
 
                 StringBuilder buf = new StringBuilder();
                 defaulted.asMap().forEach((name, entries) ->
