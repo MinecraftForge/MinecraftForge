@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.util;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -26,6 +27,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.client.CClientSettingsPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
@@ -42,6 +44,11 @@ import java.util.UUID;
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayerEntity
 {
+    /**
+     * UUID of the player responsible for the FakePlayers actions.
+     */
+    private UUID owner = null;
+
     public FakePlayer(ServerWorld world, GameProfile name)
     {
         super(world.getServer(), world, name, new PlayerInteractionManager(world));
@@ -59,4 +66,33 @@ public class FakePlayer extends ServerPlayerEntity
     @Override public void tick(){ return; }
     @Override public void handleClientSettings(CClientSettingsPacket pkt){ return; }
     @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
+
+    /**
+     * Get the current owner of the fakeplayer.
+     * @return the owners UUID.
+     */
+    @Nullable
+    public UUID getOwner() { return owner; }
+
+    /**
+     * Set the owner of the fakeplayer.
+     * @param owner the owners UUID.
+     */
+    public void setOwner(@Nonnull final UUID owner) { this.owner = owner; }
+
+    @Override
+    public void writeAdditional(@Nonnull final CompoundNBT compound)
+    {
+        super.writeAdditional(compound);
+        if (owner != null)
+            compound.putUniqueId("owner", owner);
+    }
+
+    @Override
+    public void readAdditional(@Nonnull final CompoundNBT compound)
+    {
+        super.readAdditional(compound);
+        if (compound.hasUniqueId("owner"))
+            this.owner = compound.getUniqueId("owner");
+    }
 }
