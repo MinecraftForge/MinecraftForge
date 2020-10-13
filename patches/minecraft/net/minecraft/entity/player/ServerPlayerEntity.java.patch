@@ -58,11 +58,10 @@
           if (portalinfo != null) {
 +            Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
              serverworld.func_217381_Z().func_76320_a("moving");
--            if (registrykey == World.field_234918_g_ && p_241206_1_.func_234923_W_() == World.field_234919_h_) {
-+            if (registrykey == World.field_234918_g_ && p_241206_1_.func_234923_W_() == World.field_234919_h_ && teleporter.isVanilla()) {
+             if (registrykey == World.field_234918_g_ && p_241206_1_.func_234923_W_() == World.field_234919_h_) {
                 this.field_193110_cw = this.func_213303_ch();
 -            } else if (p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-+            } else if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_ && teleporter.isVanilla()) {
++            } else if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_) {
                 this.func_242110_a(p_241206_1_, new BlockPos(portalinfo.field_222505_a));
              }
  
