@@ -23,6 +23,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="client_chat_event_test"
 [[mods]]
+    modId="client_command_test"
+[[mods]]
     modId="command_event_test"
 [[mods]]
     modId="entity_selector_test"

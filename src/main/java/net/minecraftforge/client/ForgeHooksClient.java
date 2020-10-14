@@ -22,6 +22,8 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
@@ -49,6 +51,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -61,6 +65,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -69,9 +74,14 @@ import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -745,5 +755,56 @@ public class ForgeHooksClient
             renderer.renderModel(layer, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
         }
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+    }
+
+    /**
+     * Always try to execute the cached parsing of client message as a command. {@link net.minecraft.command.Commands#handleCommand(net.minecraft.command.CommandSource,String)} for reference
+     * @param currentParse current state of the parser for the message
+     * @return true leaves the message to be sent to the server, false means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
+     */
+    public static boolean sendMessage(ParseResults<ISuggestionProvider> currentParse)
+    {
+        if (currentParse == null || currentParse.getReader().canRead()) return true;//Return early if parser fails
+        try
+        {
+            currentParse.getContext().getDispatcher().execute(currentParse);
+        }
+        catch (CommandException execution)//Probably thrown by the command
+        {
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").func_230529_a_(execution.getComponent()).func_240699_a_(TextFormatting.RED), Util.field_240973_b_);
+        }
+        catch (CommandSyntaxException syntax)//Usually thrown by the CommandDispatcher
+        {
+            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())//This case for server commands and mistyped client commands alike
+            {
+                return true;//The server will have the final word on the validity of the command
+            }
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").func_230529_a_(TextComponentUtils.toTextComponent(syntax.getRawMessage())).func_240699_a_(TextFormatting.RED), Util.field_240973_b_);
+            if (syntax.getInput() != null && syntax.getCursor() >= 0)
+            {
+                int position = Math.min(syntax.getInput().length(), syntax.getCursor());
+                IFormattableTextComponent details = new StringTextComponent("").func_240699_a_(TextFormatting.GRAY);
+                details.getStyle().func_240715_a_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, currentParse.getReader().getString()));
+                if (position > 10)
+                {
+                    details.func_240702_b_("...");
+                }
+                details.func_240702_b_(syntax.getInput().substring(Math.max(0, position - 10), position));
+                if (position < syntax.getInput().length())
+                {
+                    details.func_230529_a_(new StringTextComponent(syntax.getInput().substring(position)).func_240701_a_(TextFormatting.RED, TextFormatting.UNDERLINE));
+                }
+                details.func_230529_a_(new TranslationTextComponent("command.context.here").func_240701_a_(TextFormatting.RED, TextFormatting.ITALIC));
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent("").func_230529_a_(details).func_240699_a_(TextFormatting.RED), Util.field_240973_b_);
+            }
+        }
+        catch (Exception generic)//Probably thrown by the command
+        {
+            StringTextComponent message = new StringTextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
+            ITextComponent component = new TranslationTextComponent("command.failed");
+            component.getStyle().func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, message));
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").func_230529_a_(component).func_240699_a_(TextFormatting.RED), Util.field_240973_b_);
+        }
+        return false;
     }
 }

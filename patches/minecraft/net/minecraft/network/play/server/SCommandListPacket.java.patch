@@ -10,3 +10,11 @@
              return null;
           } else {
              RequiredArgumentBuilder<ISuggestionProvider, ?> requiredargumentbuilder = RequiredArgumentBuilder.argument(s, argumenttype);
+@@ -224,6 +227,7 @@
+                   this.field_197726_a.executes((p_197724_0_) -> {
+                      return 0;
+                   });
++                  this.field_197726_a.executes(null);// FORGE Client commands support for clients joining vanilla server, strips execution part, see ForgeHooksClient
+                }
+ 
+                this.field_197730_e = this.field_197726_a.build();
