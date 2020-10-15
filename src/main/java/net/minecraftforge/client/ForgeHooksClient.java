@@ -32,6 +32,7 @@ import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -72,6 +73,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -560,6 +562,15 @@ public class ForgeHooksClient
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static void onClientChangeGameMode(NetworkPlayerInfo info, GameType currentGameMode, GameType newGameMode)
+    {
+        if (currentGameMode != newGameMode)
+        {
+            ClientPlayerChangeGameModeEvent evt = new ClientPlayerChangeGameModeEvent(info, currentGameMode, newGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+        }
     }
 
     @SuppressWarnings("deprecation")

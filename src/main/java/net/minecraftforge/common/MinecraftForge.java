@@ -53,9 +53,6 @@ public class MinecraftForge
 
        UsernameCache.load();
        ForgeHooks.initTools();
-
-       //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
-       new CrashReport("ThisIsFake", new Exception("Not real"));
    }
 
 

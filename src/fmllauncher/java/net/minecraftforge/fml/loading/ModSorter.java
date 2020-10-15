@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -191,7 +192,7 @@ public class ModSorter
         if (!dupedMods.isEmpty()) {
             final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods
                     .stream()
-                    .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm.getValue().get(0)))
+                    .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm.getValue().get(0), Objects.toString(dm.getValue().get(0))))
                     .collect(Collectors.toList());
             throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
@@ -243,7 +244,7 @@ public class ModSorter
         if (!missingVersions.isEmpty()) {
             final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions
                     .stream()
-                    .map(mv -> new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency",
+                    .map(mv -> new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency", mv.getOwner(),
                             mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
                             modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null"))))
                     .collect(Collectors.toList());
