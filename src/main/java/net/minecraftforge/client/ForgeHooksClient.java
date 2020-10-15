@@ -138,6 +138,11 @@ public class ForgeHooksClient
         }
     }
 
+    public static void dispatchRenderFramebufferLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderFramebufferLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));
+    }
+
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mat, partialTicks, projectionMatrix, finishTimeNano));

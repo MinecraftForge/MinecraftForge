@@ -87,7 +87,7 @@
           RenderState.field_239237_T_.func_228549_b_();
        } else {
           iprofiler.func_219895_b("translucent");
-@@ -1129,7 +1141,7 @@
+@@ -1129,9 +1141,12 @@
           iprofiler.func_219895_b("string");
           this.func_228441_a_(RenderType.func_241715_r_(), p_228426_1_, d0, d1, d2);
           iprofiler.func_219895_b("particles");
@@ -95,8 +95,13 @@
 +         this.field_72777_q.field_71452_i.renderParticles(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_, clippinghelper);
        }
  
++      this.field_72777_q.func_213239_aq().func_219895_b("forge_render_framebuffer_last");
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderFramebufferLast(this.field_72777_q.field_71438_f, p_228426_1_, p_228426_2_, matrix4f, p_228426_3_);
++
        RenderSystem.pushMatrix();
-@@ -1481,6 +1493,11 @@
+       RenderSystem.multMatrix(p_228426_1_.func_227866_c_().func_227870_a_());
+       if (this.field_72777_q.field_71474_y.func_216842_e() != CloudOption.OFF) {
+@@ -1481,6 +1496,11 @@
     }
  
     public void func_228424_a_(MatrixStack p_228424_1_, float p_228424_2_) {
@@ -108,7 +113,7 @@
        if (this.field_72777_q.field_71441_e.func_239132_a_().func_241683_c_() == DimensionRenderInfo.FogType.END) {
           this.func_228444_b_(p_228424_1_);
        } else if (this.field_72777_q.field_71441_e.func_239132_a_().func_241683_c_() == DimensionRenderInfo.FogType.NORMAL) {
-@@ -1609,6 +1626,11 @@
+@@ -1609,6 +1629,11 @@
     }
  
     public void func_228425_a_(MatrixStack p_228425_1_, float p_228425_2_, double p_228425_3_, double p_228425_5_, double p_228425_7_) {
@@ -120,7 +125,7 @@
        float f = this.field_72769_h.func_239132_a_().func_239213_a_();
        if (!Float.isNaN(f)) {
           RenderSystem.disableCull();
-@@ -1792,7 +1814,7 @@
+@@ -1792,7 +1817,7 @@
  
           while(iterator.hasNext()) {
              ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = iterator.next();
@@ -129,7 +134,7 @@
                 this.field_174995_M.func_228902_a_(chunkrenderdispatcher$chunkrender);
              } else {
                 chunkrenderdispatcher$chunkrender.func_228929_a_(this.field_174995_M);
-@@ -2076,7 +2098,12 @@
+@@ -2076,7 +2101,12 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }
  
@@ -142,7 +147,7 @@
        ISound isound = this.field_147593_P.get(p_184377_2_);
        if (isound != null) {
           this.field_72777_q.func_147118_V().func_147683_b(isound);
-@@ -2084,7 +2111,7 @@
+@@ -2084,7 +2114,7 @@
        }
  
        if (p_184377_1_ != null) {
@@ -151,7 +156,7 @@
           if (musicdiscitem != null) {
              this.field_72777_q.field_71456_v.func_238451_a_(musicdiscitem.func_234801_g_());
           }
-@@ -2232,7 +2259,7 @@
+@@ -2232,7 +2262,7 @@
           break;
        case 1010:
           if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
@@ -160,7 +165,7 @@
           } else {
              this.func_184377_a((SoundEvent)null, p_180439_3_);
           }
-@@ -2382,8 +2409,8 @@
+@@ -2382,8 +2412,8 @@
           break;
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
@@ -171,7 +176,7 @@
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }
  
-@@ -2531,7 +2558,7 @@
+@@ -2531,7 +2561,7 @@
        } else {
           int i = p_228420_0_.func_226658_a_(LightType.SKY, p_228420_2_);
           int j = p_228420_0_.func_226658_a_(LightType.BLOCK, p_228420_2_);
@@ -180,7 +185,7 @@
           if (j < k) {
              j = k;
           }
-@@ -2570,6 +2597,11 @@
+@@ -2570,6 +2600,11 @@
        return this.field_239226_J_;
     }
  
