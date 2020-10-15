@@ -34,7 +34,6 @@ public class GetHandWithTest {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
         modEventBus.addListener(this::onClientSetup);
-        modEventBus.addListener(this::onClientSetup);
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
