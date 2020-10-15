@@ -28,14 +28,12 @@ net/minecraft/data/FluidTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lj
 net/minecraft/data/ItemTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/data/BlockTagsProvider;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i232552_1_,p_i232552_2_,modId,existingFileHelper
 net/minecraft/data/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_i49827_1_,p_i49827_2_,modId,existingFileHelper
 net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
-net/minecraft/entity/Entity.getPortalInfo(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/block/PortalInfo;=|p_241829_1_,teleporter
 net/minecraft/entity/item/EnderPearlEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/item/ItemEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/item/minecart/ContainerMinecartEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/merchant/villager/AbstractVillagerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
 net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
-net/minecraft/entity/player/ServerPlayerEntity.getPortalInfo(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/block/PortalInfo;=|p_241829_1_,teleporter
 net/minecraft/item/BoneMealItem.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)Z=|p_195966_0_,p_195966_1_,p_195966_2_,player
 net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;)Lnet/minecraft/world/storage/MapData;=|p_195950_0_,p_195950_1_
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/CompoundNBT;)V=|p_i48204_1_,p_i48204_2_,capNBT
