@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 @Mod.EventBusSubscriber()
 public class PlayerGameModeEventTest
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static final Logger LOGGER = LogManager.getLogger(PlayerGameModeEventTest.class);
 
     @SubscribeEvent
