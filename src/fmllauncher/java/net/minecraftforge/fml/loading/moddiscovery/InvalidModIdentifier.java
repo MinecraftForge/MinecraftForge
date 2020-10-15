@@ -36,6 +36,7 @@ public enum InvalidModIdentifier {
     FABRIC(filePresent("fabric.mod.json")),
     LITELOADER(filePresent("litemod.json")),
     OPTIFINE(filePresent("optifine/Installer.class")),
+    BUKKIT(filePresent("plugin.yml")),
     INVALIDZIP((f,zf) -> !zf.isPresent());
 
     private BiPredicate<Path, Optional<ZipFile>> ident;

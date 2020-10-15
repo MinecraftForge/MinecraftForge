@@ -19,6 +19,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_slime_block_test"
 [[mods]]
+    modId="block_harvest_tool_test"
+[[mods]]
     modId="client_chat_event_test"
 [[mods]]
     modId="command_event_test"
@@ -88,3 +90,5 @@ license="LGPL v2.1"
     modId="biome_loading_event_test"
 [[mods]]
     modId="player_game_mode_event_test"
+[[mods]]
+    modId="structure_spawn_list_event_test"

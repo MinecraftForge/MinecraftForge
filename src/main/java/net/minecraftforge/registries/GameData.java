@@ -22,8 +22,8 @@ package net.minecraftforge.registries;
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -92,12 +92,8 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -346,22 +342,30 @@ public class GameData
         keys.add(0, BLOCKS.func_240901_a_());
         keys.add(1, ITEMS.func_240901_a_());
 
-        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> modContainerEventGeneratorFunction = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
-        return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> modContainerEventGeneratorFunction.apply(rl)));
+        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
+        return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
     }
 
-    public static ModLoadingStage.EventDispatcher<RegistryEvent.Register<?>> buildRegistryEventDispatch() {
-        return eventConsumer -> eventToSend -> {
-            final ResourceLocation rl = eventToSend.getName();
-            ForgeRegistry<?> fr = (ForgeRegistry<?>) eventToSend.getRegistry();
-            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
-            fr.unfreeze();
-            eventConsumer.accept(eventToSend);
+    public static CompletableFuture<List<Throwable>> preRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
+        return CompletableFuture.runAsync(()-> {
+                    final RegistryEvent.Register<?> event = eventGenerator.apply(null);
+                    final ResourceLocation rl = event.getName();
+                    ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
+                    StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + rl));
+                    fr.unfreeze();
+                }, executor).thenApply(v->Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
+        return CompletableFuture.runAsync(()-> {
+            final RegistryEvent.Register<?> event = eventGenerator.apply(null);
+            final ResourceLocation rl = event.getName();
+            ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
+            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
-        };
+            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+        }, executor).thenApply(v->Collections.emptyList());
     }
 
     public static void setCustomTagTypesFromRegistries()
@@ -723,7 +727,7 @@ public class GameData
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
@@ -746,7 +750,7 @@ public class GameData
                 defaulted.asMap().forEach((name, entries) ->
                 {
                     buf.append("Missing ").append(name).append(":\n");
-                    entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+                    entries.stream().sorted((o1, o2) -> o1.compareNamespaced(o2)).forEach(rl -> buf.append("    ").append(rl).append("\n"));
                     buf.append("\n");
                 });
             }

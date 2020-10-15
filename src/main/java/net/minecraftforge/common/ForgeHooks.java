@@ -45,6 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
@@ -213,7 +214,11 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        //TODO Axes check Material and Blocks now.
+        //Axes check Materials and Blocks now.
+        Set<Material> materials = getPrivateValue(AxeItem.class, null, 0);
+        for (Block block : ForgeRegistries.BLOCKS)
+            if (materials.contains(block.getDefaultState().getMaterial()))
+                blockToolSetter.accept(block, ToolType.AXE, 0);
         blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
         blocks = getPrivateValue(HoeItem.class, null, 0);
