@@ -1,0 +1,6 @@
+{
+    "parent": "get_hand_with_test:item/modded_crossbow",
+    "textures": {
+        "layer0": "get_hand_with_test:item/modded_crossbow_pulling_2"
+    }
+}

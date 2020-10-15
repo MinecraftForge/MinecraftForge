@@ -1,20 +1,34 @@
 --- a/net/minecraft/entity/monster/AbstractSkeletonEntity.java
 +++ b/net/minecraft/entity/monster/AbstractSkeletonEntity.java
-@@ -155,7 +155,7 @@
+@@ -154,8 +154,8 @@
+       if (this.field_70170_p != null && !this.field_70170_p.field_72995_K) {
           this.field_70714_bg.func_85156_a(this.field_85038_e);
           this.field_70714_bg.func_85156_a(this.field_85037_d);
-          ItemStack itemstack = this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f));
+-         ItemStack itemstack = this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f));
 -         if (itemstack.func_77973_b() == Items.field_151031_f) {
++         ItemStack itemstack = this.func_184586_b(ProjectileHelper.getHandWith(this, item -> item instanceof net.minecraft.item.BowItem));
 +         if (itemstack.func_77973_b() instanceof net.minecraft.item.BowItem) {
              int i = 20;
              if (this.field_70170_p.func_175659_aa() != Difficulty.HARD) {
                 i = 40;
-@@ -173,6 +173,8 @@
+@@ -171,8 +171,10 @@
+    }
+ 
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
-       ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
+-      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
++      ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.getHandWith(this, item -> item instanceof net.minecraft.item.BowItem)));
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);
 +      if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.BowItem)
 +         abstractarrowentity = ((net.minecraft.item.BowItem)this.func_184614_ca().func_77973_b()).customArrow(abstractarrowentity);
        double d0 = p_82196_1_.func_226277_ct_() - this.func_226277_ct_();
        double d1 = p_82196_1_.func_226283_e_(0.3333333333333333D) - abstractarrowentity.func_226278_cu_();
        double d2 = p_82196_1_.func_226281_cx_() - this.func_226281_cx_();
+@@ -187,7 +189,7 @@
+    }
+ 
+    public boolean func_230280_a_(ShootableItem p_230280_1_) {
+-      return p_230280_1_ == Items.field_151031_f;
++      return p_230280_1_ instanceof net.minecraft.item.BowItem;
+    }
+ 
+    public void func_70037_a(CompoundNBT p_70037_1_) {

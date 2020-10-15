@@ -10,3 +10,12 @@
     }
  
     public Vector3d func_225627_b_(AbstractClientPlayerEntity p_225627_1_, float p_225627_2_) {
+@@ -121,7 +123,7 @@
+             if (useaction == UseAction.CROSSBOW && p_241741_1_ == p_241741_0_.func_184600_cs()) {
+                return BipedModel.ArmPose.CROSSBOW_CHARGE;
+             }
+-         } else if (!p_241741_0_.field_82175_bq && itemstack.func_77973_b() == Items.field_222114_py && CrossbowItem.func_220012_d(itemstack)) {
++         } else if (!p_241741_0_.field_82175_bq && itemstack.func_77973_b() instanceof CrossbowItem && CrossbowItem.func_220012_d(itemstack)) {
+             return BipedModel.ArmPose.CROSSBOW_HOLD;
+          }
+ 

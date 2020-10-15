@@ -1,6 +1,19 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinTasks.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinTasks.java
-@@ -232,7 +232,7 @@
+@@ -47,11 +47,7 @@
+ import net.minecraft.entity.item.ItemEntity;
+ import net.minecraft.entity.monster.HoglinEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+-import net.minecraft.item.ArmorItem;
+-import net.minecraft.item.ArmorMaterial;
+-import net.minecraft.item.Item;
+-import net.minecraft.item.ItemStack;
+-import net.minecraft.item.Items;
++import net.minecraft.item.*;
+ import net.minecraft.loot.LootContext;
+ import net.minecraft.loot.LootParameterSets;
+ import net.minecraft.loot.LootParameters;
+@@ -232,7 +228,7 @@
        ItemStack itemstack = p_234477_0_.func_184586_b(Hand.OFF_HAND);
        p_234477_0_.func_184611_a(Hand.OFF_HAND, ItemStack.field_190927_a);
        if (p_234477_0_.func_242337_eM()) {
@@ -9,7 +22,7 @@
           if (p_234477_1_ && flag) {
              func_234475_a_(p_234477_0_, func_234524_k_(p_234477_0_));
           } else if (!flag) {
-@@ -318,7 +318,7 @@
+@@ -318,7 +314,7 @@
           return false;
        } else if (func_234453_C_(p_234474_0_) && p_234474_0_.func_213375_cj().func_218191_a(MemoryModuleType.field_234103_o_)) {
           return false;
@@ -18,7 +31,7 @@
           return func_234455_E_(p_234474_0_);
        } else {
           boolean flag = p_234474_0_.func_234437_l_(p_234474_1_);
-@@ -418,7 +418,7 @@
+@@ -418,7 +414,7 @@
     }
  
     protected static boolean func_234489_b_(PiglinEntity p_234489_0_, ItemStack p_234489_1_) {
@@ -27,7 +40,7 @@
     }
  
     protected static void func_234468_a_(PiglinEntity p_234468_0_, LivingEntity p_234468_1_) {
-@@ -519,7 +519,7 @@
+@@ -519,7 +515,7 @@
     public static boolean func_234460_a_(LivingEntity p_234460_0_) {
        for(ItemStack itemstack : p_234460_0_.func_184193_aE()) {
           Item item = itemstack.func_77973_b();
@@ -36,3 +49,12 @@
              return true;
           }
        }
+@@ -673,7 +669,7 @@
+    }
+ 
+    private static boolean func_234494_c_(LivingEntity p_234494_0_) {
+-      return p_234494_0_.func_233631_a_(Items.field_222114_py);
++      return p_234494_0_.func_233634_a_(item -> item instanceof CrossbowItem);
+    }
+ 
+    private static void func_234501_d_(LivingEntity p_234501_0_) {

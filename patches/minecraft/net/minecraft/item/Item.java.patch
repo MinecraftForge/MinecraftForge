@@ -76,7 +76,7 @@
        ItemGroup itemgroup = this.func_77640_w();
        return itemgroup != null && (p_194125_1_ == ItemGroup.field_78027_g || p_194125_1_ == itemgroup);
     }
-@@ -284,10 +293,44 @@
+@@ -284,12 +293,46 @@
        return false;
     }
  
@@ -119,8 +119,11 @@
 +   }
 +
     public boolean func_219970_i(ItemStack p_219970_1_) {
-       return p_219970_1_.func_77973_b() == Items.field_222114_py;
+-      return p_219970_1_.func_77973_b() == Items.field_222114_py;
++      return p_219970_1_.func_77973_b() instanceof CrossbowItem;
     }
+ 
+    public ItemStack func_190903_i() {
 @@ -333,6 +376,9 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;

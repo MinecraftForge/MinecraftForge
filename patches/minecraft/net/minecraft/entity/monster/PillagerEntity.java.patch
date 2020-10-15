@@ -1,0 +1,42 @@
+--- a/net/minecraft/entity/monster/PillagerEntity.java
++++ b/net/minecraft/entity/monster/PillagerEntity.java
+@@ -31,11 +31,7 @@
+ import net.minecraft.entity.projectile.ProjectileEntity;
+ import net.minecraft.inventory.EquipmentSlotType;
+ import net.minecraft.inventory.Inventory;
+-import net.minecraft.item.BannerItem;
+-import net.minecraft.item.Item;
+-import net.minecraft.item.ItemStack;
+-import net.minecraft.item.Items;
+-import net.minecraft.item.ShootableItem;
++import net.minecraft.item.*;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.ListNBT;
+ import net.minecraft.network.datasync.DataParameter;
+@@ -86,7 +82,7 @@
+    }
+ 
+    public boolean func_230280_a_(ShootableItem p_230280_1_) {
+-      return p_230280_1_ == Items.field_222114_py;
++      return p_230280_1_ instanceof CrossbowItem;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -120,7 +116,7 @@
+    public AbstractIllagerEntity.ArmPose func_193077_p() {
+       if (this.func_213675_dX()) {
+          return AbstractIllagerEntity.ArmPose.CROSSBOW_CHARGE;
+-      } else if (this.func_233631_a_(Items.field_222114_py)) {
++      } else if (this.func_233634_a_(item -> item instanceof CrossbowItem)) {
+          return AbstractIllagerEntity.ArmPose.CROSSBOW_HOLD;
+       } else {
+          return this.func_213398_dR() ? AbstractIllagerEntity.ArmPose.ATTACKING : AbstractIllagerEntity.ArmPose.NEUTRAL;
+@@ -165,7 +161,7 @@
+       super.func_241844_w(p_241844_1_);
+       if (this.field_70146_Z.nextInt(300) == 0) {
+          ItemStack itemstack = this.func_184614_ca();
+-         if (itemstack.func_77973_b() == Items.field_222114_py) {
++         if (itemstack.func_77973_b() instanceof CrossbowItem) {
+             Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack);
+             map.putIfAbsent(Enchantments.field_222194_I, 1);
+             EnchantmentHelper.func_82782_a(map, itemstack);

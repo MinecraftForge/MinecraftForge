@@ -1,6 +1,32 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinEntity.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinEntity.java
-@@ -307,7 +307,7 @@
+@@ -32,6 +32,7 @@
+ import net.minecraft.entity.projectile.ProjectileEntity;
+ import net.minecraft.inventory.EquipmentSlotType;
+ import net.minecraft.inventory.Inventory;
++import net.minecraft.item.CrossbowItem;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+ import net.minecraft.item.ShootableItem;
+@@ -265,7 +266,7 @@
+       } else if (this.func_234433_eX_()) {
+          return PiglinAction.CROSSBOW_CHARGE;
+       } else {
+-         return this.func_213398_dR() && this.func_233631_a_(Items.field_222114_py) ? PiglinAction.CROSSBOW_HOLD : PiglinAction.DEFAULT;
++         return this.func_213398_dR() && this.func_233634_a_(item -> item instanceof CrossbowItem) ? PiglinAction.CROSSBOW_HOLD : PiglinAction.DEFAULT;
+       }
+    }
+ 
+@@ -299,7 +300,7 @@
+    }
+ 
+    public boolean func_230280_a_(ShootableItem p_230280_1_) {
+-      return p_230280_1_ == Items.field_222114_py;
++      return p_230280_1_ instanceof CrossbowItem;
+    }
+ 
+    protected void func_234438_m_(ItemStack p_234438_1_) {
+@@ -307,7 +308,7 @@
     }
  
     protected void func_234439_n_(ItemStack p_234439_1_) {
@@ -9,3 +35,21 @@
           this.func_184201_a(EquipmentSlotType.OFFHAND, p_234439_1_);
           this.func_233663_d_(EquipmentSlotType.OFFHAND);
        } else {
+@@ -330,14 +331,14 @@
+       if (EnchantmentHelper.func_190938_b(p_208003_2_)) {
+          return false;
+       } else {
+-         boolean flag = PiglinTasks.func_234480_a_(p_208003_1_.func_77973_b()) || p_208003_1_.func_77973_b() == Items.field_222114_py;
+-         boolean flag1 = PiglinTasks.func_234480_a_(p_208003_2_.func_77973_b()) || p_208003_2_.func_77973_b() == Items.field_222114_py;
++         boolean flag = PiglinTasks.func_234480_a_(p_208003_1_.func_77973_b()) || p_208003_1_.func_77973_b() instanceof CrossbowItem;
++         boolean flag1 = PiglinTasks.func_234480_a_(p_208003_2_.func_77973_b()) || p_208003_2_.func_77973_b() instanceof CrossbowItem;
+          if (flag && !flag1) {
+             return true;
+          } else if (!flag && flag1) {
+             return false;
+          } else {
+-            return this.func_242337_eM() && p_208003_1_.func_77973_b() != Items.field_222114_py && p_208003_2_.func_77973_b() == Items.field_222114_py ? false : super.func_208003_a(p_208003_1_, p_208003_2_);
++            return this.func_242337_eM() && !(p_208003_1_.func_77973_b() instanceof CrossbowItem) && p_208003_2_.func_77973_b() instanceof CrossbowItem ? false : super.func_208003_a(p_208003_1_, p_208003_2_);
+          }
+       }
+    }

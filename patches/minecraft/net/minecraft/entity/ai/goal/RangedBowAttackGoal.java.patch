@@ -9,3 +9,12 @@
     }
  
     public boolean func_75253_b() {
+@@ -117,7 +117,7 @@
+                }
+             }
+          } else if (--this.field_188503_e <= 0 && this.field_188504_f >= -60) {
+-            this.field_188499_a.func_184598_c(ProjectileHelper.func_221274_a(this.field_188499_a, Items.field_151031_f));
++            this.field_188499_a.func_184598_c(ProjectileHelper.getHandWith(this.field_188499_a, item -> item instanceof BowItem));
+          }
+ 
+       }

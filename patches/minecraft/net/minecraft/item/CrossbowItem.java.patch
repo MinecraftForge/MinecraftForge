@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/CrossbowItem.java
++++ b/net/minecraft/item/CrossbowItem.java
+@@ -359,7 +359,7 @@
+    }
+ 
+    private static float func_220013_l(ItemStack p_220013_0_) {
+-      return p_220013_0_.func_77973_b() == Items.field_222114_py && func_220019_a(p_220013_0_, Items.field_196152_dE) ? 1.6F : 3.15F;
++      return p_220013_0_.func_77973_b() instanceof CrossbowItem && func_220019_a(p_220013_0_, Items.field_196152_dE) ? 1.6F : 3.15F;
+    }
+ 
+    public int func_230305_d_() {
