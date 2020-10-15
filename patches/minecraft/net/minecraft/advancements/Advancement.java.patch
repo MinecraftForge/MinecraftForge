@@ -4,7 +4,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {
-+         if (!net.minecraftforge.common.crafting.ConditionalAdvancement.processConditions(p_241043_0_)) return null;
++         if ((p_241043_0_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_241043_0_)) == null) return null;
           ResourceLocation resourcelocation = p_241043_0_.has("parent") ? new ResourceLocation(JSONUtils.func_151200_h(p_241043_0_, "parent")) : null;
           DisplayInfo displayinfo = p_241043_0_.has("display") ? DisplayInfo.func_192294_a(JSONUtils.func_152754_s(p_241043_0_, "display")) : null;
           AdvancementRewards advancementrewards = p_241043_0_.has("rewards") ? AdvancementRewards.func_241096_a_(JSONUtils.func_152754_s(p_241043_0_, "rewards")) : AdvancementRewards.field_192114_a;

@@ -143,10 +143,10 @@ public class GameData
         makeRegistry(EFFECTS, Effect.class ).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
+        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").tagFolder("potions").create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").tagFolder("enchantments").create();
         makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").create();
-        makeRegistry(TILE_ENTITY_TYPES, c(TileEntityType.class)).disableSaving().legacyName("tileentities").create();
+        makeRegistry(TILE_ENTITY_TYPES, c(TileEntityType.class)).disableSaving().legacyName("tileentities").tagFolder("tile_entity_types").create();
         makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
         makeRegistry(CONTAINER_TYPES, c(ContainerType.class)).disableSaving().create();
         makeRegistry(PAINTING_TYPES, PaintingType.class, "kebab").create();
@@ -355,7 +355,7 @@ public class GameData
                     fr.unfreeze();
                 }, executor).thenApply(v->Collections.emptyList());
     }
-    
+
     public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
         return CompletableFuture.runAsync(()-> {
             final RegistryEvent.Register<?> event = eventGenerator.apply(null);
@@ -727,7 +727,7 @@ public class GameData
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
@@ -750,7 +750,7 @@ public class GameData
                 defaulted.asMap().forEach((name, entries) ->
                 {
                     buf.append("Missing ").append(name).append(":\n");
-                    entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+                    entries.stream().sorted((o1, o2) -> o1.compareNamespaced(o2)).forEach(rl -> buf.append("    ").append(rl).append("\n"));
                     buf.append("\n");
                 });
             }

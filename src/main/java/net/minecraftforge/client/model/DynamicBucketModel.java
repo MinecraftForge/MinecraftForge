@@ -99,7 +99,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         RenderMaterial particleLocation = owner.isTexturePresent("particle") ? owner.resolveTexture("particle") : null;
         RenderMaterial baseLocation = owner.isTexturePresent("base") ? owner.resolveTexture("base") : null;
         RenderMaterial fluidMaskLocation = owner.isTexturePresent("fluid") ? owner.resolveTexture("fluid") : null;
-        RenderMaterial coverLocation = owner.isTexturePresent("fluid") ? owner.resolveTexture("cover") : null;
+        RenderMaterial coverLocation = owner.isTexturePresent("cover") ? owner.resolveTexture("cover") : null;
 
         IModelTransform transformsFromModel = owner.getCombinedTransform();
 
