@@ -89,6 +89,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
+    modId="player_game_mode_event_test"
+[[mods]]
     modId="structure_spawn_list_event_test"
 [[mods]]
     modId="get_hand_with_test"
