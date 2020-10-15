@@ -19,18 +19,15 @@
 
 package net.minecraftforge.common.util;
 
-import java.util.Optional;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.block.PortalInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.TeleportationRepositioner;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Teleporter;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 /**
@@ -68,44 +65,32 @@ public interface ITeleporter
     }
 
     /**
-     * Is this teleporter the vanilla instance.
+     * Gets the PortalInfo. defaultPortalInfo references the 
+     * vanilla code and should not be used for your purposes. 
+     * Override this method to handle your own logic. 
+     * <p>
+     * Return {@code null} to prevent teleporting.
+     * 
+     * @param entity The entity teleporting before the teleport
+     * @param destWorld The world the entity is teleporting to
+     * @param defaultPortalInfo A reference to the vanilla method for getting portal info. You should implement your own logic instead of using this
+     * 
+     * @return The location, rotation, and motion of the entity in the destWorld after the teleport
      */
-    default boolean isVanilla()
+    @Nullable
+    default PortalInfo getPortalInfo(Entity entity, ServerWorld destWorld, Function<ServerWorld, PortalInfo> defaultPortalInfo)
     {
-        return this.getClass() == Teleporter.class;
-    }
-
-    /**
-     * Finds a portal to teleport to and creates a {@link TeleportationRepositioner.Result} for it.
-     * Calls {@link Teleporter} methods if this is an instance of Teleporter.
-     * Defaults to the scaled entity's position.
-     */
-    default Optional<TeleportationRepositioner.Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
-    {
-        if (this instanceof Teleporter)
-            return ((Teleporter) this).func_242957_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), toWorld.func_234923_W_() == World.field_234919_h_);
-        else
-            return Optional.of(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
-    }
-
-    /**
-     * Creates a portal if one doesn't exist and returns the {@link TeleportationRepositioner.Result Result}.
-     * Calls {@link Teleporter} methods if this is an instance of Teleporter.
-     * Defaults to the scaled entity's position.
-     */
-    default Optional<TeleportationRepositioner.Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
-    {
-        if (this instanceof Teleporter)
-            return ((Teleporter) this).func_242956_a(TeleporterHelper.getScaledPos(fromWorld, toWorld, entity.func_233580_cy_()), entity.getHorizontalFacing().getAxis());
-        else
-            return Optional.of(new TeleportationRepositioner.Result(TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec())), 0, 0));
+        return defaultPortalInfo.apply(destWorld);
     }
     
     /**
-     * Gets the portal info. Defaults to the tpResult's position, zero motion, and the entity's rotation.
+     * Is this teleporter the vanilla instance.
+     * 
+     * @deprecated Currently unused. Still here in case someone is overriding it. TODO remove in 1.17
      */
-    default PortalInfo getPortalInfo(ServerWorld fromWorld, ServerWorld toWorld, Entity entity, TeleportationRepositioner.Result tpResult)
+    @Deprecated
+    default boolean isVanilla()
     {
-        return new PortalInfo(new Vector3d(tpResult.field_243679_a.getX(), tpResult.field_243679_a.getY(), tpResult.field_243679_a.getZ()), Vector3d.ZERO, entity.rotationYaw, entity.rotationPitch);
+        return this.getClass() == Teleporter.class;
     }
 }

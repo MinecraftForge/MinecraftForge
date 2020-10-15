@@ -26,6 +26,8 @@ public class TeleporterHelper
 
     /**
      * Gets the search radius to look for a portal based on dimension scaling.
+     * <p>
+     * Min search radius is 16.
      */
     public static int getPortalSearchRadius(World fromWorld, World toWorld)
     {
