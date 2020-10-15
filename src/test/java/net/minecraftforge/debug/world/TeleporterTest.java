@@ -21,7 +21,10 @@ package net.minecraftforge.debug.world;
 
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,6 +32,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PortalInfo;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -146,37 +150,45 @@ public class TeleporterTest
         }
         
         @Override
-        public Optional<Result> findPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+        @Nullable
+        public PortalInfo getPortalInfo(Entity entity, ServerWorld destWorld, Function<ServerWorld, PortalInfo> defaultPortalInfo)
         {
-            PointOfInterestManager poiManager = toWorld.getPointOfInterestManager();
-            int scale = TeleporterHelper.getPortalSearchRadius(fromWorld, toWorld);
-            BlockPos scaledPos = TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPositionVec()));
-            poiManager.ensureLoadedAndValid(toWorld, scaledPos, scale);
+            Optional<Result> tpResult = this.findPortal(entity, destWorld);
+            if (entity instanceof ServerPlayerEntity && !tpResult.isPresent())
+                tpResult = this.createAndGetPortal(entity, destWorld);
+            
+            if (tpResult.isPresent())
+            {
+                BlockPos pos = tpResult.get().field_243679_a.north();
+                return new PortalInfo(new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), Vector3d.ZERO, 0, 0);
+            }
+            else
+                return null;
+        }
+        
+        private Optional<Result> findPortal(Entity entity, ServerWorld destWorld)
+        {
+            PointOfInterestManager poiManager = destWorld.getPointOfInterestManager();
+            int scale = TeleporterHelper.getPortalSearchRadius(entity.world, destWorld);
+            BlockPos scaledPos = TeleporterHelper.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPositionVec()));
+            poiManager.ensureLoadedAndValid(destWorld, scaledPos, scale);
             Optional<PointOfInterest> optional = poiManager.getInSquare(poiType -> poiType == this.poi, scaledPos, scale, PointOfInterestManager.Status.ANY).min(Comparator.<PointOfInterest>comparingDouble(poi -> poi.getPos().distanceSq(scaledPos)).thenComparingInt(poi -> poi.getPos().getY()));
             
             return optional.map(poi -> {
                BlockPos poiPos = poi.getPos();
-               toWorld.getChunkProvider().registerTicket(TicketType.PORTAL, new ChunkPos(poiPos), 3, poiPos);
-               BlockState blockstate = toWorld.getBlockState(poiPos);
-               return TeleportationRepositioner.func_243676_a(poiPos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, pos -> toWorld.getBlockState(pos) == blockstate);
+               destWorld.getChunkProvider().registerTicket(TicketType.PORTAL, new ChunkPos(poiPos), 3, poiPos);
+               BlockState blockstate = destWorld.getBlockState(poiPos);
+               return TeleportationRepositioner.func_243676_a(poiPos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, pos -> destWorld.getBlockState(pos) == blockstate);
             });
         }
         
-        @Override
-        public Optional<Result> createAndGetPortal(ServerWorld fromWorld, ServerWorld toWorld, Entity entity)
+        private Optional<Result> createAndGetPortal(Entity entity, ServerWorld destWorld)
         {
-            BlockPos scaledPos = TeleporterHelper.getScaledPos(fromWorld, toWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
-            for (int i = 0; i < 256 && toWorld.getBlockState(scaledPos.down()).getMaterial() == Material.AIR; i++)
+            BlockPos scaledPos = TeleporterHelper.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
+            for (int i = 0; i < 256 && destWorld.getBlockState(scaledPos.down()).getMaterial() == Material.AIR; i++)
                 scaledPos = scaledPos.down();
-            toWorld.setBlockState(scaledPos, this.teleporterBlock.getDefaultState());
+            destWorld.setBlockState(scaledPos, this.teleporterBlock.getDefaultState());
             return Optional.of(new TeleportationRepositioner.Result(scaledPos, 0, 0));
-        }
-        
-        @Override
-        public PortalInfo getPortalInfo(ServerWorld fromWorld, ServerWorld toWorld, Entity entity, Result tpResult)
-        {
-            BlockPos pos = tpResult.field_243679_a.north();
-            return new PortalInfo(new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), Vector3d.ZERO, 0, 0);
         }
     }
 }
