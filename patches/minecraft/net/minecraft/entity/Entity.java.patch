@@ -231,9 +231,8 @@
           this.func_213319_R();
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
--         if (portalinfo == null) {
-+         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : null;
-+         if (portalinfo == null && teleporter.isVanilla()) {
++         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a);
+          if (portalinfo == null) {
              return null;
           } else {
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic

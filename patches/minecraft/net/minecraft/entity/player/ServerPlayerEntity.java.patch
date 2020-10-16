@@ -33,11 +33,10 @@
 -         serverworld.func_217434_e(this);
 -         this.field_70128_L = false;
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
--         if (portalinfo != null) {
 +         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
 +         this.revive();
-+         PortalInfo portalinfo = teleporter.isVanilla() ? this.func_241829_a(p_241206_1_) : null;
-+         if (portalinfo != null || !teleporter.isVanilla()) {
++         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a);
+          if (portalinfo != null) {
 +            Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
              serverworld.func_217381_Z().func_76320_a("moving");
              if (registrykey == World.field_234918_g_ && p_241206_1_.func_234923_W_() == World.field_234919_h_) {
