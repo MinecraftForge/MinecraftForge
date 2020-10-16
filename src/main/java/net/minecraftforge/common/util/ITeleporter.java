@@ -85,10 +85,7 @@ public interface ITeleporter
     
     /**
      * Is this teleporter the vanilla instance.
-     * 
-     * @deprecated Currently unused. Still here in case someone is overriding it. TODO remove in 1.17
      */
-    @Deprecated
     default boolean isVanilla()
     {
         return this.getClass() == Teleporter.class;
