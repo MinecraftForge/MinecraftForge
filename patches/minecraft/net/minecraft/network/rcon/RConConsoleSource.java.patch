@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/rcon/RConConsoleSource.java
++++ b/net/minecraft/network/rcon/RConConsoleSource.java
+@@ -34,7 +34,7 @@
+    }
+ 
+    public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
+-      this.field_70009_b.append(p_145747_1_.getString());
++      this.field_70009_b.append(p_145747_1_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
+    }
+ 
+    public boolean func_195039_a() {

@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Biomes are completely redone in 1.16.2, reevaluate
 package net.minecraftforge.common;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,12 +30,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.biome.Biomes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.*;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public class BiomeDictionary
@@ -45,29 +45,28 @@ public class BiomeDictionary
 
     public static final class Type
     {
-
-        private static final Map<String, Type> byName = new HashMap<String, Type>();
+        private static final Map<String, Type> byName = new TreeMap<>();
         private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 
-        /*Temperature-based tags. Specifying neither implies a biome is temperate* /
+        /*Temperature-based tags. Specifying neither implies a biome is temperate*/
         public static final Type HOT = new Type("HOT");
         public static final Type COLD = new Type("COLD");
 
-        //Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts* /
+        //Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
         public static final Type SPARSE = new Type("SPARSE");
         public static final Type DENSE = new Type("DENSE");
 
-        //Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity* /
+        //Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
         public static final Type WET = new Type("WET");
         public static final Type DRY = new Type("DRY");
 
         /*Tree-based tags, SAVANNA refers to dry, desert-like trees (Such as Acacia), CONIFEROUS refers to snowy trees (Such as Spruce) and JUNGLE refers to jungle trees.
-         * Specifying no tag implies a biome has temperate trees (Such as Oak)* /
+         * Specifying no tag implies a biome has temperate trees (Such as Oak)*/
         public static final Type SAVANNA = new Type("SAVANNA");
         public static final Type CONIFEROUS = new Type("CONIFEROUS");
         public static final Type JUNGLE = new Type("JUNGLE");
 
-        /*Tags specifying the nature of a biome* /
+        /*Tags specifying the nature of a biome*/
         public static final Type SPOOKY = new Type("SPOOKY");
         public static final Type DEAD = new Type("DEAD");
         public static final Type LUSH = new Type("LUSH");
@@ -81,10 +80,10 @@ public class BiomeDictionary
         public static final Type RIVER = new Type("RIVER");
         /**
          * A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.
-         ** /
+         **/
         public static final Type WATER = new Type("WATER", OCEAN, RIVER);
 
-        /*Generic types which a biome can be* /
+        /*Generic types which a biome can be*/
         public static final Type MESA = new Type("MESA");
         public static final Type FOREST = new Type("FOREST");
         public static final Type PLAINS = new Type("PLAINS");
@@ -97,15 +96,15 @@ public class BiomeDictionary
         public static final Type BEACH = new Type("BEACH");
         public static final Type VOID = new Type("VOID");
 
-        /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension* /
+        /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
         public static final Type OVERWORLD = new Type("OVERWORLD");
         public static final Type NETHER = new Type("NETHER");
         public static final Type END = new Type("END");
 
         private final String name;
         private final List<Type> subTypes;
-        private final Set<Biome> biomes = new HashSet<Biome>();
-        private final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
+        private final Set<RegistryKey<Biome>> biomes = new HashSet<>();
+        private final Set<RegistryKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
 
         private Type(String name, Type... subTypes)
         {
@@ -117,7 +116,7 @@ public class BiomeDictionary
 
         /**
          * Gets the name for this type.
-         * /
+         */
         public String getName()
         {
             return name;
@@ -144,7 +143,7 @@ public class BiomeDictionary
          *
          * @param name The name of this Type
          * @return An instance of Type for this name.
-         * /
+         */
         public static Type getType(String name, Type... subTypes)
         {
             name = name.toUpperCase();
@@ -158,7 +157,7 @@ public class BiomeDictionary
 
         /**
          * @return An unmodifiable collection of all current biome types.
-         * /
+         */
         public static Collection<Type> getAll()
         {
             return allTypes;
@@ -175,16 +174,15 @@ public class BiomeDictionary
         }
     }
 
-    private static final Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
+    private static final Map<RegistryKey<Biome>, BiomeInfo> biomeInfoMap = new HashMap<>();
 
     private static class BiomeInfo
     {
-
         private final Set<Type> types = new HashSet<Type>();
         private final Set<Type> typesUn = Collections.unmodifiableSet(this.types);
-
     }
 
+    public static void init() {}
     static
     {
         registerVanillaBiomes();
@@ -193,11 +191,9 @@ public class BiomeDictionary
     /**
      * Adds the given types to the biome.
      *
-     * /
-    public static void addTypes(Biome biome, Type... types)
+     */
+    public static void addTypes(RegistryKey<Biome> biome, Type... types)
     {
-        Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
-
         Collection<Type> supertypes = listSupertypes(types);
         Collections.addAll(supertypes, types);
 
@@ -214,9 +210,9 @@ public class BiomeDictionary
     /**
      * Gets the set of biomes that have the given type.
      *
-     * /
+     */
     @Nonnull
-    public static Set<Biome> getBiomes(Type type)
+    public static Set<RegistryKey<Biome>> getBiomes(Type type)
     {
         return type.biomesUn;
     }
@@ -224,11 +220,10 @@ public class BiomeDictionary
     /**
      * Gets the set of types that have been added to the given biome.
      *
-     * /
+     */
     @Nonnull
-    public static Set<Type> getTypes(Biome biome)
+    public static Set<Type> getTypes(RegistryKey<Biome> biome)
     {
-        ensureHasTypes(biome);
         return getBiomeInfo(biome).typesUn;
     }
 
@@ -236,25 +231,19 @@ public class BiomeDictionary
      * Checks if the two given biomes have types in common.
      *
      * @return returns true if a common type is found, false otherwise
-     * /
-    public static boolean areSimilar(Biome biomeA, Biome biomeB)
+     */
+    public static boolean areSimilar(RegistryKey<Biome> biomeA, RegistryKey<Biome> biomeB)
     {
-        for (Type type : getTypes(biomeA))
-        {
-            if (getTypes(biomeB).contains(type))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        Set<Type> typesA = getTypes(biomeA);
+        Set<Type> typesB = getTypes(biomeB);
+        return typesA.stream().anyMatch(typesB::contains);
     }
 
     /**
      * Checks if the given type has been added to the given biome.
      *
-     * /
-    public static boolean hasType(Biome biome, Type type)
+     */
+    public static boolean hasType(RegistryKey<Biome> biome, Type type)
     {
         return getTypes(biome).contains(type);
     }
@@ -262,90 +251,16 @@ public class BiomeDictionary
     /**
      * Checks if any type has been added to the given biome.
      *
-     * /
-    public static boolean hasAnyType(Biome biome)
+     */
+    public static boolean hasAnyType(RegistryKey<Biome> biome)
     {
         return !getBiomeInfo(biome).types.isEmpty();
     }
 
-    /**
-     * Automatically adds appropriate types to a given biome based on certain heuristics.
-     * If a biome's types are requested and no types have been added to the biome so far, the biome's types
-     * will be determined and added using this method.
-     *
-     * /
-    public static void makeBestGuess(Biome biome)
-    {
-        Type type = Type.fromVanilla(biome.getCategory());
-        if (type != null)
-        {
-            BiomeDictionary.addTypes(biome, type);
-        }
-
-        if (biome.getDownfall() > 0.85f)
-        {
-            BiomeDictionary.addTypes(biome, WET);
-        }
-
-        if (biome.getDownfall() < 0.15f)
-        {
-            BiomeDictionary.addTypes(biome, DRY);
-        }
-
-        if (biome.getDefaultTemperature() > 0.85f)
-        {
-            BiomeDictionary.addTypes(biome, HOT);
-        }
-
-        if (biome.getDefaultTemperature() < 0.15f)
-        {
-            BiomeDictionary.addTypes(biome, COLD);
-        }
-
-        if (biome.isHighHumidity() && biome.getDepth() < 0.0F && (biome.getScale() <= 0.3F && biome.getScale() >= 0.0F))
-        {
-            BiomeDictionary.addTypes(biome, SWAMP);
-        }
-
-        if (biome.getDepth() <= -0.5F)
-        {
-            if (biome.getScale() == 0.0F)
-            {
-                BiomeDictionary.addTypes(biome, RIVER);
-            }
-            else
-            {
-                BiomeDictionary.addTypes(biome, OCEAN);
-            }
-        }
-
-        if (biome.getScale() >= 0.4F && biome.getScale() < 1.5F)
-        {
-            BiomeDictionary.addTypes(biome, HILLS);
-        }
-
-        if (biome.getScale() >= 1.5F)
-        {
-            BiomeDictionary.addTypes(biome, MOUNTAIN);
-        }
-    }
-
     //Internal implementation
-    private static BiomeInfo getBiomeInfo(Biome biome)
+    private static BiomeInfo getBiomeInfo(RegistryKey<Biome> biome)
     {
-        return biomeInfoMap.computeIfAbsent(biome.getRegistryName(), k -> new BiomeInfo());
-    }
-
-    /**
-     * Ensure that at least one type has been added to the given biome.
-     * /
-    static void ensureHasTypes(Biome biome)
-    {
-        if (!hasAnyType(biome))
-        {
-            makeBestGuess(biome);
-            LOGGER.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), !getBiomeInfo(biome).types.isEmpty() ? getBiomeInfo(biome).types : "could not guess types");
-        }
+        return biomeInfoMap.computeIfAbsent(biome, k -> new BiomeInfo());
     }
 
     private static Collection<Type> listSupertypes(Type... types)
@@ -443,14 +358,43 @@ public class BiomeDictionary
         addTypes(Biomes.ERODED_BADLANDS, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD);
         addTypes(Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, HILLS, RARE, OVERWORLD, PLATEAU, MODIFIED);
         addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD, PLATEAU, MODIFIED);
+        addTypes(Biomes.BAMBOO_JUNGLE, HOT, WET, RARE, JUNGLE, OVERWORLD);
+        addTypes(Biomes.BAMBOO_JUNGLE_HILLS, HOT, WET, RARE, JUNGLE, HILLS, OVERWORLD);
+        addTypes(Biomes.field_235252_ay_, HOT, DRY, NETHER);
+        addTypes(Biomes.field_235253_az_, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.field_235250_aA_, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.field_235251_aB_, HOT, DRY, NETHER);
 
         if (DEBUG)
         {
             StringBuilder buf = new StringBuilder();
             buf.append("BiomeDictionary:\n");
-            Type.byName.forEach((name, type) -> buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(b -> b.getRegistryName().toString()).collect(Collectors.joining(", "))).append('\n'));
+            Type.byName.forEach((name, type) ->
+                buf.append("    ").append(type.name).append(": ")
+                .append(type.biomes.stream()
+                    .map(RegistryKey::func_240901_a_)
+                    .sorted((a,b) -> a.compareNamespaced(b))
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+                )
+                .append('\n')
+            );
+
+            boolean missing = false;
+            List<RegistryKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
+                .map(b -> RegistryKey.func_240903_a_(Registry.field_239720_u_, b.getRegistryName()))
+                .sorted().collect(Collectors.toList());
+
+            for (RegistryKey<Biome> key : all) {
+                if (!biomeInfoMap.containsKey(key)) {
+                    if (!missing) {
+                        buf.append("Missing:\n");
+                        missing = true;
+                    }
+                    buf.append("    ").append(key.func_240901_a_()).append('\n');
+                }
+            }
             LOGGER.debug(buf.toString());
         }
     }
 }
-*/
