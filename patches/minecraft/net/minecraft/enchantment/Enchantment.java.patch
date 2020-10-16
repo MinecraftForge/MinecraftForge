@@ -1,15 +1,31 @@
 --- a/net/minecraft/enchantment/Enchantment.java
 +++ b/net/minecraft/enchantment/Enchantment.java
-@@ -18,7 +18,7 @@
+@@ -18,7 +18,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class Enchantment {
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Enchantment> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.TagCollectionManager.func_242178_a().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS));
     private final EquipmentSlotType[] field_185263_a;
     private final Enchantment.Rarity field_77333_a;
     public final EnchantmentType field_77351_y;
-@@ -114,7 +114,7 @@
+@@ -37,6 +38,14 @@
+       this.field_185263_a = p_i46731_3_;
+    }
+ 
++   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
++   public boolean isIn(net.minecraft.tags.ITag<Enchantment> tag) {
++      return tag.func_230235_a_(this);
++   }
++
+    public Map<EquipmentSlotType, ItemStack> func_222181_a(LivingEntity p_222181_1_) {
+       Map<EquipmentSlotType, ItemStack> map = Maps.newEnumMap(EquipmentSlotType.class);
+ 
+@@ -114,7 +123,7 @@
     }
  
     public boolean func_92089_a(ItemStack p_92089_1_) {
@@ -18,7 +34,7 @@
     }
  
     public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -139,6 +139,24 @@
+@@ -139,6 +148,24 @@
        return true;
     }
  

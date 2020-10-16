@@ -164,7 +164,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             REMAP
         }
 
-        public static class Mapping<T extends IForgeRegistryEntry<T>>
+        public static class Mapping<T extends IForgeRegistryEntry<T>> implements Comparable<Mapping<T>>
         {
             public final IForgeRegistry<T> registry;
             private final IForgeRegistry<T> pool;
@@ -230,6 +230,14 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public T getTarget()
             {
                 return target;
+            }
+
+            @Override
+            public int compareTo(Mapping<T> o)
+            {
+                int ret = this.registry.getRegistryName().compareNamespaced(o.registry.getRegistryName());
+                if (ret ==0) ret = this.key.compareNamespaced(o.key);
+                return ret;
             }
         }
     }

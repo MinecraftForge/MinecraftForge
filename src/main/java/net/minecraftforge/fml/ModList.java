@@ -120,11 +120,10 @@ public class ModList
 
     <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<List<Throwable>>> futureVisitor(
             final ModLoadingStage.EventGenerator<T> eventGenerator,
-            final ModLoadingStage.EventDispatcher<T> eventManager,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
         return executor -> gather(
                 this.mods.stream()
-                .map(m -> ModContainer.buildTransitionHandler(m, eventGenerator, eventManager, stateChange, executor))
+                .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, stateChange, executor))
                 .collect(Collectors.toList()))
             .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }

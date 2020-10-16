@@ -1,4 +1,4 @@
-<img src="assets/Forge_logo.svg">
+![Forge Logo](assets/Forge_logo.svg)
 
 MinecraftForge
 =============
