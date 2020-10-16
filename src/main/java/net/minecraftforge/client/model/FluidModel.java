@@ -57,8 +57,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 // TODO: Write a model loader and test/fix as needed
 public final class FluidModel implements IModelGeometry<FluidModel>

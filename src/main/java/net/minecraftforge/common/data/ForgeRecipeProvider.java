@@ -46,7 +46,6 @@ import net.minecraft.item.crafting.Ingredient.IItemList;
 import net.minecraft.item.crafting.Ingredient.TagList;
 import net.minecraft.item.crafting.Ingredient.SingleItemList;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -77,6 +76,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         replace(Items.STICK,        Tags.Items.RODS_WOODEN);
         replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
+        replace(Items.field_234759_km_, Tags.Items.INGOTS_NETHERITE);
         replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
@@ -88,7 +88,8 @@ public class ForgeRecipeProvider extends RecipeProvider
         exclude(Items.IRON_NUGGET);
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
-        
+        exclude(Blocks.field_235397_ng_);
+
         exclude(Blocks.COBBLESTONE_STAIRS);
         exclude(Blocks.COBBLESTONE_SLAB);
         exclude(Blocks.COBBLESTONE_WALL);

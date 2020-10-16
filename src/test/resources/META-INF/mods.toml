@@ -19,6 +19,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_slime_block_test"
 [[mods]]
+    modId="block_harvest_tool_test"
+[[mods]]
     modId="client_chat_event_test"
 [[mods]]
     modId="command_event_test"
@@ -75,8 +77,18 @@ license="LGPL v2.1"
 [[mods]]
     modId="player_name_event_test"
 [[mods]]
-    modId="modded_overworld_biomes_test"
-[[mods]]
     modId="tool_interact_test"
 [[mods]]
     modId="custom_elytra_test"
+[[mods]]
+    modId="finite_water_test"
+[[mods]]
+    modId="scaffolding_test"
+[[mods]]
+    modId="custom_tag_types_test"
+[[mods]]
+    modId="biome_loading_event_test"
+[[mods]]
+    modId="player_game_mode_event_test"
+[[mods]]
+    modId="structure_spawn_list_event_test"

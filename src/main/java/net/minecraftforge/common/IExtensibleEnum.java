@@ -19,6 +19,12 @@
 
 package net.minecraftforge.common;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.util.IStringSerializable;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * To be implemented on vanilla enums that should be enhanced with ASM to be
  * extensible. If this is implemented on a class, the class must define a static
@@ -47,4 +53,11 @@ public interface IExtensibleEnum
      */
     @Deprecated
     default void init() {}
+
+    /**
+     * Use this instead of {@link IStringSerializable#func_233023_a_(Supplier, Function)} for extensible enums because this not cache the enum values on construction
+     */
+    static <E extends Enum<E> & IStringSerializable> Codec<E> createCodecForExtensibleEnum(Supplier<E[]> valuesSupplier, Function<? super String, ? extends E> enumValueFromNameFunction) {
+        return IStringSerializable.func_233024_a_(Enum::ordinal, (id) -> valuesSupplier.get()[id], enumValueFromNameFunction);
+    }
 }

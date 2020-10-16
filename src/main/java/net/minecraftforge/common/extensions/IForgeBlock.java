@@ -19,11 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
@@ -43,17 +40,13 @@ import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.AxeItem;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -910,5 +903,19 @@ public interface IForgeBlock
         if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
         else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
         else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
+    }
+
+    /**
+     * Checks if a player or entity handles movement on this block like scaffolding.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos The block position in world
+     * @param entity The entity on the scaffolding
+     * @return True if the block should act like scaffolding
+     */
+    default boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
+    {
+        return state.isIn(Blocks.SCAFFOLDING);
     }
 }

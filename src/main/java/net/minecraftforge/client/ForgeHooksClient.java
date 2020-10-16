@@ -22,16 +22,17 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -72,9 +73,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -125,6 +125,7 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
+    //TODO: Rename to onDrawHighlight
     public static boolean onDrawBlockHighlight(WorldRenderer context, ActiveRenderInfo info, RayTraceResult target, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffers)
     {
         switch (target.getType()) {
@@ -134,8 +135,9 @@ public class ForgeHooksClient
             case ENTITY:
                 if (!(target instanceof EntityRayTraceResult)) return false;
                 return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
+            default:
+                return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
         }
-        return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
     }
 
     public static void dispatchRenderLast(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
@@ -222,54 +224,6 @@ public class ForgeHooksClient
         return event.getFOV();
     }
 
-    private static int skyX, skyZ;
-
-    private static boolean skyInit;
-    private static int skyRGBMultiplier;
-
-    public static int getSkyBlendColour(World world, BlockPos center)
-    {
-        if (center.getX() == skyX && center.getZ() == skyZ && skyInit)
-        {
-            return skyRGBMultiplier;
-        }
-        skyInit = true;
-
-        GameSettings settings = Minecraft.getInstance().gameSettings;
-        int[] ranges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
-        int distance = 0;
-        //TODO, GraphicsFanciness changed, and is getSkyBlendColour used still?
-//        if (settings.fancyGraphics && ranges.length > 0)
-//        {
-//            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
-//        }
-
-        int r = 0;
-        int g = 0;
-        int b = 0;
-
-        int divider = 0;
-        for (int x = -distance; x <= distance; ++x)
-        {
-            for (int z = -distance; z <= distance; ++z)
-            {
-                BlockPos pos = center.add(x, 0, z);
-                Biome biome = world.getNoiseBiome(pos.getX(), pos.getY(), pos.getZ());
-                int colour = 0xFFFFFF; // TODO: biome.getSkyColorByTemp(biome.getTemperature(pos));
-                r += (colour & 0xFF0000) >> 16;
-                g += (colour & 0x00FF00) >> 8;
-                b += colour & 0x0000FF;
-                divider++;
-            }
-        }
-
-        int multiplier = (r / divider & 255) << 16 | (g / divider & 255) << 8 | b / divider & 255;
-
-        skyX = center.getX();
-        skyZ = center.getZ();
-        skyRGBMultiplier = multiplier;
-        return skyRGBMultiplier;
-    }
     /**
      * Initialization of Forge Renderers.
      */
@@ -286,9 +240,9 @@ public class ForgeHooksClient
         {
             // render a warning at the top of the screen,
             ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).func_240699_a_(TextFormatting.RED);
-            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = new TranslationTextComponent("forge.update.beta.2");
-            gui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;
@@ -608,6 +562,15 @@ public class ForgeHooksClient
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static void onClientChangeGameMode(NetworkPlayerInfo info, GameType currentGameMode, GameType newGameMode)
+    {
+        if (currentGameMode != newGameMode)
+        {
+            ClientPlayerChangeGameModeEvent evt = new ClientPlayerChangeGameModeEvent(info, currentGameMode, newGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+        }
     }
 
     @SuppressWarnings("deprecation")

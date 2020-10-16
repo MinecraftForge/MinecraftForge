@@ -4,6 +4,7 @@
     "#forge:ingots/iron",
     "#forge:ingots/gold",
     "#forge:ingots/brick",
-    "#forge:ingots/nether_brick"
+    "#forge:ingots/nether_brick",
+    "#forge:ingots/netherite"
   ]
 }

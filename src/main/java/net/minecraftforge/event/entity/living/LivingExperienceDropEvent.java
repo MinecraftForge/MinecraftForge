@@ -28,8 +28,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * the amount of experience points dropped or completely prevent dropping of experience
  * by canceling the event.
  */
-@net.minecraftforge.eventbus.api.Cancelable
-public class LivingExperienceDropEvent extends LivingEvent 
+@Cancelable
+public class LivingExperienceDropEvent extends LivingEvent
 {
     private final PlayerEntity attackingPlayer;
     private final int originalExperiencePoints;

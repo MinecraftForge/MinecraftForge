@@ -34,6 +34,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
@@ -75,43 +76,6 @@ public class BlockEvent extends Event
     public BlockState getState()
     {
         return state;
-    }
-
-    /**
-     * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
-     * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
-     *
-     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
-     * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
-     *
-     * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
-     *
-     * @author cpw
-     */
-    public static class HarvestDropsEvent extends BlockEvent
-    {
-        private final int fortuneLevel;
-        private final NonNullList<ItemStack> drops;
-        private final boolean isSilkTouching;
-        private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
-        private final PlayerEntity harvester; // May be null for non-player harvesting such as explosions or machines
-
-        public HarvestDropsEvent(World world, BlockPos pos, BlockState state, int fortuneLevel, float dropChance, NonNullList<ItemStack> drops, PlayerEntity harvester, boolean isSilkTouching)
-        {
-            super(world, pos, state);
-            this.fortuneLevel = fortuneLevel;
-            this.setDropChance(dropChance);
-            this.drops = drops;
-            this.isSilkTouching = isSilkTouching;
-            this.harvester = harvester;
-        }
-
-        public int getFortuneLevel() { return fortuneLevel; }
-        public List<ItemStack> getDrops() { return drops; }
-        public boolean isSilkTouching() { return isSilkTouching; }
-        public float getDropChance() { return dropChance; }
-        public void setDropChance(float dropChance) { this.dropChance = dropChance; }
-        public PlayerEntity getHarvester() { return harvester; }
     }
 
     /**
@@ -280,11 +244,32 @@ public class BlockEvent extends Event
      * even if the liquid usually does do that (like water).
      */
     @HasResult
-    public static class CreateFluidSourceEvent extends BlockEvent
+    public static class CreateFluidSourceEvent extends Event
     {
-        public CreateFluidSourceEvent(World world, BlockPos pos, BlockState state)
+        private final IWorldReader world;
+        private final BlockPos pos;
+        private final BlockState state;
+
+        public CreateFluidSourceEvent(IWorldReader world, BlockPos pos, BlockState state)
         {
-            super(world, pos, state);
+            this.world = world;
+            this.pos = pos;
+            this.state = state;
+        }
+
+        public IWorldReader getWorld()
+        {
+            return world;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public BlockState getState()
+        {
+            return state;
         }
     }
 

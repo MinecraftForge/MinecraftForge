@@ -21,6 +21,7 @@ package net.minecraftforge.common.loot;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.loot.ConditionArraySerializer;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.GameData;
@@ -63,6 +64,24 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
      * @param conditionsIn An already deserialized list of ILootConditions
      */
     public abstract T read(ResourceLocation location, JsonObject object, ILootCondition[] ailootcondition);
+
+    /**
+     * Write the serializer to json.
+     *
+     * Most serializers won't have to do anything else than {@link #makeConditions}
+     * Which simply creates the JsonObject from an array of ILootConditions.
+     */
+    public abstract JsonObject write(T instance);
+
+    /**
+     * Helper to create the json object from the conditions.
+     * Add any extra properties to the returned json.
+     */
+    public JsonObject makeConditions(ILootCondition[] conditions) {
+        JsonObject json = new JsonObject();
+        json.add("conditions", ConditionArraySerializer.field_235679_a_.func_235681_a_(conditions));
+        return json;
+    }
 
     /**
      * Used by Forge's registry system.

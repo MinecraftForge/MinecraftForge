@@ -64,6 +64,7 @@ public class NotificationModUpdateScreen extends Screen
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
@@ -78,7 +79,7 @@ public class NotificationModUpdateScreen extends Screen
         int x = modButton.field_230690_l_;
         int y = modButton.field_230691_m_;
         int w = modButton.func_230998_h_();
-        int h = modButton.getHeight();
+        int h = modButton.func_238483_d_();
 
         func_238463_a_(mStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
     }

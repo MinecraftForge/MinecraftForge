@@ -19,29 +19,36 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static net.minecraftforge.fml.Logging.LOADING;
 
 /**
  * Master list of all mods - game-side version. This is classloaded in the game scope and
@@ -56,7 +63,6 @@ public class ModList
     private final Map<String, ModFileInfo> fileById;
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
-    private ForkJoinPool modLoadingThreadPool;
     private List<ModFileScanData> modFileScanData;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
@@ -68,9 +74,6 @@ public class ModList
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
                 map(ModInfo.class::cast).
                 collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
-        final int loadingThreadCount = FMLConfig.loadingThreadCount();
-        LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
-        modLoadingThreadPool = new ForkJoinPool(loadingThreadCount, ModList::newForkJoinWorkerThread, null, false);
         CrashReportExtender.registerCrashCallable("Mod List", this::crashReport);
     }
 
@@ -92,10 +95,6 @@ public class ModList
         INSTANCE = new ModList(modFiles, sortedList);
         return INSTANCE;
     }
-
-    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> inlineDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchSynchronousEvent(event, errors, executor, ticker);
-
-    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> parallelDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchParallelEvent(event, errors, executor, ticker);
 
     public static ModList get() {
         return INSTANCE;
@@ -119,39 +118,46 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
-        LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
-        executor.execute(ticker);
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
-        this.mods.stream().forEach(m->m.transitionState(lifecycleEvent, errorHandler));
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
+    <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<List<Throwable>>> futureVisitor(
+            final ModLoadingStage.EventGenerator<T> eventGenerator,
+            final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
+        return executor -> gather(
+                this.mods.stream()
+                .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, stateChange, executor))
+                .collect(Collectors.toList()))
+            .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }
-    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
-        LOGGER.debug(LOADING, "Dispatching parallel event {}", lifecycleEvent);
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
-        DeferredWorkQueue.clear();
-        try
-        {
-            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler.andThen(e -> this.mods.forEach(ModContainer::shutdown)))));
-            while (ticker != null && !parallelTask.isDone()) {
-                executor.execute(ticker);
-            }
-            parallelTask.get();
+    static CompletionStage<List<Throwable>> completableFutureFromExceptionList(List<? extends Map.Entry<?, Throwable>> t) {
+        if (t.stream().noneMatch(e->e.getValue()!=null)) {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        } else {
+            final List<Throwable> throwables = t.stream().filter(e -> e.getValue() != null).map(Map.Entry::getValue).collect(Collectors.toList());
+            CompletableFuture<List<Throwable>> cf = new CompletableFuture<>();
+            final RuntimeException accumulator = new RuntimeException();
+            cf.completeExceptionally(accumulator);
+            throwables.forEach(exception -> {
+                if (exception instanceof CompletionException) {
+                    exception = exception.getCause();
+                }
+                if (exception.getSuppressed().length!=0) {
+                    Arrays.stream(exception.getSuppressed()).forEach(accumulator::addSuppressed);
+                } else {
+                    accumulator.addSuppressed(exception);
+                }
+            });
+            return cf;
         }
-        catch (InterruptedException | ExecutionException e)
-        {
-            LOGGER.error(LOADING, "Encountered an exception during parallel processing - sleeping 10 seconds to wait for jobs to finish", e);
-            this.mods.forEach(ModContainer::shutdown); //Prevent all future events from being sent out.
-            errorHandler.accept(Collections.singletonList(new UncaughtModLoadingException(lifecycleEvent.fromStage(), e)));
-            modLoadingThreadPool.awaitQuiescence(10, TimeUnit.SECONDS);
-            if (!modLoadingThreadPool.isQuiescent()) {
-                LOGGER.fatal(LOADING, "The parallel pool has failed to quiesce correctly, forcing a shutdown. There is something really wrong here");
-                modLoadingThreadPool.shutdownNow();
-                throw new RuntimeException("Forge played \"STOP IT NOW MODS!\" - it was \"NOT VERY EFFECTIVE\"");
-            }
-        }
-        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
+    }
+
+    static <V> CompletableFuture<List<Map.Entry<V, Throwable>>> gather(List<? extends CompletableFuture<? extends V>> futures) {
+        List<Map.Entry<V, Throwable>> list = new ArrayList<>(futures.size());
+        CompletableFuture<?>[] results = new CompletableFuture[futures.size()];
+        futures.forEach(future -> {
+            int i = list.size();
+            list.add(null);
+            results[i] = future.whenComplete((result, exception) -> list.set(i, new AbstractMap.SimpleImmutableEntry<>(result, exception)));
+        });
+        return CompletableFuture.allOf(results).handle((r, th)->null).thenApply(res -> list);
     }
 
     void setLoadedMods(final List<ModContainer> modContainers)

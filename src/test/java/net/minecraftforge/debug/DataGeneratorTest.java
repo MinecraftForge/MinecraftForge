@@ -70,10 +70,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
@@ -84,6 +82,7 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -113,13 +112,15 @@ public class DataGeneratorTest
         if (event.includeClient())
         {
             gen.addProvider(new Lang(gen));
-            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
-            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
         }
         if (event.includeServer())
         {
             gen.addProvider(new Recipes(gen));
-            gen.addProvider(new Tags(gen));
+            gen.addProvider(new Tags(gen, event.getExistingFileHelper()));
         }
     }
 
@@ -149,7 +150,7 @@ public class DataGeneratorTest
                 .patternLine("XXX")
                 .key('X', Blocks.DIRT)
                 .setGroup("")
-                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
+                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
                 ::build
             )
             .setAdvancement(ID,
@@ -174,15 +175,37 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            not(
+                                and(
+                                        not(modLoaded("minecraft")),
+                                        itemExists("minecraft", "dirt"),
+                                        FALSE()
+                                )
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .key('X', Blocks.DIRT)
+                                    .setGroup("")
+                                    .addCriterion("has_dirt", hasItem(Blocks.DIRT))
+                                    ::build
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
         }
     }
 
     public static class Tags extends BlockTagsProvider
     {
-
-        public Tags(DataGenerator gen)
+        public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
         {
-            super(gen);
+            super(gen, MODID, existingFileHelper);
         }
 
         @Override

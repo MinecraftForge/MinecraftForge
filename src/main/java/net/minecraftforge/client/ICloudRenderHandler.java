@@ -17,11 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftforge.client;
 
-import net.minecraft.tags.ITag;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 
 /**
- * Marker class used by Forge to make a tag entry optional at runtime
+ * Call {@link net.minecraft.client.world.DimensionRenderInfo#setCloudRenderHandler(ICloudRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all cloud rendering with your own.
+ * This is only responsible for rendering clouds.
  */
-public interface IOptionalTagEntry extends ITag.ITagEntry {}
+@FunctionalInterface
+public interface ICloudRenderHandler {
+    void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc, double viewEntityX, double viewEntityY, double viewEntityZ);
+}

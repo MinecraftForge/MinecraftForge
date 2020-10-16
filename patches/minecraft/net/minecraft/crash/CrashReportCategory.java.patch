@@ -13,3 +13,27 @@
           return this.field_85075_d.length;
        }
     }
+@@ -145,11 +147,7 @@
+ 
+       if (this.field_85075_d != null && this.field_85075_d.length > 0) {
+          p_85072_1_.append("\nStacktrace:");
+-
+-         for(StackTraceElement stacktraceelement : this.field_85075_d) {
+-            p_85072_1_.append("\n\tat ");
+-            p_85072_1_.append((Object)stacktraceelement);
+-         }
++         p_85072_1_.append(net.minecraftforge.fml.CrashReportExtender.generateEnhancedStackTrace(this.field_85075_d));
+       }
+ 
+    }
+@@ -158,6 +156,10 @@
+       return this.field_85075_d;
+    }
+ 
++   public void applyStackTrace(Throwable t) {
++      this.field_85075_d = t.getStackTrace();
++   }
++
+    public static void func_175750_a(CrashReportCategory p_175750_0_, BlockPos p_175750_1_, @Nullable BlockState p_175750_2_) {
+       if (p_175750_2_ != null) {
+          p_175750_0_.func_189529_a("Block", p_175750_2_::toString);

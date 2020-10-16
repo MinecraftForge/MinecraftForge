@@ -23,16 +23,12 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.common.base.Throwables;
@@ -40,14 +36,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
@@ -96,6 +94,7 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -109,10 +108,15 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -136,6 +140,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -156,6 +161,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
@@ -178,20 +184,11 @@ public class ForgeHooks
         if (stack.isEmpty() || tool == null)
             return player.func_234569_d_(state);
 
-        int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
+        int toolLevel = stack.getHarvestLevel(tool, player, state);
         if (toolLevel < 0)
             return player.func_234569_d_(state);
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
-    }
-
-    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
-        BlockState state = world.getBlockState(pos);
-        //state = state.getActualState(world, pos);
-        ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null) return false;
-        return stack.getHarvestLevel(tool, null, null) >= state.getHarvestLevel();
     }
 
     public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
@@ -217,7 +214,11 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        //TODO Axes check Material and Blocks now.
+        //Axes check Materials and Blocks now.
+        Set<Material> materials = getPrivateValue(AxeItem.class, null, 0);
+        for (Block block : ForgeRegistries.BLOCKS)
+            if (materials.contains(block.getDefaultState().getMaterial()))
+                blockToolSetter.accept(block, ToolType.AXE, 0);
         blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
         blocks = getPrivateValue(HoeItem.class, null, 0);
@@ -235,6 +236,7 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
+    @SuppressWarnings("resource")
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
@@ -787,6 +789,17 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
+    public static boolean onChangeGameMode(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+    {
+        if (currentGameMode != newGameMode)
+        {
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+            return !evt.isCanceled();
+        }
+        return true;
+    }
+
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
     private static LootTableContext getLootTableContext()
     {
@@ -842,14 +855,33 @@ public class ForgeHooks
                     new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
-                    .color(0xFF3F76E4).build(fluid);
+                    .color(0xFF3F76E4)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
+                    .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
                     new ResourceLocation("block/lava_still"),
                     new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
+                    .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    @FunctionalInterface
+    public interface BiomeCallbackFunction
+    {
+        Biome apply(final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns);
+    }
+
+    public static Biome enhanceBiome(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
+    {
+        BiomeGenerationSettingsBuilder genBuilder = new BiomeGenerationSettingsBuilder(gen);
+        MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
+        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
+        MinecraftForge.EVENT_BUS.post(event);
+        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b());
     }
 
     private static class LootTableContext
@@ -1078,15 +1110,16 @@ public class ForgeHooks
 
     public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
+        //TODO 1.17 remove parsing the forge added "optional" array. Still here for compatibility with previously created tags.
         if (json.has("optional"))
         {
             for (JsonElement entry : JSONUtils.getJsonArray(json, "optional"))
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                    list.add(ForgeHooks.makeOptionalTag(true, Collections.singleton(new ResourceLocation(s))));
+                    list.add(new ITag.OptionalItemEntry(new ResourceLocation(s)));
                 else
-                    list.add(ForgeHooks.makeOptionalTag(false, Collections.singleton(new ResourceLocation(s.substring(1)))));
+                    list.add(new ITag.OptionalTagEntry(new ResourceLocation(s.substring(1))));
             }
         }
 
@@ -1177,64 +1210,6 @@ public class ForgeHooks
             list = mod.apply(list, context);
         }
         return list;
-    }
-
-    @Deprecated//INTERNAL
-    public static IOptionalTagEntry makeOptionalTag(boolean items, Collection<ResourceLocation> locations) {
-        return items ? new OptionalItemTarget(locations) : new OptionalTagTarget(locations);
-    }
-
-    private static class OptionalTagTarget implements IOptionalTagEntry
-    {
-
-        private final Collection<ResourceLocation> referents;
-
-        public OptionalTagTarget(Collection<ResourceLocation> referents)
-        {
-            this.referents = referents;
-        }
-
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            referents.stream()
-                    .map(tagLookup)
-                    .filter(Objects::nonNull)
-                    .map(ITag::func_230236_b_)
-                    .flatMap(List::stream)
-                    .forEach(collector);
-            return true;
-        }
-
-        @Override
-        public void func_230237_a_(JsonArray array)
-        {
-            referents.stream().map(e -> "#" + e).forEach(array::add);
-        }
-    }
-
-    private static class OptionalItemTarget implements IOptionalTagEntry
-    {
-
-        private final Collection<ResourceLocation> locations;
-
-        public OptionalItemTarget(Collection<ResourceLocation> locations)
-        {
-            this.locations = locations;
-        }
-
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            locations.stream().map(itemLookup).filter(Objects::nonNull).forEach(collector);
-            return true;
-        }
-
-        @Override
-        public void func_230237_a_(JsonArray array)
-        {
-            locations.stream().map(ResourceLocation::toString).forEach(array::add);
-        }
     }
 
     public static List<String> getModPacks()

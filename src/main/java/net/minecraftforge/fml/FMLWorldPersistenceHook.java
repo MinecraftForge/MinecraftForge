@@ -77,6 +77,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
         {
             registries.put(e.getKey().toString(), e.getValue().write());
         }
+        LOGGER.debug(WORLDPERSISTENCE,"ID Map collection complete {}", serverInfo.getWorldName());
         return fmlData;
     }
 
