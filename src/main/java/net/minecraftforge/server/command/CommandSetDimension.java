@@ -64,7 +64,7 @@ public class CommandSetDimension
 
         //if (!DimensionManager.isDimensionRegistered(dim))
         //    throw INVALID_DIMENSION.create(dim);
-        
+
         entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
         entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new ITeleporter()
         {
