@@ -34,6 +34,7 @@ import net.minecraftforge.common.util.ITeleporter;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
@@ -42,7 +43,7 @@ import java.util.function.Function;
 public class CommandSetDimension
 {
     private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TranslationTextComponent("commands.forge.setdim.invalid.entity"));
-
+    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.setdim.invalid.dim", dim));
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("setdimension")
@@ -63,6 +64,9 @@ public class CommandSetDimension
         if (entities.isEmpty())
             throw NO_ENTITIES.create();
 
+        //if (!DimensionManager.isDimensionRegistered(dim))
+        //    throw INVALID_DIMENSION.create(dim);
+        
         entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
         entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new ITeleporter()
         {
@@ -72,12 +76,6 @@ public class CommandSetDimension
                 Entity repositionedEntity = repositionEntity.apply(false);
                 repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
                 return repositionedEntity;
-            }
-            
-            @Override
-            public PortalInfo getPortalInfo(Entity entity, ServerWorld destWorld, Function<ServerWorld, PortalInfo> defaultPortalInfo)
-            {
-                return new PortalInfo(entity.getPositionVec(), Vector3d.ZERO, entity.rotationYaw, entity.rotationPitch);
             }
         }));
 
