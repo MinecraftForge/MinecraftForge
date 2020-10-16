@@ -43,16 +43,18 @@ import net.minecraft.util.TeleportationRepositioner;
 import net.minecraft.util.TeleportationRepositioner.Result;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.PointOfInterest;
 import net.minecraft.village.PointOfInterestManager;
 import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
 import net.minecraftforge.common.util.ITeleporter;
-import net.minecraftforge.common.util.TeleporterHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -70,39 +72,39 @@ public class TeleporterTest
     // Triggered by standing on top. Red is scaled the same as the nether while blue is 1 to 1
     private static TeleporterBlock RED_TELEPORTER, BLUE_TELEPORTER;
     private static PointOfInterestType RED_POI, BLUE_POI;
-    
+
     public TeleporterTest()
     {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(PointOfInterestType.class, this::registerPOIs);
     }
-    
+
     protected void registerBlocks(final RegistryEvent.Register<Block> event)
     {
         RED_TELEPORTER = register(event.getRegistry(), "red_teleporter", new TeleporterBlock(() -> RED_POI, RED_WORLD));
         BLUE_TELEPORTER = register(event.getRegistry(), "blue_teleporter", new TeleporterBlock(() -> BLUE_POI, BLUE_WORLD));
     }
-    
+
     protected void registerItems(final RegistryEvent.Register<Item> event)
     {
         register(event.getRegistry(), "red_teleporter", new BlockItem(RED_TELEPORTER, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
         register(event.getRegistry(), "blue_teleporter", new BlockItem(BLUE_TELEPORTER, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
     }
-    
+
     private <T extends IForgeRegistryEntry<T>, V extends T> V register(IForgeRegistry<T> registry, String name, V obj)
     {
         obj.setRegistryName(new ResourceLocation(MODID, name));
         registry.register(obj);
         return obj;
     }
-    
+
     protected void registerPOIs(final RegistryEvent.Register<PointOfInterestType> event)
     {
         RED_POI = registerPOI(event.getRegistry(), new PointOfInterestType(new ResourceLocation(MODID, "red_poi").toString(), PointOfInterestType.getAllStates(RED_TELEPORTER), 0, 1));
         BLUE_POI = registerPOI(event.getRegistry(), new PointOfInterestType(new ResourceLocation(MODID, "blue_poi").toString(), PointOfInterestType.getAllStates(BLUE_TELEPORTER), 0, 1));
     }
-    
+
     private PointOfInterestType registerPOI(IForgeRegistry<PointOfInterestType> registry, PointOfInterestType poi)
     {
         poi.setRegistryName(new ResourceLocation(poi.toString()));
@@ -117,19 +119,19 @@ public class TeleporterTest
         }
         return poi;
     }
-    
+
     private static class TeleporterBlock extends Block
     {
         final Supplier<PointOfInterestType> poi;
         final RegistryKey<World> destWorldKey;
-        
+
         private TeleporterBlock(Supplier<PointOfInterestType> poi, RegistryKey<World> destWorldKey)
         {
             super(Properties.from(Blocks.STONE));
             this.poi = poi;
             this.destWorldKey = destWorldKey;
         }
-        
+
         @Override
         public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance)
         {
@@ -142,13 +144,13 @@ public class TeleporterTest
     {
         final PointOfInterestType poi;
         final Block teleporterBlock;
-        
+
         private TestTeleporter(PointOfInterestType poi, Block teleporterBlock)
         {
             this.poi = poi;
             this.teleporterBlock = teleporterBlock;
         }
-        
+
         @Override
         @Nullable
         public PortalInfo getPortalInfo(Entity entity, ServerWorld destWorld, Function<ServerWorld, PortalInfo> defaultPortalInfo)
@@ -165,12 +167,12 @@ public class TeleporterTest
             else
                 return null;
         }
-        
+
         private Optional<Result> findPortal(Entity entity, ServerWorld destWorld)
         {
             PointOfInterestManager poiManager = destWorld.getPointOfInterestManager();
-            int scale = TeleporterHelper.getPortalSearchRadius(entity.world, destWorld);
-            BlockPos scaledPos = TeleporterHelper.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPositionVec()));
+            int scale = Math.max((int) DimensionType.func_242715_a(entity.world.func_230315_m_(), destWorld.func_230315_m_()) * 16, 16);
+            BlockPos scaledPos = this.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPositionVec()));
             poiManager.ensureLoadedAndValid(destWorld, scaledPos, scale);
             Optional<PointOfInterest> optional = poiManager.getInSquare(poiType -> poiType == this.poi, scaledPos, scale, PointOfInterestManager.Status.ANY).min(Comparator.<PointOfInterest>comparingDouble(poi -> poi.getPos().distanceSq(scaledPos)).thenComparingInt(poi -> poi.getPos().getY()));
             
@@ -181,14 +183,27 @@ public class TeleporterTest
                return TeleportationRepositioner.func_243676_a(poiPos, entity.getHorizontalFacing().getAxis(), 21, Direction.Axis.Y, 21, pos -> destWorld.getBlockState(pos) == blockstate);
             });
         }
-        
+
         private Optional<Result> createAndGetPortal(Entity entity, ServerWorld destWorld)
         {
-            BlockPos scaledPos = TeleporterHelper.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
+            BlockPos scaledPos = this.getScaledPos(entity.world, destWorld, new BlockPos(entity.getPosX(), 255, entity.getPosZ()));
             for (int i = 0; i < 256 && destWorld.getBlockState(scaledPos.down()).getMaterial() == Material.AIR; i++)
                 scaledPos = scaledPos.down();
             destWorld.setBlockState(scaledPos, this.teleporterBlock.getDefaultState());
             return Optional.of(new TeleportationRepositioner.Result(scaledPos, 0, 0));
+        }
+
+        private BlockPos getScaledPos(World fromWorld, World toWorld, BlockPos originalPos)
+        {
+            WorldBorder worldborder = toWorld.getWorldBorder();
+            double maxRadius = 2.9999872E7D;
+            int offset = 16;
+            double minX = Math.max(-maxRadius, worldborder.minX() + offset);
+            double minZ = Math.max(-maxRadius, worldborder.minZ() + offset);
+            double maxX = Math.min(maxRadius, worldborder.maxX() - offset);
+            double maxZ = Math.min(maxRadius, worldborder.maxZ() - offset);
+            double dimensionScaling = DimensionType.func_242715_a(fromWorld.func_230315_m_(), toWorld.func_230315_m_());
+            return new BlockPos(MathHelper.clamp(originalPos.getX() * dimensionScaling, minX, maxX), originalPos.getY(), MathHelper.clamp(originalPos.getZ() * dimensionScaling, minZ, maxZ));
         }
     }
 }
