@@ -1230,7 +1230,8 @@ public class ForgeHooks
     }
 
     public static void copyAttributesToForgeMap(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> newAttributes,
-                                                Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes){
+                                                Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes)
+    {
         forgeAttributes.clear();
         for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entry : newAttributes.entrySet()){
             forgeAttributes.put(entry.getKey(), entry.getValue().func_233813_a_());

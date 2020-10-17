@@ -9,14 +9,15 @@ import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import java.util.Map;
 
 public class EntityAttributeSetupEvent extends Event implements IModBusEvent {
-    private final Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entityAttrbiutes;
+    private final Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entityAttributes;
 
-    public EntityAttributeSetupEvent(Map<EntityType<? extends LivingEntity>,
-            AttributeModifierMap.MutableAttribute> entityAttrbiutes){
-        this.entityAttrbiutes = entityAttrbiutes;
+    public EntityAttributeSetupEvent(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entityAttributes)
+    {
+        this.entityAttributes = entityAttributes;
     }
 
-    public Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> getEntityAttrbiutes() {
-        return entityAttrbiutes;
+    public Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> getEntityAttributes()
+    {
+        return entityAttributes;
     }
 }

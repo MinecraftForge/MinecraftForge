@@ -340,17 +340,17 @@ public class GameData
 
     private static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> attrReplacementMap = null;
 
-    public static EntityAttributeSetupEvent generateEntityAttributeEvent(ModContainer c){
+    public static EntityAttributeSetupEvent generateEntityAttributeEvent(ModContainer c)
+    {
         if (attrReplacementMap == null){
             attrReplacementMap = GlobalEntityTypeAttributes.getCombinedAttributes();
         }
         return new EntityAttributeSetupEvent(attrReplacementMap);
     }
 
-    public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator) {
-        return CompletableFuture.runAsync(()-> {
-            GlobalEntityTypeAttributes.replaceForgeAttributes(attrReplacementMap);
-        }, executor).thenApply(v->Collections.emptyList());
+    public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
+    {
+        return CompletableFuture.runAsync(()-> GlobalEntityTypeAttributes.replaceForgeAttributes(attrReplacementMap), executor).thenApply(v->Collections.emptyList());
     }
 
     @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
