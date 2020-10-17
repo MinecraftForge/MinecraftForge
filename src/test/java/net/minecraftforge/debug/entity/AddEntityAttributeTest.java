@@ -18,7 +18,8 @@ public class AddEntityAttributeTest {
             () -> new RangedAttribute("forge.test_attr", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
 
 
-    public AddEntityAttributeTest() {
+    public AddEntityAttributeTest()
+    {
         if (ENABLE) {
             ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
             FMLJavaModLoadingContext.get().getModEventBus().register(this);
@@ -26,7 +27,8 @@ public class AddEntityAttributeTest {
     }
 
     @SubscribeEvent
-    public void entityAttributeSetup(EntityAttributeSetupEvent event){
-        event.getEntityAttrbiutes().forEach((type, map) -> map.func_233814_a_(TEST_ATTR.get()));
+    public void entityAttributeSetup(EntityAttributeSetupEvent event)
+    {
+        event.getEntityAttributes().forEach((type, map) -> map.func_233814_a_(TEST_ATTR.get()));
     }
 }
