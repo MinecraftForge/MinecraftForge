@@ -195,7 +195,7 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
         dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Processing Entity Attributes"));
-        dispatchAndHandleError(ModLoadingStage.PROCESS_ATTRBIUTES, syncExecutor, parallelExecutor, periodicTask);
+        dispatchAndHandleError(ModLoadingStage.PROCESS_ATTRIBUTES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
