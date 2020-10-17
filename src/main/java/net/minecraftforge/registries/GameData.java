@@ -30,7 +30,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
@@ -76,6 +78,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.event.entity.EntityAttributeSetupEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -328,6 +331,21 @@ public class GameData
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         LOGGER.debug(REGISTRIES, "Reverting complete");
+    }
+
+    private static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> attrReplacementMap = null;
+
+    public static EntityAttributeSetupEvent generateEntityAttributeEvent(ModContainer c){
+        if (attrReplacementMap == null){
+            attrReplacementMap = GlobalEntityTypeAttributes.getCombinedAttributes();
+        }
+        return new EntityAttributeSetupEvent(attrReplacementMap);
+    }
+
+    public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator) {
+        return CompletableFuture.runAsync(()-> {
+            GlobalEntityTypeAttributes.replaceForgeAttributes(attrReplacementMap);
+        }, executor).thenApply(v->Collections.emptyList());
     }
 
     @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
