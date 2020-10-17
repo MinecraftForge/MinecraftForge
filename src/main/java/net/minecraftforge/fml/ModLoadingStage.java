@@ -53,7 +53,7 @@ public enum ModLoadingStage
     CONSTRUCT(FMLConstructModEvent.class),
     CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))),
     LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch),
-    PROCESS_ATTRBIUTES(()->Stream.of(EventGenerator.fromFunction(GameData::generateEntityAttributeEvent)),
+    PROCESS_ATTRIBUTES(()->Stream.of(EventGenerator.fromFunction(GameData::generateEntityAttributeEvent)),
             (t,f)->CompletableFuture.completedFuture(Collections.emptyList()),
             GameData::postGenerateEntityAttributeEvent),
     COMMON_SETUP(FMLCommonSetupEvent.class),
