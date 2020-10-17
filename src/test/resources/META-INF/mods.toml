@@ -91,4 +91,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="structure_spawn_list_event_test"
 [[mods]]
+    modId="player_game_mode_event_test"
+[[mods]]
+    modId="structure_spawn_list_event_test"
+[[mods]]
     modId="level_type_test"
