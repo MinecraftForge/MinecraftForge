@@ -13,10 +13,7 @@ import net.minecraftforge.registries.DeferredRegister;
 public class AddEntityAttributeTest {
     public static final boolean ENABLE = true;
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "add_entity_attribute_test");
-
-    public static final RegistryObject<Attribute> TEST_ATTR = ATTRIBUTES.register("test_attr",
-            () -> new RangedAttribute("forge.test_attr", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
-
+    public static final RegistryObject<Attribute> TEST_ATTR = ATTRIBUTES.register("test_attr", () -> new RangedAttribute("forge.test_attr", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
 
     public AddEntityAttributeTest()
     {
