@@ -296,29 +296,34 @@ public class GameData
         LOGGER.debug(REGISTRIES, "All registries frozen");
     }
 
+    public static void revertToFrozen() {
+        revertTo(RegistryManager.FROZEN, true);
+    }
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void revertToFrozen()
+    public static void revertTo(final RegistryManager target, boolean fireEvents)
     {
-        if (RegistryManager.FROZEN.registries.isEmpty())
+        if (target.registries.isEmpty())
         {
-            LOGGER.warn(REGISTRIES, "Can't revert to frozen GameData state without freezing first.");
+            LOGGER.warn(REGISTRIES, "Can't revert to {} GameData state without a valid snapshot.", target.getName());
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        LOGGER.debug(REGISTRIES, "Reverting to frozen data state.");
+        LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
-            loadRegistry(r.getKey(), RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, true);
+            loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, clazz, true);
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
-        fireRemapEvent(ImmutableMap.of(), true);
+        if (fireEvents) {
+            fireRemapEvent(ImmutableMap.of(), true);
+            ObjectHolderRegistry.applyObjectHolders();
+        }
 
-        ObjectHolderRegistry.applyObjectHolders();
         // the id mapping has reverted, ensure we sync up the object holders
-        LOGGER.debug(REGISTRIES, "Frozen state restored.");
+        LOGGER.debug(REGISTRIES, "{} state restored.", target.getName());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -365,7 +370,16 @@ public class GameData
             LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
             LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
-        }, executor).thenApply(v->Collections.emptyList());
+        }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
+        return listCompletableFuture.thenApplyAsync(errors -> {
+            if (!errors.isEmpty()) {
+                revertTo(RegistryManager.VANILLA, false);
+            }
+            return errors;
+        }, executor);
     }
 
     public static void setCustomTagTypesFromRegistries()
@@ -550,7 +564,8 @@ public class GameData
         @Override
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
-            GlobalEntityTypeAttributes.func_233834_a_();
+            // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
+            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.func_233834_a_();
         }
     }
 

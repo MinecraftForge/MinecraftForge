@@ -84,7 +84,11 @@ public abstract class AbstractJarFileLocator implements IModLocator {
     {
         try (JarFile jf = new JarFile(file.toFile()))
         {
-            return Optional.ofNullable(jf.getManifest());
+            final Manifest manifest = jf.getManifest();
+            if (manifest != null) {
+//                injection of signing stuff here
+            }
+            return Optional.ofNullable(manifest);
         }
         catch (IOException e)
         {
