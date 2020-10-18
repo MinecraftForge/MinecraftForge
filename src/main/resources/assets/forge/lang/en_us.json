@@ -178,7 +178,7 @@
   "forge.configgui.tooltip.default": "[Default: %s]",
   "forge.configgui.tooltip.rangeWithDefault": "[Range: %s, Default: %s]",
   "forge.configgui.tooltip.invalidValue": "Invalid value!",
-  "forge.configgui.tooltip.unsupportedTypeUseConfig": "Don't know how to display %s. Use the config file to change this entry.",
+  "forge.configgui.tooltip.unsupportedTypeUseConfig": "Unable to display '%s'. Use the config file to change this entry.",
 
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
