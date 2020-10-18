@@ -26,11 +26,14 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.gui.config.ControlCreator.Interactor;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /**
  * Popup {@link ConfigScreen} that displays and modifies a {@link List}.
@@ -87,9 +90,9 @@ public abstract class ListConfigScreen extends ConfigScreen {
             Interactor<?> interactor = tryCreateInteractor(index, item);
             if (interactor == null) {
                 ITextComponent title = new StringTextComponent(index + ": " + item + (item == null ? "" : " (" + item.getClass().getSimpleName() + ")"));
-                return new ListItemConfigElement(title, index);
+                return new ListItemConfigElement(title, index, null);
             } else {
-                ConfigElement configElement = new ListItemConfigElement(interactor.title, index);
+                ConfigElement configElement = new ListItemConfigElement(interactor.title, index, interactor);
                 configElement.setMainWidget(interactor.control);
                 return configElement;
             }
@@ -117,7 +120,12 @@ public abstract class ListConfigScreen extends ConfigScreen {
          */
         class ListItemConfigElement extends ConfigElement {
 
-            public ListItemConfigElement(ITextComponent title, int index) {
+            private final BooleanSupplier canUndo;
+
+            /**
+             * @param interactor Null if we couldn't create an interaction widget for the object
+             */
+            public <T> ListItemConfigElement(ITextComponent title, int index, @Nullable Interactor<T> interactor) {
                 super(title, title, Collections.emptyList());
                 Button addBelowButton = new ExtendedButton(0, 0, 20, 20, new StringTextComponent("+"), b -> {
                     value.add(index + 1, ControlCreator.copyMutable(value.get(index)));
@@ -133,6 +141,25 @@ public abstract class ListConfigScreen extends ConfigScreen {
                 removeButton.setFGColor(ControlCreator.RED);
                 addWidget(addBelowButton);
                 addWidget(removeButton);
+                if (interactor != null) {
+                    T initialValue = ControlCreator.copyMutable(interactor.initialValue);
+                    MutableObject<T> state = new MutableObject<>(initialValue);
+                    interactor.addSaver(state::setValue);
+                    canUndo = () -> !state.getValue().equals(initialValue);
+                    addWidget(undoButton = createConfigElementUndoButton(title, button -> {
+                        T newValue = ControlCreator.copyMutable(initialValue);
+                        interactor.save(newValue);
+                        interactor.onUpdate(newValue);
+                    }));
+                } else
+                    canUndo = () -> false;
+            }
+
+            @Override
+            public void tick() {
+                super.tick();
+                if (undoButton != null)
+                    undoButton.field_230693_o_ = canUndo.getAsBoolean();
             }
         }
 
