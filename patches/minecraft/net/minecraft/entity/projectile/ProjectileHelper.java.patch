@@ -13,7 +13,7 @@
        }
     }
  
-+   @Deprecated
++   @Deprecated //Forge: Use the predicate version of getHandWidth instead
     public static Hand func_221274_a(LivingEntity p_221274_0_, Item p_221274_1_) {
        return p_221274_0_.func_184614_ca().func_77973_b() == p_221274_1_ ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
