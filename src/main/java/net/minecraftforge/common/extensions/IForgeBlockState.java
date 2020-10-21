@@ -20,8 +20,6 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.function.Predicate;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
@@ -33,8 +31,6 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tileentity.TileEntity;
@@ -239,7 +235,12 @@ public interface IForgeBlockState
      * @param world The current world
      * @param pos Block position in world
      * @return True if the block considered air
+     * @deprecated TODO: Remove in 1.17, in favor of state only version. This is a old hook from before
+     *   block states were unlimited and people used TileEntities. If you still use the location
+     *   information in your TileEntity please explain why and how you can't use BlockState only version
+     *   here: https://github.com/MinecraftForge/MinecraftForge/issues/7409
      */
+    @Deprecated
     default boolean isAir(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isAir(getBlockState(), world, pos);
