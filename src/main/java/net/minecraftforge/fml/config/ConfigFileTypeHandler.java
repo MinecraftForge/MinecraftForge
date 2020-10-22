@@ -27,6 +27,7 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +40,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
+import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -96,19 +98,24 @@ public class ConfigFileTypeHandler {
     }
 
     public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
-        int i = 0;
+        int maxBackups = 5;
         File bakFileLocation = commentedFileConfig.getFile().getParentFile();
-        String bakFileName = commentedFileConfig.getFile().getName();
-        File bakFile = new File(bakFileLocation,bakFileName + ".bak");
-        while(bakFile.exists()) {
-            if(i >= 10) { // Set a limit so we don't spin forever
-                LOGGER.warn(CONFIG, "Refusing to back up config file {} due to an excess of backups", commentedFileConfig.getFile().getName());
-                return;
-            }
-            bakFile = new File(bakFileLocation, bakFileName + "-" + ++i + ".bak");
-        }
+        String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
+        String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
+        File bakFile = new File(bakFileLocation, bakFileName + "-1" + "." + bakFileExtension);
         try
         {
+            for(int i = maxBackups; i > 0; i--){
+                File oldBak = new File(bakFileLocation, bakFileName + "-" + i + "." + bakFileExtension);
+                if(oldBak.exists()){
+                    if(i == maxBackups)
+                    {
+                        oldBak.delete();
+                        continue;
+                    }
+                    oldBak.renameTo(new File(bakFileLocation, bakFileName + "-" + (i + 1) + "." + bakFileExtension));
+                }
+            }
             Files.copy(commentedFileConfig.getNioPath(),bakFile.toPath());
         }
         catch (IOException exception)
@@ -138,6 +145,7 @@ public class ConfigFileTypeHandler {
                     this.commentedFileConfig.load();
                     if(!this.modConfig.getSpec().isCorrect(commentedFileConfig))
                     {
+                        LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", commentedFileConfig.getFile().getAbsolutePath());
                         ConfigFileTypeHandler.backUpConfig(commentedFileConfig);
                         this.modConfig.getSpec().correct(commentedFileConfig);
                         commentedFileConfig.save();
