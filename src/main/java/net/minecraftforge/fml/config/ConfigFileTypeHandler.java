@@ -110,10 +110,12 @@ public class ConfigFileTypeHandler {
                 if(oldBak.exists()){
                     if(i == maxBackups)
                     {
-                        oldBak.delete();
-                        continue;
+                        if (oldBak.delete()) continue;
+                        LOGGER.warn(CONFIG, "Failed to back up config file {} as the oldest backup, {}, could not be deleted", commentedFileConfig.getFile().getName(), oldBak.getAbsolutePath());
+                        return;
                     }
-                    oldBak.renameTo(new File(bakFileLocation, bakFileName + "-" + (i + 1) + "." + bakFileExtension));
+                    if (!oldBak.renameTo(new File(bakFileLocation, bakFileName + "-" + (i + 1) + "." + bakFileExtension)))
+                        LOGGER.warn(CONFIG, "Failed to back up config file {} as an old backup, {}, could not be renamed", commentedFileConfig.getFile().getName(), oldBak.getAbsolutePath());
                 }
             }
             Files.copy(commentedFileConfig.getNioPath(),bakFile.toPath());
