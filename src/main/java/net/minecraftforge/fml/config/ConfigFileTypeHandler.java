@@ -24,11 +24,15 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,6 +95,28 @@ public class ConfigFileTypeHandler {
         return true;
     }
 
+    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
+        int i = 0;
+        File bakFileLocation = commentedFileConfig.getFile().getParentFile();
+        String bakFileName = commentedFileConfig.getFile().getName();
+        File bakFile = new File(bakFileLocation,bakFileName + ".bak");
+        while(bakFile.exists()) {
+            if(i >= 10) { // Set a limit so we don't spin forever
+                LOGGER.warn(CONFIG, "Refusing to back up config file {} due to an excess of backups", commentedFileConfig.getFile().getName());
+                return;
+            }
+            bakFile = new File(bakFileLocation, bakFileName + "-" + ++i + ".bak");
+        }
+        try
+        {
+            Files.copy(commentedFileConfig.getNioPath(),bakFile.toPath());
+        }
+        catch (IOException exception)
+        {
+            LOGGER.warn(CONFIG, "Failed to back up config file {}", commentedFileConfig.getFile().getName());
+        }
+    }
+
     private static class ConfigWatcher implements Runnable {
         private final ModConfig modConfig;
         private final CommentedFileConfig commentedFileConfig;
@@ -110,6 +136,12 @@ public class ConfigFileTypeHandler {
                 try
                 {
                     this.commentedFileConfig.load();
+                    if(!this.modConfig.getSpec().isCorrect(commentedFileConfig))
+                    {
+                        ConfigFileTypeHandler.backUpConfig(commentedFileConfig);
+                        this.modConfig.getSpec().correct(commentedFileConfig);
+                        commentedFileConfig.save();
+                    }
                 }
                 catch (ParsingException ex)
                 {
