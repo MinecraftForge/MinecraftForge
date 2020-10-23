@@ -101,7 +101,7 @@
        } else {
           ItemStack itemstack = p_217292_1_.func_184586_b(p_217292_3_);
 +         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
-+                 .onRightClickBlock(p_217292_1_, p_217292_3_, blockpos, p_217292_4_.func_216354_b());
++                 .onRightClickBlock(p_217292_1_, p_217292_3_, blockpos, p_217292_4_);
 +         if (event.isCanceled()) {
 +            this.field_78774_b.func_147297_a(new CPlayerTryUseItemOnBlockPacket(p_217292_3_, p_217292_4_));
 +            return event.getCancellationResult();

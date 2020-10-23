@@ -29,6 +29,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -148,9 +149,16 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
+        private BlockRayTraceResult hitVec;
 
+        @Deprecated //Use RayTraceResult version.  TODO: Remove 1.17
         public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
             super(player, hand, pos, face);
+        }
+
+        public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec) {
+            super(player, hand, pos, hitVec.getFace());
+            this.hitVec = hitVec;
         }
 
         /**
@@ -167,6 +175,14 @@ public class PlayerInteractEvent extends PlayerEvent
         public Result getUseItem()
         {
             return useItem;
+        }
+
+        /**
+         * @return The ray trace result targeting the block.
+         */
+        public BlockRayTraceResult getHitVec()
+        {
+            return hitVec;
         }
 
         /**
