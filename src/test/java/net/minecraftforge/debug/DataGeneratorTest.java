@@ -150,7 +150,7 @@ public class DataGeneratorTest
                 .patternLine("XXX")
                 .key('X', Blocks.DIRT)
                 .setGroup("")
-                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
+                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
                 ::build
             )
             .setAdvancement(ID,
@@ -175,6 +175,29 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            not(
+                                and(
+                                        not(modLoaded("minecraft")),
+                                        itemExists("minecraft", "dirt"),
+                                        FALSE()
+                                )
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .key('X', Blocks.DIRT)
+                                    .setGroup("")
+                                    .addCriterion("has_dirt", hasItem(Blocks.DIRT))
+                                    ::build
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
         }
     }
 
