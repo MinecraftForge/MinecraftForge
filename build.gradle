@@ -53,7 +53,7 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20200514-1.16'
+    MAPPING_VERSION = '20200514-1.16.3'
     MC_VERSION = '1.16.3'
     MCP_VERSION = '20200911.084530'
 }
@@ -451,7 +451,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
-        installer 'org.spongepowered:mixin:0.8.1'
+        installer 'org.spongepowered:mixin:0.8.2'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         fmllauncherImplementation 'org.lwjgl:lwjgl:3.2.2'
@@ -1062,5 +1062,3 @@ task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
-
-
