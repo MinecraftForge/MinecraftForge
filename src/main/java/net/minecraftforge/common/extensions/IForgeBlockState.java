@@ -808,4 +808,16 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().isScaffolding(getBlockState(), entity.level, entity.blockPosition(), entity);
     }
+
+    /**
+     * Determines whether this state causes concrete powder to convert to concrete
+     *
+     * @param side The side of this state to determine if it causes concrete powder to convert to concrete, can be null
+     * @param world The world
+     * @param pos The position in the world
+     */
+    default boolean causesConcretePowderToSolidify(@Nullable Direction side, IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().causesConcretePowderToSolidify(getBlockState(), side, world, pos);
+    }
 }
