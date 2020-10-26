@@ -25,6 +25,8 @@ import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import net.minecraftforge.eventbus.api.Event.HasResult;
+
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
  *  the player sees.

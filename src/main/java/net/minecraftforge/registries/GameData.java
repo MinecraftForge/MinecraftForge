@@ -103,6 +103,9 @@ import java.util.stream.Stream;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 
+import net.minecraft.block.AbstractBlock;
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -186,15 +189,15 @@ public class GameData
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -318,7 +321,7 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
         if (fireEvents) {
-            fireRemapEvent(ImmutableMap.of(), true);
+        fireRemapEvent(ImmutableMap.of(), true);
             ObjectHolderRegistry.applyObjectHolders();
         }
 
@@ -341,11 +344,11 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.func_240901_a_());
-        keys.remove(ITEMS.func_240901_a_());
+        keys.remove(BLOCKS.getLocation());
+        keys.remove(ITEMS.getLocation());
 
-        keys.add(0, BLOCKS.func_240901_a_());
-        keys.add(1, ITEMS.func_240901_a_());
+        keys.add(0, BLOCKS.getLocation());
+        keys.add(1, ITEMS.getLocation());
 
         final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
         return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
@@ -392,7 +395,7 @@ public class GameData
             {
                 LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
                 customTagTypes.add(registryName);
-                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
+                TagRegistryManager.create(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
             }
         }
         ForgeTagHandler.setCustomTagTypes(customTagTypes);
@@ -482,7 +485,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
+            Block ret = new BlockDummyAir(AbstractBlock.Properties.create(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -508,7 +511,7 @@ public class GameData
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
-            private BlockDummyAir(Block.Properties properties)
+            private BlockDummyAir(AbstractBlock.Properties properties)
             {
                 super(properties);
             }
@@ -565,7 +568,7 @@ public class GameData
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
             // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
-            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.func_233834_a_();
+            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validateEntityAttributes();
         }
     }
 

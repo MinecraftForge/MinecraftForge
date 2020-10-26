@@ -25,6 +25,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 /**
  * VoidFluidHandler is a template fluid handler that can be filled indefinitely without ever getting full.
  * It does not store fluid that gets filled into it, but "destroys" it upon receiving it.

@@ -48,9 +48,9 @@ public class FakePlayer extends ServerPlayerEntity
     }
 
     @Override public Vector3d getPositionVec(){ return new Vector3d(0, 0, 0); }
-    @Override public BlockPos func_233580_cy_(){ return BlockPos.ZERO; }
+    @Override public BlockPos getPosition(){ return BlockPos.ZERO; }
     @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
-    @Override public void sendMessage(ITextComponent component, UUID p_145747_2_) {}
+    @Override public void sendMessage(ITextComponent component, UUID senderUUID) {}
     @Override public void addStat(Stat par1StatBase, int par2){}
     //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isInvulnerableTo(DamageSource source){ return true; }

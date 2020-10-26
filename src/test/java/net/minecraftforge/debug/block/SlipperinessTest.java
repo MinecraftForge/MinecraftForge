@@ -34,6 +34,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import net.minecraft.block.AbstractBlock;
+
 @Mod(SlipperinessTest.MOD_ID)
 @EventBusSubscriber
 public class SlipperinessTest
@@ -47,7 +49,7 @@ public class SlipperinessTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register((new Block(Block.Properties.create(Material.PACKED_ICE))
+        e.getRegistry().register((new Block(AbstractBlock.Properties.create(Material.PACKED_ICE))
         {
             @Override
             public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity)

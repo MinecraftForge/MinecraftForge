@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.187'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
@@ -53,9 +53,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20200514-1.16.3'
+    MAPPING_VERSION = '20201026-030137-1.16.3'
     MC_VERSION = '1.16.3'
-    MCP_VERSION = '20200911.084530'
+    MCP_VERSION = '20201025.185957'
 }
 
 project(':mcp') {

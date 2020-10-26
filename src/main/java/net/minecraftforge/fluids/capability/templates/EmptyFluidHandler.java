@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 public class EmptyFluidHandler implements IFluidHandler
 {
     public static final EmptyFluidHandler INSTANCE = new EmptyFluidHandler();

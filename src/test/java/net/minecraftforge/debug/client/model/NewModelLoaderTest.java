@@ -66,6 +66,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
+import net.minecraft.block.AbstractBlock;
+
 @Mod(NewModelLoaderTest.MODID)
 public class NewModelLoaderTest
 {
@@ -74,7 +76,7 @@ public class NewModelLoaderTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
-            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
+            new Block(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
                 @Override
                 protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
                 {

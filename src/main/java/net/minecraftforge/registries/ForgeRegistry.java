@@ -61,6 +61,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import net.minecraftforge.registries.IForgeRegistry.AddCallback;
+import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
+import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
+import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
+import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
+import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
+import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
@@ -104,7 +112,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
-        this.key = RegistryKey.func_240904_a_(name);
+        this.key = RegistryKey.getOrCreateRootKey(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -373,7 +381,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
-        this.keys.put(RegistryKey.func_240903_a_(this.key, key), value);
+        this.keys.put(RegistryKey.getOrCreateKey(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);

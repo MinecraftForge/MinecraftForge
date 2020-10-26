@@ -259,9 +259,9 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         }
 
         @Override
-        public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
+        public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
         {
-            IBakedModel overriden = nested.func_239290_a_(originalModel, stack, world, entity);
+            IBakedModel overriden = nested.getOverrideModel(originalModel, stack, world, entity);
             if (overriden != originalModel) return overriden;
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {

@@ -52,6 +52,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import net.minecraft.item.Item.Properties;
+
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
 {
@@ -101,11 +103,11 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     ModifiableAttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-                    boolean inPlains = liv.world.getBiome(liv.func_233580_cy_()).getCategory() == Category.PLAINS;
+                    boolean inPlains = liv.world.getBiome(liv.getPosition()).getCategory() == Category.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);
-                        grav.func_233767_b_(REDUCED_GRAVITY);
+                        grav.applyNonPersistentModifier(REDUCED_GRAVITY);
                     }
                     else if (!inPlains && grav.hasModifier(REDUCED_GRAVITY))
                     {

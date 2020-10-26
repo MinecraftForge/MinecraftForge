@@ -34,6 +34,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import net.minecraft.block.AbstractBlock;
+
 @Mod(FlowerPotTest.MODID)
 @Mod.EventBusSubscriber(modid = FlowerPotTest.MODID, bus = Bus.MOD)
 public class FlowerPotTest
@@ -44,9 +46,9 @@ public class FlowerPotTest
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    public static final RegistryObject<FlowerPotBlock> EMPTY_FLOWER_POT = BLOCKS.register(BLOCK_ID, () -> new FlowerPotBlock(null, Blocks.AIR.delegate, Block.Properties.from(Blocks.FLOWER_POT)));
+    public static final RegistryObject<FlowerPotBlock> EMPTY_FLOWER_POT = BLOCKS.register(BLOCK_ID, () -> new FlowerPotBlock(null, Blocks.AIR.delegate, AbstractBlock.Properties.from(Blocks.FLOWER_POT)));
     public static final RegistryObject<FlowerPotBlock> OAK_FLOWER_POT = BLOCKS.<FlowerPotBlock>register(
-            BLOCK_ID + "_oak", () -> new FlowerPotBlock(EMPTY_FLOWER_POT, Blocks.OAK_SAPLING.delegate, Block.Properties.from(Blocks.FLOWER_POT)));
+            BLOCK_ID + "_oak", () -> new FlowerPotBlock(EMPTY_FLOWER_POT, Blocks.OAK_SAPLING.delegate, AbstractBlock.Properties.from(Blocks.FLOWER_POT)));
     
     static {
         ITEMS.register(BLOCK_ID, () -> new BlockItem(EMPTY_FLOWER_POT.get(), new Item.Properties()));

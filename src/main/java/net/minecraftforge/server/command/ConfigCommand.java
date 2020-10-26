@@ -60,8 +60,8 @@ public class ConfigCommand {
                 File f = new File(configFileName);
                 context.getSource().sendFeedback(new TranslationTextComponent("commands.config.getwithtype",
                         modId, type,
-                        new StringTextComponent(f.getName()).func_240701_a_(TextFormatting.UNDERLINE).
-                        func_240700_a_((style) -> style.func_240715_a_(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
+                        new StringTextComponent(f.getName()).mergeStyle(TextFormatting.UNDERLINE).
+                        modifyStyle((style) -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                 ), true);
             } else {
                 context.getSource().sendFeedback(new TranslationTextComponent("commands.config.noconfig", modId, type),

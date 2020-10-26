@@ -30,6 +30,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
 
+import net.minecraft.block.AbstractBlock;
+
 @Mod(StickyBlockTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class StickyBlockTest
@@ -43,7 +45,7 @@ public class StickyBlockTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
+        event.getRegistry().register((new Block(AbstractBlock.Properties.create(Material.ROCK))
         {
             @Override
             public boolean isStickyBlock(BlockState state)
