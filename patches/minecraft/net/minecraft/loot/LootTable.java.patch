@@ -43,7 +43,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -173,6 +175,47 @@
+@@ -173,6 +175,48 @@
        return new LootTable.Builder();
     }
  
@@ -61,7 +61,8 @@
 +
 +   private ResourceLocation lootTableId;
 +   public void setLootTableId(final ResourceLocation id) {
-+      if (this.lootTableId == null && id != null) this.lootTableId = id;
++      if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
++      this.lootTableId = java.util.Objects.requireNonNull(id);
 +   }
 +   public ResourceLocation getLootTableId() { return this.lootTableId; }
 +
@@ -91,7 +92,7 @@
     public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
        private final List<LootPool> field_216041_a = Lists.newArrayList();
        private final List<ILootFunction> field_216042_b = Lists.newArrayList();
-@@ -227,7 +270,7 @@
+@@ -227,7 +271,7 @@
              }
           }
  
