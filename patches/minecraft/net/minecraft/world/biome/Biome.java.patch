@@ -14,17 +14,18 @@
        }), MobSpawnInfo.field_242552_c.forGetter((p_242442_0_) -> {
           return p_242442_0_.field_242425_l;
 -      })).apply(p_235064_0_, Biome::new);
-+      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName))
++      }), ResourceLocation.field_240908_a_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
 +      .apply(p_235064_0_, (climate, category, depth, scale, effects, gen, spawns, name) ->
-+          net.minecraftforge.common.ForgeHooks.enhanceBiome(name, climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new));
++          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new));
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {
-@@ -113,6 +115,23 @@
+@@ -113,6 +115,26 @@
        });
     });
  
 +   // FORGE: Since this is special (dynamic registry codec special), we have to re-implement ForgeRegistryEntry here
++   @Nullable
 +   private ResourceLocation registryName = null;
 +   @Nullable
 +   @Override
@@ -33,6 +34,8 @@
 +   }
 +   @Override
 +   public Biome setRegistryName(ResourceLocation registryName) {
++      if (getRegistryName() != null)
++         throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + registryName + " Old: " + getRegistryName());
 +      this.registryName = registryName;
 +      return this;
 +   }
@@ -44,7 +47,7 @@
     private Biome(Biome.Climate p_i241927_1_, Biome.Category p_i241927_2_, float p_i241927_3_, float p_i241927_4_, BiomeAmbience p_i241927_5_, BiomeGenerationSettings p_i241927_6_, MobSpawnInfo p_i241927_7_) {
        this.field_242423_j = p_i241927_1_;
        this.field_242424_k = p_i241927_6_;
-@@ -200,7 +219,7 @@
+@@ -200,7 +222,7 @@
        } else {
           if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_226658_a_(LightType.BLOCK, p_201850_2_) < 10) {
              BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
