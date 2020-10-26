@@ -1,0 +1,10 @@
+--- a/net/minecraft/loot/conditions/LootConditionManager.java
++++ b/net/minecraft/loot/conditions/LootConditionManager.java
+@@ -24,6 +24,7 @@
+    public static final LootConditionType field_237471_n_ = func_237475_a_("weather_check", new WeatherCheck.Serializer());
+    public static final LootConditionType field_237472_o_ = func_237475_a_("reference", new Reference.Serializer());
+    public static final LootConditionType field_237473_p_ = func_237475_a_("time_check", new TimeCheck.Serializer());
++   public static final LootConditionType lootTableId = func_237475_a_("forge:loot_table_id", new net.minecraftforge.common.loot.LootTableIdCondition.Serializer()); // FORGE
+ 
+    private static LootConditionType func_237475_a_(String p_237475_0_, ILootSerializer<? extends ILootCondition> p_237475_1_) {
+       return Registry.func_218322_a(Registry.field_239704_ba_, new ResourceLocation(p_237475_0_), new LootConditionType(p_237475_1_));
