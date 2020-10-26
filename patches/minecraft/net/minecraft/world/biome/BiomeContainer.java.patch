@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/biome/BiomeContainer.java
++++ b/net/minecraft/world/biome/BiomeContainer.java
+@@ -90,6 +90,13 @@
+ 
+       for(int i = 0; i < this.field_227054_f_.length; ++i) {
+          aint[i] = this.field_242704_g.func_148757_b(this.field_227054_f_[i]);
++         // FORGE: Fix MC-197616 - Data pack biomes are synchronized with -1 IDs causing massive log spam, lag, and invalid biomes on client
++         if (aint[i] == -1 && this.field_242704_g instanceof net.minecraft.util.registry.SimpleRegistry) {
++            Biome dynamicBiome = ((net.minecraft.util.registry.SimpleRegistry<Biome>)this.field_242704_g).func_82594_a(this.field_227054_f_[i].getRegistryName());
++            if (dynamicBiome != null) {
++                aint[i] = this.field_242704_g.func_148757_b(dynamicBiome);
++            }
++         }
+       }
+ 
+       return aint;
