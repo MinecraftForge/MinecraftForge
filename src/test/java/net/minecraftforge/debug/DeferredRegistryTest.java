@@ -44,8 +44,6 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
-import net.minecraft.block.AbstractBlock;
-
 @SuppressWarnings("unused")
 @Mod(DeferredRegistryTest.MODID)
 public class DeferredRegistryTest {
@@ -56,7 +54,7 @@ public class DeferredRegistryTest {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(Custom.class, MODID);
 
-    private static final RegistryObject<Block> BLOCK = BLOCKS.register("test", () -> new Block(AbstractBlock.Properties.create(Material.ROCK)));
+    private static final RegistryObject<Block> BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.create(Material.ROCK)));
     private static final RegistryObject<Item>  ITEM  = ITEMS .register("test", () -> new BlockItem(BLOCK.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("test", () -> new Custom(){});
 

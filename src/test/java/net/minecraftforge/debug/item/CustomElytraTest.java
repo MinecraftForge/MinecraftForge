@@ -41,8 +41,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.item.Item.Properties;
-
 @Mod(CustomElytraTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = CustomElytraTest.MOD_ID)
 public class CustomElytraTest

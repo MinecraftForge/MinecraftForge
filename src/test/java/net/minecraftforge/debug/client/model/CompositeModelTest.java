@@ -45,8 +45,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.AbstractBlock;
-
 @Mod(CompositeModelTest.MODID)
 public class CompositeModelTest
 {
@@ -55,7 +53,7 @@ public class CompositeModelTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> composite_block = BLOCKS.register("composite_block", () ->
-            new Block(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
+            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
                 @Override
                 protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
                 {

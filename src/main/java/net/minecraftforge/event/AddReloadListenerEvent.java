@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.resources.IFutureReloadListener.IStage;
-
 /**
  * The main ResourceManager is recreated on each reload, through {@link DataPackRegistries}'s creation.
  *

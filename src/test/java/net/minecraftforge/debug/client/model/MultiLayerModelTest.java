@@ -32,8 +32,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
-import net.minecraft.block.AbstractBlock;
-
 @Mod(MultiLayerModelTest.MODID)
 public class MultiLayerModelTest
 {
@@ -55,7 +53,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             event.getRegistry().register(
-                new Block(AbstractBlock.Properties.create(Material.WOOD).notSolid())
+                new Block(Block.Properties.create(Material.WOOD).notSolid())
                 {
                 }.setRegistryName(blockId)
             );

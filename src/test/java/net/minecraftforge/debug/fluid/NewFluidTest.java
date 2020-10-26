@@ -47,8 +47,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 @Mod(NewFluidTest.MODID)
 public class NewFluidTest
 {
@@ -77,7 +75,7 @@ public class NewFluidTest
     );
 
     public static RegistryObject<FlowingFluidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
-            new FlowingFluidBlock(test_fluid, AbstractBlock.Properties.create(net.minecraft.block.material.Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+            new FlowingFluidBlock(test_fluid, Block.Properties.create(net.minecraft.block.material.Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
@@ -85,7 +83,7 @@ public class NewFluidTest
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
-            new FluidloggableBlock(AbstractBlock.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+            new FluidloggableBlock(Block.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
     );
     public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
             new BlockItem(fluidloggable_block.get(), new Item.Properties().group(ItemGroup.MISC))

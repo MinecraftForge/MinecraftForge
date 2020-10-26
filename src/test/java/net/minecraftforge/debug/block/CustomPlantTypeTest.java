@@ -39,8 +39,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
 
-import net.minecraft.block.AbstractBlock;
-
 @Mod(CustomPlantTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class CustomPlantTypeTest
@@ -71,7 +69,7 @@ public class CustomPlantTypeTest
     {
         public CustomBlock()
         {
-            super(AbstractBlock.Properties.create(Material.ROCK));
+            super(Block.Properties.create(Material.ROCK));
             this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
         }
 
@@ -93,7 +91,7 @@ public class CustomPlantTypeTest
 
         public CustomPlantBlock()
         {
-            super(Effects.WEAKNESS, 9, AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().sound(SoundType.PLANT));
+            super(Effects.WEAKNESS, 9, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().sound(SoundType.PLANT));
             this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 

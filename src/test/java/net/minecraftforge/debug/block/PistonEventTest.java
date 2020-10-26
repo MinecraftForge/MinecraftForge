@@ -53,8 +53,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraft.block.AbstractBlock;
-
 /**
  * This test mod blocks pistons from moving cobblestone at all except indirectly
  * This test mod adds a block that moves upwards when pushed by a piston
@@ -70,7 +68,7 @@ public class PistonEventTest
     private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static DeferredRegister<Item>  ITEMS  = DeferredRegister.create(ForgeRegistries.ITEMS,  MODID);
 
-    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(AbstractBlock.Properties.create(Material.ROCK)));
+    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.create(Material.ROCK)));
     static {
         ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
     }

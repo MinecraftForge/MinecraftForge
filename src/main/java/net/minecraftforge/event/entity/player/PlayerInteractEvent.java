@@ -40,8 +40,6 @@ import static net.minecraftforge.eventbus.api.Event.Result.DENY;
 
 import net.minecraftforge.fml.LogicalSide;
 
-import net.minecraftforge.eventbus.api.Event.Result;
-
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
  * All subclasses are fired on {@link MinecraftForge#EVENT_BUS}.

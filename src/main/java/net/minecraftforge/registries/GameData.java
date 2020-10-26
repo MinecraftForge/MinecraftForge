@@ -103,9 +103,6 @@ import java.util.stream.Stream;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -485,7 +482,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(AbstractBlock.Properties.create(Material.AIR));
+            Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -511,7 +508,7 @@ public class GameData
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
-            private BlockDummyAir(AbstractBlock.Properties properties)
+            private BlockDummyAir(Block.Properties properties)
             {
                 super(properties);
             }

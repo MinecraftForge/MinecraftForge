@@ -52,8 +52,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import net.minecraft.item.Item.Properties;
-
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
 {

@@ -29,9 +29,6 @@ import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.RenderState.TextureState;
-import net.minecraft.client.renderer.RenderType.State;
-
 @SuppressWarnings("deprecation")
 public enum ForgeRenderTypes
 {

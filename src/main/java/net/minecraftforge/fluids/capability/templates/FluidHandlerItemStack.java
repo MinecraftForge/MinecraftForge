@@ -32,8 +32,6 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 /**
  * FluidHandlerItemStack is a template capability provider for ItemStacks.
  * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.

@@ -45,8 +45,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * This test mod allows a custom scaffolding to move down
  * while sneaking through a method.
