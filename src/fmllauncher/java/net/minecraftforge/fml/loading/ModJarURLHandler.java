@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,6 +82,12 @@ public class ModJarURLHandler extends URLStreamHandler
             } catch (IOException e) {
                 return -1L;
             }
+        }
+
+        // Used to cache protectiondomains by "top level object" aka the modid
+        @Override
+        public URL getURL() {
+            return LamdbaExceptionUtils.uncheck(()->new URL("modjar://"+modid));
         }
 
         public Optional<Manifest> getManifest() {
