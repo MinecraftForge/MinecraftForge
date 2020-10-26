@@ -45,13 +45,12 @@ public class LootTableIdCondition implements ILootCondition {
 
     @Override
     public LootConditionType func_230419_b_() {
-        return LootConditionManager.lootTableId;
+        return LootConditionManager.LOOT_TABLE_ID;
     }
 
     @Override
     public boolean test(LootContext lootContext) {
-        final ResourceLocation queriedLootTableId = lootContext.getQueriedLootTableId();
-        return queriedLootTableId != null && queriedLootTableId.equals(this.targetLootTableId);
+        return lootContext.getQueriedLootTableId().equals(this.targetLootTableId);
     }
 
     public static class Builder implements ILootCondition.IBuilder {

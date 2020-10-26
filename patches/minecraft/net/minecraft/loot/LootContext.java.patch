@@ -20,7 +20,7 @@
 +      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
 +   }
 +   public ResourceLocation getQueriedLootTableId() {
-+      return this.queriedLootTableId;
++      return this.queriedLootTableId == null? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 +   }
 +   // =============================== FORGE END ===============================
 +
