@@ -162,6 +162,12 @@
   "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
-  "attribute.name.generic.reachDistance": "Reach Distance",
-  "attribute.name.forge.swimSpeed": "Swim Speed"
+  "attribute.name.forge.swim_speed": "Swim Speed",
+  "attribute.name.forge.nametag_distance": "Nametag Render Distance",
+  "attribute.name.forge.entity_gravity": "Entity Gravity",
+  "attribute.name.generic.reach_distance": "Reach Distance",
+  "forge.swimSpeed": "Swim Speed",
+  "forge.nameTagDistance": "Nametag Render Distance",
+  "forge.entity_gravity": "Entity Gravity",
+  "generic.reachDistance": "Reach Distance"
 }

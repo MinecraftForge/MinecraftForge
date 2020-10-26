@@ -52,6 +52,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -79,6 +80,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
@@ -756,5 +758,15 @@ public class ForgeHooksClient
             renderer.renderModel(layer, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
         }
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+    }
+
+    public static boolean isNameplateInRenderDistance(Entity entity, double squareDistance) {
+        if (entity instanceof LivingEntity) {
+            final ModifiableAttributeInstance attribute = ((LivingEntity) entity).getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+            if (attribute != null) {
+                return !(squareDistance > (attribute.getValue() * attribute.getValue()));
+            }
+        }
+        return !(squareDistance > 4096.0f);
     }
 }
