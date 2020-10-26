@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.Manifest;
 
@@ -42,6 +43,18 @@ public class ModJarURLHandler extends URLStreamHandler
     @Override
     protected URLConnection openConnection(URL url) {
         return new ModJarURLConnection(url);
+    }
+
+    @Override
+    protected int hashCode(final URL u) {
+        return Objects.hash(u.getHost(), u.getFile());
+    }
+
+    @Override
+    protected boolean equals(final URL u1, final URL u2) {
+        return Objects.equals(u1.getProtocol(), u2.getProtocol())
+                && Objects.equals(u1.getHost(), u2.getHost())
+                && Objects.equals(u1.getFile(), u2.getFile());
     }
 
     static class ModJarURLConnection extends URLConnection {
