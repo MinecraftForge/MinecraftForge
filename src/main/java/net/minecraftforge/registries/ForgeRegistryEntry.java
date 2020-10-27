@@ -65,7 +65,7 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
         return GameData.checkPrefix(name, true);
     }
 
-    public static class DynamicRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
+    public abstract static class DynamicRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
     {
         @Override
         ResourceLocation checkRegistryName(String name)
