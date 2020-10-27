@@ -42,7 +42,7 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
         if (getRegistryName() != null)
             throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
 
-        this.registryName = GameData.checkPrefix(name, true);
+        this.registryName = checkRegistryName(name);
         return (V)this;
     }
 
@@ -59,4 +59,18 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     }
 
     public final Class<V> getRegistryType() { return (Class<V>)token.getRawType(); }
+
+    ResourceLocation checkRegistryName(String name)
+    {
+        return GameData.checkPrefix(name, true);
+    }
+
+    public static class DynamicRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
+    {
+        @Override
+        ResourceLocation checkRegistryName(String name)
+        {
+            return new ResourceLocation(name);
+        }
+    }
 }
