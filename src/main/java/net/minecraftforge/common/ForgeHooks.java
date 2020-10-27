@@ -672,9 +672,22 @@ public class ForgeHooks
         return ret;
     }
 
+    @Deprecated // TODO: Remove 1.17 - Use player-contextual version below.
     public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        if (MinecraftForge.EVENT_BUS.post(e)) return false;
+        if (e.getOutput().isEmpty()) return true;
+
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        container.setMaximumCost(e.getCost());
+        container.materialCost = e.getMaterialCost();
+        return false;
+    }
+
+    public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost, PlayerEntity player)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
         if (e.getOutput().isEmpty()) return true;
 
