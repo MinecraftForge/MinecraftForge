@@ -74,7 +74,6 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     /**
      * This class exists for registry entries which are dynamic (e.g. loaded via data packs), and also exist in a forge registry prior to that.
      * Due to this, the registry name will be set via the codec not during initial registration, and as a result, we want to not warn about possible overrides as the registry name will be set outside of mod context.
-     * @param <V>
      */
     public abstract static class UncheckedRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
     {
