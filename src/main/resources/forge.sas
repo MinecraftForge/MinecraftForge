@@ -27,6 +27,7 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 # Vanilla blocks calling these sided methods in getItem
 net/minecraft/tileentity/BannerTileEntity func_190615_l(Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/BannerBlock func_196287_a(Lnet/minecraft/item/DyeColor;)Lnet/minecraft/block/Block;
 net/minecraft/block/AttachedStemBlock func_196279_O_()Lnet/minecraft/item/Item;
 net/minecraft/block/StemBlock func_176481_j()Lnet/minecraft/item/Item;
 #=====================================
