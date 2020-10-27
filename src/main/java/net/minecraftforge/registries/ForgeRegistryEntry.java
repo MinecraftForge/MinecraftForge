@@ -60,12 +60,23 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
 
     public final Class<V> getRegistryType() { return (Class<V>)token.getRawType(); }
 
+    /**
+     * This will assert that the registry name is valid and warn about potential registry overrides
+     * It is important as it detects cases where modders unintentionally register objects with the "minecraft" namespace, leading to dangerous errors later.
+     * @param name The registry name
+     * @return A verified "correct" registry name
+     */
     ResourceLocation checkRegistryName(String name)
     {
         return GameData.checkPrefix(name, true);
     }
 
-    public abstract static class DynamicRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
+    /**
+     * This class exists for registry entries which are dynamic (e.g. loaded via data packs), and also exist in a forge registry prior to that.
+     * Due to this, the registry name will be set via the codec not during initial registration, and as a result, we want to not warn about possible overrides as the registry name will be set outside of mod context.
+     * @param <V>
+     */
+    public abstract static class UncheckedRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>
     {
         @Override
         ResourceLocation checkRegistryName(String name)
