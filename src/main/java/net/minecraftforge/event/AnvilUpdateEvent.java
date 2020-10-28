@@ -36,7 +36,8 @@ import javax.annotation.Nullable;
  * if the output is empty, and the event is not canceled, vanilla behavior will execute. <br>
  */
 @Cancelable
-public class AnvilUpdateEvent extends Event {
+public class AnvilUpdateEvent extends Event
+{
 
     private final ItemStack left;
     private final ItemStack right;
@@ -65,7 +66,7 @@ public class AnvilUpdateEvent extends Event {
     }
 
     /**
-     * @return ihe Item in the left input (leftmost) anvil slot.
+     * @return The item in the left input (leftmost) anvil slot.
      */
     public ItemStack getLeft()
     {
@@ -92,10 +93,11 @@ public class AnvilUpdateEvent extends Event {
     }
 
     /**
-     * This is the output as a result of this event, not of the two items. <br>
+     * This is the output as determined by the event, not by the vanilla behavior between these two items. <br>
      * If you are the first receiver of this event, it is guaranteed to be empty. <br>
-     * It will only be non-empty if changed by an event handler.
-     * @return The item in the output (rightmost) anvil slot.
+     * It will only be non-empty if changed by an event handler. <br>
+     * If this event is cancelled, this output stack is discarded.
+     * @return The item to set in the output (rightmost) anvil slot.
      */
     public ItemStack getOutput() 
     {
