@@ -22,15 +22,12 @@ package net.minecraftforge.common;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -50,6 +47,7 @@ import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
@@ -89,18 +87,19 @@ import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.*;
+import net.minecraft.village.PointOfInterestManager;
+import net.minecraft.world.biome.*;
+import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.gen.feature.template.TemplateManager;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameType;
@@ -108,13 +107,10 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraft.world.biome.BiomeGenerationSettings;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -1225,5 +1221,72 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    /**
+     * Read a biome container from a chunk save data, matching IDs with vanilla IDs
+     * This fixes a vanilla bug (which manifests itself much more in forge than in vanilla) where any change to the biome registration order will result in the biomes in a world being mismatched.
+     */
+    public static BiomeContainer readBiomeContainer(ServerWorld worldIn, ChunkPos pos, BiomeProvider biomeProvider, CompoundNBT nbt, Supplier<BiomeContainer> defaultBehavior)
+    {
+        // If we've saved a palette, then use that to determine biome IDs
+        if (nbt.contains("forge:biome_palette", Constants.NBT.TAG_COMPOUND) && nbt.contains("Biomes", Constants.NBT.TAG_INT_ARRAY))
+        {
+            final CompoundNBT paletteNbt = nbt.getCompound("forge:biome_palette");
+            final int[] ids = paletteNbt.getIntArray("ids");
+            final List<ResourceLocation> keys = new ArrayList<>(ids.length);
+            final ListNBT keysNbt = paletteNbt.getList("keys", Constants.NBT.TAG_STRING);
+            for (int i = 0; i < ids.length; i++)
+            {
+                keys.add(new ResourceLocation(keysNbt.getString(i)));
+            }
+            int[] biomesArray = nbt.getIntArray("Biomes");
+            Registry<Biome> biomeRegistry = worldIn.func_241828_r().func_243612_b(Registry.field_239720_u_);
+            for (int i = 0; i < biomesArray.length; i++)
+            {
+                int actualId = biomesArray[i];
+                for (int j = 0; j < ids.length; j++)
+                {
+                    if (ids[j] == actualId)
+                    {
+                        actualId = biomeRegistry.getId(biomeRegistry.getOrDefault(keys.get(i)));
+                        break;
+                    }
+                }
+                biomesArray[i] = actualId;
+            }
+            return new BiomeContainer(biomeRegistry, pos, biomeProvider, biomesArray);
+        }
+        // Default to original handling
+        return defaultBehavior.get();
+    }
+
+    /**
+     * Writes an additional biome palette to the chunk data.
+     * This prevents modded biomes from shifting due to any small change in the registration order
+     */
+    public static void writeBiomeContainer(ServerWorld worldIn, BiomeContainer biomeContainer, CompoundNBT nbt)
+    {
+        final Registry<Biome> biomeRegistry = worldIn.func_241828_r().func_243612_b(Registry.field_239720_u_);
+        final int[] biomesArray = biomeContainer.getBiomeIds();
+        final Map<Integer, ResourceLocation> uniqueIds = Arrays.stream(biomesArray)
+                .distinct()
+                .mapToObj(t -> t)
+                .filter(i -> biomeRegistry.getByValue(i) != null)
+                .collect(Collectors.toMap(i -> i, i -> biomeRegistry.getKey(biomeRegistry.getByValue(i))));
+        final CompoundNBT paletteNbt = new CompoundNBT();
+        final int[] ids = new int[uniqueIds.size()];
+        final ListNBT keysNbt = new ListNBT();
+        int i = 0;
+        for (Map.Entry<Integer, ResourceLocation> entry : uniqueIds.entrySet())
+        {
+            ids[i] = entry.getKey();
+            keysNbt.add(StringNBT.valueOf(entry.getValue().toString()));
+            i++;
+        }
+        paletteNbt.putIntArray("ids", ids);
+        paletteNbt.put("keys", keysNbt);
+        nbt.put("forge:biome_palette", paletteNbt);
+        nbt.putIntArray("Biomes", biomesArray);
     }
 }

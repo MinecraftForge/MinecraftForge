@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/chunk/storage/ChunkSerializer.java
+@@ -67,7 +67,7 @@
+          field_222658_a.error("Chunk file at {} is in the wrong location; relocating. (Expected {}, got {})", p_222656_3_, p_222656_3_, chunkpos);
+       }
+ 
+-      BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
++      BiomeContainer biomecontainer = net.minecraftforge.common.ForgeHooks.readBiomeContainer(p_222656_0_, p_222656_3_, biomeprovider, compoundnbt, () -> new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null));
+       UpgradeData upgradedata = compoundnbt.func_150297_b("UpgradeData", 10) ? new UpgradeData(compoundnbt.func_74775_l("UpgradeData")) : UpgradeData.field_196994_a;
+       ChunkPrimerTickList<Block> chunkprimerticklist = new ChunkPrimerTickList<>((p_222652_0_) -> {
+          return p_222652_0_ == null || p_222652_0_.func_176223_P().func_196958_f();
 @@ -132,6 +132,7 @@
           ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
              func_222650_a(compoundnbt, p_222648_1_);
@@ -34,6 +43,15 @@
           return chunkprimer1;
        }
     }
+@@ -274,7 +278,7 @@
+ 
+       BiomeContainer biomecontainer = p_222645_1_.func_225549_i_();
+       if (biomecontainer != null) {
+-         compoundnbt1.func_74783_a("Biomes", biomecontainer.func_227055_a_());
++         net.minecraftforge.common.ForgeHooks.writeBiomeContainer(p_222645_0_, biomecontainer, compoundnbt1);
+       }
+ 
+       ListNBT listnbt1 = new ListNBT();
 @@ -295,12 +299,22 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {
