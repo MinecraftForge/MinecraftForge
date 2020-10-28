@@ -133,7 +133,7 @@ public class AnvilUpdateEvent extends Event
     }
 
     /**
-     * The material cost is how many right inputs are consumed.
+     * The material cost is how many units of the right input stack are consumed.
      * @return The material cost of this anvil operation.
      */
     public int getMaterialCost()
