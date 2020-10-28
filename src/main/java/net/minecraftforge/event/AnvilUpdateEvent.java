@@ -124,7 +124,9 @@ public class AnvilUpdateEvent extends Event
     }
 
     /**
-     * Changes the level cost of this operation.
+     * Changes the level cost of this operation. <br>
+     * The level cost does prevent the output from being available.  <br>
+     * That is, a player without enough experience may not take the output.
      * @param cost The new level cost.
      */
     public void setCost(int cost)
@@ -146,7 +148,7 @@ public class AnvilUpdateEvent extends Event
      * A material cost of zero consumes the entire stack. <br>
      * A material cost higher than the count of the right stack
      * consumes the entire stack. <br>
-     * It does not block the operation.
+     * The material cost does not prevent the output from being available.
      * @param materialCost The new material cost.
      */
     public void setMaterialCost(int materialCost)
