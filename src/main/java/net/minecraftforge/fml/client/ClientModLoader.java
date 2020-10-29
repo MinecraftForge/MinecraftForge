@@ -103,7 +103,7 @@ public class ClientModLoader
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
-            DatapackCodec.field_234880_a_.addModPacks(ResourcePackLoader.getPackNames());
+            DatapackCodec.VANILLA_CODEC.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.addReloadListener(ClientModLoader::onResourceReload);
             mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
             ModelLoaderRegistry.init();
@@ -215,7 +215,7 @@ public class ClientModLoader
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.field_232625_a_);
+            final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.PLAIN);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
@@ -231,7 +231,7 @@ public class ClientModLoader
         }
         final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
                 new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 6),
-                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.field_232625_a_);
+                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.PLAIN);
         consumer.accept(packInfo);
     }
 }

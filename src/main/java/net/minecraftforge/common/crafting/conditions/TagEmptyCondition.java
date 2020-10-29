@@ -56,8 +56,8 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        ITag<Item> tag = TagCollectionManager.func_242178_a().func_241836_b().get(tag_name);
-        return tag == null || tag.func_230236_b_().isEmpty();
+        ITag<Item> tag = TagCollectionManager.getManager().getItemTags().get(tag_name);
+        return tag == null || tag.getAllElements().isEmpty();
     }
 
     @Override

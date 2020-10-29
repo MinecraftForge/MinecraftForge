@@ -58,7 +58,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
         Validate.notNull(value);
 
         if (value.getRegistryName() == null)
-            value.setRegistryName(key.func_240901_a_());
+            value.setRegistryName(key.getLocation());
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
@@ -73,7 +73,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <V extends T> V func_241874_a(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
+    public <V extends T> V validateAndRegister(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
         int wanted = -1;
         if (id.isPresent() && getByValue(id.getAsInt()) != null)
             wanted = id.getAsInt();
@@ -89,16 +89,16 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public Optional<T> func_241873_b(@Nullable ResourceLocation name)
+    public Optional<T> getOptional(@Nullable ResourceLocation name)
     {
         return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }
 
     @Override
     @Nullable
-    public T func_230516_a_(@Nullable RegistryKey<T> name)
+    public T getValueForKey(@Nullable RegistryKey<T> name)
     {
-        return name == null ? null : this.delegate.getRaw(name.func_240901_a_()); //get without default
+        return name == null ? null : this.delegate.getRaw(name.getLocation()); //get without default
     }
 
     @Override
@@ -140,7 +140,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public Set<Map.Entry<RegistryKey<T>, T>> func_239659_c_()
+    public Set<Map.Entry<RegistryKey<T>, T>> getEntries()
     {
         return this.delegate.getEntries();
     }
