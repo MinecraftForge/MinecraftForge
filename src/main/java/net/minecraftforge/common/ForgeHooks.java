@@ -120,6 +120,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -877,6 +878,14 @@ public class ForgeHooks
                     .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
                     .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public static String getDefaultWorldType()
+    {
+        ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
+        if (def != null)
+            return def.getRegistryName().toString();
+        return "default";
     }
 
     @FunctionalInterface

@@ -31,6 +31,7 @@ import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.play.NetworkPlayerInfo;
@@ -78,6 +79,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -102,12 +104,14 @@ import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -784,5 +788,30 @@ public class ForgeHooksClient
                     blockRenderer.getBlockModelRenderer().renderModel(world, blockRenderer.getModelForState(state), state, pos, stack, ivertexbuilder, checkSides, new Random(), state.getPositionRandom(pos), combinedOverlay);
                 });
         setRenderLayer(null);
+    }
+
+    public static void registerForgeWorldTypeScreens()
+    {
+        ForgeWorldTypeScreens.registerTypes();
+    }
+
+    public static BiomeGeneratorTypeScreens.IFactory getBiomeGeneratorTypeScreenFactory(Optional<BiomeGeneratorTypeScreens> generator, @Nullable BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory)
+    {
+        return ForgeWorldTypeScreens.getGeneratorScreenFactory(generator, biomegeneratortypescreens$ifactory);
+    }
+
+    public static boolean hasBiomeGeneratorSettingsOptionsScreen(Optional<BiomeGeneratorTypeScreens> generator)
+    {
+        return getBiomeGeneratorTypeScreenFactory(generator, null) != null;
+    }
+
+    public static Optional<BiomeGeneratorTypeScreens> getWorldTypeFromGenerator(DimensionGeneratorSettings dimensionGeneratorSettings)
+    {
+        return BiomeGeneratorTypeScreens.func_239079_a_(dimensionGeneratorSettings);
+    }
+
+    public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
+    {
+        return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
 }
