@@ -106,7 +106,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                         {
                             //Be loud if something went wrong
                             LOGGER.error("Fluid removed without successfully being picked up. Fluid {} at {} in {} matched requested type, but after performing pickup was {}.",
-                                  fluidState.getFluid().getRegistryName(), blockPos, world.func_234923_W_().func_240901_a_(), fluid.getRegistryName());
+                                  fluidState.getFluid().getRegistryName(), blockPos, world.getDimensionKey().getLocation(), fluid.getRegistryName());
                             return FluidStack.EMPTY;
                         }
                         return extracted;
