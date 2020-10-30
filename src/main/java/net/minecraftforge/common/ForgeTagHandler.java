@@ -93,7 +93,7 @@ public class ForgeTagHandler
         {
             TagRegistry<T> tagRegistry = getTagRegistry(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-            return tagRegistry.func_232937_a_(name.toString());
+            return tagRegistry.createTag(name.toString());
         }
         return TagRegistry.createDelayedTag(registry.getRegistryName(), name);
     }
@@ -264,13 +264,13 @@ public class ForgeTagHandler
                 if (makeEmpty)
                 {
                     if (withOptional)
-                        builder.put(registryName, tagRegistry.reinjectOptionalTags(ITagCollection.func_242202_a(Collections.emptyMap())));
+                        builder.put(registryName, tagRegistry.reinjectOptionalTags(ITagCollection.getTagCollectionFromMap(Collections.emptyMap())));
                     else
-                        builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+                        builder.put(registryName, ITagCollection.getTagCollectionFromMap(Collections.emptyMap()));
                 }
                 else
                 {
-                    builder.put(registryName, ITagCollection.func_242202_a(tagRegistry.func_241288_c_().stream().distinct().collect(Collectors.toMap(INamedTag::func_230234_a_, namedTag -> namedTag))));
+                    builder.put(registryName, ITagCollection.getTagCollectionFromMap(tagRegistry.getTags().stream().distinct().collect(Collectors.toMap(INamedTag::getName, namedTag -> namedTag))));
                 }
             }
         }
@@ -290,7 +290,7 @@ public class ForgeTagHandler
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
         }
-        return ITagCollectionSupplier.func_242209_a(blockTags, itemTags, fluidTags, entityTypeTags);
+        return ITagCollectionSupplier.getTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags);
     }
 
     /**
@@ -303,7 +303,7 @@ public class ForgeTagHandler
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (TagCollectionReaderInfo info : tagCollectionReaders)
         {
-            builder.put(info.tagType, info.reader.func_242226_a(info.tagBuilders));
+            builder.put(info.tagType, info.reader.buildTagCollectionFromMap(info.tagBuilders));
         }
         customTagTypes = builder.build();
     }
@@ -329,7 +329,7 @@ public class ForgeTagHandler
         CompletableFuture<List<TagCollectionReaderInfo>> customResults = CompletableFuture.completedFuture(new ArrayList<>());
         for (Map.Entry<ResourceLocation, TagCollectionReader<?>> entry : readers.entrySet())
         {
-            customResults = customResults.thenCombine(entry.getValue().func_242224_a(resourceManager, backgroundExecutor), (results, result) -> {
+            customResults = customResults.thenCombine(entry.getValue().readTagsFromManager(resourceManager, backgroundExecutor), (results, result) -> {
                 results.add(new TagCollectionReaderInfo(entry.getKey(), entry.getValue(), result));
                 return results;
             });
@@ -368,7 +368,7 @@ public class ForgeTagHandler
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
             {
-                builder.put(registryName, ITagCollection.func_242202_a(Collections.emptyMap()));
+                builder.put(registryName, ITagCollection.getTagCollectionFromMap(Collections.emptyMap()));
             }
         }
         return withSpecificCustom(tagCollectionSupplier, builder.build());
@@ -384,27 +384,27 @@ public class ForgeTagHandler
         return new ITagCollectionSupplier()
         {
             @Override
-            public ITagCollection<Block> func_241835_a()
+            public ITagCollection<Block> getBlockTags()
             {
-                return tagCollectionSupplier.func_241835_a();
+                return tagCollectionSupplier.getBlockTags();
             }
 
             @Override
-            public ITagCollection<Item> func_241836_b()
+            public ITagCollection<Item> getItemTags()
             {
-                return tagCollectionSupplier.func_241836_b();
+                return tagCollectionSupplier.getItemTags();
             }
 
             @Override
-            public ITagCollection<Fluid> func_241837_c()
+            public ITagCollection<Fluid> getFluidTags()
             {
-                return tagCollectionSupplier.func_241837_c();
+                return tagCollectionSupplier.getFluidTags();
             }
 
             @Override
-            public ITagCollection<EntityType<?>> func_241838_d()
+            public ITagCollection<EntityType<?>> getEntityTypeTags()
             {
-                return tagCollectionSupplier.func_241838_d();
+                return tagCollectionSupplier.getEntityTypeTags();
             }
 
             @Override

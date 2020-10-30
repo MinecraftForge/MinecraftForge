@@ -113,7 +113,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         }
 
         @Override
-        public boolean func_230044_c_()
+        public boolean isSideLit()
         {
             return isSideLit;
         }

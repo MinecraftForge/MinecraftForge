@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;

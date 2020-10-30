@@ -82,7 +82,7 @@ public final class Clips
         }
 
         @Override
-        public String func_176610_l()
+        public String getString()
         {
             return "identity";
         }
@@ -416,7 +416,7 @@ public final class Clips
         }
 
         @Override
-        public String func_176610_l()
+        public String getString()
         {
             return clipName;
         }
@@ -475,7 +475,7 @@ public final class Clips
                     // IdentityClip + ClipReference
                     if(clip instanceof IStringSerializable)
                     {
-                        out.value("#" + ((IStringSerializable)clip).func_176610_l());
+                        out.value("#" + ((IStringSerializable)clip).getString());
                         return;
                     }
                     else if(clip instanceof TimeClip)
