@@ -70,11 +70,11 @@ public class OBJLoaderBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
     }
 
     @Override
-    public JsonObject toJson()
+    public JsonObject toJson(JsonObject json)
     {
-        Preconditions.checkNotNull(modelLocation, "modelLocation must not be null");
+        json = super.toJson(json);
 
-        JsonObject json = super.toJson();
+        Preconditions.checkNotNull(modelLocation, "modelLocation must not be null");
 
         json.addProperty("model", modelLocation.toString());
 

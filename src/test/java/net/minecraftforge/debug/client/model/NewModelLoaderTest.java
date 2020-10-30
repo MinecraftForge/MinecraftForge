@@ -26,10 +26,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -53,7 +50,9 @@ import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
+import net.minecraftforge.client.model.generators.loaders.SeparatePerspectiveModelBuilder;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -239,7 +238,18 @@ public class NewModelLoaderTest
         @Override
         protected void registerModels()
         {
-
+            withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("layer0", "minecraft:item/coal")
+                    .texture("layer1", "minecraft:item/stick")
+                    .customLoader(ItemLayersModelBuilder::begin)
+                        .fullbright(1)
+                    .end();
+            withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
+                    .customLoader(SeparatePerspectiveModelBuilder::begin)
+                        .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
+                        .perspective(ItemCameraTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                    .end();
         }
     }
 
@@ -254,7 +264,7 @@ public class NewModelLoaderTest
         protected void registerStatesAndModels()
         {
             simpleBlock(NewModelLoaderTest.obj_block.get(), models()
-                    .getBuilder(blockTexture(NewModelLoaderTest.obj_block.get()).toString())
+                    .getBuilder(NewModelLoaderTest.obj_block.getId().getPath())
                     .customLoader(OBJLoaderBuilder::begin)
                             .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
                             .flipV(true)

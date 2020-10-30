@@ -34,10 +34,8 @@ public abstract class CustomLoaderBuilder<T extends ModelBuilder<T>>
         return parent;
     }
 
-    public JsonObject toJson()
+    public JsonObject toJson(JsonObject json)
     {
-        JsonObject json = new JsonObject();
-
         json.addProperty("loader", loaderId.toString());
 
         if (visibility.size() > 0)

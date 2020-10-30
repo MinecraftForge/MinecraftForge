@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -164,7 +165,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
     {
         public static final Loader INSTANCE = new Loader();
 
-        private static final ImmutableMap<String, ItemCameraTransforms.TransformType> PERSPECTIVES = ImmutableMap.<String, ItemCameraTransforms.TransformType>builder()
+        public static final ImmutableBiMap<String, ItemCameraTransforms.TransformType> PERSPECTIVES = ImmutableBiMap.<String, ItemCameraTransforms.TransformType>builder()
                 .put("none", ItemCameraTransforms.TransformType.NONE)
                 .put("third_person_left_hand", ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
                 .put("third_person_right_hand", ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)

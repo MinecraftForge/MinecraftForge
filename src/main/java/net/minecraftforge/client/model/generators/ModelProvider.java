@@ -385,6 +385,14 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         return singleTexture(name, BLOCK_FOLDER + "/carpet", "wool", wool);
     }
 
+    /**
+     * Gets a model builder that's not directly saved to disk. Meant for use in custom model loaders.
+     */
+    public T nested()
+    {
+        return factory.apply(new ResourceLocation("dummy:dummy"));
+    }
+
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
         ModelFile.ExistingModelFile ret = new ModelFile.ExistingModelFile(extendWithFolder(path), existingFileHelper);
         ret.assertExistence();

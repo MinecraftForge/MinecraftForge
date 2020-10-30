@@ -1,0 +1,11 @@
+{
+  "parent": "forge:item/default",
+  "textures": {
+    "layer0": "minecraft:item/coal",
+    "layer1": "minecraft:item/stick"
+  },
+  "loader": "forge:item-layers",
+  "fullbright_layers": [
+    1
+  ]
+}

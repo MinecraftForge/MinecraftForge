@@ -212,7 +212,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     @VisibleForTesting
     public JsonObject toJson() {
-        JsonObject root = customLoader != null ? customLoader.toJson() : new JsonObject();
+        JsonObject root = new JsonObject();
 
         if (this.parent != null) {
             root.addProperty("parent", this.parent.getLocation().toString());
@@ -305,6 +305,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             });
             root.add("elements", elements);
         }
+
+        if (customLoader != null)
+            return customLoader.toJson(root);
 
         return root;
     }
