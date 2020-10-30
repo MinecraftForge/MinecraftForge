@@ -53,14 +53,14 @@ public class StructureSpawnManager
         // then we have the same behavior as vanilla as vanilla checks, swamp huts, pillager outposts, ocean monuments, and nether fortresses in
         // that order.
         Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = new LinkedHashMap<>();
-        gatherEntitySpawns(structuresWithSpawns, Structure.field_236374_j_);
-        gatherEntitySpawns(structuresWithSpawns, Structure.field_236366_b_);
-        gatherEntitySpawns(structuresWithSpawns, Structure.field_236376_l_);
-        gatherEntitySpawns(structuresWithSpawns, Structure.field_236378_n_);
+        gatherEntitySpawns(structuresWithSpawns, Structure.SWAMP_HUT);
+        gatherEntitySpawns(structuresWithSpawns, Structure.PILLAGER_OUTPOST);
+        gatherEntitySpawns(structuresWithSpawns, Structure.MONUMENT);
+        gatherEntitySpawns(structuresWithSpawns, Structure.FORTRESS);
         for (Structure<?> structure : ForgeRegistries.STRUCTURE_FEATURES.getValues())
         {
-            if (structure != Structure.field_236374_j_ && structure != Structure.field_236366_b_ && structure != Structure.field_236376_l_ &&
-                structure != Structure.field_236378_n_)
+            if (structure != Structure.SWAMP_HUT && structure != Structure.PILLAGER_OUTPOST && structure != Structure.MONUMENT &&
+                structure != Structure.FORTRESS)
             {
                 //If we didn't already gather the spawns already to ensure we do vanilla ones already
                 // gather the spawns for this structure
@@ -99,7 +99,7 @@ public class StructureSpawnManager
             Structure<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (spawnInfo.spawns.containsKey(classification) && structureManager.func_235010_a_(pos, spawnInfo.insideOnly, structure).isValid())
+            if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureStart(pos, spawnInfo.insideOnly, structure).isValid())
                 return spawnInfo.spawns.get(classification);
         }
         return null;

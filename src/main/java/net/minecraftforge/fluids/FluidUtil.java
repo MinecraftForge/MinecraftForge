@@ -562,7 +562,7 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.func_230315_m_().func_236040_e_() && fluid.getAttributes().doesVaporize(world, pos, resource))
+        if (world.getDimensionType().isUltrawarm() && fluid.getAttributes().doesVaporize(world, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (!result.isEmpty())

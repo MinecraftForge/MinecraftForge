@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -35,5 +36,13 @@ public class BackgroundWaiter {
             } catch (InterruptedException ignored) {
             }
         } while (!work.isDone());
+        try {
+            runner.shutdown();
+            work.get();
+        } catch (ExecutionException ee) {
+            throw new RuntimeException(ee.getCause());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

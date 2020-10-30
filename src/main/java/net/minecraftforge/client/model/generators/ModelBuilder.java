@@ -249,7 +249,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (part.partRotation != null) {
                     JsonObject rotation = new JsonObject();
                     rotation.add("origin", serializeVector3f(part.partRotation.origin));
-                    rotation.addProperty("axis", part.partRotation.axis.func_176610_l());
+                    rotation.addProperty("axis", part.partRotation.axis.getString());
                     rotation.addProperty("angle", part.partRotation.angle);
                     if (part.partRotation.rescale) {
                         rotation.addProperty("rescale", part.partRotation.rescale);
@@ -272,7 +272,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                         faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
                     }
                     if (face.cullFace != null) {
-                        faceObj.addProperty("cullface", face.cullFace.func_176610_l());
+                        faceObj.addProperty("cullface", face.cullFace.getString());
                     }
                     if (face.blockFaceUV.rotation != 0) {
                         faceObj.addProperty("rotation", face.blockFaceUV.rotation);
@@ -280,7 +280,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    faces.add(dir.func_176610_l(), faceObj);
+                    faces.add(dir.getString(), faceObj);
                 }
                 if (!part.mapFaces.isEmpty()) {
                     partObj.add("faces", faces);

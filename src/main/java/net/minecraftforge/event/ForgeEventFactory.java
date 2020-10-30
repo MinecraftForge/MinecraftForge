@@ -542,13 +542,13 @@ public class ForgeEventFactory
     @OnlyIn(Dist.CLIENT)
     public static boolean renderFireOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), player.func_233580_cy_());
+        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), player.getPosition());
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean renderWaterOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.getDefaultState(), player.func_233580_cy_());
+        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.getDefaultState(), player.getPosition());
     }
 
     @OnlyIn(Dist.CLIENT)

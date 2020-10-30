@@ -20,8 +20,7 @@
 package net.minecraftforge.common.util;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Supplier;
+import java.util.Objects;
 
 /**
  * Proxy object for a value that is calculated on first access.
@@ -36,7 +35,8 @@ public interface NonNullLazy<T> extends NonNullSupplier<T>
      */
     static <T> NonNullLazy<T> of(@Nonnull NonNullSupplier<T> supplier)
     {
-        return new NonNullLazy.Fast<>(supplier);
+        Lazy<T> lazy = Lazy.of(supplier::get);
+        return () -> Objects.requireNonNull(lazy.get());
     }
 
     /**
@@ -45,65 +45,7 @@ public interface NonNullLazy<T> extends NonNullSupplier<T>
      */
     static <T> NonNullLazy<T> concurrentOf(@Nonnull NonNullSupplier<T> supplier)
     {
-        return new NonNullLazy.Concurrent<>(supplier);
-    }
-
-    /**
-     * Non-thread-safe implementation.
-     */
-    final class Fast<T> implements NonNullLazy<T>
-    {
-        private NonNullSupplier<T> supplier;
-        private T instance;
-
-        private Fast(NonNullSupplier<T> supplier)
-        {
-            this.supplier = supplier;
-        }
-
-        @Nonnull
-        @Override
-        public final T get()
-        {
-            if (supplier != null)
-            {
-                instance = supplier.get();
-                supplier = null;
-            }
-            return instance;
-        }
-    }
-
-    /**
-     * Thread-safe implementation.
-     */
-    final class Concurrent<T> implements NonNullLazy<T>
-    {
-        private static final Object lock = new Object();
-        private volatile NonNullSupplier<T> supplier;
-        private volatile T instance;
-
-        private Concurrent(NonNullSupplier<T> supplier)
-        {
-            this.supplier = supplier;
-        }
-
-        @Nonnull
-        @Override
-        public final T get()
-        {
-            if (supplier != null)
-            {
-                synchronized (lock)
-                {
-                    if (supplier != null)
-                    {
-                        instance = supplier.get();
-                        supplier = null;
-                    }
-                }
-            }
-            return instance;
-        }
+        Lazy<T> lazy = Lazy.concurrentOf(supplier::get);
+        return () -> Objects.requireNonNull(lazy.get());
     }
 }

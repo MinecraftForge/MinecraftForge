@@ -195,9 +195,9 @@ public enum ForgeRenderTypes
             return makeType("forge_item_entity_cutout_mipped", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
         }
 
-        public static RenderType layeredItemTranslucent(ResourceLocation p_239268_0_) {
+        public static RenderType layeredItemTranslucent(ResourceLocation locationIn) {
             RenderType.State rendertype$state = RenderType.State.getBuilder()
-                    .texture(new RenderState.TextureState(p_239268_0_, false, false))
+                    .texture(new RenderState.TextureState(locationIn, false, false))
                     .transparency(TRANSLUCENT_TRANSPARENCY)
                     .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
                     .alpha(DEFAULT_ALPHA)
