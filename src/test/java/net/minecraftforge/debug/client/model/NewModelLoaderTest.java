@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -50,12 +51,16 @@ import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -136,6 +141,7 @@ public class NewModelLoaderTest
         ITEMS.register(modEventBus);
 
         modEventBus.addListener(this::modelRegistry);
+        modEventBus.addListener(this::datagen);
     }
 
     public void modelRegistry(ModelRegistryEvent event)
@@ -207,6 +213,54 @@ public class NewModelLoaderTest
         public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return Collections.singleton(owner.resolveTexture("particle"));
+        }
+    }
+
+    private void datagen(GatherDataEvent event)
+    {
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeClient())
+        {
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
+        }
+    }
+
+    public static class ItemModels extends ItemModelProvider
+    {
+        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        {
+            super(generator, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels()
+        {
+
+        }
+    }
+
+    public static class BlockStates extends BlockStateProvider
+    {
+        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        {
+            super(gen, MODID, exFileHelper);
+        }
+
+        @Override
+        protected void registerStatesAndModels()
+        {
+            simpleBlock(NewModelLoaderTest.obj_block.get(), models()
+                    .getBuilder(blockTexture(NewModelLoaderTest.obj_block.get()).toString())
+                    .customLoader(OBJLoaderBuilder::begin)
+                            .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
+                            .flipV(true)
+                    .end()
+                    .texture("test1", "#test")
+            );
         }
     }
 }

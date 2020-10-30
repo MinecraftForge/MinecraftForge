@@ -35,6 +35,7 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.resources.IResource;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -51,11 +52,38 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         }
 
         @Override
-        public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
-            if (generatedModels.containsKey(loc)) {
-                return true;
+        public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix)
+        {
+            if (pathPrefix.equals("models") && pathSuffix.equals(".json"))
+            {
+                if (generatedModels.containsKey(loc))
+                {
+                    return true;
+                }
             }
             return delegate.exists(loc, type, pathSuffix, pathPrefix);
+        }
+
+        @Override
+        public boolean exists(ResourceLocation loc, ResourcePackType type) {
+            if (loc.getPath().startsWith("models/") && loc.getPath().endsWith(".json"))
+            {
+                ResourceLocation modelLoc = new ResourceLocation(
+                        loc.getNamespace(),
+                        loc.getPath().substring("models/".length(), loc.getPath().length() - ".json".length())
+                );
+                if (generatedModels.containsKey(modelLoc))
+                {
+                    return true;
+                }
+            }
+            return delegate.exists(loc, type);
+        }
+
+        @Override
+        public IResource getResource(ResourceLocation loc, ResourcePackType type) throws IOException
+        {
+            return delegate.getResource(loc, type);
         }
     }
 
