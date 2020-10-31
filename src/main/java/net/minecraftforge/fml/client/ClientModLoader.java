@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import net.minecraft.client.gui.screen.ErrorScreen;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -38,7 +39,9 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.datafix.codec.DatapackCodec;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.util.TriFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,6 +65,8 @@ import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.fml.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader
@@ -91,7 +96,7 @@ public class ClientModLoader
             }
         }
     }
-    public static void begin(final Minecraft minecraft, final ResourcePackList defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
+    public static void begin(final Minecraft minecraft, final ResourcePackList defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer, NonNullSupplier<EarlyLoaderGUI> loadingGUISupplier)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
@@ -99,7 +104,7 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.getMainWindow());
+        earlyLoaderGUI = loadingGUISupplier.get();
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
@@ -159,7 +164,7 @@ public class ClientModLoader
         return anyOutdated ? VersionChecker.Status.OUTDATED : null;
     }
 
-    public static boolean completeModLoading()
+    public static boolean completeModLoading(@Nonnull TriFunction<LoadingFailedException, List<ModLoadingWarning>, File, ErrorScreen> errorScreenSupplier)
     {
         RenderSystem.disableTexture();
         RenderSystem.enableTexture();
@@ -188,7 +193,7 @@ public class ClientModLoader
             dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }
         if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
+            mc.displayGuiScreen(Objects.requireNonNull(errorScreenSupplier.apply(error, warnings, dumpedLocation)));
             return true;
         } else {
             ClientHooks.logMissingTextureErrors();

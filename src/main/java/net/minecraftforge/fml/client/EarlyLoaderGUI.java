@@ -38,8 +38,8 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 public class EarlyLoaderGUI {
-    private final MainWindow window;
-    private boolean handledElsewhere;
+    protected final MainWindow window;
+    protected boolean handledElsewhere;
 
     public EarlyLoaderGUI(final MainWindow window) {
         this.window = window;
@@ -60,12 +60,12 @@ public class EarlyLoaderGUI {
         this.handledElsewhere = true;
     }
 
-    void renderFromGUI() {
+    protected void renderFromGUI() {
         renderMessages();
     }
 
     @SuppressWarnings("deprecation")
-    void renderTick() {
+    protected void renderTick() {
         if (handledElsewhere) return;
         int guiScale = window.calcGuiScale(0, false);
         window.setGuiScale(guiScale);

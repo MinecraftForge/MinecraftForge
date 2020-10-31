@@ -27,7 +27,7 @@
        this.field_147124_at = new Framebuffer(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), true, field_142025_a);
        this.field_147124_at.func_147604_a(0.0F, 0.0F, 0.0F, 0.0F);
        this.field_110451_am = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
-+      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
++      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax, () -> new net.minecraftforge.fml.client.EarlyLoaderGUI(this.field_195558_d));
        this.field_110448_aq.func_198983_a();
        this.field_71474_y.func_198017_a(this.field_110448_aq);
        this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
@@ -66,7 +66,7 @@
                 this.func_213256_aB();
              }
 -
-+            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
++            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading(net.minecraftforge.fml.client.gui.screen.LoadingErrorScreen::new)) return; // Do not overwrite the error screen
 +            // FORGE: Move opening initial screen to after startup and events are enabled.
 +            // Also Fixes MC-145102
 +            if (s != null) {
