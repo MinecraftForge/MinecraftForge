@@ -21,7 +21,6 @@ package net.minecraftforge.debug;
 
 import java.util.function.Supplier;
 
-import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +52,6 @@ public class DeferredRegistryTest {
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final DeferredRegister<StructureFeature<?, ?>> CONFIGURED_STRUCTURE_FEATURES = DeferredRegister.create(ForgeRegistries.CONFIGURED_STRUCTURE_FEATURES, MODID);
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(Custom.class, MODID);
 
     private static final RegistryObject<Block> BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.create(Material.ROCK)));
@@ -69,7 +67,6 @@ public class DeferredRegistryTest {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
-        CONFIGURED_STRUCTURE_FEATURES.register(modBus);
         CUSTOMS.register(modBus);
         modBus.addListener(this::gatherData);
     }
