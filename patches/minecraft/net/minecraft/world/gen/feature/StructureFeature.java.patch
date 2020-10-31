@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/StructureFeature.java
++++ b/net/minecraft/world/gen/feature/StructureFeature.java
+@@ -16,7 +16,7 @@
+ import net.minecraft.world.gen.feature.template.TemplateManager;
+ import net.minecraft.world.gen.settings.StructureSeparationSettings;
+ 
+-public class StructureFeature<FC extends IFeatureConfig, F extends Structure<FC>> {
++public class StructureFeature<FC extends IFeatureConfig, F extends Structure<FC>> extends net.minecraftforge.registries.ForgeRegistryEntry<StructureFeature<?, ?>> {
+    public static final Codec<StructureFeature<?, ?>> field_236267_a_ = Registry.field_218361_B.dispatch((p_236271_0_) -> {
+       return p_236271_0_.field_236268_b_;
+    }, Structure::func_236398_h_);
