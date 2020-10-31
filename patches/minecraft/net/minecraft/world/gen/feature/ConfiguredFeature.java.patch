@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/gen/feature/ConfiguredFeature.java
 +++ b/net/minecraft/world/gen/feature/ConfiguredFeature.java
-@@ -15,7 +15,7 @@
+@@ -12,10 +12,11 @@
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.IDecoratable;
+ import net.minecraft.world.gen.placement.ConfiguredPlacement;
++import net.minecraftforge.registries.IForgeRegistryEntry;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  

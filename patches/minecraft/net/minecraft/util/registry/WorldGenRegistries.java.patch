@@ -1,6 +1,18 @@
 --- a/net/minecraft/util/registry/WorldGenRegistries.java
 +++ b/net/minecraft/util/registry/WorldGenRegistries.java
-@@ -45,7 +45,7 @@
+@@ -35,17 +35,17 @@
+    public static final Registry<ConfiguredCarver<?>> field_243652_d = func_243667_a(Registry.field_243551_at, () -> {
+       return ConfiguredCarvers.field_243767_a;
+    });
+-   public static final Registry<ConfiguredFeature<?, ?>> field_243653_e = func_243667_a(Registry.field_243552_au, () -> {
++   public static final Registry<ConfiguredFeature<?, ?>> field_243653_e = forge(Registry.field_243552_au, () -> {
+       return Features.field_243862_bH;
+    });
+-   public static final Registry<StructureFeature<?, ?>> field_243654_f = func_243667_a(Registry.field_243553_av, () -> {
++   public static final Registry<StructureFeature<?, ?>> field_243654_f = forge(Registry.field_243553_av, () -> {
+       return StructureFeatures.field_244136_b;
+    });
+    public static final Registry<StructureProcessorList> field_243655_g = func_243667_a(Registry.field_243554_aw, () -> {
        return ProcessorLists.field_244102_b;
     });
     public static final Registry<JigsawPattern> field_243656_h = func_243667_a(Registry.field_243555_ax, JigsawPatternRegistry::func_244093_a);

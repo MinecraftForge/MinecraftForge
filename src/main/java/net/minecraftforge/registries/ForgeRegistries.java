@@ -99,11 +99,9 @@ public class ForgeRegistries
     public static final IForgeRegistry<WorldCarver<?>> WORLD_CARVERS = RegistryManager.ACTIVE.getRegistry(WorldCarver.class);
     public static final IForgeRegistry<SurfaceBuilder<?>> SURFACE_BUILDERS = RegistryManager.ACTIVE.getRegistry(SurfaceBuilder.class);
     public static final IForgeRegistry<Feature<?>> FEATURES = RegistryManager.ACTIVE.getRegistry(Feature.class);
-    public static final IForgeRegistry<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = RegistryManager.ACTIVE.getRegistry(ConfiguredFeature.class);
     public static final IForgeRegistry<Placement<?>> DECORATORS = RegistryManager.ACTIVE.getRegistry(Placement.class);
     public static final IForgeRegistry<ChunkStatus> CHUNK_STATUS = RegistryManager.ACTIVE.getRegistry(ChunkStatus.class);
     public static final IForgeRegistry<Structure<?>> STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(Structure.class);
-    public static final IForgeRegistry<StructureFeature<?, ?>> CONFIGURED_STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(StructureFeature.class);
     public static final IForgeRegistry<BlockStateProviderType<?>> BLOCK_STATE_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockStateProviderType.class);
     public static final IForgeRegistry<BlockPlacerType<?>> BLOCK_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockPlacerType.class);
     public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(FoliagePlacerType.class);
@@ -111,6 +109,8 @@ public class ForgeRegistries
 
     // Dynamic/Data driven.
     public static final IForgeRegistry<Biome> BIOMES = RegistryManager.ACTIVE.getRegistry(Keys.BIOMES);
+    public static final IForgeRegistry<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = RegistryManager.ACTIVE.getRegistry(Keys.CONFIGURED_FEATURES);
+    public static final IForgeRegistry<StructureFeature<?, ?>> CONFIGURED_STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(Keys.CONFIGURED_STRUCTURE_FEATURES);
 
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
@@ -142,11 +142,9 @@ public class ForgeRegistries
         public static final RegistryKey<Registry<WorldCarver<?>>> WORLD_CARVERS = key("worldgen/carver");
         public static final RegistryKey<Registry<SurfaceBuilder<?>>> SURFACE_BUILDERS = key("worldgen/surface_builder");
         public static final RegistryKey<Registry<Feature<?>>> FEATURES = key("worldgen/feature");
-        public static final RegistryKey<Registry<ConfiguredFeature<?, ?>>> CONFIGURED_FEATURES = key("worldgen/configured_feature");
         public static final RegistryKey<Registry<Placement<?>>> DECORATORS = key("worldgen/decorator");
         public static final RegistryKey<Registry<ChunkStatus>> CHUNK_STATUS = key("chunk_status");
         public static final RegistryKey<Registry<Structure<?>>> STRUCTURE_FEATURES = key("worldgen/structure_feature");
-        public static final RegistryKey<Registry<StructureFeature<?, ?>>> CONFIGURED_STRUCTURE_FEATURES = key("worldgen/configured_structure_feature");
         public static final RegistryKey<Registry<BlockStateProviderType<?>>> BLOCK_STATE_PROVIDER_TYPES = key("worldgen/block_state_provider_type");
         public static final RegistryKey<Registry<BlockPlacerType<?>>> BLOCK_PLACER_TYPES = key("worldgen/block_placer_type");
         public static final RegistryKey<Registry<FoliagePlacerType<?>>> FOLIAGE_PLACER_TYPES = key("worldgen/foliage_placer_type");
@@ -154,6 +152,8 @@ public class ForgeRegistries
 
         // Vanilla Dynamic
         public static final RegistryKey<Registry<Biome>> BIOMES = key("worldgen/biome");
+        public static final RegistryKey<Registry<ConfiguredFeature<?, ?>>> CONFIGURED_FEATURES = key("worldgen/configured_feature");
+        public static final RegistryKey<Registry<StructureFeature<?, ?>>> CONFIGURED_STRUCTURE_FEATURES = key("worldgen/configured_structure_feature");
 
         //Forge
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
