@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/gen/feature/ConfiguredFeature.java
 +++ b/net/minecraft/world/gen/feature/ConfiguredFeature.java
-@@ -12,10 +12,11 @@
- import net.minecraft.world.gen.ChunkGenerator;
- import net.minecraft.world.gen.IDecoratable;
- import net.minecraft.world.gen.placement.ConfiguredPlacement;
-+import net.minecraftforge.registries.IForgeRegistryEntry;
+@@ -15,7 +15,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public class ConfiguredFeature<FC extends IFeatureConfig, F extends Feature<FC>> implements IDecoratable<ConfiguredFeature<?, ?>> {
-+public class ConfiguredFeature<FC extends IFeatureConfig, F extends Feature<FC>> extends net.minecraftforge.registries.ForgeRegistryEntry<ConfiguredFeature<?, ?>> implements IDecoratable<ConfiguredFeature<?, ?>> {
++public class ConfiguredFeature<FC extends IFeatureConfig, F extends Feature<FC>> extends net.minecraftforge.registries.ForgeRegistryEntry.UncheckedRegistryEntry<ConfiguredFeature<?, ?>> implements IDecoratable<ConfiguredFeature<?, ?>> {
     public static final Codec<ConfiguredFeature<?, ?>> field_242763_a = Registry.field_218379_q.dispatch((p_236266_0_) -> {
        return p_236266_0_.field_222737_a;
     }, Feature::func_236292_a_);
