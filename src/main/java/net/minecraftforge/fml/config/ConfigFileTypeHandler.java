@@ -37,7 +37,6 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -144,7 +143,7 @@ public class ConfigFileTypeHandler {
                     this.commentedFileConfig.load();
                     if(!this.modConfig.getSpec().isCorrect(commentedFileConfig))
                     {
-                        LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", commentedFileConfig.getFile().getAbsolutePath());
+                        LOGGER.warn(CONFIG, "Configuration file {} is not correct. Correcting", commentedFileConfig.getFile().getAbsolutePath());
                         ConfigFileTypeHandler.backUpConfig(commentedFileConfig);
                         this.modConfig.getSpec().correct(commentedFileConfig);
                         commentedFileConfig.save();
