@@ -24,30 +24,31 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraftforge.event.ItemModifierEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(ItemModifierTest.MOD_ID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = ItemModifierTest.MOD_ID)
-public class ItemModifierTest
+@Mod(ItemAttributeModifierTest.MOD_ID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = ItemAttributeModifierTest.MOD_ID)
+public class ItemAttributeModifierTest
 {
     public static final String MOD_ID = "item_modifier_test";
     public static final boolean ENABLED = true;
     private static final AttributeModifier MODIFIER = new AttributeModifier(MOD_ID, 10f, Operation.ADDITION);
     
     @SubscribeEvent
-    public static void onItemAttribute(ItemModifierEvent event)
+    public static void onItemAttribute(ItemAttributeModifierEvent event)
     {
         if (ENABLED && event.getSlotType() == EquipmentSlotType.MAINHAND)
         {
             final Item item = event.getItemStack().getItem();
             if (item == Items.APPLE)
             {
-                event.getModifiers().put(Attributes.field_233826_i_, MODIFIER);
+                event.addModifier(Attributes.ARMOR, MODIFIER);
             }
-            else if (item == Items.GOLDEN_SWORD) {
-                event.getModifiers().clear();
+            else if (item == Items.GOLDEN_SWORD)
+            {
+                event.clearModifiers();
             }
         }
     }

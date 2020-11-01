@@ -221,9 +221,8 @@
 -         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
 +         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
        }
--
-+      multimap = com.google.common.collect.ArrayListMultimap.create(multimap);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.ItemModifierEvent(this, p_111283_1_, multimap));
+ 
++      multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_111283_1_, multimap);
        return multimap;
     }
  
