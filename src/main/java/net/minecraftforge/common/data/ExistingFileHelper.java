@@ -72,6 +72,22 @@ public class ExistingFileHelper {
 
     /**
      * Check if a given resource exists in the known resource packs.
+     *
+     * @param loc        the base location of the resource, e.g.
+     *                   {@code "minecraft:block/stone"}
+     * @param type       the type of resources to check
+     * @return {@code true} if the resource exists in any pack, {@code false}
+     *         otherwise
+     */
+    public boolean exists(ResourceLocation loc, ResourcePackType type) {
+        if (!enable) {
+            return true;
+        }
+        return getManager(type).hasResource(loc);
+    }
+
+    /**
+     * Check if a given resource exists in the known resource packs.
      * 
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
@@ -83,15 +99,17 @@ public class ExistingFileHelper {
      *         otherwise
      */
     public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
-        if (!enable) {
-            return true;
-        }
-        return getManager(type).hasResource(getLocation(loc, pathSuffix, pathPrefix));
+        return exists(getLocation(loc, pathSuffix, pathPrefix), type);
     }
 
     @VisibleForTesting
     public IResource getResource(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) throws IOException {
-        return getManager(type).getResource(getLocation(loc, pathSuffix, pathPrefix));
+        return getResource(getLocation(loc, pathSuffix, pathPrefix), type);
+    }
+
+    @VisibleForTesting
+    public IResource getResource(ResourceLocation loc, ResourcePackType type) throws IOException {
+        return getManager(type).getResource(loc);
     }
 
     /**

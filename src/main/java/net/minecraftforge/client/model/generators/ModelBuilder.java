@@ -19,13 +19,10 @@
 
 package net.minecraftforge.client.model.generators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -74,6 +71,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected GuiLight guiLight = null;
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
+
+    protected CustomLoaderBuilder customLoader = null;
 
     protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation);
@@ -178,6 +177,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     public ElementBuilder element() {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         ElementBuilder ret = new ElementBuilder();
         elements.add(ret);
         return ret;
@@ -191,13 +191,29 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds
      */
     public ElementBuilder element(int index) {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         Preconditions.checkElementIndex(index, elements.size(), "Element index");
         return elements.get(index);
+    }
+
+    /**
+     * Use a custom loader instead of the vanilla elements.
+     * @param customLoaderFactory
+     * @return the custom loader builder
+     */
+    public <L extends CustomLoaderBuilder<T>> L customLoader(BiFunction<T, ExistingFileHelper, L> customLoaderFactory)
+    {
+        Preconditions.checkState(elements.size() == 0, "Cannot use elements and custom loaders at the same time");
+        Preconditions.checkNotNull(customLoaderFactory, "customLoaderFactory must not be null");
+        L customLoader  = customLoaderFactory.apply(self(), existingFileHelper);
+        this.customLoader = customLoader;
+        return customLoader;
     }
 
     @VisibleForTesting
     public JsonObject toJson() {
         JsonObject root = new JsonObject();
+
         if (this.parent != null) {
             root.addProperty("parent", this.parent.getLocation().toString());
         }
@@ -289,6 +305,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             });
             root.add("elements", elements);
         }
+
+        if (customLoader != null)
+            return customLoader.toJson(root);
 
         return root;
     }
